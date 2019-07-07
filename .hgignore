@@ -1,0 +1,21 @@
+#-----------------------------------------------------------------------
+# Add an entry for .settings folder to ignore 
+#------------------------------------------------------------------------
+syntax: regexp
+^common/\.settings$
+
+#----------------------------------------------------------------------------
+# Add an entry for target folder to ignore when creating a new module.
+# This will ignore all the class files. 
+#----------------------------------------------------------------------------
+syntax: regexp
+^common/target$
+
+#-------------------------------------
+# Use global syntax
+#-------------------------------------
+syntax: glob
+.obj
+.exe
+.class
+.DS_Store
