@@ -1,16 +1,3 @@
-#-----------------------------------------------------------------------
-# Add an entry for .settings folder to ignore 
-#------------------------------------------------------------------------
-syntax: regexp
-^common/\.settings$
-
-#----------------------------------------------------------------------------
-# Add an entry for target folder to ignore when creating a new module.
-# This will ignore all the class files. 
-#----------------------------------------------------------------------------
-syntax: regexp
-^common/target$
-
 #-------------------------------------
 # Use global syntax
 #-------------------------------------
@@ -19,3 +6,8 @@ syntax: glob
 .exe
 .class
 .DS_Store
+org.amerpsoft.com.idempiere.editors-com/target
+org.amerpsoft.com.idempiere.feature/target
+org.amerpsoft.com.idempiere.p2.site/target
+org.amerpsoft.com.idempiere.p2.targetplatform/target
+org.amerpsoft.com.idempiere.themes-com/target
