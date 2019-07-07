@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+<borderlayout id="layout" sclass="login-window">
+    <center border="none" autoscroll="true" style="background-color: transparent;">
+        <vbox pack="center" align="center" style="background-color: transparent;"
+            hflex="1" vflex="1">
+            <window use="org.adempiere.webui.window.LoginWindow" id="loginWindow"/>
+    <html>
+
+       <div id="video-background-1" class="ui--video-background-video hidden-phone ">   
+        <video  loop="loop" id="bgvid">  
+        <!--source src="//2.s3.envato.com/h264-video-previews/1148750.webm" type="video/webm" /-->
+        <source src="theme/businessteam/images/envato_video.mp4" type="video/mp4" />
+        </video>
+    </div>
+    <div class="ui--video-background">
+        <div class="ui--gradient">
+        </div>
+    </div>  
+    
+        <script>
+        
+    var viewTheme = {};
+
+ /*-------------------------------------------------------------------------*
+ *                      init settings and functions                          *
+ *-------------------------------------------------------------------------*/    
+
+viewTheme.langCombobox = function() {
+                 // update to "button placeholder" in function of language seletion                                              
+                 //customize if you require other language 
+                 if($("input.modern-combobox").val() == "English"){
+                    $("input.modern-user:text").attr( "placeholder", "Username" ); 
+                    $("input.modern-password:password").attr( "placeholder", "Password" );
+                 }else{
+                    $("input.modern-user:text").attr( "placeholder", "Ingrese Usuario" ); 
+                    $("input.modern-password:password").attr( "placeholder", "Ingrese Clave" );
+                 }
+ };
+
+// init window "login"
+viewTheme.initViewLogin = function(){
+                             // clean :: re-inicilizate css
+                           //  $( "span.z-label").empty();
+                             $( "span.z-label").removeClass( "z-label" ).addClass( "modern-label" );                     
+                             $( "input.z-combobox-input:text ").removeClass( "z-combobox-input" ).addClass( "modern-input modern-combobox" ); 
+                             $( "label.z-checkbox-content").removeClass( "z-checkbox-content" ).addClass( "modern-checkbox-content" ); 
+                          //  $( "span.modern-label").empty();
+                           if ($("input.z-datebox-input:text").length !=0) {
+                              $( "table.login-box-body" ).removeClass( "login-box-body" ).addClass( "login-box-rol" );  
+                          <![CDATA[      
+                             var q = document.getElementsByTagName("button");
+                                for(var j=0; j < q.length; j++){
+                                    if (q[j].textContent == " OK"){
+                                    document.getElementsByTagName("button")[j].className = "primary-login";
+                                    document.getElementsByTagName("button")[j+1].className = "box-help";
+                                 //   $( "button.primary-login" ).html("Log in");
+                                      //  alert("testing " + j);
+                                    }
+                                }
+                            } else {                          
+                            // update css in help button
+                            document.getElementsByTagName("button")[1].className = "box-help";
+                            viewTheme.langCombobox;  
+                             }
+                         ]]>                                                              
+                            };
+                            
+//init window "selected Role"
+ viewTheme.initViewRol = function (){
+                    // update box container -css- "Selection Role"
+                    if ($("input.z-datebox-input:text").length !=0) {
+                      $( "table.login-box-body" ).removeClass( "login-box-body" ).addClass( "login-box-rol" );    
+                    } 
+
+                    $( "span.login-box-header-txt").empty();
+                            $( "div.z-combobox-popup" ).addClass( "modern-combobox-popup" );
+                            $( "li.z-comboitem" ).removeClass( "z-comboitem" ).addClass( "modern-combo-item" );
+                            $( "span.z-label").removeClass( "z-label" ).addClass( "modern-label" );
+                            $( "input.z-combobox-input:text").removeClass( "z-combobox-input" ).addClass( "modern-input modern-combobox" );
+                            $( "a.z-combobox-button").removeClass( "z-combobox-button" ).addClass( "modern-combobox-button" );
+
+                    <![CDATA[
+                        var x= document.getElementsByTagName("button");
+                        for (var i=0; i < x.length; i++){
+                        if(x[i].textContent == " OK" & $("input.z-datebox-input:text").length !=0){                      
+                          document.getElementsByTagName("button")[i].className = "primary-login";
+                       //   document.getElementsByTagName("button")[i].innerHTML = "Log in";
+                          document.getElementsByTagName("button")[i+1].className = "box-help";
+                          $( "button.box-help" ).attr("onClick", "setTimeout( viewTheme.initViewLogin, 150)");
+                        } else {
+                        //  document.getElementsByTagName("button")[i].className = "box-help";
+                        //  $( "button.box-help" ).attr("onClick", "setTimeout( viewTheme.initViewLogin, 150)");
+                         }}   
+                    ]]>             
+                  };
+                                                        
+            $( document ).ready(function() {            
+                setTimeout( viewTheme.initViewLogin, 300);
+            }); 
+                
+            $(window).load(function() {
+                 // asign and inicializate video background
+                 v= document.getElementById('bgvid');
+                 v.play();
+                 
+                 //common change css
+                 $( "a.z-combobox-button").removeClass( "z-combobox-button" ).addClass( "modern-combobox-button" );
+                 $( 'span.login-box-header-txt' ).remove(); 
+                 $( "button.primary-login" ).html("Log in");
+                 
+                  if ($("input.z-datebox-input:text").length == 0) {
+                       $( 'td.login-label' ).remove();  
+                        // clean :: re-inicilizate css                                  
+                         $( "div.z-combobox-popup" ).addClass( "modern-combobox-popup" );
+                         $( "li.z-comboitem" ).removeClass( "z-comboitem" ).addClass( "modern-combo-item" );               
+                         $( "button" ).removeClass( "login-btn z-button" ).addClass( "primary-login" );
+                         $( "label.z-checkbox-content").removeClass( "z-checkbox-content" ).addClass( "modern-checkbox-content" );   
+                         $( "input.z-textbox:text" ).removeClass( "z-textbox" ).addClass( "modern-input modern-user" );
+                         $( "input.z-textbox:password ").removeClass( "z-textbox" ).addClass( "modern-input modern-password" );
+                         $( "input.z-combobox-input:text ").removeClass( "z-combobox-input" ).addClass( "modern-input modern-combobox" );
+                        
+                         $( "input.modern-combobox" ).focus(function() {
+                             setTimeout(viewTheme.initViewLogin, 80);
+                         });
+                         $( "input.modern-combobox" ).focusout(function() {
+                             setTimeout(viewTheme.initViewLogin, 80);
+                         });
+                   } 
+                            
+                   if ($("input.z-datebox-input:text").length == 0) {
+                        setTimeout(viewTheme.initViewLogin, 800);         
+                    }
+    
+                $( "button.primary-login" ).attr("onClick", "setTimeout( viewTheme.initViewRol, 250)");                 
+            });
+            
+        </script>   
+
+</html>
+
+
+        </vbox>
+    </center>
+    <east sclass="login-east-panel">
+        <!--include src="/theme/default/zul/login/login-right.zul"/-->
+    </east>
+    <west sclass="login-west-panel">
+        <!--include src="/theme/default/zul/login/login-left.zul"/-->
+    </west>
+    <north sclass="login-north-panel">
+        <!--include src="/theme/default/zul/login/login-top.zul"/-->
+    </north>
+    <south sclass="login-south-panel">
+        <!--include src="/theme/default/zul/login/login-bottom.zul"/-->
+    </south>
+</borderlayout>
+</zk>

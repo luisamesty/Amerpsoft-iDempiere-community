@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Idempiere Themes Community version
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com
+Bundle-Version: 6.2.0.qualifier
+Bundle-ClassPath: theme/,
+  .
+Fragment-Host: org.adempiere.ui.zk;bundle-version="6.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Jetty-WarFragmentFolderPath: /
+Bundle-Vendor: Amerpsoft
