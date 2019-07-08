@@ -19,7 +19,7 @@ Also, you must have your plugins completed migrated on previous Idempiere versio
 ## 3. OSGi Buckminster plugin sets.
 
 Before start explaining changes that has to be done to special files on previous Java Buckminster's plugins, let's see standard structure of iDempiere set of plugins.
-
+<br/>
 <pre>
 Normal plugin structure before iDempiere version 6:
     Main Directory  /
