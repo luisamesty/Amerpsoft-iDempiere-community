@@ -90,7 +90,6 @@ Directory structure:
 ### 4.1 Feature project: org.amerpsoft.com.idempiere.feature.
 
 Feature plugin, includes two plugins, because p2 plugins are not considered on this list. P2 projects are required for maven build only.  <br/>
-
 pom.xml <br/>
 ```html
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"> 
@@ -141,7 +140,7 @@ feature.xml <br/>
          unpack="false"/>
 </feature>
 ```
-
+<pre>
 Tips: <br/>
 * Do not put Group ID on pom.xml <br/>
 * Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml <br/>
@@ -152,11 +151,11 @@ Tips: <br/>
     id="org.amerpsoft.com.idempiere.themes-com"  <br/>
 * p2 plugins are not included on feature list. <br/>
 
-
+</pre>
 
 ### 4.2 Plugin project: org.amerpsoft.com.idempiere.editors-com.
 
-This plugin is Extended Location plugin, alredy published.  <br/>
+This plugin is Extended Location plugin, already published.  <br/>
 It is related with demographics aspects and extended information on Business Partners Locations (Addresses). You can see more information on: <br/>
     Extended Location <br/>
 https://wiki.idempiere.org/en/Plugin:_Extended_Location <br/>
@@ -425,7 +424,7 @@ pom.xml <br/>
 Tips: <br/>
 * Check version 6.2.0-SNAPSHOT on pom.xml <br/>
 * Packaging must be "pom" on pom.xml <br/>
-* Verify correct sintax on modules. In this case modules can be added using Overview Tam (Modules sub-tab) and eclipse must be able to find them if they are full completed correctly. <br/>
+* Verify correct sintax on modules. In this case modules can be added using Overview Tab (Modules sub-tab) and eclipse must be able to find them if they are full completed correctly. <br/>
 
 
 ## 5. Maven generate plugins.
