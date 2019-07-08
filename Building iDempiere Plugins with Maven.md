@@ -1,5 +1,5 @@
 
-## Plug-In Development with Maven on Idempiere
+## Building iDempiere Plugins with Maven
 ## 1. Introduction.
 
 This tutorial is brought to you by Luis Amesty from Amerpsoft Consulting. For any question or improvement see me at (User:Luisamesty) or [email](luisamesty@gmail.com) to me.
@@ -8,46 +8,46 @@ With this tutorial i will try to give idempiere users some changes neccessary to
 
 ## 2. Prerequisites.
 
-Before start working on Maven plugis, you must install iDempiere developing environment in Eclipse with all requirements that has been detailed explained on tutorial brought to you by Carlos Ruiz from GlobalQSS. 
+Before start working on Maven plugins, you must install iDempiere developing environment in Eclipse with all requirements that has been detailed explained on tutorial brought to you by Carlos Ruiz from GlobalQSS. 
 
 Installing iDempiere:
  https://wiki.idempiere.org/en/Installing_iDempiere
 
-Also, you must have your plugings completed migrated on previous Idempiere version 5.1 in order to make changes to them to become Mave plugins. 
+Also, you must have your plugins completed migrated on previous Idempiere version 5.1 in order to make changes to them to become Maven plugins for version 6.2. 
 
 
 ## 3. OSGi Buckminster plugin sets.
 
-Before explaining changes done to special files on previous Java Buckminster plugins, let's see standard structure of iDempiere set of plugins.
+Before start explaining changes that has to be done to special files on previous Java Buckminster's plugins, let's see standard structure of iDempiere set of plugins.
 
 <pre>
-Normal plugin structure before iDempiere version 6:<br/>
-    Main Directory  /<br/>
-                Feature Plugin project/ <br/>
-                Plugin project # 1 / <br/>
-                Plugin project # 2 / <br/>
-                ... <br/>
-                Plugin project # N / <br/>
-                Fragnment project / <br/>
-New plugin structure with iDempiere version 6.2: <br/>
-    Main Directory  / <br/>
-                Feature Plugin project/ <br/>
-                Plugin project # 1 / <br/>
-                Plugin project # 2 / <br/>
-                ... <br/>
-                Plugin project # N / <br/>
-                Fragnment project / <br/>
-                p2.site project / <br/>
-                p2.targetplatform project / <br/>
-                pom.xml  (Maven file) <br/>
+Normal plugin structure before iDempiere version 6:
+    Main Directory  /
+                Feature Plugin project/ 
+                Plugin project # 1 / 
+                Plugin project # 2 / 
+                ... 
+                Plugin project # N / 
+                Fragnment project / 
+New plugin structure with iDempiere version 6.2: 
+    Main Directory  / 
+                Feature Plugin project/ 
+                Plugin project # 1 / 
+                Plugin project # 2 / 
+                ... 
+                Plugin project # N / 
+                Fragnment project / 
+                p2.site project / 
+                p2.targetplatform project / 
+                pom.xml  (Maven file) 
 </pre>
 
-Sample plugin can be cloned from: <br/>
+Amerpsoft Sample plugins can be cloned from: <br/>
 
     Amersoft community plugins: <br/>
     https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community <br/>
 
-IDempiere users, usually develop plugins for different purposes. Allways, it is important to make them independent from trunk, in order to extend base capabilities and features, and future migration to the new versions.
+IDempiere users, usually develop plugins for different purposes. To follow iDempiere development rules, it is important to make them independent from trunk, in order to extend base capabilities and features, and future migration to the new versions.
 For more information see:  <br/>
     Developing plug-ins without affecting the trunk  <br/>
     https://wiki.idempiere.org/en/Developing_plug-ins_without_affecting_the_trunk <br/>
@@ -75,21 +75,21 @@ In resume, fragments are used to customize another bundle. <br/>
 A sample set of plugins will be used, in order to explain changes done to special files on previous Java Buckminster plugins. <br/>
 When installing iDempiere developing environment, tutorial recommends to have a cloned directory called "myexperiment". In this case plugin sets are located on a same level than "myexperiment" in order to get an easy relative path to idempiere developing source code. <br/>
 <pre>
-Directory structure: <br/>
-    idempiere 6.2 / <br/>
-    myexperiment / <br/>
-    Amerpsoft-iDempiere-community/ <br/>
-        org.amerpsoft.com.idempiere.feature <br/>
-        org.amerpsoft.com.idempiere.editors-com <br/>
-        org.amerpsoft.com.idempiere.themes-com <br/>
-        org.amerpsoft.com.idempiere.p2.site <br/>
-        org.amerpsoft.com.idempiere.p2.targetplatform <br/>
-        pom.xml <br/>
+Directory structure: 
+    idempiere 6.2 / 
+    myexperiment / 
+    Amerpsoft-iDempiere-community/ 
+        org.amerpsoft.com.idempiere.feature 
+        org.amerpsoft.com.idempiere.editors-com 
+        org.amerpsoft.com.idempiere.themes-com 
+        org.amerpsoft.com.idempiere.p2.site 
+        org.amerpsoft.com.idempiere.p2.targetplatform 
+        pom.xml 
 </pre>
 
 ### 4.1 Feature project: org.amerpsoft.com.idempiere.feature.
 
-Feature plugin, includes two plugins, because p2 are not considered on this list. P2 projects are required for maven build only.  <br/>
+Feature plugin, includes two plugins, because p2 plugins are not considered on this list. P2 projects are required for maven build only.  <br/>
 
 pom.xml <br/>
 ```html
