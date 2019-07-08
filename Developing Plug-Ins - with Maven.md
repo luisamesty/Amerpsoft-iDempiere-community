@@ -19,82 +19,83 @@ Also, you must have your plugings completed migrated on previous Idempiere versi
 
 ## 3. OSGi Buckminster plugin sets.
 <pre>
-Before explaining changes done to special files on previous Java Buckminster plugins, let's see standad structure of iDempiere set of plugins.
-.
-Normal plugin structure before iDempiere version 6:
-    Main Directory  /
-                Feature Plugin project/
-                Plugin project # 1 /
-                Plugin project # 2 /
-                ...
-                Plugin project # N /
-                Fragnment project /
-New plugin structure with iDempiere version 6.2:
-    Main Directory  /
-                Feature Plugin project/
-                Plugin project # 1 /
-                Plugin project # 2 /
-                ...
-                Plugin project # N /
-                Fragnment project /
-                p2.site project /
-                p2.targetplatform project /
-                pom.xml  (Maven file)
-
-Sample plugin can be cloned from:
+Before explaining changes done to special files on previous Java Buckminster plugins, let's see standard structure of iDempiere set of plugins.
 </pre>
-    Amersoft community plugins:
-    https://wiki.idempiere.org/en/Installing_iDempiere
 <pre>
-Normally, iDempiere users develop plugins for different purposes. Allways it is important to make them independent from trunk, in order to extend base capabilities and features, and future migration to the new versions.
-For mor information see:
-    Developing plug-ins without affecting the trunk
-    https://wiki.idempiere.org/en/Developing_plug-ins_without_affecting_the_trunk
+Normal plugin structure before iDempiere version 6:<br/>
+    Main Directory  /<br/>
+                Feature Plugin project/ <br/>
+                Plugin project # 1 / <br/>
+                Plugin project # 2 / <br/>
+                ... <br/>
+                Plugin project # N / <br/>
+                Fragnment project / <br/>
+New plugin structure with iDempiere version 6.2: <br/>
+    Main Directory  / <br/>
+                Feature Plugin project/ <br/>
+                Plugin project # 1 / <br/>
+                Plugin project # 2 / <br/>
+                ... <br/>
+                Plugin project # N / <br/>
+                Fragnment project / <br/>
+                p2.site project / <br/>
+                p2.targetplatform project / <br/>
+                pom.xml  (Maven file) <br/>
+
+Sample plugin can be cloned from: <br/>
+</pre>
+    Amersoft community plugins: <br/>
+    https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community <br/>
+<pre>
+Normally, iDempiere users develop plugins for different purposes. Allways, it is important to make them independent from trunk, in order to extend base capabilities and features, and future migration to the new versions.
+For mor information see:  <br/>
+    Developing plug-ins without affecting the trunk  <br/>
+    https://wiki.idempiere.org/en/Developing_plug-ins_without_affecting_the_trunk <br/>
 </pre>
 
 ### 3.1 Feature plugin project.
 <pre>
-A feature project is basically a list of plugins and other features which can be understood as a logical separate unit.
-Eclipse uses feature projects for the updates manager and for the build process.
+A feature project is basically a list of plugins and other features which can be understood as a logical separate unit.  <br/>
+Eclipse uses feature projects for the updates manager and for the build process. <br/>
 </pre>
 
 ### 3.2 Plugin project.
 <pre>
-A plugin project is a Java jar file that contains Java code, resources, and a manifest that describes the bundle and its dependencies. The plugin is the unit of deployment for iDempiere.
+A plugin project is a Java jar file that contains Java code, resources, and a manifest that describes the bundle and its dependencies. The plugin is the unit of deployment for iDempiere. <br/>
 </pre>
 
 ### 3.3 Fragment project.
 <pre>
-A fragment plugin project is a Java jar file that contains Java code, resources, and a manifest that makes its contents available to another bundle. And most importantly, a fragment and its host bundle share the same classloader. An example of this kind of project are Extended theme plugins. 
-In resume, fragments are used to customize another bundle.
+A fragment plugin project is a Java jar file that contains Java code, resources, and a manifest that makes its contents available to another bundle. And most importantly, a fragment and its host bundle share the same classloader. An example of this kind of project are Extended theme plugins.  <br/>
+In resume, fragments are used to customize another bundle. <br/>
 </pre>
 
 ## 4. Sample Amerpsoft community plugins.
 <pre>
-A sample set of plugins will be used, in order to explain changes done to special files on previous Java Buckminster plugins.
-When installing iDempiere developing environment, tutorial recommends to have a cloned directory called "myexperiment". In this case plugin sets are located on a same level than "myexperiment" in order to get an easy relative path to idempiere developing source code.
-Directory structure:
-    idempiere 6.2 /
-    myexperiment /
-    Amerpsoft-iDempiere-community/
-        org.amerpsoft.com.idempiere.feature
-        org.amerpsoft.com.idempiere.editors-com
-        org.amerpsoft.com.idempiere.themes-com
-        org.amerpsoft.com.idempiere.p2.site
-        org.amerpsoft.com.idempiere.p2.targetplatform
-        pom.xml
+A sample set of plugins will be used, in order to explain changes done to special files on previous Java Buckminster plugins. <br/>
+When installing iDempiere developing environment, tutorial recommends to have a cloned directory called "myexperiment". In this case plugin sets are located on a same level than "myexperiment" in order to get an easy relative path to idempiere developing source code. <br/>
+Directory structure: <br/>
+    idempiere 6.2 / <br/>
+    myexperiment / <br/>
+    Amerpsoft-iDempiere-community/ <br/>
+        org.amerpsoft.com.idempiere.feature <br/>
+        org.amerpsoft.com.idempiere.editors-com <br/>
+        org.amerpsoft.com.idempiere.themes-com <br/>
+        org.amerpsoft.com.idempiere.p2.site <br/>
+        org.amerpsoft.com.idempiere.p2.targetplatform <br/>
+        pom.xml <br/>
 </pre>
 
 ### 4.1 Feature project: org.amerpsoft.com.idempiere.feature.
 <pre>
-Feature plugin, includes two plugins, because p2 are not considered on this list. P2 projects are required for maven build only. 
+Feature plugin, includes two plugins, because p2 are not considered on this list. P2 projects are required for maven build only.  <br/>
 </pre>
-pom.xml
-<pre>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>org.amerpsoft.com.idempiere.feature</artifactId>
-  <parent>
+pom.xml <br/>
+```html
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"> 
+  <modelVersion>4.0.0</modelVersion> 
+  <artifactId>org.amerpsoft.com.idempiere.feature</artifactId> 
+  <parent> <br/> 
   	<groupId>org.idempiere</groupId>
   	<artifactId>org.idempiere.parent</artifactId>
   	<version>6.2.0-SNAPSHOT</version>
@@ -102,8 +103,8 @@ pom.xml
   </parent>
   <packaging>eclipse-feature</packaging>
 </project>
-</pre>
-feature.xml
+```
+feature.xml <br/>
 <pre>
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
@@ -140,26 +141,26 @@ feature.xml
 </feature>
 <pre>
 
-Tips:
-* Do not put Group ID on pom.xml
-* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
-* Packaging must be "eclipse-feature" on pom.xml
-* Artifact ID must be the same (correct sintax) on pom.xml and feature.xml, because eclipse will not detect diffrences. (org.amerpsoft.com.idempiere.feature)
-* Included plugin list must concide with global project pom.xml file, and must be the same names (correct sintax). In this case 
-    id="org.amerpsoft.com.idempiere.editors-com"
-    id="org.amerpsoft.com.idempiere.themes-com" 
-* p2 plugins are not included on feature list.
+Tips: <br/>
+* Do not put Group ID on pom.xml <br/>
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml <br/>
+* Packaging must be "eclipse-feature" on pom.xml <br/>
+* Artifact ID must be the same (correct sintax) on pom.xml and feature.xml, because eclipse will not detect differences. (org.amerpsoft.com.idempiere.feature) <br/>
+* Included plugin list must coincide with global project pom.xml file, and must be the same names (correct sintax). In this case  <br/>
+    id="org.amerpsoft.com.idempiere.editors-com" <br/>
+    id="org.amerpsoft.com.idempiere.themes-com"  <br/>
+* p2 plugins are not included on feature list. <br/>
 </pre>
 
 
 ### 4.2 Plugin project: org.amerpsoft.com.idempiere.editors-com.
 <pre>
-This plugin is Extended Location plugin, alredy published. 
-It is related with demographics aspects and extended information on Business Partners Locations (Addresses). You can see more information on:
-    Extended Location
-https://wiki.idempiere.org/en/Plugin:_Extended_Location
+This plugin is Extended Location plugin, alredy published.  <br/>
+It is related with demographics aspects and extended information on Business Partners Locations (Addresses). You can see more information on: <br/>
+    Extended Location <br/>
+https://wiki.idempiere.org/en/Plugin:_Extended_Location <br/>
 </pre>
-pom.xml
+pom.xml <br/>
 <pre>
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -175,7 +176,7 @@ pom.xml
   <packaging>eclipse-plugin</packaging>
 </project>
 </pre>
-MANIFEST.MF
+MANIFEST.MF <br/>
 <pre>
 Manifest-Version: 1.0
 Automatic-Module-Name: org.amerpsoft.editors
@@ -207,21 +208,21 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 </pre>
 <pre>
-Tips:
-* Do not put Group ID on pom.xml
-* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
-* Packaging must be "eclipse-plugin" on pom.xml
-* Artifact ID must be the same (correct sintax) on pom.xml and MANIFEST.MF, because eclipse will not detect differences. 
+Tips: <br/>
+* Do not put Group ID on pom.xml <br/>
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml <br/>
+* Packaging must be "eclipse-plugin" on pom.xml <br/>
+* Artifact ID must be the same (correct sintax) on pom.xml and MANIFEST.MF, because eclipse will not detect differences.  <br/>
 </pre>
 
 ### 4.3 Fragment project: org.amerpsoft.com.idempiere.themes-com.
 <pre>
-A sample fragment plugin project related with iDempiere looks. 
-You can see more information on:
-Themes Amerpsoft
-https://wiki.idempiere.org/en/Plugin:_Themes_Amerpsoft
+A sample fragment plugin project related with iDempiere looks.  <br/>
+You can see more information on: <br/>
+Themes Amerpsoft <br/>
+https://wiki.idempiere.org/en/Plugin:_Themes_Amerpsoft <br/>
 </pre>
-pom.xml
+pom.xml <br/>
 <pre>
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
@@ -239,7 +240,7 @@ pom.xml
 <!--   <groupId>org.amerpsoft.com.idempiere</groupId> -->
 </project>
 </pre>
-build.properties
+build.properties <br/>
 <pre>
 source.. = src/
 output.. = bin/
@@ -249,7 +250,7 @@ bin.includes = META-INF/,\
                theme/
 src.includes = theme/
 </pre>
-MANIFEST.MF
+MANIFEST.MF <br/>
 <pre>
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
@@ -274,9 +275,9 @@ Tips:
 
 ### 4.4 P2.site project: org.amerpsoft.com.idempiere.p2.site.
 <pre>
-This project must be added to plugin group.
+This project must be added to plugin's group. <br/>
 </pre>
-pom.xml
+pom.xml <br/>
 <pre>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -313,7 +314,7 @@ pom.xml
   </build>
 </project>
 </pre>
-category.xml
+category.xml <br/>
 <pre>
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
@@ -325,20 +326,20 @@ category.xml
 </site>
 </pre>
 <pre>
-Tips:
-* Do not put Group ID on pom.xml
-* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
+Tips: <br/>
+* Do not put Group ID on pom.xml <br/>
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.x <br/>ml <br/>
 * Packaging must be "eclipse-repository" on pom.xml
-* Feature project id must be the same (correct sintax) on pom.xml and category.xml, because eclipse will not detect differences.
-    id="org.amerpsoft.com.idempiere.feature" 
+* Feature project id must be the same (correct sintax) on pom.xml and category.xml, because eclipse will not detect differences. <br/>
+    id="org.amerpsoft.com.idempiere.feature"  <br/>
 </pre>
 
 
 ### 4.5 P2.targetplatform project: org.amerpsoft.com.idempiere.p2.targetplatform.
 <pre>
-This project must be added to plugin group.
+This project must be added to plugin's group. <br/>
 </pre>
-pom.xml
+pom.xml <br/>
 <pre>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -353,7 +354,7 @@ pom.xml
 <!--   <groupId>org.amerpsoft.com.idempiere</groupId> -->
 </project>
 </pre>
-org.amerpsoft.com.idempiere.p2.targetplatform.target
+org.amerpsoft.com.idempiere.p2.targetplatform.target <br/>
 <pre>
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="idempiere-6.2" sequenceNumber="91">
 <locations>
@@ -392,16 +393,17 @@ org.amerpsoft.com.idempiere.p2.targetplatform.target
 </target>
 </pre>
 <pre>
-Tips:
-* Do not put Group ID on pom.xml
-* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
-* Packaging must be "eclipse-target-definition" on pom.xml
-* Verify repository location. It should be the directory of your source code "org.idempiere.p2" project.
+Tips: <br/>
+* Do not put Group ID on pom.xml <br/>
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml <br/>
+* Packaging must be "eclipse-target-definition" on pom.xml <br/>
+* Verify repository location. It should be the directory of your source code "org.idempiere.p2" project. <br/>
 </pre>
+
 ### 4.6 Main plugin project.
-In this example main project, that holds all plugins is located on:
-    Amerpsoft-iDempiere-community/
-pom.xml
+In this example main project, that holds all plugins is located on: <br/>
+    Amerpsoft-iDempiere-community/ <br/>
+pom.xml <br/>
 <pre>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -419,21 +421,22 @@ pom.xml
 </project>
 </pre>
 <pre>
-Tips:
-* Check version 6.2.0-SNAPSHOT on pom.xml
-* Packaging must be "pom" on pom.xml
-* Verify correct sintax on modules. In this case modules can be added using Overview Tam (Modules sub-tab) and eclipse must be able to find them if they are full completed correctly.
+Tips: <br/>
+* Check version 6.2.0-SNAPSHOT on pom.xml <br/>
+* Packaging must be "pom" on pom.xml <br/>
+* Verify correct sintax on modules. In this case modules can be added using Overview Tam (Modules sub-tab) and eclipse must be able to find them if they are full completed correctly. <br/>
 </pre>
+
 ## 5. Maven generate plugins.
 <pre>
-Once project are completely clean and tested, they can be generated using mvn command.
-On main plugins directory:
+Once project are completely clean and tested, they can be generated using 'mvn' command. <br/>
+On main plugins directory: <br/>
 </pre>
-mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
+mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X <br/>
 <pre>
 Jar files are generated on:
 org.amerpsoft.com.idempiere.p2.site/target/repository/plugins
-    for plugin projects
+    for plugin projects 
 org.amerpsoft.com.idempiere.p2.site/target/repository/plugins
     for feature projects
 </pre>
