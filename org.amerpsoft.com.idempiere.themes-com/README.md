@@ -4,9 +4,7 @@ AMERP Amerpsoft-themes:
 Description
 -----------
 * Amerpsoft Themes
-* Update for idempiere version 5.1
-* Revisada 3 Septiembre 2018
-* Update for idempiere version 6.2
+* Updated for idempiere version 6.2
 
 Features
 --------

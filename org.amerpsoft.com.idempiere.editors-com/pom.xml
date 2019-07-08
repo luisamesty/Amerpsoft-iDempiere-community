@@ -10,6 +10,4 @@
   </parent>
   <artifactId>org.amerpsoft.com.idempiere.editors-com</artifactId>
   <packaging>eclipse-plugin</packaging>
- 
-	 
 </project>
