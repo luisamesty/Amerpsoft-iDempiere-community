@@ -106,7 +106,7 @@ pom.xml <br/>
 </project>
 ```
 feature.xml <br/>
-
+```html
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.amerpsoft.com.idempiere.feature"
@@ -140,7 +140,7 @@ feature.xml <br/>
          fragment="true"
          unpack="false"/>
 </feature>
-
+```
 
 Tips: <br/>
 * Do not put Group ID on pom.xml <br/>
