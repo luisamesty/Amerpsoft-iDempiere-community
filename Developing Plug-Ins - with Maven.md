@@ -1,439 +1,439 @@
+
+## Plug-In Development with Maven on Idempiere
+## 1. Introduction.
+<pre>
+This tutorial is brought to you by Luis Amesty from Amerpsoft Consulting. For any question or improvement see me at (User:Luisamesty) or [email](luisamesty@gmail.com) to me.
+From versión 1.0 to 5.1 idempiere plugins are based on OSGi Buckminster. From version 6.1 and its successor 6.2, Maven was introduced in order to compile Idempiere trunk and plugins.
+With this tutorial i will try to give idempiere users some changes neccessary to carry on this task. Also some tips for easily get final objectives.
+</pre>
+
+## 2. Prerequisites.
+<pre>
+Before start working on Maven plugis, you must install iDempiere developing environment in Eclipse with all requirements that has been detailed explained on tutorial brought to you by Carlos Ruiz from GlobalQSS. 
+</pre>
+Installing iDempiere:
+ https://wiki.idempiere.org/en/Installing_iDempiere
+<pre>
+Also, you must have your plugings completed migrated on previous Idempiere version 5.1 in order to make changes to them to become Mave plugins. 
+</pre>
+
+## 3. OSGi Buckminster plugin sets.
+<pre>
+Before explaining changes done to special files on previous Java Buckminster plugins, let's see standad structure of iDempiere set of plugins.
+.
+Normal plugin structure before iDempiere version 6:
+    Main Directory  /
+                Feature Plugin project/
+                Plugin project # 1 /
+                Plugin project # 2 /
+                ...
+                Plugin project # N /
+                Fragnment project /
+New plugin structure with iDempiere version 6.2:
+    Main Directory  /
+                Feature Plugin project/
+                Plugin project # 1 /
+                Plugin project # 2 /
+                ...
+                Plugin project # N /
+                Fragnment project /
+                p2.site project /
+                p2.targetplatform project /
+                pom.xml  (Maven file)
+
+Sample plugin can be cloned from:
+</pre>
+    Amersoft community plugins:
+    https://wiki.idempiere.org/en/Installing_iDempiere
+<pre>
+Normally, iDempiere users develop plugins for different purposes. Allways it is important to make them independent from trunk, in order to extend base capabilities and features, and future migration to the new versions.
+For mor information see:
+    Developing plug-ins without affecting the trunk
+    https://wiki.idempiere.org/en/Developing_plug-ins_without_affecting_the_trunk
+</pre>
+
+### 3.1 Feature plugin project.
+<pre>
+A feature project is basically a list of plugins and other features which can be understood as a logical separate unit.
+Eclipse uses feature projects for the updates manager and for the build process.
+</pre>
+
+### 3.2 Plugin project.
+<pre>
+A plugin project is a Java jar file that contains Java code, resources, and a manifest that describes the bundle and its dependencies. The plugin is the unit of deployment for iDempiere.
+</pre>
+
+### 3.3 Fragment project.
+<pre>
+A fragment plugin project is a Java jar file that contains Java code, resources, and a manifest that makes its contents available to another bundle. And most importantly, a fragment and its host bundle share the same classloader. An example of this kind of project are Extended theme plugins. 
+In resume, fragments are used to customize another bundle.
+</pre>
+
+## 4. Sample Amerpsoft community plugins.
+<pre>
+A sample set of plugins will be used, in order to explain changes done to special files on previous Java Buckminster plugins.
+When installing iDempiere developing environment, tutorial recommends to have a cloned directory called "myexperiment". In this case plugin sets are located on a same level than "myexperiment" in order to get an easy relative path to idempiere developing source code.
+Directory structure:
+    idempiere 6.2 /
+    myexperiment /
+    Amerpsoft-iDempiere-community/
+        org.amerpsoft.com.idempiere.feature
+        org.amerpsoft.com.idempiere.editors-com
+        org.amerpsoft.com.idempiere.themes-com
+        org.amerpsoft.com.idempiere.p2.site
+        org.amerpsoft.com.idempiere.p2.targetplatform
+        pom.xml
+</pre>
+
+### 4.1 Feature project: org.amerpsoft.com.idempiere.feature.
+<pre>
+Feature plugin, includes two plugins, because p2 are not considered on this list. P2 projects are required for maven build only. 
+</pre>
+pom.xml
+<pre>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>org.amerpsoft.com.idempiere.feature</artifactId>
   <parent>
   	<groupId>org.idempiere</groupId>
   	<artifactId>org.idempiere.parent</artifactId>
   	<version>6.2.0-SNAPSHOT</version>
   	<relativePath>../../myexperiment/org.idempiere.parent/pom.xml</relativePath>
   </parent>
-  <packaging>eclipse-plugin</packaging>
-
-
-== Steps to build and setup development environment ==
-# Materialize and build (this step is needed for both headless build and setup of Eclipse)
-## Clone source from [http://bitbucket.org/idempiere/idempiere bitbucket.org] to a folder [idempiere-home]
-## Open terminal, cd to [idempiere-home] and execute command "mvn verify" (in case you focus to setup eclipse, don't want to build product, use "mvn validate")
-##* Downloads all libraries on Bundle-ClassPath
-##* Build all projects and output binary to [idempiere-home]/org.idempiere.p2/target/products
-# Setup Eclipse Workspace
-## Import Projects
-### Open Eclipse with Workspace at [idempiere-home]
-### From Eclipse Menu, choose File/Import
-### At Import dialog, choose Maven/Existing Maven Projects
-### Click Next button and Browse to [idempiere-home]
-### Select all projects, click Finish to complete the import
-### All projects are loaded to workspace
-## Set Target Platform
-### From Eclipse Menu, choose File/Import
-### At Import dialog, choose General/Existing Projects into Workspace
-### Click Next button and Browse to [idempiere-home]/org.idempiere.p2.targetplatform. Click Finish to complete the import
-### Open the org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target file. This is the default target platform definition with remote url
-### At Target Editor, click the "Set as Active Target Platform" link
-### Wait for Eclipse to download bundles onto target platform. Click the "Reload Target Platform" link if some download fail
-## Say good bye to Buckminster
-# Know issue
-## in case you do step "Import Projects" before "mvn validate" eclipse will auto change some classpath, so you you will build fail ever you run "mvn validate". Need to revert change of eclipse before you run "mvn validate"
-
-[[User:Hengsin|Hengsin]] ([[User talk:Hengsin|talk]]) 05:54, 20 October 2018 (UTC), org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target is slow and error prone for me. I'm not sure that's the intended alternative but idempiere/org.idempiere.p2/target/repository works fine for me as Target Platform (add new empty target platform and add the idempiere/org.idempiere.p2/target/repository folder/directory to it) and without all the hassle with org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target
-
-== Config For Jenkins ==
-# Setup Maven for Jenkins
-# Create a Maven Project
-# In "Source Code Management" Section
-#* Repository URL=ssh://hg@bitbucket.org/idempiere/idempiere-experimental (or the url of your target repository)
-#* Revision=experimental (or the revision of your target repository)
-# On build step, setup with value:
-#* Root POM=pom.xml
-#* Goals and options=verify
-
-== How to set an OSGi Plugin as a Maven Project ==
-# Create a normal plugin/feature project on eclipse
-# Right click on project and choose "''Configure/Convert to Maven Project"''
-# At dialog, value of "Package" type field depends on type of plug-in
-#* Eclipse feature => "eclipse-feature"
-#* Eclipse plugin/fragment => "eclipse-plugin"
-# After eclipse has converted project, there will be a pom.xml inside project space, please adjust value as below:
-#* Add parent section
+  <packaging>eclipse-feature</packaging>
+</project>
+</pre>
+feature.xml
 <pre>
-    <parent>
-        <groupId>org.idempiere</groupId>
-	<artifactId>org.idempiere.parent</artifactId>
-	<version>6.2.0-SNAPSHOT</version>
-	<relativePath>../org.idempiere.parent/pom.xml</relativePath>
-    </parent>
-</pre>
-# Open MANIFEST.MF and continue checking..
-#* At Runtime tab, section classpath has item "." if not, you should create one (it's importance in case your plugin have java file)
-# In build.properties 
-#* Adjust Output to "target/classes/"
-#* In case your project has source, make sure it is stated: "source.. = src/"
-#* In case your project has source, make sure on "bin.includes = " have item "." otherwise your export miss .class
-# Reference:
-#* http://codeandme.blogspot.co.at/2012/12/tycho-build-1-building-plug-ins.html
-#* Core project
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.amerpsoft.com.idempiere.feature"
+      label="Amerpsoft_community_features"
+      version="6.2.0.qualifier">
 
-== Build Extra Plugin ==
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
 
-=== Build by Run Script from local ===
-# Build idempiere core so we have a p2 repository that contains idempiere core plus dependency at idempiere/org.idempiere.p2/target/repository
-# Host this repository with a web server. If you don't have one, you can use [https://www.eclipse.org/jetty/documentation/current/jetty-maven-plugin.html#jetty-start-goal jetty-maven-plugin] to host it
-# Create a maven tycho target plugin point to the p2 repository server setup at step 2
-# Build extra plugin by using target at step 3
-Full example and step by step guideline [https://bitbucket.org/idplugin/idempiere.maven.tycho.build.extra.bundle/overview here]
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
 
-=== Build by Run Jenkins Job ===
-Because you have to check out from multi repository, I prefer to use jenkins pipeline
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
 
-Besides, normal pipeline plugin, you have to install "Pipeline Maven Integration Plugin"
+   <plugin
+         id="org.amerpsoft.com.idempiere.editors-com"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
-For newbie to jenkins pipeline, I suggest to use this tool to generate script http://&#x5B;jenkins_server&#x5D;/job/&#x5B;job_name&#x5D;/pipeline-syntax/
-[[File:Pipeline syntax.png|none|thumb]]
-
-==== Steps to build ====
-# Setup a web server (like apache httpd at port 80 on same server jenkin, for access by localhost), assume document dir at /var/www/html
-# Setup a jenkins job to build idempiere core.
-# Successful build will copy artifact to /var/www/html/idempiere-core/latest
-# This is pipeline for build idempiere-core
-{| class="wikitable mw-collapsible mw-collapsed"
-|- 
-! Pipe script example
-|-
-|<pre>
-node {
-   def mvnHome
-   stage('Preparation') { // for display purposes
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', revision: 'hsv', source: 'ssh://hg@bitbucket.org/hasuvimex/idempiere', subdir: 'idempiere'])
-   }
-   stage('Build') {
-            
-        withMaven(jdk: 'openjdk', maven: 'build-in maven', publisherStrategy: 'EXPLICIT') {
-            sh "cd ${WORKSPACE}/idempiere && mvn verify"
-        }
-        
-        sh '''p2OutputDir="${WORKSPACE}/idempiere/org.idempiere.p2/target/repository"
-            webDir="/var/www/html/repository/idempiere-hsv-core/latest"
-            mkdir -p ${webDir}
-            cp -r ${p2OutputDir}/* ${webDir}'''
-   }
-   stage('Results') {
- 
-   }
-}
-</pre>
-|}
-# Setup other jenkins job to build extra plugin
-# This's pipeline script
-{| class="wikitable mw-collapsible mw-collapsed"
-|- 
-! Pipe script example
-|-
-|<pre>
-node {
-   def mvnHome
-   stage('Preparation') { // for display purposes
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', revision: 'hsv', source: 'ssh://hg@bitbucket.org/hasuvimex/idempiere', subdir: 'idempiere'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', revision: 'hsv', source: 'ssh://hg@bitbucket.org/idplugin/idempiere.maven.tycho.build.extra.bundle', subdir: 'idempiere.maven.tycho.build.extra.bundle'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/hasuvimex/project.extra.bundle', subdir: 'project.extra.bundle'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', revision: 'hsv', source: 'ssh://hg@bitbucket.org/hasuvimex/org.idempiere.customize-feature', subdir: 'project.extra.bundle/org.idempiere.customize-feature'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/idplugin/th.motive.idempiere.base', subdir: 'project.extra.bundle/th.motive.idempiere.base'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/idplugin/th.motive.jasper.report.font', subdir: 'project.extra.bundle/th.motive.jasper.report.font'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/idplugin/th.motive.utility', subdir: 'project.extra.bundle/th.motive.utility'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/hasuvimex/vn.hsv.editor.currencyrate', subdir: 'project.extra.bundle/vn.hsv.editor.currencyRate'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/hasuvimex/vn.hsv.idempiere.base', subdir: 'project.extra.bundle/vn.hsv.idempiere.base'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/hasuvimex/vn.hsv.idempiere.override', subdir: 'project.extra.bundle/vn.hsv.idempiere.override'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/hasuvimex/vn.hsv.jasperreport.install', subdir: 'project.extra.bundle/vn.hsv.jasperreport.install'])
-        checkout([$class: 'MercurialSCM', clean: true, credentialsId: 'mainSshKey', source: 'ssh://hg@bitbucket.org/idplugin/th.motive.jasperreport.configuration', subdir: 'project.extra.bundle/th.motive.jasperreport.configuration'])
-        
-   }
-   stage('Build') {
-            
-        withMaven(jdk: 'openjdk', maven: 'build-in maven', publisherStrategy: 'EXPLICIT') {
-            sh  '''
-                    ${WORKSPACE}/idempiere.maven.tycho.build.extra.bundle/update.version.sh "/var/www/html/repository/idempiere-hsv-core/latest/plugins" "org.adempiere.base_*.jar"
-                '''
-        }
-        
-        
-        sh '''newP2Url="http://localhost/repository/idempiere-hsv-core/latest"
-            oldP2Url=http://localhost:8080/idempiere-core
-            sed -ri "s|${oldP2Url}|${newP2Url}|g" ${WORKSPACE}/idempiere.maven.tycho.build.extra.bundle/org.idempiere.p2.build.extra.bundle.targetplatform/org.idempiere.p2.build.extra.bundle.targetplatform.target'''
-        
-        withMaven(jdk: 'openjdk', maven: 'build-in maven', publisherStrategy: 'EXPLICIT') {
-            sh '''cd ${WORKSPACE}/idempiere.maven.tycho.build.extra.bundle && mvn verify -Didempiere.target="org.idempiere.p2.build.extra.bundle.targetplatform"'''
-        }
-   }
-   stage('Results') {
- 
-   }
-}
-</pre>
-|}
-
-note: you still have to checkout idempire on this job, because some plugin refer to parent pom on idempiere
-
-== Add more bundle to p2 maven repository of idempiere ==
-to add more bundle we need to modify [idempiere-source]/org.idempiere.maven.to.p2/org.idempiere.maven.to.p2/pom.xml
-
-have some pattern
-
-=== artifacts from maven and already exists Osgi metadata (source also HAS correct Osgi metadata) ===
-append to same area of <id>org.passay:passay:jar
+   <plugin
+         id="org.amerpsoft.com.idempiere.themes-com"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+</feature>
 <pre>
-<artifact>
-   <id>[artifactGroup]:[artifactID]:jar:[artifactVersion]</id>
-   <source>true</source>
-   <transitive>false</transitive>
-</artifact>
+
+Tips:
+* Do not put Group ID on pom.xml
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
+* Packaging must be "eclipse-feature" on pom.xml
+* Artifact ID must be the same (correct sintax) on pom.xml and feature.xml, because eclipse will not detect diffrences. (org.amerpsoft.com.idempiere.feature)
+* Included plugin list must concide with global project pom.xml file, and must be the same names (correct sintax). In this case 
+    id="org.amerpsoft.com.idempiere.editors-com"
+    id="org.amerpsoft.com.idempiere.themes-com" 
+* p2 plugins are not included on feature list.
 </pre>
-=== artifacts from maven and already exists Osgi metadata (source HASN'T Osgi metadata) ===
+
+
+### 4.2 Plugin project: org.amerpsoft.com.idempiere.editors-com.
 <pre>
-<artifact>
-   <id>[artifactGroup]:[artifactID]:jar:[artifactVersion]</id>
-   <source>false</source> <!-- set source to false -->
-   <transitive>false</transitive>
-</artifact>
-<artifact>
-   <id>[artifactGroup]:[artifactID]:jar:sources:[artifactVersion]</id>
-   <source>false</source>
-   <transitive>false</transitive>
-   <instructions>
-     <Export-Package/>
-     <Private-Package/>
-     <Private-Package/>
-     <Bundle-SymbolicName>[bundleName].source</Bundle-SymbolicName>
-     <Bundle-Name>[bundleName].source</Bundle-Name>
-     <Eclipse-SourceBundle>[bundleName];version="[artifactVersion]";roots:="."</Eclipse-SourceBundle>
-   </instructions>
-</artifact>
+This plugin is Extended Location plugin, alredy published. 
+It is related with demographics aspects and extended information on Business Partners Locations (Addresses). You can see more information on:
+    Extended Location
+https://wiki.idempiere.org/en/Plugin:_Extended_Location
 </pre>
-=== artifacts from maven and already exists Osgi metadata (source HAS BUT WRONG Osgi metadata) ===
+pom.xml
 <pre>
-<artifact>
-   <id>[artifactGroup]:[artifactID]:jar:[artifactVersion]</id>
-   <source>false</source> <!-- set source to false -->
-   <transitive>false</transitive>
-</artifact>
-<artifact>
-   <id>[artifactGroup]:[artifactID]:jar:sources:[artifactVersion]</id>
-   <source>false</source>
-   <override>true</override> <!-- said want to override -->
-   <transitive>false</transitive>
-   <instructions>
-     <Export-Package/>
-     <Private-Package/>
-     <Private-Package/>
-     <Bundle-SymbolicName>[bundleName].source</Bundle-SymbolicName>
-     <Bundle-Name>[bundleName].source</Bundle-Name>
-     <Eclipse-SourceBundle>[bundleName];version="[artifactVersion]";roots:="."</Eclipse-SourceBundle>
-   </instructions>
-</artifact>
-</pre>
-=== artifacts from other p2 repository ===
-* define that p2 at <repositories> section
-* on <p2> area add
-<pre>
-<artifact>
-   <id>[bundleSymbolicName]:[bundleVersion]</id>
-</artifact>
-</pre>
-
-=== rebuild ===
-* open terminal
-* cd [idempiere-source]/org.idempiere.maven.to.p2/org.idempiere.maven.to.p2
-* mvn clean verify -X -e -P buildP2FromMaven -Dtycho.disableP2Mirrors=true
-* [idempiere-source]/org.idempiere.maven.to.p2/org.idempiere.maven.to.p2
-* rename and commit this folder to git [idempiere-source]/org.idempiere.maven.to.p2/org.idempiere.maven.to.p2/target/repository
-=== update [idempiere-source]/org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target ===
-* on eclipse open [idempiere-source]/org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target
-* on definition tab, update value of target name to idempiere-[yymmdd]
-* on locations choose link to maven p2 and click edit to open dialog "edit content"
-* click "manage ..." button to show dialog "available software site"
-* click add button on "add site" dialog set value name = "maven idempiere-[yymmdd]", location = [link to git of new p2 maven] and click add
-* click ok on dialog "available software site" to close it
-* on dialog "edit content" at "work with" combobox choose item just created
-* in case checkbox "show only the latest version" is checked then unchecked it
-* choose and unchoose node "maven osgi-bundles" sometime to let content update
-* click finish to done
-[[File:AddMoreBundleToMavenP2Repository.png|300px|thumb|center|update Maven P2 Repository]]
-
-
-== Add extra bundle for extra plugin ==
-How about when you use a bundle on your extra plugin that bundle don't include on core target platform?
-
-=== prepare p2 repository for extra bundle (in case your extra bundle get from maven or from somes p2 repository and you want to combine it to one p2) ===
-* create a pom.xml with content like [idempiere-source]/org.idempiere.maven.to.p2/org.idempiere.maven.to.p2/pom.xml on folder [general.extra.p2]
-* I make a example here for reference (comment inline already self explain file content)
-{| class="wikitable mw-collapsible mw-collapsed"
-|- 
-! pom.xml
-|-
-|<pre><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
 		<groupId>org.idempiere</groupId>
 		<artifactId>org.idempiere.parent</artifactId>
 		<version>6.2.0-SNAPSHOT</version>
-		<!-- relative path to org.idempiere.parent on idempiere source.
-		in case you run mvn install on org.idempiere.parent before run this one, you don't need care about this value -->
-		<relativePath>../../org.idempiere.parent/pom.xml</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>org.idempiere.maven.to.p2.extra</artifactId>
-	<packaging>pom</packaging>
-<!-- full document here https://github.com/reficio/p2-maven-plugin -->
-    <repositories>
+		<relativePath>../../myexperiment/org.idempiere.parent/pom.xml</relativePath>
+  </parent>
+  <artifactId>org.amerpsoft.com.idempiere.editors-com</artifactId>
+  <packaging>eclipse-plugin</packaging>
+</project>
+</pre>
+MANIFEST.MF
+<pre>
+Manifest-Version: 1.0
+Automatic-Module-Name: org.amerpsoft.editors
+Bundle-ManifestVersion: 2
+Bundle-Name: Extended Location Editor
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true
+Bundle-Version: 6.2.0.qualifier
+Require-Bundle: org.adempiere.base;bundle-version="6.2.0",
+ org.adempiere.ui;bundle-version="6.2.0",
+ org.idempiere.zk.extra;bundle-version="6.2.0",
+ org.adempiere.plugin.utils;bundle-version="6.2.0",
+ org.adempiere.ui.zk;bundle-version="6.2.0",
+ zcommon;bundle-version="8.6.0",
+ zel;bundle-version="8.6.0",
+ zhtml;bundle-version="8.6.0",
+ zul;bundle-version="8.6.0",
+ zk;bundle-version="8.6.0",
+ zkbind;bundle-version="8.6.0",
+ zkplus;bundle-version="8.6.0",
+ zweb;bundle-version="8.6.0",
+ org.eclipse.osgi.services;bundle-version="3.7.100"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Service-Component: OSGI-INF/ModelFactory.xml,OSGI-INF/EditorFactory.xml,OSGI-INF/DisplayTypeFactory.xml,OSGI-INF/EventFactory.xml
+Import-Package: org.osgi.service.event,
+ org.zkoss.bind,
+ org.zkoss.zul.impl
+Bundle-Vendor: Amerpsoft
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+</pre>
+<pre>
+Tips:
+* Do not put Group ID on pom.xml
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
+* Packaging must be "eclipse-plugin" on pom.xml
+* Artifact ID must be the same (correct sintax) on pom.xml and MANIFEST.MF, because eclipse will not detect differences. 
+</pre>
 
-    	<!-- add more p2 repository where you can get your extra bundle -->
-        <repository>
-            <id>orbit-photon-R20180531190352</id>
-            <url>http://download.eclipse.org/tools/orbit/downloads/drops2/R20180531190352/repository</url>
-            <!-- importance for p2 repository-->
-            <layout>p2</layout>
-        </repository>
-        <!-- add more maven repository where you can get your extra bundle -->
-        <repository>
-            <id>zkoss</id>
-            <url>http://mavensync.zkoss.org/maven2</url>
-        </repository>
-    </repositories>
+### 4.3 Fragment project: org.amerpsoft.com.idempiere.themes-com.
+<pre>
+A sample fragment plugin project related with iDempiere looks. 
+You can see more information on:
+Themes Amerpsoft
+https://wiki.idempiere.org/en/Plugin:_Themes_Amerpsoft
+</pre>
+pom.xml
+<pre>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>org.idempiere</groupId>
+		<artifactId>org.idempiere.parent</artifactId>
+		<version>6.2.0-SNAPSHOT</version>
+		<relativePath>../../myexperiment/org.idempiere.parent/pom.xml</relativePath>
+  </parent>
+  <artifactId>org.amerpsoft.com.idempiere.themes-com</artifactId>
+  <packaging>eclipse-plugin</packaging>
+<!--   <groupId>org.amerpsoft.com.idempiere</groupId> -->
+</project>
+</pre>
+build.properties
+<pre>
+source.. = src/
+output.. = bin/
+bin.includes = META-INF/,\
+               .,\
+               WEB-INF/,\
+               theme/
+src.includes = theme/
+</pre>
+MANIFEST.MF
+<pre>
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Idempiere Themes Community version
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com
+Bundle-Version: 6.2.0.qualifier
+Bundle-ClassPath: theme/,
+  .
+Fragment-Host: org.adempiere.ui.zk;bundle-version="6.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Jetty-WarFragmentFolderPath: /
+Bundle-Vendor: Amerpsoft
+</pre>
+<pre>
+Tips:
+* Do not put Group ID on pom.xml
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
+* Packaging must be "eclipse-plugin" on pom.xml
+* Artifact ID must be the same (correct sintax) on pom.xml and MANIFEST.MF, because eclipse will not detect differences. 
+</pre>
 
-	<build>
+
+### 4.4 P2.site project: org.amerpsoft.com.idempiere.p2.site.
+<pre>
+This project must be added to plugin group.
+</pre>
+pom.xml
+<pre>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>org.amerpsoft.com.idempiere.p2.site</artifactId>
+  <parent>
+		<groupId>org.idempiere</groupId>
+		<artifactId>org.idempiere.parent</artifactId>
+		<version>6.2.0-SNAPSHOT</version>
+		<relativePath>../../myexperiment/org.idempiere.parent/pom.xml</relativePath>
+  </parent>
+  <packaging>eclipse-repository</packaging>
+  <build>
 		<plugins>
 			<plugin>
-				<groupId>org.reficio</groupId>
-				<artifactId>p2-maven-plugin</artifactId>
-				<version>1.3.0</version>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>default-cli</id>
-						<phase>package</phase>
+						<!-- install the product using the p2 director -->
+						<id>build-site-p2</id>
 						<goals>
-							<goal>site</goal>
+							<goal>assemble-repository</goal>
 						</goals>
-						<configuration>
-							<featureDefinitions>
-								<feature>
-									<!-- feature information to group extra bundle  -->
-									<id>org.idempiere.maven.extra.feature</id>
-									<version>${project.version}</version>
-									<label>Idempiere maven extra osgi dependency ${project.version} feature</label>
-									<providerName>Idempiere</providerName>
-									<description>feature group all osgi bundle get from maven repository</description>
-									<copyright>Idempiere</copyright>
-									<license>GPL v2.1</license>
-									<generateSourceFeature>true</generateSourceFeature>
-
-									<artifacts>
-										<!-- a artifact host on maven repository and Osgi ready -->
-										<artifact>
-											<id>com.rabbitmq:amqp-client:jar:5.7.0</id>
-											<source>true</source>
-											<transitive>false</transitive>
-										</artifact>
-										<!-- a artifact host on maven repository withoud Osgi metadata, need to add  -->
-										<artifact>
-											<id>org.conscrypt:conscrypt-openjdk-uber:jar:${jetty.conscrypt.openjdk.uber.version}</id>
-											<source>true</source>
-											<transitive>false</transitive>
-											<instructions>
-        										<Export-Package>org.conscrypt;version="${jetty.conscrypt.openjdk.uber.version}"</Export-Package>
-        										<Bundle-Name>org.idempiere.org.conscrypt.openjdk-uber</Bundle-Name>
-        										<Bundle-SymbolicName>org.idempiere.org.conscrypt.openjdk-uber</Bundle-SymbolicName>
-    										</instructions>
-										</artifact>
-										<!--  a artifact ready Osgi metadata, but source bundle not yet has Osgi so need to make source bundle (help easy debug) -->
-										<artifact>
-											<id>org.apache.servicemix.bundles:org.apache.servicemix.bundles.spring-beans:jar:sources:${springframework.version}</id>
-											<source>false</source>
-											<transitive>false</transitive>
-                                            <override>true</override>
-											<instructions>
-											    <Export-Package/><!-- important -->
-											    <Private-Package/><!-- important -->
-											    <Private-Package/><!-- important -->
-											    <Bundle-SymbolicName>org.apache.servicemix.bundles.spring-beans.source</Bundle-SymbolicName>
-											    <Bundle-Name>spring-expression.source</Bundle-Name>
-												<Eclipse-SourceBundle>org.apache.servicemix.bundles.spring-beans;version="${springframework.version}";roots:="."</Eclipse-SourceBundle>
-											</instructions>
-										</artifact>
-									</artifacts>
-								</feature>
-							</featureDefinitions>
-                            <p2>
-                            	<!--  a artifact ready Osgi metadata, get from other P2 repository -->
-                                <artifact>
-                                    <id>org.apache.batik.anim:1.9.1.v20180528-1434</id>
-                                </artifact>
-                            </p2>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<includeAllDependencies>false</includeAllDependencies>
+					<!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=512396 -->
+					<xzCompress>false</xzCompress>
+				</configuration>
 			</plugin>
 		</plugins>
-	</build>
-</project></pre>
-|}
-* open terminal 
-<pre>
-cd [general.extra.p2]
-mvn clean verify -X -e -P buildP2FromMaven -Dtycho.disableP2Mirrors=true
+  </build>
+</project>
 </pre>
-it generate p2 at [general.extra.p2]/target/repository
-* host your extra bundle to web server or keep it on local directory
-
-=== update target platform ===
-# on eclipse open [idempiere-source]/org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target
-# add your new p2 link to target platform
-# in case you don't want to make a commit to core, you can do bellow step
-## duplicate [idempiere-source]/org.idempiere.p2.targetplatform to [somedir]/org.idempiere.p2.extra.targetplatform
-## close or remove project [idempiere-source]/org.idempiere.p2.targetplatform
-## import [somedir]/org.idempiere.p2.extra.targetplatform to eclipse working-space
-## on eclipse open [somedir]/org.idempiere.p2.targetplatform/org.idempiere.p2.targetplatform.target
-## add your new p2 link to target platform and active it
-## when you run mvn verify on [idempiere-source] append parameter -Didempiere.target=[somedir]/org.idempiere.p2.targetplatform
+category.xml
 <pre>
-mvn verify -Didempiere.target=[somedir]/org.idempiere.p2.targetplatform
-you can use relative path from [somedir] to [idempiere-source] also
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+    <feature 
+    	url="features/org.amerpsoft.com.idempiere.feature_6.2.0.qualifier.jar" 
+    	id="org.amerpsoft.com.idempiere.feature" version="6.2.0.qualifier">
+	    <category name="org.amerpsoft.idempiere"/>
+    </feature>
+</site>
+</pre>
+<pre>
+Tips:
+* Do not put Group ID on pom.xml
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
+* Packaging must be "eclipse-repository" on pom.xml
+* Feature project id must be the same (correct sintax) on pom.xml and category.xml, because eclipse will not detect differences.
+    id="org.amerpsoft.com.idempiere.feature" 
 </pre>
 
-== Common command ==
-* mvn verify -P online
-** build idempiere with online profile (will use remote repository to feed all dependency bundle)
 
-== Summary about tycho use on idempiere (for full [http://www.eclipse.org/tycho/sitedocs/index.html reference tycho API]) ==
-
-=== [idempiere-root]/pom.xml ===
-setup list of module (bundle) that build with command "mvn verify -P online"
-
-=== [idempiere-root]/org.idempiere.parent/pom.xml ===
-* parent pom with common configuration, for other bundle to inherit from this pom
-* profiles
-** Set properties for build condition, currently use to setup online and offline repository
-* repositories
-** Setup list of repository to resolve dependency
-** with P2 repository use "<layout>p2</layout>"
-* dependencies
-** define OSGi bundles feed from maven repositories
-
-== Known Issue ==
-# Before the completion of step 2.2 (Set Target Platform), you should turn off "Project/Build Automatically". Before the setting of Active Target Platform, build will be slow and full with errors.
-# Sometimes due to condition in Sourceforge, the setting of Active Target Platform ends with errors, hindering a complete clean build. Take a look bellow for tips:
-[[File:TargetIssue.png|none|thumb]]
-
-== Reference ==
-[http://www.eclipse.org/tycho/sitedocs/index.html API to configure tycho]
-
-[http://www.eclipse.org/tycho/sitedocs-extras/index.html More API to configure tycho plugin]
-
-[http://hudson.eclipse.org/tycho/job/tycho-sitedocs/ws/target/staging/tycho-release/tycho-versions-plugin/update-eclipse-metadata-mojo.html Sync bundle version on manifest with version on pom.xml]
-
-[http://wiki.eclipse.org/Tycho/Packaging_Types Tycho package type]
-
-[http://github.com/FTSRG/cheat-sheets/wiki/Maven-and-Eclipse A good summary]
-
-[http://stackoverflow.com/questions/11373009/should-i-use-pom-first-or-manifest-first-when-developing-osgi-application-with-m Idempiere maven tycho is MANIFEST-First]
-
-[http://codeandme.blogspot.co.at/p/tycho-articles.html A complete guide about tycho setup] (Must read)
-
-[http://www.lorenzobettini.it/2015/03/build-your-own-custom-eclipse/ Explain about root-ui for feature]
-
-==See Also==
-[[Update_JDK]]
+### 4.5 P2.targetplatform project: org.amerpsoft.com.idempiere.p2.targetplatform.
+<pre>
+This project must be added to plugin group.
+</pre>
+pom.xml
+<pre>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>org.idempiere</groupId>
+		<artifactId>org.idempiere.parent</artifactId>
+		<version>6.2.0-SNAPSHOT</version>
+		<relativePath>../../myexperiment/org.idempiere.parent/pom.xml</relativePath>
+  </parent>
+  <artifactId>org.amerpsoft.com.idempiere.p2.targetplatform</artifactId>
+  <packaging>eclipse-target-definition</packaging>
+<!--   <groupId>org.amerpsoft.com.idempiere</groupId> -->
+</project>
+</pre>
+org.amerpsoft.com.idempiere.p2.targetplatform.target
+<pre>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="idempiere-6.2" sequenceNumber="91">
+<locations>
+	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+		<unit id="org.adempiere.base.feature.feature.group"/>
+		<unit id="org.adempiere.bundles.external.feature.feature.group"/>
+		<unit id="org.adempiere.payment.processor.feature.feature.group"/>
+		<unit id="org.adempiere.pipo.feature.feature.group"/>
+		<unit id="org.adempiere.replication.feature.feature.group"/>
+		<unit id="org.adempiere.replication.server.feature.feature.group"/>
+		<unit id="org.adempiere.report.jasper.feature.feature.group"/>
+		<unit id="org.adempiere.server.feature.feature.group"/>
+		<unit id="org.adempiere.target.platform.feature.feature.group"/>
+		<unit id="org.adempiere.ui.zk.feature.feature.group"/>
+		<unit id="org.adempiere.webstore.feature.feature.group"/>
+		<unit id="org.compiere.db.provider.feature.feature.group"/>
+		<unit id="org.eclipse.ecf.core.feature.feature.group"/>
+		<unit id="org.eclipse.ecf.core.ssl.feature.feature.group"/>
+		<unit id="org.eclipse.ecf.filetransfer.feature.feature.group"/>
+		<unit id="org.eclipse.ecf.filetransfer.httpclient4.feature.feature.group"/>
+		<unit id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group"/>
+		<unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group"/>
+		<unit id="org.eclipse.equinox.executable.feature.group"/>
+		<unit id="org.eclipse.equinox.server.core.feature.group"/>
+		<unit id="org.eclipse.equinox.server.p2.feature.group"/>
+		<unit id="org.idempiere.eclipse.platform.feature.feature.group"/>
+		<unit id="org.idempiere.equinox.p2.director.feature.feature.group"/>
+		<unit id="org.idempiere.felix.webconsole.feature.feature.group"/>
+		<unit id="org.idempiere.fitnesse.feature.feature.group"/>
+		<unit id="org.idempiere.hazelcast.service.feature.feature.group"/>
+		<unit id="org.idempiere.zk.feature.feature.group"/>
+		<repository location="file:///Volumes/Datos/Adempiere/iDempiere6.2srcmac/myexperiment/org.idempiere.p2/target/repository"/>
+	</location>
+</locations>
+<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>
+</target>
+</pre>
+<pre>
+Tips:
+* Do not put Group ID on pom.xml
+* Check parent relative path and version 6.2.0-SNAPSHOT on pom.xml
+* Packaging must be "eclipse-target-definition" on pom.xml
+* Verify repository location. It should be the directory of your source code "org.idempiere.p2" project.
+</pre>
+### 4.6 Main plugin project.
+In this example main project, that holds all plugins is located on:
+    Amerpsoft-iDempiere-community/
+pom.xml
+<pre>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>amerpsoft-idempiere-community</artifactId>
+  <version>6.2.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+   	<module>org.amerpsoft.com.idempiere.feature</module> 	
+  	<module>org.amerpsoft.com.idempiere.editors-com</module>
+  	<module>org.amerpsoft.com.idempiere.p2.site</module>
+  	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
+  	<module>org.amerpsoft.com.idempiere.themes-com</module>
+  </modules>
+  <groupId>org.idempiere</groupId>
+</project>
+</pre>
+<pre>
+Tips:
+* Check version 6.2.0-SNAPSHOT on pom.xml
+* Packaging must be "pom" on pom.xml
+* Verify correct sintax on modules. In this case modules can be added using Overview Tam (Modules sub-tab) and eclipse must be able to find them if they are full completed correctly.
+</pre>
+## 5. Maven generate plugins.
+<pre>
+Once project are completely clean and tested, they can be generated using mvn command.
+On main plugins directory:
+</pre>
+mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
+<pre>
+Jar files are generated on:
+org.amerpsoft.com.idempiere.p2.site/target/repository/plugins
+    for plugin projects
+org.amerpsoft.com.idempiere.p2.site/target/repository/plugins
+    for feature projects
+</pre>
