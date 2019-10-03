@@ -9,7 +9,7 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
     3. Create Language extension for es__VE or xx__XX
     4. Verify country code 3 digits is updated on C_Country table
     5. Pack IN Venezuela ExtendedDemography
-    6 Install Plugin using Apache felix Web Console
+    6. Install Plugin using Apache felix Web Console
     7. Restart Server
     8. Modify C__BPartner__location Table
     8. Modify Country Record
@@ -46,6 +46,8 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
 - You may look at 'GeografiaVenezolanaCompleta.saql'
 - Make your Country Extended Demography Packin
     ( If you are using other local you may build your tables)
+- Remember to execute procedures on System Admin --> General Rules: 
+    Role Access Update, Sequence Check and Syncronize Terminology
 
 6-Install Plugin using Apache felix Web Console
 - Download plugin jar file from Repository
@@ -59,7 +61,7 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
 
 8- C_BPartner_location Table
 - Using Application dictionary Modify Table
-- Field: C_Location 
+- Field: C_Location_ID
 - Change Reference 
 - with 
 - LocationExtended
