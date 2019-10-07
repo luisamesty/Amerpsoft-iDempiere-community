@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Localization Colombia - Withholdings
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singlet
+ on:=true
+Bundle-Version: 6.2.0.201910071943
+Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
+Bundle-Vendor: GlobalQSS
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.adempiere.base;bundle-version="6.2.0",org.adempiere.
+ plugin.utils;bundle-version="6.2.0",org.adempiere.base.callout;bundle-v
+ ersion="6.2.0"
+Export-Package: org.globalqss.model,org.globalqss.process
+Service-Component: OSGI-INF/lco_modelfactorywh.xml,OSGI-INF/lco_processf
+ actorywh.xml,OSGI-INF/lco_calloutfactorywh.xml,OSGI-INF/lco_validatorwh
+ .xml
+Import-Package: org.osgi.service.event
+Bundle-ActivationPolicy: lazy
+
