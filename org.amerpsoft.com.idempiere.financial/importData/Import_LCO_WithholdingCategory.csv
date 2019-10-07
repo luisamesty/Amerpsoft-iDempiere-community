@@ -1,0 +1,19 @@
+Name,Description,IsDefault,IsActive
+Retención IVA Proveedores y Clientes,Retención IVA  Proveedores y Clientes,Y,Y
+Retencion ISLR,Retencion ISLR,N,Y
+Retencion Municipal,Retencion Municipal,N,Y
+002 Honorarios Profesionales No Mercantiles (PNR),Honorarios Profesionales No Mercantiles (PNR) - Porcentaje 3%,N,Y
+004 Honorarios Profesionales PJD,004 Honorarios Profesionales PJD - Porcentaje 5%,N,Y
+055 Pago a Empresas Contratistas y Servicios,055 Pago a Empresas Contratistas y Servicios - 2%,N,Y
+053 Servicios Contratistas PN,053 Servicios Contratistas PN - 1%,N,Y
+057 Alquiler de Bienes Inmuebles PN,057 Alquiler de Bienes Inmuebles PN - Porcentaje 3%,N,Y
+059 Alquiler de Bienes Inmuebles PJ,059 Alquiler de Bienes Inmuebles PJ - Porcentaje 5%,N,Y
+072 Gastos de Transporte por Fletes,072 Gastos de Transporte por Fletes - Porcentaje 3%,N,Y
+084 Servicios de Publicidad PJD,"084 Servicios de Publicidad PJD, Porcentaje 5%",N,Y
+061 Alquiler de Bienes Muebles PN,061 Alquiler de Bienes Muebles PN - Porcentaje 3%,N,Y
+063 Alquiler de Bienes Muebles PJD,063 Alquiler de Bienes Muebles PJD - Porcentaje 5%,N,Y
+083 Servicios Publicidad PNR,083 Servicios Publicidad PNR - Porcentaje 3%,N,Y
+086 Emisora de Radios,086 Emisora de Radios - Porcentaje 3%,N,Y
+071 Gastos de Transporte por Fletes PNR,071 Gastos de Transporte por Fletes PNR - Porcentaje 1%,N,Y
+067 Pagos de las Empresas Emisoras Tarjeta Creditos  PJD,067 Pagos de las Empresas Emisoras Tarjeta Creditos  PJD - Porcentaje 5%,N,Y
+078 Pagos de las Empresas de Seguros a Clínicas Hospitales,078 Pagos de las Empresas de Seguros a Clínicas Hospitales- Porcentaje 5%,N,Y
