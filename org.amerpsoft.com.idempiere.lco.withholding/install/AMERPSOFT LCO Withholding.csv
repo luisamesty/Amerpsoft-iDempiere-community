@@ -1,0 +1,23 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
+*,AMERPSOFT LCO Withholding,10,ET,QSS_LCO,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,20,M,,LCO Withholdings Rules,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,30,T,,,,,,,,Invoice,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,40,W,,,,,,,,,ALL,,,,,,,Invoice (Vendor),,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,50,W,,,,,,,,,ALL,,,,,,,Invoice (Customer),,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,60,T,,,,,,,,Invoice Withholding Document,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,70,T,,,,,,,,Invoice Withholding Document Lines,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,80,P,,,,,,,,,ALL,,,,,LCO_GenerateWithholdingWHDocLines,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,90,P,,,,,,,,,ALL,,,,,LCO_InvoiceWHDocOpen,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,100,P,,,,,,,,,ALL,,,,,LCO_InvoiceWHDocClose,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,110,T,,,,,,,,Document Type,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,120,V,,,,,,,,,ALL,,,,,,,,,System Administrator,,,C_DocType APW Invoices MUNICIPAL Withholding,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,130,V,,,,,,,,,ALL,,,,,,,,,System Administrator,,,C_DocType APW Invoices VAT Withholding,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,140,V,,,,,,,,,ALL,,,,,,,,,System Administrator,,,C_DocType AR Withholding Only,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,150,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_TaxCategory MUNICIPAL WithHolding,,Product Info
+*,AMERPSOFT LCO Withholding,160,V,,,,,,,,,ALL,,,,,,,,,System Administrator,,,C_DocType APW Invoices MUNICIPAL Withholding,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,170,V,,,,,,,,,ALL,,,,,,,,,System Administrator,,,C_DocType APW Invoices VAT Withholding,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,180,P,,,,,,,,,ALL,,,,,AmFormInvoiceMultiCxPVATWithhold,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,190,P,,,,,,,,,ALL,,,,,AmFormInvoiceMultiCxPMUNICIPALWithhold,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,200,W,,,,,,,,,ALL,,,,,,,Document Type,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,210,M,,Invoice (Vendor Municipal  WithHolding),,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT LCO Withholding,220,M,,Invoice (Vendor VAT WithHolding),,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
