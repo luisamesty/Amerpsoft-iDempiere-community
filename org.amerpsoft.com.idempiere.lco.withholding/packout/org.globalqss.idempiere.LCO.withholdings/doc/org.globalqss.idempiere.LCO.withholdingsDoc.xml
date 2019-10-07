@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="idempiereDocument.css"?>
+
+<idempiereDocument>
+    <header>org.globalqss.idempiere.LCO.withholdings Package Description</header>
+    <H1>Package Name:</H1>
+    <packagename>org.globalqss.idempiere.LCO.withholdings</packagename>
+    <H1>Author:</H1>
+    <Name:/>
+    <H1>Email Address:</H1>
+    <Email>info@globalqss.com</Email>
+    <H1>Created:</H1>
+    <Date>2013-11-18 22:49:18.799</Date>
+    <H1>Updated:</H1>
+    <Date>2014-03-30 18:33:37.765</Date>
+    <H1>Description:</H1>
+    <description>Localization Colombia - Withholdings</description>
+    <H1>Instructions:</H1>
+    <instructions/>
+    <H1>Files in Package:</H1>
+    <file>File: PackOut.xml</file>
+    <filedirectory>Directory: \dict\</filedirectory>
+    <filenotes>Notes: Contains all application/object settings for package</filenotes>
+    <H1>Client:</H1>
+    <Client>0-SYSTEM-System</Client>
+</idempiereDocument>

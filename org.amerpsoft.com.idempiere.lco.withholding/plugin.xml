@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.compiere.model.CalloutPayment"
+         name="LCO Callout Payment"
+         point="org.compiere.model.Callout">
+      <callout
+            class="org.globalqss.model.CalloutPayment"
+            prioriy="0">
+      </callout>
+   </extension>
+   <extension
+         id="org.compiere.model.CalloutPaymentAllocate"
+         name="LCO Callout Payment Allocate"
+         point="org.compiere.model.Callout">
+      <callout
+            class="org.globalqss.model.CalloutPaymentAllocate"
+            prioriy="0">
+      </callout>
+   </extension>
+</plugin>

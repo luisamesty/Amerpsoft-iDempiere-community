@@ -9,6 +9,7 @@
   	<module>org.amerpsoft.com.idempiere.p2.site</module>
   	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
   	<module>org.amerpsoft.com.idempiere.themes-com</module>
+  	<module>org.amerpsoft.com.idempiere.lco.withholding</module>
   </modules>
   <groupId>org.idempiere</groupId>
 </project>
