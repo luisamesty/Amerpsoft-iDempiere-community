@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Financial
-Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true
 Bundle-Version: 6.2.0.qualifier
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Require-Bundle: org.adempiere.base;bundle-version="6.2.0",

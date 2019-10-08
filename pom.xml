@@ -6,11 +6,11 @@
   <modules>
    	<module>org.amerpsoft.com.idempiere.feature</module> 	
   	<module>org.amerpsoft.com.idempiere.editors-com</module>
-  	<module>org.amerpsoft.com.idempiere.p2.site</module>
-  	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
   	<module>org.amerpsoft.com.idempiere.themes-com</module>
   	<module>org.amerpsoft.com.idempiere.lco.withholding</module>
   	<module>org.amerpsoft.com.idempiere.financial</module>
+  	<module>org.amerpsoft.com.idempiere.p2.site</module>
+  	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
   </modules>
   <groupId>org.idempiere</groupId>
 </project>

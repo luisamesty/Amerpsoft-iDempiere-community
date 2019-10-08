@@ -35,6 +35,7 @@ import org.compiere.model.MProductCategoryAcct;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.model.X_M_Product_Acct;
+import org.compiere.model.X_M_Product_Category_Acct;
 import org.compiere.model.X_M_Warehouse_Acct;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CLogger;
@@ -242,7 +243,7 @@ public class AMRRebuildMaterial {
 			while (rs.next ())
 			{
 				M_Warehouse_ID = rs.getInt(1);
-log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));		
+//log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));		
 				// getTargetAcctSchema_ID()
 				// Percentage Monitor
 				WHNo = WHNo+1;
@@ -349,7 +350,7 @@ log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));
 		X_M_Product_Acct target = getM_Product_Acct(Env.getCtx(),targetAS.getC_AcctSchema_ID(), M_Product_ID);
 		StringBuffer  sqlCmdI1 = null;
 		StringBuffer  sqlCmdI2 = null;
-		// 	Stansard Columns
+		// 	Standard Columns
 		String stdColumns = "AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy";
 		//	Standard Values
 		String stdValues = String.valueOf(mp.getAD_Client_ID()) + ","+String.valueOf(mp.getAD_Org_ID())+ ",'Y',SysDate,"+String.valueOf(Env.getAD_User_ID(Env.getCtx()))+",SysDate,"+String.valueOf(Env.getAD_User_ID(Env.getCtx()));
@@ -449,7 +450,10 @@ log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));
 	 * @param targetAS
 	 * @throws Exception
 	 */
-
+	private static void copyM_Product_Category_Acct2(int M_Product_Category_ID, MAcctSchema sourceAS, MAcctSchema targetAS) throws Exception
+	{
+		
+	}
 
 	private static void copyM_Product_Category_Acct(int M_Product_Category_ID, MAcctSchema sourceAS, MAcctSchema targetAS) throws Exception
 	{
@@ -459,13 +463,17 @@ log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));
 		MProductCategory mpc = new MProductCategory(Env.getCtx(),M_Product_Category_ID,null);
 		String ConstingLevel ="";
 		String CostingMethod ="";
-		MProductCategoryAcct source = getM_Product_Category_Acct(Env.getCtx(),sourceAS.getC_AcctSchema_ID(), M_Product_Category_ID);
+log.warning("Source   C_AcctSchema_ID="+sourceAS.getC_AcctSchema_ID());
+log.warning("Target   C_AcctSchema_ID="+targetAS.getC_AcctSchema_ID());
+log.warning("M_Product_Category_ID="+M_Product_Category_ID);
+
+		X_M_Product_Category_Acct source = getM_Product_Category_Acct(Env.getCtx(),sourceAS.getC_AcctSchema_ID(), M_Product_Category_ID);
 		ConstingLevel =source.getCostingLevel();
 		CostingMethod =source.getCostingMethod();
-		MProductCategoryAcct target = getM_Product_Category_Acct(Env.getCtx(),targetAS.getC_AcctSchema_ID(), M_Product_Category_ID);
+		X_M_Product_Category_Acct target = getM_Product_Category_Acct(Env.getCtx(),targetAS.getC_AcctSchema_ID(), M_Product_Category_ID);
 		StringBuffer  sqlCmdI1 = null;
 		StringBuffer  sqlCmdI2 = null;
-		// 	Stansard Columns
+		// 	Standard Columns
 		String stdColumns = "AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy";
 		//	Standard Values
 		String stdValues = String.valueOf(mpc.getAD_Client_ID()) + ","+String.valueOf(mpc.getAD_Org_ID())+ ",'Y',SysDate,"+String.valueOf(Env.getAD_User_ID(Env.getCtx()))+",SysDate,"+String.valueOf(Env.getAD_User_ID(Env.getCtx()));
@@ -807,7 +815,7 @@ log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));
 	 * 	Get Acct Info list 
 	 *	@return list
 	 */
-	public static ArrayList<KeyNamePair> getMProductCategoryAcctInfo(MProductCategoryAcct mpca)
+	public static ArrayList<KeyNamePair> getMProductCategoryAcctInfo(X_M_Product_Category_Acct mpca)
 	{
 		ArrayList<KeyNamePair> list = new ArrayList<KeyNamePair>();
 		int id = 0;
@@ -860,14 +868,23 @@ log.warning("WHValue="+rs.getString(2)+"  WHName="+rs.getString(3));
 	 * @return AMRMProductCategoryAcct (X_M_Product_Category Extends)
 	 */
 
-	public static MProductCategoryAcct getM_Product_Category_Acct (Properties ctx, int C_AcctSchema_ID, int M_Product_Category_ID)
+	public static X_M_Product_Category_Acct getM_Product_Category_Acct (Properties ctx, int C_AcctSchema_ID, int M_Product_Category_ID)
 	{
-		MProductCategoryAcct retValue = null;
-		final String whereClause = "C_AcctSchema_ID=? AND M_Product_Category_ID=?";
-		retValue =  new Query(ctx,MProductCategory.Table_Name,whereClause,null)
-		.setParameters(C_AcctSchema_ID,M_Product_Category_ID)
+log.warning("C_AcctSchema_ID="+C_AcctSchema_ID+" M_Product_Category_ID="+M_Product_Category_ID);
+		X_M_Product_Category_Acct retValue = null;
+//		final String whereClause = "C_AcctSchema_ID=? AND M_Product_Category_ID=?";
+//		retValue =  new Query(ctx,MProductCategory.Table_Name,whereClause,null)
+//		.setParameters(C_AcctSchema_ID,M_Product_Category_ID)
+//		.firstOnly();
+//		 return retValue;
+
+		final String whereClause = "C_AcctSchema_ID="+C_AcctSchema_ID+" AND M_Product_Category_ID="+M_Product_Category_ID;
+		retValue =  new Query(ctx,X_M_Product_Category_Acct.Table_Name,whereClause,null)
+//		.setParameters(C_AcctSchema_ID,M_Product_Category_ID)
 		.firstOnly();
 		 return retValue;
+
+	
 	}	//	get
 	
 
