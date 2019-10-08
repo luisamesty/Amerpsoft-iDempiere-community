@@ -3,6 +3,6 @@
     <feature 
     	url="features/org.amerpsoft.com.idempiere.feature_6.2.0.qualifier.jar" 
     	id="org.amerpsoft.com.idempiere.feature" version="6.2.0.qualifier">
-	    <category name="org.amerpsoft.idempiere"/>
+	    <category name="org.amerpsoft.com.idempiere"/>
     </feature>
 </site>
