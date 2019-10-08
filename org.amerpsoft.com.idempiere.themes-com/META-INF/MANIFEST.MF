@@ -6,6 +6,6 @@ Bundle-Version: 6.2.0.qualifier
 Bundle-ClassPath: theme/,
   .
 Fragment-Host: org.adempiere.ui.zk;bundle-version="6.2.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Jetty-WarFragmentFolderPath: /
 Bundle-Vendor: Amerpsoft
