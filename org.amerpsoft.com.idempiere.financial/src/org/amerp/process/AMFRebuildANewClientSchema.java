@@ -11,6 +11,7 @@ import org.compiere.model.X_C_ValidCombination;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.AdempiereSystemError;
+import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 
@@ -28,11 +29,15 @@ public class AMFRebuildANewClientSchema extends SvrProcess{
 	private String p_Material ="N";
 	private String p_MaterialCost="N";
 	
-	
+	// CLogger
+	CLogger log = CLogger.getCLogger(AMFRebuildANewClientSchema.class);
+
 	@Override
 	protected void prepare() {
 		// TODO Auto-generated method stub
-	   	//log.warning("...........Toma de Parametros...................");
+//log.setLevel(Level.WARNING);
+//log.warning("..WARNING....Toma de Parametros.......AMFRebuildANewClientSchema............");
+//log.severe("..SEVERE.........Toma de Parametros.......AMFRebuildANewClientSchema............");
     	ProcessInfoParameter[] paras = getParameter();
 		for (ProcessInfoParameter para : paras)
 		{

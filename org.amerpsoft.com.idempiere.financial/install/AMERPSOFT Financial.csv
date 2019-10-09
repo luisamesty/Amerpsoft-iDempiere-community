@@ -1,6 +1,4 @@
 AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
-*,AMERPSOFT Financial,10,T,,,,,,,,Account Element,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Financial,20,W,,,,,,,,,ALL,,,,,,,Account Element,,System Administrator,,,,,,,,,,Product Info
 *,AMERPSOFT Financial,30,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Period Selection,,Product Info
 *,AMERPSOFT Financial,40,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,AMF_Year_ID,,Product Info
 *,AMERPSOFT Financial,50,V,,,,,,,,,ALL,,,,,,,,,System Administrator,,,C_Period of Year,,,,,C_Period Selection,,Product Info
