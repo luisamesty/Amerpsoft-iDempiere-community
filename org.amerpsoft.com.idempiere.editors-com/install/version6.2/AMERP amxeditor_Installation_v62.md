@@ -12,7 +12,7 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
     6. Install Plugin using Apache felix Web Console
     7. Restart Server
     8. Modify C__BPartner__location Table
-    8. Modify Country Record
+    9. Modify Country Record
 
 1- Pack IN AMERP amxeditor.zip
 - Using AD PackIn

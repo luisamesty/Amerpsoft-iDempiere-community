@@ -19,7 +19,7 @@ import org.amerp.amxeditor.editor.WLocationExtEditor;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.CLogger;
-
+import java.util.logging.Level;
 /**
  * @author luisamesty
  *
@@ -30,20 +30,20 @@ public class EditorFactory implements IEditorFactory {
 	 * @see org.adempiere.webui.factory.IEditorFactory#getEditor(org.compiere.model.GridTab, org.compiere.model.GridField, boolean)
 	 */
 	CLogger log = CLogger.getCLogger(EditorFactory.class);
-	
+
     @Override
     public WEditor getEditor(GridTab p_gridTab, GridField p_gridField, 
     		boolean p_tableEditor) {
 	    // TODO Auto-generated method stub
+//log.setLevel(Level.WARNING);
     	if (p_gridField == null)
     	{
     		return null;
     	}
     	WEditor editor = null;
     	int displayType = p_gridField.getDisplayType();
-    	
+//log.warning("..............EditorFactory........displayType="+displayType );
     	if (displayType == DisplayTypeFactory.LocationExtended) {
-//log.warning("..............EditorFactory........" );
 //log.warning("DisplayTypeFactory: LocationExtended ");
     		editor = new WLocationExtEditor(p_gridField, p_gridTab);
     		//editor = new WLocationEditor(p_gridField);
@@ -52,5 +52,4 @@ public class EditorFactory implements IEditorFactory {
     		editor.setTableEditor(p_tableEditor);
 	    return editor;
     }
-
 }

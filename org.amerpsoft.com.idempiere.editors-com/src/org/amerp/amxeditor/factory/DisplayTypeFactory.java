@@ -14,10 +14,9 @@ package org.amerp.amxeditor.factory;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.logging.Level;
 
 import org.adempiere.base.IDisplayTypeFactory;
-import org.adempiere.base.Service;
 import org.compiere.util.*;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Reference;
@@ -33,18 +32,19 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	//public static int LocationExtended = ((X_AD_Reference)new Query(Env.getCtx(),X_AD_Reference.Table_Name,"Name='LocationExtended'",null).first()).getAD_Reference_ID();
 	//public static int LocationExtended = 1000066;
 	public static int LocationExtended = ((X_AD_Reference)new Query(Env.getCtx(),X_AD_Reference.Table_Name,"Name='LocationExtended'",null).first()).getAD_Reference_ID();
-	
+
 	/* (non-Javadoc)
 	 * @see org.adempiere.base.IDisplayTypeFactory#isID(int)
 	 */
     @Override
     public boolean isID(int p_displayType) {
 	    // TODO Auto-generated method stub
+//log.setLevel(Level.WARNING);
     	if(p_displayType == LocationExtended) {
-//log.warning("..........DisplayTypeFactory...........");
-//log.warning("isID - LocationExtended "+LocationExtended);
+//log.warning("..........DisplayTypeFactory...........isID - LocationExtended "+LocationExtended);
     		return true;
     	} else {
+//log.warning("..........DisplayTypeFactory...........isID:"+p_displayType);
     		return false;
     	}
     }
