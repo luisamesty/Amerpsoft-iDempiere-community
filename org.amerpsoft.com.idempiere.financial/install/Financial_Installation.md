@@ -1,17 +1,19 @@
-# Amerpsoft-Financial Basic 
-## Installation Procedure: 
-<pre>
-System Install 
+Amerpsoft-Financial Basic 
+=========================
+Installation Procedure: 
+======================
+System Install
+==============
 	1. Pack in ‘AMERP Financial.zip’
-	    Tables, References, Processes, Windows, Menus, 
+		Tables, References, Processes, Windows, Menus, 
 	2. Create Views and Functions
 		Folders: 
 			sql/views 
 			sql/functions
 	3. Import LCO_ISIC.csv 
-</pre>
-## Client Install Steps.
-<pre>
+
+Client Install Steps
+====================
 	1. LCO ISIC
 		EXPORT CSV and Import on New Client
 	2. Tax Payer Type
@@ -30,4 +32,3 @@ System Install
 		Firts Create Withholding Calc and then Withholding Rules
 		Withholding Calc: Export one by one and import 
 		Withholding Rule: Export one by one and import 
-</pre>
