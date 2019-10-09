@@ -23,7 +23,7 @@ Client Install Steps.
 		EXPORT CSV and Import on New Client
 	6. Withholding Types (Tipos de Retención)
 		EXPORT CSV and Import on New Client
-	7. Withholding Rles (Reglas de Retención)
+	7. Withholding Rules (Reglas de Retención)
 		Rule Conf: Adjust manually
 		Firts Create Withholding Calc and then Withholding Rules
 		Withholding Calc: Export one by one and import 
