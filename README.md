@@ -2,7 +2,7 @@
 
 ## Description
 <pre>
-These repository is a main project for several Idempiere Plugins shared and published for Idempiere Community.
+This repository is a main project for several Idempiere Plugins shared and published for Idempiere Community.
 AMERPSOFT plugins are brought to you by Luis Amesty from Amerpsoft Consulting.
 </pre>
 
@@ -10,9 +10,11 @@ AMERPSOFT plugins are brought to you by Luis Amesty from Amerpsoft Consulting.
 
 - [Home](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/README.md)
 
-- [AMERPSOFT Editor - Extended Location version 2.1 to 5.1](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.editors-com/documentation/version2.1_5.1/AMERP%20amxeditor_Installation.md)
+- [AMERPSOFT Financial - Basic Financial](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/install/Financial_Installation.md)
 
-- [AMERPSOFT Editor - Extended Location version 6.2 and UP](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.editors-com/documentation/version6.2/AMERP%20amxeditor_Installation_v62.md)
+- [AMERPSOFT Editor - Extended Location version 2.1 to 5.1](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.editors-com/install/version2.1_5.1/AMERP%20amxeditor_Installation.md)
+
+- [AMERPSOFT Editor - Extended Location version 6.2 and UP](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.editors-com/install/version6.2/AMERP%20amxeditor_Installation_v62.md)
 
 - [AMERPSOFT Themes](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.themes-com/README.md)
 
