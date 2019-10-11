@@ -87,7 +87,8 @@ public class AMRRebuildSetup {
 		if (target.get_ID() == 0)
 			throw new AdempiereSystemError("NotFound Target C_AcctSchema_ID=" + p_TargetAcctSchema_ID);
 		// List Target elements 
-log.warning("p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+" p_TargetAcctSchema_ID"+p_TargetAcctSchema_ID);
+//log.setLevel(Level.WARNING);	
+//log.warning("p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+" p_TargetAcctSchema_ID"+p_TargetAcctSchema_ID);
 		MAcctSchemaElement[] targetElements = target.getAcctSchemaElements();
 		// Create Target AC C_AcctSchema_Element
 		copyAccSchemaElements(AD_Client_ID, source, target);
@@ -423,6 +424,7 @@ log.warning("p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+" p_TargetAcctSchema_I
 			AMRRebuildValidCombinations rvc = new AMRRebuildValidCombinations();
 			// CREATE C_ValidCombination records
 			MAccount targetAccount = rvc.getFirstVCcombination(Env.getCtx(),sourceAS.getAD_Client_ID(),targetAS.getC_AcctSchema_ID(), sourceAccount.getAccount_ID(), sourceAccount.getCombination());
+//log.warning("sourceAccount="+sourceAccount+ "  targetAccount="+targetAccount);
 			if (targetAccount== null) {
 				// CREATE New Valid Combination for the New Account Schema
 				targetAccount = rvc.createAccount(sourceAS, targetAS, sourceAccount, targetAccount);
@@ -433,7 +435,7 @@ log.warning("p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+" p_TargetAcctSchema_I
 				targetAccount = rvc.createAccount(sourceAS, targetAS, sourceAccount, targetAccount);
 			}
 			target.setValue(columnName, new Integer(targetAccount.getC_ValidCombination_ID()));
-			//log.warning("columnName="+columnName);
+//log.warning("columnName="+columnName);
 		}
 		targetSave = target.save();
 		//
@@ -470,6 +472,7 @@ log.warning("p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+" p_TargetAcctSchema_I
 			AMRRebuildValidCombinations rvc = new AMRRebuildValidCombinations();
 			// CREATE C_ValidCombination records
 			MAccount targetAccount = rvc.getFirstVCcombination(Env.getCtx(),sourceAS.getAD_Client_ID(),targetAS.getC_AcctSchema_ID(), sourceAccount.getAccount_ID(), sourceAccount.getCombination());
+//log.warning("sourceAccount="+sourceAccount+ "  targetAccount="+targetAccount);
 			if (targetAccount== null) {
 				// CREATE New Valid Combination for the New Account Schema
 				targetAccount = rvc.createAccount(sourceAS, targetAS, sourceAccount, targetAccount);

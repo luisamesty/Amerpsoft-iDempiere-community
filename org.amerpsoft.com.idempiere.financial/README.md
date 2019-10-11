@@ -1,36 +1,20 @@
-## README ##
-##### AMERP Financial:
-5.1 Actualizado Marzo 2018
-Created and Starting Branch release-5.1 on March 13 2019
-default on idempiere release 6.2
-*********************************************************
-##### Directory: #####
-* /Volumes/Datos/Adempiere/iDempiere5.1srcMac/AMX_Plugins5.1.0/amerpsoft-financial
-* Push:
-* New: hg push https://bitbucket.org/amerpsoft/amerpsoft-financial
-* Revisada 3 Septiembre 2018
+## AMERPSOFT Financial:
+This plugin is brought to you from AMERPSOFT Consulting by Luis Amesty.
 
-##### AMERP-AMFIN: Plugin Financial
-* Name: org.amerp.amfmodel
-* Pack: 2Pack.zip
-* CSV: Amerp_Financial_Package_Exp_Detail.csv 
-* (For Import PACKOUT on a New Developing Data Base)
+Updated for idempiere release 6.2, October 2019.
 
-##### 1.	AMERP Consultation.
-* Application Dictionary Windows, for Consulting Accounts, Balances and Detail.
+See AMF-Financial.docx on documentation directory, for more information.
+[AMF-Financial.docx](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/documentacion/AMF-%20Financial.docx)
 
-##### 2.	Tables.
-Tables involved:
-###### C\_ElementValue (AD Account Element):
-######  Fields Added:
-######  - Name2: String 60 , Non Mandaatory, Updatable
-######  - Value_Parent : String 60 , Non Mandaatory, Updatable
-######C\_ElementParent_ID:  
-###### - Table Direct 10 length, Updatable
-###### - Value_Parent: String 20,  Non Mandatory, Updatable
-#####AMF\_AcctBalDetail: (New table for Consulting Definition)
+For Install see Financial_Installation.md on install directory.
+[Financial_Installation.md](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/install/Financial_Installation.md)
 
-##### 3.	Functions.
+For additional information contact:
+Luis Amesty - luisamesty@gmail.com
+
+************************************************
+
+### 1.	Functions.
 ##### Special Function for calculating Balances and Dates:
 * amf_acctdate0prevbalance.sql
 * amf_acctdate1deb.sql
@@ -54,15 +38,15 @@ Tables involved:
 * amf_prevperiodenddate.sql
 * amf_prevperiodstartdate.sql
 
-##### 4.	Amf_Views:
+### 2. Amf_Views:
 ##### Must be created in order, because Views are dependant bethween them.
 1. amf_accounts_v.sql
 2. amf_accounts_detail_v.sql
 3. amf_accounts_balance_v.sql
 
-##### 5.	Report Modules: AMERP Reports. (Jasper Reports Financial Standard Formats)
-##### All Menu: Amerp Reports
-* Amerp Windows Financial Consultations
-* Amerp Financial Reports
-* Bank Reports
-* VAT and Tax Reports
+### 3. Modules: 
+* AMERPSOFT Financial Processes
+* AMERPSOFT Financial Reports
+* AMERPSOFT Bank Reports
+
+

@@ -35,7 +35,7 @@ public class AMFRebuildANewClientSchema extends SvrProcess{
 	@Override
 	protected void prepare() {
 		// TODO Auto-generated method stub
-//log.setLevel(Level.WARNING);
+log.setLevel(Level.WARNING);
 //log.warning("..WARNING....Toma de Parametros.......AMFRebuildANewClientSchema............");
 //log.severe("..SEVERE.........Toma de Parametros.......AMFRebuildANewClientSchema............");
     	ProcessInfoParameter[] paras = getParameter();
@@ -63,7 +63,7 @@ public class AMFRebuildANewClientSchema extends SvrProcess{
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-//log.warning("...........Parametros.........AD_Client_ID="+p_AD_Client_ID+"  p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+"  p_TargetAcctSchema_ID"+p_TargetAcctSchema_ID);
+log.warning("...........Parametros.........AD_Client_ID="+p_AD_Client_ID+"  p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+"  p_TargetAcctSchema_ID"+p_TargetAcctSchema_ID);
 	}
 
 	@Override

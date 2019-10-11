@@ -10,7 +10,7 @@ AMERPSOFT plugins are brought to you by Luis Amesty from Amerpsoft Consulting.
 
 - [Home](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/README.md)
 
-- [AMERPSOFT Financial - Basic Financial](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/install/Financial_Installation.md)
+- [AMERPSOFT Financial - Basic Financial](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/README.md)
 
 - [AMERPSOFT Editor - Extended Location version 2.1 to 5.1](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.editors-com/install/version2.1_5.1/AMERP%20amxeditor_Installation.md)
 
