@@ -255,15 +255,16 @@ public class AMFNaturalAccountMap<K,V> extends CCache<K,V> {
 			MAMF_ElementValue na = (MAMF_ElementValue)iterator.next();
 //log.warning(" Cuenta:"+na.getValue()+"-"+na.getName());
 			// Parent Account ID
-			if (na.getValue_Parent() != null) {
-				MAMF_ElementValue napar = findByMElementValue(Env.getCtx(), AD_Client_ID, C_Element_ID, na.getValue_Parent());
-				if (napar != null) 
-					C_Elementparent_ID =  napar.getC_ElementValue_ID();
-				else
-					C_Elementparent_ID =  0;
-			} else {
-				C_Elementparent_ID =  0;
-			}
+			// Non in version 6.2
+//			if (na.getValue_Parent() != null) {
+//				MAMF_ElementValue napar = findByMElementValue(Env.getCtx(), AD_Client_ID, C_Element_ID, na.getValue_Parent());
+//				if (napar != null) 
+//					C_Elementparent_ID =  napar.getC_ElementValue_ID();
+//				else
+//					C_Elementparent_ID =  0;
+//			} else {
+//				C_Elementparent_ID =  0;
+//			}
 			MAMF_ElementValue nanew = findByMElementValue(Env.getCtx(), AD_Client_ID, C_Element_ID, na.getValue());
 			if (nanew == null) {
 log.warning(" Cuenta nueva.....:"+na.getValue()+"-"+na.getName());
@@ -278,8 +279,8 @@ log.warning(" Cuenta nueva.....:"+na.getValue()+"-"+na.getName());
 				nanew.setIsDocControlled(na.isDocControlled());
 				nanew.setAccountSign(na.getAccountSign());
 				nanew.setAccountType(na.getAccountType());
-				nanew.setValue_Parent(na.getValue_Parent());
-				nanew.setC_Elementparent_ID(C_Elementparent_ID);
+//				nanew.setValue_Parent(na.getValue_Parent());
+//				nanew.setC_Elementparent_ID(C_Elementparent_ID);
 				nanew.save();
 			} else {
 log.warning(" Cuenta existe.....:"+na.getValue()+"-"+na.getName());				
@@ -291,8 +292,8 @@ log.warning(" Cuenta existe.....:"+na.getValue()+"-"+na.getName());
 				nanew.setIsDocControlled(na.isDocControlled());
 				nanew.setAccountSign(na.getAccountSign());
 				nanew.setAccountType(na.getAccountType());
-				nanew.setValue_Parent(na.getValue_Parent());
-				nanew.setC_Elementparent_ID(C_Elementparent_ID);
+//				nanew.setValue_Parent(na.getValue_Parent());
+//				nanew.setC_Elementparent_ID(C_Elementparent_ID);
 				nanew.save();
 			}
 		}

@@ -3,6 +3,7 @@ package org.amerp.amfmodel;
 import java.sql.ResultSet;
 import java.util.Properties;
 
+import org.compiere.model.X_C_ElementValue;
 import org.compiere.util.CLogger;
 
 public class MAMF_ElementValue extends X_C_ElementValue{
@@ -49,7 +50,7 @@ public class MAMF_ElementValue extends X_C_ElementValue{
 		setAccountSign(AccountSign);
 		setIsDocControlled(IsDocControlled);
 		setIsSummary(IsSummary);
-		setValue_Parent(Value_Parent);
+//		setValue_Parent(Value_Parent);
 	}	//	MElementValue
 	
 
