@@ -63,7 +63,7 @@ log.setLevel(Level.WARNING);
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-log.warning("...........Parametros.........AD_Client_ID="+p_AD_Client_ID+"  p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+"  p_TargetAcctSchema_ID"+p_TargetAcctSchema_ID);
+//log.warning("...........Parametros.........AD_Client_ID="+p_AD_Client_ID+"  p_SourceAcctSchema_ID"+p_SourceAcctSchema_ID+"  p_TargetAcctSchema_ID"+p_TargetAcctSchema_ID);
 	}
 
 	@Override

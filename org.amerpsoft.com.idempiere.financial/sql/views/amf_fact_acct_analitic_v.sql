@@ -64,7 +64,7 @@ SELECT
 		WHEN fac.AD_table_ID = 325 THEN mpo.documentno -- M_Production
 		WHEN fac.AD_table_ID = 472 THEN mma.documentno -- M_MatchInv
 		WHEN fac.AD_table_ID = 473 THEN mmp.documentno -- M_MatchPO
-		WHEN fac.AD_table_ID = 1000042 THEN amn.documentno -- AMN_Payroll
+	--	WHEN fac.AD_table_ID = 1000042 THEN amn.documentno -- AMN_Payroll
 		ELSE CONCAT(tbl.tablename,'- Doc:',CAST(fac.record_id AS varchar)) END AS  documentno,
 	-- Description  Original Table
 	CASE 	WHEN fac.AD_table_ID = 318 THEN COALESCE(inv.description,'') -- C_Invoice
@@ -81,7 +81,7 @@ SELECT
 		WHEN fac.AD_table_ID = 325 THEN COALESCE(mpo.description,'') -- M_Production
 		WHEN fac.AD_table_ID = 472 THEN COALESCE(mma.description,'') -- M_MatchInv
 		WHEN fac.AD_table_ID = 473 THEN COALESCE(mmp.description,'') -- M_MatchPO
-		WHEN fac.AD_table_ID = 1000042 THEN COALESCE(amn.description,'') -- AMN_Payroll
+	--	WHEN fac.AD_table_ID = 1000042 THEN COALESCE(amn.description,'') -- AMN_Payroll
 		ELSE CONCAT(tbl.tablename,'- Rec:',CAST(fac.record_id AS varchar)) END AS  description_tbl,
 	-- Document Type Original Table
 	CASE 	WHEN fac.AD_table_ID = 318 THEN inv.c_doctype_id -- C_Invoice
@@ -98,7 +98,7 @@ SELECT
 		WHEN fac.AD_table_ID = 325 THEN 9999999996 -- M_Production
 		WHEN fac.AD_table_ID = 472 THEN 9999999995 -- M_MatchInv
 		WHEN fac.AD_table_ID = 473 THEN 9999999994 -- M_MatchPO
-		WHEN fac.AD_table_ID = 1000042 THEN amn.c_doctype_id -- AMN_Payroll
+	--	WHEN fac.AD_table_ID = 1000042 THEN amn.c_doctype_id -- AMN_Payroll
 		ELSE 0 END AS  c_doctype_id,
 	-- C_ElementValue Account Elements
 	cev.value as account_value,
@@ -107,12 +107,12 @@ FROM adempiere.fact_acct fac
 LEFT JOIN adempiere.c_elementvalue cev ON cev.c_elementvalue_id = fac.account_id
 LEFT JOIN adempiere.c_bpartner bpa ON fac.c_bpartner_id = bpa.c_bpartner_id
 LEFT JOIN adempiere.m_product mpr ON fac.m_product_id = mpr.m_product_id
-LEFT JOIN adempiere.amn_employee emp ON emp.c_bpartner_id = bpa.c_bpartner_id
-LEFT JOIN adempiere.amn_payroll amn ON amn.amn_payroll_id = fac.record_id
-LEFT JOIN adempiere.amn_jobtitle as crg ON (amn.amn_jobtitle_id= crg.amn_jobtitle_id)
-LEFT JOIN adempiere.ad_reference as ref ON(ref.name='AMN_Workforce')
-LEFT JOIN adempiere.ad_ref_list as reflis ON (ref.ad_reference_id = reflis.ad_reference_id AND reflis.value =crg.workforce)
-LEFT JOIN adempiere.ad_ref_list_trl as reflistr ON (reflis.ad_ref_list_id = reflistr.ad_ref_list_id AND reflistr.ad_language = 'es_VE')
+--LEFT JOIN adempiere.amn_employee emp ON emp.c_bpartner_id = bpa.c_bpartner_id
+--LEFT JOIN adempiere.amn_payroll amn ON amn.amn_payroll_id = fac.record_id
+--LEFT JOIN adempiere.amn_jobtitle as crg ON (amn.amn_jobtitle_id= crg.amn_jobtitle_id)
+--LEFT JOIN adempiere.ad_reference as ref ON(ref.name='AMN_Workforce')
+--LEFT JOIN adempiere.ad_ref_list as reflis ON (ref.ad_reference_id = reflis.ad_reference_id AND reflis.value =crg.workforce)
+--LEFT JOIN adempiere.ad_ref_list_trl as reflistr ON (reflis.ad_ref_list_id = reflistr.ad_ref_list_id AND reflistr.ad_language = 'es_VE')
 LEFT JOIN adempiere.c_invoice inv ON inv.c_invoice_id = fac.record_id
 LEFT JOIN adempiere.m_inout min ON min.m_inout_id = fac.record_id
 LEFT JOIN adempiere.c_payment pay ON pay.c_payment_id = fac.record_id
