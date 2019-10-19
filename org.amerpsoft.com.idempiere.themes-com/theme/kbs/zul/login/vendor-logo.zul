@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2009 Low Heng Sin
+Copyright (C) 2009 Idalica Corporation
+-->
+<zk>
+
+<div style="margin: 5px;">
+	<hbox align="center">
+		<a href="http://www.kylinsystems.com" target="_blank"><image src="/theme/kbs/images/vendor-logo.png"/></a>		
+	</hbox>
+</div>
+<div style="height: 90px" >
+	<space/>
+</div>
+
+</zk>
