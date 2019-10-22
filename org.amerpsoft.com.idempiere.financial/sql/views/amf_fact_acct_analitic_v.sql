@@ -102,7 +102,23 @@ SELECT
 		ELSE 0 END AS  c_doctype_id,
 	-- C_ElementValue Account Elements
 	cev.value as account_value,
-	cev.name as account_name
+	cev.name as account_name,
+		-- C_Project proj 
+	fac.C_Project_ID as C_Project_ID,
+	COALESCE(proj.value,'') as project_value,
+	COALESCE(proj.name,'') as project_name,
+	-- C_Activity acti ON
+	fac.C_Activity_ID as C_Activity_ID,
+	COALESCE(acti.value,'') as activity_value,
+	COALESCE(acti.name,'') as activity_name,
+	-- C_SalesRegion sare 
+	fac.C_SalesRegion_ID as C_SalesRegion_ID,
+	COALESCE(sare.value,'') as salesregion_value,
+	COALESCE(sare.name,'') as salesregion_name,
+	-- C_Campaign camp ON camp.C_Campaign_ID = 
+	fac.C_Campaign_ID as C_Campaign_ID,
+	COALESCE(camp.value,'') as campaign_value,
+	COALESCE(camp.name,'') as campaign_name
 FROM adempiere.fact_acct fac
 LEFT JOIN adempiere.c_elementvalue cev ON cev.c_elementvalue_id = fac.account_id
 LEFT JOIN adempiere.c_bpartner bpa ON fac.c_bpartner_id = bpa.c_bpartner_id
@@ -112,7 +128,7 @@ LEFT JOIN adempiere.m_product mpr ON fac.m_product_id = mpr.m_product_id
 --LEFT JOIN adempiere.amn_jobtitle as crg ON (amn.amn_jobtitle_id= crg.amn_jobtitle_id)
 --LEFT JOIN adempiere.ad_reference as ref ON(ref.name='AMN_Workforce')
 --LEFT JOIN adempiere.ad_ref_list as reflis ON (ref.ad_reference_id = reflis.ad_reference_id AND reflis.value =crg.workforce)
---LEFT JOIN adempiere.ad_ref_list_trl as reflistr ON (reflis.ad_ref_list_id = reflistr.ad_ref_list_id AND reflistr.ad_language = 'es_VE')
+--LEFT JOIN adempiere.ad_ref_list_trl as reflistr ON (reflis.ad_ref_list_id = reflistr.ad_ref_list_id 	AND reflistr.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=fac.ad_client_id) )
 LEFT JOIN adempiere.c_invoice inv ON inv.c_invoice_id = fac.record_id
 LEFT JOIN adempiere.m_inout min ON min.m_inout_id = fac.record_id
 LEFT JOIN adempiere.c_payment pay ON pay.c_payment_id = fac.record_id
@@ -129,6 +145,10 @@ LEFT JOIN adempiere.m_production mpo ON mpo.m_production_id = fac.record_id
 LEFT JOIN adempiere.m_matchinv mma ON mma.m_matchinv_id = fac.record_id
 LEFT JOIN adempiere.m_matchpo mmp ON mmp.m_matchpo_id = fac.record_id
 LEFT JOIN adempiere.ad_table tbl ON tbl.ad_table_id = fac.ad_table_id
+LEFT JOIN adempiere.C_Project proj ON proj.C_Project_ID = fac.C_Project_ID
+LEFT JOIN adempiere.C_Activity acti ON acti.C_Activity_ID = fac.C_Activity_ID
+LEFT JOIN adempiere.C_SalesRegion sare ON sare.C_SalesRegion_ID = fac.C_SalesRegion_ID
+LEFT JOIN adempiere.C_Campaign camp ON camp.C_Campaign_ID = fac.C_Campaign_ID
 ;
 
 ALTER TABLE amf_fact_accounts_analitic_v
