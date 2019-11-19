@@ -31,7 +31,7 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
     ( If you are using other Locale adjust to your)
 
 3- Create Language extension for es__VE or xx__XX
-- Download Script from Repository
+- Download Script from Repository (See This plugin documentation directory)
 - Example:  Create-language-from-es-CO-to-es-VE.sql" Script
 - Execute Query from PostgreSQL environment
 - You may edit this Query for your favourite Language xx_XX
