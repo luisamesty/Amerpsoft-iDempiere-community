@@ -5,7 +5,9 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Editor 6.2 - Step 1,30,MSG,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,Municipality,,,,,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,40,MSG,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,Parish,,,,,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,50,MSG,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,Community,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 1,60,T,,,,,,,,Region,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,70,T,,,,,,,,Community,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,80,T,,,,,,,,C_Municipality,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,90,T,,,,,,,,c_Parish,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor 6.2 - Step 1,100,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Municipality,,Product Info
+*,AMERPSOFT Editor 6.2 - Step 1,110,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Parish_ID,,Product Info
+*,AMERPSOFT Editor 6.2 - Step 1,120,T,,,,,,,,Address,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info

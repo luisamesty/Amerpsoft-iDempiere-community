@@ -24,5 +24,5 @@ Import-Package: org.osgi.service.event,
  org.zkoss.bind,
  org.zkoss.zul.impl
 Bundle-Vendor: Amerpsoft
-Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
