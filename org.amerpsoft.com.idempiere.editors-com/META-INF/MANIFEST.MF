@@ -26,3 +26,4 @@ Import-Package: org.osgi.service.event,
 Bundle-Vendor: Amerpsoft
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
