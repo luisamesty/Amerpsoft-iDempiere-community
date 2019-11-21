@@ -19,8 +19,10 @@
 	padding: 60px 40px 60px 40px;
 	margin: 0;
 	text-align: center;
+/*
 	background-image: url(../images/login-logo-app.png) !important;
 	background-repeat: no-repeat;
+*/
 }
 
 .login-box-header {
