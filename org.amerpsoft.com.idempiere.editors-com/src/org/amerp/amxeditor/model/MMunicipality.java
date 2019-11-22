@@ -98,7 +98,7 @@ public class MMunicipality extends X_C_Municipality implements DocAction {
 	 * 	@param ctx context
 	 *  @return MCountry Array
 	 */
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public static MMunicipality[] getMunicipalitys(Properties ctx)
 	{
 		if (s_Municipalitys == null || s_Municipalitys.size() == 0)
@@ -115,12 +115,13 @@ public class MMunicipality extends X_C_Municipality implements DocAction {
 	 *  @param C_Country_ID country
 	 *  @return MMunicipality Array
 	 */
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public static MMunicipality[] getMunicipalitys (Properties ctx, int C_Region_ID)
 	{
 		if (s_Municipalitys == null || s_Municipalitys.size() == 0)
 			loadAllMunicipalitys(ctx);
 		ArrayList<MMunicipality> list = new ArrayList<MMunicipality>();
+		
 		Iterator it = s_Municipalitys.values().iterator();
 		while (it.hasNext())
 		{

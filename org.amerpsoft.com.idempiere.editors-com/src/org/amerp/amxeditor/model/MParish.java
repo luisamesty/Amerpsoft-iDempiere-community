@@ -101,7 +101,7 @@ public class MParish extends X_C_Parish implements DocAction {
 	 * 	@param ctx context
 	 *  @return MCountry Array
 	 */
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public static MParish[] getParishs(Properties ctx)
 	{
 		if (s_Parishs == null || s_Parishs.size() == 0)
@@ -118,7 +118,7 @@ public class MParish extends X_C_Parish implements DocAction {
 	 *  @param C_Country_ID country
 	 *  @return MParish Array
 	 */
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	public static MParish[] getParishs (Properties ctx, int C_Municipality_ID, int C_Region_ID)
 	{
 		if (s_Parishs == null || s_Parishs.size() == 0)

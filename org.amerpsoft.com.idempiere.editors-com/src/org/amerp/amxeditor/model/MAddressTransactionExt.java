@@ -30,7 +30,6 @@ import java.util.logging.Level;
 
 import org.adempiere.base.*;
 import org.adempiere.model.IAddressValidation;
-import org.compiere.model.MAddressValidation;
 import org.compiere.model.MOnlineTrxHistory;
 import org.compiere.util.*;
 

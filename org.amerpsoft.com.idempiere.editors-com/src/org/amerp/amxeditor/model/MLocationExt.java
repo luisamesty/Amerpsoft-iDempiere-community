@@ -71,7 +71,7 @@ public class MLocationExt extends MLocation implements DocAction
 		if (C_Location_ID == 0)
 			return new MLocationExt(ctx, C_Location_ID, trxName);
 		//
-		Integer key = new Integer (C_Location_ID);
+		Integer key = Integer.valueOf(C_Location_ID);
 		MLocationExt retValue = null;
 		if (trxName == null)
 			retValue = (MLocationExt) s_cache.get (key);

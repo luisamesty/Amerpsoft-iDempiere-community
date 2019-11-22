@@ -20,7 +20,11 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
     AMERPSOFT Editor 6.2 - Step 1.zip
     AMERPSOFT Editor 6.2 - Step 2.zip
     AMERPSOFT Editor 6.2 - Step 3.zip
-- Packin all tre in order.
+- Packin all thre in order.
+Remember to do:
+    Role Access Update
+    Syncronize Terminology
+    Sequence Check
 	
 2- Set es_VE as System language
 - Login idempiere as System in English
@@ -35,8 +39,9 @@ AMERP Amerpsoft-editors Version 6.2 and Up:
 - Example:  Create-language-from-es-CO-to-es-VE.sql" Script
 - Execute Query from PostgreSQL environment
 - You may edit this Query for your favourite Language xx_XX
+- Remember to do Syncronize Terminology
 
-4- Add country code 3 digits
+4- Verify country code 3 digits is updated on C_Country table
 - CountryCode3 Fields on C_Country Table are already set on Step 2
 
 5- Pack IN Venezuela ExtendedDemography

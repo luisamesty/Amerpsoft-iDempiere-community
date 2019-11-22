@@ -10,4 +10,6 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Editor 6.2 - Step 1,90,T,,,,,,,,c_Parish,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,100,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Municipality,,Product Info
 *,AMERPSOFT Editor 6.2 - Step 1,110,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Parish_ID,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 1,120,T,,,,,,,,Address,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor 6.2 - Step 1,120,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Community,,Product Info
+*,AMERPSOFT Editor 6.2 - Step 1,130,T,,,,,,,,Address,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor 6.2 - Step 1,140,T,,,,,,,,Region,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info

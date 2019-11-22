@@ -1,6 +1,6 @@
 AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
 *,AMERPSOFT Editor 6.2 - Step 2,10,SQL,,,,,,,,,Postgres,"-- Elimina la tabla temporal si existe c_country2 
--- DROP TABLE IF EXISTS ""adempiere"".""c_country2"" ;
+DROP TABLE IF EXISTS ""adempiere"".""c_country2"" ;
 
 -- Crea tabla temporal de codigos de tres digitos 
  CREATE TABLE ""adempiere"".""c_country2"" (
@@ -606,7 +606,7 @@ VALUES ('GS', 'SGS', '239', 'Islas Georgias del Sur y Sandwich del Sur', '', '',
 INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
 VALUES ('SH', 'SHN', '654', 'Santa Helena', '', '', 0);
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),120,SQL,,,,,,,,,Postgres,"
+*,AMERPSOFT Editor 6.2 - Step 2,120,SQL,,,,,,,,,Postgres,"
 INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
 VALUES ('SJ', 'SJM', '744', 'Svalbard y Jan Mayen', '', '', 0);
 
@@ -661,7 +661,7 @@ VALUES ('TC', 'TCA', '796', 'Islas Turcas y Caicos', '', '', 0);
 INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
 VALUES ('TD', 'TCD', '148', 'Chad', '', '', 0);
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),130,SQL,,,,,,,,,Postgres,"
+*,AMERPSOFT Editor 6.2 - Step 2,130,SQL,,,,,,,,,Postgres,"
 INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
 VALUES ('TG', 'TGO', '768', 'Togo', '', '', 0);
 
@@ -725,7 +725,7 @@ VALUES ('VA', 'VAT', '336', 'Ciudad del Vaticano', '', '', 0);
 INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
 VALUES ('VC', 'VCT', '670', 'San Vicente y las Granadinas', '', '', 0);
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),140,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
+*,AMERPSOFT Editor 6.2 - Step 2,140,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
 VALUES ('VE', 'VEN', '862', 'República Bolivariana de Venezuela', '', '', 0);
 
 INSERT INTO ""adempiere"".""c_country2"" (""countrycode"", ""countrycode3"", ""countryid"", ""name"", ""detalle1"", ""detalle2"", ""modificado"")
@@ -773,7 +773,7 @@ update	adempiere.c_country set hasparish = 'Y' ;
 
 -- Elimina la tabla c_country2 
 -- DROP TABLE ""adempiere"".""c_country2"" ;",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),150,SQL,,,,,,,,,Postgres,"-- Data for the `adempiere.c_community` table  (Records 1 - 255) 
+*,AMERPSOFT Editor 6.2 - Step 2,150,SQL,,,,,,,,,Postgres,"-- Data for the `adempiere.c_community` table  (Records 1 - 255) 
 -- UNA COMMUNIDAD POR CADA PAIS DEL RESTO DEL MUNDO PARA MANTENER CONSISTENCIA 
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -810,7 +810,7 @@ INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"",
 VALUES (100286, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2010-12-18 12:46:11', 0, 'Community Russian Federation', 'Russian Federation', 286, 'Y');
 
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),160,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,160,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100288, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Saint Helena', 'Saint Helena', 288, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -844,7 +844,7 @@ INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"",
 VALUES (100303, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Solomon Islands', 'Solomon Islands', 303, 'Y');
 
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),170,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,170,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100305, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community South Africa', 'South Africa', 305, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -880,7 +880,7 @@ VALUES (100310, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100311, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Svalbard And Jan Mayen', 'Svalbard And Jan Mayen', 311, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),180,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,180,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100312, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Swaziland', 'Swaziland', 312, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -916,7 +916,7 @@ VALUES (100166, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100169, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Dominica', 'Dominica', 169, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),190,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,190,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100171, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Ecuador', 'Ecuador', 171, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -952,7 +952,7 @@ VALUES (100200, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100202, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Heard Island And Mcdonald Islands', 'Heard Island And Mcdonald Islands', 202, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),200,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,200,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100327, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Turkmenistan', 'Turkmenistan', 327, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -989,7 +989,7 @@ INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"",
 VALUES (100348, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Zimbabwe', 'Zimbabwe', 348, 'Y');
 
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),210,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,210,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100110, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Afghanistan', 'Afghanistan', 110, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1025,7 +1025,7 @@ VALUES (100127, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100128, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Barbados', 'Barbados', 128, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),220,SQL,,,,,,,,,Postgres,"
+*,AMERPSOFT Editor 6.2 - Step 2,220,SQL,,,,,,,,,Postgres,"
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100131, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Belize', 'Belize', 131, 'Y');
 
@@ -1062,7 +1062,7 @@ VALUES (100144, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100146, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Cameroon', 'Cameroon', 146, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),230,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,230,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100149, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Cayman Islands', 'Cayman Islands', 149, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1098,7 +1098,7 @@ VALUES (100267, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100268, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Northern Mariana Islands', 'Northern Mariana Islands', 268, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),240,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,240,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100270, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Oman', 'Oman', 270, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1134,7 +1134,7 @@ VALUES (100221, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100223, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Kuwait', 'Kuwait', 223, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),250,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,250,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100224, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Kyrgyzstan', 'Kyrgyzstan', 224, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1170,7 +1170,7 @@ VALUES (100279, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100280, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Poland', 'Poland', 280, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),260,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,260,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100281, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Portugal', 'Portugal', 281, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1206,7 +1206,7 @@ VALUES (100168, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100170, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Dominican Republic', 'Dominican Republic', 170, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),270,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,270,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100172, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Egypt', 'Egypt', 172, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1242,7 +1242,7 @@ VALUES (100190, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100191, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Gibraltar', 'Gibraltar', 191, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),280,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,280,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100193, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Greenland', 'Greenland', 193, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1275,7 +1275,7 @@ VALUES (100237, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100240, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Mali', 'Mali', 240, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),290,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,290,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100241, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2008-02-25 13:28:46', 0, 'Community Malta', 'Malta', 241, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1311,7 +1311,7 @@ VALUES (100253, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100256, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Namibia', 'Namibia', 256, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),300,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,300,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100260, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Netherlands Antilles', 'Netherlands Antilles', 260, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1347,7 +1347,7 @@ VALUES (100102, 0, 0, 'Y', '2000-11-28 17:23:06', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100319, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Thailand', 'Thailand', 319, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),310,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,310,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100345, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Yemen', 'Yemen', 345, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1383,7 +1383,7 @@ VALUES (100137, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100140, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community British Indian Ocean Territory', 'British Indian Ocean Territory', 140, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),320,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,320,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100350, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Montenegro', 'Montenegro', 350, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1419,7 +1419,7 @@ VALUES (100216, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2006-02-23 16:16:56', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100220, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Kiribati', 'Kiribati', 220, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),330,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,330,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100203, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Holy See (vatican City State)', 'Holy See (vatican City State)', 203, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1455,7 +1455,7 @@ VALUES (100328, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, '
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100330, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Uganda', 'Uganda', 330, 'Y');
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),340,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,340,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100331, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Ukraine', 'Ukraine', 331, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1489,7 +1489,7 @@ INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"",
 VALUES (100247, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2005-05-07 20:51:55', 0, 'Community Mexico', 'Mexico', 247, 'Y');
 
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),350,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
+*,AMERPSOFT Editor 6.2 - Step 2,350,SQL,,,,,,,,,Postgres,"INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
 VALUES (100250, 0, 0, 'Y', '2003-03-09 00:00:00', 0, '2000-01-02 00:00:00', 0, 'Community Monaco', 'Monaco', 250, 'Y');
 
 INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"", ""ad_org_id"", ""isactive"", ""created"", ""createdby"", ""updated"", ""updatedby"", ""name"", ""description"", ""c_country_id"", ""isdefault"")
@@ -1517,7 +1517,7 @@ INSERT INTO ""adempiere"".""c_community"" (""c_community_id"", ""ad_client_id"",
 VALUES (100101, 0, 0, 'Y', '1999-12-20 09:56:40', 0, '2010-04-19 17:30:18', 0, 'Community Germany - Deutschland', NULL, 101, 'Y');
 
 ",,,,,,,,System Administrator,,,,,,,,,,Product Info
-*,AMERPSOFT Editor 6.2 - Step 2 (1.0.1),360,SQL,,,,,,,,,Postgres,"-- Reemplaza el codigo de la region por defecto de todos los paises
+*,AMERPSOFT Editor 6.2 - Step 2,360,SQL,,,,,,,,,Postgres,"-- Reemplaza el codigo de la region por defecto de todos los paises
 update  adempiere.c_region
 set c_community_id=(
 select adempiere.c_community.c_community_id 

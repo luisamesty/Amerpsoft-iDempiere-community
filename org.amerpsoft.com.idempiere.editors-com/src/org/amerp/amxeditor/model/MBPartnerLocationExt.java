@@ -1,6 +1,3 @@
-
-
-
 /******************************************************************************
  * Product: Adempiere ERP & CRM Smart Business Solution                       *
  * Copyright (C) 1999-2006 ComPiere, Inc. All Rights Reserved.                *
@@ -36,15 +33,10 @@ import org.compiere.model.*;
 
 
 /**
- * Partner Location Model
+ * Partner Location Extended Model
  * 
- * @author Jorg Janke
- * @version $Id: MBPartnerLocation.java,v 1.3 2006/07/30 00:51:03 jjanke Exp $
- * @author Teo Sarca, www.arhipac.ro <li>FR [ 2788465 ]
- *         MBPartnerLocation.getForBPartner method add trxName
- *         https://sourceforge
- *         .net/tracker/index.php?func=detail&aid=2788465&group_id
- *         =176962&atid=879335
+ * @author Luis Amesty
+ *
  */
 public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	/**
@@ -120,7 +112,9 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 		this(bp.getCtx(), 0, bp.get_TrxName());
 		setClientOrg(bp);
 		// may (still) be 0
-		set_ValueNoCheck("C_BPartner_ID", new Integer(bp.getC_BPartner_ID()));
+		// set_ValueNoCheck("C_BPartner_ID", new Integer(bp.getC_BPartner_ID()));
+		int C_BPartner_ID = Integer.valueOf(bp.getC_BPartner_ID());
+		set_ValueNoCheck("C_BPartner_ID", C_BPartner_ID);
 	} // MBPartner_Location
 
 	/**
@@ -150,8 +144,12 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 * @return location
 	 */
 	public MLocationExt getLocation(boolean requery) {
-		if (requery || m_location == null)
-			m_location = (MLocationExt) MLocationExt.get(getCtx(), getC_Location_ID(), get_TrxName());
+		if (requery || m_location == null) {
+//			m_location = (MLocationExt) MLocationExt.get(getCtx(), getC_Location_ID(), get_TrxName());
+			int C_Location_ID = 0;
+			C_Location_ID = (int) getC_Location_ID();
+			m_location = (MLocationExt) MLocationExt.get(getCtx(), C_Location_ID, get_TrxName());
+		}
 		return m_location;
 	} // getLocation
 
@@ -176,8 +174,11 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 * @return save
 	 */
 	protected boolean beforeSave(boolean newRecord) {
-		if (getC_Location_ID() == 0)
+		
+		if (this.get_ID()== 0)
 			return false;
+//		if (getC_Location_ID() == 0)
+//			return false;
 
 		// Set New Name
 		if (".".equals(getName())) {
