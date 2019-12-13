@@ -3,12 +3,12 @@ Automatic-Module-Name: org.amerpsoft.editors
 Bundle-ManifestVersion: 2
 Bundle-Name: Extended Location Editor
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true
-Bundle-Version: 6.2.0.qualifier
-Require-Bundle: org.adempiere.base;bundle-version="6.2.0",
- org.adempiere.ui;bundle-version="6.2.0",
- org.idempiere.zk.extra;bundle-version="6.2.0",
- org.adempiere.plugin.utils;bundle-version="6.2.0",
- org.adempiere.ui.zk;bundle-version="6.2.0",
+Bundle-Version: 7.1.0.qualifier
+Require-Bundle: org.adempiere.base;bundle-version="7.1.0",
+ org.adempiere.ui;bundle-version="7.1.0",
+ org.idempiere.zk.extra;bundle-version="7.1.0",
+ org.adempiere.plugin.utils;bundle-version="7.1.0",
+ org.adempiere.ui.zk;bundle-version="7.1.0",
  zcommon;bundle-version="8.6.0",
  zel;bundle-version="8.6.0",
  zhtml;bundle-version="8.6.0",

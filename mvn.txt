@@ -1,361 +1,335 @@
-[INFO] Scanning for projects...
-[INFO] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.feature:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/pom.xml
-[INFO] Adding repository file:///Volumes/Datos/Adempiere/iDempiere6.2srcmac/myexperiment/org.idempiere.p2/target/repository
-[INFO] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.feature:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/pom.xml
-[INFO] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.feature:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/pom.xml
-[INFO] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.editors-com:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/pom.xml
-[INFO] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.editors-com:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/pom.xml
-[INFO] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.editors-com:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/pom.xml
-[INFO] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.themes-com:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/pom.xml
-[INFO] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.themes-com:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/pom.xml
-[INFO] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.themes-com:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/pom.xml
-[INFO] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.lco.withholding:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/pom.xml
-[INFO] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.lco.withholding:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/pom.xml
-[INFO] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.lco.withholding:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/pom.xml
-[INFO] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.financial:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/pom.xml
-[INFO] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.financial:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/pom.xml
-[INFO] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.financial:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/pom.xml
-[INFO] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.p2.site:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/pom.xml
-[INFO] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.p2.site:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/pom.xml
-[INFO] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.p2.site:6.2.0-SNAPSHOT @ /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/pom.xml
-[INFO] ------------------------------------------------------------------------
-[INFO] Reactor Build Order:
-[INFO] 
-[INFO] org.amerpsoft.com.idempiere.editors-com                 [eclipse-plugin]
-[INFO] org.amerpsoft.com.idempiere.themes-com                  [eclipse-plugin]
-[INFO] org.amerpsoft.com.idempiere.feature                    [eclipse-feature]
-[INFO] org.amerpsoft.com.idempiere.lco.withholding             [eclipse-plugin]
-[INFO] org.amerpsoft.com.idempiere.financial                   [eclipse-plugin]
-[INFO] org.amerpsoft.com.idempiere.p2.site                 [eclipse-repository]
-[INFO] org.amerpsoft.com.idempiere.p2.targetplatform [eclipse-target-definition]
-[INFO] amerpsoft-idempiere-community                                      [pom]
-[INFO] 
-[INFO] -------< org.idempiere:org.amerpsoft.com.idempiere.editors-com >--------
-[INFO] Building org.amerpsoft.com.idempiere.editors-com 6.2.0-SNAPSHOT    [1/8]
-[INFO] ---------------------------[ eclipse-plugin ]---------------------------
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:build-qualifier (default-build-qualifier) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] The project's OSGi version is 6.2.0.201910081013
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-id (default-validate-id) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-version (default-validate-version) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] Deleting /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/main/resources
-[INFO] 
-[INFO] --- tycho-compiler-plugin:1.4.0:compile (default-compile) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] Compiling 35 source files to /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target/classes
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/ModelFactory.java:[10] 
-	import org.compiere.model.MCountry;
-	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The import org.compiere.model.MCountry is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/DisplayTypeFactory.java:[17] 
-	import java.util.List;
-	       ^^^^^^^^^^^^^^
-The import java.util.List is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/DisplayTypeFactory.java:[20] 
-	import org.adempiere.base.Service;
-	       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-The import org.adempiere.base.Service is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/EventFactory.java:[41] 
-	MLocationExt pr = (MLocationExt)po;
-	             ^^
-The value of the local variable pr is not used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MLocationLookupExt.java:[34] 
-	import org.adempiere.webui.editor.WLocationEditor;
-	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The import org.adempiere.webui.editor.WLocationEditor is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MCountryExt.java:[108] 
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.feature:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/pom.xml
+[[1;34mINFO[m] Adding repository file:///home/luisamesty/sources/myexperiment/org.idempiere.p2/target/repository
+[[1;34mINFO[m] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.feature:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/pom.xml
+[[1;34mINFO[m] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.feature:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/pom.xml
+[[1;34mINFO[m] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.editors-com:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/pom.xml
+[[1;34mINFO[m] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.editors-com:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/pom.xml
+[[1;34mINFO[m] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.editors-com:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/pom.xml
+[[1;34mINFO[m] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.themes-com:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/pom.xml
+[[1;34mINFO[m] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.themes-com:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/pom.xml
+[[1;34mINFO[m] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.themes-com:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/pom.xml
+[[1;34mINFO[m] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.lco.withholding:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/pom.xml
+[[1;34mINFO[m] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.lco.withholding:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/pom.xml
+[[1;34mINFO[m] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.lco.withholding:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/pom.xml
+[[1;34mINFO[m] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.financial:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/pom.xml
+[[1;34mINFO[m] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.financial:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/pom.xml
+[[1;34mINFO[m] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.financial:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/pom.xml
+[[1;34mINFO[m] Computing target platform for MavenProject: org.idempiere:org.amerpsoft.com.idempiere.p2.site:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/pom.xml
+[[1;34mINFO[m] Resolving dependencies of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.p2.site:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/pom.xml
+[[1;34mINFO[m] Resolving class path of MavenProject: org.idempiere:org.amerpsoft.com.idempiere.p2.site:7.1.0-SNAPSHOT @ /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/pom.xml
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1mReactor Build Order:[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.editors-com                 [eclipse-plugin]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.themes-com                  [eclipse-plugin]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.lco.withholding             [eclipse-plugin]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.financial                   [eclipse-plugin]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.feature                    [eclipse-feature]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.p2.site                 [eclipse-repository]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.p2.targetplatform [eclipse-target-definition]
+[[1;34mINFO[m] amerpsoft-idempiere-community                                      [pom]
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.idempiere:org.amerpsoft.com.idempiere.editors-com[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.editors-com 7.1.0-SNAPSHOT    [1/8][m
+[[1;34mINFO[m] [1m---------------------------[ eclipse-plugin ]---------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:build-qualifier[m [1m(default-build-qualifier)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] The project's OSGi version is 7.1.0.201912140240
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-id[m [1m(default-validate-id)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-version[m [1m(default-validate-version)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:resources[m [1m(default-resources)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-compiler-plugin:1.5.0:compile[m [1m(default-compile)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] Compiling 35 source files to /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target/classes
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MCountryExt.java:[108] 
 	private static void loadAllCountries (Properties ctx)
 	                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The method loadAllCountries(Properties) from the type MCountryExt is never used locally
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MCommunity.java:[13] 
-	public class MCommunity extends X_C_Community{
-	             ^^^^^^^^^^
-The serializable class MCommunity does not declare a static final serialVersionUID field of type long
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MAddressTransactionExt.java:[33] 
-	import org.compiere.model.MAddressValidation;
-	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The import org.compiere.model.MAddressValidation is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MLocationExt.java:[74] 
-	Integer key = new Integer (C_Location_ID);
-	                  ^^^^^^^^^^^^^^^^^^^^^^^
-The constructor Integer(int) is deprecated since version 9
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtDialog.java:[110] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtDialog.java:[110] 
 	private int         s_oldParish_ID = 0;
 	                    ^^^^^^^^^^^^^^
 The value of the field WLocationExtDialog.s_oldParish_ID is not used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MBPartnerLocationExt.java:[123] 
-	set_ValueNoCheck("C_BPartner_ID", new Integer(bp.getC_BPartner_ID()));
-	                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The constructor Integer(int) is deprecated since version 9
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MMunicipality.java:[101] 
-	@SuppressWarnings("unchecked")
-	                  ^^^^^^^^^^^
-Unnecessary @SuppressWarnings("unchecked")
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MMunicipality.java:[118] 
-	@SuppressWarnings("unchecked")
-	                  ^^^^^^^^^^^
-Unnecessary @SuppressWarnings("unchecked")
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MMunicipality.java:[124] 
-	Iterator it = s_Municipalitys.values().iterator();
-	^^^^^^^^
-Iterator is a raw type. References to generic type Iterator<E> should be parameterized
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[26] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[26] 
 	import org.adempiere.webui.window.WLocationDialog;
 	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The import org.adempiere.webui.window.WLocationDialog is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[27] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[27] 
 	import org.amerp.amxeditor.factory.DisplayTypeFactory;
 	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The import org.amerp.amxeditor.factory.DisplayTypeFactory is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[34] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[34] 
 	import org.zkoss.zk.ui.Component;
 	       ^^^^^^^^^^^^^^^^^^^^^^^^^
 The import org.zkoss.zk.ui.Component is never used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[49] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[49] 
 	private MLocationLookupExt     m_Location;
 	                               ^^^^^^^^^^
 The value of the field WLocationExtEditor.m_Location is not used
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[101] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[101] 
 	return new Integer(m_value.getC_Location_ID());
 	           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The constructor Integer(int) is deprecated since version 9
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[202] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/editor/WLocationExtEditor.java:[202] 
 	Integer ii = new Integer(C_Location_ID);
 	                 ^^^^^^^^^^^^^^^^^^^^^^
 The constructor Integer(int) is deprecated since version 9
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MParish.java:[104] 
-	@SuppressWarnings("unchecked")
-	                  ^^^^^^^^^^^
-Unnecessary @SuppressWarnings("unchecked")
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MParish.java:[121] 
-	@SuppressWarnings("unchecked")
-	                  ^^^^^^^^^^^
-Unnecessary @SuppressWarnings("unchecked")
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MParish.java:[127] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MMunicipality.java:[125] 
+	Iterator it = s_Municipalitys.values().iterator();
+	^^^^^^^^
+Iterator is a raw type. References to generic type Iterator<E> should be parameterized
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MParish.java:[127] 
 	Iterator it = s_Parishs.values().iterator();
 	^^^^^^^^
 Iterator is a raw type. References to generic type Iterator<E> should be parameterized
-[WARNING] /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/EditorFactory.java:[16] 
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/ModelFactory.java:[10] 
+	import org.compiere.model.MCountry;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.compiere.model.MCountry is never used
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/EventFactory.java:[41] 
+	MLocationExt pr = (MLocationExt)po;
+	             ^^
+The value of the local variable pr is not used
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MCommunity.java:[13] 
+	public class MCommunity extends X_C_Community{
+	             ^^^^^^^^^^
+The serializable class MCommunity does not declare a static final serialVersionUID field of type long
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/model/MLocationLookupExt.java:[34] 
 	import org.adempiere.webui.editor.WLocationEditor;
 	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The import org.adempiere.webui.editor.WLocationEditor is never used
-24 problems (24 warnings)
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/test/resources
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target/org.amerpsoft.com.idempiere.editors-com-6.2.0-SNAPSHOT-sources.jar
-[INFO] 
-[INFO] --- target-platform-configuration:1.4.0:target-platform (default-target-platform) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:package-plugin (default-package-plugin) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target/org.amerpsoft.com.idempiere.editors-com-6.2.0-SNAPSHOT.jar
-[INFO] 
-[INFO] --- tycho-p2-plugin:1.4.0:p2-metadata-default (default-p2-metadata-default) @ org.amerpsoft.com.idempiere.editors-com ---
-[INFO] 
-[INFO] --------< org.idempiere:org.amerpsoft.com.idempiere.themes-com >--------
-[INFO] Building org.amerpsoft.com.idempiere.themes-com 6.2.0-SNAPSHOT     [2/8]
-[INFO] ---------------------------[ eclipse-plugin ]---------------------------
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:build-qualifier (default-build-qualifier) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] The project's OSGi version is 6.2.0.201910081013
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-id (default-validate-id) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-version (default-validate-version) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] Deleting /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/src/main/resources
-[INFO] 
-[INFO] --- tycho-compiler-plugin:1.4.0:compile (default-compile) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] Compiling 1 source file to /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/src/test/resources
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/org.amerpsoft.com.idempiere.themes-com-6.2.0-SNAPSHOT-sources.jar
-[INFO] 
-[INFO] --- target-platform-configuration:1.4.0:target-platform (default-target-platform) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:package-plugin (default-package-plugin) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/org.amerpsoft.com.idempiere.themes-com-6.2.0-SNAPSHOT.jar
-[INFO] 
-[INFO] --- tycho-p2-plugin:1.4.0:p2-metadata-default (default-p2-metadata-default) @ org.amerpsoft.com.idempiere.themes-com ---
-[INFO] 
-[INFO] ---------< org.idempiere:org.amerpsoft.com.idempiere.feature >----------
-[INFO] Building org.amerpsoft.com.idempiere.feature 6.2.0-SNAPSHOT        [3/8]
-[INFO] --------------------------[ eclipse-feature ]---------------------------
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] The project's OSGi version is 6.2.0.201910081013
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-id (default-validate-id) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-version (default-validate-version) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] Deleting /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/target
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] 
-[INFO] --- target-platform-configuration:1.4.0:target-platform (default-target-platform) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:package-feature (default-package-feature) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/target/org.amerpsoft.com.idempiere.feature-6.2.0-SNAPSHOT.jar
-[INFO] 
-[INFO] --- tycho-p2-plugin:1.4.0:p2-metadata-default (default-p2-metadata-default) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] 
-[INFO] --- tycho-p2-plugin:1.4.0:feature-p2-metadata (default-feature-p2-metadata) @ org.amerpsoft.com.idempiere.feature ---
-[INFO] 
-[INFO] -----< org.idempiere:org.amerpsoft.com.idempiere.lco.withholding >------
-[INFO] Building org.amerpsoft.com.idempiere.lco.withholding 6.2.0-SNAPSHOT [4/8]
-[INFO] ---------------------------[ eclipse-plugin ]---------------------------
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:build-qualifier (default-build-qualifier) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] The project's OSGi version is 6.2.0.201910081013
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-id (default-validate-id) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-version (default-validate-version) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] Deleting /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/src/main/resources
-[INFO] 
-[INFO] --- tycho-compiler-plugin:1.4.0:compile (default-compile) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] Compiling 38 source files to /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/src/test/resources
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target/org.amerpsoft.com.idempiere.lco.withholding-6.2.0-SNAPSHOT-sources.jar
-[INFO] 
-[INFO] --- target-platform-configuration:1.4.0:target-platform (default-target-platform) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:package-plugin (default-package-plugin) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target/org.amerpsoft.com.idempiere.lco.withholding-6.2.0-SNAPSHOT.jar
-[INFO] 
-[INFO] --- tycho-p2-plugin:1.4.0:p2-metadata-default (default-p2-metadata-default) @ org.amerpsoft.com.idempiere.lco.withholding ---
-[INFO] 
-[INFO] --------< org.idempiere:org.amerpsoft.com.idempiere.financial >---------
-[INFO] Building org.amerpsoft.com.idempiere.financial 6.2.0-SNAPSHOT      [5/8]
-[INFO] ---------------------------[ eclipse-plugin ]---------------------------
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:build-qualifier (default-build-qualifier) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] The project's OSGi version is 6.2.0.201910081013
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-id (default-validate-id) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:validate-version (default-validate-version) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] Deleting /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/src/main/resources
-[INFO] 
-[INFO] --- tycho-compiler-plugin:1.4.0:compile (default-compile) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] Compiling 26 source files to /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target/classes
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/src/test/resources
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target/org.amerpsoft.com.idempiere.financial-6.2.0-SNAPSHOT-sources.jar
-[INFO] 
-[INFO] --- target-platform-configuration:1.4.0:target-platform (default-target-platform) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:package-plugin (default-package-plugin) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] Building jar: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target/org.amerpsoft.com.idempiere.financial-6.2.0-SNAPSHOT.jar
-[INFO] 
-[INFO] --- tycho-p2-plugin:1.4.0:p2-metadata-default (default-p2-metadata-default) @ org.amerpsoft.com.idempiere.financial ---
-[INFO] 
-[INFO] ---------< org.idempiere:org.amerpsoft.com.idempiere.p2.site >----------
-[INFO] Building org.amerpsoft.com.idempiere.p2.site 6.2.0-SNAPSHOT        [6/8]
-[INFO] -------------------------[ eclipse-repository ]-------------------------
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] The project's OSGi version is 6.2.0.201910081013
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] Deleting /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/target
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (default-clean-1) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/src/main/resources
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- target-platform-configuration:1.4.0:target-platform (default-target-platform) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- tycho-p2-publisher-plugin:1.4.0:publish-osgi-ee (default-publish-osgi-ee) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] Published profile IUs: [a.jre.javase 10.0.0, config.a.jre.javase 10.0.0]
-[INFO] Published profile IUs: [a.jre.javase 11.0.0, config.a.jre.javase 11.0.0]
-[INFO] 
-[INFO] --- tycho-p2-publisher-plugin:1.4.0:publish-products (default-publish-products) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- tycho-p2-publisher-plugin:1.4.0:publish-categories (default-publish-categories) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- tycho-p2-publisher-plugin:1.4.0:attach-artifacts (default-attach-artifacts) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- tycho-p2-repository-plugin:1.4.0:assemble-repository (default-assemble-repository) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] --- tycho-p2-repository-plugin:1.4.0:archive-repository (default-archive-repository) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] Building zip: /Volumes/Datos/Adempiere/iDempiere6.2srcmac/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/target/org.amerpsoft.com.idempiere.p2.site-6.2.0-SNAPSHOT.zip
-[INFO] 
-[INFO] --- tycho-p2-repository-plugin:1.4.0:assemble-repository (build-site-p2) @ org.amerpsoft.com.idempiere.p2.site ---
-[INFO] 
-[INFO] ----< org.idempiere:org.amerpsoft.com.idempiere.p2.targetplatform >-----
-[INFO] Building org.amerpsoft.com.idempiere.p2.targetplatform 6.2.0-SNAPSHOT [7/8]
-[INFO] ---------------------[ eclipse-target-definition ]----------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:2.5:clean (auto-clean) @ org.amerpsoft.com.idempiere.p2.targetplatform ---
-[INFO] 
-[INFO] --- tycho-source-plugin:1.4.0:plugin-source (plugin-source) @ org.amerpsoft.com.idempiere.p2.targetplatform ---
-[INFO] 
-[INFO] --- tycho-packaging-plugin:1.4.0:package-target-definition (default-package-target-definition) @ org.amerpsoft.com.idempiere.p2.targetplatform ---
-[INFO] 
-[INFO] ------------< org.idempiere:amerpsoft-idempiere-community >-------------
-[INFO] Building amerpsoft-idempiere-community 6.2.0-SNAPSHOT              [8/8]
-[INFO] --------------------------------[ pom ]---------------------------------
-[INFO] ------------------------------------------------------------------------
-[INFO] Reactor Summary for amerpsoft-idempiere-community 6.2.0-SNAPSHOT:
-[INFO] 
-[INFO] org.amerpsoft.com.idempiere.editors-com ............ SUCCESS [  4.494 s]
-[INFO] org.amerpsoft.com.idempiere.themes-com ............. SUCCESS [  0.802 s]
-[INFO] org.amerpsoft.com.idempiere.feature ................ SUCCESS [  0.194 s]
-[INFO] org.amerpsoft.com.idempiere.lco.withholding ........ SUCCESS [  1.272 s]
-[INFO] org.amerpsoft.com.idempiere.financial .............. SUCCESS [  1.141 s]
-[INFO] org.amerpsoft.com.idempiere.p2.site ................ SUCCESS [  3.718 s]
-[INFO] org.amerpsoft.com.idempiere.p2.targetplatform ...... SUCCESS [  0.013 s]
-[INFO] amerpsoft-idempiere-community ...................... SUCCESS [  0.001 s]
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  23.445 s
-[INFO] Finished at: 2019-10-08T12:13:47+02:00
-[INFO] ------------------------------------------------------------------------
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/EditorFactory.java:[16] 
+	import org.adempiere.webui.editor.WLocationEditor;
+	       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The import org.adempiere.webui.editor.WLocationEditor is never used
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/EditorFactory.java:[22] 
+	import java.util.logging.Level;
+	       ^^^^^^^^^^^^^^^^^^^^^^^
+The import java.util.logging.Level is never used
+[[1;33mWARNING[m] /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/org/amerp/amxeditor/factory/DisplayTypeFactory.java:[17] 
+	import java.util.logging.Level;
+	       ^^^^^^^^^^^^^^^^^^^^^^^
+The import java.util.logging.Level is never used
+17 problems (17 warnings)
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:testResources[m [1m(default-testResources)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target/org.amerpsoft.com.idempiere.editors-com-7.1.0-SNAPSHOT-sources.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtarget-platform-configuration:1.5.0:target-platform[m [1m(default-target-platform)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:package-plugin[m [1m(default-package-plugin)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.editors-com/target/org.amerpsoft.com.idempiere.editors-com-7.1.0-SNAPSHOT.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-plugin:1.5.0:p2-metadata-default[m [1m(default-p2-metadata-default)[m @ [36morg.amerpsoft.com.idempiere.editors-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.idempiere:org.amerpsoft.com.idempiere.themes-com[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.themes-com 7.1.0-SNAPSHOT     [2/8][m
+[[1;34mINFO[m] [1m---------------------------[ eclipse-plugin ]---------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:build-qualifier[m [1m(default-build-qualifier)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] The project's OSGi version is 7.1.0.201912140240
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-id[m [1m(default-validate-id)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-version[m [1m(default-validate-version)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:resources[m [1m(default-resources)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-compiler-plugin:1.5.0:compile[m [1m(default-compile)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] Compiling 1 source file to /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:testResources[m [1m(default-testResources)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/org.amerpsoft.com.idempiere.themes-com-7.1.0-SNAPSHOT-sources.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtarget-platform-configuration:1.5.0:target-platform[m [1m(default-target-platform)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:package-plugin[m [1m(default-package-plugin)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/org.amerpsoft.com.idempiere.themes-com-7.1.0-SNAPSHOT.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-plugin:1.5.0:p2-metadata-default[m [1m(default-p2-metadata-default)[m @ [36morg.amerpsoft.com.idempiere.themes-com[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.idempiere:org.amerpsoft.com.idempiere.lco.withholding[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.lco.withholding 7.1.0-SNAPSHOT [3/8][m
+[[1;34mINFO[m] [1m---------------------------[ eclipse-plugin ]---------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:build-qualifier[m [1m(default-build-qualifier)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] The project's OSGi version is 7.1.0.201912140240
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-id[m [1m(default-validate-id)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-version[m [1m(default-validate-version)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:resources[m [1m(default-resources)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-compiler-plugin:1.5.0:compile[m [1m(default-compile)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] Compiling 38 source files to /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:testResources[m [1m(default-testResources)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target/org.amerpsoft.com.idempiere.lco.withholding-7.1.0-SNAPSHOT-sources.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtarget-platform-configuration:1.5.0:target-platform[m [1m(default-target-platform)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:package-plugin[m [1m(default-package-plugin)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.lco.withholding/target/org.amerpsoft.com.idempiere.lco.withholding-7.1.0-SNAPSHOT.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-plugin:1.5.0:p2-metadata-default[m [1m(default-p2-metadata-default)[m @ [36morg.amerpsoft.com.idempiere.lco.withholding[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.idempiere:org.amerpsoft.com.idempiere.financial[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.financial 7.1.0-SNAPSHOT      [4/8][m
+[[1;34mINFO[m] [1m---------------------------[ eclipse-plugin ]---------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:build-qualifier[m [1m(default-build-qualifier)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] The project's OSGi version is 7.1.0.201912140240
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-id[m [1m(default-validate-id)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-version[m [1m(default-validate-version)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:resources[m [1m(default-resources)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-compiler-plugin:1.5.0:compile[m [1m(default-compile)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] Compiling 24 source files to /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:testResources[m [1m(default-testResources)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target/org.amerpsoft.com.idempiere.financial-7.1.0-SNAPSHOT-sources.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtarget-platform-configuration:1.5.0:target-platform[m [1m(default-target-platform)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:package-plugin[m [1m(default-package-plugin)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.financial/target/org.amerpsoft.com.idempiere.financial-7.1.0-SNAPSHOT.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-plugin:1.5.0:p2-metadata-default[m [1m(default-p2-metadata-default)[m @ [36morg.amerpsoft.com.idempiere.financial[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.idempiere:org.amerpsoft.com.idempiere.feature[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.feature 7.1.0-SNAPSHOT        [5/8][m
+[[1;34mINFO[m] [1m--------------------------[ eclipse-feature ]---------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:build-qualifier-aggregator[m [1m(default-build-qualifier-aggregator)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] The project's OSGi version is 7.1.0.201912140240
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-id[m [1m(default-validate-id)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:validate-version[m [1m(default-validate-version)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtarget-platform-configuration:1.5.0:target-platform[m [1m(default-target-platform)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:package-feature[m [1m(default-package-feature)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.feature/target/org.amerpsoft.com.idempiere.feature-7.1.0-SNAPSHOT.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-plugin:1.5.0:p2-metadata-default[m [1m(default-p2-metadata-default)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-plugin:1.5.0:feature-p2-metadata[m [1m(default-feature-p2-metadata)[m @ [36morg.amerpsoft.com.idempiere.feature[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.idempiere:org.amerpsoft.com.idempiere.p2.site[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.p2.site 7.1.0-SNAPSHOT        [6/8][m
+[[1;34mINFO[m] [1m-------------------------[ eclipse-repository ]-------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:build-qualifier-aggregator[m [1m(default-build-qualifier-aggregator)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] The project's OSGi version is 7.1.0.201912140240
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(default-clean-1)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.4.3:resources[m [1m(default-resources)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtarget-platform-configuration:1.5.0:target-platform[m [1m(default-target-platform)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-publisher-plugin:1.5.0:publish-osgi-ee[m [1m(default-publish-osgi-ee)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] Published profile IUs: [a.jre.javase 10.0.0, config.a.jre.javase 10.0.0]
+[[1;34mINFO[m] Published profile IUs: [a.jre.javase 11.0.0, config.a.jre.javase 11.0.0]
+[[1;34mINFO[m] Published profile IUs: [a.jre.javase 12.0.0, config.a.jre.javase 12.0.0]
+[[1;34mINFO[m] Published profile IUs: [a.jre.javase 13.0.0, config.a.jre.javase 13.0.0]
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-publisher-plugin:1.5.0:publish-products[m [1m(default-publish-products)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-publisher-plugin:1.5.0:publish-categories[m [1m(default-publish-categories)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-publisher-plugin:1.5.0:attach-artifacts[m [1m(default-attach-artifacts)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-repository-plugin:1.5.0:assemble-repository[m [1m(default-assemble-repository)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-repository-plugin:1.5.0:archive-repository[m [1m(default-archive-repository)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] Building zip: /home/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.p2.site/target/org.amerpsoft.com.idempiere.p2.site-7.1.0-SNAPSHOT.zip
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-p2-repository-plugin:1.5.0:assemble-repository[m [1m(build-site-p2)[m @ [36morg.amerpsoft.com.idempiere.p2.site[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----< [0;36morg.idempiere:org.amerpsoft.com.idempiere.p2.targetplatform[0;1m >-----[m
+[[1;34mINFO[m] [1mBuilding org.amerpsoft.com.idempiere.p2.targetplatform 7.1.0-SNAPSHOT [7/8][m
+[[1;34mINFO[m] [1m---------------------[ eclipse-target-definition ]----------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(auto-clean)[m @ [36morg.amerpsoft.com.idempiere.p2.targetplatform[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-source-plugin:1.5.0:plugin-source[m [1m(plugin-source)[m @ [36morg.amerpsoft.com.idempiere.p2.targetplatform[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mtycho-packaging-plugin:1.5.0:package-target-definition[m [1m(default-package-target-definition)[m @ [36morg.amerpsoft.com.idempiere.p2.targetplatform[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.idempiere:amerpsoft-idempiere-community[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding amerpsoft-idempiere-community 7.1.0-SNAPSHOT              [8/8][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1mReactor Summary for amerpsoft-idempiere-community 7.1.0-SNAPSHOT:[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.editors-com ............ [1;32mSUCCESS[m [  4.381 s]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.themes-com ............. [1;32mSUCCESS[m [  3.690 s]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.lco.withholding ........ [1;32mSUCCESS[m [  1.228 s]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.financial .............. [1;32mSUCCESS[m [  1.482 s]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.feature ................ [1;32mSUCCESS[m [  0.456 s]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.p2.site ................ [1;32mSUCCESS[m [  4.157 s]
+[[1;34mINFO[m] org.amerpsoft.com.idempiere.p2.targetplatform ...... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] amerpsoft-idempiere-community ...................... [1;32mSUCCESS[m [  0.000 s]
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  24.069 s
+[[1;34mINFO[m] Finished at: 2019-12-14T02:40:38Z
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
