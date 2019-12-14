@@ -1,0 +1,15 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
+*,AMERPSOFT Editor - Step 1,10,ET,AMERP,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,20,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,LocationExtended,,Product Info
+*,AMERPSOFT Editor - Step 1,25,T,,,,,,,,Country,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,30,MSG,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,Municipality,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,40,MSG,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,Parish,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,50,MSG,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,Community,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,70,T,,,,,,,,Community,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,80,T,,,,,,,,C_Municipality,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,90,T,,,,,,,,c_Parish,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,100,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Municipality,,Product Info
+*,AMERPSOFT Editor - Step 1,110,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Parish_ID,,Product Info
+*,AMERPSOFT Editor - Step 1,120,REF,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,C_Community,,Product Info
+*,AMERPSOFT Editor - Step 1,130,T,,,,,,,,Address,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Editor - Step 1,140,T,,,,,,,,Region,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info

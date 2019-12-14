@@ -1,5 +1,5 @@
 Installation Procedure: 
-1. Pack in ‘AMERPSOFT Themes 5.1.zip’
+1. Pack in ‘AMERPSOFT Themes.zip’
     Sys Config Variables 
-2. Install Jar Plugin using 
-	org.amerpsoft.themes_1.0.0.201807221432.jar
+2. Install Jar Plugin available on p2 site target plugins
+	org.amerpsoft.com.idempiere.themes-com_X.X.0.XXXXXXXXXX.jar

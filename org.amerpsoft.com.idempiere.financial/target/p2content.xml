@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-  <unit id='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912140240' generation='2'>
-    <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,7.1.0.201912140240)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912142214' generation='2'>
+    <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,7.1.0.201912142214)' severity='0'/>
     <properties size='5'>
       <property name='org.eclipse.equinox.p2.name' value='Financial'/>
       <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
@@ -10,9 +10,9 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='4'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912140240'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912140240'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912140240'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912142214'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912142214'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912142214'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -31,19 +31,19 @@
       <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
     </requires>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912140240'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='7.1.0.201912142214'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 7.1.0.201912140240&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 7.1.0.201912142214&#xA;
         </instruction>
       </instructions>
     </touchpointData>
   </unit>
-  <unit id='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912140240' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.financial.source' range='[0.0.0,7.1.0.201912140240)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912142214' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.financial.source' range='[0.0.0,7.1.0.201912142214)' severity='0'/>
     <properties size='9'>
       <property name='df_LT.bundleVendor' value='Amerpsoft'/>
       <property name='df_LT.bundleName' value='Financial Source'/>
@@ -56,9 +56,9 @@
       <property name='maven-classifier' value='sources'/>
     </properties>
     <provides size='5'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912140240'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912140240'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912140240'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912142214'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912142214'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912142214'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -67,13 +67,13 @@
       <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
     </provides>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912140240'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial.source' version='7.1.0.201912142214'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial.source&#xA;Bundle-Version: 7.1.0.201912140240&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial.source&#xA;Bundle-Version: 7.1.0.201912142214&#xA;
         </instruction>
       </instructions>
     </touchpointData>
