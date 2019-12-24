@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Localization Colombia - Withholdings
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singlet
  on:=true
-Bundle-Version: 7.1.0.201912142214
+Bundle-Version: 7.1.0.201912231154
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Bundle-Vendor: GlobalQSS
 Bundle-RequiredExecutionEnvironment: JavaSE-11

@@ -25,7 +25,7 @@ Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisames
     AMERPSOFT Editor - Step 1.zip
     AMERPSOFT Editor - Step 2.zip
     AMERPSOFT Editor - Step 3.zip
-- Packin all thre in order.
+- Packin all three in order.
 Remember to do:
     Role Access Update
     Syncronize Terminology
