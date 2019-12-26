@@ -1,3 +1,5 @@
+* THIS FILE IS NOT COMPLETED
+* FOR FUTURE FEATURE
 INSERT INTO ad_sequence (ad_sequence_id,ad_client_id,ad_org_id,isactive,created,createdby,updated,updatedby,name,description,vformat,isautosequence,incrementno,startno,currentnext,currentnextsys,isaudited,istableid,prefix,suffix,startnewyear,datecolumn,decimalpattern,ad_sequence_uu,startnewmonth,isorglevelsequence,orgcolumn)
 SELECT 1000361,1000000,0,'Y','2016-04-22 15:35:04.312',100,'2019-11-18 09:58:14.737',100,'AP Invoice VAT Withholding Number Multi-Invoice','@DateOrdered<YYYY>@ ','','Y',1,1,1,100,'N','N','@DateDoc<YYYYMM>@','','N','DateAcct','00000000','239c1f1b-d0f0-4e08-a76a-3f2e7e829d6a','N','N','AD_Org_ID'
 WHERE NOT EXISTS (SELECT 1 FROM ad_sequence WHERE  ad_sequence_ID=1000361);

@@ -53,10 +53,31 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
 
 ## <b>Installation Procedure</b>
 
-
-1. <b>Pack in ‘AMERPSOFT Themes.zip’</b>
-    Sys Config Variables 
-    
-2. <b>Install Jar Plugin </b>
+1. <b>Install Jar Plugin </b>
     Available on p2 site target plugins
     org.amerpsoft.com.idempiere.themes-com_X.X.0.XXXXXXXXXX.jar
+
+
+2. <b>Pack in ‘AMERPSOFT Themes.zip’</b>
+
+    Once plugin is running, then Pack-In:
+
+    <b>'AMERPSOFT Themes.zip'</b>
+
+    It contains SysConfig Variables:
+    - ZK_THEME 
+    - ZK_LOGO_LARGE
+    - ZK_LOGO_SMALL
+    - ZK_BROWSER_TITLE
+    - ZK_BROWSER_ICON
+    - ZK_THEME_USE_FONT_ICON_FOR_IMAGE 
+    
+3. <b>IF SOMETHING GO WRONG</b>
+
+    REPLACE AD_Sysconfig Record (AD_SysConfig_ID=200021)
+
+    Name:ZK_THEME
+
+    Value: default
+
+    This will put default Idempiere Standard ZK Theme

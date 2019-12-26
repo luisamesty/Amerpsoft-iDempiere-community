@@ -1,5 +1,5 @@
 
-# <b>AMERP Amerpsoft editors Version 7.1 and Up: </b>
+# <b>Amerpsoft editors Version 7.1 and Up: </b>
 
 ## <b>Installation </b>
 

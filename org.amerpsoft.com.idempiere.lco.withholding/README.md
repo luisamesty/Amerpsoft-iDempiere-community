@@ -54,12 +54,31 @@ Other countries has to bee created.
 - Pack in 'AMERPSOFT LCO Withholding Data.zip'
    * File is located on install directory.
 
-When is completed, you will have:
+### <b>3- Create and Update Document Types</b>
+
+Create Document Types as indicated on Spread Sheet file:
+
+  <b>AMERPSOFT_Document_Types.xls</b>
+
+Also, Some Document Types must be updated as indicated.
+Invoice, Credit Memo and Debit Memo.
+
+### <b>4- Create Sequence for Document Type included</b>
+
+Verify Sequence for Withholding Documents.
+AP Invoice - Withholding Number Multiple Invoice.
+
+
+When is completed, you should have:
 - Tax rates
 - Tax categories.
 - Withholding Categories
-- Withholding Types
-- Invoice Withholding (VAT) window
-- Invoice Withholding (MUNICIPAL) window
+- Withholding Types with Rules and Calc
+- Invoice (Vendor) Window  ** UPDATED **
+- Invoice Withholding (VAT) Window
+- Invoice Withholding (MUNICIPAL) Window
+- Invoice (Customer) Window  ** UPDATED **
+- Invoice (Customer Withholding) Window 
+- Invoice (Customer Return Check)  Window
 
 For more information Contact to [me](luisamesty@gmail.com).
