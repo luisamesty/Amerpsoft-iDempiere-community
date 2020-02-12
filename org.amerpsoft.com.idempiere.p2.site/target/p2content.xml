@@ -978,17 +978,17 @@
       </instructions>
     </touchpointData>
   </unit>
-  <unit id='201912231154.Default' version='1.0.0.7D1-cMOBU67735K577955CA'>
+  <unit id='202002121916.Default' version='1.0.0.7D1-cMOBU67737337575K5E'>
     <properties size='3'>
       <property name='org.eclipse.equinox.p2.name' value='Uncategorized'/>
       <property name='org.eclipse.equinox.p2.description' value='Default category for otherwise uncategorized features'/>
       <property name='org.eclipse.equinox.p2.type.category' value='true'/>
     </properties>
     <provides size='1'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='201912231154.Default' version='1.0.0.7D1-cMOBU67735K577955CA'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='202002121916.Default' version='1.0.0.7D1-cMOBU67737337575K5E'/>
     </provides>
     <requires size='1'>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' range='[7.1.0.201912231154,7.1.0.201912231154]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' range='[7.1.0.202002121916,7.1.0.202002121916]'/>
     </requires>
     <touchpoint id='null' version='0.0.0'/>
   </unit>
