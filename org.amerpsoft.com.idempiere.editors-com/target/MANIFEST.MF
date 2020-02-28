@@ -4,7 +4,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Extended Location Editor
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=
  true
-Bundle-Version: 7.1.0.202002121916
+Bundle-Version: 7.1.0.202002191803
 Require-Bundle: org.adempiere.base;bundle-version="7.1.0",org.adempiere.
  ui;bundle-version="7.1.0",org.idempiere.zk.extra;bundle-version="7.1.0"
  ,org.adempiere.plugin.utils;bundle-version="7.1.0",org.adempiere.ui.zk;

@@ -2,7 +2,7 @@
 <feature
       id="org.amerpsoft.com.idempiere.feature"
       label="Amerpsoft_community_features"
-      version="7.1.0.202002121916">
+      version="7.1.0.202002191803">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -20,22 +20,22 @@
          id="org.amerpsoft.com.idempiere.editors-com"
          download-size="175"
          install-size="502"
-         version="7.1.0.202002121916"
+         version="7.1.0.202002191803"
          unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.themes-com"
          download-size="12286"
          install-size="12483"
-         version="7.1.0.202002121916"
+         version="7.1.0.202002191803"
          fragment="true"
          unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.lco.withholding"
-         download-size="736"
-         install-size="848"
-         version="7.1.0.202002121916"
+         download-size="92"
+         install-size="197"
+         version="7.1.0.202002191803"
          fragment="true"
          unpack="false"/>
 
@@ -43,7 +43,7 @@
          id="org.amerpsoft.com.idempiere.financial"
          download-size="118"
          install-size="258"
-         version="7.1.0.202002121916"
+         version="7.1.0.202002191803"
          fragment="true"
          unpack="false"/>
 
