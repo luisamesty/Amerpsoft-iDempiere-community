@@ -175,8 +175,8 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 */
 	protected boolean beforeSave(boolean newRecord) {
 		
-		if (this.get_ID()== 0)
-			return false;
+//		if (this.get_ID()== 0)
+//			return false;
 //		if (getC_Location_ID() == 0)
 //			return false;
 
