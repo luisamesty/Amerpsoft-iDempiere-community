@@ -653,4 +653,6 @@ adwindow-detailpane-tabpanel .z-grid tbody tr td.z-cell { /*Color border grilla 
 
 <c:include page="fragment/parameter-process.css.dsp" />
 
+<c:include page="fragment/window-size.css.dsp" />
+
 <c:include page="fragment/font-icons.css.dsp" />
