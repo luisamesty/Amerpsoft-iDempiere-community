@@ -41,6 +41,10 @@ Maintainer: User: PabloValdivia
 Developer: Heng Sin Low , Idempiere 6.2 New Features.
 Configuration is simply to set the System Configurator flag ZK_THEME_USE_FONT_ICON_FOR_IMAGE = Y, and then execute a Cache Reset.
 
+* <b>optumTheme:</b>
+Maintainer: Optum-OGS
+[optumTheme](https://github.com/Optum-OGS/iDempiereOptumTheme)
+
 * <b>Updated for idempiere version 7.1</b>
 
 ## <b>Documentation</b>
