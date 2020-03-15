@@ -18,7 +18,7 @@ CREATE OR REPLACE VIEW adempiere.amf_accounts_v AS
  elv0.value AS acctvalue, 
  elv0.name AS acctname, 
  COALESCE(elv0.description, ''::character varying) AS acctdescription, 
- COALESCE(elv0.name2, ''::bpchar) AS acctname2, 
+ COALESCE(elv0.name, ''::bpchar) AS acctname2, 
  elv0.accountsign AS acctsign, 
  elv0.accounttype AS accttype, 
  elv0.isactive AS acctisactive
