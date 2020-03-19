@@ -1,4 +1,4 @@
-﻿-- View: amf_fact_accounts_v
+﻿-- View: amf_fact_accounts_analitic_v
 
 DROP VIEW IF EXISTS amf_fact_accounts_analitic_v;
 
