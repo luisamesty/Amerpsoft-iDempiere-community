@@ -142,43 +142,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.adempiere.base.callout' version='7.1.0.201912050109' singleton='false' generation='2'>
-      <update id='org.adempiere.base.callout' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere Callout'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.base.callout'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.base.callout' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.base.callout' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.compiere.model' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.base.callout' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='3'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.base.callout' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.base.callout&#xA;Bundle-Version: 7.1.0.201912050109
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='groovy' version='2.5.3' singleton='false' generation='2'>
       <update id='groovy' range='[0.0.0,2.5.3)' severity='0'/>
       <properties size='3'>
@@ -1632,58 +1595,81 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.adempiere.ui' version='7.1.0.201912050109' generation='2'>
-      <update id='org.adempiere.ui' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
+    <unit id='org.adempiere.plugin.utils' version='7.1.0.202003231434' singleton='false' generation='2'>
+      <update id='org.adempiere.plugin.utils' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
       <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere UI base'/>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere Plugin Utils'/>
         <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
         <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.ui'/>
+        <property name='maven-artifactId' value='org.adempiere.plugin.utils'/>
         <property name='maven-version' value='7.1.0-SNAPSHOT'/>
       </properties>
-      <provides size='22'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.ui' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.ui' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.compiere.apps' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.apps.form' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.apps.wf' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.grid' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.grid.ed' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.css' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.install' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.minigrid' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.print' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.action' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.anchor' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.border' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.graph' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.graph.layout' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.layout' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.router' version='0.0.0'/>
-        <provided namespace='java.package' name='org.netbeans.api.visual.widget' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.ui' version='7.1.0.201912050109'>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.plugin.utils' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.plugin.utils' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.adempiere.plugin.utils' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.plugin.utils' version='7.1.0.202003231434'>
           <properties size='1'>
             <property name='type' value='osgi.bundle'/>
           </properties>
         </provided>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
-      <requires size='5'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.apache.servicemix.bundles.xerces' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.equinox.app' range='0.0.0'/>
+      <requires size='45'>
+        <required namespace='java.package' name='org.adempiere.base' range='0.0.0'/>
+        <required namespace='java.package' name='org.adempiere.util' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.xerces.dom' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.dom.events' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.dom3.as' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.dtd' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.dtd.models' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.dv' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.dv.dtd' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.dv.util' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.dv.xs' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.io' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.msg' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.validation' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xpath' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xpath.regex' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xs' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xs.identity' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xs.models' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xs.opti' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xs.traversers' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.impl.xs.util' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.jaxp' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.jaxp.datatype' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.jaxp.validation' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.parsers' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.util' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xinclude' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xni' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xni.grammars' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xni.parser' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xpointer' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xs' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xerces.xs.datatypes' range='2.9.0'/>
+        <required namespace='java.package' name='org.apache.xml.serialize' range='2.9.0'/>
+        <required namespace='java.package' name='org.compiere' range='0.0.0'/>
+        <required namespace='java.package' name='org.compiere.db' range='0.0.0'/>
+        <required namespace='java.package' name='org.compiere.model' range='0.0.0'/>
+        <required namespace='java.package' name='org.compiere.process' range='0.0.0'/>
+        <required namespace='java.package' name='org.compiere.util' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.5.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
         <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
         <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.ui' version='7.1.0.201912050109'/>
+        <artifact classifier='osgi.bundle' id='org.adempiere.plugin.utils' version='7.1.0.202003231434'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.ui;singleton:=true&#xA;Bundle-Version: 7.1.0.201912050109
+            Bundle-SymbolicName: org.adempiere.plugin.utils&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -1827,6 +1813,42 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351' singleton='false' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.themes-com' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Idempiere Themes Community version'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'>
+          <properties size='1'>
+            <property name='type' value='osgi.fragment'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='osgi.fragment' name='org.adempiere.ui.zk' version='7.1.0.202003232351'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com&#xA;Bundle-Version: 7.1.0.202003232351&#xA;Fragment-Host: org.adempiere.ui.zk;bundle-version=&quot;7.1.0&quot;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.eclipse.text' version='3.8.0.v20180923-1636' singleton='false' generation='2'>
       <update id='org.eclipse.text' range='[0.0.0,3.8.0.v20180923-1636)' severity='0'/>
       <properties size='8'>
@@ -1875,47 +1897,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.eclipse.text&#xA;Bundle-Version: 3.8.0.v20180923-1636
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.apache.ecs' version='7.1.0.201912050109' singleton='false' generation='2'>
-      <update id='org.apache.ecs' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Apache ECS Library'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.apache.ecs'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='9'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ecs' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.apache.ecs' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.apache.ecs' version='0.0.0'/>
-        <provided namespace='java.package' name='org.apache.ecs.filter' version='0.0.0'/>
-        <provided namespace='java.package' name='org.apache.ecs.storage' version='0.0.0'/>
-        <provided namespace='java.package' name='org.apache.ecs.xhtml' version='0.0.0'/>
-        <provided namespace='java.package' name='org.apache.ecs.xml' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.apache.ecs' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='3'>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.apache.ecs' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.apache.ecs&#xA;Bundle-Version: 7.1.0.201912050109
           </instruction>
         </instructions>
       </touchpointData>
@@ -2091,8 +2072,181 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.idempiere.zk.extra' version='7.1.0.201912050109' singleton='false' generation='2'>
-      <update id='org.idempiere.zk.extra' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
+    <unit id='org.apache.commons.collections' version='3.2.2.v201511171945' singleton='false'>
+      <update id='org.apache.commons.collections' range='[0.0.0,3.2.2.v201511171945)' severity='0'/>
+      <properties size='8'>
+        <property name='df_LT.pluginName' value='Apache Commons Collections'/>
+        <property name='df_LT.providerName' value='Eclipse Orbit'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
+        <property name='iplog.bug_id' value='10386'/>
+        <property name='iplog.contact.name' value='David Williams'/>
+        <property name='iplog.contact.email' value='david_williams@us.ibm.com'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='16'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.commons.collections' version='3.2.2.v201511171945'/>
+        <provided namespace='osgi.bundle' name='org.apache.commons.collections' version='3.2.2.v201511171945'/>
+        <provided namespace='java.package' name='org.apache.commons.collections' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.bag' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.bidimap' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.buffer' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.collection' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.comparators' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.functors' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.iterators' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.keyvalue' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.list' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.map' version='3.2.2'/>
+        <provided namespace='java.package' name='org.apache.commons.collections.set' version='3.2.2'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.commons.collections' version='3.2.2.v201511171945'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.apache.commons.collections&#xA;Bundle-Version: 3.2.2.v201511171945
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202003232351'>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
+        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202003232351'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202003232351'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202003232351'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
+          [Enter License Description here.]
+        </license>
+      </licenses>
+      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
+        [Enter Copyright Description here.]
+      </copyright>
+    </unit>
+    <unit id='org.eclipse.jetty.security' version='9.4.14.v20181114' singleton='false' generation='2'>
+      <update id='org.eclipse.jetty.security' range='[0.0.0,9.4.14.v20181114)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Jetty :: Security'/>
+        <property name='org.eclipse.equinox.p2.description' value='Jetty module for Jetty :: Security'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Eclipse Jetty Project'/>
+        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.eclipse.org/jetty'/>
+      </properties>
+      <provides size='6'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jetty.security' version='9.4.14.v20181114'/>
+        <provided namespace='osgi.bundle' name='org.eclipse.jetty.security' version='9.4.14.v20181114'/>
+        <provided namespace='java.package' name='org.eclipse.jetty.security' version='9.4.14'/>
+        <provided namespace='java.package' name='org.eclipse.jetty.security.authentication' version='9.4.14'/>
+        <provided namespace='osgi.identity' name='org.eclipse.jetty.security' version='9.4.14.v20181114'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='20'>
+        <required namespace='java.package' name='javax.security.auth' range='0.0.0'/>
+        <required namespace='java.package' name='javax.security.auth.callback' range='0.0.0'/>
+        <required namespace='java.package' name='javax.security.auth.login' range='0.0.0'/>
+        <required namespace='java.package' name='javax.servlet' range='[3.1.0,4.0.0)'/>
+        <required namespace='java.package' name='javax.servlet.annotation' range='[3.1.0,4.0.0)'/>
+        <required namespace='java.package' name='javax.servlet.http' range='[3.1.0,4.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.http' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.security' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.security.authentication' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.server' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.server.handler' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.server.session' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.util' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.util.component' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.util.log' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.util.resource' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.eclipse.jetty.util.security' range='[9.4.14,10.0.0)'/>
+        <required namespace='java.package' name='org.ietf.jgss' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=1.8))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=1.8))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.eclipse.jetty.security' version='9.4.14.v20181114'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.eclipse.jetty.security&#xA;Bundle-Version: 9.4.14.v20181114
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.xml.resolver' version='1.2.0.v201005080400' singleton='false'>
+      <update id='org.apache.xml.resolver' range='[0.0.0,1.2.0.v201005080400)' severity='0'/>
+      <properties size='8'>
+        <property name='df_LT.Bundle-Vendor.0' value='Eclipse Orbit'/>
+        <property name='df_LT.Bundle-Name.0' value='Apache XmlResolver'/>
+        <property name='org.eclipse.equinox.p2.name' value='%Bundle-Name.0'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%Bundle-Vendor.0'/>
+        <property name='iplog.bug_id' value='2136'/>
+        <property name='iplog.contact.name' value='David Williams'/>
+        <property name='iplog.contact.email' value='david_williams@us.ibm.com'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='11'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.xml.resolver' version='1.2.0.v201005080400'/>
+        <provided namespace='osgi.bundle' name='org.apache.xml.resolver' version='1.2.0.v201005080400'/>
+        <provided namespace='java.package' name='org.apache.env' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.xml.resolver' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.xml.resolver.apps' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.xml.resolver.etc' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.xml.resolver.helpers' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.xml.resolver.readers' version='1.2.0'/>
+        <provided namespace='java.package' name='org.apache.xml.resolver.tools' version='1.2.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <requires size='1'>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.xml.resolver' version='1.2.0.v201005080400'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.apache.xml.resolver&#xA;Bundle-Version: 1.2.0.v201005080400
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.idempiere.zk.extra' version='7.1.0.202003231434' singleton='false' generation='2'>
+      <update id='org.idempiere.zk.extra' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
       <properties size='5'>
         <property name='org.eclipse.equinox.p2.name' value='extra zk library'/>
         <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
@@ -2101,8 +2255,8 @@
         <property name='maven-version' value='7.1.0-SNAPSHOT'/>
       </properties>
       <provides size='194'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.idempiere.zk.extra' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.idempiere.zk.extra' version='7.1.0.201912050109'/>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.idempiere.zk.extra' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.idempiere.zk.extra' version='7.1.0.202003231434'/>
         <provided namespace='java.package' name='com.google.common.annotations' version='0.0.0'/>
         <provided namespace='java.package' name='com.google.common.base' version='0.0.0'/>
         <provided namespace='java.package' name='com.google.common.cache' version='0.0.0'/>
@@ -2293,7 +2447,7 @@
         <provided namespace='java.package' name='web.js.timeplotz.ext.timeplot.locales.en' version='0.0.0'/>
         <provided namespace='java.package' name='web.js.timeplotz.ext.timeplot.scripts' version='0.0.0'/>
         <provided namespace='java.package' name='web.js.timeplotz.mold' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.idempiere.zk.extra' version='7.1.0.201912050109'>
+        <provided namespace='osgi.identity' name='org.idempiere.zk.extra' version='7.1.0.202003231434'>
           <properties size='1'>
             <property name='type' value='osgi.bundle'/>
           </properties>
@@ -2320,385 +2474,13 @@
         <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.idempiere.zk.extra' version='7.1.0.201912050109'/>
+        <artifact classifier='osgi.bundle' id='org.idempiere.zk.extra' version='7.1.0.202003231434'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-SymbolicName: org.idempiere.zk.extra&#xA;Bundle-Version: 7.1.0.201912050109
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.apache.commons.collections' version='3.2.2.v201511171945' singleton='false'>
-      <update id='org.apache.commons.collections' range='[0.0.0,3.2.2.v201511171945)' severity='0'/>
-      <properties size='8'>
-        <property name='df_LT.pluginName' value='Apache Commons Collections'/>
-        <property name='df_LT.providerName' value='Eclipse Orbit'/>
-        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
-        <property name='org.eclipse.equinox.p2.provider' value='%providerName'/>
-        <property name='iplog.bug_id' value='10386'/>
-        <property name='iplog.contact.name' value='David Williams'/>
-        <property name='iplog.contact.email' value='david_williams@us.ibm.com'/>
-        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
-      </properties>
-      <provides size='16'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.commons.collections' version='3.2.2.v201511171945'/>
-        <provided namespace='osgi.bundle' name='org.apache.commons.collections' version='3.2.2.v201511171945'/>
-        <provided namespace='java.package' name='org.apache.commons.collections' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.bag' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.bidimap' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.buffer' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.collection' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.comparators' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.functors' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.iterators' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.keyvalue' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.list' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.map' version='3.2.2'/>
-        <provided namespace='java.package' name='org.apache.commons.collections.set' version='3.2.2'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.apache.commons.collections' version='3.2.2.v201511171945'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.apache.commons.collections&#xA;Bundle-Version: 3.2.2.v201511171945
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.eclipse.jetty.security' version='9.4.14.v20181114' singleton='false' generation='2'>
-      <update id='org.eclipse.jetty.security' range='[0.0.0,9.4.14.v20181114)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='Jetty :: Security'/>
-        <property name='org.eclipse.equinox.p2.description' value='Jetty module for Jetty :: Security'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Eclipse Jetty Project'/>
-        <property name='org.eclipse.equinox.p2.doc.url' value='http://www.eclipse.org/jetty'/>
-      </properties>
-      <provides size='6'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jetty.security' version='9.4.14.v20181114'/>
-        <provided namespace='osgi.bundle' name='org.eclipse.jetty.security' version='9.4.14.v20181114'/>
-        <provided namespace='java.package' name='org.eclipse.jetty.security' version='9.4.14'/>
-        <provided namespace='java.package' name='org.eclipse.jetty.security.authentication' version='9.4.14'/>
-        <provided namespace='osgi.identity' name='org.eclipse.jetty.security' version='9.4.14.v20181114'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='20'>
-        <required namespace='java.package' name='javax.security.auth' range='0.0.0'/>
-        <required namespace='java.package' name='javax.security.auth.callback' range='0.0.0'/>
-        <required namespace='java.package' name='javax.security.auth.login' range='0.0.0'/>
-        <required namespace='java.package' name='javax.servlet' range='[3.1.0,4.0.0)'/>
-        <required namespace='java.package' name='javax.servlet.annotation' range='[3.1.0,4.0.0)'/>
-        <required namespace='java.package' name='javax.servlet.http' range='[3.1.0,4.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.http' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.security' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.security.authentication' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.server' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.server.handler' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.server.session' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.util' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.util.component' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.util.log' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.util.resource' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.eclipse.jetty.util.security' range='[9.4.14,10.0.0)'/>
-        <required namespace='java.package' name='org.ietf.jgss' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=1.8))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=1.8))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.eclipse.jetty.security' version='9.4.14.v20181114'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.eclipse.jetty.security&#xA;Bundle-Version: 9.4.14.v20181114
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.apache.xml.resolver' version='1.2.0.v201005080400' singleton='false'>
-      <update id='org.apache.xml.resolver' range='[0.0.0,1.2.0.v201005080400)' severity='0'/>
-      <properties size='8'>
-        <property name='df_LT.Bundle-Vendor.0' value='Eclipse Orbit'/>
-        <property name='df_LT.Bundle-Name.0' value='Apache XmlResolver'/>
-        <property name='org.eclipse.equinox.p2.name' value='%Bundle-Name.0'/>
-        <property name='org.eclipse.equinox.p2.provider' value='%Bundle-Vendor.0'/>
-        <property name='iplog.bug_id' value='2136'/>
-        <property name='iplog.contact.name' value='David Williams'/>
-        <property name='iplog.contact.email' value='david_williams@us.ibm.com'/>
-        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
-      </properties>
-      <provides size='11'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.xml.resolver' version='1.2.0.v201005080400'/>
-        <provided namespace='osgi.bundle' name='org.apache.xml.resolver' version='1.2.0.v201005080400'/>
-        <provided namespace='java.package' name='org.apache.env' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.xml.resolver' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.xml.resolver.apps' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.xml.resolver.etc' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.xml.resolver.helpers' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.xml.resolver.readers' version='1.2.0'/>
-        <provided namespace='java.package' name='org.apache.xml.resolver.tools' version='1.2.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
-      </provides>
-      <requires size='1'>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi' range='0.0.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.apache.xml.resolver' version='1.2.0.v201005080400'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.apache.xml.resolver&#xA;Bundle-Version: 1.2.0.v201005080400
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003061957' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,7.1.0.202003061957)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Financial'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.financial'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003061957'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='9'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.report.jasper' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.base.process' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
-        <required namespace='java.package' name='net.sf.jasperreports.engine' range='0.0.0'/>
-        <required namespace='java.package' name='org.adempiere.webui.window' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003061957'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 7.1.0.202003061957
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.adempiere.ui.zk' version='7.1.0.201912050109' generation='2'>
-      <update id='org.adempiere.ui.zk' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere Web Client'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.ui.zk'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='96'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.ui.zk' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.ui.zk' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='fi.jawsy.jawwa.zk.atmosphere' version='0.0.0'/>
-        <provided namespace='java.package' name='metainfo.zk' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.acct' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.action' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.adwindow' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.adwindow.validator' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.apps' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.apps.form' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.apps.graph' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.apps.graph.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.apps.wf' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.component' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.component.test' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.dashboard' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.desktop' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.editor' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.event' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.exception' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.factory' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.grid' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.info' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.install' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.panel' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.panel.action' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.part' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.process' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.report' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.session' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.theme' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.util' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.webui.window' version='0.0.0'/>
-        <provided namespace='java.package' name='org.zkforge.ckez' version='0.0.0'/>
-        <provided namespace='java.package' name='org.zkforge.keylistener' version='0.0.0'/>
-        <provided namespace='java.package' name='web.chosenbox.img' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.chosenbox' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.chosenbox.css' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.chosenbox.mold' version='0.0.0'/>
-        <provided namespace='java.package' name='web.ckez.html' version='0.0.0'/>
-        <provided namespace='java.package' name='web.ckez.img' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.adapters' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.lang' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.a11yhelp.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.a11yhelp.dialogs.lang' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.about.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.about.dialogs.hidpi' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.colordialog.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.copyformatting.cursors' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.copyformatting.styles' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.dialog' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.div.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.find.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.flash.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.flash.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.forms.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.forms.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.iframe.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.iframe.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.image.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.image.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.link.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.link.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.link.images.hidpi' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.liststyle.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.magicline.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.magicline.images.hidpi' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.pagebreak.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.pastefromword.filter' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.preview' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.scayt' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.scayt.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.scayt.skins' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.showblocks.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.smiley.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.smiley.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.specialchar.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.specialchar.dialogs.lang' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.table.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.tableselection.styles' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.tabletools.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.templates.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.templates.templates' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.templates.templates.images' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.wsc' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.wsc.dialogs' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.wsc.skins' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.skins' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.zkforge' version='0.0.0'/>
-        <provided namespace='java.package' name='web.js.zkforge.mold' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.ui.zk' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='69'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.idempiere.zk.extra' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zcommon' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zel' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zhtml' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zk' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zkbind' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zkplus' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zul' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zweb' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.junit' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.apache.commons.io' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='com.itextpdf' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.atmosphere.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='zkwebfragment' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='com.sun.activation.jakarta.activation' range='1.2.1'/>
-        <required namespace='java.package' name='groovy.transform.stc' range='2.4.7'/>
-        <required namespace='java.package' name='javax.annotation' range='0.0.0'/>
-        <required namespace='java.package' name='javax.annotation.processing' range='0.0.0'/>
-        <required namespace='java.package' name='javax.annotation.security' range='0.0.0'/>
-        <required namespace='java.package' name='javax.annotation.sql' range='0.0.0'/>
-        <required namespace='java.package' name='javax.servlet' range='0.0.0'/>
-        <required namespace='java.package' name='javax.servlet.annotation' range='3.1.0'/>
-        <required namespace='java.package' name='javax.servlet.http' range='0.0.0'/>
-        <required namespace='java.package' name='javax.servlet.jsp.resources' range='2.3.0'/>
-        <required namespace='java.package' name='javax.servlet.resources' range='3.1.0'/>
-        <required namespace='java.package' name='javax.websocket' range='1.1.0'/>
-        <required namespace='java.package' name='javax.websocket.server' range='1.1.0'/>
-        <required namespace='java.package' name='javax.xml.bind' range='2.3.0'/>
-        <required namespace='java.package' name='net.sf.jasperreports.engine' range='0.0.0'/>
-        <required namespace='java.package' name='net.sf.jasperreports.engine.export' range='0.0.0'/>
-        <required namespace='java.package' name='net.sf.jasperreports.engine.util' range='0.0.0'/>
-        <required namespace='java.package' name='net.sf.jasperreports.export' range='0.0.0'/>
-        <required namespace='java.package' name='org.adempiere.report.jasper' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.codec.binary' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.fileupload' range='1.2.2'/>
-        <required namespace='java.package' name='org.apache.commons.fileupload.disk' range='1.2.2'/>
-        <required namespace='java.package' name='org.apache.commons.fileupload.portlet' range='1.2.2'/>
-        <required namespace='java.package' name='org.apache.commons.fileupload.servlet' range='1.2.2'/>
-        <required namespace='java.package' name='org.apache.commons.fileupload.util' range='1.2.2'/>
-        <required namespace='java.package' name='org.apache.ecs' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.ecs.xhtml' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0'/>
-        <required namespace='java.package' name='org.compiere.css' range='0.0.0'/>
-        <required namespace='java.package' name='org.compiere.server' range='0.0.0'/>
-        <required namespace='java.package' name='org.eclipse.core.runtime' range='3.4.0'/>
-        <required namespace='java.package' name='org.eclipse.jetty.websocket.jsr356' range='9.4.12'/>
-        <required namespace='java.package' name='org.eclipse.jetty.websocket.jsr356.server' range='9.4.12'/>
-        <required namespace='java.package' name='org.idempiere.server.cluster' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.chart' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.chart.encoders' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.chart.entity' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.chart.plot' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.data' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.data.general' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.data.time' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.util' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.7.0'/>
-        <required namespace='java.package' name='org.osgi.service.component.annotations' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
-        <required namespace='java.package' name='org.slf4j' range='1.7.2'/>
-        <required namespace='java.package' name='org.slf4j.helpers' range='1.7.2'/>
-        <required namespace='java.package' name='org.slf4j.spi' range='1.7.2'/>
-        <required namespace='java.package' name='org.springframework.web.util' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.ui.zk' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.ui.zk;singleton:=true&#xA;Bundle-Version: 7.1.0.201912050109
+            Bundle-SymbolicName: org.idempiere.zk.extra&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -2810,43 +2592,6 @@
           </instruction>
         </instructions>
       </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202003061957'>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
-        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202003061957'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202003061957'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202003061957'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
-          [Enter License Description here.]
-        </license>
-      </licenses>
-      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
-        [Enter Copyright Description here.]
-      </copyright>
     </unit>
     <unit id='zel' version='8.6.0.1' singleton='false'>
       <update id='zel' range='[0.0.0,8.6.0.1)' severity='0'/>
@@ -2991,58 +2736,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003061957' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.editors-com' range='[0.0.0,7.1.0.202003061957)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Extended Location Editor'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.editors-com'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003061957'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='19'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.ui' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.idempiere.zk.extra' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='zcommon' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zel' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zhtml' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zul' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zk' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zkbind' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zkplus' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zweb' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
-        <required namespace='java.package' name='org.compiere.model' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
-        <required namespace='java.package' name='org.zkoss.bind' range='0.0.0'/>
-        <required namespace='java.package' name='org.zkoss.zul.impl' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003061957'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true&#xA;Bundle-Version: 7.1.0.202003061957
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='zcommon' version='8.6.0.1' singleton='false'>
       <update id='zcommon' range='[0.0.0,8.6.0.1)' severity='0'/>
       <properties size='1'>
@@ -3169,6 +2862,116 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: net.sf.supercsv.super-csv&#xA;Bundle-Version: 2.4.0
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.apache.ecs' version='7.1.0.202003231434' singleton='false' generation='2'>
+      <update id='org.apache.ecs' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Apache ECS Library'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.apache.ecs'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='9'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ecs' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.apache.ecs' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.apache.ecs' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ecs.filter' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ecs.storage' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ecs.xhtml' version='0.0.0'/>
+        <provided namespace='java.package' name='org.apache.ecs.xml' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.apache.ecs' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.apache.ecs' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.apache.ecs&#xA;Bundle-Version: 7.1.0.202003231434
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.adempiere.server' version='7.1.0.202003231434' generation='2'>
+      <update id='org.adempiere.server' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere Server'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.server'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='10'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.server' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.server' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.adempiere.server' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.ldap' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.server' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.server.cluster' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.server.cluster.callable' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.server.factory' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.server' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='30'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.equinox.app' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jetty.apache-jsp' range='0.0.0'/>
+        <required namespace='java.package' name='javax.jms' range='1.1.0'/>
+        <required namespace='java.package' name='javax.mail' range='1.5.0'/>
+        <required namespace='java.package' name='javax.servlet' range='3.0.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='3.0.0'/>
+        <required namespace='java.package' name='org.apache.activemq' range='5.3.0'/>
+        <required namespace='java.package' name='org.apache.commons.codec' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.codec.binary' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.ecs' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.ecs.xhtml' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.poi.hssf.usermodel' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.6.0'/>
+        <required namespace='java.package' name='org.osgi.service.component.annotations' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='1.4.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
+        <required namespace='java.package' name='org.restlet' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.data' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.ext.servlet' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.ext.servlet.internal' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.representation' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.resource' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.routing' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.security' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.service' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.util' range='0.0.0'/>
+        <required namespace='java.package' name='org.w3c.dom' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.server' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.server;singleton:=true&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -3388,6 +3191,50 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.apache.servicemix.bundles.spring-web&#xA;Bundle-Version: 4.3.19.RELEASE_1
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.adempiere.base.process' version='7.1.0.202003231434' singleton='false' generation='2'>
+      <update id='org.adempiere.base.process' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere Processes'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.base.process'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='7'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.base.process' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.base.process' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.adempiere.process' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.process' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.process' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.base.process' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='8'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+        <required namespace='java.package' name='javax.mail' range='1.5.0'/>
+        <required namespace='java.package' name='javax.mail.internet' range='1.5.0'/>
+        <required namespace='java.package' name='javax.servlet' range='2.5.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='2.5.0'/>
+        <required namespace='java.package' name='org.apache.commons.collections.keyvalue' range='3.2.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.base.process' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.base.process&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -4159,149 +4006,87 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.adempiere.base' version='7.1.0.201912050109' generation='2'>
-      <update id='org.adempiere.base' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
+    <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
       <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere Core'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='org.eclipse.equinox.p2.name' value='AMERPSOFT Localization Colombia - Withholdings'/>
+        <property name='org.eclipse.equinox.p2.provider' value='AMERPSOFT Fork from GlobalQSS'/>
         <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.base'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.lco.withholding'/>
         <property name='maven-version' value='7.1.0-SNAPSHOT'/>
       </properties>
-      <provides size='51'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.base' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.base' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='bsh' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.classpath' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.collection' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.commands' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.engine' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.org.objectweb.asm' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.reflect' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.servlet' version='0.0.0'/>
-        <provided namespace='java.package' name='bsh.util' version='0.0.0'/>
-        <provided namespace='java.package' name='com.akunagroup.uk.postcode' version='0.0.0'/>
-        <provided namespace='java.package' name='it.sauronsoftware.cron4j' version='0.0.0'/>
-        <provided namespace='java.package' name='javax.jnlp' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.apps.graph' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.base' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.base.equinox' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.base.event' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.exceptions' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.impexp' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.pdf' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.print.export' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.process' version='0.0.0'/>
-        <provided namespace='java.package' name='org.adempiere.util' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.acct' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.cm' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.db' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.dbPort' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.impexp' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.install' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.interfaces' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.interfaces.impl' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.print' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.print.layout' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.process' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.report' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.report.core' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.sla' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.tools' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.util' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.wf' version='0.0.0'/>
-        <provided namespace='java.package' name='org.eevolution.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.broadcast' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.distributed' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.fa.service.api' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.model' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.base' version='7.1.0.201912050109'>
+      <provides size='6'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'/>
+        <provided namespace='java.package' name='org.globalqss.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.globalqss.process' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'>
           <properties size='1'>
             <property name='type' value='osgi.bundle'/>
           </properties>
         </provided>
         <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
       </provides>
-      <requires size='67'>
-        <required namespace='osgi.bundle' name='org.eclipse.equinox.app' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.passay' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.cryptacular' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='com.itextpdf' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='net.sf.supercsv.super-csv' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='bcprov' range='1.54.0'/>
-        <required namespace='osgi.bundle' name='org.krysalis.barcode4j' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='groovy' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.apache.poi.poi' range='3.15.0'/>
-        <required namespace='osgi.bundle' name='org.apache.poi.poi-ooxml' range='3.15.0'/>
-        <required namespace='osgi.bundle' name='com.sun.activation.jakarta.activation' range='1.2.1'/>
-        <required namespace='java.package' name='com.google.zxing' range='0.0.0'/>
-        <required namespace='java.package' name='com.google.zxing.qrcode.decoder' range='0.0.0'/>
-        <required namespace='java.package' name='com.google.zxing.qrcode.encoder' range='0.0.0'/>
-        <required namespace='java.package' name='com.sun.mail.smtp' range='1.5.0'/>
-        <required namespace='java.package' name='javax.jms' range='1.1.0'/>
-        <required namespace='java.package' name='javax.mail' range='1.5.0'/>
-        <required namespace='java.package' name='javax.mail.internet' range='1.5.0'/>
-        <required namespace='java.package' name='javax.servlet' range='3.0.0'/>
-        <required namespace='java.package' name='javax.servlet.http' range='3.0.0'/>
-        <required namespace='java.package' name='javax.xml.bind' range='2.3.0'/>
-        <required namespace='java.package' name='junit.framework' range='3.8.2' optional='true' greedy='false'/>
-        <required namespace='java.package' name='junit.textui' range='3.8.2' optional='true' greedy='false'/>
-        <required namespace='java.package' name='net.sf.cglib.proxy' range='0.0.0'/>
-        <required namespace='java.package' name='net.sourceforge.barbecue' range='0.0.0'/>
-        <required namespace='java.package' name='net.sourceforge.barbecue.linear.ean' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.activemq' range='5.3.0'/>
-        <required namespace='java.package' name='org.apache.commons.collections' range='3.2.0'/>
-        <required namespace='java.package' name='org.apache.commons.collections.keyvalue' range='3.2.0'/>
-        <required namespace='java.package' name='org.apache.commons.net' range='2.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.net.ftp' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.ecs' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.ecs.xhtml' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.felix.scr' range='1.6.0'/>
-        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0'/>
-        <required namespace='java.package' name='org.eclipse.core.runtime' range='3.4.0'/>
-        <required namespace='java.package' name='org.eclipse.osgi.framework.console' range='1.1.0'/>
-        <required namespace='java.package' name='org.eclipse.osgi.service.datalocation' range='0.0.0'/>
-        <required namespace='java.package' name='org.jfree.chart' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.chart.axis' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.chart.plot' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.chart.renderer.category' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.data.category' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.data.general' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.data.time' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.data.xy' range='1.0.19'/>
-        <required namespace='java.package' name='org.jfree.date' range='1.0.23'/>
-        <required namespace='java.package' name='org.jfree.io' range='1.0.23'/>
-        <required namespace='java.package' name='org.krysalis.barcode4j' range='2.1.0'/>
-        <required namespace='java.package' name='org.krysalis.barcode4j.impl' range='2.1.0'/>
-        <required namespace='java.package' name='org.krysalis.barcode4j.impl.upcean' range='2.1.0'/>
-        <required namespace='java.package' name='org.krysalis.barcode4j.output.bitmap' range='2.1.0'/>
-        <required namespace='java.package' name='org.osgi.framework' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.service.cm' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.component' range='1.1.0'/>
-        <required namespace='java.package' name='org.osgi.service.component.runtime' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.component.runtime.dto' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='1.2.0'/>
-        <required namespace='java.package' name='org.osgi.util.promise' range='1.0.0'/>
-        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
-        <required namespace='java.package' name='org.restlet' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.data' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.representation' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.util' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+      <requires size='5'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.base.callout' range='7.1.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
         <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.base' version='7.1.0.201912050109'/>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 7.1.0.202003232351
+          </instruction>
+          <instruction key='configure'>
+            setStartLevel(startLevel:5); markStarted(started: true);
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Financial'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.financial'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='9'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.report.jasper' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.base.process' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
+        <required namespace='java.package' name='net.sf.jasperreports.engine' range='0.0.0'/>
+        <required namespace='java.package' name='org.adempiere.webui.window' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.base;singleton:=true&#xA;Bundle-Version: 7.1.0.201912050109
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 7.1.0.202003232351
           </instruction>
         </instructions>
       </touchpointData>
@@ -5054,50 +4839,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.adempiere.base.process' version='7.1.0.201912050109' singleton='false' generation='2'>
-      <update id='org.adempiere.base.process' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere Processes'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.base.process'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='7'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.base.process' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.base.process' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.adempiere.process' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.process' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.process' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.base.process' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='8'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
-        <required namespace='java.package' name='javax.mail' range='1.5.0'/>
-        <required namespace='java.package' name='javax.mail.internet' range='1.5.0'/>
-        <required namespace='java.package' name='javax.servlet' range='2.5.0'/>
-        <required namespace='java.package' name='javax.servlet.http' range='2.5.0'/>
-        <required namespace='java.package' name='org.apache.commons.collections.keyvalue' range='3.2.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.base.process' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.base.process&#xA;Bundle-Version: 7.1.0.201912050109
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='zjavassist' version='8.6.0.1' singleton='false'>
       <update id='zjavassist' range='[0.0.0,8.6.0.1)' severity='0'/>
       <properties size='2'>
@@ -5139,6 +4880,58 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: zjavassist&#xA;Bundle-Version: 8.6.0.1
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.editors-com' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Extended Location Editor'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.editors-com'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='19'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.ui' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.idempiere.zk.extra' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='zcommon' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zel' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zhtml' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zul' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zk' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zkbind' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zkplus' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zweb' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
+        <required namespace='java.package' name='org.compiere.model' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
+        <required namespace='java.package' name='org.zkoss.bind' range='0.0.0'/>
+        <required namespace='java.package' name='org.zkoss.zul.impl' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true&#xA;Bundle-Version: 7.1.0.202003232351
           </instruction>
         </instructions>
       </touchpointData>
@@ -5250,85 +5043,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003061957' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,7.1.0.202003061957)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='AMERPSOFT Localization Colombia - Withholdings'/>
-        <property name='org.eclipse.equinox.p2.provider' value='AMERPSOFT Fork from GlobalQSS'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.lco.withholding'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='6'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003061957'/>
-        <provided namespace='java.package' name='org.globalqss.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.globalqss.process' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003061957'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='5'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.base.callout' range='7.1.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003061957'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='2'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 7.1.0.202003061957
-          </instruction>
-          <instruction key='configure'>
-            setStartLevel(startLevel:5); markStarted(started: true);
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003061957' singleton='false' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.themes-com' range='[0.0.0,7.1.0.202003061957)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Idempiere Themes Community version'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003061957'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003061957'>
-          <properties size='1'>
-            <property name='type' value='osgi.fragment'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='osgi.fragment' name='org.adempiere.ui.zk' version='7.1.0.202003061957'/>
-      </provides>
-      <requires size='2'>
-        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003061957'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com&#xA;Bundle-Version: 7.1.0.202003061957&#xA;Fragment-Host: org.adempiere.ui.zk;bundle-version=&quot;7.1.0&quot;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='org.jfree.jcommon-osgi' version='1.0.23' singleton='false'>
       <update id='org.jfree.jcommon-osgi' range='[0.0.0,1.0.23)' severity='0'/>
       <properties size='4'>
@@ -5384,6 +5098,43 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.jfree.jcommon-osgi&#xA;Bundle-Version: 1.0.23
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.adempiere.base.callout' version='7.1.0.202003231434' singleton='false' generation='2'>
+      <update id='org.adempiere.base.callout' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere Callout'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.base.callout'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.base.callout' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.base.callout' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.compiere.model' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.base.callout' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.base.callout' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.base.callout&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -5637,6 +5388,153 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.eclipse.jetty.http&#xA;Bundle-Version: 9.4.14.v20181114
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.adempiere.base' version='7.1.0.202003231434' generation='2'>
+      <update id='org.adempiere.base' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere Core'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.base'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='51'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.base' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.base' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='bsh' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.classpath' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.collection' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.commands' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.engine' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.org.objectweb.asm' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.reflect' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.servlet' version='0.0.0'/>
+        <provided namespace='java.package' name='bsh.util' version='0.0.0'/>
+        <provided namespace='java.package' name='com.akunagroup.uk.postcode' version='0.0.0'/>
+        <provided namespace='java.package' name='it.sauronsoftware.cron4j' version='0.0.0'/>
+        <provided namespace='java.package' name='javax.jnlp' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.apps.graph' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.base' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.base.equinox' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.base.event' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.exceptions' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.impexp' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.pdf' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.print.export' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.process' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.acct' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.cm' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.db' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.dbPort' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.impexp' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.install' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.interfaces' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.interfaces.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.print' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.print.layout' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.process' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.report' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.report.core' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.sla' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.tools' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.wf' version='0.0.0'/>
+        <provided namespace='java.package' name='org.eevolution.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.broadcast' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.distributed' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.fa.service.api' version='0.0.0'/>
+        <provided namespace='java.package' name='org.idempiere.model' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.base' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='67'>
+        <required namespace='osgi.bundle' name='org.eclipse.equinox.app' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.passay' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.cryptacular' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='com.itextpdf' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='net.sf.supercsv.super-csv' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='bcprov' range='1.54.0'/>
+        <required namespace='osgi.bundle' name='org.krysalis.barcode4j' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='groovy' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.poi.poi' range='3.15.0'/>
+        <required namespace='osgi.bundle' name='org.apache.poi.poi-ooxml' range='3.15.0'/>
+        <required namespace='osgi.bundle' name='com.sun.activation.jakarta.activation' range='1.2.1'/>
+        <required namespace='java.package' name='com.google.zxing' range='0.0.0'/>
+        <required namespace='java.package' name='com.google.zxing.qrcode.decoder' range='0.0.0'/>
+        <required namespace='java.package' name='com.google.zxing.qrcode.encoder' range='0.0.0'/>
+        <required namespace='java.package' name='com.sun.mail.smtp' range='1.5.0'/>
+        <required namespace='java.package' name='javax.jms' range='1.1.0'/>
+        <required namespace='java.package' name='javax.mail' range='1.5.0'/>
+        <required namespace='java.package' name='javax.mail.internet' range='1.5.0'/>
+        <required namespace='java.package' name='javax.servlet' range='3.0.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='3.0.0'/>
+        <required namespace='java.package' name='javax.xml.bind' range='2.3.0'/>
+        <required namespace='java.package' name='junit.framework' range='3.8.2' optional='true' greedy='false'/>
+        <required namespace='java.package' name='junit.textui' range='3.8.2' optional='true' greedy='false'/>
+        <required namespace='java.package' name='net.sf.cglib.proxy' range='0.0.0'/>
+        <required namespace='java.package' name='net.sourceforge.barbecue' range='0.0.0'/>
+        <required namespace='java.package' name='net.sourceforge.barbecue.linear.ean' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.activemq' range='5.3.0'/>
+        <required namespace='java.package' name='org.apache.commons.collections' range='3.2.0'/>
+        <required namespace='java.package' name='org.apache.commons.collections.keyvalue' range='3.2.0'/>
+        <required namespace='java.package' name='org.apache.commons.net' range='2.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.net.ftp' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.ecs' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.ecs.xhtml' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.felix.scr' range='1.6.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.core.runtime' range='3.4.0'/>
+        <required namespace='java.package' name='org.eclipse.osgi.framework.console' range='1.1.0'/>
+        <required namespace='java.package' name='org.eclipse.osgi.service.datalocation' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.chart' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.chart.axis' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.chart.plot' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.chart.renderer.category' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.data.category' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.data.general' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.data.time' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.data.xy' range='1.0.19'/>
+        <required namespace='java.package' name='org.jfree.date' range='1.0.23'/>
+        <required namespace='java.package' name='org.jfree.io' range='1.0.23'/>
+        <required namespace='java.package' name='org.krysalis.barcode4j' range='2.1.0'/>
+        <required namespace='java.package' name='org.krysalis.barcode4j.impl' range='2.1.0'/>
+        <required namespace='java.package' name='org.krysalis.barcode4j.impl.upcean' range='2.1.0'/>
+        <required namespace='java.package' name='org.krysalis.barcode4j.output.bitmap' range='2.1.0'/>
+        <required namespace='java.package' name='org.osgi.framework' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.service.cm' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.component' range='1.1.0'/>
+        <required namespace='java.package' name='org.osgi.service.component.runtime' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.component.runtime.dto' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='1.2.0'/>
+        <required namespace='java.package' name='org.osgi.util.promise' range='1.0.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
+        <required namespace='java.package' name='org.restlet' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.data' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.representation' range='0.0.0'/>
+        <required namespace='java.package' name='org.restlet.util' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.base' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.base;singleton:=true&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -6222,75 +6120,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.adempiere.server' version='7.1.0.201912050109' generation='2'>
-      <update id='org.adempiere.server' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere Server'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.server'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='10'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.server' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.server' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.adempiere.server' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.ldap' version='0.0.0'/>
-        <provided namespace='java.package' name='org.compiere.server' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.server.cluster' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.server.cluster.callable' version='0.0.0'/>
-        <provided namespace='java.package' name='org.idempiere.server.factory' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.server' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='30'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.equinox.app' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jetty.apache-jsp' range='0.0.0'/>
-        <required namespace='java.package' name='javax.jms' range='1.1.0'/>
-        <required namespace='java.package' name='javax.mail' range='1.5.0'/>
-        <required namespace='java.package' name='javax.servlet' range='3.0.0'/>
-        <required namespace='java.package' name='javax.servlet.http' range='3.0.0'/>
-        <required namespace='java.package' name='org.apache.activemq' range='5.3.0'/>
-        <required namespace='java.package' name='org.apache.commons.codec' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.codec.binary' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.ecs' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.ecs.xhtml' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.poi.hssf.usermodel' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.6.0'/>
-        <required namespace='java.package' name='org.osgi.service.component.annotations' range='1.3.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='1.4.0'/>
-        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
-        <required namespace='java.package' name='org.restlet' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.data' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.ext.servlet' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.ext.servlet.internal' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.representation' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.resource' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.routing' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.security' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.service' range='0.0.0'/>
-        <required namespace='java.package' name='org.restlet.util' range='0.0.0'/>
-        <required namespace='java.package' name='org.w3c.dom' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.server' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.server;singleton:=true&#xA;Bundle-Version: 7.1.0.201912050109
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='org.eclipse.jetty.io' version='9.4.14.v20181114' singleton='false' generation='2'>
       <update id='org.eclipse.jetty.io' range='[0.0.0,9.4.14.v20181114)' severity='0'/>
       <properties size='4'>
@@ -6796,6 +6625,62 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.adempiere.ui' version='7.1.0.202003231434' generation='2'>
+      <update id='org.adempiere.ui' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere UI base'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.ui'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='22'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.ui' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.ui' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.compiere.apps' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.apps.form' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.apps.wf' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.grid' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.grid.ed' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.css' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.install' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.minigrid' version='0.0.0'/>
+        <provided namespace='java.package' name='org.compiere.print' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.action' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.anchor' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.border' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.graph' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.graph.layout' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.layout' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.router' version='0.0.0'/>
+        <provided namespace='java.package' name='org.netbeans.api.visual.widget' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.ui' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.servicemix.bundles.xerces' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.equinox.app' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.ui' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.ui;singleton:=true&#xA;Bundle-Version: 7.1.0.202003231434
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.apache.servicemix.bundles.xerces' version='2.9.1.5' singleton='false'>
       <update id='org.apache.servicemix.bundles.xerces' range='[0.0.0,2.9.1.5)' severity='0'/>
       <properties size='4'>
@@ -6881,85 +6766,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.apache.servicemix.bundles.xerces&#xA;Bundle-Version: 2.9.1.5
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.adempiere.plugin.utils' version='7.1.0.201912050109' singleton='false' generation='2'>
-      <update id='org.adempiere.plugin.utils' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere Plugin Utils'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.plugin.utils'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.plugin.utils' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.plugin.utils' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.adempiere.plugin.utils' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.plugin.utils' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='45'>
-        <required namespace='java.package' name='org.adempiere.base' range='0.0.0'/>
-        <required namespace='java.package' name='org.adempiere.util' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.xerces.dom' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.dom.events' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.dom3.as' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.dtd' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.dtd.models' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.dv' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.dv.dtd' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.dv.util' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.dv.xs' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.io' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.msg' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.validation' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xpath' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xpath.regex' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xs' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xs.identity' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xs.models' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xs.opti' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xs.traversers' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.impl.xs.util' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.jaxp' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.jaxp.datatype' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.jaxp.validation' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.parsers' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.util' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xinclude' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xni' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xni.grammars' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xni.parser' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xpointer' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xs' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xerces.xs.datatypes' range='2.9.0'/>
-        <required namespace='java.package' name='org.apache.xml.serialize' range='2.9.0'/>
-        <required namespace='java.package' name='org.compiere' range='0.0.0'/>
-        <required namespace='java.package' name='org.compiere.db' range='0.0.0'/>
-        <required namespace='java.package' name='org.compiere.model' range='0.0.0'/>
-        <required namespace='java.package' name='org.compiere.process' range='0.0.0'/>
-        <required namespace='java.package' name='org.compiere.util' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.5.0'/>
-        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.plugin.utils' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.plugin.utils&#xA;Bundle-Version: 7.1.0.201912050109
           </instruction>
         </instructions>
       </touchpointData>
@@ -7174,6 +6980,200 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.adempiere.ui.zk' version='7.1.0.202003231434' generation='2'>
+      <update id='org.adempiere.ui.zk' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere Web Client'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.ui.zk'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='96'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.ui.zk' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.ui.zk' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='fi.jawsy.jawwa.zk.atmosphere' version='0.0.0'/>
+        <provided namespace='java.package' name='metainfo.zk' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.acct' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.action' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.adwindow' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.adwindow.validator' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.apps' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.apps.form' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.apps.graph' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.apps.graph.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.apps.wf' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.component' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.component.test' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.dashboard' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.desktop' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.editor' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.event' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.exception' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.factory' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.grid' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.info' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.install' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.panel' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.panel.action' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.part' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.process' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.report' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.session' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.theme' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.util' version='0.0.0'/>
+        <provided namespace='java.package' name='org.adempiere.webui.window' version='0.0.0'/>
+        <provided namespace='java.package' name='org.zkforge.ckez' version='0.0.0'/>
+        <provided namespace='java.package' name='org.zkforge.keylistener' version='0.0.0'/>
+        <provided namespace='java.package' name='web.chosenbox.img' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.chosenbox' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.chosenbox.css' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.chosenbox.mold' version='0.0.0'/>
+        <provided namespace='java.package' name='web.ckez.html' version='0.0.0'/>
+        <provided namespace='java.package' name='web.ckez.img' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.adapters' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.lang' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.a11yhelp.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.a11yhelp.dialogs.lang' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.about.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.about.dialogs.hidpi' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.colordialog.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.copyformatting.cursors' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.copyformatting.styles' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.dialog' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.div.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.find.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.flash.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.flash.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.forms.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.forms.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.iframe.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.iframe.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.image.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.image.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.link.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.link.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.link.images.hidpi' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.liststyle.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.magicline.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.magicline.images.hidpi' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.pagebreak.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.pastefromword.filter' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.preview' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.scayt' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.scayt.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.scayt.skins' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.showblocks.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.smiley.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.smiley.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.specialchar.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.specialchar.dialogs.lang' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.table.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.tableselection.styles' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.tabletools.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.templates.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.templates.templates' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.templates.templates.images' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.wsc' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.wsc.dialogs' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.plugins.wsc.skins' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.ckez.ext.CKeditor.skins' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.zkforge' version='0.0.0'/>
+        <provided namespace='java.package' name='web.js.zkforge.mold' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.ui.zk' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='69'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.idempiere.zk.extra' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zcommon' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zel' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zhtml' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zk' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zkbind' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zkplus' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zul' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zweb' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.junit' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.apache.commons.io' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='com.itextpdf' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.atmosphere.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='zkwebfragment' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='com.sun.activation.jakarta.activation' range='1.2.1'/>
+        <required namespace='java.package' name='groovy.transform.stc' range='2.4.7'/>
+        <required namespace='java.package' name='javax.annotation' range='0.0.0'/>
+        <required namespace='java.package' name='javax.annotation.processing' range='0.0.0'/>
+        <required namespace='java.package' name='javax.annotation.security' range='0.0.0'/>
+        <required namespace='java.package' name='javax.annotation.sql' range='0.0.0'/>
+        <required namespace='java.package' name='javax.servlet' range='0.0.0'/>
+        <required namespace='java.package' name='javax.servlet.annotation' range='3.1.0'/>
+        <required namespace='java.package' name='javax.servlet.http' range='0.0.0'/>
+        <required namespace='java.package' name='javax.servlet.jsp.resources' range='2.3.0'/>
+        <required namespace='java.package' name='javax.servlet.resources' range='3.1.0'/>
+        <required namespace='java.package' name='javax.websocket' range='1.1.0'/>
+        <required namespace='java.package' name='javax.websocket.server' range='1.1.0'/>
+        <required namespace='java.package' name='javax.xml.bind' range='2.3.0'/>
+        <required namespace='java.package' name='net.sf.jasperreports.engine' range='0.0.0'/>
+        <required namespace='java.package' name='net.sf.jasperreports.engine.export' range='0.0.0'/>
+        <required namespace='java.package' name='net.sf.jasperreports.engine.util' range='0.0.0'/>
+        <required namespace='java.package' name='net.sf.jasperreports.export' range='0.0.0'/>
+        <required namespace='java.package' name='org.adempiere.report.jasper' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.codec.binary' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.fileupload' range='1.2.2'/>
+        <required namespace='java.package' name='org.apache.commons.fileupload.disk' range='1.2.2'/>
+        <required namespace='java.package' name='org.apache.commons.fileupload.portlet' range='1.2.2'/>
+        <required namespace='java.package' name='org.apache.commons.fileupload.servlet' range='1.2.2'/>
+        <required namespace='java.package' name='org.apache.commons.fileupload.util' range='1.2.2'/>
+        <required namespace='java.package' name='org.apache.ecs' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.ecs.xhtml' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.tools.ant.taskdefs' range='0.0.0'/>
+        <required namespace='java.package' name='org.compiere.css' range='0.0.0'/>
+        <required namespace='java.package' name='org.compiere.server' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.core.runtime' range='3.4.0'/>
+        <required namespace='java.package' name='org.eclipse.jetty.websocket.jsr356' range='9.4.12'/>
+        <required namespace='java.package' name='org.eclipse.jetty.websocket.jsr356.server' range='9.4.12'/>
+        <required namespace='java.package' name='org.idempiere.server.cluster' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.chart' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.chart.encoders' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.chart.entity' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.chart.plot' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.data' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.data.general' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.data.time' range='0.0.0'/>
+        <required namespace='java.package' name='org.jfree.util' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.7.0'/>
+        <required namespace='java.package' name='org.osgi.service.component.annotations' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='1.3.0'/>
+        <required namespace='java.package' name='org.osgi.util.tracker' range='1.5.0'/>
+        <required namespace='java.package' name='org.slf4j' range='1.7.2'/>
+        <required namespace='java.package' name='org.slf4j.helpers' range='1.7.2'/>
+        <required namespace='java.package' name='org.slf4j.spi' range='1.7.2'/>
+        <required namespace='java.package' name='org.springframework.web.util' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.ui.zk' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.ui.zk;singleton:=true&#xA;Bundle-Version: 7.1.0.202003231434
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='zkplus' version='8.6.0.1' singleton='false'>
       <update id='zkplus' range='[0.0.0,8.6.0.1)' severity='0'/>
       <properties size='1'>
@@ -7367,41 +7367,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202003061957' singleton='false'>
-      <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202003061957)' severity='0'/>
-      <properties size='7'>
-        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
-        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='1'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202003061957'/>
-      </provides>
-      <requires size='5'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202003061957,7.1.0.202003061957]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202003061957,7.1.0.202003061957]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202003061957,7.1.0.202003061957]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202003061957,7.1.0.202003061957]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202003061957,7.1.0.202003061957]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <licenses size='1'>
-        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
-          [Enter License Description here.]
-        </license>
-      </licenses>
-      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
-        [Enter Copyright Description here.]
-      </copyright>
-    </unit>
     <unit id='slf4j.jcl' version='1.7.25' singleton='false' generation='2'>
       <update id='slf4j.jcl' range='[0.0.0,1.7.25)' severity='0'/>
       <properties size='3'>
@@ -7437,6 +7402,50 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: slf4j.jcl&#xA;Bundle-Version: 1.7.25&#xA;Fragment-Host: slf4j.api
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.adempiere.report.jasper' version='7.1.0.202003231434' generation='2'>
+      <update id='org.adempiere.report.jasper' range='[0.0.0,7.1.0.202003231434)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='iDempiere JasperReport integration'/>
+        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.adempiere.report.jasper'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.report.jasper' version='7.1.0.202003231434'/>
+        <provided namespace='osgi.bundle' name='org.adempiere.report.jasper' version='7.1.0.202003231434'/>
+        <provided namespace='java.package' name='org.adempiere.report.jasper' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.adempiere.report.jasper' version='7.1.0.202003231434'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='10'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='net.sf.jasperreports.engine' range='6.3.1'/>
+        <required namespace='java.package' name='net.sourceforge.barbecue' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.codec' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.codec.binary' range='0.0.0'/>
+        <required namespace='java.package' name='org.apache.commons.logging' range='1.1.1'/>
+        <required namespace='java.package' name='org.apache.commons.logging.impl' range='1.1.1'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.adempiere.report.jasper' version='7.1.0.202003231434'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.adempiere.report.jasper;singleton:=true&#xA;Bundle-Version: 7.1.0.202003231434
           </instruction>
         </instructions>
       </touchpointData>
@@ -8274,49 +8283,40 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.adempiere.report.jasper' version='7.1.0.201912050109' generation='2'>
-      <update id='org.adempiere.report.jasper' range='[0.0.0,7.1.0.201912050109)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='iDempiere JasperReport integration'/>
-        <property name='org.eclipse.equinox.p2.provider' value='iDempiere Community'/>
+    <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202003232351' singleton='false'>
+      <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
+      <properties size='7'>
+        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
+        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
         <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.adempiere.report.jasper'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
         <property name='maven-version' value='7.1.0-SNAPSHOT'/>
       </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.adempiere.report.jasper' version='7.1.0.201912050109'/>
-        <provided namespace='osgi.bundle' name='org.adempiere.report.jasper' version='7.1.0.201912050109'/>
-        <provided namespace='java.package' name='org.adempiere.report.jasper' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.adempiere.report.jasper' version='7.1.0.201912050109'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202003232351'/>
       </provides>
-      <requires size='10'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='net.sf.jasperreports.engine' range='6.3.1'/>
-        <required namespace='java.package' name='net.sourceforge.barbecue' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.codec' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.codec.binary' range='0.0.0'/>
-        <required namespace='java.package' name='org.apache.commons.logging' range='1.1.1'/>
-        <required namespace='java.package' name='org.apache.commons.logging.impl' range='1.1.1'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version&gt;=11))'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      <requires size='5'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202003232351,7.1.0.202003232351]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
       </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.adempiere.report.jasper' version='7.1.0.201912050109'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.adempiere.report.jasper;singleton:=true&#xA;Bundle-Version: 7.1.0.201912050109
-          </instruction>
-        </instructions>
-      </touchpointData>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
+          [Enter License Description here.]
+        </license>
+      </licenses>
+      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
+        [Enter Copyright Description here.]
+      </copyright>
     </unit>
     <unit id='org.eclipse.jetty.websocket.common' version='9.4.14.v20181114' singleton='false' generation='2'>
       <update id='org.eclipse.jetty.websocket.common' range='[0.0.0,9.4.14.v20181114)' severity='0'/>
