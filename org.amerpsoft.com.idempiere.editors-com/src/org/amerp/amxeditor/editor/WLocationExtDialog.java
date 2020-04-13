@@ -191,7 +191,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		m_selectedRegion_ID = m_origRegion_ID;	// lstRegion.getSelectedCount();;
 		// 
 		lstMunicipality.appendItem("", null); 
-		for (MMunicipality municipality : MMunicipality.getMunicipalitys(Env.getCtx(), m_selectedRegion_ID))
+		for (MMunicipality municipality : MMunicipality.getSQLMunicipalitys(Env.getCtx(), m_selectedRegion_ID))
 		{
 			lstMunicipality.appendItem(municipality.getName(),municipality);
 		}
@@ -201,7 +201,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		m_selectedMunicipality_ID = m_origMunicipality_ID;	// lstMunicipality.getSelectedCount();	
 		//
 		lstParish.appendItem("", null); 
-		for (MParish parish : MParish.getParishs(Env.getCtx(), m_selectedMunicipality_ID,m_selectedRegion_ID))
+		for (MParish parish : MParish.getSQLParishs(Env.getCtx(), m_selectedMunicipality_ID,m_selectedRegion_ID))
 		{
 			lstParish.appendItem(parish.getName(),parish);
 		}
@@ -222,8 +222,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			});
 		}
 		//
-		//this.setWidth("350px");
-		//this.setHeight("420px"); // required fixed height for ZK to auto adjust the position based on available space
 		ZKUpdateUtil.setWidth(this,"350px");
 		ZKUpdateUtil.setHeight(this, "420px");
 		this.setSclass("popup-dialog");
@@ -631,7 +629,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			
 			lstParish.getChildren().clear();
 			lstParish.appendItem("", null);
-			for (MMunicipality municipality : MMunicipality.getMunicipalitys(Env.getCtx(), m_location.getC_Region_ID()))
+			for (MMunicipality municipality : MMunicipality.getSQLMunicipalitys(Env.getCtx(), m_location.getC_Region_ID()))
 			{
 				lstMunicipality.appendItem(municipality.getName(),municipality);			
 			}
@@ -653,9 +651,10 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		{
 			// Clear Parish
 //			setParish();
+			// log.warning("  Municipality_ID="+m_location.getC_Municipality_ID()+" C_Region_ID="+m_location.getC_Region_ID());
 			lstParish.getChildren().clear();
 			lstParish.appendItem("", null); 
-			for (MParish parish : MParish.getParishs(Env.getCtx(),  m_location.getC_Municipality_ID(),m_location.getC_Region_ID()))
+			for (MParish parish : MParish.getSQLParishs(Env.getCtx(),  m_location.getC_Municipality_ID(),m_location.getC_Region_ID()))
 			{
 				lstParish.appendItem(parish.getName(),parish);
 			}
@@ -663,10 +662,9 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			s_oldMunicipality_ID = m_location.getC_Municipality_ID();
 		}
 		//  new Parish
-		
-//		log.warning("m_location.initLocation OJO..City:"+m_location.getC_City_ID()+"-"+m_location.getCity()+
-//						"..Country:"+m_location.getC_Country_ID()+"..Region:"+m_location.getC_Region_ID()+
-//						"..Municipality:"+m_location.getC_Municipality_ID()+"..Parish:"+m_location.getC_Parish_ID());
+		//log.warning("m_location.initLocation OJO..City:"+m_location.getC_City_ID()+"-"+m_location.getCity()+
+		//				"..Country:"+m_location.getC_Country_ID()+"..Region:"+m_location.getC_Region_ID()+
+		//				"..Municipality:"+m_location.getC_Municipality_ID()+"..Parish:"+m_location.getC_Parish_ID());
 		//      sequence of City Postal Region - @P@ @C@ - @C@, @R@ @P@
 		String ds = country.getCaptureSequence();
 		if (ds == null || ds.length() == 0)
@@ -824,6 +822,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			lstMunicipality.setSelectedItem(null);
 		}        
 	}
+	
 	/**
 	 *  setParish
 	 */
@@ -856,6 +855,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 	{
 		return m_change;
 	}   //  getChange
+	
 	/**
 	 *  Get edited Value (MLocationExt)
 	 *  @return location
@@ -1172,6 +1172,10 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			//if (!lstRegion.getSelectedItem().equals(null)) {
 			if (lstRegion.getSelectedItem() != null) {
 				MRegionExt r = (MRegionExt)lstRegion.getSelectedItem().getValue();
+//				MRegionExt rr = (MRegion)lstRegion.getSelectedItem().getValue();
+//				// POWrapper Class
+//				I_C_Region_Amerp r =  POWrapper.create(rr, I_C_Region_Amerp.class);
+
 				m_location.setRegion(r); 
 			} else {
 				m_location.setC_Region_ID(0);

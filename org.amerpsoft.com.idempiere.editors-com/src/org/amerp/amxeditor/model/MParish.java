@@ -38,7 +38,7 @@ public class MParish extends X_C_Parish implements DocAction {
 	 */
 	private static void loadAllParishs (Properties ctx)
 	{
-		s_Parishs = new CCache<String,MParish>("C_Parish", 100);
+		s_Parishs = new CCache<String,MParish>("C_Parish", 500);
 		String sql = "SELECT * FROM C_Parish WHERE IsActive='Y'";
 		try
 		{
@@ -112,11 +112,13 @@ public class MParish extends X_C_Parish implements DocAction {
 		return retValue;
 	}	//	getParishs
 
+
 	/**
-	 *	Return Array of Parishs of Country
-	 * 	@param ctx context
-	 *  @param C_Country_ID country
-	 *  @return MParish Array
+	 *	Return Array of Parishs of C_Municipality_ID and C_Region_ID
+	 * @param ctx
+	 * @param C_Municipality_ID
+	 * @param C_Region_ID
+	 * @return
 	 */
 	//@SuppressWarnings("unchecked")
 	public static MParish[] getParishs (Properties ctx, int C_Municipality_ID, int C_Region_ID)
@@ -138,6 +140,49 @@ public class MParish extends X_C_Parish implements DocAction {
 		return retValue;
 	}	//	getParishs
 
+
+	/**
+	 * Return Array of Parishs of C_Municipality_ID and C_Region_ID by SQL
+	 * @param ctx
+	 * @param C_Municipality_ID
+	 * @param C_Region_ID
+	 * @return
+	 */
+	//@SuppressWarnings("unchecked")
+	public static MParish[] getSQLParishs (Properties ctx, int C_Municipality_ID, int C_Region_ID)
+	{
+		if (s_Parishs == null || s_Parishs.size() == 0)
+			loadAllParishs(ctx);
+		ArrayList<MParish> list = new ArrayList<MParish>();
+		//
+		String sql = "SELECT * FROM C_Parish "+
+				" WHERE IsActive='Y' "+
+				" AND C_Municipality_ID="+C_Municipality_ID +
+				" AND C_Region_ID="+C_Region_ID;
+		try
+		{
+			Statement stmt = DB.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next())
+			{
+				MParish r = new MParish (ctx, rs, null);
+				if (r.getC_Municipality_ID() == C_Municipality_ID && r.getC_Region_ID()==C_Region_ID)
+					list.add(r);
+			}
+			rs.close();
+			stmt.close();
+		}
+		catch (SQLException e)
+		{
+			s_log.log(Level.SEVERE, sql, e);
+		}
+		
+		//  Sort it
+		MParish[] retValue = new MParish[list.size()];
+		list.toArray(retValue);
+		Arrays.sort(retValue, new MParish(ctx, 0, null));
+		return retValue;
+	}	//	getSQLParishs
 	
 	/**
 	 * @param p_ctx

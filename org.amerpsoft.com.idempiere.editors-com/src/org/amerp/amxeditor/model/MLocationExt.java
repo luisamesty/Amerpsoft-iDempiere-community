@@ -12,7 +12,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.compiere.model.MCountry;
 import org.compiere.model.MLocation;
+import org.compiere.model.MRegion;
 import org.compiere.model.MSysConfig;
 import org.compiere.process.DocAction;
 import org.compiere.util.CCache;
@@ -35,7 +37,7 @@ import org.amerp.amxeditor.model.MRegionExt;
  * 		<li>BF [ 3002736 ] MLocation.get cache all MLocations
  * 			https://sourceforge.net/tracker/?func=detail&aid=3002736&group_id=176962&atid=879332
  */
-public class MLocationExt extends MLocation implements DocAction
+public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAction
 {
 	/**
 	 * 
@@ -137,9 +139,9 @@ public class MLocationExt extends MLocation implements DocAction
 		super (ctx, C_Location_ID, trxName);
 		if (C_Location_ID == 0)
 		{
-			MCountryExt defaultCountry = MCountryExt.getDefault(getCtx()); 
+			MCountry defaultCountry = MCountry.getDefault(getCtx()); 
 			setCountry(defaultCountry);
-			MRegionExt defaultRegion = MRegionExt.getDefault(getCtx());
+			MRegion defaultRegion = MRegion.getDefault(getCtx());
 			if (defaultRegion != null 
 				&& defaultRegion.getC_Country_ID() == defaultCountry.getC_Country_ID())
 				setRegion(defaultRegion);
@@ -288,6 +290,7 @@ public class MLocationExt extends MLocation implements DocAction
 			}
 		}
 	} // setRegion
+	
 	/**
 	 * 	Set C_Region_ID
 	 *	@param C_Region_ID region

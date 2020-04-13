@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import org.adempiere.base.event.AbstractEventHandler;
 import org.adempiere.base.event.IEventTopics;
 import org.amerp.amxeditor.model.*;
+import org.compiere.model.I_C_Location;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.PO;
 import org.osgi.service.event.Event;

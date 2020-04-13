@@ -110,10 +110,10 @@ public class MMunicipality extends X_C_Municipality implements DocAction {
 	}	//	getMunicipalitys
 
 	/**
-	 *	Return Array of Municipalitys of Country
-	 * 	@param ctx context
-	 *  @param C_Country_ID country
-	 *  @return MMunicipality Array
+	 * Return Array of Municipalitys of REGION (C_REGION_ID)
+	 * @param ctx
+	 * @param C_Region_ID
+	 * @return
 	 */
 	//@SuppressWarnings("unchecked")
 	public static MMunicipality[] getMunicipalitys (Properties ctx, int C_Region_ID)
@@ -136,6 +136,45 @@ public class MMunicipality extends X_C_Municipality implements DocAction {
 		return retValue;
 	}	//	getMunicipalitys
 
+	/**
+	 * Return Array of Municipalitys of REGION (C_REGION_ID)
+	 * @param ctx
+	 * @param C_Region_ID
+	 * @return
+	 */
+	//@SuppressWarnings("unchecked")
+	public static MMunicipality[] getSQLMunicipalitys (Properties ctx, int C_Region_ID)
+	{
+		if (s_Municipalitys == null || s_Municipalitys.size() == 0)
+		loadAllMunicipalitys(ctx);
+		ArrayList<MMunicipality> list = new ArrayList<MMunicipality>();
+		String sql = "SELECT * FROM C_Municipality "+
+				" WHERE IsActive='Y' "+
+				" AND C_Region_ID="+C_Region_ID ;
+		try
+		{
+			Statement stmt = DB.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next())
+			{
+				MMunicipality r = new MMunicipality (ctx, rs, null);
+				if (r.getC_Region_ID()==C_Region_ID)
+					list.add(r);
+			}
+			rs.close();
+			stmt.close();
+		}
+		catch (SQLException e)
+		{
+			s_log.log(Level.SEVERE, sql, e);
+		}
+		//  Sort it
+		MMunicipality[] retValue = new MMunicipality[list.size()];
+		list.toArray(retValue);
+		Arrays.sort(retValue, new MMunicipality(ctx, 0, null));
+		return retValue;
+	}	//	getSQLMunicipalitys
+	
 	/**
 	 * @param p_ctx
 	 * @param C_Municipality_ID

@@ -1813,42 +1813,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351' singleton='false' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.themes-com' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Idempiere Themes Community version'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='5'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'>
-          <properties size='1'>
-            <property name='type' value='osgi.fragment'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-        <provided namespace='osgi.fragment' name='org.adempiere.ui.zk' version='7.1.0.202003232351'/>
-      </provides>
-      <requires size='2'>
-        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202003232351'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com&#xA;Bundle-Version: 7.1.0.202003232351&#xA;Fragment-Host: org.adempiere.ui.zk;bundle-version=&quot;7.1.0&quot;
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
     <unit id='org.eclipse.text' version='3.8.0.v20180923-1636' singleton='false' generation='2'>
       <update id='org.eclipse.text' range='[0.0.0,3.8.0.v20180923-1636)' severity='0'/>
       <properties size='8'>
@@ -2113,43 +2077,6 @@
           </instruction>
         </instructions>
       </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202003232351'>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
-        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202003232351'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202003232351'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202003232351'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
-          [Enter License Description here.]
-        </license>
-      </licenses>
-      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
-        [Enter Copyright Description here.]
-      </copyright>
     </unit>
     <unit id='org.eclipse.jetty.security' version='9.4.14.v20181114' singleton='false' generation='2'>
       <update id='org.eclipse.jetty.security' range='[0.0.0,9.4.14.v20181114)' severity='0'/>
@@ -3963,6 +3890,58 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202004132307' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.editors-com' range='[0.0.0,7.1.0.202004132307)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Extended Location Editor'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.editors-com'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202004132307'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='19'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.ui' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.idempiere.zk.extra' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='zcommon' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zel' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zhtml' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zul' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zk' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zkbind' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zkplus' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='zweb' range='8.6.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
+        <required namespace='java.package' name='org.compiere.model' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
+        <required namespace='java.package' name='org.zkoss.bind' range='0.0.0'/>
+        <required namespace='java.package' name='org.zkoss.zul.impl' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202004132307'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true&#xA;Bundle-Version: 7.1.0.202004132307
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.apache.commons.codec' version='1.10.0.v20180409-1845' singleton='false'>
       <update id='org.apache.commons.codec' range='[0.0.0,1.10.0.v20180409-1845)' severity='0'/>
       <properties size='9'>
@@ -4002,91 +3981,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.apache.commons.codec&#xA;Bundle-Version: 1.10.0.v20180409-1845
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='AMERPSOFT Localization Colombia - Withholdings'/>
-        <property name='org.eclipse.equinox.p2.provider' value='AMERPSOFT Fork from GlobalQSS'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.lco.withholding'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='6'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'/>
-        <provided namespace='java.package' name='org.globalqss.model' version='0.0.0'/>
-        <provided namespace='java.package' name='org.globalqss.process' version='0.0.0'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='5'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.base.callout' range='7.1.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202003232351'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='2'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 7.1.0.202003232351
-          </instruction>
-          <instruction key='configure'>
-            setStartLevel(startLevel:5); markStarted(started: true);
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Financial'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.financial'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='9'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.report.jasper' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.base.process' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
-        <required namespace='java.package' name='net.sf.jasperreports.engine' range='0.0.0'/>
-        <required namespace='java.package' name='org.adempiere.webui.window' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202003232351'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 7.1.0.202003232351
           </instruction>
         </instructions>
       </touchpointData>
@@ -4839,6 +4733,43 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202004132307'>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
+        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202004132307'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202004132307'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202004132307'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
+          [Enter License Description here.]
+        </license>
+      </licenses>
+      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
+        [Enter Copyright Description here.]
+      </copyright>
+    </unit>
     <unit id='zjavassist' version='8.6.0.1' singleton='false'>
       <update id='zjavassist' range='[0.0.0,8.6.0.1)' severity='0'/>
       <properties size='2'>
@@ -4880,58 +4811,6 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: zjavassist&#xA;Bundle-Version: 8.6.0.1
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351' generation='2'>
-      <update id='org.amerpsoft.com.idempiere.editors-com' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
-      <properties size='5'>
-        <property name='org.eclipse.equinox.p2.name' value='Extended Location Editor'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.editors-com'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'/>
-        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'>
-          <properties size='1'>
-            <property name='type' value='osgi.bundle'/>
-          </properties>
-        </provided>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='19'>
-        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.ui' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.idempiere.zk.extra' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
-        <required namespace='osgi.bundle' name='zcommon' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zel' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zhtml' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zul' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zk' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zkbind' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zkplus' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='zweb' range='8.6.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
-        <required namespace='java.package' name='org.compiere.model' range='0.0.0'/>
-        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
-        <required namespace='java.package' name='org.zkoss.bind' range='0.0.0'/>
-        <required namespace='java.package' name='org.zkoss.zul.impl' range='0.0.0'/>
-        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202003232351'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true&#xA;Bundle-Version: 7.1.0.202003232351
           </instruction>
         </instructions>
       </touchpointData>
@@ -6893,6 +6772,48 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202004132307' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,7.1.0.202004132307)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Financial'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.financial'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='7.1.0.202004132307'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='9'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.report.jasper' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.base.process' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.osgi.services' range='3.7.100'/>
+        <required namespace='java.package' name='net.sf.jasperreports.engine' range='0.0.0'/>
+        <required namespace='java.package' name='org.adempiere.webui.window' range='0.0.0'/>
+        <required namespace='java.package' name='org.osgi.framework' range='1.3.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='7.1.0.202004132307'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 7.1.0.202004132307
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='org.cryptacular' version='1.2.2' singleton='false' generation='2'>
       <update id='org.cryptacular' range='[0.0.0,1.2.2)' severity='0'/>
       <properties size='2'>
@@ -7265,6 +7186,49 @@
         </instructions>
       </touchpointData>
     </unit>
+    <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202004132307' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,7.1.0.202004132307)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='AMERPSOFT Localization Colombia - Withholdings'/>
+        <property name='org.eclipse.equinox.p2.provider' value='AMERPSOFT Fork from GlobalQSS'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.lco.withholding'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='6'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202004132307'/>
+        <provided namespace='java.package' name='org.globalqss.model' version='0.0.0'/>
+        <provided namespace='java.package' name='org.globalqss.process' version='0.0.0'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202004132307'>
+          <properties size='1'>
+            <property name='type' value='osgi.bundle'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
+        <required namespace='osgi.bundle' name='org.adempiere.base.callout' range='7.1.0'/>
+        <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202004132307'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 7.1.0.202004132307
+          </instruction>
+          <instruction key='configure'>
+            setStartLevel(startLevel:5); markStarted(started: true);
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
     <unit id='javax.jms' version='1.1.0.v201205091237' singleton='false'>
       <update id='javax.jms' range='[0.0.0,1.1.0.v201205091237)' severity='0'/>
       <properties size='8'>
@@ -7366,6 +7330,41 @@
           </instruction>
         </instructions>
       </touchpointData>
+    </unit>
+    <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202004132307' singleton='false'>
+      <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202004132307)' severity='0'/>
+      <properties size='7'>
+        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
+        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202004132307'/>
+      </provides>
+      <requires size='5'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202004132307,7.1.0.202004132307]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202004132307,7.1.0.202004132307]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202004132307,7.1.0.202004132307]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202004132307,7.1.0.202004132307]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202004132307,7.1.0.202004132307]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
+          [Enter License Description here.]
+        </license>
+      </licenses>
+      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
+        [Enter Copyright Description here.]
+      </copyright>
     </unit>
     <unit id='slf4j.jcl' version='1.7.25' singleton='false' generation='2'>
       <update id='slf4j.jcl' range='[0.0.0,1.7.25)' severity='0'/>
@@ -8283,41 +8282,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202003232351' singleton='false'>
-      <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202003232351)' severity='0'/>
-      <properties size='7'>
-        <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
-        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='maven-groupId' value='org.idempiere'/>
-        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.feature'/>
-        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
-      </properties>
-      <provides size='1'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202003232351'/>
-      </provides>
-      <requires size='5'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202003232351,7.1.0.202003232351]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202003232351,7.1.0.202003232351]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <licenses size='1'>
-        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
-          [Enter License Description here.]
-        </license>
-      </licenses>
-      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
-        [Enter Copyright Description here.]
-      </copyright>
-    </unit>
     <unit id='org.eclipse.jetty.websocket.common' version='9.4.14.v20181114' singleton='false' generation='2'>
       <update id='org.eclipse.jetty.websocket.common' range='[0.0.0,9.4.14.v20181114)' severity='0'/>
       <properties size='4'>
@@ -8385,6 +8349,42 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.eclipse.jetty.websocket.common&#xA;Bundle-Version: 9.4.14.v20181114
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202004132307' singleton='false' generation='2'>
+      <update id='org.amerpsoft.com.idempiere.themes-com' range='[0.0.0,7.1.0.202004132307)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='Idempiere Themes Community version'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
+        <property name='maven-groupId' value='org.idempiere'/>
+        <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
+        <property name='maven-version' value='7.1.0-SNAPSHOT'/>
+      </properties>
+      <provides size='5'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202004132307'/>
+        <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202004132307'>
+          <properties size='1'>
+            <property name='type' value='osgi.fragment'/>
+          </properties>
+        </provided>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='osgi.fragment' name='org.adempiere.ui.zk' version='7.1.0.202004132307'/>
+      </provides>
+      <requires size='2'>
+        <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='7.1.0'/>
+        <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202004132307'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com&#xA;Bundle-Version: 7.1.0.202004132307&#xA;Fragment-Host: org.adempiere.ui.zk;bundle-version=&quot;7.1.0&quot;
           </instruction>
         </instructions>
       </touchpointData>

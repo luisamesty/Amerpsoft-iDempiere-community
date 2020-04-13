@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import org.adempiere.webui.editor.WLocationEditor;
 import org.compiere.model.Lookup;
 import org.compiere.util.*;
 

@@ -7,13 +7,14 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.compiere.model.MRegion;
 import org.compiere.util.*;
 
 /**
  * @author luisamesty
  *
  */
-public class MRegionExt extends X_C_Region {
+public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 
 	/**
 	 * 
@@ -68,6 +69,9 @@ public class MRegionExt extends X_C_Region {
 			loadAllRegions(ctx);
 		String key = String.valueOf(C_Region_ID);
 		MRegionExt r = (MRegionExt)s_regions.get(key);
+//		MRegion rr = (MRegion)s_regions.get(key);
+//		// POWrapper Class
+//		I_C_Region_Amerp r =  POWrapper.create(rr, I_C_Region_Amerp.class);		
 		if (r != null)
 			return r;
 		r = new MRegionExt (ctx, C_Region_ID, null);
@@ -84,7 +88,7 @@ public class MRegionExt extends X_C_Region {
 	 * 	@param ctx context
 	 *	@return Region or null
 	 */
-	public static MRegionExt getDefault (Properties ctx)
+	public static MRegion getDefault (Properties ctx)
 	{
 		if (s_regions == null || s_regions.size() == 0)
 			loadAllRegions(ctx);
@@ -157,6 +161,18 @@ public class MRegionExt extends X_C_Region {
 	    super(p_ctx, p_rs, p_trxName);
 	    // TODO Auto-generated constructor stub
     }
+
+	@Override
+	public void setC_Community_ID(int C_Community_ID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getC_Community_ID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 
 }
