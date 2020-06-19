@@ -697,7 +697,7 @@ log.warning("sql="+sqlCmdI1+" "+sqlCmdI2);
 		X_A_Asset_Acct target = getA_Asset_Acct(Env.getCtx(),targetAS.getC_AcctSchema_ID(), A_Asset_ID);
 		StringBuffer  sqlCmdI1 = null;
 		StringBuffer  sqlCmdI2 = null;
-		// 	Stansard Columns
+		// 	Standard Columns
 		String stdColumns = "AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy";
 		//	Standard Values
 		String stdValues = String.valueOf(mas.getAD_Client_ID()) + ","+String.valueOf(mas.getAD_Org_ID())+ ",'Y',SysDate,"+String.valueOf(Env.getAD_User_ID(Env.getCtx()))+",SysDate,"+String.valueOf(Env.getAD_User_ID(Env.getCtx()));
@@ -731,10 +731,10 @@ log.warning("sql="+sqlCmdI1+" "+sqlCmdI2);
 		sqlCmdI2.append(","+source.getA_Depreciation_ID()+","+source.getA_Depreciation_F_ID());
 		sqlCmdI2.append(","+source.getA_Depreciation_Manual_Amount()+","+source.getA_Depreciation_Manual_Period());
 		sqlCmdI2.append(","+source.getA_Depreciation_Variable_Perc()+","+source.getA_Depreciation_Variable_Perc_F());
-		sqlCmdI2.append(","+source.getA_Disposal_Gain()+","+source.getA_Disposal_Loss()+","+source.getA_Disposal_Revenue());
+		sqlCmdI2.append(","+source.getA_Disposal_Gain_A()+","+source.getA_Disposal_Loss_A()+","+source.getA_Disposal_Revenue_A());
 		sqlCmdI2.append(","+source.getA_Period_End()+","+source.getA_Period_Start());
-		sqlCmdI2.append(","+source.getA_Reval_Accumdep_Offset_Cur()+","+source.getA_Reval_Accumdep_Offset_Prior()+","+source.getA_Reval_Cal_Method());
-		sqlCmdI2.append(","+source.getA_Reval_Cost_Offset()+","+source.getA_Reval_Cost_Offset_Prior()+","+source.getA_Reval_Depexp_Offset()+","+source.getA_Salvage_Value());
+		sqlCmdI2.append(","+source.getA_Reval_Cal_Method());
+		sqlCmdI2.append(","+source.getA_Reval_Cost_Offset_A()+","+source.getA_Reval_Cost_Offset_Prior_A()+","+source.getA_Reval_Depexp_Offset_A()+","+source.getA_Salvage_Value());
 		sqlCmdI2.append(","+source.getA_Split_Percent()+",'"+source.getPostingType()+"','"+source.getValidFrom()+"'");
 		if (target == null) {
 			for (int i = 0; i < list.size(); i++)
