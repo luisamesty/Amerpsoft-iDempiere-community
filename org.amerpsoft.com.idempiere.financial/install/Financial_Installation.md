@@ -4,7 +4,7 @@ Installation Procedure:
 ======================
 System Install
 ==============
-	1. Pack in ‘AMERP Financial.zip’
+	1. Pack in ‘AMERPSOFT Financial.zip’
 		Tables, References, Processes, Windows, Menus, 
 	2. Create Views and Functions
 		Folders: 
