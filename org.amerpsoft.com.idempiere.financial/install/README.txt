@@ -1,8 +1,8 @@
 Installation Procedure: 
 Systema Install 
-	1. Pack in ‘AMERP Financial.zip’
+	1. Pack in ‘AMERPSOFT Financial.zip’
 	    Tables, References, Processes, Windows, Menus, 
-	2. Create Views and Functions
+	2. Create Views and Functions (Review if already created)
 		Folders: 
 			sql/views 
 			sql/functions
