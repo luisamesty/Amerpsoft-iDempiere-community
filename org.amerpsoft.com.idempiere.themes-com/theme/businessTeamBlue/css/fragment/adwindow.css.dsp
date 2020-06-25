@@ -14,10 +14,17 @@
 .breadcrumb-record-info {
 	font-size: 12px;
 }
+.breadcrumb-toolbar-button [class^="z-icon-"] {
+	padding-left: 4px;
+	padding-right: 4px;
+}
 
 <%-- EGS CustomTheme --%>
 .adwindow-form > .z-grid-body {
 	background-color: #EEF1F6;
+}
+.adwindow-form.z-grid > .z-grid-body {
+	overflow: visible !important;
 }
 
 .adwindow-layout {
@@ -82,6 +89,10 @@
     height: 40px;
     background-image: none;
     background-color: #FAFBFD;
+}
+.adwindow-toolbar.mobile {
+	position: relative;
+	overflow: hidden;
 }
 
 .adwindow-breadcrumb {
@@ -177,7 +188,8 @@
 }
 
 .adwindow-gridview-detail {
-	height: 200px;
+	min-height: 200px;
+	height: 35%;
 }
 
 .adwindow-gridview-detail + .z-south-splitter {
@@ -256,3 +268,4 @@
 	left: 4px;
 	height: 12px;
 }
+

@@ -144,6 +144,10 @@
 .favourites-box .z-toolbar-start {
 	float: right;
 }
+.favourites-box .trash-font-icon {
+	font-family: FontAwesome;
+	font-size: 20px;
+}
 
 .recentitems-box {
 	width: 90%;
@@ -159,13 +163,26 @@
 .recentitems-box .z-toolbar-start {
 	float: right;
 }
-
+.recentitems-box A.trash-toolbarbutton {
+	display: inline-block;
+}
 .link.z-toolbarbutton-over .z-toolbarbutton-cnt {
     background-image: none;
     color: #000;
     text-decoration: none;
     font-size: 10px;
   /*  background: #FBD87E;*/
+}
+.recentitems-box .z-toolbar .z-toolbar-content {
+	display: inline-flex;
+	align-items: center;
+}
+.recentitems-box .trash-toolbarbutton .z-toolbarbutton-content {
+	font-size: 16px;
+}
+.recentitems-box .trash-font-icon {
+	font-family: FontAwesome;
+	font-size: 20px;
 }
 
 .views-box {
@@ -291,8 +308,8 @@ tr.z-listitem.z-listitem-selected .z-listcell-content {
 }
 .performance-panel .z-grid {
 	border: none;
-	margin:0; 
-	padding:0; 
+	margin:0px; 
+	padding:0px; 
 	position: relative;
 	width: 100%;
 }
@@ -306,4 +323,11 @@ tr.z-listitem.z-listitem-selected .z-listcell-content {
 	padding: 5px;
 	font-size: 11px;
 	font-weight: normal;
+}
+
+.fav-new-btn.z-toolbarbutton [class^="z-icon-"] {
+	font-size: smaller;
+	color: #333;
+	padding-left: 4px;
+	padding-right: 4px;
 }

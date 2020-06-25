@@ -5,12 +5,16 @@ it fix some issue relate resize, but can make side effect
 when detect side effect, fix to only apply for parameter window*/
 .z-window.z-window-noborder.z-window-noheader.z-window-embedded,
 .z-window.z-window-noborder.z-window-noheader.z-window-embedded .z-window-content,
-.main-parameter-layout{
+.main-parameter-layout {
 	height: 100%;
     background-color: #FFFFFF;
 }
+.process-modal-dialog .main-parameter-layout{
+	height: auto;
+	flex-basis: auto;
+}
 .process-modal-dialog.z-window > .z-window-content {
-	height: 100%;
+	flex: 1 1 auto;
 }
 
 .main-parameter-layout,
@@ -30,11 +34,14 @@ when detect side effect, fix to only apply for parameter window*/
 }
 .top-parameter-layout{
 	overflow: auto;
+	padding-bottom: 2vh;
+	flex-basis: auto;
 }
 
 .bottom-parameter-layout{
 	background-color: #C5C5C5;
-	padding: 1px 0px 0px 0px;
+	padding: 4px 4px 0px 4px;
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .z-window-content {
@@ -42,7 +49,7 @@ when detect side effect, fix to only apply for parameter window*/
 }	
 
 .message-paramenter{
-	max-height: 150pt; 
+	max-height: 300pt; 
 	overflow: hidden; 
 	margin: 10px;
 }
@@ -58,18 +65,22 @@ when detect side effect, fix to only apply for parameter window*/
 }
 
 .bottom-container{
-	overflow: auto;
-	padding: 4px;
-	background-color: white;
+	overflow: hidden;
 }
 
 .button-container{
 	float: right;
+	overflow: hidden;
+	padding: 4px;
 }
 
 .save-parameter-container{
-	float: left;
-	padding: 4px;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.result-parameter-layout {
+	overflow: auto;
 }
 
 .popup-dialog.z-window.z-window-overlapped.z-window-shadow,

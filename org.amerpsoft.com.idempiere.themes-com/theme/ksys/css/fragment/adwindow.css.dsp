@@ -14,6 +14,10 @@
 .breadcrumb-record-info {
 	font-size: 12px;
 }
+.breadcrumb-toolbar-button [class^="z-icon-"] {
+	padding-left: 4px;
+	padding-right: 4px;
+}
 
 .adwindow-form > .z-grid-body {
 	background-color: #E9F0FF;
@@ -174,7 +178,8 @@
 }
 
 .adwindow-gridview-detail {
-	height: 200px;
+	min-height: 200px;
+	height: 35%;
 }
 
 .adwindow-gridview-detail + .z-south-splitter {
@@ -277,4 +282,35 @@
 	.adtab-form-borderlayout.mobile.z-borderlayout > div > .adwindow-gridview-detail.z-south {
 		height: 80% !important;
 	}
+}
+
+@media screen and (min-width: 600px) {
+    /* Tablets and bigger */
+	.adwindow-detailpane-adtab-grid-south .z-paging ul>li {
+  		display: inline!important;
+	}
+}
+
+.activity-card {
+	border: 1px solid #d0cdc8;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	border-bottom: 2px solid #d0cdc8;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+.activity-card-spacing {
+	margin-top: 8px;
+}
+.activity-card .help-content {
+	font-size: 13px;
+}
+.record-info-dialog .record-info-radiogroup {
+	padding: 4px 4px 8px 4px;
+}
+.record-info-dialog .record-info-changelog-table {
+	margin-left: 3px;
+	margin-right: 3px;
 }

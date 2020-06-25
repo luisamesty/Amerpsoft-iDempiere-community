@@ -139,7 +139,7 @@
 }
 
 .views-box .z-vbox {
-	width: 99%;
+	width: 100%;
 }
 
 .views-box .z-window-content .z-vbox .z-vbox-separator td {

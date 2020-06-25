@@ -60,7 +60,7 @@
 	margin-left: auto; 
 	margin-right: auto;
 	position: relative;
-	width: 92%;	
+	width: 99%;	
 }
 
 .dashboard-widget-max {
@@ -85,7 +85,7 @@
 }
 
 .favourites-box {
-	width: 90%;
+	width: 100%;
 	margin: auto;
 	padding: 5px 0px 5px 0px;
 }
@@ -102,9 +102,13 @@
 .favourites-box .z-toolbar-start {
 	float: right;
 }
+.favourites-box .trash-font-icon {
+	font-family: FontAwesome;
+	font-size: 20px;
+}
 
 .recentitems-box {
-	width: 90%;
+	width: 100%;
 	margin: auto;
 	padding: 5px 0px 5px 0px;
 }
@@ -117,7 +121,20 @@
 .recentitems-box .z-toolbar-start {
 	float: right;
 }
-
+.recentitems-box A.trash-toolbarbutton {
+	display: inline-block;
+}
+.recentitems-box .z-toolbar .z-toolbar-content {
+	display: inline-flex;
+	align-items: center;
+}
+.recentitems-box .trash-toolbarbutton .z-toolbarbutton-content {
+	font-size: 16px;
+}
+.recentitems-box .trash-font-icon {
+	font-family: FontAwesome;
+	font-size: 20px;
+}
 .link.z-toolbarbutton-over .z-toolbarbutton-cnt {
     background-image: none;
     color: #000;
@@ -175,7 +192,7 @@
 }
 
 .activities-box {
-	width: 90%;
+	width: 100%;
 	margin: auto;
 	padding: 5px 0px 5px 0px;
 	cursor: pointer;
@@ -211,12 +228,13 @@
 
 <%-- performance indicator --%>
 .performance-indicator {
-	margin: auto; 
+	margin: 0px; 
 	position: relative; 
 }
 .performance-indicator img {
 	display: block;
-	margin: auto;
+	margin: 0px;
+	padding:0px;
 }
 .window-view-pi .performance-indicator img {
 }
@@ -232,11 +250,12 @@
 	border: 1px solid #c8c8c8;
 	padding-top: 4px; 
 	padding-bottom: 4px;
+	line-height:12px;
 }
 .performance-panel .z-grid {
 	border: none;
-	margin:0; 
-	padding:0; 
+	margin:0px; 
+	padding:0px; 
 	position: relative;
 	width: 100%;
 }
@@ -250,4 +269,11 @@
 	padding: 5px;
 	font-size: 11px;
 	font-weight: normal;
+}
+
+.fav-new-btn.z-toolbarbutton [class^="z-icon-"] {
+	font-size: smaller;
+	color: #333;
+	padding-left: 4px;
+	padding-right: 4px;
 }

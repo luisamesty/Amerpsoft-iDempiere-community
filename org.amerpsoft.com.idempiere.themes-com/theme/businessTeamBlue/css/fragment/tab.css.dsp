@@ -15,7 +15,7 @@
 	color: blue;
 }
 
-/*Modifica el CSS del Header*/
+/* EGS GROUP Modifica el CSS del Header*/
 .desktop-header-right.z-center .z-label {
     color: #000 !important;
     font-family: Helvetica,Arial,sans-serif !important;

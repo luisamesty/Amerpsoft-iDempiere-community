@@ -74,6 +74,7 @@
 }
 
 .desktop-tabbox .z-tab {
+	width: 5555px !important;
 	margin-right: 2px;
 }
 
@@ -120,6 +121,10 @@
 .desktop-tabbox .z-tab .z-tab-text {
 	padding-top: 0px;
 	padding-bottom: 0px;
+}
+
+.desktop-tabbox > .z-tabpanels {
+	flex-grow: 1 1 0;
 }
 
 .desktop-north, .desktop-center {

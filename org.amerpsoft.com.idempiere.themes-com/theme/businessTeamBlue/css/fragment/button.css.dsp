@@ -81,6 +81,9 @@
 .z-button.btn-small {
 	padding: 1px 5px;
 }
+.z-button.btn-medium {
+	padding: 2px 10px;
+}
 
 .z-button-disabled {
 	color: black; cursor: default; opacity: .6; -moz-opacity: .6; -khtml-opacity: .6; filter: alpha(opacity=60);
@@ -105,4 +108,34 @@
 	color: #555;
 	border: solid 1px #bbb;
 	text-shadow: 0px 1px 2px #888;
+}
+
+.z-button [class^="z-icon-"],
+.z-button-os [class^="z-icon-"]{
+	font-size: larger;
+	color: #333;	
+	padding-left: 2px;
+	padding-right: 2px;
+}
+.z-button.xlarge-toolbarbutton [class^="z-icon-"] {
+	font-size: 24px;
+}
+.z-button.large-toolbarbutton [class^="z-icon-"] {
+	font-size: 20px;
+}
+.z-button.medium-toolbarbutton [class^="z-icon-"] {
+	font-size: 16px;
+}
+.z-button.small-toolbarbutton [class^="z-icon-"] {
+	font-size: 12px;
+}
+.z-button {
+	vertical-align: middle;
+	text-align: center;
+}
+.btn-ok.z-button [class^="z-icon-"]:before {
+	color: green;	
+}
+.btn-cancel.z-button [class^="z-icon-"]:before {
+	color: red;	
 }

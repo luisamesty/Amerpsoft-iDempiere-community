@@ -8,7 +8,7 @@
 }
 
 .z-toolbarbutton-content {
-	padding: 0px;
+	padding: 0px 3px;
 }
 
 .toolbar-button {

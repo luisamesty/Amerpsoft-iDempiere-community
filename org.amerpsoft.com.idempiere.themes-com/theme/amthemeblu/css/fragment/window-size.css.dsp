@@ -89,15 +89,15 @@
 }	
 
 .record-info-dialog {
-	width: 500px;
-	height: 400px;
+	width: 800px;
+	height: 600px;
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 800px) {
 	.record-info-dialog {
 		width: 100%;
 	}
 }
-@media screen and (max-height: 400px) {
+@media screen and (max-height: 600px) {
 	.record-info-dialog {
 		height: 100%;
 	}
@@ -224,6 +224,10 @@
 }
 .quick-entry-dialog > .z-window-content {
 	overflow: auto;
+	padding: 4px;	
+}
+.quick-entry-dialog > .z-window-content > .confirm-panel {
+	padding-top: 4px;
 }
 @media screen and (max-width: 350px) {
 	.quick-entry-dialog {
@@ -300,8 +304,16 @@
 }
 
 .location-dialog {
-	width: 380px;
 	height: 420px;
+}
+.location-dialog > .z-window-content > .z-borderlayout {
+	min-width: 380px;
+}
+.location-dialog .field-label {
+	white-space: nowrap;
+}
+.location-dialog .confirm-panel {
+	padding: 4px 8px;
 }
 @media screen and (max-width: 380px) {
 	.location-dialog {

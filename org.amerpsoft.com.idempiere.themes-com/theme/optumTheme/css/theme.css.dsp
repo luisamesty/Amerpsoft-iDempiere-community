@@ -9,9 +9,14 @@ html,body {
 	width: 100%;
 	background-color: #333;
 	color: #333;
-	font-family: Arial;
+	font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;	
 	overflow: hidden;
 }
+
+body *:not([class*="z-icon-"], [class*="z-group-icon"]) {
+    font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;
+}
+
 .z-html p{
 	margin:0px;
 }
@@ -118,7 +123,7 @@ table.z-vbox > tbody > tr > td > table {
     border-radius: 4px;
     margin: auto 1px;
     background: #fefefe;
-    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zd�IgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCN6a2llOSkiIC8+PC9zdmc+);
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zd�IgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCN6a2llOSkiIC8+PC9zdmc+);
     background: -moz-linear-gradient(top,#fefefe 0,#eee 100%);
     background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#fefefe),color-stop(100%,#eee));
     background: -webkit-linear-gradient(top,#fefefe 0,#eee 100%);
@@ -236,7 +241,7 @@ table.z-vbox > tbody > tr > td > table {
     background: #ffffff;
 }
 
-.z-popup-content { /* border padding a la seccion men�*/
+.z-popup-content { /* border padding a la seccion men�*/
     background: #ffffff;
 }
 
@@ -306,7 +311,7 @@ table.z-vbox > tbody > tr > td > table {
     background-color: #EEF1F6;
 }
 
-/*Secci�n de b�squeda Menu*/
+/*Secci�n de b�squeda Menu*/
 
 .global-search-tabpanel .z-listbox-body {    /* Existe en ThemeCSS */
     background-color: #606C7D;
@@ -670,6 +675,8 @@ adwindow-detailpane-tabpanel .z-grid tbody tr td.z-cell { /*Color border grilla 
 <c:include page="fragment/menu-tree.css.dsp" />
 
 <c:include page="fragment/info-window.css.dsp" />
+
+<c:include page="fragment/window-size.css.dsp" />
 
 <c:include page="fragment/window.css.dsp" />
 

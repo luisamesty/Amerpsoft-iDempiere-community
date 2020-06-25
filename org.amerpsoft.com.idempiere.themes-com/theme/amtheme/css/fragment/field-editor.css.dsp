@@ -19,6 +19,9 @@
 	width: 100%;
 	height: 21px;
 }
+.editor-input.mobile.z-decimalbox {
+	padding-right: 5px;
+}
 
 .editor-input:focus {
 	border: 1px solid #0000ff;
@@ -75,16 +78,11 @@
 }
 
 .datetime-box {
-	display: inline-block;
 	white-space:nowrap;
 }
-
 .datetime-box .z-datebox {
-	display: inline;
 }
-
 .datetime-box .z-timebox {
-	display: inline;
 }
 
 span.grid-combobox-editor {

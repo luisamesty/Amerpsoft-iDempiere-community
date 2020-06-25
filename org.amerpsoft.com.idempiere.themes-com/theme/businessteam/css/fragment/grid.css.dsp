@@ -13,6 +13,12 @@
 	background-size: 16px 16px;  
 	cursor: pointer;
 }
+.z-grid tbody tr.grid-inactive-row span.row-indicator-selected.z-icon-Edit,
+.z-grid tbody tr.highlight span.row-indicator-selected.z-icon-Edit {
+	font-family: FontAwesome;
+	font-size: larger;
+	color: #333; 
+}
 
 .z-grid tbody tr.highlight td.z-cell { 
 	background-color: #FFFFCC !important;
@@ -43,10 +49,18 @@ div.z-column-cnt, div.z-grid-header div.z-auxheader-cnt {
 	text-overflow: ellipsis;
 	display: inline-block;
 	width: 100%;
+	vertical-align: middle;
+}
+
+.z-listcell > div.z-listcell-content {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: inline-block;
+	width: 100%;
 }
 
 .z-column-content, .z-listheader-content, .z-listcell-content {
-	padding: 0px 3px 0px;
+	padding: 2px 3px 1px;
 }
 
 .z-grid-body .z-cell {

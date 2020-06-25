@@ -45,7 +45,6 @@
 	width:100%;
 }
 
-
 .z-toolbarbutton [class^="z-icon-"] {
 	font-size: larger;
 	color: inherit;
@@ -94,4 +93,19 @@
 }
 .font-icon-toolbar-button .z-toolbarbutton-content {
 	color: inherit;
+}
+.font-icon-menuitem i {
+	vertical-align: middle;
+}
+.toolbar-searchbox {
+    margin-right: 10px;
+    margin-left: 10px;
+    border: 1px;
+    padding: 1px;
+}
+@media screen and (max-width: 768px) {
+  .toolbar-searchbox {
+    display: none;
+    width: 0px;
+  }
 }

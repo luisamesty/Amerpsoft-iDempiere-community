@@ -1,5 +1,5 @@
 <%-- Combobox --%>
-.z-combobox-disabled {
+.z-combobox-disabled, .z-combobox[disabled] {
 	color: black !important; cursor: default !important; opacity: 1; -moz-opacity: 1; -khtml-opacity: 1; filter: alpha(opacity=100);
 }
 

@@ -62,6 +62,12 @@ td.z-listcell {
 
 /*FIN EGS GROUP*/
 
+}
+.desktop-header.mobile {
+	height: 36px;
+	padding: 4px 4px;
+}
+
 .desktop-header-font {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
@@ -78,6 +84,7 @@ td.z-listcell {
 
 .desktop-header-popup .desktop-header {
 	border: none;
+	height: 100% !important;
 }
 
 .desktop-header-username {
@@ -92,6 +99,9 @@ td.z-listcell {
 .desktop-user-panel {
 	float: right;
 }
+.desktop-user-panel.mobile .desktop-header-font.desktop-header-username {
+	font-weight: 600;
+}
 
 .desktop-layout {
 	position: absolute; 
@@ -104,18 +114,29 @@ td.z-listcell {
 	background-color: #FAFAFC;
 }
 
-.desktop-tabbox .z-tab {
-	margin-right: 2px;
+.desktop-tabbox .z-tabs-content {
+    width: 5555px !important;
 }
 
 .desktop-tabbox .z-tab {
 	height: 24px;
+}
+@media screen and (max-width: 360px) {
+	.desktop-tabbox .z-tab {
+		max-width: 190px;
+	}
+}
+
+.desktop-tabbox .z-tab-selected {
+	height: 25px;
 }
 
  /*INICIO EGS GROUP*/
  
 .desktop-tabbox .z-tab-selected {
 	border-top: 2px solid #FCC654;
+	border-top-left-radius: 5px 5px;
+	border-top-right-radius: 5px 5px;
 }
 
 .desktop-tabbox .z-tab .z-tab-text {
@@ -331,11 +352,33 @@ td.z-listcell {
 }
 
 <%-- window container --%>
-.window-container-toolbar-btn .z-toolbarbutton-content img {
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content img {
 	width: 22px;
 	height: 22px;
+	padding: 3px 3px;
+}
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content [class^="z-icon"] {
+	width: 22px;
+	height: 22px;
+	padding: 3px 3px;
+}
+.window-container-toolbar > .z-toolbar-content,
+.window-container-toolbar-btn.z-toolbarbutton, 
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content,
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content [class^="z-icon"] {
+	display:inline-flex;
+	align-items: center;
+	justify-content: center; 
 }
 
+.user-panel-popup .z-popup-content {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.user-panel-popup .z-popup-content > .z-vlayout {
+	overflow-x: auto;
+	padding: 8px;
+}
 .window-container-toolbar-btn.context-help-btn .z-toolbarbutton-content img {
 	width: 16px;
 	height: 16px;

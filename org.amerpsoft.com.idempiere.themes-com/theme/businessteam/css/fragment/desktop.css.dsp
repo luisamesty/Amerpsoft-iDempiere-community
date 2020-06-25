@@ -25,6 +25,7 @@
 	width: 100%;
 	height: 66px;
 	border-bottom: 1px solid #C5C5C5 !important;
+	padding-left: 4px;
 }
 /*EGS GROUP*/
 .z-tabs-content {
@@ -48,6 +49,10 @@ td.z-listcell {
     border-left: 0.1em solid #CDD7BB;
     /* border-left: none; */
 }
+.desktop-header.mobile {
+	height: 36px;
+	padding: 4px 4px;
+}
 
 .desktop-header-font {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -65,6 +70,7 @@ td.z-listcell {
 
 .desktop-header-popup .desktop-header {
 	border: none;
+	height: 100% !important;
 }
 
 .desktop-header-username {
@@ -79,6 +85,9 @@ td.z-listcell {
 .desktop-user-panel {
 	float: right;
 }
+.desktop-user-panel.mobile .desktop-header-font.desktop-header-username {
+	font-weight: 600;
+}
 
 .desktop-layout {
 	position: absolute; 
@@ -91,12 +100,17 @@ td.z-listcell {
 	background-color: #E4E4E4;
 }
 
-.desktop-tabbox .z-tab {
-	margin-right: 2px;
+.desktop-tabbox .z-tabs-content {
+    width: 5555px !important;
 }
 
 .desktop-tabbox .z-tab {
 	height: 24px;
+}
+@media screen and (max-width: 360px) {
+	.desktop-tabbox .z-tab {
+		max-width: 190px;
+	}
 }
 
 .desktop-tabbox .z-tab-selected {
@@ -112,6 +126,10 @@ td.z-listcell {
 .desktop-tabbox .z-tab .z-tab-text {
 	padding-top: 0px;
 	padding-bottom: 0px;
+}
+
+.desktop-tabbox > .z-tabpanels {
+	flex-grow: 1 1 0;
 }
 
 .desktop-north, .desktop-center {
@@ -253,13 +271,31 @@ td.z-listcell {
 }
 
 <%-- window container --%>
-.window-container-toolbar-btn .z-toolbarbutton-content img {
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content img {
+	width: 16px;
+	height: 16px;
+	padding: 3px 3px;
+}
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content [class^="z-icon"] {
 	width: 22px;
 	height: 22px;
+	padding: 3px 3px;
+}
+.window-container-toolbar > .z-toolbar-content,
+.window-container-toolbar-btn.z-toolbarbutton, 
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content,
+.window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content [class^="z-icon"] {
+	display:inline-flex;
+	align-items: center;
+	justify-content: center; 
 }
 
 .window-container-toolbar-btn.context-help-btn .z-toolbarbutton-content img {
 	width: 16px;
 	height: 16px;
 	padding: 3px 3px;
+}
+.user-panel-popup .z-popup-content > .z-vlayout {
+	overflow-x: auto;
+	padding: 8px;
 }

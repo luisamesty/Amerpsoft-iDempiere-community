@@ -9,8 +9,12 @@ html,body {
 	width: 100%;
 	background-color: #D4E3F4;
 	color: #333;
-	font-family: Helvetica,Arial,sans-serif;
+	font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;	
 	overflow: hidden;
+}
+
+body *:not([class*="z-icon-"], [class*="z-group-icon"]) {
+    font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;
 }
 
 .z-html p{

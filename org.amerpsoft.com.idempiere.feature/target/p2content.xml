@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-  <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202006231048' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202006231048)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202006260756' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202006260756)' severity='0'/>
     <properties size='7'>
       <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
       <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
@@ -12,14 +12,14 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='1'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202006231048'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202006260756'/>
     </provides>
     <requires size='5'>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202006231048,7.1.0.202006231048]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202006231048,7.1.0.202006231048]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202006231048,7.1.0.202006231048]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202006231048,7.1.0.202006231048]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202006231048,7.1.0.202006231048]'>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202006260756,7.1.0.202006260756]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202006260756,7.1.0.202006260756]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202006260756,7.1.0.202006260756]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202006260756,7.1.0.202006260756]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202006260756,7.1.0.202006260756]'>
         <filter>
           (org.eclipse.update.install.features=true)
         </filter>
@@ -35,7 +35,7 @@
       [Enter Copyright Description here.]
     </copyright>
   </unit>
-  <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202006231048'>
+  <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202006260756'>
     <properties size='6'>
       <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
       <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
@@ -45,15 +45,15 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='3'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202006231048'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202006260756'/>
       <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-      <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202006231048'/>
+      <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202006260756'/>
     </provides>
     <filter>
       (org.eclipse.update.install.features=true)
     </filter>
     <artifacts size='1'>
-      <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202006231048'/>
+      <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202006260756'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>

@@ -108,7 +108,84 @@
 	background-image:url(${c:encodeThemeURL('~./zul/img/tree/item-sel.gif')});
 }
 
+.global-search-box.z-bandbox > .z-bandbox-button {
+	width: 24px;
+}
 .global-search-tabpanel {
-	width: 500px;
+	width: 600px;
+}
+@media screen and (max-width: 599px) {
+	.global-search-tabpanel {
+		width: 100%;
+	}
+}
+.global-search-box.z-bandbox {
+	width: 180px;
+}
+.global-search-box.z-bandbox > input.z-bandbox-input {
+	width: 180px;
+}
+@media screen and (min-width: 500px) {
+	.global-search-box.z-bandbox {
+		width: 200px;
+	}
+	.global-search-box.z-bandbox > input.z-bandbox-input {
+		width: 200px;
+	}
+}
+@media screen and (min-width: 768px) {
+	.global-search-box.z-bandbox {
+		width: 250px;
+	}
+	.global-search-box.z-bandbox > input.z-bandbox-input {
+		width: 250px;
+	}
+}
+@media screen and (min-width: 1024px) {
+	.global-search-box.z-bandbox {
+		width: 300px;
+	}
+	.global-search-box.z-bandbox > input.z-bandbox-input {
+		width: 300px;
+	}
+}
+
+.menu-href [class^="z-icon-"] {
+	font-size: larger;
+	color: #333;	
+	padding-right: 4px;
+	text-align: center;
+}
+.menu-href [class^="z-icon-"]:before {
+	width: 14px;
+}
+.menu-href-newbtn.z-toolbarbutton [class^="z-icon-"] {
+	font-size: smaller;
+	color: #333;
+}
+.menu-href-newbtn.z-toolbarbutton,
+.menu-href-newbtn.z-toolbarbutton .z-toolbarbutton-content {
+	justify-content: center;
+	align-items: center;
+	display: inline-flex;
+}
+
+.menu-search-list-toolbar-cell.z-listcell > div.z-listcell-content {
+	display: inline-flex; 
+	align-items: center;
+	justify-content: center;
+}
+.menu-search-list-toolbar-cell.z-listcell .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {
+	font-size: larger;
+}
+
+.z-menu-noimage.z-menupopup .z-menu-content > img.z-menu-image {
+	display: none;
+}
+.z-menu-noimage.z-menupopup .z-menuitem-content > img.z-menuitem-image {
+	display: none;
+}
+.z-menu-noimage.z-menupopup > .z-menupopup-separator {
+	display: none;
 }
 

@@ -13,7 +13,12 @@
 	background-size: 16px 16px;  
 	cursor: pointer;
 }
-
+.z-grid tbody tr.grid-inactive-row span.row-indicator-selected.z-icon-Edit,
+.z-grid tbody tr.highlight span.row-indicator-selected.z-icon-Edit {
+	font-family: FontAwesome;
+	font-size: larger;
+	color: #333; 
+}
 .z-grid tbody tr.highlight td.z-cell { 
 	background-color: #FFFFCC !important;
 	background-image: none !important;
@@ -39,6 +44,14 @@ div.z-column-cnt, div.z-grid-header div.z-auxheader-cnt {
 
 <%-- text overflow for grid cell --%>
 .z-cell > span.z-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: inline-block;
+	width: 100%;
+	vertical-align: middle;
+}
+
+.z-listcell > div.z-listcell-content {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: inline-block;

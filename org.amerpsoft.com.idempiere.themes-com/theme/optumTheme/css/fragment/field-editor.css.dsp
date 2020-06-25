@@ -73,6 +73,9 @@
 	width: 100%;
 	height: 21px;
 }
+.editor-input.mobile.z-decimalbox {
+	padding-right: 5px;
+}
 
 .editor-input:focus {
 	border: 1px solid #0000ff;
@@ -240,4 +243,37 @@ span.grid-combobox-editor {
 .image-field.image-field-readonly {
 	cursor: default;
 	border: none;
+}
+.image-fit-contain {
+	object-fit: contain;
+}
+.z-cell.image-field-cell {
+	z-index: 1;
+}
+
+.html-field {
+	cursor: pointer;
+	border: 1px solid #C5C5C5;
+	overflow: auto;
+}
+
+.dashboard-field-panel.z-panel, .dashboard-field-panel.z-panel > .z-panel-body,  .dashboard-field-panel.z-panel > .z-panel-body > .z-panelchildren  {
+	overflow: visible;
+}
+
+.idempiere-mandatory, .idempiere-mandatory input, .idempiere-mandatory a {
+    border-color:red;
+}
+
+.idempiere-label {
+    color: #333;
+}
+
+.idempiere-mandatory-label{
+   color: red!important;
+}
+
+.idempiere-zoomable-label {
+    cursor: pointer; 
+    text-decoration: underline;
 }
