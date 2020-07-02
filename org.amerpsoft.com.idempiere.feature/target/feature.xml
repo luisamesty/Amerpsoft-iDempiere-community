@@ -2,7 +2,11 @@
 <feature
       id="org.amerpsoft.com.idempiere.feature"
       label="Amerpsoft_community_features"
+<<<<<<< HEAD
       version="7.1.0.202007020803">
+=======
+      version="7.1.0.202007021023">
+>>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -20,14 +24,24 @@
          id="org.amerpsoft.com.idempiere.editors-com"
          download-size="150"
          install-size="402"
+<<<<<<< HEAD
          version="7.1.0.202007020803"
+=======
+         version="7.1.0.202007021023"
+>>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
          unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.themes-com"
+<<<<<<< HEAD
          download-size="12968"
          install-size="13280"
          version="7.1.0.202007020803"
+=======
+         download-size="12688"
+         install-size="12978"
+         version="7.1.0.202007021023"
+>>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
          fragment="true"
          unpack="false"/>
 
@@ -35,7 +49,11 @@
          id="org.amerpsoft.com.idempiere.lco.withholding"
          download-size="92"
          install-size="197"
+<<<<<<< HEAD
          version="7.1.0.202007020803"
+=======
+         version="7.1.0.202007021023"
+>>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
          fragment="true"
          unpack="false"/>
 
@@ -43,7 +61,11 @@
          id="org.amerpsoft.com.idempiere.financial"
          download-size="118"
          install-size="258"
+<<<<<<< HEAD
          version="7.1.0.202007020803"
+=======
+         version="7.1.0.202007021023"
+>>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
          fragment="true"
          unpack="false"/>
 
