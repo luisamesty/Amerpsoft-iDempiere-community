@@ -1,12 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-<<<<<<< HEAD
-  <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202007020803' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202007020803)' severity='0'/>
-=======
-  <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202007021023' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202007021023)' severity='0'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+  <unit id='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202007060859' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.feature.feature.group' range='[0.0.0,7.1.0.202007060859)' severity='0'/>
     <properties size='7'>
       <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
       <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
@@ -17,26 +12,14 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='1'>
-<<<<<<< HEAD
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202007020803'/>
-=======
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202007021023'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.group' version='7.1.0.202007060859'/>
     </provides>
     <requires size='5'>
-<<<<<<< HEAD
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202007020803,7.1.0.202007020803]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202007020803,7.1.0.202007020803]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202007020803,7.1.0.202007020803]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202007020803,7.1.0.202007020803]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202007020803,7.1.0.202007020803]'>
-=======
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202007021023,7.1.0.202007021023]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202007021023,7.1.0.202007021023]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202007021023,7.1.0.202007021023]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202007021023,7.1.0.202007021023]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202007021023,7.1.0.202007021023]'>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' range='[7.1.0.202007060859,7.1.0.202007060859]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' range='[7.1.0.202007060859,7.1.0.202007060859]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' range='[7.1.0.202007060859,7.1.0.202007060859]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' range='[7.1.0.202007060859,7.1.0.202007060859]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' range='[7.1.0.202007060859,7.1.0.202007060859]'>
         <filter>
           (org.eclipse.update.install.features=true)
         </filter>
@@ -52,11 +35,7 @@
       [Enter Copyright Description here.]
     </copyright>
   </unit>
-<<<<<<< HEAD
-  <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202007020803'>
-=======
-  <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202007021023'>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+  <unit id='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202007060859'>
     <properties size='6'>
       <property name='org.eclipse.equinox.p2.name' value='Amerpsoft_community_features'/>
       <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
@@ -66,27 +45,15 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='3'>
-<<<<<<< HEAD
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202007020803'/>
-=======
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202007021023'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.feature.feature.jar' version='7.1.0.202007060859'/>
       <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-<<<<<<< HEAD
-      <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202007020803'/>
-=======
-      <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202007021023'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+      <provided namespace='org.eclipse.update.feature' name='org.amerpsoft.com.idempiere.feature' version='7.1.0.202007060859'/>
     </provides>
     <filter>
       (org.eclipse.update.install.features=true)
     </filter>
     <artifacts size='1'>
-<<<<<<< HEAD
-      <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202007020803'/>
-=======
-      <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202007021023'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+      <artifact classifier='org.eclipse.update.feature' id='org.amerpsoft.com.idempiere.feature' version='7.1.0.202007060859'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>

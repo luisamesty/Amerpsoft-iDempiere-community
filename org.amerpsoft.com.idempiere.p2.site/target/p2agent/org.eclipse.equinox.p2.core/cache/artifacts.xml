@@ -3,11 +3,7 @@
 <repository name='download cache' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1'>
   <properties size='2'>
     <property name='p2.system' value='true'/>
-<<<<<<< HEAD
-    <property name='p2.timestamp' value='1593677046893'/>
-=======
-    <property name='p2.timestamp' value='1593685452018'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+    <property name='p2.timestamp' value='1594025985209'/>
   </properties>
   <mappings size='3'>
     <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>

@@ -1,32 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository version='1.1.0'?>
 <artifacts size='2'>
-<<<<<<< HEAD
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202007020803'>
-=======
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202007021023'>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='7.1.0.202007060859'>
     <properties size='5'>
-      <property name='artifact.size' value='12993122'/>
-      <property name='download.size' value='12993122'/>
+      <property name='artifact.size' value='12993123'/>
+      <property name='download.size' value='12993123'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
   </artifact>
-<<<<<<< HEAD
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='7.1.0.202007020803'>
-=======
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='7.1.0.202007021023'>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='7.1.0.202007060859'>
     <properties size='6'>
-<<<<<<< HEAD
-      <property name='artifact.size' value='13277857'/>
-      <property name='download.size' value='13277857'/>
-=======
-      <property name='artifact.size' value='12991357'/>
-      <property name='download.size' value='12991357'/>
->>>>>>> branch 'master' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
+      <property name='artifact.size' value='12991360'/>
+      <property name='download.size' value='12991360'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
