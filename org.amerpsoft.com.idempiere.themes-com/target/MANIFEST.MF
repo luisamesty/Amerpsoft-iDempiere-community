@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Idempiere Themes Community version
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com
-Bundle-Version: 7.1.0.202007060859
+Bundle-Version: 7.1.0.202007141506
 Bundle-ClassPath: theme/, .
 Fragment-Host: org.adempiere.ui.zk;bundle-version="7.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
