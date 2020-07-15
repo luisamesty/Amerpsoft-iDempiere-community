@@ -334,7 +334,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		txtResult.setCols(2);
 		txtResult.setRows(3);
 		//txtResult.setHeight("100%");
-		ZKUpdateUtil.setHeight(txtResult, "100%");
+		//ZKUpdateUtil.setHeight(txtResult, "100%");
 		txtResult.setReadonly(true);
 		
 		cbxValid = new Checkbox();
