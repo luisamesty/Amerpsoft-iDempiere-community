@@ -37,7 +37,6 @@ import java.sql.Timestamp;
 import java.util.logging.Level;
 
 import org.adempiere.util.IProcessUI;
-import org.amerp.amfmodel.MAMF_AllocationHdr;
 import org.compiere.acct.Doc;
 import org.compiere.acct.Doc_Invoice;
 import org.compiere.model.MAcctSchema;
@@ -452,7 +451,6 @@ public class AMFClientAcctProcessor extends SvrProcess
 					else
 						Percent = 0;
 					int C_AllocationHdr_ID= rs.getInt(1);
-					MAMF_AllocationHdr mmallhdr = new MAMF_AllocationHdr();
 					MAllocationHdr mallochdr = new MAllocationHdr(Env.getCtx(), C_AllocationHdr_ID, null);
 					Msg_Value =Msg.getElement(Env.getCtx(), "C_AllocationHdr_ID")+":"+mallochdr.getDocumentNo().trim()+
 							" ("+ DocumentNo+"/"+Document_Count+") " +
@@ -467,10 +465,7 @@ public class AMFClientAcctProcessor extends SvrProcess
 								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
 								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Reversed)) {		
 							Doc doc =  (Doc) Doc_Invoice.get(as, p_AD_Table_ID, C_AllocationHdr_ID, this.get_TrxName());
-							//postReturn = doc.post(true, true);
-							// RePostMAMFAllocationHeader
-							postReturn = mmallhdr.RePostMAMFAllocationHeader(mallochdr.getC_AllocationHdr_ID(), as, get_TrxName());
-							//postReturn = doc.post(true, true);
+							postReturn = doc.post(true, true);
 							Msg_Value=Msg_Value+ " ** "+postReturn+" **";
 						} else {
 							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
