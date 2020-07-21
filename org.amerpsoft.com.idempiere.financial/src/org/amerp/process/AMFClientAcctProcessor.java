@@ -1,31 +1,3 @@
-/**********************************************************************
-* This file is part of Adempiere ERP Bazaar                           *
-* http://www.adempiere.org                                            *
-*                                                                     *
-* Copyright (C) Carlos Ruiz - globalqss                               *
-* Copyright (C) Contributors                                          *
-*                                                                     *
-* This program is free software; you can redistribute it and/or       *
-* modify it under the terms of the GNU General Public License         *
-* as published by the Free Software Foundation; either version 2      *
-* of the License, or (at your option) any later version.              *
-*                                                                     *
-* This program is distributed in the hope that it will be useful,     *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of      *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the        *
-* GNU General Public License for more details.                        *
-*                                                                     *
-* You should have received a copy of the GNU General Public License   *
-* along with this program; if not, write to the Free Software         *
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,          *
-* MA 02110-1301, USA.                                                 *
-*                                                                     *
-* Contributors:                                                       *
-* - Carlos Ruiz - globalqss                                           *
-*                                                                     *
-* Sponsors:                                                           *
-* - Company (http://www.globalqss.com)                                *
-**********************************************************************/
 
 package org.amerp.process;
 
@@ -34,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
 import org.adempiere.util.IProcessUI;
@@ -122,6 +95,9 @@ public class AMFClientAcctProcessor extends SvrProcess
 		Timestamp DateIni = mperiod.getStartDate();
 		Timestamp DateEnd = mperiod.getEndDate();
 		String sql = "";
+		String mpDocStatus = "";
+		String mpNewStatus = "";
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		// Account Schema
 		MClientInfo info = MClientInfo.get(Env.getCtx(), p_AD_Client_ID, null); 
 		//MAcctSchema as = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
@@ -189,21 +165,36 @@ public class AMFClientAcctProcessor extends SvrProcess
 					Msg_Value =Msg.getElement(Env.getCtx(), "C_Invoice_ID")+":"+minvoice.getDocumentNo().trim()+
 							" ("+ DocumentNo+"/"+Document_Count+") " +
 							" "+Msg.translate(Env.getCtx(), "Date")+":"+String.format("%-20s", minvoice.getDateAcct() );
-					String mpDocStatus = minvoice.getDocStatus();
+					mpDocStatus = minvoice.getDocStatus();
 					if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Drafted) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_NotApproved) ||
 							mpDocStatus.equalsIgnoreCase(DocAction.ACTION_Void) ) {
-						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+								": ("+mpDocStatus+") ";
+						Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";
 					} else {
 						// DOCS
 						if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Completed) ||
-								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Invalid) ||
 								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Reversed)) {		
 							Doc doc =  (Doc) Doc_Invoice.get(as, p_AD_Table_ID, C_Invoice_ID, this.get_TrxName());
 							postReturn = doc.post(true, true);
-							Msg_Value=Msg_Value+ " ** "+postReturn+" **";
+							if (postReturn != null) {
+								mpNewStatus = postReturn;
+							} else {
+								mpNewStatus = minvoice.getDocStatus();
+							}
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "New")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpNewStatus+") **   \r\n";
 						} else {
-							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";						
 						}
+
 					}					
 					// Document Header
 					addLog(Msg_Value);
@@ -211,11 +202,9 @@ public class AMFClientAcctProcessor extends SvrProcess
 					// Process Monitor
 					if (processMonitor != null)
 					{
-						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+":"+ DocumentNo+"/"+Document_Count +"  " +
-								Msg.translate(Env.getCtx(), "Date")+":"+
-								String.format("%-20s", minvoice.getDateAcct()).replace(' ', '_') +" - " +
-								"No:"+
-								String.format("%-40s", minvoice.getDocumentNo().trim()).replace(' ', '_') ;
+						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+": "+ DocumentNo+"/"+Document_Count +"   " +
+								Msg.translate(Env.getCtx(), "Date")+":"+ dateFormat.format(minvoice.getDateAcct())+" - " +
+								"No:"+ String.format("%-40s", minvoice.getDocumentNo().trim()).replace(' ', '_') ;
 						processMonitor.statusUpdate(Message);
 					}
 				}
@@ -279,21 +268,34 @@ public class AMFClientAcctProcessor extends SvrProcess
 					Msg_Value =Msg.getElement(Env.getCtx(), "C_Payment_ID")+":"+mpayment.getDocumentNo().trim()+
 							" ("+ DocumentNo+"/"+Document_Count+") " +
 							" "+Msg.translate(Env.getCtx(), "Date")+":"+String.format("%-20s", mpayment.getDateAcct() );
-					String mpDocStatus = mpayment.getDocStatus();
+					mpDocStatus = mpayment.getDocStatus();
 					if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Drafted) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_NotApproved) ||
 							mpDocStatus.equalsIgnoreCase(DocAction.ACTION_Void) ) {
-						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+								": ("+mpDocStatus+") ";
+						Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";
 					} else {
 						// DOCS
 						if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Completed) ||
-								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Invalid) ||
 								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Reversed) ) {
 							Doc doc =  (Doc) Doc_Invoice.get(as, p_AD_Table_ID, C_Payment_ID, this.get_TrxName());
 							postReturn = doc.post(true, true);
-							Msg_Value=Msg_Value+ " ** "+postReturn+" **";
-
+							if (postReturn != null) {
+								mpNewStatus = postReturn;
+							} else {
+								mpNewStatus = mpayment.getDocStatus();
+							}
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "New")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpNewStatus+") **   \r\n";
 						} else {
-							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";						
 						}
 					}					
 					// Document Header
@@ -302,11 +304,9 @@ public class AMFClientAcctProcessor extends SvrProcess
 					// Process Monitor
 					if (processMonitor != null)
 					{
-						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+":"+ DocumentNo+"/"+Document_Count +"  " +
-								Msg.translate(Env.getCtx(), "Date")+":"+
-								String.format("%-20s", mpayment.getDateAcct()).replace(' ', '_') +" - " +
-								"No:"+
-								String.format("%-40s", mpayment.getDocumentNo().trim()).replace(' ', '_') ;
+						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+": "+ DocumentNo+"/"+Document_Count +"   " +
+								Msg.translate(Env.getCtx(), "Date")+":"+ dateFormat.format(mpayment.getDateAcct())+" - " +
+								"No:"+ String.format("%-40s", mpayment.getDocumentNo().trim()).replace(' ', '_') ;
 						processMonitor.statusUpdate(Message);
 					}
 				}
@@ -336,12 +336,12 @@ public class AMFClientAcctProcessor extends SvrProcess
 			addLog( DocTypeName+"  No:"+Document_Count);
 			// SQL
 			if (p_Posted.isEmpty()) {
-				sql = "SELECT C_BankStatementt_ID "
+				sql = "SELECT C_BankStatement_ID "
 						+ " FROM C_BankStatement " 
 						+ " WHERE AD_Client_ID= "+ p_AD_Client_ID 
 						+ DateBetween ;			
 			} else {
-				sql = "SELECT C_BankStatementt_ID "
+				sql = "SELECT C_BankStatement_ID "
 						+ " FROM C_BankStatement " 
 						+ " WHERE AD_Client_ID= "+ p_AD_Client_ID 
 						+ DateBetween 		
@@ -366,20 +366,34 @@ public class AMFClientAcctProcessor extends SvrProcess
 					Msg_Value =Msg.getElement(Env.getCtx(), "C_Payment_ID")+":"+mbs.getDocumentNo().trim()+
 							" ("+ DocumentNo+"/"+Document_Count+") " +
 							" "+Msg.translate(Env.getCtx(), "Date")+":"+String.format("%-20s", mbs.getDateAcct() );
-					String mpDocStatus = mbs.getDocStatus();
+					mpDocStatus = mbs.getDocStatus();
 					if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Drafted) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_NotApproved) ||
 							mpDocStatus.equalsIgnoreCase(DocAction.ACTION_Void) ) {
-						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+								": ("+mpDocStatus+") ";
+						Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";
 					} else {
 						// DOCS
 						if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Completed) ||
-								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Invalid) ||
 								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Reversed)) {		
 							Doc doc =  (Doc) Doc_Invoice.get(as, p_AD_Table_ID, C_BankStatement_ID, this.get_TrxName());
 							postReturn = doc.post(true, true);
-							Msg_Value=Msg_Value+ " ** "+postReturn+" **";
+							if (postReturn != null) {
+								mpNewStatus = postReturn;
+							} else {
+								mpNewStatus = mbs.getDocStatus();
+							}
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "New")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpNewStatus+") **   \r\n";
 						} else {
-							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";						
 						}
 					}					
 					// Document Header
@@ -388,11 +402,9 @@ public class AMFClientAcctProcessor extends SvrProcess
 					// Process Monitor
 					if (processMonitor != null)
 					{
-						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+":"+ DocumentNo+"/"+Document_Count +"  " +
-								Msg.translate(Env.getCtx(), "Date")+":"+
-								String.format("%-20s", mbs.getDateAcct()).replace(' ', '_') +" - " +
-								"No:"+
-								String.format("%-40s", mbs.getDocumentNo().trim()).replace(' ', '_') ;
+						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+": "+ DocumentNo+"/"+Document_Count +"   " +
+								Msg.translate(Env.getCtx(), "Date")+":"+ dateFormat.format(mbs.getDateAcct())+" - " +
+								"No:"+ String.format("%-40s", mbs.getDocumentNo().trim()).replace(' ', '_') ;
 						processMonitor.statusUpdate(Message);
 					}
 				}
@@ -451,24 +463,39 @@ public class AMFClientAcctProcessor extends SvrProcess
 					else
 						Percent = 0;
 					int C_AllocationHdr_ID= rs.getInt(1);
+					//
 					MAllocationHdr mallochdr = new MAllocationHdr(Env.getCtx(), C_AllocationHdr_ID, null);
 					Msg_Value =Msg.getElement(Env.getCtx(), "C_AllocationHdr_ID")+":"+mallochdr.getDocumentNo().trim()+
 							" ("+ DocumentNo+"/"+Document_Count+") " +
-							" "+Msg.translate(Env.getCtx(), "Date")+":"+String.format("%-20s", mallochdr.getDateAcct() );
-					String mpDocStatus = mallochdr.getDocStatus();
+							" "+Msg.translate(Env.getCtx(), "Date")+":"+dateFormat.format(mallochdr.getDateAcct());  
+					mpDocStatus = mallochdr.getDocStatus();
 					if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Drafted) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
+							mpDocStatus.equalsIgnoreCase(DocAction.STATUS_NotApproved) ||
 							mpDocStatus.equalsIgnoreCase(DocAction.ACTION_Void) ) {
-						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+						Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+								": ("+mpDocStatus+") ";
+						Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";
 					} else {
 						// DOCS
 						if (mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Completed) ||
-								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Closed) ||
-								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Reversed)) {		
+								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Reversed) ||	
+								mpDocStatus.equalsIgnoreCase(DocAction.STATUS_Invalid)) {		
 							Doc doc =  (Doc) Doc_Invoice.get(as, p_AD_Table_ID, C_AllocationHdr_ID, this.get_TrxName());
 							postReturn = doc.post(true, true);
-							Msg_Value=Msg_Value+ " ** "+postReturn+" **";
+							if (postReturn != null) {
+								mpNewStatus = postReturn;
+							} else {
+								mpNewStatus = mallochdr.getDocStatus();
+							}
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "New")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpNewStatus+") **   \r\n";
 						} else {
-							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "DocStatus")+":"+mpDocStatus+" **   \r\n";
+							Msg_Value=Msg_Value+ " ** "+Msg.translate(Env.getCtx(), "OldValue")+" "+Msg.getElement(Env.getCtx(), "Status")+
+									": ("+mpDocStatus+") ";
+							Msg_Value=Msg_Value+ " ** "+Msg.getElement(Env.getCtx(), "Processed")+" ("+Msg.translate(Env.getCtx(), "No")+") **";
 						}
 					}					
 					// Document Header
@@ -477,11 +504,9 @@ public class AMFClientAcctProcessor extends SvrProcess
 					// Process Monitor
 					if (processMonitor != null)
 					{
-						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+":"+ DocumentNo+"/"+Document_Count +"  " +
-								Msg.translate(Env.getCtx(), "Date")+":"+
-								String.format("%-20s", mallochdr.getDateAcct()).replace(' ', '_') +" - " +
-								"No:"+
-								String.format("%-40s", mallochdr.getDocumentNo().trim()).replace(' ', '_') ;
+						Message = "( "+String.format("%-5s",Percent)+ "% ) "+DocTypeName+": "+ DocumentNo+"/"+Document_Count +"   " +
+								Msg.translate(Env.getCtx(), "Date")+":"+ dateFormat.format(mallochdr.getDateAcct())+" - " +
+								"No:"+ String.format("%-40s", mallochdr.getDocumentNo().trim()).replace(' ', '_') ;
 						processMonitor.statusUpdate(Message);
 					}
 				}
