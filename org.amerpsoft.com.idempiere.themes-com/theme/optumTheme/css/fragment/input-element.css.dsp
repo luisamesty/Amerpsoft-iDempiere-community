@@ -15,8 +15,6 @@
 }
 <%-- highlight focus form element --%>
 input:focus, textarea:focus, .z-combobox-input:focus, z-datebox-input:focus {
-	/*border: 1px solid #0000ff;
-	background: #FFFFCC;*/
 	border: 1px solid #FA962F;
     background: #FDD676;
 }

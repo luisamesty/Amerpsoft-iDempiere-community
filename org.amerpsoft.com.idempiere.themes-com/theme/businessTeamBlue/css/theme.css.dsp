@@ -2,21 +2,22 @@
 <%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>
 <%@ taglib uri="http://www.idempiere.org/dsp/web/util" prefix="u" %>
 
+/*	font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif; */
 html,body {
 	margin: 0;
 	padding: 0;
 	height: 100%;
 	width: 100%;
 	background-color: #D4E3F4;
-	color: #333;
-	font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;	
+	color: #00000;
+	font-family: Helvetica,Arial,sans-serif;
 	overflow: hidden;
 }
-
+/*
 body *:not([class*="z-icon-"], [class*="z-group-icon"]) {
     font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;
 }
-
+*/
 .z-html p{
 	margin:0px;
 }

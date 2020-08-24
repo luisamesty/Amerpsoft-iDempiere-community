@@ -1,15 +1,10 @@
 /*EGS GROUP*/
 
-/* span.z-label {
-    text-decoration: none !important;
-    color: #333 !important;
-} */ 
-
 <%-- EGS CUSTOM cdd7bb --%>
 
 .z-combobox-input {
     background-color: #ffffff;
-    border: 1px solid #0099ff;
+    border: 1px solid #000;
     color: #333 !important;
  }
  
@@ -32,24 +27,18 @@
 	text-decoration: none;
 	font-size: small; 
 	vertical-align: top;
-	color: #2196f3 !important;
+	color: #000 !important;
     font-weight: 700 !important;
 }
 
 .egs_mandatory {
-    border: 1px solid #f9b968 !important;
+    border: 1px solid #000 !important;
     background-color: #fff9dc;
 }
 
 .egs_not_mandatory {
-    border: 1px solid #707070 !important;
+    border: 1px solid #000 !important;
 }
-
-
-/*.egs_mandatory > input {
-    border: 1px solid #f9b968 !important;
-    background-color: #fff9dc;
-}*/
 
 /* FIN EGS GROUP*/
 
@@ -129,16 +118,11 @@
 }
 
 .datetime-box {
-	display: inline-block;
 	white-space:nowrap;
 }
-
 .datetime-box .z-datebox {
-	display: inline;
 }
-
 .datetime-box .z-timebox {
-	display: inline;
 }
 
 span.grid-combobox-editor {
