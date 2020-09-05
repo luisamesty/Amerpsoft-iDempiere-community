@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-  <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009031225' generation='2'>
-    <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,7.1.0.202009031225)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009050949' generation='2'>
+    <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,7.1.0.202009050949)' severity='0'/>
     <properties size='5'>
       <property name='org.eclipse.equinox.p2.name' value='AMERPSOFT Localization Colombia - Withholdings'/>
       <property name='org.eclipse.equinox.p2.provider' value='AMERPSOFT Fork from GlobalQSS'/>
@@ -10,11 +10,11 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='6'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009031225'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009031225'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009050949'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009050949'/>
       <provided namespace='java.package' name='org.globalqss.model' version='0.0.0'/>
       <provided namespace='java.package' name='org.globalqss.process' version='0.0.0'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009031225'>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009050949'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -22,20 +22,20 @@
       <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
     </provides>
     <requires size='5'>
-      <required namespace='osgi.bundle' name='org.adempiere.base' range='7.1.0'/>
-      <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='7.1.0'/>
-      <required namespace='osgi.bundle' name='org.adempiere.base.callout' range='7.1.0'/>
+      <required namespace='osgi.bundle' name='org.adempiere.base' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.adempiere.plugin.utils' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.adempiere.base.callout' range='0.0.0'/>
       <required namespace='java.package' name='org.osgi.service.event' range='0.0.0'/>
       <requiredProperties namespace='osgi.ee' match='(&amp;(osgi.ee=JavaSE)(version=11))'/>
     </requires>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009031225'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='7.1.0.202009050949'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='2'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 7.1.0.202009031225&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 7.1.0.202009050949&#xA;
         </instruction>
         <instruction key='configure'>
           setStartLevel(startLevel:5); markStarted(started: true);
@@ -43,8 +43,8 @@
       </instructions>
     </touchpointData>
   </unit>
-  <unit id='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009031225' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.lco.withholding.source' range='[0.0.0,7.1.0.202009031225)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009050949' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.lco.withholding.source' range='[0.0.0,7.1.0.202009050949)' severity='0'/>
     <properties size='9'>
       <property name='df_LT.bundleVendor' value='AMERPSOFT Fork from GlobalQSS'/>
       <property name='df_LT.bundleName' value='AMERPSOFT Localization Colombia - Withholdings Source'/>
@@ -57,9 +57,9 @@
       <property name='maven-classifier' value='sources'/>
     </properties>
     <provides size='5'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009031225'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009031225'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009031225'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009050949'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009050949'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009050949'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -68,13 +68,13 @@
       <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
     </provides>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009031225'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding.source' version='7.1.0.202009050949'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding.source&#xA;Bundle-Version: 7.1.0.202009031225&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding.source&#xA;Bundle-Version: 7.1.0.202009050949&#xA;
         </instruction>
       </instructions>
     </touchpointData>

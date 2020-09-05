@@ -6,9 +6,9 @@ Bundle-Version: 7.1.0.qualifier
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: AMERPSOFT Fork from GlobalQSS
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: org.adempiere.base;bundle-version="7.1.0",
- org.adempiere.plugin.utils;bundle-version="7.1.0",
- org.adempiere.base.callout;bundle-version="7.1.0"
+Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
+ org.adempiere.plugin.utils;bundle-version="0.0.0",
+ org.adempiere.base.callout;bundle-version="0.0.0"
 Export-Package: org.globalqss.model,
  org.globalqss.process
 Service-Component: OSGI-INF/lco_modelfactorywh.xml,
