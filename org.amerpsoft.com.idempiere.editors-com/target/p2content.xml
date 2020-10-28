@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-  <unit id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010200422' generation='2'>
-    <update id='org.amerpsoft.com.idempiere.editors-com' range='[0.0.0,7.1.0.202010200422)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010271708' generation='2'>
+    <update id='org.amerpsoft.com.idempiere.editors-com' range='[0.0.0,7.1.0.202010271708)' severity='0'/>
     <properties size='5'>
       <property name='org.eclipse.equinox.p2.name' value='Extended Location Editor'/>
       <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
@@ -10,9 +10,9 @@
       <property name='maven-version' value='7.1.0-SNAPSHOT'/>
     </properties>
     <provides size='4'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010200422'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010200422'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010200422'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010271708'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010271708'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010271708'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -46,19 +46,19 @@
       </requiredProperties>
     </requires>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010200422'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com' version='7.1.0.202010271708'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true&#xA;Bundle-Version: 7.1.0.202010200422&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true&#xA;Bundle-Version: 7.1.0.202010271708&#xA;
         </instruction>
       </instructions>
     </touchpointData>
   </unit>
-  <unit id='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010200422' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.editors-com.source' range='[0.0.0,7.1.0.202010200422)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010271708' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.editors-com.source' range='[0.0.0,7.1.0.202010271708)' severity='0'/>
     <properties size='9'>
       <property name='df_LT.bundleVendor' value='Amerpsoft'/>
       <property name='df_LT.bundleName' value='Extended Location Editor Source'/>
@@ -71,9 +71,9 @@
       <property name='maven-classifier' value='sources'/>
     </properties>
     <provides size='5'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010200422'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010200422'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010200422'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010271708'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010271708'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010271708'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -82,13 +82,13 @@
       <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
     </provides>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010200422'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.editors-com.source' version='7.1.0.202010271708'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com.source&#xA;Bundle-Version: 7.1.0.202010200422&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com.source&#xA;Bundle-Version: 7.1.0.202010271708&#xA;
         </instruction>
       </instructions>
     </touchpointData>

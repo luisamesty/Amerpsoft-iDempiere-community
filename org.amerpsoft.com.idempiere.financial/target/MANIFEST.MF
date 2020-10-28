@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Financial
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=tr
  ue
-Bundle-Version: 7.1.0.202010200422
+Bundle-Version: 7.1.0.202010271708
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",org.adempiere.
  plugin.utils;bundle-version="0.0.0",org.adempiere.report.jasper;bundle-
