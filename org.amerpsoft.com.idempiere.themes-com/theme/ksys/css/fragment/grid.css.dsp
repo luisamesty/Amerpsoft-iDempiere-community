@@ -62,9 +62,17 @@ div.z-column-cnt, div.z-grid-header div.z-auxheader-cnt {
 .z-listheader-content, .z-listcell-content {
 	padding: 2px 3px 1px;
 }
-
+@media only screen 
+  and (max-device-width: 700px) {
+	.z-listcell > div.z-listcell-content {
+		white-space: pre-line;
+	}	
+}
 .z-column-content,.z-auxheader-content{
 	padding: 0px 3px 0px;
+}
+.z-column-content, .z-listheader-content, .z-listcell-content {
+	padding: 2px 3px 1px;
 }
 
 .z-grid-body .z-cell {

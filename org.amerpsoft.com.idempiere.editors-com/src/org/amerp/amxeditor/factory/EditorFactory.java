@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.amerp.amxeditor.factory;
 
+//import org.adempiere.webui.editor.IEditorConfiguration;
 import org.adempiere.webui.editor.WEditor;
 import org.adempiere.webui.editor.WLocationEditor;
 import org.adempiere.webui.factory.IEditorFactory;
@@ -32,19 +33,18 @@ public class EditorFactory implements IEditorFactory {
 	CLogger log = CLogger.getCLogger(EditorFactory.class);
 
     @Override
-    public WEditor getEditor(GridTab p_gridTab, GridField p_gridField, 
-    		boolean p_tableEditor) {
+    public WEditor getEditor(GridTab p_gridTab, GridField p_gridField, boolean p_tableEditor) {
 	    // TODO Auto-generated method stub
-//log.setLevel(Level.WARNING);
+    	//log.setLevel(Level.WARNING);
     	if (p_gridField == null)
     	{
     		return null;
     	}
     	WEditor editor = null;
     	int displayType = p_gridField.getDisplayType();
-//log.warning("..............EditorFactory........displayType="+displayType );
+    	//log.warning("..............EditorFactory........displayType="+displayType );
     	if (displayType == DisplayTypeFactory.LocationExtended) {
-//log.warning("DisplayTypeFactory: LocationExtended ");
+    		//log.warning("DisplayTypeFactory: LocationExtended ");
     		editor = new WLocationExtEditor(p_gridField, p_gridTab);
     		//editor = new WLocationEditor(p_gridField);
     	}
@@ -52,4 +52,26 @@ public class EditorFactory implements IEditorFactory {
     		editor.setTableEditor(p_tableEditor);
 	    return editor;
     }
+
+//	@Override
+//	public WEditor getEditor(GridTab gridTab, GridField gridField, boolean tableEditor,
+//			IEditorConfiguration editorConfiguration) {
+//		// TODO Auto-generated method stub
+//    	//log.setLevel(Level.WARNING);
+//    	if (gridField == null)
+//    	{
+//    		return null;
+//    	}
+//    	WEditor editor = null;
+//    	int displayType = gridField.getDisplayType();
+//    	//log.warning("..............EditorFactory........displayType="+displayType );
+//    	if (displayType == DisplayTypeFactory.LocationExtended) {
+//    		//log.warning("DisplayTypeFactory: LocationExtended ");
+//    		editor = new WLocationExtEditor(gridField, tableEditor, editorConfiguration);
+//    		//editor = new WLocationEditor(p_gridField);
+//    	}
+//    	if(editor != null)
+//    		editor.setTableEditor(tableEditor);
+//	    return editor;
+//	}
 }

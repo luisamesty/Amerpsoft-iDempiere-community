@@ -369,6 +369,7 @@ td.z-listcell {
 	display:inline-flex;
 	align-items: center;
 	justify-content: center; 
+	border-bottom: 0px; 
 }
 
 .user-panel-popup .z-popup-content {

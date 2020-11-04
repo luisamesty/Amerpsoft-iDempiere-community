@@ -180,6 +180,12 @@
     padding: 5px 5px 5px 5px;
     background: #E8E8E8;
 }
+.views-box .z-toolbarbutton [class^="z-icon"] {
+	text-align: center;
+}
+.views-box .z-toolbarbutton [class^="z-icon"]:before {
+	width: 14px;
+}
 
 .views-box .z-toolbarbutton-content{
 	text-decoration: none !important;
@@ -269,6 +275,10 @@
 	padding: 5px;
 	font-size: 11px;
 	font-weight: normal;
+}
+.mobile .help-content
+{
+	font-size: 14px;
 }
 
 .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {

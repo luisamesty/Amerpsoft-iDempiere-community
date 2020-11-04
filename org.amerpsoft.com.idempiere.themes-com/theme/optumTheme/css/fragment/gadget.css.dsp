@@ -138,7 +138,6 @@
 .views-box {
 	width: 98%;
 	margin: auto;
-	/*padding: 5px 0px 5px 0px;*/
 	padding: 2px 0px 2px 2px !important;
 	background: #EAF1F6 !important;
 }
@@ -169,6 +168,13 @@
     border: 1px solid #E8E8E8;
     padding: 5px 5px 5px 5px;
     background: #E8E8E8;
+}
+
+.views-box .z-toolbarbutton [class^="z-icon"] {
+	text-align: center;
+}
+.views-box .z-toolbarbutton [class^="z-icon"]:before {
+	width: 14px;
 }
 
 .views-box .z-toolbarbutton-content{
@@ -242,10 +248,6 @@
 .activities-box .z-button:hover {
     background-color: #FBD87E;
 }
-/* FIN EGS GROUP */
-
-
-
 
 .recentitems-box .z-toolbar, .favourites-box .z-toolbar {
 	margin-top: 1px;
@@ -295,6 +297,10 @@
 	padding: 2px;
 	font-size: 11px;
 	font-weight: normal;
+}
+.mobile .help-content
+{
+	font-size: 14px;
 }
 
 .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {

@@ -56,6 +56,10 @@
 
 .desktop-center.z-center .z-panel {
     border-radius: 10px 10px 1px 1px;
+
+}
+.z-panel-head {
+	background-image: none; background-color: #FFFFFF;
 }
 
 .z-panel {
@@ -188,7 +192,6 @@
 .views-box {
 	width: 98%;
 	margin: auto;
-	/*padding: 5px 0px 5px 0px;*/
 	padding: 2px 0px 2px 2px !important;
 	background: #EAF1F6 !important;
 }
@@ -237,10 +240,22 @@
 	width: 16px;
 }
 
+.views-box .link img {
+	height: 16px;
+	width: 16px;
+}
+.views-box .z-toolbarbutton [class^="z-icon"] {
+	text-align: center;
+}
+.views-box .z-toolbarbutton [class^="z-icon"]:before {
+	width: 14px;
+}
+
 .activities-box {
 	width: 96%;
 	margin: auto;
 	padding: 5px 0px 5px 0px;
+	cursor: pointer;
 }
 
 .activities-box .z-vbox {
@@ -323,6 +338,10 @@ tr.z-listitem.z-listitem-selected .z-listcell-content {
 	padding: 5px;
 	font-size: 11px;
 	font-weight: normal;
+}
+.mobile .help-content
+{
+	font-size: 14px;
 }
 
 .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {

@@ -13,18 +13,22 @@ html,body {
 	font-family: Helvetica,Arial,sans-serif;
 	overflow: hidden;
 }
-/*
-body *:not([class*="z-icon-"], [class*="z-group-icon"]) {
-    font-family: Helvetica, Arial, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;
-}
-*/
+
 .z-html p{
 	margin:0px;
 }
 
-<%-- Tablet --%>
+[class*="z-"]:not([class*="z-icon-"]):not([class*="z-group-icon-"]) {
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+<%-- Mobile/Tablet --%>
 .tablet-scrolling {
 	-webkit-overflow-scrolling: touch;
+}
+.mobile [class*="z-"] {
+    font-size: 16px;
 }
 
 <%-- vbox fix for firefox and ie --%>
