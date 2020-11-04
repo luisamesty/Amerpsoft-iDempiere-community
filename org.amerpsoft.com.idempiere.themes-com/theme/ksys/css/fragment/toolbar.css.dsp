@@ -1,5 +1,6 @@
 .z-toolbar.z-toolbar-tabs {
 	padding-top: 0px;
+	padding-bottom: 0px;
 }
 
 .toolbar {
@@ -26,6 +27,10 @@
 	padding: 1px;
 	border: none;   
 	display: inline-block;
+}
+.toolbar-overflow-popup-vertical .toolbar-button, 
+.toolbar-overflow-popup-vertical .toolbar-button .z-toolbarbutton-content {
+	width: auto;
 }
 
 .depressed img {
@@ -96,6 +101,10 @@
 }
 .font-icon-menuitem i {
 	vertical-align: middle;
+}
+.toolbar-overflow-popup-vertical .font-icon-toolbar-button.toolbar-button, 
+.toolbar-overflow-popup-vertical .font-icon-toolbar-button.toolbar-button .z-toolbarbutton-content {
+	justify-content: flex-start;
 }
 .toolbar-searchbox {
     margin-right: 10px;

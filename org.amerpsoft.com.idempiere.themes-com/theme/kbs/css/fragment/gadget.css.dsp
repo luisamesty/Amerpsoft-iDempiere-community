@@ -249,6 +249,10 @@
 	font-size: 11px;
 	font-weight: normal;
 }
+.mobile .help-content
+{
+	font-size: 14px;
+}
 
 .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {
 	font-size: smaller;

@@ -161,6 +161,7 @@
 	width: 90%;
 	margin: auto;
 	padding: 5px 0px 5px 0px;
+	cursor: pointer;	
 }
 
 .activities-box .z-vbox {
@@ -202,8 +203,8 @@
 }
 .performance-panel .z-grid {
 	border: none;
-	margin:0; 
-	padding:0; 
+	margin:0px; 
+	padding:0px; 
 	position: relative;
 	width: 100%;
 }
@@ -217,6 +218,10 @@
 	padding: 5px;
 	font-size: 11px;
 	font-weight: normal;
+}
+.mobile .help-content
+{
+	font-size: 14px;
 }
 
 .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {

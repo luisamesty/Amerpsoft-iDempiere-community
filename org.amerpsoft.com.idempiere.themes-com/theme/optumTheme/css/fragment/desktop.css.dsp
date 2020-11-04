@@ -60,8 +60,12 @@ td.z-listcell {
     color: #333 !important;
     text-decoration: none;
 }
-
 /*FIN EGS GROUP*/
+
+.desktop-header.mobile {
+	height: 36px;
+	padding: 4px 4px;
+}
 
 .desktop-header-font {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -362,7 +366,8 @@ td.z-listcell {
 .window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content [class^="z-icon"] {
 	display:inline-flex;
 	align-items: center;
-	justify-content: center; 
+	justify-content: center;
+	border-bottom: 0px;
 }
 
 .window-container-toolbar-btn.context-help-btn .z-toolbarbutton-content img {

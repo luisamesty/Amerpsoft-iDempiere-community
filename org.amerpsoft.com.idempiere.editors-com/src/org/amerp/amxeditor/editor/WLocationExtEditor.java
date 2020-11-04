@@ -29,6 +29,7 @@ import org.amerp.amxeditor.model.MLocationExt;
 import org.amerp.amxeditor.model.MLocationLookupExt;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
+import org.compiere.model.MLocationLookup;
 //import org.compiere.model.*;
 import org.compiere.util.*;
 import org.zkoss.zk.ui.Component;
@@ -78,6 +79,18 @@ public class WLocationExtEditor extends WEditor implements EventListener<Event>,
         init();
 	}
 
+    /**
+     * 
+     * @param gridField
+     * @param tableEditor
+     * @param editorConfiguration
+     */
+    public WLocationExtEditor(GridField gridField, boolean tableEditor, IEditorConfiguration editorConfiguration) {
+		super(new Locationbox(), gridField, tableEditor, editorConfiguration);
+		m_Location = (MLocationLookupExt)gridField.getLookup();
+        init();
+	}
+    
     private void init()
     {
     	getComponent().setButtonImage(ThemeManager.getThemeResource("images/Location16.png"));

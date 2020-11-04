@@ -82,3 +82,4 @@ When is completed, you should have:
 - Invoice (Customer Return Check)  Window
 
 For more information Contact to [me](luisamesty@gmail.com).
+#### Updated for Idempiere release 8.1 - November 2020

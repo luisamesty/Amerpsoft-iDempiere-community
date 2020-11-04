@@ -20,10 +20,10 @@
 		<unit id="org.eclipse.ecf.filetransfer.feature.feature.group"/>
 		<unit id="org.eclipse.ecf.filetransfer.httpclient4.feature.feature.group"/>
 		<unit id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group"/>
-		<unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group"/> -->
+		<unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group"/> 
 		<unit id="org.eclipse.equinox.executable.feature.group"/>
 		<unit id="org.eclipse.equinox.server.core.feature.group"/>
-		<unit id="org.eclipse.equinox.server.p2.feature.group"/>
+		<unit id="org.eclipse.equinox.server.p2.feature.group"/> -->
 		<unit id="org.idempiere.eclipse.platform.feature.feature.group"/>
 		<unit id="org.idempiere.equinox.p2.director.feature.feature.group"/>
 		<unit id="org.idempiere.felix.webconsole.feature.feature.group"/>
@@ -33,7 +33,7 @@
 <!--		LINUX OS  -->
 <!--		<repository location="file:///home/luisamesty/sources/myexperiment/org.idempiere.p2/target/repository"/>  -->
 <!--		MAC OS  -->
-		<repository location="file:///Users/luisamesty/iDempiere7.1/myexperiment/org.idempiere.p2/target/repository"/>
+		<repository location="file:///Users/luisamesty/sources/idempiere/org.idempiere.p2/target/repository"/>
 	</location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>

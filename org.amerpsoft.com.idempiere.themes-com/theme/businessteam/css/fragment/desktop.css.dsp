@@ -287,7 +287,8 @@ td.z-listcell {
 .window-container-toolbar-btn.z-toolbarbutton .z-toolbarbutton-content [class^="z-icon"] {
 	display:inline-flex;
 	align-items: center;
-	justify-content: center; 
+	justify-content: center;
+	border-bottom: 0px;  
 }
 
 .window-container-toolbar-btn.context-help-btn .z-toolbarbutton-content img {

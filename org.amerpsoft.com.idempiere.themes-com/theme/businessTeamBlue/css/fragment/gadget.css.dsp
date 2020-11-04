@@ -136,7 +136,6 @@
 .views-box {
 	width: 98%;
 	margin: auto;
-	/*padding: 5px 0px 5px 0px;*/
 	padding: 2px 0px 2px 2px !important;
 	background: #EAF1F6 !important;
 }
@@ -161,12 +160,24 @@
 	padding: 0px 5px 0px 0px;
 }
 
+.views-box .z-toolbarbutton {
+	width: 100%;
+	padding: 0px 14px;
+}
+
 .views-box .link img {
     height: 16px;
     width: 16px;
     border: 1px solid #E8E8E8;
     padding: 5px 5px 5px 5px;
     background: #E8E8E8;
+}
+
+.views-box .z-toolbarbutton [class^="z-icon"] {
+	text-align: center;
+}
+.views-box .z-toolbarbutton [class^="z-icon"]:before {
+	width: 14px;
 }
 
 .views-box .z-toolbarbutton-content{
@@ -188,7 +199,6 @@
 .activities-box {
 	width: 99%;
 	margin: auto;
-/*	padding: 5px 0px 5px 0px; */
     margin-bottom: -3px;
     margin-right: -1px;
 }
@@ -287,6 +297,10 @@
 	padding: 2px;
 	font-size: 11px;
 	font-weight: normal;
+}
+.mobile .help-content
+{
+	font-size: 14px;
 }
 
 .fav-new-btn.z-toolbarbutton [class^="z-icon-"] {

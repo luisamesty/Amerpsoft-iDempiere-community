@@ -50,3 +50,4 @@ Luis Amesty - luisamesty@gmail.com
 * AMERPSOFT Bank Reports
 
 
+#### Updated for Idempiere release 8.1 - November 2020

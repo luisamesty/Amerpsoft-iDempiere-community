@@ -10,9 +10,9 @@ mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
 #   org.amerpsoft.idempiere.editors-com/pom.xml
 #   org.amerpsoft.idempiere.themes/pom.xml
 #  Relative Path is set as: 
-#  <relativePath>../../myexperiment/org.idempiere.parent/pom.xml</relativePath>
+#  <relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
 #
 # 2. Change the repository location in file:
 #   org.amerpsoft.com.idempiere.p2.targetplatform/org.amerpsoft.com.idempiere.p2.targetplatform.target
 #   Repository Location is set as: 
-# 		<repository location="file:///Volumes/Datos/Adempiere/iDempiere7.1srcGitMac/myexperiment/org.idempiere.p2/target/repository"/>
+# 		<repository location="file:///Users/luisamesty/sources/idempiere/org.idempiere.p2/target/repository"/>

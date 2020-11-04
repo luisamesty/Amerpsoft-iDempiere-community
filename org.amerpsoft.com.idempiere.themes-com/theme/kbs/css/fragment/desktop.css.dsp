@@ -73,30 +73,9 @@
 	background-color: #E4E4E4;
 }
 
-.desktop-tabbox .z-tab {
-	width: 5555px !important;
-	margin-right: 2px;
-}
-
 .desktop-tabbox .z-tabs-content {
     width: 5555px !important;
 	background-color: #E9F0FF;
-}
-
-<%-- customization for search window --%>
-.desktop-tabbox .z-window-content .z-tabs-content {
-    width: 5555px !important;
-    background-color: #ffffff;
-}
-
-.desktop-tabbox .z-window-content .z-row .z-row-inner, .z-row .z-cell {
-    border-right: 0px;
-    background-color: #eaf0ff;
-}
-
-.desktop-tabbox .z-window-content .z-south {
-	border: none;
-	background-color: #ffffff;
 }
 
 .desktop-tabbox .z-tab {
@@ -134,11 +113,6 @@
 .desktop-center {
 	padding-top: 2px;
 	background-color: #E4E4E4;
-}
-
-.desktop-center .desktop-tabbox .z-tabpanel {
-    background: #eaf0ff;
-    padding: 0px 0px 0px 0px;
 }
 
 .desktop-tabpanel {
@@ -287,6 +261,7 @@
 	display:inline-flex;
 	align-items: center;
 	justify-content: center; 
+	border-bottom: 0px; 
 }
 
 .user-panel-popup .z-popup-content {

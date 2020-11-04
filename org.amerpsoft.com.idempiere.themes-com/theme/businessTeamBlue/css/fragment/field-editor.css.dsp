@@ -25,7 +25,7 @@
 
 .mandatory-decorator-text {
 	text-decoration: none;
-	font-size: small; 
+	font-size: xx-small; 
 	vertical-align: top;
 	color: #000 !important;
     font-weight: 700 !important;
@@ -161,6 +161,22 @@ span.grid-combobox-editor {
 	
 .grid-combobox-editor input:focus + .z-combobox-button {
 	border-left: 1px solid #0000ff;
+}
+
+.editor-input.z-combobox + .editor-button {
+	background-color: #F7F7F7;
+	width: 22px;
+    height: 24px;
+    min-height: 24px;
+    right: 0px;
+    top: 1px;
+    border: 1px solid #CFCFCF;
+    border-radius: 0;
+    border-left: 1px solid transparent;
+}
+.editor-input.z-combobox > .z-combobox-input {
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
 }
 
 <%-- payment rule --%>

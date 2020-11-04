@@ -43,4 +43,4 @@ For more information on How to build idempiere Maven projects, see on Wiki:
 
 -[Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
 
-#### Updated for Idempiere release 7.1 - July 2020
+#### Updated for Idempiere release 8.1 - November 2020

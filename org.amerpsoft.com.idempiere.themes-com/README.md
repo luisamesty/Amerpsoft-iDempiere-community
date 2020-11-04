@@ -85,3 +85,5 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
     Value: default
 
     This will put default Idempiere Standard ZK Theme
+
+   Updated for Idempiere release 8.1 - November 2020
