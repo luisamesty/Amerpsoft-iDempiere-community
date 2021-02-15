@@ -1,5 +1,12 @@
+# DELETE old Build plugins
+rm build.plugins/*.jar
+
 #  COMMAND TO Build Maven Plugins
 mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
+
+# COPY Build plugins to build.plugins directory
+cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/*.jar build.plugins/
+
 
 # NOTE: Compilation is configured for local MAC OS development environment
 # Compiling in a different server setup you need to change relativePath and Location.
