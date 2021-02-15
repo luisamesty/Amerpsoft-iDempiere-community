@@ -59,6 +59,12 @@ repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.a
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.themes-com_target/provider=
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.themes-com_target/suffix=p2artifacts.xml
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.themes-com_target/uri=file\:/Users/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.themes-com/target/
+repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/description=
+repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/enabled=true
+repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/isSystem=false
+repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/provider=
+repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/suffix=p2artifacts.xml
+repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/uri=file\:/Users/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.zk_themes/target/
 repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/description=Read-only repository adapter for org.eclipse.tycho.p2.target.TargetPlatformBundlePublisher$PublishedBundlesArtifactRepository@793e33fc
 repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/enabled=true
 repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/isSystem=false

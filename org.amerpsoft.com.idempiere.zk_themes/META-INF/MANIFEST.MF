@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Zk_themes
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.zk_themes
+Bundle-Version: 8.2.0.qualifier
+Fragment-Host: org.adempiere.ui.zk
+Automatic-Module-Name: org.amerpsoft.com.idempiere.zk.themes
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Vendor: Amerpsoft

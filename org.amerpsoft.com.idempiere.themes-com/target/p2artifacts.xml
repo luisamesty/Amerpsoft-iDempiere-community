@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository version='1.1.0'?>
 <artifacts size='2'>
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202101211815'>
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202102152212'>
     <properties size='5'>
-      <property name='artifact.size' value='13014015'/>
-      <property name='download.size' value='13014015'/>
+      <property name='artifact.size' value='13014016'/>
+      <property name='download.size' value='13014016'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.themes-com'/>
       <property name='maven-version' value='8.2.0-SNAPSHOT'/>
     </properties>
   </artifact>
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202101211815'>
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202102152212'>
     <properties size='6'>
       <property name='artifact.size' value='13012257'/>
       <property name='download.size' value='13012257'/>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-  <unit id='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202101211815' singleton='false' generation='2'>
-    <update id='org.amerpsoft.com.idempiere.themes-com' range='[0.0.0,8.2.0.202101211815)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202102152212' singleton='false' generation='2'>
+    <update id='org.amerpsoft.com.idempiere.themes-com' range='[0.0.0,8.2.0.202102152212)' severity='0'/>
     <properties size='5'>
       <property name='org.eclipse.equinox.p2.name' value='Idempiere Themes Community version'/>
       <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
@@ -10,15 +10,15 @@
       <property name='maven-version' value='8.2.0-SNAPSHOT'/>
     </properties>
     <provides size='5'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202101211815'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202101211815'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202101211815'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202102152212'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202102152212'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202102152212'>
         <properties size='1'>
           <property name='type' value='osgi.fragment'/>
         </properties>
       </provided>
       <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      <provided namespace='osgi.fragment' name='org.adempiere.ui.zk' version='8.2.0.202101211815'/>
+      <provided namespace='osgi.fragment' name='org.adempiere.ui.zk' version='8.2.0.202102152212'/>
     </provides>
     <requires size='2'>
       <required namespace='osgi.bundle' name='org.adempiere.ui.zk' range='8.1.0'/>
@@ -29,19 +29,19 @@
       </requiredProperties>
     </requires>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202101211815'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com' version='8.2.0.202102152212'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com&#xA;Bundle-Version: 8.2.0.202101211815&#xA;Fragment-Host: org.adempiere.ui.zk;bundle-version=&quot;8.1.0&quot;&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com&#xA;Bundle-Version: 8.2.0.202102152212&#xA;Fragment-Host: org.adempiere.ui.zk;bundle-version=&quot;8.1.0&quot;&#xA;
         </instruction>
       </instructions>
     </touchpointData>
   </unit>
-  <unit id='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202101211815' singleton='false'>
-    <update id='org.amerpsoft.com.idempiere.themes-com.source' range='[0.0.0,8.2.0.202101211815)' severity='0'/>
+  <unit id='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202102152212' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.themes-com.source' range='[0.0.0,8.2.0.202102152212)' severity='0'/>
     <properties size='9'>
       <property name='df_LT.bundleVendor' value='Amerpsoft'/>
       <property name='df_LT.bundleName' value='Idempiere Themes Community version Source'/>
@@ -54,9 +54,9 @@
       <property name='maven-classifier' value='sources'/>
     </properties>
     <provides size='5'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202101211815'/>
-      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202101211815'/>
-      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202101211815'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202102152212'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202102152212'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202102152212'>
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -65,13 +65,13 @@
       <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
     </provides>
     <artifacts size='1'>
-      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202101211815'/>
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.themes-com.source' version='8.2.0.202102152212'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
-          Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com.source&#xA;Bundle-Version: 8.2.0.202101211815&#xA;
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.themes-com.source&#xA;Bundle-Version: 8.2.0.202102152212&#xA;
         </instruction>
       </instructions>
     </touchpointData>

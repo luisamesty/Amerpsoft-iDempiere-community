@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository version='1.1.0'?>
 <artifacts size='2'>
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='8.2.0.202101211815'>
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='8.2.0.202102152212'>
     <properties size='5'>
-      <property name='artifact.size' value='94866'/>
-      <property name='download.size' value='94866'/>
+      <property name='artifact.size' value='94865'/>
+      <property name='download.size' value='94865'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.lco.withholding'/>
       <property name='maven-version' value='8.2.0-SNAPSHOT'/>
     </properties>
   </artifact>
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding.source' version='8.2.0.202101211815'>
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding.source' version='8.2.0.202102152212'>
     <properties size='6'>
-      <property name='artifact.size' value='81725'/>
-      <property name='download.size' value='81725'/>
+      <property name='artifact.size' value='81723'/>
+      <property name='download.size' value='81723'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.lco.withholding'/>
       <property name='maven-version' value='8.2.0-SNAPSHOT'/>
