@@ -1,0 +1,99 @@
+Xsession: X session started for root at mar jun  9 11:15:31 CEST 2020
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
+dbus-update-activation-environment: setting DISPLAY=:10.0
+localuser:root being added to access control list
+/etc/X11/Xsession: 2: [: x: unexpected operator
+/etc/X11/Xsession: 2: [: x: unexpected operator
+dbus-update-activation-environment: setting GTK_MODULES=gail:atk-bridge
+dbus-update-activation-environment: setting QT_ACCESSIBILITY=1
+dbus-update-activation-environment: setting USER=root
+dbus-update-activation-environment: setting J2SDKDIR=/usr/lib/jvm/java-14-oracle
+dbus-update-activation-environment: setting LANGUAGE=es_ES.utf8
+dbus-update-activation-environment: setting J2REDIR=/usr/lib/jvm/java-14-oracle
+dbus-update-activation-environment: setting HOME=/root
+dbus-update-activation-environment: setting GTK_MODULES=gail:atk-bridge
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/0/bus
+dbus-update-activation-environment: setting PULSE_SCRIPT=/etc/xrdp/pulse/default.pa
+dbus-update-activation-environment: setting IM_CONFIG_PHASE=1
+dbus-update-activation-environment: setting LOGNAME=root
+dbus-update-activation-environment: setting PATH=/sbin:/bin:/usr/bin:/usr/local/bin:/snap/bin:/usr/lib/jvm/java-14-oracle/bin:/usr/lib/jvm/java-14-oracle/db/bin:/usr/lib/jvm/java-14-oracle/bin:/usr/lib/jvm/java-14-oracle/db/bin
+dbus-update-activation-environment: setting DERBY_HOME=/usr/lib/jvm/java-14-oracle/db
+dbus-update-activation-environment: setting XRDP_SOCKET_PATH=/var/run/xrdp/sockdir
+dbus-update-activation-environment: setting XDG_RUNTIME_DIR=/run/user/0
+dbus-update-activation-environment: setting S_COLORS=auto
+dbus-update-activation-environment: setting DISPLAY=:10.0
+dbus-update-activation-environment: setting LANG=es_ES.utf8
+dbus-update-activation-environment: setting UID=0
+dbus-update-activation-environment: setting SHELL=/bin/bash
+dbus-update-activation-environment: setting QT_ACCESSIBILITY=1
+dbus-update-activation-environment: setting XRDP_SESSION=1
+dbus-update-activation-environment: setting GPG_AGENT_INFO=/run/user/0/gnupg/S.gpg-agent:0:1
+dbus-update-activation-environment: setting PWD=/root
+dbus-update-activation-environment: setting JAVA_HOME=/usr/lib/jvm/java-14-oracle
+dbus-update-activation-environment: setting LC_ALL=es_ES.utf8
+dbus-update-activation-environment: setting XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+** Message: 11:15:35.261: couldn't access control socket: /run/user/0/keyring/control: No existe el archivo o el directorio
+mate-session[1623]: WARNING: Unable to find provider '' of required component 'dock'
+Advertencia del gestor de ventanas: Ocurrió un error al cargar el tema «Ambiant-MATE»: Falló al encontrar un archivo válido para el temaAmbiant-MATE
+
+Advertencia del gestor de ventanas: Ocurrió un error al cargar el tema «Simple»: Falló al encontrar un archivo válido para el temaSimple
+
+Advertencia del gestor de ventanas: Log level 16: XPresent is not compatible with your current system configuration.
+Gtk-Message: 11:15:42.411: GtkDialog mapped without a transient parent. This is discouraged.
+Gtk-Message: 11:15:42.978: GtkDialog mapped without a transient parent. This is discouraged.
+Gtk-Message: 11:15:43.729: GtkDialog mapped without a transient parent. This is discouraged.
+Error creating proxy: Error calling StartServiceByName for org.gtk.vfs.AfcVolumeMonitor: Timeout was reached (g-io-error-quark, 24)
+Error creating proxy: Error calling StartServiceByName for org.gtk.vfs.AfcVolumeMonitor: Timeout was reached (g-io-error-quark, 24)
+Error en la conexión: Conexión negada
+pa_context_connect() falló: Conexión negada
+SSH_AUTH_SOCK=/run/user/0/keyring/ssh
+mate-session[1623]: WARNING: Could not launch application 'indicator-sound.desktop': Unable to start application: Failed to execute child process “/usr/lib/x86_64-linux-gnu/indicator-sound/indicator-sound-service” (No existe el archivo o el directorio)
+SSH_AUTH_SOCK=/run/user/0/keyring/ssh
+SSH_AUTH_SOCK=/run/user/0/keyring/ssh
+mate-session[1623]: WARNING: Could not launch application 'indicator-messages.desktop': Unable to start application: Failed to execute child process “/usr/lib/x86_64-linux-gnu/indicator-messages/indicator-messages-service” (No existe el archivo o el directorio)
+caja-dropbox is not installed, doing nothing.
+mate-session[1623]: WARNING: Could not launch application 'indicator-session.desktop': Unable to start application: Failed to execute child process “/usr/lib/x86_64-linux-gnu/indicator-session/indicator-session-service” (No existe el archivo o el directorio)
+mate-session[1623]: WARNING: Could not launch application 'indicator-power.desktop': Unable to start application: Failed to execute child process “/usr/lib/x86_64-linux-gnu/indicator-power/indicator-power-service” (No existe el archivo o el directorio)
+mate-session[1623]: WARNING: Could not launch application 'indicator-application.desktop': Unable to start application: Failed to execute child process “/usr/lib/x86_64-linux-gnu/indicator-application/indicator-application-service” (No existe el archivo o el directorio)
+
+(update-notifier:1817): GLib-ERROR **: 11:16:15.052: creating thread 'dconf worker': Error creating thread: Recurso no disponible temporalmente
+
+(nm-applet:1780): Gtk-WARNING **: 11:16:15.053: Can't set a parent on widget which has a parent
+Error creating proxy: Error calling StartServiceByName for org.gtk.vfs.AfcVolumeMonitor: Timeout was reached (g-io-error-quark, 24)
+
+** (mate-settings-daemon:1648): WARNING **: 11:17:37.452: Disable DEBUG
+
+** (mate-settings-daemon:1648): WARNING **: 11:20:33.670: Disable DEBUG
+
+** (mate-settings-daemon:1648): WARNING **: 11:20:34.704: Disable DEBUG
+Gtk-Message: 11:20:44.554: GtkDialog mapped without a transient parent. This is discouraged.
+Gtk-Message: 11:20:44.587: GtkDialog mapped without a transient parent. This is discouraged.
+
+(mate-panel:1671): Gtk-WARNING **: 11:20:57.923: Error loading theme icon 'help-contents' for stock: Icon 'help-contents' not present in theme Ambiant-MATE
+
+(mate-panel:1671): Gtk-WARNING **: 11:20:57.924: Error loading theme icon 'go-previous' for stock: 
+
+(mate-panel:1671): Gtk-WARNING **: 11:20:57.924: Error loading theme icon 'list-add' for stock: Icon 'list-add' not present in theme Ambiant-MATE
+
+(mate-panel:1671): Gtk-WARNING **: 11:20:57.924: Error loading theme icon 'window-close' for stock: Icon 'window-close' not present in theme Ambiant-MATE
+Gtk-Message: 11:20:57.945: GtkDialog mapped without a transient parent. This is discouraged.
+
+(mate-panel:1671): Gtk-WARNING **: 11:21:06.980: Error loading theme icon 'help-contents' for stock: Icon 'help-contents' not present in theme Ambiant-MATE
+Gtk-Message: 11:21:07.002: GtkDialog mapped without a transient parent. This is discouraged.
+
+(firefox:2110): GLib-ERROR **: 11:21:11.561: creating thread 'gmain': Error creating thread: Recurso no disponible temporalmente
+Gtk-Message: 11:22:05.261: GtkDialog mapped without a transient parent. This is discouraged.
+
+(mate-panel:1671): Gtk-WARNING **: 11:22:38.059: Error loading theme icon 'help-contents' for stock: Icon 'help-contents' not present in theme Ambiant-MATE
+
+(mate-panel:1671): Gtk-WARNING **: 11:22:38.060: Error loading theme icon 'window-close' for stock: Icon 'window-close' not present in theme Ambiant-MATE
+Gtk-Message: 11:22:38.075: GtkDialog mapped without a transient parent. This is discouraged.
+
+(mate-panel:1671): Gtk-WARNING **: 11:22:38.117: Failed to fetch network locations: Automount failed: Failed to fork (Recurso no disponible temporalmente)
+Gtk-Message: 11:22:38.209: GtkDialog mapped without a transient parent. This is discouraged.
+Gtk-Message: 11:22:38.235: GtkDialog mapped without a transient parent. This is discouraged.
+Gtk-Message: 11:22:38.272: GtkDialog mapped without a transient parent. This is discouraged.
+
+(mate-panel:1671): Gtk-WARNING **: 11:22:43.696: Failed to fetch network locations: Automount failed: Failed to fork (Recurso no disponible temporalmente)
+Gdk-Message: 11:22:45.190: mate-session: Fatal IO error 11 (Recurso no disponible temporalmente) on X server :10.0.
+
