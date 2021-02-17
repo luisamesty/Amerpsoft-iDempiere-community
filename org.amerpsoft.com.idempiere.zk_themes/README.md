@@ -20,6 +20,8 @@ Joining on a single fragment plugin. Tested on idempiere versions 8.2.
 
 Using the new standard for Theme managent on Idempiere 8.2 as stablished with IDEMPIERE-4421
 
+<b>***  DO NOT USE this plugin for iDempiere Versions older than 8.2 *** </b>
+
 <pre>
 Based on IDEMPIERE-4421, Some Theme Migration Notes:
 </pre>
@@ -73,7 +75,11 @@ Configuration is simply to set the System Configurator flag ZK_THEME_USE_FONT_IC
 Maintainer: Optum-OGS
 [optumTheme](https://github.com/Optum-OGS/iDempiereOptumTheme)
 
-* <b>Updated for idempiere version 7.1</b>
+* <b>iceblue_c:</b>
+Maintainer: Heng Sin
+[iceblue_c](https://github.com/hengsin/idempiere-examples)
+
+* <b>Updated for idempiere version 8.2</b>
 
 ## <b>Documentation</b>
 
@@ -81,7 +87,7 @@ Maintainer: Optum-OGS
 See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
 
 
-[AMERPSOFT Themes - amerp_themes.pdf ](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.themes-com/documentation/amerp_themes.pdf)
+[AMERPSOFT Themes - amerp_themes.pdf ](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.zk_themes/documentation/amerp_themes.pdf)
 
 ## <b>Installation Procedure</b>
 
@@ -114,4 +120,4 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
 
     This will put default Idempiere Standard ZK Theme
 
-   Updated for Idempiere release 8.1 - November 2020
+   Updated for Idempiere release 8.2 - February 2021

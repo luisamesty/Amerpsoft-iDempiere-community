@@ -18,8 +18,8 @@ For any question or improvement see me at:
 AMERPSOFT Themes is a collection of themes from different sources and contributors. 
 Joining on a single fragment plugin. Tested on idempiere versions 5.1,  6.2 and 7.1.
 
-<b>***  DO NOT USE this plugin for Version 8.2 *** </b>
-<b>USE New one ZK_THEMES.</b>
+<b>***  DO NOT USE this plugin for iDempiere Version 8.2 *** </b>
+<b>*** USE New one ZK_THEMES. ***</b>
 
 Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
@@ -89,4 +89,4 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
 
     This will put default Idempiere Standard ZK Theme
 
-   Updated for Idempiere release 8.1 - November 2020
+   Updated for Idempiere release 7.1 - February 2021
