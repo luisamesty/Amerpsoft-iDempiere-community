@@ -50,6 +50,7 @@ div.z-column-cnt, div.z-grid-header div.z-auxheader-cnt {
 	display: inline-block;
 	width: 100%;
 	vertical-align: middle;
+	white-space: nowrap;
 }
 
 .z-listcell > div.z-listcell-content {
