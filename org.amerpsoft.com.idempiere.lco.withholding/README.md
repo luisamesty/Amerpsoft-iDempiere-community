@@ -1,6 +1,6 @@
 # <b>AMERPSOFT LCO Withholding</b>
 
-## <b>AMERPSOFT Editor - Location Extended</b>
+## <b>AMERPSOFT LCO - Withholding</b>
 This tutorial is brought to you by Luis Amesty from:
 
 [Amerpsoft Consulting](http://amerpsoft.com/index.php/en/)
@@ -19,7 +19,7 @@ Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisames
 AMERPSOFT LCO Withholding is a Fork for LCO Withholding from GolbalQss (Carlos Ruiz).
 
 This Plugin is intended to solve Venezuela´s requirement for Withholding Documents Registration and Printing. These Modifications include Multiple Invoices registering.
-Carlos Ruiz – GlobalQSS, developed original Plugin. This version is actually tested on Idempiere Version from 2.1 to 7.1.
+Carlos Ruiz – GlobalQSS, developed original Plugin. This version is actually tested on Idempiere Version 8.2.
 
 ## <b>Documentation</b>
 For complete information.
@@ -47,14 +47,23 @@ https://github.com/luisamesty/Amerpsoft-iDempiere-community/tree/master/org.amer
     * Role Access Update
     * Syncronize Terminology
     * Sequence Check
-### <b>2- Add Withholding Data (Venezuela)</b>
+### <b>2- Verify Pack-In</b>
+Verify that 2Pack files were updated and loaded without errors.
+
+You must login as a System user.
+
+There are two Pack files:
+- AMERPSOFT LCO Withholding (2Pack_7.1.1.zip)
+- AMERPSOFT LCO Withholding Windows (2Pack_7.1.2.zip)
+
+### <b>3- Add Withholding Data (Venezuela)</b>
 This apply for Venezuela Withholding Seniat Rules.
 Other countries has to bee created.
 - Login idempiere as GardenAdmin.
 - Pack in 'AMERPSOFT LCO Withholding Data.zip'
    * File is located on install directory.
 
-### <b>3- Create and Update Document Types</b>
+### <b>4- Create and Update Document Types</b>
 
 Create Document Types as indicated on Spread Sheet file:
 
@@ -63,7 +72,7 @@ Create Document Types as indicated on Spread Sheet file:
 Also, Some Document Types must be updated as indicated.
 Invoice, Credit Memo and Debit Memo.
 
-### <b>4- Create Sequence for Document Type included</b>
+### <b>5- Create Sequence for Document Type included</b>
 
 Verify Sequence for Withholding Documents.
 AP Invoice - Withholding Number Multiple Invoice.
