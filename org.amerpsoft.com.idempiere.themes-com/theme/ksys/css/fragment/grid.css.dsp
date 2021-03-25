@@ -65,7 +65,7 @@ div.z-column-cnt, div.z-grid-header div.z-auxheader-cnt {
 @media only screen 
   and (max-device-width: 700px) {
 	.z-listcell > div.z-listcell-content {
-		white-space: pre-line;
+		white-space: nowrap;
 	}	
 }
 .z-column-content,.z-auxheader-content{

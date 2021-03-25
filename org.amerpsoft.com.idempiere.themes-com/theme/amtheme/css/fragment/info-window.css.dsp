@@ -34,7 +34,7 @@
 }
 
 .info-panel .z-listheader > .z-listheader-content {
-	white-space: pre-line;
+	white-space: nowrap;
 	text-overflow: ellipsis;
 }
  
