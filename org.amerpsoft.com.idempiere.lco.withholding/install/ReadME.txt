@@ -1,4 +1,4 @@
-PAck-IN files:
+PAck-IN files as System:
 1. AMERPSOFT LCO Withholding
 	AMERPSOFT LCO Withholding.csv					(Pack-out CSV file)
 	AMERPSOFT LCO Withholding.zip					(Pack-out Zip file)
@@ -19,8 +19,8 @@ PAck-IN files:
 	AD_TableIndex Keys duplicates must be deleted on PackOut.xml contained on zip file.
 	Uncompless it -  Delete them - Compress it Again
 	
-
-3. AMERPSOFT LCO Withholding DATA
+PAck-IN files as Tenant user:
+1. AMERPSOFT LCO Withholding DATA
 	AMERPSOFT LCO Withholding DATA.csv
 	AMERPSOFT LCO Withholding Data.zip
 
