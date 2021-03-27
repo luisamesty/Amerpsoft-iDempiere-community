@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><idempiere Name="AD_Ref_List" Version="1.0.0" idempiereVersion="8.2.0.202101211436" DataBaseVersion="2020-12-20" Description="" Author="System" AuthorEmail="luisamesty@gmail.com" CreatedDate="Wed Mar 24 10:05:22 CET 2021" UpdatedDate="Wed Mar 24 10:05:22 CET 2021" PackOutVersion="100" UpdateDictionary="true" Client="0-SYSTEM-System" AD_Client_UU="11237b53-9592-4af1-b3c5-afd216514b5d">
+    <AD_Ref_List type="table">
+        <AD_Client_ID>0</AD_Client_ID>
+        <AD_Org_ID>0</AD_Org_ID>
+        <Name>AP Invoice Vendor Withholding (APW)</Name>
+        <Description/>
+        <AD_Reference_ID reference="id">183</AD_Reference_ID>
+        <ValidFrom/>
+        <ValidTo/>
+        <Value>APW</Value>
+        <AD_Org_ID reference="id">0</AD_Org_ID>
+        <IsActive>Y</IsActive>
+        <EntityType>D</EntityType>
+        <AD_Ref_List_UU>6292ac93-4da8-43db-90e2-a0a2ce7b93ec</AD_Ref_List_UU>
+        <AD_Ref_List_Trl type="translation">
+            <Description>Retención Factura de Compras</Description>
+            <Name>Retención Factura de Compras  (APW)</Name>
+            <AD_Language>es_CO</AD_Language>
+            <IsActive>Y</IsActive>
+            <IsTranslated>Y</IsTranslated>
+        </AD_Ref_List_Trl>
+        <AD_Ref_List_Trl type="translation">
+            <Description>Retención Factura de Compras</Description>
+            <Name>Retención Factura de Compras  (APW)</Name>
+            <AD_Language>es_VE</AD_Language>
+            <IsActive>Y</IsActive>
+            <IsTranslated>Y</IsTranslated>
+        </AD_Ref_List_Trl>
+    </AD_Ref_List>
+</idempiere>

@@ -1,9 +1,0 @@
-AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],AD_Table_ID[Name],AD_Window_ID[Name],AD_Reference_ID[Name],AD_Process_ID[Value],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Workflow_ID[Value],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
-AMERPSOFT LCO Withholding Windows,10,M,,Invoice (Customer),,Invoice (Customer Withholding ),,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,20,M,,Invoice (Customer Withholding ),,,,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,30,M,,Invoice (Customer) Non Fiscal Document,,,,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,40,M,,Invoice (Customer Return Check),,,,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,50,M,,Invoice Control Number and Shipment Date,,,,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,60,M,,Invoice (Vendor),,,,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,70,REF,,,,,C_DocType DocBaseType,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info
-AMERPSOFT LCO Withholding Windows,80,M,,Document Type,,,,,,,,,,ALL,,,,,,,System Administrator,,,,,,,,,Product Info

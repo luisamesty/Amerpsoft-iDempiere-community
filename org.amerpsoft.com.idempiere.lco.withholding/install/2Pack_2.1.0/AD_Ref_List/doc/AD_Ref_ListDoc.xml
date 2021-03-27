@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/css" href="idempiereDocument.css"?><idempiereDocument>
+    <header>AD_Ref_List Package Description</header>
+    <H1>Package Name:</H1>
+    <packagename>AD_Ref_List</packagename>
+    <H1>Author:</H1>
+    <Name:>System</Name:>
+    <H1>Email Address:</H1>
+    <Email>luisamesty@gmail.com</Email>
+    <H1>Created:</H1>
+    <Date>Wed Mar 24 10:05:22 CET 2021</Date>
+    <H1>Updated:</H1>
+    <Date>Wed Mar 24 10:05:22 CET 2021</Date>
+    <H1>Description:</H1>
+    <description/>
+    <H1>Instructions:</H1>
+    <instructions/>
+    <H1>Files in Package:</H1>
+    <file>File: PackOut.xml</file>
+    <filedirectory>Directory: \dict\</filedirectory>
+    <filenotes>Notes: Contains all application/object settings for package</filenotes>
+    <H1>Client:</H1>
+    <Client>0-SYSTEM-System</Client>
+</idempiereDocument>
