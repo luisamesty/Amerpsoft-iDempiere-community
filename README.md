@@ -27,7 +27,7 @@ For more information on How to build idempiere Maven projects, see on Wiki:
 - [Home](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
 
-- [AMERPSOFT Themes](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.themes-com/README.md)
+- [AMERPSOFT Themes for iDempiere Version 7.1 or Older](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.themes-com/README.md)
 
 - [AMERPSOFT Editor - Location Extended](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.editors-com/README.md)
 
@@ -35,6 +35,7 @@ For more information on How to build idempiere Maven projects, see on Wiki:
 
 - [AMERPSOFT Financial - Basic Financial](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.financial/README.md)
 
+- [AMERPSOFT ZK_Themes NEW for iDempiere Version 8.2](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.zk_themes/README.md)
 
 ## <b>Wiki Idempiere</b>
 -[AMERPSOFT Editor - Extended Location](http://wiki.idempiere.org/en/Plugin:_Extended_Location)
@@ -43,4 +44,4 @@ For more information on How to build idempiere Maven projects, see on Wiki:
 
 -[Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
 
-#### Updated for Idempiere release 8.1 - November 2020
+#### Updated for Idempiere release 8.2 - March 2021

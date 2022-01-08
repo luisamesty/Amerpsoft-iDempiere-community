@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: AMERPSOFT Localization Colombia - Withholdings
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singlet
  on:=true
-Bundle-Version: 8.2.0.202101211815
+Bundle-Version: 8.2.0.202104171008
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: AMERPSOFT Fork from GlobalQSS
 Bundle-RequiredExecutionEnvironment: JavaSE-11
