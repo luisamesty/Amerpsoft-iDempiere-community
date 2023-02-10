@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><idempiere Name="AD_Ref_List" Version="1.0.0" idempiereVersion="8.2.0.202101211436" DataBaseVersion="2020-12-20" Description="" Author="System" AuthorEmail="luisamesty@gmail.com" CreatedDate="Wed Mar 24 10:05:22 CET 2021" UpdatedDate="Wed Mar 24 10:05:22 CET 2021" PackOutVersion="100" UpdateDictionary="true" Client="0-SYSTEM-System" AD_Client_UU="11237b53-9592-4af1-b3c5-afd216514b5d">
+<?xml version="1.0" encoding="UTF-8"?><idempiere Name="AD_Ref_List" Version="1.0.0" idempiereVersion="10.0.0.202101211436" DataBaseVersion="2020-12-20" Description="" Author="System" AuthorEmail="luisamesty@gmail.com" CreatedDate="Wed Mar 24 10:05:22 CET 2021" UpdatedDate="Wed Mar 24 10:05:22 CET 2021" PackOutVersion="100" UpdateDictionary="true" Client="0-SYSTEM-System" AD_Client_UU="11237b53-9592-4af1-b3c5-afd216514b5d">
     <AD_Ref_List type="table">
         <AD_Client_ID>0</AD_Client_ID>
         <AD_Org_ID>0</AD_Org_ID>

@@ -2,7 +2,8 @@
 rm build.plugins/*.jar
 
 #  COMMAND TO Build Maven Plugins
-mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
+#mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
+mvn verify
 
 # COPY Build plugins to build.plugins directory
 cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/*.jar build.plugins/

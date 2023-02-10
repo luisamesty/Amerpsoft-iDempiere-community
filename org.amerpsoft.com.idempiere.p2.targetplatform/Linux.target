@@ -31,7 +31,7 @@
 		<unit id="org.idempiere.hazelcast.service.feature.feature.group"/>
 		<unit id="org.idempiere.zk.feature.feature.group"/>
 <!--		LINUX OS  -->
-		<repository location="file:///home/luisamesty/sources/idempiere/org.idempiere.p2/target/repository"/> 
+		<repository location="file:///home/luisamesty/sources/iDempiere10/idempiere/org.idempiere.p2/target/repository"/> 
 <!--		MAC OS  -->
 <!--		<repository location="file:///Users/luisamesty/sources/idempiere/org.idempiere.p2/target/repository"/> -->
 <!--		<repository location="file:/${project.basedir}/../idempiere/org.idempiere.p2/target/repository"  />  -->

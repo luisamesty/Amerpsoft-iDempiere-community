@@ -1,23 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?artifactRepository version='1.1.0'?>
 <artifacts size='2'>
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='8.2.0.202210192032'>
-    <properties size='5'>
-      <property name='artifact.size' value='91575'/>
-      <property name='download.size' value='91575'/>
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='10.0.0.202302091724'>
+    <properties size='6'>
+      <property name='artifact.size' value='94080'/>
+      <property name='download.size' value='94080'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.financial'/>
-      <property name='maven-version' value='8.2.0-SNAPSHOT'/>
+      <property name='maven-version' value='10.0.0-SNAPSHOT'/>
+      <property name='maven-type' value='eclipse-plugin'/>
     </properties>
   </artifact>
-  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial.source' version='8.2.0.202210192032'>
-    <properties size='6'>
-      <property name='artifact.size' value='58364'/>
-      <property name='download.size' value='58364'/>
+  <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202302091724'>
+    <properties size='7'>
+      <property name='artifact.size' value='58365'/>
+      <property name='download.size' value='58365'/>
       <property name='maven-groupId' value='org.idempiere'/>
       <property name='maven-artifactId' value='org.amerpsoft.com.idempiere.financial'/>
-      <property name='maven-version' value='8.2.0-SNAPSHOT'/>
+      <property name='maven-version' value='10.0.0-SNAPSHOT'/>
       <property name='maven-classifier' value='sources'/>
+      <property name='maven-type' value='java-source'/>
     </properties>
   </artifact>
 </artifacts>

@@ -2,7 +2,7 @@
 <feature
       id="org.amerpsoft.com.idempiere.feature"
       label="Amerpsoft_community_features"
-      version="8.2.0.qualifier">
+      version="10.0.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
