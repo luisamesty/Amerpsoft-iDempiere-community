@@ -33,7 +33,7 @@
 <!--		LINUX OS  -->
 <!--		<repository location="file:///home/luisamesty/sources/myexperiment/org.idempiere.p2/target/repository"/>  -->
 <!--		MAC OS  -->
-		<repository location="file:///Users/luisamesty/sources/idempiere/org.idempiere.p2/target/repository"/>
+		<repository location="file:///Users/luisamesty/sources/iDempiere10/idempiere/org.idempiere.p2/target/repository"/>
 <!--		<repository location="file:/${project.basedir}/../idempiere/org.idempiere.p2/target/repository"  />  -->
 	</location>
 </locations>
