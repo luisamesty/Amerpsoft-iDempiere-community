@@ -1,7 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
+<<<<<<< HEAD
   <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202305130714' generation='2'>
     <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,10.0.0.202305130714)' severity='0'/>
+=======
+  <unit id='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202302091724' generation='2'>
+    <update id='org.amerpsoft.com.idempiere.lco.withholding' range='[0.0.0,10.0.0.202302091724)' severity='0'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     <properties size='6'>
       <property name='org.eclipse.equinox.p2.name' value='AMERPSOFT Localization Colombia - Withholdings'/>
       <property name='org.eclipse.equinox.p2.provider' value='AMERPSOFT Fork from GlobalQSS'/>
@@ -11,11 +16,20 @@
       <property name='maven-type' value='eclipse-plugin'/>
     </properties>
     <provides size='6'>
+<<<<<<< HEAD
       <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202305130714'/>
       <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202305130714'/>
+=======
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202302091724'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
       <provided namespace='java.package' name='org.globalqss.model' version='0.0.0'/>
       <provided namespace='java.package' name='org.globalqss.process' version='0.0.0'/>
+<<<<<<< HEAD
       <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202305130714'>
+=======
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202302091724'>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -34,13 +48,21 @@
       </requiredProperties>
     </requires>
     <artifacts size='1'>
+<<<<<<< HEAD
       <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202305130714'/>
+=======
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding' version='10.0.0.202302091724'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='2'>
         <instruction key='manifest'>
+<<<<<<< HEAD
           Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 10.0.0.202305130714&#xA;
+=======
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true&#xA;Bundle-Version: 10.0.0.202302091724&#xA;
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         </instruction>
         <instruction key='configure'>
           setStartLevel(startLevel:5); markStarted(started: true);
@@ -48,8 +70,13 @@
       </instructions>
     </touchpointData>
   </unit>
+<<<<<<< HEAD
   <unit id='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202305130714' singleton='false'>
     <update id='org.amerpsoft.com.idempiere.lco.withholding.source' range='[0.0.0,10.0.0.202305130714)' severity='0'/>
+=======
+  <unit id='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202302091724' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.lco.withholding.source' range='[0.0.0,10.0.0.202302091724)' severity='0'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     <properties size='10'>
       <property name='df_LT.bundleVendor' value='AMERPSOFT Fork from GlobalQSS'/>
       <property name='df_LT.bundleName' value='AMERPSOFT Localization Colombia - Withholdings Source'/>
@@ -63,9 +90,15 @@
       <property name='maven-type' value='java-source'/>
     </properties>
     <provides size='5'>
+<<<<<<< HEAD
       <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202305130714'/>
       <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202305130714'/>
       <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202305130714'>
+=======
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202302091724'>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -74,13 +107,21 @@
       <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
     </provides>
     <artifacts size='1'>
+<<<<<<< HEAD
       <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202305130714'/>
+=======
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.lco.withholding.source' version='10.0.0.202302091724'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
+<<<<<<< HEAD
           Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding.source&#xA;Bundle-Version: 10.0.0.202305130714&#xA;
+=======
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding.source&#xA;Bundle-Version: 10.0.0.202302091724&#xA;
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         </instruction>
       </instructions>
     </touchpointData>

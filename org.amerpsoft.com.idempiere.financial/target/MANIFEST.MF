@@ -3,7 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Financial
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=tr
  ue
+<<<<<<< HEAD
 Bundle-Version: 10.0.0.202305130714
+=======
+Bundle-Version: 10.0.0.202302091724
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",org.adempiere.
  plugin.utils;bundle-version="0.0.0",org.adempiere.report.jasper;bundle-

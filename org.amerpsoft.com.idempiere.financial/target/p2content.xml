@@ -1,7 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
+<<<<<<< HEAD
   <unit id='org.amerpsoft.com.idempiere.financial' version='10.0.0.202305130714' generation='2'>
     <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,10.0.0.202305130714)' severity='0'/>
+=======
+  <unit id='org.amerpsoft.com.idempiere.financial' version='10.0.0.202302091724' generation='2'>
+    <update id='org.amerpsoft.com.idempiere.financial' range='[0.0.0,10.0.0.202302091724)' severity='0'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     <properties size='6'>
       <property name='org.eclipse.equinox.p2.name' value='Financial'/>
       <property name='org.eclipse.equinox.p2.provider' value='Amerpsoft'/>
@@ -11,9 +16,15 @@
       <property name='maven-type' value='eclipse-plugin'/>
     </properties>
     <provides size='4'>
+<<<<<<< HEAD
       <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='10.0.0.202305130714'/>
       <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='10.0.0.202305130714'/>
       <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='10.0.0.202305130714'>
+=======
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial' version='10.0.0.202302091724'>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -36,19 +47,32 @@
       </requiredProperties>
     </requires>
     <artifacts size='1'>
+<<<<<<< HEAD
       <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='10.0.0.202305130714'/>
+=======
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial' version='10.0.0.202302091724'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
+<<<<<<< HEAD
           Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 10.0.0.202305130714&#xA;
+=======
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true&#xA;Bundle-Version: 10.0.0.202302091724&#xA;
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         </instruction>
       </instructions>
     </touchpointData>
   </unit>
+<<<<<<< HEAD
   <unit id='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202305130714' singleton='false'>
     <update id='org.amerpsoft.com.idempiere.financial.source' range='[0.0.0,10.0.0.202305130714)' severity='0'/>
+=======
+  <unit id='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202302091724' singleton='false'>
+    <update id='org.amerpsoft.com.idempiere.financial.source' range='[0.0.0,10.0.0.202302091724)' severity='0'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     <properties size='10'>
       <property name='df_LT.bundleVendor' value='Amerpsoft'/>
       <property name='df_LT.bundleName' value='Financial Source'/>
@@ -62,9 +86,15 @@
       <property name='maven-type' value='java-source'/>
     </properties>
     <provides size='5'>
+<<<<<<< HEAD
       <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202305130714'/>
       <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202305130714'/>
       <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202305130714'>
+=======
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.bundle' name='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202302091724'/>
+      <provided namespace='osgi.identity' name='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202302091724'>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         <properties size='1'>
           <property name='type' value='osgi.bundle'/>
         </properties>
@@ -73,13 +103,21 @@
       <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
     </provides>
     <artifacts size='1'>
+<<<<<<< HEAD
       <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202305130714'/>
+=======
+      <artifact classifier='osgi.bundle' id='org.amerpsoft.com.idempiere.financial.source' version='10.0.0.202302091724'/>
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>
       <instructions size='1'>
         <instruction key='manifest'>
+<<<<<<< HEAD
           Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial.source&#xA;Bundle-Version: 10.0.0.202305130714&#xA;
+=======
+          Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial.source&#xA;Bundle-Version: 10.0.0.202302091724&#xA;
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
         </instruction>
       </instructions>
     </touchpointData>

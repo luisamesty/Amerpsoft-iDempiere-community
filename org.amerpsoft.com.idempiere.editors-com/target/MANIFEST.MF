@@ -4,7 +4,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Extended Location Editor
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=
  true
+<<<<<<< HEAD
 Bundle-Version: 10.0.0.202305130714
+=======
+Bundle-Version: 10.0.0.202302091724
+>>>>>>> branch 'release-10' of https://github.com/luisamesty/Amerpsoft-iDempiere-community
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",org.adempiere.
  plugin.utils;bundle-version="0.0.0",org.adempiere.base.process;bundle-v
  ersion="0.0.0",org.adempiere.ui;bundle-version="0.0.0",org.adempiere.ui
