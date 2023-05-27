@@ -1,10 +1,10 @@
 eclipse.preferences.version=1
-repositories/file\:_Users_luisamesty_.m2_repository/description=
-repositories/file\:_Users_luisamesty_.m2_repository/enabled=true
-repositories/file\:_Users_luisamesty_.m2_repository/isSystem=false
-repositories/file\:_Users_luisamesty_.m2_repository/provider=
-repositories/file\:_Users_luisamesty_.m2_repository/suffix=.meta/p2-artifacts.properties
-repositories/file\:_Users_luisamesty_.m2_repository/uri=file\:/Users/luisamesty/.m2/repository/
+repositories/file\:_Users_luisamesty_.m2_repository_82_OK/description=
+repositories/file\:_Users_luisamesty_.m2_repository_82_OK/enabled=true
+repositories/file\:_Users_luisamesty_.m2_repository_82_OK/isSystem=false
+repositories/file\:_Users_luisamesty_.m2_repository_82_OK/provider=
+repositories/file\:_Users_luisamesty_.m2_repository_82_OK/suffix=.meta/p2-artifacts.properties
+repositories/file\:_Users_luisamesty_.m2_repository_82_OK/uri=file\:/Users/luisamesty/.m2/repository_82_OK/
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.editors-com_target/description=
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.editors-com_target/enabled=true
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.editors-com_target/isSystem=false
@@ -65,7 +65,7 @@ repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.a
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/provider=
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/suffix=p2artifacts.xml
 repositories/file\:_Users_luisamesty_sources_Amerpsoft-iDempiere-community_org.amerpsoft.com.idempiere.zk_themes_target/uri=file\:/Users/luisamesty/sources/Amerpsoft-iDempiere-community/org.amerpsoft.com.idempiere.zk_themes/target/
-repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/description=Read-only repository adapter for org.eclipse.tycho.p2.target.TargetPlatformBundlePublisher$PublishedBundlesArtifactRepository@793e33fc
+repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/description=Read-only repository adapter for org.eclipse.tycho.p2.target.TargetPlatformBundlePublisher$PublishedBundlesArtifactRepository@6717cd0e
 repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/enabled=true
 repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/isSystem=false
 repositories/file\:_resolution-context-artifacts@%252FUsers%252Fluisamesty%252Fsources%252FAmerpsoft-iDempiere-community%252Forg.amerpsoft.com.idempiere.p2.site/provider=
