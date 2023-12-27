@@ -23,14 +23,6 @@
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
-         id="org.amerpsoft.com.idempiere.themes-com"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
   <plugin
          id="org.amerpsoft.com.idempiere.zk_themes"
          download-size="0"
