@@ -6,7 +6,6 @@
   <modules>
    	<module>org.amerpsoft.com.idempiere.feature</module> 	
   	<module>org.amerpsoft.com.idempiere.editors-com</module>
-  	<module>org.amerpsoft.com.idempiere.themes-com</module>
   	<module>org.amerpsoft.com.idempiere.zk_themes</module>
   	<module>org.amerpsoft.com.idempiere.lco.withholding</module>
   	<module>org.amerpsoft.com.idempiere.financial</module>
@@ -14,4 +13,7 @@
   	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
   </modules>
   <groupId>org.idempiere</groupId>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 </project>
