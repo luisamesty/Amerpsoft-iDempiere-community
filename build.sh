@@ -3,7 +3,7 @@
 
 #  COMMAND TO Build Maven Plugins
 #mvn verify -Didempiere.target=org.amerpsoft.com.idempiere.p2.targetplatform -X
-mvn -Dmaven.repo.local=$HOME/.m2/repository_10_OK clean install
+mvn -Dmaven.repo.local=$HOME/.m2/repository_11_OK clean install
 
 # COPY Build plugins to build.plugins directory
 cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/*.jar build.plugins/
