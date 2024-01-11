@@ -40,7 +40,7 @@ https://github.com/luisamesty/Amerpsoft-iDempiere-community/tree/master/org.amer
 
 ### <b>1- Install Jar Plugin</b>
 - Using Apache felix Web Console install:
-  org.amerpsoft.com.idempiere.lco.withholding_7.1.0.201912231154.jar
+  org.amerpsoft.com.idempiere.lco.withholding_10.0.0.201912231154.jar
   (Versión may differ)
 - Restart Server
 -	Remember to do:
@@ -91,4 +91,6 @@ When is completed, you should have:
 - Invoice (Customer Return Check)  Window
 
 For more information Contact to [me](luisamesty@gmail.com).
-#### Updated for Idempiere release 8.1 - November 2020
+### Updated for Idempiere release 8.1 - November 2020
+### Updated for Idempiere release 11 - January 2024
+  Under Test - See release-11 branch.

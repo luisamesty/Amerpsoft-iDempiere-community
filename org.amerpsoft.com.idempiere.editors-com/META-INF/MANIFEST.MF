@@ -3,11 +3,10 @@ Automatic-Module-Name: org.amerpsoft.editors
 Bundle-ManifestVersion: 2
 Bundle-Name: Extended Location Editor
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.editors-com;singleton:=true
-Bundle-Version: 8.2.0.qualifier
+Bundle-Version: 11.0.0.qualifier
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  org.adempiere.plugin.utils;bundle-version="0.0.0",
  org.adempiere.base.process;bundle-version="0.0.0",
- org.eclipse.osgi.services;bundle-version="0.0.0",
  org.adempiere.ui;bundle-version="0.0.0",
  org.adempiere.ui.zk;bundle-version="0.0.0",
  org.idempiere.zk.extra;bundle-version="0.0.0",
@@ -18,7 +17,15 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  zkbind;bundle-version="0.0.0",
  zkplus;bundle-version="0.0.0",
  zul;bundle-version="0.0.0",
- zweb;bundle-version="0.0.0"
+ zweb;bundle-version="0.0.0",
+ org.apache.commons.commons-io;bundle-version="0.0.0",
+ org.atmosphere.runtime;bundle-version="0.0.0",
+ zkwebfragment,
+ com.sun.activation.jakarta.activation;bundle-version="1.2.1",
+ org.adempiere.base.process,
+ com.github.librepdf.openpdf;bundle-version="1.3.26",
+ com.github.librepdf.openpdf-fonts-extra;bundle-version="1.3.26",
+ org.idempiere.zk.billboard
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/ModelFactory.xml,OSGI-INF/EditorFactory.xml,OSGI-INF/DisplayTypeFactory.xml,OSGI-INF/EventFactory.xml
 Import-Package: org.compiere.model,

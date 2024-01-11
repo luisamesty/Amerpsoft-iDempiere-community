@@ -121,3 +121,7 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
     This will put default Idempiere Standard ZK Theme
 
    Updated for Idempiere release 8.2 - March 2021
+   
+   Updated for Idempiere release 11 - January 2024
+   
+     Under Test - See release-11 branch.

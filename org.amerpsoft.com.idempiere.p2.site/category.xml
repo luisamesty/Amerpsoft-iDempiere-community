@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
     <feature 
-    	url="features/org.amerpsoft.com.idempiere.feature_8.2.0.qualifier.jar" 
-    	id="org.amerpsoft.com.idempiere.feature" version="8.2.0.qualifier">
+    	url="features/org.amerpsoft.com.idempiere.feature_11.0.0.qualifier.jar" 
+    	id="org.amerpsoft.com.idempiere.feature" version="11.0.0.qualifier">
 	    <category name="org.amerpsoft.com.idempiere"/>
     </feature>
 </site>
