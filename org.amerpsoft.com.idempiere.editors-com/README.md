@@ -49,4 +49,6 @@ See Intallation Procedure:
 ## <b>Github Project Home</b>
 [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
-#### Updated for Idempiere release 8.1 - November 2020
+### Updated for Idempiere release 8.1 - November 2020
+### Updated for Idempiere release 11 - January 2024
+  Under Test - See release-11 branch.

@@ -46,3 +46,6 @@ For more information on How to build idempiere Maven projects, see on Wiki:
 
 #### Updated for Idempiere release 8.2 - March 2021
 #### Updated for Idempiere release 10 - June 2023
+  See release-10 branch.
+#### Updated for Idempiere release 11 - January 2024
+  Under Test - See release-11 branch.

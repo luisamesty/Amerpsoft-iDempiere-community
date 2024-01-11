@@ -50,4 +50,6 @@ Luis Amesty - luisamesty@gmail.com
 * AMERPSOFT Bank Reports
 
 
-#### Updated for Idempiere release 8.1 - November 2020
+### Updated for Idempiere release 8.1 - November 2020
+### Updated for Idempiere release 11 - January 2024
+  Under Test - See release-11 branch.
