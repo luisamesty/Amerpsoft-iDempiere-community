@@ -3,7 +3,7 @@
 }
 
 .login-window .z-window-content {
-     background-image: url(../images/background-world-gmt.png) !important;
+     background-image: url(../images/background-world-physical.png) !important;
      background-position: center;
 	 /*background-attachment: scroll;*/
 	 background-repeat: no-repeat;
