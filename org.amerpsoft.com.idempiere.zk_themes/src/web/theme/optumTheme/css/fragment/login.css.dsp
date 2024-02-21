@@ -4,7 +4,7 @@
 }
 
 .login-window .z-window-content {
-     /*background-image: url(../images/background-world.png) !important;*/
+     /*background-image: url(../images/background-world-moderm.png) !important;*/
      background-position: center;
 	 /*background-attachment: scroll;*/
 	 background-repeat: no-repeat;
