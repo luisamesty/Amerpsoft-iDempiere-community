@@ -1,4 +1,4 @@
-
+&lArr;[AMERPSOFT Editor](../README.md) | [Home](../README.md)
 # <b>Amerpsoft editors Version 7.1 and Up: </b>
 
 ## <b>Installation </b>
@@ -20,12 +20,22 @@ AMERPSOFT Editor Home: [AMERPSOFT Editor - Location Extended](https://github.com
 Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
 ### <b>1- Pack IN AMERP amxeditor.zip</b>
-- Using AD PackIn
-- Download:
-    AMERPSOFT Editor - Step 1.zip
-    AMERPSOFT Editor - Step 2.zip
-    AMERPSOFT Editor - Step 3.zip
-- Packin all three in order.
+Verify Pack-In 
+- 2Pack_1.0.0.zip
+- 2Pack_2.0.0.zip
+- 2Pack_3.0.0.zip
+- 2Pack_4.0.0.zip
+- 2Pack_5.0.0.zip
+- 2Pack_6.0.0.zip
+- 2Pack_7.0.0.zip
+- 2Pack_8.0.0.zip
+- 2Pack_8.1.0.zip
+
+Pack IN Manually as System User: 
+
+- AMERPSOFT Editor - CountryCode3.zip
+- AMERPSOFT Editor - Cummunity Fill.zip
+
 Remember to do:
     Role Access Update
     Syncronize Terminology

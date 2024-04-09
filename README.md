@@ -1,51 +1,45 @@
 
 # <b>AMERPSOFT COMMUNITY PLUGINS</b>
+These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI User: Luis Amesty](https://wiki.idempiere.org/en/User:Luisamesty)
+Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
-## <b>COMMUNITY PLUGINS</b>
-These plugins and tutorials are brought to you by Luis Amesty from:
-
-[Amerpsoft Consulting](http://amerpsoft.com/index.php/en/)
-
-For any question or improvement see me at:
-
-[Idempiere WIKI User Luis Amesty](https://wiki.idempiere.org/en/User:Luisamesty)
-
-[LinkedIn: Luis Amesty](https://www.linkedin.com/in/luisamesty/)
-
-[email](luisamesty @ gmail.com) to me. <br/>
-
-## <b>Description</b>
+#### <b>Description</b>
 
 This repository is a main project for several Idempiere Plugins shared and published for Idempiere Community.
 
-For more information on How to build idempiere Maven projects, see on Wiki: 
+#### <b>COMMUNITY PLUGINS CONTENT</b>
 
-[Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
-
-## <b>Content</b>
+<div style="padding-left: 20px;">
 
 - [Home](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
+- [AMERPSOFT Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
 
-- [AMERPSOFT Themes for iDempiere Version 7.1 or Older](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.themes-com/README.md)
+- [AMERPSOFT LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
 
-- [AMERPSOFT Editor - Location Extended](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.editors-com/README.md)
+- [AMERPSOFT Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 
-- [AMERPSOFT LCO Withholding](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.lco.withholding/README.md)
+- [AMERPSOFT ZK_Themes NEW for iDempiere Version 8.2](./org.amerpsoft.com.idempiere.zk_themes/README.md)
+</div>
 
-- [AMERPSOFT Financial - Basic Financial](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.financial/README.md)
+#### <b>Wiki Idempiere</b>
+<div style="padding-left: 20px;">
+For more information on How to build idempiere Maven projects, see on Wiki: 
 
-- [AMERPSOFT ZK_Themes NEW for iDempiere Version 8.2](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.zk_themes/README.md)
+- [Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
 
-## <b>Wiki Idempiere</b>
--[AMERPSOFT Editor - Extended Location](http://wiki.idempiere.org/en/Plugin:_Extended_Location)
+- [AMERPSOFT Editor - Extended Location](http://wiki.idempiere.org/en/Plugin:_Extended_Location)
 
--[AMERPSOFT Themes](https://wiki.idempiere.org/en/Plugin:_Themes_Amerpsoft)
+- [AMERPSOFT Themes](https://wiki.idempiere.org/en/Plugin:_Themes_Amerpsoft)
 
--[Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
+- [Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
 
-#### Updated for Idempiere release 8.2 - March 2021
-#### Updated for Idempiere release 10 - June 2023
+</div>
+
+#### Release Notes:
+
+- Updated for Idempiere release 8.2 - March 2021
+- Updated for Idempiere release 10 - June 2023
   See release-10 branch.
-#### Updated for Idempiere release 11 - January 2024
-  Under Test - See release-11 branch.
+- Updated for Idempiere release 11 - January 2024
+- Under Test - See release-11 branch.

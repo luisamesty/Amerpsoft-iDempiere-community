@@ -1,21 +1,20 @@
-## AMERPSOFT Financial:
+&lArr;[AMERPSOFT COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+### AMERPSOFT Financial
 This plugin is brought to you from AMERPSOFT Consulting by Luis Amesty.
 
-Updated for idempiere release 6.2, October 2019.
-
 See AMF-Financial.docx on documentation directory, for more information.
-[AMF-Financial.docx](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/documentacion/AMF-%20Financial.docx)
+[AMF-Financial.docx](./documentacion/AMF-%20Financial.docx)
 
 For Install see Financial_Installation.md on install directory.
-[Financial_Installation.md](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/install/Financial_Installation.md)
+[Financial_Installation.md](./install/Financial_Installation.md)
 
 For additional information contact:
 Luis Amesty - luisamesty@gmail.com
 
 ************************************************
 
-### 1.	Functions.
-##### Special Function for calculating Balances and Dates:
+#### 1.	Functions.
+####### Special Function for calculating Balances and Dates:
 * amf_acctdate0prevbalance.sql
 * amf_acctdate1deb.sql
 * amf_acctdate2cre.sql
@@ -38,18 +37,19 @@ Luis Amesty - luisamesty@gmail.com
 * amf_prevperiodenddate.sql
 * amf_prevperiodstartdate.sql
 
-### 2. Amf_Views:
-##### Must be created in order, because Views are dependant bethween them.
+#### 2. Amf_Views:
+###### Must be created in order, because Views are dependant bethween them.
 1. amf_accounts_v.sql
 2. amf_accounts_detail_v.sql
 3. amf_accounts_balance_v.sql
 
-### 3. Modules: 
+#### 3. Modules: 
 * AMERPSOFT Financial Processes
 * AMERPSOFT Financial Reports
 * AMERPSOFT Bank Reports
 
 
-### Updated for Idempiere release 8.1 - November 2020
-### Updated for Idempiere release 11 - January 2024
+#### Updated for Idempiere release 8.1 - November 2020
+#### Updated for Idempiere release 11 - January 2024
   Under Test - See release-11 branch.
+  
