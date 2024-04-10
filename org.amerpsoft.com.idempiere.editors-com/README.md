@@ -1,10 +1,10 @@
-&lArr;[AMERPSOFT COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+&lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 
 This tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI User: Luis Amesty](https://wiki.idempiere.org/en/User:Luisamesty)
 Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
 
-# <b>AMERPSOFT Editor Plugin- Location Extended</b>
+# <b>Editor Plugin- Location Extended</b>
 
 ## <b>Description</b>
 
