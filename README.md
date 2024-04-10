@@ -1,25 +1,33 @@
 
-# <b>AMERPSOFT COMMUNITY PLUGINS</b>
+# <b>COMMUNITY PLUGINS</b>
 These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI User: Luis Amesty](https://wiki.idempiere.org/en/User:Luisamesty)
 Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
 #### <b>Description</b>
 
 This repository is a main project for several Idempiere Plugins shared and published for Idempiere Community.
+Special considerations and notes for LVE, LPY and LES localization.
 
-#### <b>COMMUNITY PLUGINS CONTENT</b>
+#### <b>CONTENT</b>
 
 <div style="padding-left: 20px;">
 
 - [Home](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
 
-- [AMERPSOFT Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
+- [Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
 
-- [AMERPSOFT LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
+- [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
 
-- [AMERPSOFT Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
+- [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 
-- [AMERPSOFT ZK_Themes NEW for iDempiere Version 8.2](./org.amerpsoft.com.idempiere.zk_themes/README.md)
+- [ZK_Themes](./org.amerpsoft.com.idempiere.zk_themes/README.md)
+
+- [Cash and Banks (Next coming, under Construction..)](./README.md)
+
+- [Payroll (Next coming, under construction..)](./README.md)
+
+- [Electronic Invoice (Next coming, under construction..)](./README.md)
+
 </div>
 
 #### <b>Wiki Idempiere</b>
@@ -42,4 +50,4 @@ For more information on How to build idempiere Maven projects, see on Wiki:
 - Updated for Idempiere release 10 - June 2023
   See release-10 branch.
 - Updated for Idempiere release 11 - January 2024
-- Under Test - See release-11 branch.
+- Under Test - See release-11_LPY branch.

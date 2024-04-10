@@ -1,5 +1,5 @@
-&lArr;[AMERPSOFT COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
-### AMERPSOFT Financial
+&lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+### Financial Plugin
 This plugin is brought to you from AMERPSOFT Consulting by Luis Amesty.
 
 See AMF-Financial.docx on documentation directory, for more information.

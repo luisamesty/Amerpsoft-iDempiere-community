@@ -1,5 +1,5 @@
-&lArr;[AMERPSOFT COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
-#### <b>AMERPSOFT LCO - Withholding</b>
+&lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+#### <b>LCO - Withholding</b>
 This tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/index.php/en/), For any question or improvement see me at: [Idempiere WIKI User: Luis Amesty](https://wiki.idempiere.org/en/User:Luisamesty)
 
 Github Project Home: [Amerpsoft-iDempiere-community](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/README.md)
