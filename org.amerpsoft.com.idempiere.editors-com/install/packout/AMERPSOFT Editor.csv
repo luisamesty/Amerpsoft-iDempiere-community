@@ -1,0 +1,6 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT Editor,10,ET,AMERP,,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Editor,30,MSG,,,,,,,,,ALL,,,,,,,,,,,,Municipality,,,,,,,
+*,AMERPSOFT Editor,40,MSG,,,,,,,,,ALL,,,,,,,,,,,,Parish,,,,,,,
+*,AMERPSOFT Editor,50,MSG,,,,,,,,,ALL,,,,,,,,,,,,Community,,,,,,,
+*,AMERPSOFT Editor,70,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='6c91eea7-4b4c-4b0a-9d37-eff652ed493f';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
