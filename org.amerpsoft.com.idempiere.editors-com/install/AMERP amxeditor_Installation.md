@@ -93,8 +93,8 @@ This is very important, because Demography queries are very long. Next, proceed 
 - Using Application dictionary Modify Table
 - Field: C_Location_ID
 - Change Reference 
-- with 
-- LocationExtended
+- from <b>Location</b> 
+- to <b>LocationExtended</b>
 
 ### <b>6- Modify Country Record</b>
 - Change Capture Sequence
