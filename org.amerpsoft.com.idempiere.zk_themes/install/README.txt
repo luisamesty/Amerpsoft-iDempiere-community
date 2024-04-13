@@ -9,5 +9,12 @@ IF SOMETHING GO WRONG:
 REPLACE AD_Sysconfig Record (AD_SysConfig_ID=200021)
 Name:ZK_THEME
 Value: default
-
 This will put default Idempiere Standard ZK Theme
+
+This values must be set with Plugin Pack-IN
+'ZK_THEME',
+'ZK_LOGO_LARGE',
+'ZK_LOGO_SMALL',
+'ZK_BROWSER_TITLE',
+'ZK_BROWSER_ICON',
+'ZK_THEME_USE_FONT_ICON_FOR_IMAGE'
