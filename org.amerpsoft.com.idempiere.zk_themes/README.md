@@ -79,11 +79,11 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
     org.amerpsoft.com.idempiere.themes-com_X.X.0.XXXXXXXXXX.jar
 
 
-#### <b>Pack in ‘AMERPSOFT Themes.zip’</b>
+#### <b>Pack in ‘AMERPSOFT ZK_Themes.zip’</b>
 
     Once plugin is running, then Pack-In:
 
-    <b>'AMERPSOFT Themes.zip'</b>
+    <b>'AMERPSOFT ZK_Themes.zip'</b>
 
     It contains SysConfig Variables:
     - ZK_THEME 

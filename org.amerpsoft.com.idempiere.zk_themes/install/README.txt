@@ -5,11 +5,11 @@ Installation Procedure:
     Sys Config Variables 
 
 IF SOMETHING GO WRONG:
-
 REPLACE AD_Sysconfig Record (AD_SysConfig_ID=200021)
 Name:ZK_THEME
 Value: default
 This will put default Idempiere Standard ZK Theme
+
 
 This values must be set with Plugin Pack-IN
 'ZK_THEME',
