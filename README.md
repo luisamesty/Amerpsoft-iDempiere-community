@@ -15,11 +15,13 @@ Special considerations and notes for LVE, LPY and LES localization.
 
 - [Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
 
-- [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
+- [ZK_Themes](./org.amerpsoft.com.idempiere.zk_themes/README.md)
+
+- [Language Pack](./org.amerpsoft.com.idempiere.languages/README.md)
 
 - [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 
-- [ZK_Themes](./org.amerpsoft.com.idempiere.zk_themes/README.md)
+- [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
 
 - [Cash and Banks (Next coming, under Construction..)](./README.md)
 
