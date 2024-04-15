@@ -1,5 +1,5 @@
 &lArr;[AMERPSOFT Editor](../README.md) | [Home](../README.md)
-# <b>Amerpsoft editors Version 7.1 and Up: </b>
+# <b>Amerpsoft editors Version 11 </b>
 
 ## <b>Installation </b>
 
@@ -61,13 +61,13 @@ Next, do the following actions:
     
 ### <b>3- Pack IN Venezuela Extended Demography</b>
 
-Before doing this, a Manual Application Dictionary Change must be done on:
-- Table <b>AD_Package_Exp_Detail</b>
-- Column <b>SQLStatement</b>
+Before doing this, a Manual Application Dictionary Changes must be done on:
+- Table: <b>AD_Package_Exp_Detail</b>
+- Column: <b>SQLStatement</b>
 
 Changes:
 
-- Increase Length to 50.000
+- Increase <b>Length to 50.000</b>
 - Synchronize Column.
 - Restart Server
 
@@ -76,15 +76,20 @@ This is very important, because Demography queries are very long. Next, proceed 
 - Using AD PackIn
 - Download:  AMERPSOFT Demografia Venezolana.zip, 
 - Packin IT.
-- You may take a look at 'GeografiaVenezolanaCompleta.sql' only for information.
-- Make your Country Extended Demography Packin
+
+You may take a look at 'GeografiaVenezolanaCompleta.sql' only for information.
+Make your Country Extended Demography Packin
     ( If you are using other local you may build your tables)
-- Remember to execute procedures on System Admin --> General Rules: 
+
+Remember to execute procedures on System Admin --> General Rules: 
+
     - Role Access Update
     - Sequence Check 
     - Syncronize Terminology
     - Cache Reset
 
+(*) Repeat this procedure for any other Demography Pack-Out provided.
+ 
 ### <b>4- Restart Server</b>
 - Restart idempiere Server 
 - Verify plugin is Installed and Running

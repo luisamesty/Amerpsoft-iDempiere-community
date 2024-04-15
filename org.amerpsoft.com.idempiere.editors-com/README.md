@@ -22,7 +22,9 @@ See DemografiaExtendida_amxeditor.docx
   or 
 DemografiaExtendida_amxeditor.pdf
 
-PDF: [AMERPSOFT Editor Demografia Extendida - DemografiaExtendida_amxeditor.pdf ](https://github.com/luisamesty/Amerpsoft-iDempiere-community/blob/master/org.amerpsoft.com.idempiere.editors-com/documentation/DemografiaExtendida_amxeditor.pdf)
+PDF: [AMERPSOFT Editor Demografia Extendida - DemografiaExtendida_amxeditor.pdf ](./documentation/DemografiaExtendida_amxeditor.pdf)
+
+Excel: [Demography Tables](./documentation/Tables.xlsx)
 
 Wiki Idempiere: [Extended Location](http://wiki.idempiere.org/en/Plugin:_Extended_Location)
 
