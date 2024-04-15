@@ -1,5 +1,5 @@
 &lArr;[AMERPSOFT Editor](../README.md) | [Home](../README.md)
-# <b>Amerpsoft editors Version 7.1 and Up: </b>
+# <b>Amerpsoft editors Version 11 </b>
 
 ## <b>Installation </b>
 
@@ -59,44 +59,60 @@ Next, do the following actions:
 
 - <b>System Admin -> General Rules --> System Rules -->Country Community Region Municipality Parish City</b>
     
-### <b>3- Pack IN Venezuela Extended Demography</b>
+### <b>3- Pack IN Extended Demography</b>
 
-Before doing this, a Manual Application Dictionary Change must be done on:
-- Table <b>AD_Package_Exp_Detail</b>
-- Column <b>SQLStatement</b>
+Before doing this, a Manual Application Dictionary Changes must be done on:
+- Table: <b>AD_Package_Exp_Detail</b>
+- Column: <b>SQLStatement</b>
 
 Changes:
 
-- Increase Length to 50.000
+- Increase <b>Length to 65.000</b>
 - Synchronize Column.
 - Restart Server
 
 This is very important, because Demography queries are very long. Next, proceed with Demography Install.
 
 - Using AD PackIn
-- Download:  AMERPSOFT Demografia Venezolana.zip, 
+- Download Country File:  AMERPSOFT Demografia Venezolana.zip or AMERPSOFT Demografia Paraguay.zip 
 - Packin IT.
-- You may take a look at 'GeografiaVenezolanaCompleta.sql' only for information.
-- Make your Country Extended Demography Packin
-    ( If you are using other local you may build your tables)
-- Remember to execute procedures on System Admin --> General Rules: 
+
+You may take a look at 'GeografiaVenezolanaCompleta.sql' only for information or in case you prefer to do it using DatabaBase Client.
+Also 'GeografiaParaguayBasica.sql/GeografiaParaguayExtendida.sql' are available as examples.
+
+Make your Country Extended Demography Pack-IN
+( If you are using other local you may build your tables)
+
+Remember to execute procedures on System Admin --> General Rules: 
+
     - Role Access Update
     - Sequence Check 
     - Syncronize Terminology
     - Cache Reset
 
+(*) Repeat this procedure for any other Demography Pack-Out provided.
+
+Delete Queries are available if something goes wrong with Pack-IN. You may delete records for a selected country.
+See 'delete_demografia_venezuela.sql' or 'delete_demografia_paraguay.sql'. Delete commands must be executed in the indicated order.
+ 
 ### <b>4- Restart Server</b>
 - Restart idempiere Server 
 - Verify plugin is Installed and Running
 
 ### <b>5- C_BPartner_Location Table</b>
-- Using Application dictionary Modify Table
-- Field: C_Location_ID
+- Using Application dictionary Modify Table C_BPartner_Location
+- Column: C_Location_ID
 - Change Reference 
 - from <b>Location</b> 
 - to <b>LocationExtended</b>
 
 ### <b>6- Modify Country Record</b>
-- Change Capture Sequence
+
+Using the new window <b>'Country Community Region Municipality Parish'</b> provided.
+
+- Select Country
+- Change Capture Sequence field
 -    with
 - @CO@ @A1!@ @A2@ @A3@ @A4@  @R!@ @MU@ @PA@ @C@, @P@ 
+
+

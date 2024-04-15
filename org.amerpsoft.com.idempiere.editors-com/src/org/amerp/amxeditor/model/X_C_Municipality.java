@@ -218,4 +218,23 @@ public class X_C_Municipality extends PO implements I_C_Municipality, I_Persiste
 	{
 		return (String)get_Value(COLUMNNAME_Name);
 	}
+	
+	/**
+	 * Set Search Key.
+	 * 
+	 * @param Value Search key for the record in the format required - must be
+	 *              unique
+	 */
+	public void setValue(String Value) {
+		set_Value(COLUMNNAME_Value, Value);
+	}
+
+	/**
+	 * Get Search Key.
+	 * 
+	 * @return Search key for the record in the format required - must be unique
+	 */
+	public String getValue() {
+		return (String) get_Value(COLUMNNAME_Value);
+	}
 }
