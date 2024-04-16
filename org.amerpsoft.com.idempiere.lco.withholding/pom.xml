@@ -10,4 +10,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   </parent>
   <artifactId>org.amerpsoft.com.idempiere.lco.withholding</artifactId>
   <packaging>eclipse-plugin</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>  
 </project>

@@ -18,33 +18,22 @@
 
    <plugin
          id="org.amerpsoft.com.idempiere.editors-com"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="11.0.0.qualifier"/>
 
-  <plugin
+   <plugin
          id="org.amerpsoft.com.idempiere.zk_themes"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-         
+         version="11.0.0.qualifier"/>
+
    <plugin
          id="org.amerpsoft.com.idempiere.lco.withholding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
+         version="11.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.financial"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
+         version="11.0.0.qualifier"/>
+
+   <plugin
+         id="org.idempiere.zk.iceblue_c.theme"
+         version="0.0.0"/>
 
 </feature>

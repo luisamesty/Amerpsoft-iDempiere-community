@@ -189,4 +189,17 @@ public interface I_C_Municipality
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+	
+    /** Column name Value */
+    public static final String COLUMNNAME_Value = "Value";
+
+	/** Set Search Key.
+	  * Search key for the record in the format required - must be unique
+	  */
+	public void setValue (String Value);
+
+	/** Get Search Key.
+	  * Search key for the record in the format required - must be unique
+	  */
+	public String getValue();
 }

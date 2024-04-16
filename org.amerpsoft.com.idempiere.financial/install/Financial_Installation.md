@@ -1,3 +1,4 @@
+&lArr;[AMERPSOFT COMMUNITY PLUGINS](../README.md) | [Home](../../README.md)
 Amerpsoft-Financial Basic 
 =========================
 Installation Procedure: 

@@ -5,5 +5,5 @@ Bundle-SymbolicName: org.amerpsoft.com.idempiere.zk_themes
 Bundle-Version: 11.0.0.qualifier
 Fragment-Host: org.adempiere.ui.zk
 Automatic-Module-Name: org.amerpsoft.com.idempiere.zk.themes
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Amerpsoft

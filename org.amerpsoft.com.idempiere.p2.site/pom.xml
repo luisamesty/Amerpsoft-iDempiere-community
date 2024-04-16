@@ -25,6 +25,7 @@
 				</executions>
 				<configuration>
 					<includeAllDependencies>false</includeAllDependencies>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
 					<!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=512396 -->
 					<xzCompress>false</xzCompress>
 				</configuration>
