@@ -33,15 +33,13 @@ Special considerations and notes for LVE, LPY and LES localization.
 
 #### <b>Wiki Idempiere</b>
 <div style="padding-left: 20px;">
-For more information on How to build idempiere Maven projects, see on Wiki: 
+For more information, see on Wiki: 
 
 - [Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
 
 - [AMERPSOFT Editor - Extended Location](http://wiki.idempiere.org/en/Plugin:_Extended_Location)
 
 - [AMERPSOFT Themes](https://wiki.idempiere.org/en/Plugin:_Themes_Amerpsoft)
-
-- [Building iDempiere Plugins with Maven](https://wiki.idempiere.org/en/Building_iDempiere_Plugins_with_Maven)
 
 </div>
 
