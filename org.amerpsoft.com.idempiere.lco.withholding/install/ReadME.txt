@@ -24,3 +24,24 @@ PAck-IN files as Tenant user:
 	AMERPSOFT LCO Withholding DATA.csv
 	AMERPSOFT LCO Withholding Data.zip
 
+
+Client Install Steps.
+
+	1. LCO ISIC
+		EXPORT CSV and Import on New Client
+	2. Tax Payer Type
+		Create manually
+	3. Tax Categories
+		Export CSV and Import on New Client
+	4. Tax Rates
+		Export CSV and Import on New Client
+		Adjust Accounting by Group, manuallly and using DB UPDATE Command
+	5. Withholding Categories (Categorias de retención)
+		EXPORT CSV and Import on New Client
+	6. Withholding Types (Tipos de Retención)
+		EXPORT CSV and Import on New Client
+	7. Withholding Rules (Reglas de Retención)
+		Rule Conf: Adjust manually
+		Firts Create Withholding Calc and then Withholding Rules
+		Withholding Calc: Export one by one and import 
+		Withholding Rule: Export one by one and import 
