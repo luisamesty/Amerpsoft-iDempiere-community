@@ -471,637 +471,142 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 	 * 	Get (local) Region Name
 	 *	@return	region Name or ""
 	 */
-	/*public String getRegionName()
-	{
-		return getRegionName(false);
-	}	//	getRegionName
-
-	/**
-	 * 	Get Region Name
-	 * 	@param getFroMRegionExt get from region (not locally)
-	 *	@return	region Name or ""
-	 */
-	/*public String getRegionName (boolean getFroMRegionExt)
-	{
-		if (getFroMRegionExt && getCountry().isHasRegion() 
-			&& getRegion() != null)
-		{
-			super.setRegionName("");	//	avoid duplicates
-			return getRegion().getName();
-		}
-		//
-		String regionName = super.getRegionName();
-		if (regionName == null)
-			regionName = "";
-		return regionName;
-	}	//	getRegionName
-
-	
-	/**
-	 * 	Compares to current record
-	 *	@param C_Country_ID if 0 ignored
-	 *	@param C_Region_ID if 0 ignored
-	 *	@param Postal match postal
-	 *	@param Postal_Add match postal add
-	 *	@param City match city
-	 *	@param Address1 match address 1
-	 *	@param Address2 match address 2
-	 *	@return true if equals
-	 */
-	/*public boolean equals (int C_Country_ID, int C_Region_ID, 
-		String Postal, String Postal_Add, String City, String Address1, String Address2)
-	{
-		if (C_Country_ID != 0 && getC_Country_ID() != C_Country_ID)
-			return false;
-		if (C_Region_ID != 0 && getC_Region_ID() != C_Region_ID)
-			return false;
-		//	must match
-		if (!equalsNull(Postal, getPostal()))
-			return false;
-		if (!equalsNull(Postal_Add, getPostal_Add()))
-			return false;
-		if (!equalsNull(City, getCity()))
-			return false;
-		if (!equalsNull(Address1, getAddress1()))
-			return false;
-		if (!equalsNull(Address2, getAddress2()))
-			return false;
-		return true;
-	}	//	equals
-	
-	/**
-	 * 	Equals if "" or Null
-	 *	@param c1 c1
-	 *	@param c2 c2
-	 *	@return true if equal (ignore case)
-	 */
-	/*private boolean equalsNull (String c1, String c2)
-	{
-		if (c1 == null)
-			c1 = "";
-		if (c2 == null)
-			c2 = "";
-		return c1.equalsIgnoreCase(c2);
-	}	//	equalsNull
-	
-	/**
-	 * 	Equals
-	 * 	@param cmp comparator
-	 * 	@return true if ID the same
-	 */
-	/*public boolean equals (Object cmp)
-	{
-		if (cmp == null)
-			return false;
-		if (cmp.getClass().equals(this.getClass()))
-			return ((PO)cmp).get_ID() == get_ID();
-		return equals(cmp);
-	}	//	equals
-
-	/**
-	 * 	Print Address Reverse Order
-	 *	@return true if reverse depending on country
-	 */
-	/*public boolean isAddressLinesReverse()
-	{
-		//	Local
-		if (getC_Country_ID() == MCountry.getDefault(getCtx()).getC_Country_ID())
-			return getCountry().isAddressLinesLocalReverse();
-		return getCountry().isAddressLinesReverse();
-	}	//	isAddressLinesReverse
-
-	
-	/**
-	 * 	Get formatted City Region Postal line
-	 * 	@return City, Region Postal
-	 */
-	/*public String getCityRegionPostal()
-	{
-		return parseCRP (getCountry());
-	}	//	getCityRegionPostal
-	
-	/**
-	 *	Parse according City/Postal/Region according to displaySequence.
-	 *	@C@ - City		@R@ - Region	@P@ - Postal  @A@ - PostalAdd
-	 *  @param c country
-	 *  @return parsed String
-	 */
-	/*private String parseCRP (MCountry c)
-	{
-		if (c == null)
-			return "CountryNotFound";
-
-		boolean local = getC_Country_ID() == MCountry.getDefault(getCtx()).getC_Country_ID();
-		String inStr = local ? c.getDisplaySequenceLocal() : c.getDisplaySequence();
-		StringBuffer outStr = new StringBuffer();
-
-		String token;
-		int i = inStr.indexOf('@');
-		while (i != -1)
-		{
-			outStr.append (inStr.substring(0, i));			// up to @
-			inStr = inStr.substring(i+1, inStr.length());	// from first @
-
-			int j = inStr.indexOf('@');						// next @
-			if (j < 0)
-			{
-				token = "";									//	no second tag
-				j = i+1;
-			}
-			else
-				token = inStr.substring(0, j);
-			//	Tokens
-			if (token.equals("C"))
-			{
-				if (getCity() != null)
-					outStr.append(getCity());
-			}
-			else if (token.equals("R"))
-			{
-				if (getRegion() != null)					//	we have a region
-					outStr.append(getRegion().getName());
-				else if (super.getRegionName() != null && super.getRegionName().length() > 0)
-					outStr.append(super.getRegionName());	//	local region name
-			}
-			else if (token.equals("P"))
-			{
-				if (getPostal() != null)
-					outStr.append(getPostal());
-			}
-			else if (token.equals("A"))
-			{
-				String add = getPostal_Add();
-				if (add != null && add.length() > 0)
-					outStr.append("-").append(add);
-			}
-			else
-				outStr.append("@").append(token).append("@");
-
-			inStr = inStr.substring(j+1, inStr.length());	// from second @
-			i = inStr.indexOf('@');
-		}
-		outStr.append(inStr);						// add the rest of the string
-
-		//	Print Region Name if entered and not part of pattern
-		if (c.getDisplaySequence().indexOf("@R@") == -1
-			&& super.getRegionName() != null && super.getRegionName().length() > 0)
-			outStr.append(" ").append(super.getRegionName());
-
-		String retValue = Util.replace(outStr.toString(), "\\n", "\n");
-		log.finest("parseCRP - " + c.getDisplaySequence() + " -> " +  retValue);
-		return retValue;
-	}	//	parseContext
-
-	
-	/**************************************************************************
-	 *	Return printable String representation
-	 *  @return String
-	 */
-	/*public String toString()
-	{
-		StringBuffer retStr = new StringBuffer();
-		if (isAddressLinesReverse())
-		{
-			//	City, Region, Postal
-			retStr.append(", ").append(parseCRP (getCountry()));
-			if (getAddress4() != null && getAddress4().length() > 0)
-				retStr.append(", ").append(getAddress4());
-			if (getAddress3() != null && getAddress3().length() > 0)
-				retStr.append(", ").append(getAddress3());
-			if (getAddress2() != null && getAddress2().length() > 0)
-				retStr.append(", ").append(getAddress2());
-			if (getAddress1() != null)
-				retStr.append(getAddress1());
-		}
-		else
-		{
-			if (getAddress1() != null)
-				retStr.append(getAddress1());
-			if (getAddress2() != null && getAddress2().length() > 0)
-				retStr.append(", ").append(getAddress2());
-			if (getAddress3() != null && getAddress3().length() > 0)
-				retStr.append(", ").append(getAddress3());
-			if (getAddress4() != null && getAddress4().length() > 0)
-				retStr.append(", ").append(getAddress4());
-			//	City, Region, Postal
-			retStr.append(", ").append(parseCRP (getCountry()));
-			//	Add Country would come here
-		}
-		return retStr.toString();
-	}	//	toString
-
-	/**
-	 *	Return String representation with CR at line end
-	 *  @return String
-	 */
-	/*public String toStringCR()
-	{
-		StringBuffer retStr = new StringBuffer();
-		if (isAddressLinesReverse())
-		{
-			//	City, Region, Postal
-			retStr.append(parseCRP (getCountry()));
-			if (getAddress4() != null && getAddress4().length() > 0)
-				retStr.append("\n").append(getAddress4());
-			if (getAddress3() != null && getAddress3().length() > 0)
-				retStr.append("\n").append(getAddress3());
-			if (getAddress2() != null && getAddress2().length() > 0)
-				retStr.append("\n").append(getAddress2());
-			if (getAddress1() != null)
-				retStr.append("\n").append(getAddress1());
-		}
-		else
-		{
-			if (getAddress1() != null)
-				retStr.append(getAddress1());
-			if (getAddress2() != null && getAddress2().length() > 0)
-				retStr.append("\n").append(getAddress2());
-			if (getAddress3() != null && getAddress3().length() > 0)
-				retStr.append("\n").append(getAddress3());
-			if (getAddress4() != null && getAddress4().length() > 0)
-				retStr.append("\n").append(getAddress4());
-			//	City, Region, Postal
-			retStr.append("\n").append(parseCRP (getCountry()));
-			//	Add Country would come here
-		}
-		return retStr.toString();
-	}	//	toStringCR
-
-	/**
-	 *	Return detailed String representation
-	 *  @return String
-	 */
-	/*public String toStringX()
-	{
-		StringBuffer sb = new StringBuffer("MLocation=[");
-		sb.append(get_ID())
-			.append(",C_Country_ID=").append(getC_Country_ID())
-			.append(",C_Region_ID=").append(getC_Region_ID())
-			.append(",Postal=").append(getPostal())
-			.append ("]");
-		return sb.toString();
-	}   //  toStringX
-
-	/**
-	 * 	Before Save
-	 *	@param newRecord new
-	 *	@return true
-	 */
-	/*protected boolean beforeSave (boolean newRecord)
-	{
-		if (getAD_Org_ID() != 0)
-			setAD_Org_ID(0);
-		//	Region Check
-		if (getC_Region_ID() != 0)
-		{
-			if (m_c == null || m_c.getC_Country_ID() != getC_Country_ID())
-				getCountry();
-			if (!m_c.isHasRegion())
-				setC_Region_ID(0);
-		}
-		if (getC_City_ID() <= 0 && getCity() != null && getCity().length() > 0) {
-			int city_id = DB.getSQLValue(
-					get_TrxName(),
-					"SELECT C_City_ID FROM C_City WHERE C_Country_ID=? AND COALESCE(C_Region_ID,0)=? AND Name=?",
-					new Object[] {getC_Country_ID(), getC_Region_ID(), getCity()});
-			if (city_id > 0)
-				setC_City_ID(city_id);
-		}
-
-		//check city
-		if (m_c != null && !m_c.isAllowCitiesOutOfList() && getC_City_ID()<=0) {
-			log.saveError("CityNotFound", Msg.translate(getCtx(), "CityNotFound"));
-			return false;
-		}
-		
-		return true;
-	}	//	beforeSave
-	
-	/**
-	 * 	After Save
-	 *	@param newRecord new
-	 *	@param success success
-	 *	@return success
-	 */
-	/*protected boolean afterSave (boolean newRecord, boolean success)
-	{
-		//	Value/Name change in Account
-		if (!newRecord
-			&& ("Y".equals(Env.getContext(getCtx(), "$Element_LF")) 
-				|| "Y".equals(Env.getContext(getCtx(), "$Element_LT")))
-			&& (is_ValueChanged("Postal") || is_ValueChanged("City"))
-			)
-			MAccount.updateValueDescription(getCtx(), 
-				"(C_LocFrom_ID=" + getC_Location_ID() 
-				+ " OR C_LocTo_ID=" + getC_Location_ID() + ")", get_TrxName());
-		
-		//Update BP_Location name IDEMPIERE 417
-		if (get_TrxName().startsWith("POSave")) { // saved without trx
-			int bplID = DB.getSQLValueEx(get_TrxName(), "SELECT C_BPartner_Location_ID FROM C_BPartner_Location WHERE C_Location_ID = " + getC_Location_ID());
-			if (bplID>0)
-			{
-				MBPartnerLocation bpl = new MBPartnerLocation(getCtx(), bplID, get_TrxName());
-				Integer id=this.get_ID();
-				
-//				bpl.setName(bpl.getBPLocName(this));
-				bpl.saveEx();
-			}
-		}
-		return success;
-	}	//	afterSave
-
-	/**
-	 * 	Get edited Value (MLocation) for GoogleMaps / IDEMPIERE-147
-	 *  @param MLocationExt location
-	 *	@return String address
-	 */
-	/*public String getMapsLocation() {
-
-		MRegionExt region = new MRegionExt(Env.getCtx(), getC_Region_ID(), get_TrxName());
-		String address = "";
-		address = address + (getAddress1() != null ? getAddress1() + ", " : "");
-		address = address + (getAddress2() != null ? getAddress2() + ", " : "");
-		address = address + (getCity() != null ? getCity() + ", " : "");
-		address = address + (region.getName() != null ? region.getName() + ", " : "");
-		address = address + (getCountryName() != null ? getCountryName() : "");
-
-		return address.replace(" ", "+");
-	}
 
 	@Override
 	public void setDocStatus(String newStatus) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public String getDocStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean processIt(String action) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean unlockIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean invalidateIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String prepareIt() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean approveIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean rejectIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String completeIt() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean voidIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean closeIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean reverseCorrectIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean reverseAccrualIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean reActivateIt() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public String getSummary() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getDocumentNo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getDocumentInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public File createPDF() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getProcessMsg() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getDoc_User_ID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getC_Currency_ID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public BigDecimal getApprovalAmt() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getDocAction() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-*/
-
-	@Override
-	public void setDocStatus(String newStatus) {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public String getDocStatus() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean processIt(String action) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean unlockIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean invalidateIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public String prepareIt() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public boolean approveIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean rejectIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public String completeIt() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public boolean voidIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean closeIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean reverseCorrectIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean reverseAccrualIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean reActivateIt() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public String getSummary() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getDocumentNo() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getDocumentInfo() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public File createPDF() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getProcessMsg() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public int getDoc_User_ID() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public int getC_Currency_ID() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public BigDecimal getApprovalAmt() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getDocAction() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 }	//	MLocation

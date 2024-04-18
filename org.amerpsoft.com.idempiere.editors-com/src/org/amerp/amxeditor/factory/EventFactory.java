@@ -33,14 +33,11 @@ public class EventFactory extends AbstractEventHandler{
     
     @Override
     protected void doHandleEvent(Event p_event) {
-	    // TODO Auto-generated method stub
 	    PO po = getPO(p_event);
 	    
 	    // MAMNPayroll
 	    if (po instanceof MLocationExt) {
 	    	MLocationExt pr = (MLocationExt)po;
-log.warning("..............MLocationExt-..............................");
-
 	    }    
     }
 
@@ -49,7 +46,6 @@ log.warning("..............MLocationExt-..............................");
 	 */
     @Override
     protected void initialize() {
-	    // TODO Auto-generated method stub
 	    // MLocationExt
 	    registerTableEvent(IEventTopics.PO_AFTER_CHANGE, MLocationExt.Table_Name);
 	    registerTableEvent(IEventTopics.PO_AFTER_NEW , MLocationExt.Table_Name);
