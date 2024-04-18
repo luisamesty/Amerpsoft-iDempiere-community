@@ -38,7 +38,7 @@ Verify Pack-In automatically installed:
 - 2Pack_8.3.0.zip
 - 2Pack_8.4.0.zip
 
-Ignore error starting server.
+** **-Ignore error starting server-**  **.
 - <b>Restart idempiere Server</b>
 
 These Packs IN, creates New structure for Extended Location, also C_Country3 Table and C_Community default records. One Community for each country in order to be consistent with the model:
