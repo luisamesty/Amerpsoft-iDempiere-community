@@ -297,9 +297,19 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 	 */
 	public void setC_Region_ID (int C_Region_ID)
 	{
-		if (C_Region_ID >=0 ) {
-			setRegion (MRegionExt.get(getCtx(), C_Region_ID));
+		if (C_Region_ID == 0)
+			setRegion(null);
+		//	Country defined
+		else if (getC_Country_ID() != 0)
+		{
+			MCountry cc = getCountry();
+			if (cc.isValidRegion(C_Region_ID))
+				super.setC_Region_ID(C_Region_ID);
+			else
+				setRegion(null);
 		}
+		else
+			setRegion (MRegion.get(C_Region_ID));
 	}	//	setC_Region_ID
 	/**
 	 * 	Get Region

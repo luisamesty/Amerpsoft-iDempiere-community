@@ -11,4 +11,14 @@
   <groupId>org.amerpsoft.com.idempiere</groupId>
   <artifactId>org.amerpsoft.com.idempiere.editors-com</artifactId>
   <packaging>eclipse-plugin</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

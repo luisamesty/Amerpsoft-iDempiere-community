@@ -1,55 +1,64 @@
-## AMERPSOFT Financial:
-This plugin is brought to you from AMERPSOFT Consulting by Luis Amesty.
-
-Updated for idempiere release 6.2, October 2019.
-
-See AMF-Financial.docx on documentation directory, for more information.
-[AMF-Financial.docx](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/documentacion/AMF-%20Financial.docx)
-
-For Install see Financial_Installation.md on install directory.
-[Financial_Installation.md](https://bitbucket.org/amerpsoft/amerpsoft-idempiere-community/src/default/org.amerpsoft.com.idempiere.financial/install/Financial_Installation.md)
-
-For additional information contact:
-Luis Amesty - luisamesty@gmail.com
+&lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+### Financial Plugin
+These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
 
 ************************************************
+## <b>Description</b>
 
-### 1.	Functions.
-##### Special Function for calculating Balances and Dates:
-* amf_acctdate0prevbalance.sql
-* amf_acctdate1deb.sql
-* amf_acctdate2cre.sql
-* amf_acctdate3balance.sql
-* amf_acctdate4currentbalance.sql
-* amf_acctper0prevbalance.sql
-* amf_acctper1deb.sql
-* amf_acctper2cre.sql
-* amf_acctper3balance.sql
-* amf_acctper4currentbalance.sql
+AMERPSOFT Financial Plugin is related to Idempiere Accounting in order to complement some tasks, processes and reports.
+
+<b>Content:</b>
+
+```text
+- Database Functions
+- Processes
+- Accounting Reports
+- Installing
+```
+
+#### 1.	Functions.
+###### Special Function for Reporting Dates and Text:
+
+```text
 * amf_dow2letter.sql
-* amf_fiscalstartdate.sql
 * amf_month2letter.sql
-* amf_nextperiodenddate.sql
-* amf_nextperiodstartdate.sql
 * amf_num2letter.sql
 * amf_num2letter1000.sql
-* amf_periodenddate.sql
-* amf_periodstartdate.sql
-* amf_prevperiodenddate.sql
-* amf_prevperiodstartdate.sql
-
-### 2. Amf_Views:
-##### Must be created in order, because Views are dependant bethween them.
-1. amf_accounts_v.sql
-2. amf_accounts_detail_v.sql
-3. amf_accounts_balance_v.sql
-
-### 3. Modules: 
-* AMERPSOFT Financial Processes
-* AMERPSOFT Financial Reports
-* AMERPSOFT Bank Reports
+```
 
 
-### Updated for Idempiere release 8.1 - November 2020
-### Updated for Idempiere release 11 - January 2024
-  Under Test - See release-11 branch.
+#### 2. Processes. 
+
+AMERPSOFT Financial Processes
+
+```text
+- Amfin Process Reset Accounting
+- Amfin Process Repost Accounting
+- Amfin Process GLJournal Annual Closing
+```
+
+#### 3. Accounting Reports 
+
+AMERPSOFT Financial Reports
+
+```text
+- Amfin Account Elements Jasper
+- Amfin Trial Balance Jasper One Period
+- Amfin Trial Balance Jasper by Two Dates
+- Amfin State Financial Balance Jasper
+- Amfin State Financial Integral Results Jasper
+```
+
+#### 4. Installing 
+
+Before installing you must have a Client with appropriate Accounting elements and Accounting Schema created.
+For more Information see on Idempiere Wiki: 
+
+- [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_(Process_ID-53161) )
+- [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage)
+
+Installation Procedure: [AMERPSOFT Financial Plugin](./install/Financial_Installation.md)
+
+#### Requires Idempiere release 11 
+  Under Test - See release-11 branch lso for more details.
+ 
