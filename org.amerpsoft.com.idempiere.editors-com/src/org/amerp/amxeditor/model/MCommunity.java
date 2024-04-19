@@ -19,7 +19,6 @@ public class MCommunity extends X_C_Community{
 	 */
     public MCommunity(Properties p_ctx, int C_Community_ID, String p_trxName) {
 	    super(p_ctx, C_Community_ID, p_trxName);
-	    // TODO Auto-generated constructor stub
     }
 	/**
 	 * @param p_ctx
@@ -28,7 +27,6 @@ public class MCommunity extends X_C_Community{
 	 */
     public MCommunity(Properties p_ctx, ResultSet p_rs, String p_trxName) {
 	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
     }
 
 

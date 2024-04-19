@@ -34,8 +34,7 @@ public class EditorFactory implements IEditorFactory {
 
     @Override
     public WEditor getEditor(GridTab p_gridTab, GridField p_gridField, boolean p_tableEditor) {
-	    // TODO Auto-generated method stub
-    	//log.setLevel(Level.WARNING);
+	   
     	if (p_gridField == null)
     	{
     		return null;
@@ -56,19 +55,15 @@ public class EditorFactory implements IEditorFactory {
 	@Override
 	public WEditor getEditor(GridTab gridTab, GridField gridField, boolean tableEditor,
 			IEditorConfiguration editorConfiguration) {
-		// TODO Auto-generated method stub
-    	//log.setLevel(Level.WARNING);
+
     	if (gridField == null)
     	{
     		return null;
     	}
     	WEditor editor = null;
     	int displayType = gridField.getDisplayType();
-    	//log.warning("..............EditorFactory........displayType="+displayType );
     	if (displayType == DisplayTypeFactory.LocationExtended) {
-    		//log.warning("DisplayTypeFactory: LocationExtended ");
     		editor = new WLocationExtEditor(gridField, tableEditor, editorConfiguration);
-    		//editor = new WLocationEditor(p_gridField);
     	}
     	if(editor != null)
     		editor.setTableEditor(tableEditor);

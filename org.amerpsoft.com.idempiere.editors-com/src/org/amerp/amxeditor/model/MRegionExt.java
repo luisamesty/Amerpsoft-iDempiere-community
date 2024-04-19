@@ -16,6 +16,8 @@ import org.compiere.util.*;
  */
 public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 
+	private String COLUMNNAME_C_Community_ID = I_C_Region_Amerp.COLUMNNAME_C_Community_ID;
+	
 	/**
 	 * 
 	 */
@@ -69,9 +71,7 @@ public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 			loadAllRegions(ctx);
 		String key = String.valueOf(C_Region_ID);
 		MRegionExt r = (MRegionExt)s_regions.get(key);
-//		MRegion rr = (MRegion)s_regions.get(key);
-//		// POWrapper Class
-//		I_C_Region_Amerp r =  POWrapper.create(rr, I_C_Region_Amerp.class);		
+	
 		if (r != null)
 			return r;
 		r = new MRegionExt (ctx, C_Region_ID, null);
@@ -149,7 +149,7 @@ public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 	 */
     public MRegionExt(Properties p_ctx, int C_Region_ID, String p_trxName) {
 	    super(p_ctx, C_Region_ID, p_trxName);
-	    // TODO Auto-generated constructor stub
+	    // 
     }
     
 	/**
@@ -159,20 +159,24 @@ public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 	 */
     public MRegionExt(Properties p_ctx, ResultSet p_rs, String p_trxName) {
 	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
+
     }
 
 	@Override
 	public void setC_Community_ID(int C_Community_ID) {
-		// TODO Auto-generated method stub
 		
+		set_Value (COLUMNNAME_C_Community_ID,C_Community_ID);
 	}
 
 	@Override
 	public int getC_Community_ID() {
-		// TODO Auto-generated method stub
+
+		Object oo = get_Value(COLUMNNAME_C_Community_ID);
+		if (oo != null) 
+		{
+			return (int) (oo); 
+		}
 		return 0;
 	}
-
 
 }
