@@ -30,16 +30,17 @@ import org.compiere.util.*;
  * @author luisamesty
  *
  */
-public class MCountryExt extends X_C_Country implements Comparator<Object>, Serializable {
+public class MCountryExt extends X_C_Country implements I_C_Country_Amerp, Comparator<Object>, Serializable {
 
 	/**
 	 * 
 	 */
     private static final long serialVersionUID = 8154237714754309192L;
 
-    private String COLUMNNAME_HasParish ="HasParish";
-	private String COLUMNNAME_HasMunicipality = "HasMunicipality";
-	private String COLUMNNAME_HasCommunity = "HasCommunity";
+    private String COLUMNNAME_HasParish = I_C_Country_Amerp.COLUMNNAME_HasParish;
+	private String COLUMNNAME_HasMunicipality = I_C_Country_Amerp.COLUMNNAME_HasMunicipality;
+	private String COLUMNNAME_HasCommunity = I_C_Country_Amerp.COLUMNNAME_HasCommunity;
+	private String COLUMNNAME_countrycode3 = I_C_Country_Amerp.COLUMNNAME_countrycode3;
 
 
 	/**
@@ -527,5 +528,19 @@ public class MCountryExt extends X_C_Country implements Comparator<Object>, Seri
 		return false;
 	}
 
+	@Override
+	public void setcountrycode3(String countrycode3) {
+		set_Value (COLUMNNAME_countrycode3,countrycode3);
+	}
 
+	@Override
+	public String getcountrycode3() {
+		
+		Object oo = get_Value(COLUMNNAME_countrycode3);
+		if (oo != null) 
+		{
+			return (String) (oo); 
+		}
+		return "";
+	}
 }

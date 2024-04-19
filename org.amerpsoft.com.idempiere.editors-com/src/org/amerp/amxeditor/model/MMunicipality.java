@@ -18,7 +18,7 @@ import org.amerp.amxeditor.model.MMunicipality;
  * @author luisamesty
  *
  */
-public class MMunicipality extends X_C_Municipality implements DocAction {
+public class MMunicipality extends X_C_Municipality {
 	/**
 	 * 
 	 */
@@ -182,7 +182,7 @@ public class MMunicipality extends X_C_Municipality implements DocAction {
 	 */
     public MMunicipality(Properties p_ctx, int C_Municipality_ID, String p_trxName) {
 	    super(p_ctx, C_Municipality_ID, p_trxName);
-	    // TODO Auto-generated constructor stub
+	    
     }
 	/**
 	 * @param p_ctx
@@ -191,216 +191,7 @@ public class MMunicipality extends X_C_Municipality implements DocAction {
 	 */
     public MMunicipality(Properties p_ctx, ResultSet p_rs, String p_trxName) {
 	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#setDocStatus(java.lang.String)
-	 */
-    @Override
-    public void setDocStatus(String p_newStatus) {
-	    // TODO Auto-generated method stub
 	    
     }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getDocStatus()
-	 */
-    @Override
-    public String getDocStatus() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#processIt(java.lang.String)
-	 */
-    @Override
-    public boolean processIt(String p_action) throws Exception {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#unlockIt()
-	 */
-    @Override
-    public boolean unlockIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#invalidateIt()
-	 */
-    @Override
-    public boolean invalidateIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#prepareIt()
-	 */
-    @Override
-    public String prepareIt() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#approveIt()
-	 */
-    @Override
-    public boolean approveIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#rejectIt()
-	 */
-    @Override
-    public boolean rejectIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#completeIt()
-	 */
-    @Override
-    public String completeIt() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#voidIt()
-	 */
-    @Override
-    public boolean voidIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#closeIt()
-	 */
-    @Override
-    public boolean closeIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#reverseCorrectIt()
-	 */
-    @Override
-    public boolean reverseCorrectIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#reverseAccrualIt()
-	 */
-    @Override
-    public boolean reverseAccrualIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#reActivateIt()
-	 */
-    @Override
-    public boolean reActivateIt() {
-	    // TODO Auto-generated method stub
-	    return false;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getSummary()
-	 */
-    @Override
-    public String getSummary() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getDocumentNo()
-	 */
-    @Override
-    public String getDocumentNo() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getDocumentInfo()
-	 */
-    @Override
-    public String getDocumentInfo() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#createPDF()
-	 */
-    @Override
-    public File createPDF() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getProcessMsg()
-	 */
-    @Override
-    public String getProcessMsg() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getDoc_User_ID()
-	 */
-    @Override
-    public int getDoc_User_ID() {
-	    // TODO Auto-generated method stub
-	    return 0;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getC_Currency_ID()
-	 */
-    @Override
-    public int getC_Currency_ID() {
-	    // TODO Auto-generated method stub
-	    return 0;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getApprovalAmt()
-	 */
-    @Override
-    public BigDecimal getApprovalAmt() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#getDocAction()
-	 */
-    @Override
-    public String getDocAction() {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-
 
 }
