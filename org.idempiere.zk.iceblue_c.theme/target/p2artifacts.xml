@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<artifacts size='2'>
+  <artifact classifier='osgi.bundle' id='org.idempiere.zk.iceblue_c.theme' version='11.0.0.202404232132'>
+    <properties size='6'>
+      <property name='artifact.size' value='311528'/>
+      <property name='download.size' value='311528'/>
+      <property name='maven-groupId' value='org.idempiere'/>
+      <property name='maven-artifactId' value='org.idempiere.zk.iceblue_c.theme'/>
+      <property name='maven-version' value='11.0.0-SNAPSHOT'/>
+      <property name='maven-type' value='eclipse-plugin'/>
+    </properties>
+  </artifact>
+  <artifact classifier='osgi.bundle' id='org.idempiere.zk.iceblue_c.theme.source' version='11.0.0.202404232132'>
+    <properties size='7'>
+      <property name='artifact.size' value='309533'/>
+      <property name='download.size' value='309533'/>
+      <property name='maven-groupId' value='org.idempiere'/>
+      <property name='maven-artifactId' value='org.idempiere.zk.iceblue_c.theme'/>
+      <property name='maven-version' value='11.0.0-SNAPSHOT'/>
+      <property name='maven-classifier' value='sources'/>
+      <property name='maven-type' value='java-source'/>
+    </properties>
+  </artifact>
+</artifacts>
