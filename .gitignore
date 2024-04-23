@@ -3,7 +3,7 @@
 **/bin/
 **/lib/*.jar
 **/seed/*.jar
-
+/.settings/
 /.metadata/
 /PostgreSQL/
 /Oracle/
