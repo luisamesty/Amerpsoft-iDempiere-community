@@ -10,4 +10,14 @@
   </parent>  
   <artifactId>org.amerpsoft.com.idempiere.financial</artifactId>
   <packaging>eclipse-plugin</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>  
 </project>

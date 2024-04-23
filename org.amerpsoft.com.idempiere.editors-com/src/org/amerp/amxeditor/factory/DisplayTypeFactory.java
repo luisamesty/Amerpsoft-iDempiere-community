@@ -29,8 +29,6 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	
 	CLogger log = CLogger.getCLogger(DisplayTypeFactory.class);
 	
-	//public static int LocationExtended = ((X_AD_Reference)new Query(Env.getCtx(),X_AD_Reference.Table_Name,"Name='LocationExtended'",null).first()).getAD_Reference_ID();
-	//public static int LocationExtended = 1000066;
 	public static int LocationExtended = ((X_AD_Reference)new Query(Env.getCtx(),X_AD_Reference.Table_Name,"Name='LocationExtended'",null).first()).getAD_Reference_ID();
 
 	/* (non-Javadoc)
@@ -38,13 +36,10 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public boolean isID(int p_displayType) {
-	    // TODO Auto-generated method stub
-//log.setLevel(Level.WARNING);
+
     	if(p_displayType == LocationExtended) {
-//log.warning("..........DisplayTypeFactory...........isID - LocationExtended "+LocationExtended);
     		return true;
     	} else {
-//log.warning("..........DisplayTypeFactory...........isID:"+p_displayType);
     		return false;
     	}
     }
@@ -53,7 +48,6 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public boolean isNumeric(int p_displayType) {
-	    // TODO Auto-generated method stub
 	    return false;
     }
 
@@ -62,7 +56,6 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public Integer getDefaultPrecision(int p_displayType) {
-	    // TODO Auto-generated method stub
 	    return null;
     }
 
@@ -71,15 +64,12 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public boolean isText(int p_displayType) {
-	    // TODO Auto-generated method stub
+	    
     	if(p_displayType == LocationExtended) {
-//log.warning("..........DisplayTypeFactory...........");
-//log.warning("isText - LocationExtended"+LocationExtended);
     		return false;
     	} else {
     		return false;
     	}
-    	//return false;
     }
 
 	/* (non-Javadoc)
@@ -87,7 +77,6 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public boolean isDate(int p_displayType) {
-	    // TODO Auto-generated method stub
 	    return false;
     }
 
@@ -96,7 +85,6 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public boolean isLookup(int p_displayType) {
-	    // TODO Auto-generated method stub
 	    return false;
     }
 
@@ -105,7 +93,6 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public boolean isLOB(int p_displayType) {
-	    // TODO Auto-generated method stub
 	    return false;
     }
 
@@ -114,7 +101,7 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public DecimalFormat getNumberFormat(int p_displayType, Language p_language, String p_pattern) {
-	    // TODO Auto-generated method stub
+	    
 	    return null;
     }
 
@@ -123,7 +110,7 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public SimpleDateFormat getDateFormat(int p_displayType, Language p_language, String p_pattern) {
-	    // TODO Auto-generated method stub
+	    
 	    return null;
     }
 
@@ -132,10 +119,8 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public Class<?> getClass(int p_displayType, boolean p_yesNoAsBoolean) {
-	    // TODO Auto-generated method stub
+	    
     	if(p_displayType == LocationExtended) {
-//log.warning(".....................");
-//log.warning("getClass - LocationExtended"+LocationExtended);
     		return Integer.class;
     	}  else {
     		return null;
@@ -147,10 +132,8 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public String getSQLDataType(int p_displayType, String p_columnName, int p_fieldLength) {
-	    // TODO Auto-generated method stub
+	    
     	if(p_displayType == LocationExtended) {
-//log.warning(".....................");
-//log.warning("getSQLDataType - LocationExtended"+LocationExtended);
     		return "NUMBER(10)";
     	} else {   	
     		return null;
@@ -162,7 +145,7 @@ public class DisplayTypeFactory implements IDisplayTypeFactory{
 	 */
     @Override
     public String getDescription(int p_displayType) {
-	    // TODO Auto-generated method stub
+	    
     	if(p_displayType == LocationExtended) {
     		return "LocationExtended";   		
 
