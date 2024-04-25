@@ -9,6 +9,7 @@
     4. Restart Server
     5. Modify C__BPartner_Location Table
     6. Modify Country Record
+    A. Additional Note.
 
 (*)Steps 2 and 3 are for Venezuela, skip if not using additional language localization.
 
@@ -116,3 +117,9 @@ Using the new window <b>'Country Community Region Municipality Parish'</b> provi
 - @CO@ @A1!@ @A2@ @A3@ @A4@  @R!@ @MU@ @PA@ @C@, @P@ 
 
 
+### <b>A- Additonal Note</b>
+
+A Pack-Out is provided to execute all changes manually if something goes wrong or you are installing a non fresh database.
+Two files are provided in addition:
+- AMERPSOFT Editor AD.csv
+- AMERPSOFT Editor AD.zip

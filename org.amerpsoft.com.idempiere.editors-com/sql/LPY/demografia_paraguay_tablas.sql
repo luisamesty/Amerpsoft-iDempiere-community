@@ -127,31 +127,6 @@ CREATE TABLE adempiere.c_region (
 );
 CREATE UNIQUE INDEX c_region_name ON adempiere.c_region USING btree (c_country_id, name);
 
-------------------------------
--- TABLE C_City
-------------------------------
--- DROP TABLE adempiere.c_city;
-CREATE TABLE adempiere.c_city (
-	c_city_id numeric(10) NOT NULL,
-	ad_client_id numeric(10) NOT NULL,
-	ad_org_id numeric(10) NOT NULL,
-	isactive bpchar(1) DEFAULT 'Y'::bpchar NOT NULL,
-	created timestamp DEFAULT now() NOT NULL,
-	createdby numeric(10) NOT NULL,
-	updated timestamp DEFAULT now() NOT NULL,
-	updatedby numeric(10) NOT NULL,
-	"name" varchar(60) NOT NULL,
-	locode varchar(10) NULL,
-	coordinates varchar(15) NULL,
-	postal varchar(10) NULL,
-	areacode varchar(10) NULL,
-	c_country_id numeric(10) NOT NULL,
-	c_region_id numeric(10) NULL,
-	c_city_uu varchar(36) DEFAULT NULL::character varying NULL,
-	CONSTRAINT c_city_isactive_check CHECK ((isactive = ANY (ARRAY['Y'::bpchar, 'N'::bpchar]))),
-	CONSTRAINT c_city_pkey PRIMARY KEY (c_city_id),
-	CONSTRAINT c_city_uu_idx UNIQUE (c_city_uu)
-);
 -- adempiere.c_city foreign keys
 ALTER TABLE adempiere.c_city ADD CONSTRAINT ccountry_ccity FOREIGN KEY (c_country_id) REFERENCES adempiere.c_country(c_country_id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE adempiere.c_city ADD CONSTRAINT cregion_ccity FOREIGN KEY (c_region_id) REFERENCES adempiere.c_region(c_region_id) DEFERRABLE INITIALLY DEFERRED;

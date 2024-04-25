@@ -1,0 +1,34 @@
+---------------------------------------
+-- DATABASE
+---------------------------------------
+CREATE DATABASE "WorldDemography"
+    WITH
+    OWNER = adempiere
+    ENCODING = 'UTF8'
+   TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+---------------------------------------
+-- MAIN TABLE
+---------------------------------------
+
+-- public.mylan_worldcities_alln definition
+
+-- Drop table
+
+-- DROP TABLE public.mylan_worldcities_alln;
+
+CREATE TABLE public.mylan_worldcities_alln (
+	city varchar(250) NULL,
+	city_ascii varchar(250) NULL,
+	lat varchar(50) NULL,
+	lng varchar(50) NULL,
+	country varchar(250) NULL,
+	iso2 varchar(50) NULL,
+	iso3 varchar(50) NULL,
+	admin_name varchar(250) NULL,
+	capital varchar(250) NULL,
+	population int4 NULL,
+	id int4 NULL
+);
+
