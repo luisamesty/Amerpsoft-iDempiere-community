@@ -1,3 +1,16 @@
+---------------------------------------
+-- BASE DE DATOS DemografiaParaguay
+---------------------------------------
+
+CREATE DATABASE "DemografiaParaguay"
+    WITH
+    OWNER = adempiere
+    ENCODING = 'UTF8'
+   TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+ALTER DATABASE "DemografiaParaguay"
+    SET search_path TO adempiere;
+
 ------------------------------
 -- table c_cOUNTRY
 ------------------------------
