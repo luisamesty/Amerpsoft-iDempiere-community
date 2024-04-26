@@ -5,7 +5,7 @@
 
     1. Install Plugin using Apache felix Web Console
     2. Verify country code 3 digits is updated on C_Country table
-    3. Pack IN Venezuela ExtendedDemography
+    3. Pack IN ExtendedDemography
     4. Restart Server
     5. Modify C__BPartner_Location Table
     6. Modify Country Record
