@@ -1,0 +1,8 @@
+"IsWithholding","AD_Org_ID[Name]","Name","Description","IsActive","IsDefault","withholdingformat","commoditycode"
+"N","*","Exentas Compras",,"Y","N",,
+"N","*","Standard",,"Y","Y",,
+"N","*","Exentas 1.0","Exentas 1.0","Y","N",,
+"N","*","IVA 10%","IVA 10%","Y","N",,
+"N","*","Exentas 1.5","Paraguay Tax Excempt","Y","Y",,
+"N","*","IVA 5%","IVA 5%","Y","N",,
+"N","*","IRP","IRP","Y","N",,"IRP"

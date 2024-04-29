@@ -1,6 +1,6 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 ### Financial Plugin
-These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/){:target="_blank"}. For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty){:target="_blank"}
+These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
 
 ************************************************
 ## <b>Description</b>
@@ -54,8 +54,8 @@ AMERPSOFT Financial Reports
 Before installing you must have a Client with appropriate Accounting elements and Accounting Schema created.
 For more Information see on Idempiere Wiki: 
 
-- [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_(Process_ID-53161) ){:target="_blank"}
-- [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage){:target="_blank"}
+- [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_(Process_ID-53161) 
+- [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage)
 
 See Accounting plans provided:
 

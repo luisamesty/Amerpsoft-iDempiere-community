@@ -1,0 +1,37 @@
+"AD_CLIENT_ID","AD_ORG_ID","C_COUNTRY_ID","C_REGION_ID","C_TAXCATEGORY_ID","C_TAX_ID","CREATED","CREATEDBY","DESCRIPTION","ISACTIVE","ISDEFAULT","ISDOCUMENTLEVEL","ISSALESTAX","ISSUMMARY","ISTAXEXEMPT","ISUSESHIPPINGADDRESS","NAME","PARENT_TAX_ID","RATE","REQUIRESTAXCERTIFICATE","SOPOTYPE","TAXINDICATOR","TO_COUNTRY_ID","TO_REGION_ID","UPDATED","UPDATEDBY","VALIDFROM"
+1000004,0,,,1000202,1000403,28-MAY-18,1037051,"","Y","N","N","N","N","N","N","Standard",,0,"N","B","Exenta",,,11-AUG-23,100,01-JAN-90
+1000006,0,,,1000502,1000603,01-JUN-18,1037251,"","Y","N","Y","N","N","N","N","Standard",,0,"N","B","Exenta",,,11-AUG-23,100,01-JAN-90
+1000004,0,276,,1000402,1000803,05-JUN-18,1000239,"Exenta(NO USAR)","Y","N","N","N","Y","Y","N","Exenta(NO USAR)",,0,"Y","B","Exenta",276,,15-NOV-18,100,01-JAN-18
+1000004,0,276,,1000404,1000804,05-JUN-18,1000239,"IVA 10%","Y","Y","N","N","N","N","N","IVA 10%",,10,"N","B","IVA 10%",276,,04-JAN-21,100,01-JAN-18
+1000004,0,276,,1000402,1000903,08-JUN-18,100,"","Y","N","N","N","N","Y","N","Exenta Distribuidor 1.5%",1000803,1.5,"Y","B","Exenta",276,,12-JUN-18,100,01-JUN-00
+1000000,0,276,,1000702,1001003,09-JUN-18,100,"Exenta Compras","Y","N","N","N","N","N","N","Exenta Compras",,0,"N","B","Exenta",276,,17-DEC-21,100,01-JAN-08
+1000004,0,276,,1000802,1000904,09-JUN-18,100,"Exenta Compras","Y","N","N","N","N","N","N","Exenta Compras",,0,"N","B","Exenta",276,,12-JUN-18,100,01-JAN-08
+1000004,0,276,,1001302,1001503,18-JUN-19,100,"Exenta 1.0(NO USAR)","Y","N","N","Y","N","Y","N","Exenta 1.0(NO USAR)",,0,"Y","B","Exenta",,,18-JUN-19,100,14-JUN-19
+1000005,0,276,,1000603,1000704,05-JUN-18,1000239,"IVA 10%","Y","Y","N","N","N","N","N","IVA 10%",,10,"N","B","IVA 10%",276,,09-JUN-18,100,01-JAN-18
+1000005,0,276,,1000604,1000705,05-JUN-18,1000239,"IVA 5% ","Y","N","N","N","N","N","N","IVA 5% ",,5,"N","B","IVA 5%",276,,09-JUN-18,100,01-JAN-18
+1000000,0,,,1001202,1001403,18-JUN-19,100,"Exenta 1.0 GRUPO","N","N","N","N","Y","Y","N","Exenta 1.0 GRUPO",,0,"Y","B","Exenta",,,02-JUN-23,100,13-JUN-19
+1000000,0,276,,1001202,1001405,18-JUN-19,100,"Exenta Distribuidor 1.0%","Y","Y","N","N","N","Y","N","Exenta Distribuidor 1.0%",,0,"Y","B","Exenta",276,,02-JUN-23,100,13-JUN-19
+11,0,100,,107,104,27-MAR-01,0,"","Y","Y","Y","N","N","N","N","Standard",,0,"N","B","",100,,22-FEB-03,0,01-JAN-90
+11,0,100,102,107,105,11-MAY-01,100,"","Y","N","N","N","N","N","N","CT Sales",,6,"N","B","6%CT",100,102,22-FEB-03,0,01-JAN-70
+11,0,109,,107,106,08-JAN-03,100,"Canadian Federal Sales Tax","Y","N","N","N","N","N","N","GST",108,7,"N","B","GST",109,,22-FEB-03,0,01-JAN-01
+11,0,109,,107,107,08-JAN-03,100,"Canadian Provincial Tax","Y","N","N","N","N","N","N","PST",108,7.5,"N","B","PST",109,,18-NOV-08,101,01-JAN-02
+11,0,109,,107,108,08-JAN-03,100,"Canadian Federal & State Tax","Y","N","N","N","Y","N","N","GST/PST",,14.5,"N","B","Tax",109,,22-FEB-03,0,01-JAN-02
+11,0,,,107,109,17-JAN-03,100,"Used when Business Partners are exempt from tax","Y","N","N","N","N","Y","N","Exempt",,0,"Y","B","",,,22-FEB-03,0,01-JAN-00
+1000000,0,,,1000000,1000000,10-MAY-18,1000000,"","Y","N","N","N","N","N","N","Standard",,0,"N","B","Exenta",,,11-AUG-23,100,01-JAN-90
+1000004,0,276,,1000405,1000805,05-JUN-18,1000239,"IVA 5% ","Y","N","N","N","N","N","N","IVA 5% ",,5,"N","B","IVA 5%",276,,16-JUL-18,100,01-JAN-18
+1000006,0,276,442,1001102,1001303,04-JUN-19,100,"","Y","N","N","N","N","N","N","IVA 10%",,10,"N","B","IVA 10%",,,02-AUG-19,100,01-JUN-17
+1000000,0,,,1000102,1000001,19-OCT-09,1000000,"Exenta 1.5 GRUPO","N","N","N","N","Y","Y","N","Exenta 1.5 GRUPO",,0,"Y","B","Exenta",,,02-JUN-23,100,31-DEC-15
+1000000,0,276,,1000102,1000002,01-AUG-12,100,"Exenta Distribuidor 1.5%","Y","Y","N","N","N","Y","N","Exenta Distribuidor 1.5%",,1.5,"Y","B","Exenta",276,,02-JUN-23,100,01-JAN-90
+1000000,0,276,,1000001,1000302,04-APR-17,100,"IVA 10% Exenta","Y","N","N","N","N","Y","N","IVA 10% Exenta",,10,"Y","B","IVA 10%",276,,15-JUL-19,100,01-APR-15
+1000000,0,276,,1000001,1000102,27-OCT-16,1000239,"IVA 10%","Y","Y","N","N","N","N","N","IVA 10%",,10,"N","B","IVA 10%",276,,02-JUN-23,100,31-DEC-15
+1000000,0,276,,1000101,1000103,27-OCT-16,1000239,"IVA 5% ","Y","N","N","N","N","N","N","IVA 5%",,5,"N","B","IVA 5%",276,,02-JUN-23,100,31-DEC-15
+1000000,0,276,,1000102,1000202,01-NOV-16,1000239,"Exenta Turismo 0%","Y","N","N","N","N","Y","N","Exenta Turismo 0%",,0,"Y","B","Exenta",139,,02-JUN-23,100,31-DEC-15
+1000000,0,276,,1000101,1000203,01-NOV-16,1000239,"IVA 5% Exenta","Y","N","N","N","N","Y","N","IVA 5% Exenta",,5,"Y","B","IVA 5%",276,,02-JUN-23,100,31-DEC-15
+1000000,0,,,1000000,1000402,04-APR-17,100,"Standar Excempt","Y","N","N","N","N","Y","N","Standar Excempt",,0,"N","B","STD",,,12-JUN-18,100,31-DEC-89
+1000005,0,,,1000302,1000503,28-MAY-18,1037151,"","Y","N","Y","N","N","N","N","Standard",,0,"N","B","Exenta",,,11-AUG-23,100,01-JAN-90
+1000005,0,276,103,1000602,1000703,05-JUN-18,1000239,"Exenta","Y","N","N","N","Y","Y","N","Exenta",,0,"Y","B","Exenta",,,09-JUN-18,100,01-JAN-18
+1000005,0,276,,1000902,1001103,09-JUN-18,100,"Excenta Compras","Y","N","N","N","N","N","N","Excenta Compras",,0,"N","B","Exenta",276,,09-JUN-18,100,01-JAN-08
+1000006,0,276,,1001002,1001203,09-JUN-18,100,"Exentas Compras","Y","N","N","N","N","N","N","Exentas Compras",,0,"N","B","Exenta",276,,09-JUN-18,100,01-JAN-08
+1000006,0,276,442,1001103,1001304,04-JUN-19,100,"","Y","N","N","N","N","N","N","IVA 5%",,5,"N","B","IVA 5%",,,04-JUN-19,100,01-APR-17
+1000000,0,276,,1001202,1001404,18-JUN-19,100,"Exenta 1.0 Turismo 0%","Y","N","N","N","N","Y","N","Exenta 1.0 Turismo 0%",,0,"Y","B","Exenta",139,,02-JUN-23,100,13-JUN-19
+1000004,0,276,442,1001302,1001504,18-JUN-19,100,"Exenta Distribuidor 1.0%","Y","N","N","N","N","Y","N","Exenta Distribuidor 1.0%",1001503,0,"Y","B","Exenta",276,,04-JUL-19,100,14-JUN-19
