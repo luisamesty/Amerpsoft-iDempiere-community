@@ -1,4 +1,4 @@
-&lArr;[Installing Idempiere](../README.md) | [Install Ubuntu 22.04 ](../installUbuntu2204/README_InstallUbuntu.md) &rArr;
+&lArr;[Installing Idempiere](../README.md)
 
 <div style="padding-left: 20px;">
 

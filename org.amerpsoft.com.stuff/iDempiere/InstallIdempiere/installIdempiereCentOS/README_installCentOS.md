@@ -1,5 +1,4 @@
-&lArr;[Installing Idempiere](../../InstallIdempiere/README.md) | [Home](../../../README.md)
-
+&lArr;[Installing Idempiere](../../InstallIdempiere/README.md) 
 <div style="padding-left: 20px;">
 
 ### Install Idempiere in CentOS
