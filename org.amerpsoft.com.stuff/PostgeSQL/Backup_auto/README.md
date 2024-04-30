@@ -6,6 +6,7 @@ Backup_auto contains install procedure to perform Daily Backups with additional 
 </pre>
 [Amerpsoft Stuff Home](https://github.com/luisamesty/Amerpsoft-stuff/blob/master/README.md)
 
+[Return to PostgreSQL](../PostgreSQL.md)
 ## <b>Install procedures</b>
 
 <pre>

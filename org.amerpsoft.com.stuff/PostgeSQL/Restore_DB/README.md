@@ -9,7 +9,7 @@ Very useful for replicating an idempiere server each time that user may program 
 This procedure is for Ubuntu Linux, specifically tested on UBUNTU 18.04 version.
 </pre>
 
-[Return to Amerpsoft Stuff Home](https://github.com/luisamesty/Amerpsoft-stuff/blob/master/README.md)
+[Return to PostgreSQL](../PostgreSQL.md)
 ## <b>Basic concepts</b>
 <pre>
 <pre>
