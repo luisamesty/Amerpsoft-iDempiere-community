@@ -11,7 +11,7 @@ Install Procedures for CentOS using PostgreSQL database.
 | ----- | ---------------------------------- | ----------------- | --------------------------------------------- |
 | 1     | [Install PostgreSQL 15](#step1)    | DataBase machine  | Install PostgeSQL Database version 15         |
 | 2     | [Config PostgreSQL 15 ](#step2)    | DataBase machine  | Edit pg_hba.conf / postgresql.conf files      |
-| 3     | [Install JAVA OpenJDK17 ](#step31) | Idempiere machine | Download and install Java 17                  |
+| 3     | [Install JAVA OpenJDK17 ](#step3)  | Idempiere machine | Download and install Java 17                  |
 | 4     | [Download Installers](#step4)      | Idempiere machine | Download installers from iDempiere repository |
 | 5     | [Install from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory   |
 | 6     | [Running idempiere11 ](#step6)     | Idempiere machine | Run and Configure auto execute idempiere      |
