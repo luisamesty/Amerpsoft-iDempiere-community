@@ -1,4 +1,5 @@
 &lArr;[Installing Idempiere](../README.md)
+<a name="readme-top"></a>
 
 ## Install Idempiere in Ubuntu 22.04
 
@@ -63,7 +64,7 @@ sudo systemctl enable postgresql-15
 sudo systemctl start postgresql-15
 ````
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step2"></a>2-⭐️Configure PostgreSQL 15
 
@@ -198,7 +199,7 @@ On PostgreSQL Command lines:
 # \q
 ```
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step3"></a>3-⭐️Install JAVA OpenJDK17
 
@@ -270,7 +271,7 @@ Java(TM) SE Runtime Environment (build 17.0.3+8-LTS-111)
 Java HotSpot(TM) 64-Bit Server VM (build 17.0.3+8-LTS-111, mixed mode, sharing)
 ```
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step4"></a>4-⭐️Download Installers
 
@@ -288,7 +289,7 @@ $ wget https://sourceforge.net/projects/idempiere/files/v11/daily-server/idempie
 $ md5sum -c idempiereServer11Daily.gtk.linux.x86_64.zip.MD5
 ```
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step5"></a>5-⭐️Install idempiere11 from Installers
 
@@ -360,7 +361,7 @@ Database Password: fill here with the password usually adempiere
 Mail: Can be configured later
 ```
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step6"></a>6-⭐️Running idempiere11
 
@@ -406,5 +407,5 @@ After iDempiere is registered as a service, it will be started automatically on 
 # systemctl start idempiere      # to start the iDempiere app when stopped
 ```
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 

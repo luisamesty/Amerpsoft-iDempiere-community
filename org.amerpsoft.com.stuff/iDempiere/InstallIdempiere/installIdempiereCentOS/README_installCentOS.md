@@ -1,6 +1,6 @@
 &lArr;[Installing Idempiere](../../InstallIdempiere/README.md)
 
-<div style="padding-left: 20px;">
+<a name="readme-top"></a>
 
 ## Install Idempiere in CentOS
 
@@ -15,6 +15,7 @@ Install Procedures for CentOS using PostgreSQL database.
 | 4     | [Download Installers](./Download_idempiere11_Installers.md)          | Idempiere machine | Download installers from iDempiere repository |
 | 5     | [Install from Installers ](./Install_IDEMPIERE11_From_Installers.md) | Idempiere machine | Unzip and copy Installers in /opt directory   |
 | 6     | [Running idempiere11 ](./Running_IDEMPIERE11.md)                     | Idempiere machine | Run and Configure auto execute idempiere      |
+
 
 ### <a name="step1"></a>⭐️ 1-Install PostgreSQL 15
 
@@ -47,7 +48,7 @@ sudo systemctl start postgresql-15
 dnf install postgresql15-contrib
 ```
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step2"></a>⭐️2-Config PostgreSQL 15
 
@@ -210,11 +211,10 @@ Schema: adempiere should be created with 899 tables, 160 Views, 70 Functions.
 
 </div>
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-### <a name="step3"></a>3-Install JAVA OpenJDK17
+### <a name="step3"></a>⭐️3-Install JAVA OpenJDK17
 
 
 #### MAQUINA IDEMPIERE
@@ -251,10 +251,10 @@ Nothing to do.
 Complete!
 ````
 
-<a href="#top">Back to top</a>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 
-### <a name="step4"></a>:star:4-Download Installers
+### <a name="step4"></a>⭐️4-Download Installers
 
 
 #### IDEMPIERE MACHINE
@@ -299,7 +299,7 @@ idempiereServer11Daily.gtk.linux.x86_64.zip: OK
 <a href="#top">Back to top</a>
 
 
-### <a name="step4"></a>3-Install from Installers
+### <a name="step5"></a>⭐️5-Install from Installers
 
 #### IDEMPIERE MACHINE
 ````
@@ -417,7 +417,7 @@ sh sign-database-build-alt.sh
 
 
 
-### <a name="step6"></a>6-Running idempiere11
+### <a name="step6"></a>⭐️6-Running idempiere11
 
 
 
