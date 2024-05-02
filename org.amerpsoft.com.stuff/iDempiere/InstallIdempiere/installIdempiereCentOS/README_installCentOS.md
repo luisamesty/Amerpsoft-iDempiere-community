@@ -7,14 +7,14 @@
 Install Procedures for CentOS using PostgreSQL database.
 
 
-| Steps | Link                                                                 | Where             | Comments                                      |
-| ----- | -------------------------------------------------------------------- | ----------------- | --------------------------------------------- |
-| 1     | [Install PostgreSQL 15](./InstallPostgreSQL.md)                      | DataBase machine  | Install PostgeSQL Database version 15         |
-| 2     | [Config PostgreSQL 15 ](./ConfigPostgreSQL.md)                       | DataBase machine  | Edit pg_hba.conf / postgresql.conf files      |
-| 3     | [Install JAVA OpenJDK17 ](./Install_JAVA_OpenJDK17.md)               | Idempiere machine | Download and install Java 17                  |
-| 4     | [Download Installers](./Download_idempiere11_Installers.md)          | Idempiere machine | Download installers from iDempiere repository |
-| 5     | [Install from Installers ](./Install_IDEMPIERE11_From_Installers.md) | Idempiere machine | Unzip and copy Installers in /opt directory   |
-| 6     | [Running idempiere11 ](./Running_IDEMPIERE11.md)                     | Idempiere machine | Run and Configure auto execute idempiere      |
+| Steps | Link                               | Where             | Comments                                      |
+| ----- | ---------------------------------- | ----------------- | --------------------------------------------- |
+| 1     | [Install PostgreSQL 15](#step1)    | DataBase machine  | Install PostgeSQL Database version 15         |
+| 2     | [Config PostgreSQL 15 ](#step2)    | DataBase machine  | Edit pg_hba.conf / postgresql.conf files      |
+| 3     | [Install JAVA OpenJDK17 ](#step31) | Idempiere machine | Download and install Java 17                  |
+| 4     | [Download Installers](#step4)      | Idempiere machine | Download installers from iDempiere repository |
+| 5     | [Install from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory   |
+| 6     | [Running idempiere11 ](#step6)     | Idempiere machine | Run and Configure auto execute idempiere      |
 
 
 ### <a name="step1"></a>⭐️ 1-Install PostgreSQL 15

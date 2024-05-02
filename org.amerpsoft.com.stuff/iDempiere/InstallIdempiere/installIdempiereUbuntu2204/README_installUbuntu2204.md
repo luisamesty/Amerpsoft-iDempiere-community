@@ -3,7 +3,6 @@
 
 ## Install Idempiere in Ubuntu 22.04
 
-[toc]
 
 Install Procedures for Ubuntu 22.04 with PosgreSQL Database.
 
@@ -16,14 +15,14 @@ This is recommended approach, but if you have one machine all procedures must be
 
 This procedure includes information taken from  [Installing iDempiere](https://wiki.idempiere.org/en/Installing_iDempiere).  Wiki page brought to you by [Carlos Ruiz](https://wiki.idempiere.org/en/User:CarlosRuiz) from [BX Service](https://www.bx-service.com/).
 
-| Steps | Link                                                                         | Where             | Comments                                                        |
-| ----: | ---------------------------------------------------------------------------- | ----------------- | --------------------------------------------------------------- |
-|     1 | [Install PostgreSQL 15](#step1)                            | Dabase machine    | Install postgresql from Ubuntu distribution. Update repository. |
-|     2 | [Config PostgreSQL 15 ](#step2)                                   | Database machine  | Edit pg_hba.conf / postgresql.conf files                        |
-|     3 | [Install JAVA OpenJDK17 ](#step3)                           | Idempiere machine | Download and install Java 17                                    |
-|     4 | [Download Installers ](#step4)                     | Idempiere machine | Download installers from iDempiere repository                   |
+| Steps | Link                                           | Where             | Comments                                                        |
+| ----: | ---------------------------------------------- | ----------------- | --------------------------------------------------------------- |
+|     1 | [Install PostgreSQL 15](#step1)                | Dabase machine    | Install postgresql from Ubuntu distribution. Update repository. |
+|     2 | [Config PostgreSQL 15 ](#step2)                | Database machine  | Edit pg_hba.conf / postgresql.conf files                        |
+|     3 | [Install JAVA OpenJDK17 ](#step3)              | Idempiere machine | Download and install Java 17                                    |
+|     4 | [Download Installers ](#step4)                 | Idempiere machine | Download installers from iDempiere repository                   |
 |     5 | [Install idempiere11 from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory                     |
-|     6 | [Running idempiere11 ](#step6)                                 | Idempiere machine | Run Configure auto execute idempiere                            |
+|     6 | [Running idempiere11 ](#step6)                 | Idempiere machine | Run Configure auto execute idempiere                            |
 
 ### <a name="step1"></a>1-⭐️Install PostgreSQL 15
 
