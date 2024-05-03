@@ -89,7 +89,8 @@ Execute postgres on the machine that runs the database manager.
 
 ````
 OS Command (Port No may be different 5432,5433)
-$ sudo psql -p 5432 postgres -U postgres
+$ sudo su postgres
+$ psql -p 5432 postgres -U postgres
 password user postgres: PostgreSQLPassword (NewPassw0rd) 	# Enter postgres password
 ````
 
