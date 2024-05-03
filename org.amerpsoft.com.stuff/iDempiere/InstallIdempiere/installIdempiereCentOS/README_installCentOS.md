@@ -474,7 +474,7 @@ iDempiere can be registered as a service in linux, in order to do that you can c
 
 ````
 $ sudo su -    # this must be executed as root
-# cp /opt/idempiere-server/utils/unix/idempiere_Debian.sh /etc/rc.d/init.d/idempiere
+# cp /opt/idempiere-server/utils/unix/idempiere_RedHat.sh /etc/rc.d/init.d/idempiere
 # systemctl daemon-reload
 ````
 ##### Running Idempiere as a service
