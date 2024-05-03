@@ -60,6 +60,13 @@ Change User Password
 postgres=# ALTER USER postgres PASSWORD 'NewPassw0rd';
 ```
 
+#### Re-Start Postgresl
+
+Lastly, restart the PostgreSQL service to enable these changes
+```
+sudo systemctl restart postgresql-15
+```
+
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step2"></a>⭐️2-Config PostgreSQL 15
