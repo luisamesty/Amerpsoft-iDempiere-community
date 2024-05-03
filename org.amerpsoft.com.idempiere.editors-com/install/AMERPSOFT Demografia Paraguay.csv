@@ -8038,4 +8038,15 @@ INSERT INTO adempiere.c_parish (c_parish_id,ad_client_id,ad_org_id,isactive,crea
 	 (12761065,0,0,'Y','2024-04-15 13:42:27.143053',0,'2024-04-15 13:42:27.143053',0,'SANTA ROSA',276,1027618,12760207,'N','94b4e121-e7ef-d147-a219-aa55a5d44d96'),
 	 (12761101,0,0,'Y','2024-04-15 13:42:27.143053',0,'2024-04-15 13:42:27.143053',0,'SAN JOSE',276,1027618,12760271,'N','090ee67a-04a0-6dd8-14e2-744d136bf68f');
 ",,,,,,,,,,,,,,,,,,
-*,AMERPSOFT Demografia Paraguay,310,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='5bab6dc9-ac4d-40ad-b19a-b3fea7da729f';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Demografia Paraguay,310,SQL,,,,,,,,,ALL,"-- REGION _ DEPARTAMENTO  2Caracteres
+UPDATE C_region SET VALUE = SUBSTR(C_region_Id::varchar(7),6,2) WHERE C_country_id= 276 ;
+
+-- CIUDAD 4C
+UPDATE c_city SET VALUE = SUBSTR(C_city_Id::varchar(8),5,4) WHERE C_country_id= 276 ;
+
+-- C_MUNICIPALITY (DISTRITO) 3 C
+UPDATE c_municipality SET VALUE = SUBSTR(C_municipality_Id::varchar(8),6,3) WHERE C_country_id= 276; 
+
+-- PARROQUIA BARRIO 4c
+UPDATE c_parish SET VALUE = SUBSTR(C_parish_Id::varchar(8),5,4) WHERE C_country_id= 276 ;",,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Demografia Paraguay,350,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='5bab6dc9-ac4d-40ad-b19a-b3fea7da729f';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,

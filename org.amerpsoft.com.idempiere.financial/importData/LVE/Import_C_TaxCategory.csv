@@ -1,0 +1,8 @@
+IsWithholding,AD_Org_ID[Name],Name,Description,IsActive,IsDefault,withholdingformat
+N,*,IVA Alicuota Adicional,Impuesto a las Ventas con Alícuota Adicional,Y,N,
+N,*,IVA Alicuota General,Impuesto a las Ventas con Alícuota General,Y,N,
+N,*,IVA Alicuota Reducida,Impuesto a las Ventas con Alícuota Reducida,Y,N,
+N,*,IVA Exento,Impuesto a las Ventas Exento,Y,N,
+Y,*,Retencion ISLR,Retencion ISLR,Y,N,ISLR
+Y,*,Retención IVA ,Retención del IVA,Y,N,IVA
+Y,*,Retención Municipal,Retención Municipal,Y,N,MUNICIPAL

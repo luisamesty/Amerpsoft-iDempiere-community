@@ -46,7 +46,7 @@ Manually translate the labels associated with regions, municipalities and parish
 ```text
 - Goto 'Application Dictionary/Messges' and Locale for Region, Municipality and Parish.
 - Change for Paraguay to Departamento/ Distrito /Barrio.
-- Change for venezuela to Estado / Municipio / Parroquia.
+- Change for Venezuela to Estado / Municipio / Parroquia.
 
 These tags are important to change, because they are used on Entended Location Window when you select a Language different to English.
 ```
@@ -57,7 +57,8 @@ Menu (System Admin/General Rules/SystemRules/Language)
 
 ```text
 Modify 'Print Text' Field and Translate to yoy selected Language (Spanish for example). 
+Español (España)  for es_ES
 Español (Paraguay)  for es_PY
-Español (Veneuela)  for es_VE
+Español (Venezuela)  for es_VE
 ```
 
