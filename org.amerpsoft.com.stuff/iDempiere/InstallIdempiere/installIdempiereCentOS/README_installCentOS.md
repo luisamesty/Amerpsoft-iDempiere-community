@@ -73,13 +73,59 @@ sudo systemctl restart postgresql-15
 
 #### DATABASE MACHINE
 
-#### DATABASE MACHINE
-
 Install on the machine that runs the database manager.
 
 ````
 ssh root@maquina-postgresql.com -p 22
 ````
+#### Modify ***ph_hba.conf*** file
+
+After installing postgres you must check the correct configuration of:
+
+"/var/lib/pgsql/15/data/pg_hba.conf"
+
+The following line requires change of the authentication method:
+
+```
+local   all             all                                     peer
+CHANGE TO:
+local   all             all                                     scram-sha-256
+```
+
+Addremote connection for your ip
+
+```
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            scram-sha-256
+host    all             all             83.49.112.218/32           scram-sha-256
+```
+
+#### Modify postgresql.conf file
+
+For development open Listen address ‘*’ , for production localhost.
+
+Port 5432/5433.
+
+Edit: ‘/var/lib/pgsql/15/data/postgresql.conf'
+
+```
+#------------------------------------------------------------------------------
+# CONNECTIONS AND AUTHENTICATION
+#------------------------------------------------------------------------------
+....
+listen_addresses = '*'                  # what IP address(es) to listen on;
+....
+max_connections = 300                   # (change requires restart)
+....
+shared_buffers = 512MB                  # min 128kB
+```
+
+#### Re-Start Postgresl
+
+restart the PostgreSQL service to enable these changes
+```
+sudo systemctl restart postgresql-15
+```
 
 ##### Execute Postgres
 
@@ -180,53 +226,15 @@ total 53488
 -rw-r--r--. 1 root root 44945504 Mar 21 10:05 Adempiere_pg.dmp
 -rw-r--r--. 1 root root  9818290 Mar 21 09:08 Adempiere_pg.jar
 -- EXECUTE POSTGRES COMMAND
-$ psql -d idempiereSeed11 -U adempiere -f Adempiere_pg.dmp
+$ psql -d idempiereSeed11 -f Adempiere_pg.dmp
 password user adempiere: adempiere 
 ````
 
 </div>
 
-##### PostgreSQL Files and Folders
+#### DATABASE IS CREATED
 
-<div style="padding-left: 20px;">
-
-Data and configuration files:
-
-````
-/var/lib/pgsql/15/data/pg_hba.conf
-/var/lib/pgsql/15/data/postgresql.conf
-````
-
-Edit postgresql.conf
-
-````
-#------------------------------------------------------------------------------
-# CONNECTIONS AND AUTHENTICATION
-#------------------------------------------------------------------------------
-# - Connection Settings -
-#listen_addresses = '*'         # what IP address(es) to listen on;
-                                        # comma-separated list of addresses;
-                                        # defaults to 'localhost'; use '*' for all
-                                        # (change requires restart)
-port = 5432                             # (change requires restart)
-max_connections = 100                   # (change requires restart)
-#superuser_reserved_connections = 3     # (change requires restart)
-````
-
-Edit pg_hba.conf
-Add remote connections
-
-````
-# IPv4 local connections:
-host    all             all             127.0.0.1/32            scram-sha-256
-host    all             all             79.150.136.208/32           scram-sha-256
-````
-
-</div>
-
-DATABASE IS CREATED
-
-VERIFY Database is created with pgadmin4
+VERIFY Database is created with pgadmin4 or any other PostgreSQL Client.
 Schema: adempiere should be created with 899 tables, 160 Views, 70 Functions.
 
 </div>
@@ -237,10 +245,10 @@ Schema: adempiere should be created with 899 tables, 160 Views, 70 Functions.
 ### <a name="step3"></a>⭐️3-Install JAVA OpenJDK17
 
 
-#### MAQUINA IDEMPIERE
+#### IDEMPIERE MACHINE
 
 ````
-Instalar en la maquina que ejecuta Idempiere y requiere de Java.
+Install on machine that executes Idempiere, it requires Java.
 ssh root@maquina-idempiere.com -p 22
 ````
 
