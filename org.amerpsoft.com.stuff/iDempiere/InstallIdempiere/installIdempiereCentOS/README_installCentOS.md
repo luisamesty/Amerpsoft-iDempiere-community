@@ -47,6 +47,18 @@ sudo systemctl enable postgresql-15
 sudo systemctl start postgresql-15
 dnf install postgresql15-contrib
 ```
+#### Modify postgres password.
+
+In order to start using PostgreSQL, you will need to connect to its prompt. Start by switching to the postgres user.
+
+```
+ sudo su postgres
+```
+Change User Password
+
+```
+postgres=# ALTER USER postgres PASSWORD 'NewPassw0rd';
+```
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
@@ -71,7 +83,7 @@ Execute postgres on the machine that runs the database manager.
 ````
 OS Command (Port No may be different 5432,5433)
 $ sudo psql -p 5432 postgres -U postgres
-password user postgres: PostgreSQLPassword 	# Enter postgres password
+password user postgres: PostgreSQLPassword (NewPassw0rd) 	# Enter postgres password
 ````
 
 </div>
