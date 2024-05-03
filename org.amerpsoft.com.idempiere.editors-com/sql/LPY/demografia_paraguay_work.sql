@@ -1,6 +1,8 @@
 -- QUERIES FOR CREATING C_Community, C_region, C_City, C_Municipality, C_Parish
 -- FROM demografia_paraguay.sql
 -- Temporary datababse
+INSERT INTO adempiere.c_country (c_country_id,ad_client_id,ad_org_id,isactive,created,createdby,updated,updatedby,"name",description,countrycode,hasregion,regionname,expressionphone,displaysequence,expressionpostal,haspostal_add,expressionpostal_add,ad_language,c_currency_id,displaysequencelocal,isaddresslinesreverse,isaddresslineslocalreverse,expressionbankroutingno,expressionbankaccountno,mediasize,ispostcodelookup,lookupclassname,lookupclientid,lookuppassword,lookupurl,allowcitiesoutoflist,capturesequence,c_country_uu,countrycode3,hascommunity,hasmunicipality,hasparish,placeholderaddress1,placeholderaddress2,placeholderaddress3,placeholderaddress4,placeholderaddress5,placeholdercity,placeholdercomments,placeholderpostal,placeholderpostal_add) VALUES
+	 (276,0,0,'Y','2003-03-09 00:00:00',0,'2024-04-15 12:12:04.494',0,'Paraguay','the Republic of Paraguay','PY','Y',NULL,NULL,'@C@,  @P@',NULL,'N',NULL,'es_PY',344,NULL,'N','N',NULL,NULL,NULL,'N',NULL,NULL,NULL,NULL,'Y','@A1@ @A2@ @A3@ @A4@ @C@,  @P@ @CO@','e7fc9e42-fa61-4a20-afc8-590b0a4df58f','PRY','Y','N','N',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);	
 
 SELECT DISTINCT ON (c_region_id ) c_region_id , region_name FROM demografia ORDER BY  c_region_id ;
 -- C_Country_ID=276

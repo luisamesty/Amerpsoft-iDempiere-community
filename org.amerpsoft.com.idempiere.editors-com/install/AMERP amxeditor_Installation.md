@@ -5,10 +5,12 @@
 
     1. Install Plugin using Apache felix Web Console
     2. Verify country code 3 digits is updated on C_Country table
-    3. Pack IN Venezuela ExtendedDemography
+    3. Pack IN ExtendedDemography
     4. Restart Server
     5. Modify C__BPartner_Location Table
     6. Modify Country Record
+    7. Pack IN World Demography
+    A. Additional Note.
 
 (*)Steps 2 and 3 are for Venezuela, skip if not using additional language localization.
 
@@ -115,4 +117,20 @@ Using the new window <b>'Country Community Region Municipality Parish'</b> provi
 -    with
 - @CO@ @A1!@ @A2@ @A3@ @A4@  @R!@ @MU@ @PA@ @C@, @P@ 
 
+### <b>7- Pack IN World Demography</b>
 
+World Demography includes 44690 Cities in the world.
+This Cities must be included applying Pakc-In and import sql Query provided.
+- Using 'AMERPSOFT World Demography.zip'. Pack-IN City Changes.
+- Import Cities using 'WorldDemography.sql' Query.
+
+Additional columns were added to c_city Table, such as Name2, Latitude, Longitude, Poppulation.
+Use 'Country Region and city' Windown and see them on Tab 'City (Without Regions)
+
+
+### <b>A- Additonal Note</b>
+
+A Pack-Out is provided to execute all changes manually if something goes wrong or you are installing a non fresh database.
+Two files are provided in addition:
+- AMERPSOFT Editor AD.csv
+- AMERPSOFT Editor AD.zip

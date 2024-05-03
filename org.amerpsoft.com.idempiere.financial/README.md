@@ -54,8 +54,14 @@ AMERPSOFT Financial Reports
 Before installing you must have a Client with appropriate Accounting elements and Accounting Schema created.
 For more Information see on Idempiere Wiki: 
 
-- [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_(Process_ID-53161) )
+- [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_(Process_ID-53161) 
 - [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage)
+
+See Accounting plans provided:
+
+- LVE NIIF Paln de cuentas Diciembre2015.csv
+- LPY Plan de cuentas 2024.csv
+
 
 Installation Procedure: [AMERPSOFT Financial Plugin](./install/Financial_Installation.md)
 

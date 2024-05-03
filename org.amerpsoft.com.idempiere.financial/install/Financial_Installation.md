@@ -49,3 +49,20 @@ AMERPSOFT Financial Reports
 	- Amfin State Financial Balance Jasper
 	- Amfin State Financial Integral Results Jasper
 ```
+
+### <b>4-Import AMERPSOFT Financial Taxes. </b>
+
+Using Application Dictionary pack-IN AMERPSOFT Financial Taxes as a System User.
+This Packs modify table C_TaxCategory as explained in excel 'tablesFinancial.xlsx'.
+It also modify Window for Tax Category, therefore we will be able to import Taxes.
+
+Entering as a Tenant user and selecting the client import Taxes in this order:
+
+- Import C_TaxCategory CSV file related with your Localization.
+- Import C_Tax CSV file related with your Localization.
+
+If it is required you must create an appropiated CSV file, or enter manually taxes categories and taxes.
+** It is important this Step to follow with Withholding plugin.
+
+ 
+

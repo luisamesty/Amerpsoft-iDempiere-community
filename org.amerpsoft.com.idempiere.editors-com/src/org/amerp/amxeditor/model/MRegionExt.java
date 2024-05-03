@@ -16,8 +16,11 @@ import org.compiere.util.*;
  */
 public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 
+	/** Column name C_Community_ID */
 	private String COLUMNNAME_C_Community_ID = I_C_Region_Amerp.COLUMNNAME_C_Community_ID;
-	
+    /** Column name Value */
+    public static final String COLUMNNAME_Value = "Value";
+    
 	/**
 	 * 
 	 */
@@ -177,6 +180,25 @@ public class MRegionExt extends MRegion implements I_C_Region_Amerp {
 			return (int) (oo); 
 		}
 		return 0;
+	}
+
+	/**
+	 * Set Search Key.
+	 * 
+	 * @param Value Search key for the record in the format required - must be
+	 *              unique
+	 */
+	public void setValue(String Value) {
+		set_Value(COLUMNNAME_Value, Value);
+	}
+
+	/**
+	 * Get Search Key.
+	 * 
+	 * @return Search key for the record in the format required - must be unique
+	 */
+	public String getValue() {
+		return (String) get_Value(COLUMNNAME_Value);
 	}
 
 }
