@@ -1,26 +1,41 @@
 &lArr;[AMERPSOFT Editor](../README.md) | [Home](../README.md)
-# <b>Amerpsoft editors Version 11 </b>
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="../../images/AMERPSOFT_logo_600.png" alt="Logo" width="150" height="90">
+  </a>
+</div>
+
+# <b>Amerpsoft editor Version 11 </b>
+
+<a name="readme-top"></a>
+
+<!-- TABLE OF CONTENTS -->
 
 ## <b>Installation Steps</b>
 
 Note:
 In case you have a previous version installed, verify if tables C_country3 or c_country2 exists in Database. I any of these tables exists, then remove them. C_country3 table will be created.
- 
+
 Follow steps:
 
-```text
-    1. Install Plugin using Apache felix Web Console
-    2. Pack IN CommunityFill Pack
-    3. Verify country code 3 digits is updated on C_Country table
-    4. Import ExtendedDemography
-    5. Restart Server
-    6. Modify C__BPartner_Location Table
-    7. Modify Country Record
-    8. Pack-In and Import World Demography
-    A. Additional Note.
-```
+| Steps | Title                                        | Comments                                                                           |
+| ----: | ---------------------------------------------- | ---------------------------------------------------------------------------------- |
+|     1 | [Install Plugin](#step1)                       | Install Plugin using Apache felix Web Console                                      |
+|     2 | [Pack IN CommunityFill Pack](#step2)           | Pack IN CommunityFill Pack                                                         |
+|     3 | [Verify ISO3 Country](#step3)                  | Verify country code 3 digits is updated on C_Country table                         |
+|     4 | [Import ExtendedDemography](#step4)            | Using SQL Queries, Import ExtendedDemography for your country                      |
+|     5 | [Restart Server](#step5)                       | Re-Start iDempiere Server                                                          |
+|     6 | [C_BPartner_Location Table](#step6)            | Modify C__BPartner_Location Table                                                  |
+|     7 | [Modify Country Record](#step7)                | Modify Country Record for Capture Sequence fields on Locations                     |
+|     8 | [World Demography](#step8)                     | Pack-In World demography and Import World Demography                               |
+|     9 | [Additional Notes](#step9)                     | Additional notes for installation                                                  |
 
-### <b>1-Install Plugin using Apache felix Web Console</b>
+
+
+### <a name="step1"></a>⭐️<b>1-Install Plugin using Apache felix Web Console</b>
 
 ```text
 - Download plugin jar file from Repository. 
@@ -64,7 +79,9 @@ Next, do the following actions:
 - <b>Restart idempiere Server</b>
 ```
 
-### <b>2- Pack CommunityFill Pack</b>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step2"></a> ⭐️ <b>2- Pack-IN CommunityFill Pack</b>
 
  Using AD PackIn
  Download Community File an Pack IN:  
@@ -87,7 +104,9 @@ One Community for each country in order to be consistent with the model:
 - COUNTRY --> COMMUNITY --> REGION --> MUNICIPALITY --> PARISH
 ```
 
-### <b>3- Verify country code 3 digits is updated </b>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step3"></a> ⭐️ <b>3- Verify country code 3 digits is updated </b>
 
 On C_Country table verify:
 
@@ -97,7 +116,7 @@ On C_Country table verify:
 
 - <b>System Admin -> General Rules --> System Rules -->Country Community Region Municipality Parish City</b>
     
-### <b>4- Import Extended Demography</b>
+### <a name="step4"></a> ⭐️ <b>4- Import Extended Demography</b>
 
 ##### <b>4.1- Import Extended Demography using Packs</b>
 
@@ -145,19 +164,27 @@ Remember to execute procedures on System Admin --> General Rules:
 
 Delete Queries are available if something goes wrong with Pack-IN. You may delete records for a selected country.
 See 'delete_demografia_venezuela.sql' or 'delete_demografia_paraguay.sql'. Delete commands must be executed in the indicated order.
- 
-### <b>5- Restart Server</b>
+
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step5"></a> ⭐️ <b>5- Restart Server</b>
+
 - Restart idempiere Server 
 - Verify plugin is Installed and Running
 
-### <b>6- C_BPartner_Location Table</b>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step6"></a> ⭐️ <b>6- C_BPartner_Location Table</b>
+
 - Using Application dictionary Modify Table <b>C_BPartner_Location</b>
 - Column: <b>C_Location_ID</b>
 - Change Reference 
 - from: <b>Location</b> 
 - to  : <b>LocationExtended</b>
 
-### <b>7- Modify Country Record</b>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step7"></a> ⭐️ <b>7- Modify Country Record</b>
 
 Using the new window <b>'Country Community Region Municipality Parish'</b> provided.
 
@@ -166,7 +193,9 @@ Using the new window <b>'Country Community Region Municipality Parish'</b> provi
 -    with
 - @CO@ @A1!@ @A2@ @A3@ @A4@  @R!@ @MU@ @PA@ @C@, @P@ 
 
-### <b>8- Pack IN and Import World Demography</b>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step8"></a> ⭐️ <b>8- Pack IN and Import World Demography</b>
 
 World Demography includes 44690 Cities in the world.
 
@@ -187,9 +216,13 @@ A sql query is provided 'sql/postgresql/World/mylan_worldcities_alln_20240425225
 
 A sql query is provided 'sql/oracle/World/mylan_worldcities_alln_202405110914.sql'
 
-### <b>A- Additional Note</b>
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+### <a name="step9"></a> ⭐️ <b>A- Additional Note</b>
 
 A Pack-Out is provided to execute all changes manually if something goes wrong or you are installing a non fresh database.
 Two files are provided in addition:
 - AMERPSOFT Editor AD.csv
 - AMERPSOFT Editor AD.zip
+
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
