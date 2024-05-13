@@ -17,7 +17,9 @@
 ## <b>Installation Steps</b>
 
 Note:
-In case you have a previous version installed, verify if tables C_country3 or c_country2 exists in Database. I any of these tables exists, then remove them. C_country3 table will be created.
+In case you have a previous version installed, verify if tables C_country3 or c_country2 exists in Database. I any of these tables exists, then remove them. 
+
+C_Country3 table, will be created during installation.
 
 Follow steps:
 
@@ -95,7 +97,9 @@ Next, do the following actions:
 
 Important to select database version folder for packs (oracle - postgresql).
 
-These Packs-in creates C_Community default records. 
+These Packs-IN creates C_Community default records. 
+
+* For more detail see sql queries in  oracle and postgresql folders, for communities.
 
 One Community for each country in order to be consistent with the model:
 
@@ -113,8 +117,15 @@ On C_Country table verify:
 - CountryCode3 Fields on C_Country Table are already set on Pack-IN Step 2
 - For verifying it: 
 - Open the new created window:
-
 - <b>System Admin -> General Rules --> System Rules -->Country Community Region Municipality Parish City</b>
+
+<div align="left">
+  <a href="ISO_CODE">
+    <img src="./images/C_Country3_ISO_Code.png" alt="Logo" width="800" >
+  </a>
+</div>
+
+
     
 ### <a name="step4"></a> ⭐️ <b>4- Import Extended Demography</b>
 
@@ -140,7 +151,7 @@ This is necessary only if you are going to use Packs-In., because Demography Pac
 
 ##### <b>4.2- Import Extended Demography using SQL-Queries</b>
 
-Use DatabaBase Console.
+Use DataBase Console.
 
 You may take a look at sql folder:
 
@@ -192,6 +203,13 @@ Using the new window <b>'Country Community Region Municipality Parish'</b> provi
 - Change Capture Sequence field
 -    with
 - @CO@ @A1!@ @A2@ @A3@ @A4@  @R!@ @MU@ @PA@ @C@, @P@ 
+
+<div align="left">
+  <a href="ISO_CODE">
+    <img src="./images/Capture_Sequence.png" alt="Logo" width="800" >
+  </a>
+</div>
+
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
