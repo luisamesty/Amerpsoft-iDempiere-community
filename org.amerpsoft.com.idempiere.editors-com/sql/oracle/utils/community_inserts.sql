@@ -8,3 +8,13 @@ INSERT INTO adempiere.c_community (
 		SELECT c_country_id FROM adempiere.c_community 
 	)
 );
+
+-- UPDATE Default regions with default Comunnity of the country 
+-- ONLY For Nulls values on C_Community ID
+UPDATE adempiere.C_Region
+SET C_Community_ID = (
+	SELECT c_country_id+1000000 
+	FROM adempiere.c_country3
+	WHERE adempiere.c_country3.c_country_id = adempiere.C_Region.c_country_id
+	AND c_community_id IS NULL
+);
