@@ -352,7 +352,18 @@ chown -R idempiere:idempiere /opt/idempiere-server
 
 ##### CONFIGURE IDEMPIERE
 
-````
+All commands must be executed as idempiere user.
+Also idempiere user must have a path to oracle 21c.
+```text
+#.bashrc
+export ORACLE_SID=XE 
+export ORAENV_ASK=NO 
+. /opt/oracle/product/21c/dbhomeXE/bin/oraenv
+#ORACLE_HOME = [] ? /opt/oracle/product/21c/dbhomeXE
+```
+Start configuring idempiere.
+
+```copy
 su - idempiere  ##### not necessary if you're already as user idempiere
 cd /opt/idempiere-server
 ````
@@ -412,6 +423,7 @@ postgres:x:26:
 mock:x:135:
 idempiere:x:54331:
 ```
+<b>dba:x:54322:oracle</b>
 
 #### Verify group attributes to Adempiere.dmp
 ```text
@@ -444,15 +456,15 @@ cd /opt/idempiere-server
 bash idempiere-server.sh
 ```
 
-
-
+#### Enjoy iDempiere Web
+Open URL.
+```copy
+http://localhost:8080/
+```
 
 <a href="#top">Back to top</a>
 
-
-
 ### <a name="step6"></a>⭐️6-Running idempiere11
-
 
 
 ##### IDEMPIERE MACHINE
