@@ -415,7 +415,7 @@ idempiere:x:54331:
 
 #### Verify group attributes to Adempiere.dmp
 ```text
-sudo chgrp 54322 /opt/idempiere-server/dataRUN	
+sudo chgrp 54322 /opt/idempiere-server/data
 sudo chgrp 54322 /opt/idempiere-server/data/seed
 sudo chgrp 54322 /opt/idempiere-server/data/seed/Adempiere.dmp
 ```
