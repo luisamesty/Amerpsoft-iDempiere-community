@@ -1,7 +1,14 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 # <b>Languages</b>
 
-## <b>Installation </b>
+Idempiere is able to show web interfaces in different languages. You must configure Langages using appropiate installation packs.
+As a example you may see wiki page [Install_german_language_Pack](https://wiki.idempiere.org/en/Install_german_language_Pack). Also, you could find different Languages packs in [Translation page](https://wiki.idempiere.org/en/Translations).
+
+In this case we are concerned with the Spanish Language. We have different locations depending on the country. For example Venezuela, Paraguay, Spain, etc. 
+
+Follow these instructions to define a Spanish language similar to the default Idempiere 'Seed'.
+
+## <b>Spanish Language Installation </b>
 
 Follow these steps in order to define a new System Language in your Idempiere System.
 Language table contains most of Languages and Localizations. For example for Spanish there are different Localization for the different countries.
