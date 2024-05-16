@@ -94,7 +94,19 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
     - ZK_THEME_USE_FONT_ICON_FOR_IMAGE 
     
     SET ZK_THEME_USE_FONT_ICON_FOR_IMAGE to 'N'
-    
+
+If error on Pack-IN you may enter them manually (System Admin --> General Rules --> System Rules --> System Configurator)
+Configured Values:
+| NAME	                          | VALUE	   | DESCRIPTION	                                                           |AD_SYSCONFIG_UU      |
+|---------------------------------|------------| ------------------------------------------------------------------------- |-------------------- | 
+|ZK_THEME	                      |ksys	       |Available choices amtheme amthemeblu businessteam businessTeamBlue ksys kbs iceblue optumTheme iceblue_c |	054399ad-3705-411d-b79e-7ec7111888c5 |
+|ZK_THEME_USE_FONT_ICON_FOR_IMAGE |N	       |Use Font Icon Yes or No	                                                   | 29a0d95d-af05-477a-a047-241c350dc8e3 |
+|ZK_BROWSER_ICON	              |~./theme/ksys/images/icon-idempiere.png	| Browse Icon Path	| 4cf766fd-5982-49dd-82f2-e8347214dbf0 |
+|ZK_LOGO_LARGE	                  |~./theme/ksys/images/login-logo-amerp2.png	| Login Logo Large	| bfe6284e-00a2-412f-be82-37ed38363768 |
+|ZK_LOGO_SMALL	                  |~./theme/ksys/images/header-logo-amerp.png	| Login Logo Small	| 69007345-c36f-4b02-870a-c41d8fb9deea |
+|ZK_BROWSER_TITLE	              | iDempiere AMERP |	Browser Title	| c587f6f8-2910-4b27-913e-2e41e8581ea0 |
+
+
 #### <b>IF SOMETHING GO WRONG</b>
 
     REPLACE AD_Sysconfig Record (AD_SysConfig_ID=200021)
