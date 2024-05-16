@@ -151,7 +151,9 @@ This is necessary only if you are going to use Packs-In., because Demography Pac
 
 ##### <b>4.2- Import Extended Demography using SQL-Queries</b>
 
-Use DataBase Console.
+Use DataBase Console. SQLDeveloper for Oracle.
+
+Verify 'AMERPSOFT World Demography.zip' Pack-IN City Changes is applied. 
 
 You may take a look at sql folder:
 
@@ -219,8 +221,8 @@ World Demography includes 44690 Cities in the world.
 
 They are included without region.
 
-These Cities must be included applying Pack-In and import sql Query provided. 
-- Using 'AMERPSOFT World Demography.zip'. Pack-IN City Changes.
+These Cities must be included applying Pack-In and import sql Query provided, use SQLDeveloper for Oracle.
+- Verify 'AMERPSOFT World Demography.zip' Pack-IN City Changes is applied. 
 - Import Cities using provided Query.
 
 Additional columns were added to c_city Table, such as Name2, Latitude, Longitude, Population.
