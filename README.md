@@ -1,13 +1,13 @@
 # <b>COMMUNITY PLUGINS</b>
 
-These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
+<a name="readme-top"></a>
 
-#### <b>Description</b>
+## <b>Description</b>
 
 This repository is a main project for several Idempiere Plugins shared and published for Idempiere Community.
 Special considerations and notes for LVE, LPY and LES localization.
 
-#### <b>CONTENT</b>
+## <b>CONTENT</b>
 
 <div style="padding-left: 20px;">
 
@@ -23,7 +23,7 @@ Special considerations and notes for LVE, LPY and LES localization.
 
 </div>
 
-#### <b>Wiki Idempiere</b>
+## <b>Wiki Idempiere</b>
 
 <div style="padding-left: 20px;">
 For more information, see on Wiki:
@@ -34,7 +34,14 @@ For more information, see on Wiki:
 
 </div>
 
-#### Release Notes:
+<!-- CONTACT -->
+## Contact
+
+These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). 
+
+For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
+
+## Release Notes:
 
 - Updated for Idempiere release 8.2 - March 2021
 - Updated for Idempiere release 10 - June 2023
@@ -42,3 +49,4 @@ For more information, see on Wiki:
 - Updated for Idempiere release 11 - January 2024
 - Under Test - See release-11_LPY branch.
 
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
