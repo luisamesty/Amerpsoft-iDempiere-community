@@ -1,4 +1,5 @@
 -- CREATE_LANGUAJE_FROM_es_VE_to_es_ES.sql
+-- POSTGRESQL VERSION
 -- Se debe definir el Idioma es_ES como idioma del Systema
 -- Ejecutar Language Maintainance en en menú Languaje
 --	Ejecutar este script:
