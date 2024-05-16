@@ -1,8 +1,8 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 ### Financial Plugin
-These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
 
-************************************************
+<a name="readme-top"></a>
+
 ## <b>Description</b>
 
 AMERPSOFT Financial Plugin is related to Idempiere Accounting in order to complement some tasks, processes and reports.
@@ -16,8 +16,8 @@ AMERPSOFT Financial Plugin is related to Idempiere Accounting in order to comple
 - Installing
 ```
 
-#### 1.	Functions.
-###### Special Function for Reporting Dates and Text:
+## 1.	Functions.
+#### Special Function for Reporting Dates and Text:
 
 ```text
 * amf_dow2letter.sql
@@ -27,7 +27,7 @@ AMERPSOFT Financial Plugin is related to Idempiere Accounting in order to comple
 ```
 
 
-#### 2. Processes. 
+## 2. Processes. 
 
 AMERPSOFT Financial Processes
 
@@ -37,7 +37,7 @@ AMERPSOFT Financial Processes
 - Amfin Process GLJournal Annual Closing
 ```
 
-#### 3. Accounting Reports 
+## 3. Accounting Reports 
 
 AMERPSOFT Financial Reports
 
@@ -49,7 +49,7 @@ AMERPSOFT Financial Reports
 - Amfin State Financial Integral Results Jasper
 ```
 
-#### 4. Installing 
+## 4. Installing 
 
 Before installing you must have a Client with appropriate Accounting elements and Accounting Schema created.
 For more Information see on Idempiere Wiki: 
@@ -64,7 +64,15 @@ See Accounting plans provided:
 
 
 Installation Procedure: [AMERPSOFT Financial Plugin](./install/Financial_Installation.md)
+<!-- CONTACT -->
+## Contact
 
-#### Requires Idempiere release 11 
+These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). 
+
+For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
+
+## Requires Idempiere release 11 
+
   Under Test - See release-11 branch lso for more details.
- 
+
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
