@@ -1,7 +1,6 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 
-These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
-
+<a name="readme-top"></a>
 
 # <b>Editor Plugin- Location Extended</b>
 
@@ -15,7 +14,7 @@ For example, in Spain we talk about Communities, they are related to Group of Pr
 
 Another example is Venezuela, they have a political division for Provinces (Estados) called Municipalities (Municipality-Municipio) and a Municipality is also divided on Parishes (Parish-Parroquia). 
 
-### <b>Documentation</b>
+## <b>Documentation</b>
 
 For complete information.
 See DemografiaExtendida_amxeditor.docx 
@@ -28,12 +27,21 @@ Excel: [Demography Tables](./documentation/Tables.xlsx)
 
 Wiki Idempiere: [Extended Location](http://wiki.idempiere.org/en/Plugin:_Extended_Location)
 
-### <b>Installation Procedure</b>
+## <b>Installation Procedure</b>
 
 See Intallation Procedure: [AMERPSOFT Editor - Extended Location Install ](./install/AMERP%20amxeditor_Installation.md)
 
-### Release Notes:
+<!-- CONTACT -->
+## Contact
+
+These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). 
+
+For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
+
+## Release Notes:
 
 -  Updated for Idempiere release 8.1 - November 2020
 -  Updated for Idempiere release 11 - January 2024
 -  Under Test - See release-11 branch.
+
+<p align="left">(<a href="#readme-top">back to top</a>)</p>

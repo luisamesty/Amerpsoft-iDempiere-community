@@ -1,7 +1,7 @@
 Installation Procedure: 
 1. Install Jar Plugin available on p2 site target plugins
 	org.amerpsoft.com.idempiere.zk_themes_X.X.0.XXXXXXXXXX.jar
-2. Pack in ‘AMERPSOFT Themes.zip’
+2. Pack in ‘AMERPSOFT Themes.zip’  Select Oracle/Postgresql
     Sys Config Variables 
 
 IF SOMETHING GO WRONG:
