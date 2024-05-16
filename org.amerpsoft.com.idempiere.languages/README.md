@@ -63,7 +63,7 @@ These tags are important to change, because they are used on Entended Location W
 Menu (System Admin/General Rules/SystemRules/Language)
 
 ```text
-Modify 'Print Text' Field and Translate to yoy selected Language (Spanish for example). 
+Modify 'Print Text' Field and Translate to your selected Language (Spanish for example). 
 Español (España)  for es_ES
 Español (Paraguay)  for es_PY
 Español (Venezuela)  for es_VE
