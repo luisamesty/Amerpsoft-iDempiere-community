@@ -4,7 +4,7 @@
 Idempiere is able to show web interfaces in different languages. You must configure Langages using appropiate installation packs.
 As a example you may see wiki page [Install_german_language_Pack](https://wiki.idempiere.org/en/Install_german_language_Pack). Also, you could find different Languages packs in [Translation page](https://wiki.idempiere.org/en/Translations).
 
-In this case we are concerned with the Spanish Language. We have different locations depending on the country. For example Venezuela, Paraguay, Spain, etc. 
+In this case we are concerned with the Spanish Language. We have different locations depending on the country. For example Venezuela, Paraguay, Spain, etc. Spanish locations have many similarities and small differences, this is the reason why we copy the translations and adjust the differences.
 
 Follow these instructions to define a Spanish language similar to the default Idempiere 'Seed'.
 
@@ -37,21 +37,22 @@ For these reasons, i have done a Script to copy (clone) from es_CO provided from
     ( If you are using other Locale adjust to your)
 ```
 
-### <b>2- Create Language extension for es__VE or xx__XX</b>
+### <b>2- Create Language extension for es_VE or xx_XX</b>
 ```text
 - Download Scripts from Repository (See This plugin documentation directory)
 - Example:  Create-language-from-es-CO-to-es-VE.sql" Script
-- Execute Query from PostgreSQL environment. (Recommended do it in partial queries)
+- Execute Query on a SQL Console. SQLDeveloper for Oracle, DBeaver for PostgreSQL environment.
+  (Recommended to do it in partial queries, or executing a file)
 - You may edit this Query for your favourite Language xx_XX
-- Remember to do <b>Syncronize Terminology</b>
+- Remember to do Syncronize Terminology
 ```
 
 ### <b>3- Manual changes on some Translation</b>
 
-Manually translate the labels associated with regions, municipalities and parishes.
-
+Manually translate the labels associated with regions, municipalities and parishes. Also the possible language differences that exist.
+For example:
 ```text
-- Goto 'Application Dictionary/Messges' and Locale for Region, Municipality and Parish.
+- Goto 'Application Dictionary/Messages' and Locale for Region, Municipality and Parish.
 - Change for Paraguay to Departamento/ Distrito /Barrio.
 - Change for Venezuela to Estado / Municipio / Parroquia.
 
