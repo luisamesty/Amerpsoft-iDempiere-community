@@ -1,4 +1,5 @@
 ﻿-- CREATE_LANGUAJE_FROM_es_CO_to_es_PY.sql
+-- POSTGRESQL VERSION
 -- Se debe definir el Idioma es_PY como idioma del Systema
 -- Ejecutar Language Maintainance en en menú Languaje
 --	Ejecutar este script:
@@ -13,7 +14,7 @@ UPDATE adempiere.AD_CLIENT SET AD_LANGUAGE='es_PY' WHERE AD_LANGUAGE='es_CO';
 -- name
 UPDATE adempiere.ad_column_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_column_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_column_id = adtrl_2.ad_column_id order by adtrl_1.ad_column_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_column_id = adtrl_2.ad_column_id order by adtrl_1.ad_column_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_column_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -22,15 +23,15 @@ UPDATE adempiere.ad_column_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_
 -- name
 UPDATE adempiere.ad_desktop_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_desktop_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_desktop_id = adtrl_2.ad_desktop_id order by adtrl_1.ad_desktop_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_desktop_id = adtrl_2.ad_desktop_id order by adtrl_1.ad_desktop_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_desktop_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_desktop_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_desktop_id = adtrl_2.ad_desktop_id order by adtrl_1.ad_desktop_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_desktop_id = adtrl_2.ad_desktop_id order by adtrl_1.ad_desktop_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_desktop_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_desktop_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_desktop_id = adtrl_2.ad_desktop_id order by adtrl_1.ad_desktop_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_desktop_id = adtrl_2.ad_desktop_id order by adtrl_1.ad_desktop_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_desktop_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -39,19 +40,19 @@ UPDATE adempiere.ad_desktop_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.ad_element_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- printname
 UPDATE adempiere.ad_element_trl as adtrl_2
 set printname=( SELECT adtrl_1."printname" FROM adempiere.ad_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_element_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_element_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_element_id = adtrl_2.ad_element_id order by adtrl_1.ad_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_element_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -60,15 +61,15 @@ UPDATE adempiere.ad_element_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.ad_field_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_field_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_field_id = adtrl_2.ad_field_id order by adtrl_1.ad_field_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_field_id = adtrl_2.ad_field_id order by adtrl_1.ad_field_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_field_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_field_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_field_id = adtrl_2.ad_field_id order by adtrl_1.ad_field_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_field_id = adtrl_2.ad_field_id order by adtrl_1.ad_field_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_field_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_field_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_field_id = adtrl_2.ad_field_id order by adtrl_1.ad_field_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_field_id = adtrl_2.ad_field_id order by adtrl_1.ad_field_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_field_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -77,7 +78,7 @@ UPDATE adempiere.ad_field_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_l
 -- name
 UPDATE adempiere.ad_fieldgroup_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_fieldgroup_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_fieldgroup_id = adtrl_2.ad_fieldgroup_id order by adtrl_1.ad_fieldgroup_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_fieldgroup_id = adtrl_2.ad_fieldgroup_id order by adtrl_1.ad_fieldgroup_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_fieldgroup_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -86,15 +87,15 @@ UPDATE adempiere.ad_fieldgroup_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1
 -- name
 UPDATE adempiere.ad_form_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_form_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_form_id = adtrl_2.ad_form_id order by adtrl_1.ad_form_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_form_id = adtrl_2.ad_form_id order by adtrl_1.ad_form_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_form_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_form_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_form_id = adtrl_2.ad_form_id order by adtrl_1.ad_form_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_form_id = adtrl_2.ad_form_id order by adtrl_1.ad_form_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_form_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_form_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_form_id = adtrl_2.ad_form_id order by adtrl_1.ad_form_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_form_id = adtrl_2.ad_form_id order by adtrl_1.ad_form_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_form_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -103,15 +104,15 @@ UPDATE adempiere.ad_form_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_la
 -- name
 UPDATE adempiere.ad_infocolumn_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_infocolumn_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infocolumn_id = adtrl_2.ad_infocolumn_id order by adtrl_1.ad_infocolumn_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infocolumn_id = adtrl_2.ad_infocolumn_id order by adtrl_1.ad_infocolumn_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_infocolumn_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_infocolumn_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infocolumn_id = adtrl_2.ad_infocolumn_id order by adtrl_1.ad_infocolumn_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infocolumn_id = adtrl_2.ad_infocolumn_id order by adtrl_1.ad_infocolumn_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_infocolumn_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_infocolumn_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infocolumn_id = adtrl_2.ad_infocolumn_id order by adtrl_1.ad_infocolumn_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infocolumn_id = adtrl_2.ad_infocolumn_id order by adtrl_1.ad_infocolumn_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_infocolumn_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -120,15 +121,15 @@ UPDATE adempiere.ad_infocolumn_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1
 -- name
 UPDATE adempiere.ad_infowindow_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_infowindow_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infowindow_id = adtrl_2.ad_infowindow_id order by adtrl_1.ad_infowindow_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infowindow_id = adtrl_2.ad_infowindow_id order by adtrl_1.ad_infowindow_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_infowindow_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_infowindow_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infowindow_id = adtrl_2.ad_infowindow_id order by adtrl_1.ad_infowindow_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infowindow_id = adtrl_2.ad_infowindow_id order by adtrl_1.ad_infowindow_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_infowindow_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_infowindow_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infowindow_id = adtrl_2.ad_infowindow_id order by adtrl_1.ad_infowindow_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_infowindow_id = adtrl_2.ad_infowindow_id order by adtrl_1.ad_infowindow_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_infowindow_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- -----------------------------------------------
@@ -137,11 +138,11 @@ UPDATE adempiere.ad_infowindow_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1
 UPDATE adempiere.ad_menu_trl as adtrl_2
 -- name
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_menu_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_menu_id = adtrl_2.ad_menu_id order by adtrl_1.ad_menu_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_menu_id = adtrl_2.ad_menu_id order by adtrl_1.ad_menu_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_menu_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_menu_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_menu_id = adtrl_2.ad_menu_id order by adtrl_1.ad_menu_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_menu_id = adtrl_2.ad_menu_id order by adtrl_1.ad_menu_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_menu_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -150,11 +151,11 @@ UPDATE adempiere.ad_menu_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_la
 -- msgtext
 UPDATE adempiere.ad_message_trl as adtrl_2
 set msgtext=( SELECT adtrl_1."msgtext" FROM adempiere.ad_message_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_message_id = adtrl_2.ad_message_id order by adtrl_1.ad_message_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_message_id = adtrl_2.ad_message_id order by adtrl_1.ad_message_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- msgtip
 UPDATE adempiere.ad_message_trl as adtrl_2
 set msgtip=( SELECT adtrl_1."msgtip" FROM adempiere.ad_message_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_message_id = adtrl_2.ad_message_id order by adtrl_1.ad_message_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_message_id = adtrl_2.ad_message_id order by adtrl_1.ad_message_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_message_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- --------------------------------------------
@@ -164,11 +165,11 @@ UPDATE adempiere.ad_message_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- printname
 UPDATE adempiere.ad_printformatitem_trl as adtrl_2
 set printname=( SELECT adtrl_1."printname" FROM adempiere.ad_printformatitem_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_printformatitem_id = adtrl_2.ad_printformatitem_id order by adtrl_1.ad_printformatitem_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_printformatitem_id = adtrl_2.ad_printformatitem_id order by adtrl_1.ad_printformatitem_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- name
 UPDATE adempiere.ad_printformatitem_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_printformatitem_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_printformatitem_id = adtrl_2.ad_printformatitem_id order by adtrl_1.ad_printformatitem_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_printformatitem_id = adtrl_2.ad_printformatitem_id order by adtrl_1.ad_printformatitem_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_printformatitem_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -182,15 +183,15 @@ UPDATE adempiere.ad_printformatitem_trl as adtrl_1 set istranslated='Y' WHERE ad
 -- name
 UPDATE adempiere.ad_process_para_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_process_para_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_para_id = adtrl_2.ad_process_para_id order by adtrl_1.ad_process_para_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_para_id = adtrl_2.ad_process_para_id order by adtrl_1.ad_process_para_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_process_para_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_process_para_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_para_id = adtrl_2.ad_process_para_id order by adtrl_1.ad_process_para_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_para_id = adtrl_2.ad_process_para_id order by adtrl_1.ad_process_para_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_process_para_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_process_para_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_para_id = adtrl_2.ad_process_para_id order by adtrl_1.ad_process_para_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_para_id = adtrl_2.ad_process_para_id order by adtrl_1.ad_process_para_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_process_para_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -199,15 +200,15 @@ UPDATE adempiere.ad_process_para_trl as adtrl_1 set istranslated='Y' WHERE adtrl
 -- name
 UPDATE adempiere.ad_process_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_process_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_id = adtrl_2.ad_process_id order by adtrl_1.ad_process_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_id = adtrl_2.ad_process_id order by adtrl_1.ad_process_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_process_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_process_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_id = adtrl_2.ad_process_id order by adtrl_1.ad_process_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_id = adtrl_2.ad_process_id order by adtrl_1.ad_process_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_process_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_process_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_id = adtrl_2.ad_process_id order by adtrl_1.ad_process_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_process_id = adtrl_2.ad_process_id order by adtrl_1.ad_process_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_process_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -216,11 +217,11 @@ UPDATE adempiere.ad_process_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.ad_ref_list_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_ref_list_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_ref_list_id = adtrl_2.ad_ref_list_id order by adtrl_1.ad_ref_list_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_ref_list_id = adtrl_2.ad_ref_list_id order by adtrl_1.ad_ref_list_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_ref_list_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_ref_list_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_ref_list_id = adtrl_2.ad_ref_list_id order by adtrl_1.ad_ref_list_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_ref_list_id = adtrl_2.ad_ref_list_id order by adtrl_1.ad_ref_list_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_ref_list_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -229,15 +230,15 @@ UPDATE adempiere.ad_ref_list_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.a
 -- name
 UPDATE adempiere.ad_reference_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_reference_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_reference_id = adtrl_2.ad_reference_id order by adtrl_1.ad_reference_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_reference_id = adtrl_2.ad_reference_id order by adtrl_1.ad_reference_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_reference_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_reference_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_reference_id = adtrl_2.ad_reference_id order by adtrl_1.ad_reference_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_reference_id = adtrl_2.ad_reference_id order by adtrl_1.ad_reference_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_reference_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_reference_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_reference_id = adtrl_2.ad_reference_id order by adtrl_1.ad_reference_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_reference_id = adtrl_2.ad_reference_id order by adtrl_1.ad_reference_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_reference_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -246,19 +247,19 @@ UPDATE adempiere.ad_reference_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.
 -- name
 UPDATE adempiere.ad_tab_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_tab_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_tab_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_tab_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_tab_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_tab_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- commitwarning
 UPDATE adempiere.ad_tab_trl as adtrl_2
 set commitwarning=( SELECT adtrl_1."commitwarning" FROM adempiere.ad_tab_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_tab_id = adtrl_2.ad_tab_id order by adtrl_1.ad_tab_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_tab_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -267,7 +268,7 @@ UPDATE adempiere.ad_tab_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_lan
 -- name
 UPDATE adempiere.ad_table_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_table_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_table_id = adtrl_2.ad_table_id order by adtrl_1.ad_table_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_table_id = adtrl_2.ad_table_id order by adtrl_1.ad_table_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_table_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -276,15 +277,15 @@ UPDATE adempiere.ad_table_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_l
 -- name
 UPDATE adempiere.ad_task_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_task_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_task_id = adtrl_2.ad_task_id order by adtrl_1.ad_task_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_task_id = adtrl_2.ad_task_id order by adtrl_1.ad_task_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_task_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_task_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_task_id = adtrl_2.ad_task_id order by adtrl_1.ad_task_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_task_id = adtrl_2.ad_task_id order by adtrl_1.ad_task_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_task_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_task_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_task_id = adtrl_2.ad_task_id order by adtrl_1.ad_task_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_task_id = adtrl_2.ad_task_id order by adtrl_1.ad_task_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_task_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -297,15 +298,15 @@ UPDATE adempiere.ad_task_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_la
 -- name
 UPDATE adempiere.ad_wf_node_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_wf_node_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_wf_node_id = adtrl_2.ad_wf_node_id order by adtrl_1.ad_wf_node_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_wf_node_id = adtrl_2.ad_wf_node_id order by adtrl_1.ad_wf_node_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_wf_node_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_wf_node_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_wf_node_id = adtrl_2.ad_wf_node_id order by adtrl_1.ad_wf_node_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_wf_node_id = adtrl_2.ad_wf_node_id order by adtrl_1.ad_wf_node_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_wf_node_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_wf_node_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_wf_node_id = adtrl_2.ad_wf_node_id order by adtrl_1.ad_wf_node_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_wf_node_id = adtrl_2.ad_wf_node_id order by adtrl_1.ad_wf_node_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_wf_node_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -314,15 +315,15 @@ UPDATE adempiere.ad_wf_node_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.ad_window_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_window_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_window_id = adtrl_2.ad_window_id order by adtrl_1.ad_window_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_window_id = adtrl_2.ad_window_id order by adtrl_1.ad_window_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_window_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_window_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_window_id = adtrl_2.ad_window_id order by adtrl_1.ad_window_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_window_id = adtrl_2.ad_window_id order by adtrl_1.ad_window_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_window_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_window_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_window_id = adtrl_2.ad_window_id order by adtrl_1.ad_window_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_window_id = adtrl_2.ad_window_id order by adtrl_1.ad_window_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_window_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -331,15 +332,15 @@ UPDATE adempiere.ad_window_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_
 -- name
 UPDATE adempiere.ad_workbench_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_workbench_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workbench_id = adtrl_2.ad_workbench_id order by adtrl_1.ad_workbench_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workbench_id = adtrl_2.ad_workbench_id order by adtrl_1.ad_workbench_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_workbench_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_workbench_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workbench_id = adtrl_2.ad_workbench_id order by adtrl_1.ad_workbench_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workbench_id = adtrl_2.ad_workbench_id order by adtrl_1.ad_workbench_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_workbench_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_workbench_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workbench_id = adtrl_2.ad_workbench_id order by adtrl_1.ad_workbench_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workbench_id = adtrl_2.ad_workbench_id order by adtrl_1.ad_workbench_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_workbench_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -348,15 +349,15 @@ UPDATE adempiere.ad_workbench_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.
 -- name
 UPDATE adempiere.ad_workflow_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.ad_workflow_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workflow_id = adtrl_2.ad_workflow_id order by adtrl_1.ad_workflow_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workflow_id = adtrl_2.ad_workflow_id order by adtrl_1.ad_workflow_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.ad_workflow_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.ad_workflow_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workflow_id = adtrl_2.ad_workflow_id order by adtrl_1.ad_workflow_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workflow_id = adtrl_2.ad_workflow_id order by adtrl_1.ad_workflow_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.ad_workflow_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.ad_workflow_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workflow_id = adtrl_2.ad_workflow_id order by adtrl_1.ad_workflow_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.ad_workflow_id = adtrl_2.ad_workflow_id order by adtrl_1.ad_workflow_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.ad_workflow_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -370,15 +371,15 @@ UPDATE adempiere.ad_workflow_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.a
 -- name
 UPDATE adempiere.c_country_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_country_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_country_id = adtrl_2.c_country_id order by adtrl_1.c_country_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_country_id = adtrl_2.c_country_id order by adtrl_1.c_country_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.c_country_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_country_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_country_id = adtrl_2.c_country_id order by adtrl_1.c_country_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_country_id = adtrl_2.c_country_id order by adtrl_1.c_country_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- regionname
 UPDATE adempiere.c_country_trl as adtrl_2
 set regionname=( SELECT adtrl_1."regionname" FROM adempiere.c_country_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_country_id = adtrl_2.c_country_id order by adtrl_1.c_country_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_country_id = adtrl_2.c_country_id order by adtrl_1.c_country_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_country_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -387,7 +388,7 @@ UPDATE adempiere.c_country_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_
 -- description
 UPDATE adempiere.c_currency_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_currency_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_currency_id = adtrl_2.c_currency_id order by adtrl_1.c_currency_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_currency_id = adtrl_2.c_currency_id order by adtrl_1.c_currency_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_currency_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -396,15 +397,15 @@ UPDATE adempiere.c_currency_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.c_doctype_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_doctype_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_doctype_id = adtrl_2.c_doctype_id order by adtrl_1.c_doctype_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_doctype_id = adtrl_2.c_doctype_id order by adtrl_1.c_doctype_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- printname
 UPDATE adempiere.c_doctype_trl as adtrl_2
 set printname=( SELECT adtrl_1."printname" FROM adempiere.c_doctype_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_doctype_id = adtrl_2.c_doctype_id order by adtrl_1.c_doctype_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_doctype_id = adtrl_2.c_doctype_id order by adtrl_1.c_doctype_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- documentnote
 UPDATE adempiere.c_doctype_trl as adtrl_2
 set documentnote=( SELECT adtrl_1."documentnote" FROM adempiere.c_doctype_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_doctype_id = adtrl_2.c_doctype_id order by adtrl_1.c_doctype_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_doctype_id = adtrl_2.c_doctype_id order by adtrl_1.c_doctype_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_doctype_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -413,11 +414,11 @@ UPDATE adempiere.c_doctype_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_
 -- printname
 UPDATE adempiere.c_dunninglevel_trl as adtrl_2
 set printname=( SELECT adtrl_1."printname" FROM adempiere.c_dunninglevel_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_dunninglevel_id = adtrl_2.c_dunninglevel_id order by adtrl_1.c_dunninglevel_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_dunninglevel_id = adtrl_2.c_dunninglevel_id order by adtrl_1.c_dunninglevel_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- note
 UPDATE adempiere.c_dunninglevel_trl as adtrl_2
 set note=( SELECT adtrl_1."note" FROM adempiere.c_dunninglevel_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_dunninglevel_id = adtrl_2.c_dunninglevel_id order by adtrl_1.c_dunninglevel_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_dunninglevel_id = adtrl_2.c_dunninglevel_id order by adtrl_1.c_dunninglevel_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_dunninglevel_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -426,11 +427,11 @@ UPDATE adempiere.c_dunninglevel_trl as adtrl_1 set istranslated='Y' WHERE adtrl_
 -- name
 UPDATE adempiere.c_elementvalue_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_elementvalue_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_elementvalue_id = adtrl_2.c_elementvalue_id order by adtrl_1.c_elementvalue_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_elementvalue_id = adtrl_2.c_elementvalue_id order by adtrl_1.c_elementvalue_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.c_elementvalue_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_elementvalue_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_elementvalue_id = adtrl_2.c_elementvalue_id order by adtrl_1.c_elementvalue_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_elementvalue_id = adtrl_2.c_elementvalue_id order by adtrl_1.c_elementvalue_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_elementvalue_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -439,11 +440,11 @@ UPDATE adempiere.c_elementvalue_trl as adtrl_1 set istranslated='Y' WHERE adtrl_
 -- name
 UPDATE adempiere.c_greeting_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_greeting_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_greeting_id = adtrl_2.c_greeting_id order by adtrl_1.c_greeting_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_greeting_id = adtrl_2.c_greeting_id order by adtrl_1.c_greeting_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- greeting
 UPDATE adempiere.c_greeting_trl as adtrl_2
 set greeting=( SELECT adtrl_1."greeting" FROM adempiere.c_greeting_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_greeting_id = adtrl_2.c_greeting_id order by adtrl_1.c_greeting_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_greeting_id = adtrl_2.c_greeting_id order by adtrl_1.c_greeting_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_greeting_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -452,15 +453,15 @@ UPDATE adempiere.c_greeting_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.c_paymentterm_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_paymentterm_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_paymentterm_id = adtrl_2.c_paymentterm_id order by adtrl_1.c_paymentterm_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_paymentterm_id = adtrl_2.c_paymentterm_id order by adtrl_1.c_paymentterm_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.c_paymentterm_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_paymentterm_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_paymentterm_id = adtrl_2.c_paymentterm_id order by adtrl_1.c_paymentterm_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_paymentterm_id = adtrl_2.c_paymentterm_id order by adtrl_1.c_paymentterm_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- documentnote
 UPDATE adempiere.c_paymentterm_trl as adtrl_2
 set documentnote=( SELECT adtrl_1."documentnote" FROM adempiere.c_paymentterm_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_paymentterm_id = adtrl_2.c_paymentterm_id order by adtrl_1.c_paymentterm_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_paymentterm_id = adtrl_2.c_paymentterm_id order by adtrl_1.c_paymentterm_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_paymentterm_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -469,15 +470,15 @@ UPDATE adempiere.c_paymentterm_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1
 -- name
 UPDATE adempiere.c_tax_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_tax_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_tax_id = adtrl_2.c_tax_id order by adtrl_1.c_tax_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_tax_id = adtrl_2.c_tax_id order by adtrl_1.c_tax_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.c_tax_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_tax_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_tax_id = adtrl_2.c_tax_id order by adtrl_1.c_tax_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_tax_id = adtrl_2.c_tax_id order by adtrl_1.c_tax_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- taxindicator
 UPDATE adempiere.c_tax_trl as adtrl_2
 set taxindicator=( SELECT adtrl_1."taxindicator" FROM adempiere.c_tax_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_tax_id = adtrl_2.c_tax_id order by adtrl_1.c_tax_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_tax_id = adtrl_2.c_tax_id order by adtrl_1.c_tax_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_tax_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -486,11 +487,11 @@ UPDATE adempiere.c_tax_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_lang
 -- name
 UPDATE adempiere.c_taxcategory_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_taxcategory_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_taxcategory_id = adtrl_2.c_taxcategory_id order by adtrl_1.c_taxcategory_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_taxcategory_id = adtrl_2.c_taxcategory_id order by adtrl_1.c_taxcategory_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.c_taxcategory_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_taxcategory_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_taxcategory_id = adtrl_2.c_taxcategory_id order by adtrl_1.c_taxcategory_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_taxcategory_id = adtrl_2.c_taxcategory_id order by adtrl_1.c_taxcategory_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_taxcategory_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -499,11 +500,11 @@ UPDATE adempiere.c_taxcategory_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1
 -- name
 UPDATE adempiere.c_uom_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_uom_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_uom_id = adtrl_2.c_uom_id order by adtrl_1.c_uom_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_uom_id = adtrl_2.c_uom_id order by adtrl_1.c_uom_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.c_uom_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.c_uom_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_uom_id = adtrl_2.c_uom_id order by adtrl_1.c_uom_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_uom_id = adtrl_2.c_uom_id order by adtrl_1.c_uom_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_uom_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- --------------------------------------------------------
@@ -512,15 +513,15 @@ UPDATE adempiere.c_uom_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_lang
 -- name
 UPDATE adempiere.cm_container_element_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.cm_container_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_element_id = adtrl_2.cm_container_element_id order by adtrl_1.cm_container_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_element_id = adtrl_2.cm_container_element_id order by adtrl_1.cm_container_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.cm_container_element_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.cm_container_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_element_id = adtrl_2.cm_container_element_id order by adtrl_1.cm_container_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_element_id = adtrl_2.cm_container_element_id order by adtrl_1.cm_container_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.cm_container_element_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.cm_container_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_element_id = adtrl_2.cm_container_element_id order by adtrl_1.cm_container_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_element_id = adtrl_2.cm_container_element_id order by adtrl_1.cm_container_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.cm_container_element_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -529,19 +530,19 @@ UPDATE adempiere.cm_container_element_trl as adtrl_1 set istranslated='Y' WHERE 
 -- name
 UPDATE adempiere.cm_container_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.cm_container_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- title
 UPDATE adempiere.cm_container_trl as adtrl_2
 set title=( SELECT adtrl_1."title" FROM adempiere.cm_container_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- meta_description
 UPDATE adempiere.cm_container_trl as adtrl_2
 set meta_description=( SELECT adtrl_1."meta_description" FROM adempiere.cm_container_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- meta_keywords
 UPDATE adempiere.cm_container_trl as adtrl_2
 set meta_keywords=( SELECT adtrl_1."meta_keywords" FROM adempiere.cm_container_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_container_id = adtrl_2.cm_container_id order by adtrl_1.cm_container_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.cm_container_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ------------------------------------------------
@@ -550,15 +551,15 @@ UPDATE adempiere.cm_container_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.
 -- name
 UPDATE adempiere.cm_cstage_element_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.cm_cstage_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_element_id = adtrl_2.cm_cstage_element_id order by adtrl_1.cm_cstage_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_element_id = adtrl_2.cm_cstage_element_id order by adtrl_1.cm_cstage_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- description
 UPDATE adempiere.cm_cstage_element_trl as adtrl_2
 set description=( SELECT adtrl_1."description" FROM adempiere.cm_cstage_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_element_id = adtrl_2.cm_cstage_element_id order by adtrl_1.cm_cstage_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_element_id = adtrl_2.cm_cstage_element_id order by adtrl_1.cm_cstage_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- help
 UPDATE adempiere.cm_cstage_element_trl as adtrl_2
 set help=( SELECT adtrl_1."help" FROM adempiere.cm_cstage_element_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_element_id = adtrl_2.cm_cstage_element_id order by adtrl_1.cm_cstage_element_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_element_id = adtrl_2.cm_cstage_element_id order by adtrl_1.cm_cstage_element_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.cm_cstage_element_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -567,19 +568,19 @@ UPDATE adempiere.cm_cstage_element_trl as adtrl_1 set istranslated='Y' WHERE adt
 -- name
 UPDATE adempiere.cm_cstage_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.cm_cstage_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- title
 UPDATE adempiere.cm_cstage_trl as adtrl_2
 set title=( SELECT adtrl_1."title" FROM adempiere.cm_cstage_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- meta_description
 UPDATE adempiere.cm_cstage_trl as adtrl_2
 set meta_description=( SELECT adtrl_1."meta_description" FROM adempiere.cm_cstage_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- meta_keywords
 UPDATE adempiere.cm_cstage_trl as adtrl_2
 set meta_keywords=( SELECT adtrl_1."meta_keywords" FROM adempiere.cm_cstage_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.cm_cstage_id = adtrl_2.cm_cstage_id order by adtrl_1.cm_cstage_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.cm_cstage_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -598,11 +599,11 @@ UPDATE adempiere.cm_cstage_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_
 -- name
 UPDATE adempiere.m_product_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.m_product_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.m_product_id = adtrl_2.m_product_id order by adtrl_1.m_product_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.m_product_id = adtrl_2.m_product_id order by adtrl_1.m_product_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- documentnote
 UPDATE adempiere.m_product_trl as adtrl_2
 set documentnote=( SELECT adtrl_1."documentnote" FROM adempiere.m_product_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.m_product_id = adtrl_2.m_product_id order by adtrl_1.m_product_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.m_product_id = adtrl_2.m_product_id order by adtrl_1.m_product_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.m_product_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -611,15 +612,15 @@ UPDATE adempiere.m_product_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_
 -- name
 UPDATE adempiere.r_mailtext_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.r_mailtext_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.r_mailtext_id = adtrl_2.r_mailtext_id order by adtrl_1.r_mailtext_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.r_mailtext_id = adtrl_2.r_mailtext_id order by adtrl_1.r_mailtext_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- mailheader
 UPDATE adempiere.r_mailtext_trl as adtrl_2
 set mailheader=( SELECT adtrl_1."mailheader" FROM adempiere.r_mailtext_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.r_mailtext_id = adtrl_2.r_mailtext_id order by adtrl_1.r_mailtext_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.r_mailtext_id = adtrl_2.r_mailtext_id order by adtrl_1.r_mailtext_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- mailtext
 UPDATE adempiere.r_mailtext_trl as adtrl_2
 set mailtext=( SELECT adtrl_1."mailtext" FROM adempiere.r_mailtext_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.r_mailtext_id = adtrl_2.r_mailtext_id order by adtrl_1.r_mailtext_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.r_mailtext_id = adtrl_2.r_mailtext_id order by adtrl_1.r_mailtext_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.r_mailtext_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 -- ----------------------------------------
@@ -638,7 +639,7 @@ UPDATE adempiere.r_mailtext_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad
 -- name
 UPDATE adempiere.c_charge_trl as adtrl_2
 set name=( SELECT adtrl_1."name" FROM adempiere.c_charge_trl as adtrl_1 
-WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_charge_id = adtrl_2.c_charge_id order by adtrl_1.c_charge_id );
+WHERE adtrl_1.ad_language = 'es_CO' and adtrl_1.c_charge_id = adtrl_2.c_charge_id order by adtrl_1.c_charge_id )  WHERE adtrl_2.ad_language = 'es_PY';
 -- set istranslated='Y'
 UPDATE adempiere.c_charge_trl as adtrl_1 set istranslated='Y' WHERE adtrl_1.ad_language = 'es_PY';
 
