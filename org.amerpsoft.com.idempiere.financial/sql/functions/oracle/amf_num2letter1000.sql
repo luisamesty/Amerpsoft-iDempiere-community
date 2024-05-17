@@ -1,17 +1,12 @@
-﻿-- Function: adempiere.amf_num2letter1000(numeric, character)
+CREATE OR REPLACE FUNCTION adempiere.amf_num2letter1000(conv_number numeric, languaje_iso varchar)
+  RETURN VARCHAR 
 
--- DROP FUNCTION adempiere.amf_num2letter1000(numeric, character);
-
-CREATE OR REPLACE FUNCTION adempiere.amf_num2letter1000(conv_number numeric, languaje_iso character)
-  RETURNS character varying AS
-$BODY$
-
-DECLARE
+IS
     reg numeric;
     letter_number varchar(255) ;
-    tmp_number varchar ;
+    tmp_number varchar(250) ;
     nullvalue varchar(20);
-    notnullvalue varchar(30);
+    notnullvalue varchar(40);
     numero numeric;
     entero numeric;
     centenas numeric;
@@ -21,13 +16,12 @@ DECLARE
     aux varchar(15);
     
 BEGIN
-    nullvalue := '*** NULL VALUE ***';
-    notnullvalue := '** NOT NULL VALUE*** ';
-    languaje_iso := lower(languaje_iso);
+    SELECT '*** NULL ***' INTO nullvalue FROM DUAL;
+    SELECT '*** NOT NULL ***' INTO notnullvalue FROM DUAL;
     IF (conv_number IS NULL) 
     THEN 
 	letter_number := nullvalue ;
-    ELSEIF (conv_number IS NOT NULL) 
+    ELSIF (conv_number IS NOT NULL) 
     THEN
        numero := conv_number;
 
@@ -371,9 +365,3 @@ BEGIN
 
 RETURN (letter_number);
 END;
-
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION adempiere.amf_num2letter1000(numeric, character)
-  OWNER TO adempiere;
