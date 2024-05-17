@@ -1,10 +1,10 @@
-﻿-- Function: adempiere.amf_month2letter(character, character, character)
-
--- DROP FUNCTION adempiere.amf_month2letter(character, character, character);
+--﻿ Function: adempiere.amf_month2letter(character, character, character)
+-- FUNCTION adempiere.amf_month2letter(bpchar, bpchar, bpchar);
 
 CREATE OR REPLACE FUNCTION adempiere.amf_month2letter(conv_month character, upp_low character, languaje_iso character)
-  RETURNS character varying AS
-$BODY$
+ RETURNS character varying
+ LANGUAGE plpgsql
+AS $function$
 
 DECLARE
     letter_month varchar(40);
@@ -81,8 +81,10 @@ BEGIN
     RETURN (letter_month);
 END;
 
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+$function$
+;
+
+--ALTER
 ALTER FUNCTION adempiere.amf_month2letter(character, character, character)
   OWNER TO adempiere;
+

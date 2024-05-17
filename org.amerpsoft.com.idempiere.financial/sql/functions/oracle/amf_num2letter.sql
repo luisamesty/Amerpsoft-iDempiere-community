@@ -1,16 +1,10 @@
-﻿-- Function: adempiere.amf_num2letter(numeric, character, character)
+create or replace FUNCTION           amf_num2letter(conv_number varchar, upp_low varchar, languaje_iso varchar)
+  RETURN VARCHAR 
 
--- DROP FUNCTION adempiere.amf_num2letter(numeric, character, character);
-
-CREATE OR REPLACE FUNCTION adempiere.amf_num2letter(conv_number numeric, upp_low character, languaje_iso character)
-  RETURNS character varying AS
-$BODY$
-
-DECLARE
+IS
     reg numeric;
     letter_number varchar(255);
-    tmp_number varchar ;
-    nullvalue varchar(20);
+    tmp_number varchar(255) ;
     notnullvalue varchar(30);
     choice char(1);
     millares_de_millon numeric;
@@ -22,16 +16,16 @@ DECLARE
     en_letras varchar(200);
     entero numeric;
     aux varchar(15);
-    
+    nullvalue VARCHAR(40);
+
 BEGIN
-    nullvalue := '*** NULL ***';
-    notnullvalue := '** NOT NULL *** ';
+    SELECT '*** NULL ***' INTO nullvalue FROM DUAL;
+    SELECT '*** NOT NULL ***' INTO notnullvalue FROM DUAL;
     choice := 'y';
-    languaje_iso := lower(languaje_iso);
     IF (conv_number IS NULL) 
     THEN 
 	letter_number := nullvalue ;
-    ELSEIF (conv_number IS NOT NULL) 
+    ELSIF (conv_number IS NOT NULL) 
     THEN
         numero := conv_number;
         if numero < 0 or numero > 999999999999.99 then
@@ -97,9 +91,9 @@ BEGIN
 		    end if;
 		else  --if millones > 0 then
 		--replace(adempiere.amf_num2letter1000(millones,languaje_iso),'uno ','un ')
-                   case when languaje_iso = 'es' then en_letras := concat(en_letras, replace(adempiere.amf_num2letter1000(millones,languaje_iso),'uno ','un '), 'millones ');
-                        when languaje_iso = 'en' then en_letras := concat(en_letras, adempiere.amf_num2letter1000(millones,languaje_iso), 'million ');
-                        else en_letras := concat(en_letras, replace(adempiere.amf_num2letter1000(millones,languaje_iso),'uno ','un '), 'millones ');
+                   case when languaje_iso = 'es' then en_letras := concat(concat(en_letras, replace(adempiere.amf_num2letter1000(millones,languaje_iso),'uno ','un ')), 'millones ');
+                        when languaje_iso = 'en' then en_letras := concat(concat(en_letras, adempiere.amf_num2letter1000(millones,languaje_iso)), 'million ');
+                        else en_letras := concat(concat(en_letras, replace(adempiere.amf_num2letter1000(millones,languaje_iso),'uno ','un ')), 'millones ');
                    end case; 		
 		end if;
               --en_letras := 'MILLONES ' || en_letras ;
@@ -112,9 +106,9 @@ BEGIN
                       else en_letras := concat(en_letras , 'un mil ');
                  end case;  
              else
-                 case when languaje_iso = 'es' then en_letras := concat(en_letras , replace(adempiere.amf_num2letter1000(millares,languaje_iso),'uno ','un ') , 'mil ');
-                      when languaje_iso = 'en' then en_letras := concat(en_letras , adempiere.amf_num2letter1000(millares,languaje_iso) , 'thousand ');
-                      else en_letras := concat(en_letras , replace(adempiere.amf_num2letter1000(millares,languaje_iso),'uno ','un ')  , 'mil ');
+                 case when languaje_iso = 'es' then en_letras := concat(concat(en_letras , replace(adempiere.amf_num2letter1000(millares,languaje_iso),'uno ','un ')) , 'mil ');
+                      when languaje_iso = 'en' then en_letras := concat(concat(en_letras , adempiere.amf_num2letter1000(millares,languaje_iso)) , 'thousand ');
+                      else en_letras := concat(concat(en_letras , replace(adempiere.amf_num2letter1000(millares,languaje_iso),'uno ','un '))  , 'mil ');
                  end case; 
              end if;
              --en_letras := concat('MILLARES ' , en_letras );
@@ -138,14 +132,14 @@ BEGIN
                  end case;              
             else
 		if entero > 0 then
-                    case when languaje_iso = 'es' then en_letras := concat(en_letras , 'con ' , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ') , 'centimos ');
-                         when languaje_iso = 'en' then en_letras := concat(en_letras , 'with ' , adempiere.amf_num2letter1000(centimos,languaje_iso) , 'cents ');
-                         else en_letras := concat(en_letras , 'con ' , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ') , 'centimos ');
+                    case when languaje_iso = 'es' then en_letras := concat(concat(concat(en_letras , 'con ') , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ')) , 'centimos ');
+                         when languaje_iso = 'en' then en_letras := concat(concat(concat(en_letras , 'with ') , adempiere.amf_num2letter1000(centimos,languaje_iso)) , 'cents ');
+                         else en_letras := concat(concat(concat(en_letras , 'con ') , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ')) , 'centimos ');
                     end case;    		
 		else
-                    case when languaje_iso = 'es' then en_letras := concat(en_letras , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ') , 'centimos ');
-                         when languaje_iso = 'en' then en_letras := concat(en_letras , adempiere.amf_num2letter1000(centimos,languaje_iso) , 'cents ');
-                         else en_letras := concat(en_letras , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ') , 'centimos ');
+                    case when languaje_iso = 'es' then en_letras := concat(concat(en_letras , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ')) , 'centimos ');
+                         when languaje_iso = 'en' then en_letras := concat(concat(en_letras , adempiere.amf_num2letter1000(centimos,languaje_iso)) , 'cents ');
+                         else en_letras := concat(concat(en_letras , replace(adempiere.amf_num2letter1000(centimos,languaje_iso),'uno ','un ')) , 'centimos ');
                     end case;   		
 		end if;
             end if;
@@ -174,12 +168,6 @@ BEGIN
 	--letter_number := concat('entero:',entero,'Millares de Millones:',millares_de_millon,' Millones:',millones,' Millares:',millares,' Centenas:',centenas,' Centimos:',centimos,' ',en_letras) ;
 
     END IF;
- 
+
     RETURN (letter_number);
 END;
-
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION adempiere.amf_num2letter(numeric, character, character)
-  OWNER TO adempiere;

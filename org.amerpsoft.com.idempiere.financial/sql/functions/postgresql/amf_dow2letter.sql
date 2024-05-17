@@ -1,10 +1,8 @@
-﻿-- Function: adempiere.amf_dow2letter(character, character, character)
-
--- DROP FUNCTION adempiere.amf_dow2letter(character, character, character);
-
+-- FUNCTION adempiere.amf_dow2letter(bpchar, bpchar, bpchar);
 CREATE OR REPLACE FUNCTION adempiere.amf_dow2letter(conv_dow character, upp_low character, languaje_iso character)
-  RETURNS character varying AS
-$BODY$
+ RETURNS character varying
+ LANGUAGE plpgsql
+AS $function$
 
 DECLARE
     letter_dow varchar(40);
@@ -65,9 +63,8 @@ BEGIN
     end if;
     RETURN (letter_dow);
 END;
-
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+$function$
+;
+-- ALTER
 ALTER FUNCTION adempiere.amf_dow2letter(character, character, character)
   OWNER TO adempiere;
