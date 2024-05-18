@@ -213,6 +213,14 @@ AMERPSOFT Financial Reports
 - Amfin State Financial Integral Results Jasper
 ```
 
+Examples:
+[Account Elements](./install/pdf/CatalogoElementosCuenta.pdf)
+[State Financial Balance](./install/pdf/BalanceSituacionFinanciera.pdf)
+[State Financial Integral Results](./install/pdf/EstadoResultadosIntegrales.pdf)
+[Trial Balance](./install/pdf/BalanceComprobacionPeríodo.pdf)
+
+
+
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 
