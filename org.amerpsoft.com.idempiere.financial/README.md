@@ -50,7 +50,8 @@ Follow steps:
 ## <a name="step2"></a>⭐️2. Initial Client Setup 
 
 Before installing financial plugin, you must have a Client with appropriate Accounting elements and Accounting Schema created. You can use the garden client, but it is advisable to create a demo client with the chart of accounts adapted to your country's accounting.
-For more Information see on Idempiere Wiki [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_(Process_ID-53161) -  [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage)
+
+For more Information see on Idempiere Wiki [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_Process_ID-53161) -  [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage)
 
 ### 2.1 Select Accounting plans provided
 
@@ -61,49 +62,84 @@ These files are provided:
 
 ### 2.3 Create new Client
 
-Initial Tenant 1
+Initial Tenant.
+As a Systenm Administrator Start Tenant setup process.
+Give all values related with Tenant and Organization. Very importar <b> Chart of Accounts File </b>. Here you enter the csv file.
+
 <div align="center">
   <a href="AMERPSOFT_logo">
     <img src="./install/images/Initial_Tenant_Setup1.png" alt="Logo" width="800">
   </a>
 </div>
 
-Initial Tenant 2
+Start the process until you get a final OK. This means you have completely created he Tenant (Client) and all default accounts have been validated.
+
 <div align="center">
   <a href="AMERPSOFT_logo">
     <img src="./install/images/Initial_Tenant_Setup2.png" alt="Logo" width="800">
   </a>
 </div>
 
+Next, Import Accounts.
+
 ### 2.3 Import Account Elements
 
-Import Account1
+Login as a Tenant administrative user and goto to Window <b>Import File Loader</b>.
+
+Select File to Load (same CSV file used for Initial Tenenat Setup). Also Select import format (Accounting - Accounts) and Execute Import.
+
+You will receive a final message with the number of rous imported. In thsi example (451).
+
 <div align="center">
   <a href="AMERPSOFT_logo">
     <img src="./install/images/Import_Accounts1.png" alt="Logo" width="800">
   </a>
 </div>
 
-Import Account2
+As a Tenant administrative user, goto to <b> Import Accounts </b>.  You will have the records imported, but normally first one is empty and you must delete it. 
+
+You may review all imported records.
+
 <div align="center">
   <a href="AMERPSOFT_logo">
     <img src="./install/images/Import_Accounts2.png" alt="Logo" width="800" >
   </a>
 </div>
 
-Import Account3
+Execute <b> Import Accounts </b> Process, select Client and Element, rest inputs leave default values.
+
 <div align="center">
   <a href="AMERPSOFT_logo">
     <img src="./install/images/Import_Accounts3.png" alt="Logo" width="800" >
   </a>
 </div>
 
-Import Account4
+Verify imports and errors, reviewing 'Import Error Messages' Column.
+
+
 <div align="center">
   <a href="AMERPSOFT_logo">
-    <img src="./install/images/Import_Accounts1.png" alt="Logo" width="800">
+    <img src="./install/images/Import_Accounts4.png" alt="Logo" width="800">
   </a>
 </div>
+
+Change Accounts Tree Settings on 'Tree' Window. Check 'Display Search Key'.
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/Accounts_Tree_Settings.png" alt="Logo" width="800">
+  </a>
+</div>
+
+Review Account Elements.
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/Account_Elements.png" alt="Logo" width="800">
+  </a>
+</div>
+
+
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
