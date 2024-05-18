@@ -25,6 +25,7 @@ The accounting system is the basis for the beginning of a Client and organizatio
 - Installing plugin
 - Processes
 - Accounting Reports
+- Taxes
 ```
 Follow steps:
 
@@ -35,7 +36,8 @@ Follow steps:
 |     3 | [Installing plugin](#step3)                    | Install plugin using OSGI console                                                  |
 |     4 | [Processes](#step4)                            | Verify processes installed                                                         |
 |     5 | [Accounting Reports](#step5)                   | Review Accounting Reports                                                          |
-|     6 | [Import Financial Taxes](#step6)               | Import Tac categories and taxes                                                    |
+|     6 | [Import Financial Taxes](#step6)               | Import Tax categories and taxes                                                    |
+
 
 ## <a name="step1"></a>⭐️1.	Install Database Functions.
 #### Special Function for Reporting Dates and Text:
@@ -56,13 +58,13 @@ Before installing financial plugin, you must have a Client with appropriate Acco
 
 For more Information see on Idempiere Wiki [Initial Client Setup](https://wiki.idempiere.org/en/Initial_Tenant_Setup_Process_ID-53161) -  [Default Accounts](https://wiki.idempiere.org/en/Default_Accounts_Usage)
 
-Follow this procedure for Initial Client Setup.
+Follow this procedure for Initial Client Setup using a NIIF Accounts Elements Sample.
 
 ### 2.1 Select Accounting plans provided
 
-These files are provided:
+These files are provided: (LVE NIIF Plan de cuentas Diciembre2015.csv)
 
-- LVE NIIF Paln de cuentas Diciembre2015.csv
+- LVE NIIF Plan de cuentas Diciembre2015.csv
 - LPY Plan de cuentas 2024.csv
 
 ### 2.2 Create new Client
@@ -166,11 +168,17 @@ Review Account Elements.
 	 3. Run Synchronize Terminology, Sequence Check and Role Access Update
 	 4. Restart Server
  ```
-<b>Verify reports and processes menus created. </b>
+<b>Make some changes </b>
 
 Using Application Dictionary For Menus and Processes, make translations for your Language. In case of Spanish, you may copy es_CO (Colombia) Translations.
 AMERPSOFT Financial Processes.
-Company Logo is shown on most reports. To update go to 'System Admin / Tenant Rules / Tenant', on Tab 'Tenant Info', update 'Logo' and 'Logo Report' fields with your company image.
+
+** IMPORTANT **
+Company Logo is shown on most reports. 
+
+To update go to 'System Admin / Tenant Rules / Tenant', on Tab 'Tenant Info', update 'Logo' and 'Logo Report' fields with your company image.
+
+<b>Verify reports and processes menus created. </b>
 
  ```text
 	- Amfin Process Reset Accounting
@@ -213,12 +221,14 @@ AMERPSOFT Financial Reports
 - Amfin State Financial Integral Results Jasper
 ```
 
-Examples:
-[Account Elements](./install/pdf/CatalogoElementosCuenta.pdf)
-[State Financial Balance](./install/pdf/BalanceSituacionFinanciera.pdf)
-[State Financial Integral Results](./install/pdf/EstadoResultadosIntegrales.pdf)
-[Trial Balance](./install/pdf/BalanceComprobacionPeríodo.pdf)
+These reports have been tested with Postgresql database. Oracle versions are coming soon.
 
+PDF samples:
+
+- [Account Elements](./install/pdf/CatalogoElementosCuenta.pdf)
+- [State Financial Balance](./install/pdf/BalanceSituacionFinanciera.pdf)
+- [State Financial Integral Results](./install/pdf/EstadoResultadosIntegrales.pdf)
+- [Trial Balance](./install/pdf/BalanceComprobacionPeríodo.pdf)
 
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
@@ -249,8 +259,8 @@ For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempie
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
-## Requires Idempiere release 11 
+## Requires Idempiere Release 11 
 
-  Under Test - See release-11 branch lso for more details.
+  Under Test - See release-11 branch for more details.
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
