@@ -1,0 +1,153 @@
+AD_Org_ID[Name],Value,Name,Description,C_Activity_ID[Value],IsActive
+*,1003430,Asistente de Servicios de Atención al Cliente,Asistente de Servicios de Atención al Cliente,,Y
+*,1003431,Asistente de Tesorería,Asistente de Tesorería,,Y
+*,1003104,Tesorero,,,Y
+*,1003204,Técnico,Técnico,,Y
+*,1000002,Sales Representative,Sales Representative,,Y
+*,1000000,Jefe TI,Jefe TI,,Y
+*,1000001,Store Manager,Store Manager,,Y
+*,1000005,Madre,Madre,,Y
+*,1000009,Esposa,Esposa,,Y
+*,1000011,Asistente,Asistente,,Y
+*,1000105,Padrastro,Padrastro,,Y
+*,1000106,Madrastra,Madrastra,,Y
+*,1000108,Promotora,Promotora,,Y
+*,1000703,Anfitriona de Restaurant,Anfitriona de Restaurant,,Y
+*,1000804,Albañil,Albañil,,Y
+*,1000806,Limpiador/a,Limpiador/a,,Y
+*,1000903,Recepcionista,Recepcionista,,Y
+*,1000906,Analista,Analista,,Y
+*,1001005,Pintor,Pintor,,Y
+*,1001103,Secretaria,Secretaria,,Y
+*,1001303,Carpintero,Carpintero,,Y
+*,1001404,Arquitecto,Arquitecto,,Y
+*,1001505,Barman,,,Y
+*,1002104,Herrero,Herrero,,Y
+*,1002303,Chofer,Chofer,,Y
+*,1002403,Operador de Ecommerce,Operador de Ecommerce,,Y
+*,1002803,Muerte,,,Y
+*,1000006,Hijo,Hijo,,Y
+*,1000104,Cónyugue,Cónyugue,,Y
+*,1000109,Vendedor,Vendedor,,Y
+*,1000304,Ordenanza,Ordenanza,,Y
+*,1000503,Depositero,Depositero,,Y
+*,1000803,Auxiliar Carpinteria,Auxiliar Carpinteria,,Y
+*,1000808,Asistente RRHH,Asistente RRHH,,Y
+*,1000904,Telefonista,Telefonista,,Y
+*,1000905,Supervisor,Supervisor,,Y
+*,1001106,Jefe,Jefe,,Y
+*,1001203,Decorador,Decorador,,Y
+*,1001207,Tecnico de Aire Acondicionado,Tecnico de Aire Acondicionado,,Y
+*,1001304,Tecnico en CCTV,Tecnico en CCTV,,Y
+*,1001305,Electrotecnica,Electrotecnica,,Y
+*,1001503,Cocinero,,,Y
+*,1001504,Chef,,,Y
+*,1001603,Ayudante de Cocina,,,Y
+*,1001903,Jubilacion,Jubilacion,,Y
+*,1002503,Visual merchandising,,,Y
+*,1000003,Titular,Titular,,Y
+*,1000010,Analista TI,,,Y
+*,1000012,Encargado,Encargado,,Y
+*,1000103,Concubino,Concubino,,Y
+*,1000303,Hermano,Hermano,,Y
+*,1000305,Cajera/o,Cajera/o,,Y
+*,1000603,Abuelo(a),Abuelo(a),,Y
+*,1000807,Jefe RRHH,Jefe RRHH,,Y
+*,1001003,Cocinera(Cafeteria),Cocinera(Cafeteria),,Y
+*,1001205,Tio/a,Tio/a,,Y
+*,1001403,Director,Director,,Y
+*,1001703,Rescision de Contrato,,,Y
+*,1001704,Renuncia Laboral,,,Y
+*,1002003,Cotrol de Sensor,,,Y
+*,1002005,Formacion Docente,,,Y
+*,1002105,Encargada del Comedor,,,Y
+*,1002603,Preseleccionado,Preseleccionado,,Y
+*,1002703,Asistente de Gerente,,,Y
+*,1000004,Padre,Padre,,Y
+*,1000007,Hija,Hija,,Y
+*,1000008,Esposo,Esposo,,Y
+*,1000107,Abuelo(a),Abuelo(a),,Y
+*,1000203,Seguridad,Seguridad,,Y
+*,1000204,Diseño,,,Y
+*,1000403,Maquillador/Vendedor,Maquillador/Vendedor,,Y
+*,1000805,Asistente CCTV,Asistente CCTV,,Y
+*,1001004,Electricista,Electricista,,Y
+*,1001104,Demostradora de Perfumes,Demostradora de Perfumes,,Y
+*,1001105,Cobrador,Cobrador,,Y
+*,1001107,Gerente,Gerente,,Y
+*,1001204,Nieto/a,Nieto/a,,Y
+*,1001206,Regente,Regente,,Y
+*,1001405,Mozo/a,Mozo/a,,Y
+*,1001803,Empaquetador,,,Y
+*,1002004,Encargado de Probador,,,Y
+*,1002103,Encargada del Vestidor,,,Y
+*,1002203,Ayudante,Ayudante,,Y
+*,1002604,Vendedor/a Mayorista,,,Y
+*,1002904,Prima,Prima,,Y
+*,1002903,Primo,Primo,,Y
+*,1003003,Fallecimiento,Fallecimiento,,Y
+*,1003004,Vendedora,Vendedora,,Y
+*,1003105,JEFE ADMINISTRATIVO,,,Y
+*,1003205,Ingeniero Electricista,Ingeniero Electricista,,Y
+*,1003304,Auxiliar administrativo,Auxiliar administrativo,,Y
+*,1003404,Encargado de Post-Venta. Relojería,,,Y
+*,1003409,Supervisora de Ventas,Supervisora de Ventas,,Y
+*,1003411,Asistente Adminstrativo Compras,Asistente Adminstrativo Compras,,Y
+*,1003413,Analista Contable,Analista Contable,,Y
+*,1003415,Supervisora de Marcas,Supervisora de Marcas,,Y
+*,1003416,Analista de Marketing,Analista de Marketing,,Y
+*,1003418,Supervisora de Importación y Logística,Supervisora de Importación y Logística,,Y
+*,1003421,Coordinadora Retail,Coordinadora Retail,,Y
+*,1003422,Asistente de Publicidad,Asistente de Publicidad,,Y
+*,1003424,Asistente de Informática,Asistente de Informática,,Y
+*,1003427,Supervisora de Gestión de Personas,Supervisora de Gestión de Personas,,Y
+*,1003432,Representante de Servicio de Atención al Cliente,Representante de Servicio de Atención al Cliente,,Y
+*,1003436,Asistente de Cobranza,Asistente de Cobranza,,Y
+*,1003438,Tesorera,Tesorera,,Y
+*,1003440,Supervisora de Marketing.Comercial,Supervisora de Marketing.Comercial,,Y
+*,1003441,Asistente de Marketing,Asistente de Marketing,,Y
+*,1003444,Analista Digital de Publicidad,Analista Digital de Publicidad,,Y
+*,1003446,Analista de Recursos Humanos,Analista de Recursos Humanos,,Y
+*,1003449,Guardia de Seguridad,Guardia de Seguridad,,Y
+*,1003453,Asistente de Supervisión de Ventas,Asistente de Supervisión de Ventas,,Y
+*,1003454,Técnico de Esacleras Mecánicas y Ascensores,Técnico de Esacleras Mecánicas y Ascensores,,Y
+*,1003455,Asistente de Compras Locales,Asistente de Compras Locales,,Y
+*,1003456,Promotora de Ventas,Promotora de Ventas,,Y
+*,1003459,Supervisor de Mantenimiento,Supervisor de Mantenimiento,,Y
+*,1003508,Ayudante Carpintero,Ayudante Carpintero,,Y
+*,1003506,Ayudante Pintor,Ayudante Pintor,,Y
+*,1003406,Diego Jose Fernandez,Supervisor de Seguridad,,Y
+*,1003414,Asistente de Marketing Comercial,Asistente de Marketing Comercial,,Y
+*,1003417,Asistente de Importación y Logística,Asistente de Importación y Logística,,Y
+*,1003419,Supervisor Financiero,Supervisor Financiero,,Y
+*,1003423,Supervisora de Arquitectura,Supervisora de Arquitectura,,Y
+*,1003426,Analista de Nómina. Recursos Humanos,Analista de Nómina. Recursos Humanos,,Y
+*,1003429,Supervisora Contable,Supervisora Contable,,Y
+*,1003433,Asistente de Tesorería,Asistente de Tesorería,,Y
+*,1003435,Cobrador,Cobrador,,Y
+*,1003437,Asistente Financiero,Asistente Financiero,,Y
+*,1003442,Analista de Importaciones y Logística,Analista de Importaciones y Logística,,Y
+*,1003445,Diseñadora y Creativa Gráfica,Diseñadora y Creativa Gráfica,,Y
+*,1003447,Personal de Depósito,Personal de Depósito,,Y
+*,1003450,Guardia de Seguridad,Guardia de Seguridad,,Y
+*,1003451,Empaquetador/a,Empaquetador/a,,Y
+*,1003452,Asistente de Operaciones.Depósito,Asistente de Operaciones.Depósito,,Y
+*,1003460,Asistente de Cafetería,Asistente de Cafetería,,Y
+*,1003505,Supervisor de Producción de Muebles,Supervisor de Producción de Muebles,,Y
+*,1003509,Asistente de Arquitectura,Asistente de Arquitectura,,Y
+*,1003410,Supervisora de Cafetería,Supervisora de Cafetería,,Y
+*,1003407,Supervisor de Seguridad,Supervisor de Seguridad,,Y
+*,1003408,Supervisor de Operaciones. Depósito,Supervisor de Operaciones. Depósito,,Y
+*,1003412,Asistente Administrativo,Asistente Administrativo,,Y
+*,1003420,Supervisora de Publicidad,Supervisora de Publicidad,,Y
+*,1003425,Asistente de Reportes Gerenciales,Asistente de Reportes Gerenciales,,Y
+*,1003428,Asistente de Recursos Humanos,Asistente de Recursos Humanos,,Y
+*,1003434,Asistente Financiero,Asistente Financiero,,Y
+*,1003439,Asistente de Auditoria,Asistente de Auditoria,,Y
+*,1003443,Supervisora Administrativa,Supervisora Administrativa,,Y
+*,1003448,Supervisor de Depósito,Supervisor de Depósito,,Y
+*,1003457,Asistente Contable,Asistente Contable,,Y
+*,1003458,Tesorero,Tesorero,,Y
+*,1003507,Ayudante  Herrero,Ayudante Herrero,,Y
+*,1003704,Supervisora de Marcas JR,Supervisora de Marcas JR,,Y
+*,1003604,Amigo/a,,,Y

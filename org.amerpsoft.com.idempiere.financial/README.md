@@ -1,5 +1,4 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="AMERPSOFT_logo">

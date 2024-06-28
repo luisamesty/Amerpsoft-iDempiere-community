@@ -1,0 +1,548 @@
+CalcOrder,Value,AMN_Concept_Uom_ID[Value],optmode,Name,Description,rule,arc,utilidad,vacacion,prestacion,sso,ince,faov,spf,salario,sign,C_DocType_ID[Name],isrepeat,isshow,isValue,isQty,isDate,variable,formula,DefaultValue,daydiscriminated,Script,IsActive,conceptsource,feriado,Note,ScriptDefaultValue
+100050,SB,Bs,R,Salario Básico Trabajador,Salario Básico Mensual del Trabajador,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,N,Y,Y,Y,SB,CN,Ver Script Valor por Defecto,N,,Y,L,N,, if (SB > SBMIN ) { SB + 0 ; } else { SBMIN +0; }
+100100,DIAS,Dias,R,Dias Trabajados,Valor por defecto No Días del Tipo de Contrato,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,Y,Y,DIAS,CN,15 + 0,N,,Y,L,Y,,
+100110,HORAS,Horas,R,Horas Trabajadas,Valor por defecto según LOTT,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,Y,Y,HORAS,CN,0,N,,Y,L,N,,
+100120,SALARIO,Bs,A,Salario Trabajador,Salario Mensual Trabajador,F,Y,Y,Y,Y,Y,Y,Y,Y,Y,D,Payroll,N,Y,Y,Y,Y,SALARIO,(QT_SB/30)*QT_DIAS*CN,1,N,,Y,L,Y,SB/30*DT,
+100125,RETROACTIVO,Horas,A,Retroactivo,Retroactivo,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,RETROACTIVO,CN,0,N,,Y,C,Y,,
+100130,HND,Horas,A,Horas Normales Laboradas,Horas Normales Laboradas,V,Y,Y,Y,Y,Y,Y,Y,Y,Y,D,Payroll,Y,Y,Y,Y,Y,HND,((QT_SB/30)*CN/8),BUSINESSDAYS*8,N,,Y,L,Y,,
+100135,TIEMPOVIA,Bs,A,Tiempo de Viaje,Salario del Trabajador durante Horas de Viaje,V,Y,Y,Y,Y,Y,Y,Y,Y,Y,D,Payroll,N,Y,Y,Y,Y,TIEMPOVIA,((QT_SB/30)*CN/8),2.5,N,,Y,L,Y,SB/30*DT,
+100140,HNN,Horas,A,Horas Normales Nocturnas,Según Turno 18:01 a 4:59 sig. Dí­a,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,Y,Y,HNN,((QT_SB/30)/8)*CN*1.3,0,N,,Y,L,Y,,
+100150,HED,Horas,A,Horas Extras Diurnas,Según Turno des 05:00 a 18:00,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,Y,Y,HED,((QT_SB/30)/8)*CN*1.6,0,N,,Y,L,N,,
+100160,HEN,Horas,A,Horas Extras Nocturnas,Según Turno 18:01 a 4:59 siguiente dí­a,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,Y,Y,HEN,((QT_SB/30)/8)*CN*1.5*1.3,0,N,,Y,L,Y,,
+100165,HORFALTJUS,Horas,R,Horas faltadas Justificadas,Horas faltadas Justificadas,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,HORFALTJUS,CN,0,N,,Y,L,N,,
+100170,HORFALTINJUS,Horas,R,Horas faltadas Injustificadas,Horas faltadas Injustificadas,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,HORFALTINJUS,CN,0,N,,Y,L,N,,
+100174,DIASFALTJUS,Dias,R,Días faltados Justificados,Dias faltados Justificados,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,DIASFALTJUS,CN,0,N,,Y,L,N,,
+100176,DIASFALTINJUS,Dias,R,Días faltados Injustificados,Días faltados Injustificados,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,DIASFALTINJUS,CN,0,N,,Y,L,N,,
+100178,PERMISOREM,Dias,A,Permiso Remunerado,Permiso Remunerado,V,Y,N,N,N,N,Y,Y,N,N,D,Payroll,Y,Y,Y,Y,Y,PERMISOREM,((QT_SB/30)/8)*CN,0,N,,Y,L,N,,
+100185,    OTRASASIG,Bs,A,Otras Asignaciones,Otras Asignaciones,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,N,N,OTRASASIG,CN,0,N,,Y,L,Y,,
+100190,AJUSTE,Bs,A,Ajuste de Asignacion,Ajuste de Asignacion,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,N,N,AJUSTE,CN,1,N,,Y,C,N,,
+100195,AJUSTEISLR,Bs,A,Descuentos Indebidos ISLR,Descuentos Indebidos ISLR,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,N,N,AJUSTEISLR,CN,1,N,,Y,C,N,,
+100207,RETROACTIVO,Bs,A,Retroactivo,Retroactivo,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,N,N,RETROACTIVO,CN,0,N,,Y,L,Y,,
+100230,BONOASIST,Dias,A,Bono por Asistencia Puntual,Claúsula 54 del contrato colectivo,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,BONOASIST,if (AM_Currency=='VEB') { 9*CN + 0 ; } else { 9*CN + 0 ;},DTPER - HOLLIDAYS - NONLABORDAYS + 0,N,,Y,C,Y,"ANTES 36000*CN + 0
+NUEVO if (AM_Currency=='VEB') { 36000*CN + 0 ; } else { 0,3600*CN + 0 ;}
+if (AM_Currency=='VEB') { 0,3600*CN + 0 ; } else { 0,3600*CN + 0 ;}",
+100240,BONOTRANSP,Dias,A,Compensación por gasto de Transporte,Clausula 40 del contrato colectivo 15% de Unidad Tributaria,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,BONOTRANSP,if (AM_Currency=='VEB') { 4*CN + 0 ; } else { 4*CN + 0 ;},DTPER - HOLLIDAYS - NONLABORDAYS + 0,N,,Y,C,Y,"0.15*(UNIDADTRIBUTARIA)*CN ANTES
+ANTES 60000*CN + 0
+NUEVO if (AM_Currency=='VEB') { 60000*CN + 0 ; } else { 0,6000*CN + 0 ;}",
+100250,BONOPOSTVAC,Horas,A,Bono Post Vacacional,Según Turno desde 05:00 a 18:00,V,N,Y,N,Y,N,N,Y,N,N,D,Payroll,Y,Y,Y,N,Y,BONOPOSTVAC,if (AM_Currency=='VEB') { 135000000*CN + 0 ; } else { 1350*CN + 0 ;},1,N,,Y,L,N,"ANTES 2250000*CN*CN + 0
+NUEVO if (AM_Currency=='VEB') { 2250000*CN*CN + 0 ; } else { 22.5000*CN + 0 ;}",
+100290,BONOTOA,Bs,A,Bono por Lavado de Toallas,Bono por Lavado de Toallas,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,N,N,BONOTOA,CN,0,N,,Y,C,N,,
+100300,BONOMANT,Bs,A,Bono de Mantenimiento de Cancha,Bono de Mantenimiento de Cancha,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,N,N,BONOMANT,CN,1,N,,Y,C,N,,
+100305,BONOSUPLENCIA,Bs,A,Bonificación por Suplencia,Bonificación por Suplencia,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,N,N,BONOSUPLENCIA,CN,1,N,,Y,C,Y,,
+100310,BONOEXTRA,Bs,A,Bonificación por Trabajo Extra,Bonificación por Trabajo Extra,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,Y,Y,Y,N,N,BONOEXTRA,CN,0,N,,Y,C,Y,,
+100550,FERIADORE,Dias,A,Dí­as Feriados Regionales,Dí­as Feriados Regionales,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,FERIADORE,Script,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+       R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE);
+        break;
+     default:
+	   if ((BUSINESSDAYS-QT_FERIADORE) == 0) {
+	      (QT_SB/30*CN );
+	   } else {
+          if (R_DESCANSO/(BUSINESSDAYS-CN) > QT_SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-CN); } else { QT_SB/30*CN; } 
+	   }
+}",Y,L,N,R_DESCANSO*CN/LABORDAYS,
+100600,DESCANSO,Dias,A,Días de Descanso,Días de Descanso,V,Y,Y,Y,Y,Y,Y,Y,Y,Y,D,Payroll,N,Y,Y,Y,Y,DESCANSO,Ver Script,NONLABORDAYS + 0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+       R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE);
+        break;
+     default:
+        (QT_SB/30) * 1.5*CN ;
+}",Y,L,N,"if (R_DESCANSO/LABORDAYS > SB/30 ) {R_DESCANSO*CN/LABORDAYS; } else { SB/30*CN; }
+if (R_DESCANSO/5 > SB/30 ) {R_DESCANSO*CN/LABORDAYS; } else { SB/30*CN; }
+if (R_DESCANSO/(QTY_HND/8) > SB/30 ) {R_DESCANSO*CN/(QTY_HND/8); } else { SB/30*CN; }
+if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { SB/30*CN; }
+if (R_DESCANSO/(LABORDAYS-HOLLIDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(LABORDAYS-HOLLIDAYS-QT_FERIADORE); } else { SB/30*CN; }",
+100610,DESCANSOT,Dias,A,Días de Descanso Trabajado,Días de Descanso Trabajado,V,Y,Y,Y,Y,Y,Y,Y,Y,Y,D,Payroll,N,Y,Y,Y,Y,DESCANSOT,Ver Script,0,N,"if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > QT_SB/30 ) {
+       R_DESCANSO*1.5*CN/(BUSINESSDAYS-QT_FERIADORE); 
+    } else { 
+       QT_SB/30*CN*1.5; }",Y,L,N,,
+100700,FERIADO,Dias,A,Días Feriados,Días Feriados,V,Y,Y,Y,Y,Y,Y,Y,Y,Y,D,Payroll,N,Y,Y,Y,Y,FERIADO,Ver Script,HOLLIDAYS + 0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+       R_DESCANSO*CN*1.5/(BUSINESSDAYS-QT_FERIADORE);
+        break;
+     default:
+	 QT_SB/30*CN*1.5;  
+}",Y,L,N,"R_DESCANSO*CN/LABORDAYS
+if (R_DESCANSO/(QTY_HND/8) > SB/30 ) {R_DESCANSO*CN/(QTY_HND/8); } else { SB/30*CN; }
+if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { SB/30*CN; }",
+100710,FERIADOT,Dias,A,Dí­as Feriados Trabajados,Dí­as Feriados Trabajados,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,FERIADOT,if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > QT_SB/30 ) {R_DESCANSO*1.6*CN/(BUSINESSDAYS-QT_FERIADORE); } else { QT_SB/30*CN*1.6; },0,N,,Y,L,N,,
+100900,DOMINGOT,Dias,A,Domingo Trabajados,Domingo Trabajados,V,Y,Y,Y,Y,N,Y,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,DOMINGOT,(QT_SB/30) * 1.5*CN,0,N,,Y,L,N,,
+120100,PAGAEXTRA,Bs,A,Pago Extra de Ayuda,Pago Extra de Ayuda,F,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,N,N,PAGAEXTRA,CN,script,N,,Y,C,N,"var strDate = ACCT_Date;
+var strActivity= AM_Activity ;
+var strWorkforce = AM_Workforce;
+var diacont =  strDate.substring(8,10);
+switch(diacont ) {
+     case  '11':
+           switch(strWorkforce ) {
+               case  'M':
+                   10000 + 0  ; 
+                   break;
+              case  'A':
+                    6000 +0 ;
+                    break;
+              default:
+                   4000+0 ;
+           }
+           break;
+     case  '20':
+                 3581.91 +0 ;
+                 break;
+     case  '26':
+           switch(strWorkforce ) {
+               case  'M':
+                   10000 + 0  ; 
+                   break;
+              case  'A':
+                    6000 +0 ;
+                    break;
+              default:
+                   4000+0 ;
+           }
+        break;
+     default:
+       0 ;
+}","var strDate = ACCT_Date;
+var strActivity= AM_Activity ;
+var strWorkforce = AM_Workforce;
+var diacont =  strDate.substring(8,10);
+switch(diacont ) {
+     case  '11':
+           switch(strWorkforce ) {
+               case  'M':
+                   10000 + 0  ; 
+                   break;
+              case  'A':
+                    6000 +0 ;
+                    break;
+              default:
+                   4000+0 ;
+           }
+           break;
+     case  '20':
+                 3581.91 +0 ;
+                 break;
+     case  '26':
+           switch(strWorkforce ) {
+               case  'M':
+                   12000 + 0  ; 
+                   break;
+              case  'A':
+                    7000 +0 ;
+                    break;
+              default:
+                   5000+0 ;
+           }
+        break;
+     default:
+       0 ;
+}"
+140115,REPOSO,Dias,A,Reposo 33.33%,Reposo 33.33%,V,Y,N,N,Y,N,N,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,REPOSO,(QT_SB/30)*QT_DIAS*CN*33.33/100,1,N,,Y,L,N,,
+140120,REPOSO100,Dias,A,Reposo 100%,Reposo 100%,V,Y,N,N,Y,N,N,Y,N,Y,D,Payroll,N,Y,Y,Y,Y,REPOSO100,(QT_SB/30)*QT_DIAS*CN*100/100,1,N,,Y,L,N,,
+150000,CATICKETHR,Bs,A,Programa de Alimentación Horas Laboradas,Programa de Alimentación Horas  Laboradas en base al Salario Mínimo,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,CATICKETHR,((SBMIN/30)*CN/8)/10,BUSINESSDAYS*8,N,,Y,L,N,,
+150001,CATICKETDE,Bs,A,Programa de Alimentación Descanso,Programa de Alimentación Descanso en base al Salario Mínimo,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,CATICKETDE,((SBMIN/30)*CN/8)/10,NONBUSINESSDAYS*8,N,,Y,L,N,,
+150002,CATICKET1,Bs,R,Cantidad UT Programa de Alimentación M1,Cantidad Unidades Tributarias Programa de Alimentación M1,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,CATICKET1,CN,(61) + 0,N,,Y,L,N,,
+150005,UTTICKET1,Bs,R,UT Programa de Alimentación M1,Unidad Tributaria Programa de Alimentación M1,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,UTTICKET1,CN,850,N,,Y,L,N,,
+150010,TICKET1,Horas,A,Horas Laboradas M1,Horas Laboradas M1,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,TICKET1,(61 * (QT_UTTICKET1))/8*CN,104,N,,Y,L,N,,
+150020,DESTICKET1,Horas,A,Descanso y Feriados M1,Descanso y Feriados M1,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,DESTICKET1,(61 * (QT_UTTICKET1))/8*CN,40,N,,Y,L,N,,
+150102,CATICKET2,Bs,R,Cantidad UT Programa de Alimentación M2,Cantidad Unidades Tributarias Programa de Alimentación M2,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,CATICKET2,CN,(61) + 0,N,,Y,L,N,,
+150105,UTTICKET2,Bs,R,UT Programa de Alimentación M2,Unidad Tributaria Programa de Alimentación M2,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,UTTICKET2,(UNIDADTRIBUTARIA) + 0,(UNIDADTRIBUTARIA) + 0,N,,Y,L,N,,
+150110,TICKET2,Horas,A,Horas Laboradas M2,Horas Laboradas M2,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,TICKET2,(61 * (QT_UTTICKET2))/8*CN,136,N,,Y,L,N,,
+150115,TICKETADI,Horas,A,Horas Adicionales segun convenio colectivo,Horas Adicionales según Convenio colectivo,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,TICKETADI,(61 * (QT_UTTICKET2))/8*CN,0,N,,Y,C,N,,
+150120,DESTICKET2,Horas,A,Descanso y Feriados M2,Descanso y Feriados M2,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,DESTICKET2,(61 * (QT_UTTICKET2))/8*CN,40,N,,Y,L,N,,
+150210,TICKETLAB,Bs,A,Programa de Alimentación Dias Laborados,Programa de Alimentación Dias Laborados,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,TICKETLAB,((SBMIN/30)*CN)/10,BUSINESSDAYS + 2,N,,Y,L,N,,
+150220,TICKETDDE,Bs,A,Programa de Alimentación Dias Descanso,Programa de Alimentación Dias Descanso,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,TICKETDDE,((SBMIN/30)*CN)/10,NONBUSINESSDAYS + 0,N,,Y,L,N,,
+150250,TICKETADI,Bs,A,Programa de Alimentación Adicional,Programa de Alimentación Adicional,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,TICKETADI,Ver Script,1535,N,CN,Y,L,N,,
+150900,TICKETDES,Bs,D,Descuento Convenio de Alimentación,Descuento Convenio de Alimentación,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,N,N,N,TICKETDES,CN,0,N,,Y,C,N,,
+150910,CATICKETAJ,Bs,A,Programa de Alimentación Ajustes redondeo,Programa de Alimentación Ajustes redondeo,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,CATICKETAJ,CN,1.95,N,,Y,L,N,,
+180050,CLAUSULA01,Bs,A,Facilidades para Adquisición de Medicinas,Facilidades para Adquisición de Medicinas,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,CLAUSULA01,CN,0,N,,Y,C,N,,
+180100,CLAUSULA02,Bs,A,Facilidades para Consulta Médica,Facilidades para Consulta Médica,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,CLAUSULA02,CN,0,N,,Y,C,N,,
+180110,CLAUSULA03,Bs,A,Facilidades para Adquisición de Lentes Correctivos,Facilidades para Adquisición de Lentes Correctivosa,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,CLAUSULA03,CN,0,N,,Y,C,N,,
+200100,SALVACAC,Dias,R,Salario Promedio Vacaciones,SalarioPromedio Base del Calculo de Vacaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,SALVACAC,CN,(SBMIN)/30,N,,Y,L,N,Anterior: (DV_SALVACAC)/30,
+200102,VACACION,Dias,A,Vacaciones Art  190 LOTTT,DIAS DE DISFRUTE de Vacaciones,F,Y,Y,N,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACACION,QT_SALVACAC*CN,15,N,,Y,L,N,,
+200105,VACAC190,Dias,A,Días Adicionales Vacaciones Art. 190 LOTTT,Días Adicionales Vacaciones Art. 190 LOTTT,F,Y,Y,N,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACAC190,QT_SALVACAC*CN,DV_VACAC190,N,,Y,L,N,,
+200110,VACAC192,Dias,A,Bono Vacacional Art. 192 LOTTT,Bono 15 Días Art 192 Con Carácter Salarial,F,N,Y,N,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACAC192,QT_SALVACAC*CN,15,N,,Y,L,N,,
+200120,VACAC192A,Dias,A,Días Adicionales Bono Vacacional Art. 192 LOTTT,Bono Adicional Art 192 por cada año de servicio,F,N,Y,Y,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACAC192A,QT_SALVACAC*CN,DV_VACAC192A +1,N,,Y,L,N,,
+200130,VACACFER,Dias,A,Días Feriados,Días Feriados durante el período de vaciones,F,Y,Y,N,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACACFER,QT_SALVACAC*CN,DV_VACACFER + 0,N,,Y,L,N,,
+200135,VACACFERRE,Dias,A,Días Feriados Regionales,Días Feriados Regionales durante el período de vaciones,V,Y,Y,N,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACACFERRE,QT_SALVACAC*CN,0,N,,Y,L,N,,
+200140,VACACDES,Dias,A,Días de Descanso Vacaciones,Días de Descanso Vacaciones,F,Y,Y,N,N,Y,N,Y,Y,N,D,Payroll,N,Y,Y,Y,Y,VACACDES,QT_SALVACAC*CN,DV_VACACDES,N,,Y,L,N,,
+200170,REPOSO33,Bs,A,"Reposo 33,33%","Reposo 33,33%",V,Y,N,N,Y,N,Y,Y,N,N,D,,Y,Y,N,N,N,REPOSO33,((QT_SALVAC/8)*CN)*33.33/100,1,N,,Y,L,N,,
+200510,AJUSNVDB,Bs,A,AJUSTE VACACIONES DB,AJUSTE VACACIONES DB,V,Y,N,N,Y,N,Y,Y,N,N,D,,Y,Y,N,N,N,AJUSNVDB,CN,0,N,,Y,L,N,,
+200520,AJUSNVCR,Bs,D,AJUSTE VACACIONES CR,AJUSTE VACACIONES CR,V,Y,N,N,Y,N,Y,Y,N,N,C,,Y,Y,N,N,N,AJUSNVCR,CN,0,N,,Y,L,N,,
+250000,SALDOINIPREST,Bs,R,Saldos Iniciales de Prestaciones,Saldos Iniciales de  Acumulación de Prestaciones,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,SALDOINIPREST,CN,0,N,,Y,L,N,,
+250100,SALPREST,Bs,R,Salario Diario Base de Prestaciones,Salario Diario Base para el Cálculo de Acumulación de Prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,SALPREST,CN,if (DV_SALPREST > DV_SALARYLAST ) {(DV_SALPREST)/30 ; } else { (DV_SALARYLAST)/30 ; },N,,Y,L,N,"DV_SALPREST , DV_SALARIOP , DV_SALARYSB : Returns Average last three months
+DV_SALARYLAST: Returns Average last month.
+Defore: (DV_SALPREST)/30
+Now: if (DV_SALPREST > DV_SALARYLAST ) {(DV_SALPREST)/30 ; } else { (DV_SALARYLAST)/30 ; }",
+250110,SALDOINIPR,Bs,A,Salario Diario Base de Prestaciones,Salario Diario Base para el Cálculo de Acumulación de Prestaciones,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,SALDOINIPR,CN,CN,N,,Y,L,N,,
+250120,INCUTILID,Bs,R,Incidencia por bonificación de fin de año,Incidencia por bonificación de fin de año en Abono de Prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,INCUTILID,VER SCRIPT,30,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    case  'C':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    default:
+         CN*(QT_SALPREST/ 360 )
+}",Y,L,N,,
+250130,INCVACAC,Bs,R,Incidencia por Vacaciones,Incidencia por Vacaciones en Abono de Prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,INCVACAC,VER SCRIPT,if ((DV_INCVACAC +3 ) > 30)  { 30 ;} else { (DV_INCVACAC + 3 );},N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    case  'C':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    default:
+         CN*(QT_SALPREST/ 360 )
+}",Y,L,N,,
+250140,SALINTEPR,Bs,R,Total Salario Integral Prestaciones,Total Salario Integral Prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,SALINTEPR,VER SCRIPT,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         QT_SALPREST  + QT_INCVACAC*(QT_SALPREST/ 365 ) + QT_INCUTILID*(QT_SALPREST/ 365 )
+          break;
+    case  'ME':
+        QT_SALPREST  + QT_INCVACAC*(QT_SALPREST/ 365 ) + QT_INCUTILID*(QT_SALPREST/ 365 )
+          break;
+    default:
+         QT_SALPREST  + QT_INCVACAC*(QT_SALPREST/ 360 ) + QT_INCUTILID*(QT_SALPREST/ 360 )
+}
+",Y,L,N,,
+250150,ABONOPS,Bs,A,Depósito de Garantía de Prestaciones Sociales Art. 143 LOTT,Abono por Concepto de Prestaciones Sociales Art. 143 LOTT,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,ABONOPS,Ver Script,DV_ABONOPS,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    case  'C':
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    default:
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 360 )
+}",Y,L,N,,
+250200,SAL12PREST,Bs,R,Salario Diario Integral de Prestaciones Art.142 B,Salario Diario Promedio Integral Ultimos 12 meses Base para el Cálculo de Acumulación de Días Adicionales de Prestaciones Art 142 B,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,SAL12PREST,CN,if (DV_SAL12PREST > DV_SALARYLAST ) {(DV_SAL12PREST)/30 ; } else { (DV_SALARYLAST)/30 ; },N,,Y,L,N,"DV_SAL12PREST : Returns Average last twelve months
+DV_SALARYLAST: Returns Average last month.
+Defore: (DV_SALPREST)/30
+Now: if (DV_SAL12PREST > DV_SALARYLAST ) {(DV_SAL12PREST)/30 ; } else { (DV_SALARYLAST)/30 ; }",
+250205,INCUTILIDADIC,Bs,R,Incidencia por bonificación de fin de año Adicional,Incidencia por bonificación de fin de año Adicional en Abono de Prestaciones Anual,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,INCUTILIDADIC,VER SCRIPT,30,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SAL12PREST/ 365 )
+          break;
+    case  'ME':
+         CN*(QT_SAL12PREST/ 365 )
+          break;
+    default:
+         CN*(QT_SAL12PREST/ 360 )
+}",Y,L,N,,
+250210,INCVACACADIC,Bs,R,Incidencia por Vacaciones Adicional,Incidencia por Vacaciones en Abono de Prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,INCVACACADIC,VER SCRIPT,QT_INCVACAC + 0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SAL12PREST/ 365 )
+          break;
+    case  'ME':
+         CN*(QT_SAL12PREST/ 365 )
+          break;
+    default:
+         CN*(QT_SAL12PREST/ 360 )
+}",Y,L,N,,
+250215,SALINTEPRADIC,Bs,R,Salario Integral Prestaciones Anual,Total Salario Integral Prestaciones Anual,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,SALINTEPRADIC,VER SCRIPT,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         QT_SAL12PREST  + QT_INCVACACADIC*(QT_SAL12PREST/ 365 ) + QT_INCUTILIDADIC*(QT_SAL12PREST/ 365 )
+          break;
+    case  'ME':
+        QT_SAL12PREST  + QT_INCVACACADIC*(QT_SAL12PREST/ 365 ) + QT_INCUTILIDADIC*(QT_SAL12PREST/ 365 )
+          break;
+    default:
+         QT_SAL12PREST  + QT_INCVACACADIC*(QT_SAL12PREST/ 360 ) + QT_INCUTILIDADIC*(QT_SAL12PREST/ 360 )
+}",Y,L,N,,
+250220,ABONOPSA,Bs,A,Abono por Deposito Anual Prestaciones Sociales Adicionales,Abono por Deposito Anual de Prestaciones Sociales Adicionales Art. 143 LOTT,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,ABONOPSA,Ver Script,DV_ABONOPSA + 0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SAL12PREST)*(1 + (QT_INCVACACADIC+QT_INCUTILID) / 365 )
+          break;
+    case  'ME':
+         CN*(QT_SAL12PREST)*(1 + (QT_INCVACACADIC+QT_INCUTILID) / 365 )
+          break;
+    default:
+         CN*(QT_SAL12PREST)*(1 + (QT_INCVACACADIC+QT_INCUTILID) / 360 )
+}",Y,L,N,,
+250225,ABONOMPSA,Bs,A,Abono CM Deposito Anual Prestaciones Sociales Adicionales,Abono por Deposito Anual de Prestaciones Sociales Adicionales Art. 143 LOTT,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,ABONOMPSA,Ver Script,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALM12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALM12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    default:
+         CN*(QT_SALM12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 360 )
+}",Y,L,N,,
+250230,AJUSTEPSDB,Bs,A,Ajustes de Prestaciones A Favor,Ajustes Indemnización de Prestaciones Sociales a Favor del Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,AJUSTEPSDB,CN,0,N,,Y,L,N,,
+250240,AJUSTEPSCR,Bs,A,Ajustes de Prestaciones En Contra,Ajustes Indemnización de Prestaciones Sociales en Contra del Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,AJUSTEPSCR,CN,0,N,,Y,L,N,,
+250250,INTERPRESTDB,Bs,A,Ajustes Intereses de Prestaciones A Favor,Ajustes Indemnización de Intereses de Prestaciones Sociales a Favor del Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,Y,INTERPRESTDB,CN,0,N,,Y,,N,,
+250260,INTERPRESTCR,Bs,D,Ajustes Intereses de Prestaciones Descuento,Ajustes Indemnización de Intereses de Prestaciones Sociales descontadas al Trabajador,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,Y,INTERPRESTCR,CN,0,N,,Y,,N,,
+300050,SALUTIL,Bs,R,Salario Utilidades,Salario Base de Cáculo de Utilidades,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,SALUTIL,CN,SBMIN + 0,N,,Y,L,N,,
+300080,UTILIDDEV,Bs,R,Asignaciones del Período,Asignaciones del Período Base de Cáculo de Utilidades,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,N,N,N,UTILIDDEV,CN,(DV_UTILIDDEV) + 0,N,,Y,C,N,,
+300100,UTIL30D,Dias,A,Bonificación Fin de Año 30 Días,Bonificación Fin de Año 30 Días,F,N,N,N,N,N,Y,Y,N,N,D,Payroll,N,Y,Y,Y,Y,UTIL30D,CN,SBMIN +0,N,,Y,C,N,"Formula Script:
+var Contrato= AM_Contract;
+switch(Contrato ) {
+       case  'QU':
+         (CN) + 0
+          break;
+       case  'C':
+         (CN) + 0
+          break;
+       case  'ME':
+         (CN) + 0
+          break;
+       default:
+         (CN) + 0
+  }",
+300110,UTILANT,Dias,A,Asignación Anticipo Utilidades Antes del Cierre,Asignación Anticipo Utilidades Antes del Cierre,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,UTILANT,SB/30*CN,30,N,,Y,,N,,
+300120,UTILDEF,Bs,A,Asignación Definitiva Utilidades Cierre de ejercicio,Asignación Definitiva Utilidades Cierre de ejercicio,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,UTILDEF,SB/30*CN,1,N,,Y,,N,,
+300130,UTILADIC,Bs,A,Bonificación Fin de Año Adicional,Bonificación Fin de Año Adicional,F,N,N,N,N,N,Y,Y,N,N,D,Payroll,N,Y,Y,N,N,UTILADIC,CN,SBMIN + 0,N,,Y,,N,,
+400030,PLSALMEN,Bs,R,Salario Mensual Básico Trabajador,Salario Mensual Básico Trabajador para el cálculo de Liquidación de prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,PLSALMEN,script,SBMIN + 0,N,CN,Y,,N,,
+400040,SALMENLIQ,Bs,R,Salario Base Mensual Liquidación de prestaciones,Salario Base Mensual para el cálculo de Liquidación de prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,SALMENLIQ,CN,if (SBMIN > DV_SALARYLAST ) { SBMIN +0 ; } else { DV_SALARYLAST + 0 ; },N,,Y,,N,"Antes: SBMIN + 0
+Ahora: if (SBMIN > DV_SALARYLAST ) { SBMIN +0 ; } else { DV_SALARYLAST + 0 ; }",
+400050,SALBASLIQ,Bs,R,Salario Base Diario Liquidación de prestaciones,Salario Base Diario para el cálculo de Liquidación de prestaciones,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,SALBASLIQ,CN * (QT_SALMENLIQ / 30 ),1,N,,Y,,N,,
+400100,ACUMPRESTAC,Bs,R,Antiguedad Acumulada Según Artículo 142 Literal A y B,Indemnización Antiguedad acumulada neta según Artículo 142 Literal A y B,F,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,N,N,ACUMPRESTAC,CN,DV_ACUMPRESTAC + 0,N,,Y,,N,,
+400110,ANTIGUEDADC,Dias,R,Días de Antiguedad Según Artículo 142 Literal C,Días de Antiguedad para efectos de Indemnización Según Artículo 142 Literal C,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,ANTIGUEDADC,CN,if ((RV_FDAYS_SERVICE ) > 180 )  { 30 * RV_FYEAR_SERVICE ;} else { 5 * ( RV_FDAYS_SERVICE / 30);},N,,Y,,N,"Antes: 30 * RV_FYEAR_SERVICE
+Ahora: if ((RV_FDAYS_SERVICE ) > 180 )  { 30 * RV_FYEAR_SERVICE ;} else { 5 * ( RV_FDAYS_SERVICE / 30);}",
+400115,ANTIGUEDADDIAS,Dias,R,Días de Antiguedad Absolutos,Días de Antiguedad para efectos de Indemnización Según Artículo 142 Literal C,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,ANTIGUEDADDIAS,CN,RV_FDAYS_SERVICE,N,,Y,,N,,
+400120,ANTIGUEDADCM,Bs,R,Antiguedad Basada en Ultimo Salario Artículo 142 Literal C,Indemnización Antiguedad Según Artículo 142 Literal C,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,ANTIGUEDADCM,RS_SALBASLIQ*CN,if ((RV_FDAYS_SERVICE ) > 180 )  { 30 * RV_FYEAR_SERVICE ;} else { 5 * ( RV_FDAYS_SERVICE / 30);},N,,Y,,N,"Antes : 30 * RV_FYEAR_SERVICE
+Ahora: if ((RV_FDAYS_SERVICE ) > 180 )  { 30 * RV_FYEAR_SERVICE ;} else { 5 * ( RV_FDAYS_SERVICE / 30);}",
+400140,ANTICIPPREST,Bs,R,Anticipos Prestaciones Otorgados,Anticipos Prestaciones Otorgados,F,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,N,N,ANTICIPPREST,CN,0,N,,Y,,N,,
+400150,ANTIGUEDADPA,Bs,A,Antiguedad a indemnizar definitiva,Indemnización Antiguedad definitiva a Pagar Según Artículo 142 Literales A B y C,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,ANTIGUEDADPA,RS_ANTIGUEDADCM * CN,1,N,,Y,,N,,
+400190,INTERESESPS,Bs,A,Intereses Prestaciones Sociales Acumulados,Saldo de Intereses Prestaciones Sociales Acumulados,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,INTERESESPS,CN,0,N,,Y,,N,,
+400200,VACACVENC,Dias,A,Vacaciones Vencidas Perí­odos anteriores,Vacaciones Vencidas Perí­odos anteriores XXXX,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,N,N,VACACVENC,RS_SALBASLIQ*CN,15,N,,Y,,N,,
+400210,BONOVACACV,Dias,A,Bono Vacacional Vencido,Bono Vacacional Vencido,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,BONOVACACV,RS_SALBASLIQ*CN,DV_VACAC190,N,,Y,,N,,
+400250,VACACDFRAC,Dias,R,Días Transcurridos para Cálculo de Vacaciones Fraccionadas,Días Transcurridos para Cálculo de Vacaciones Fraccionadas del Período Actual,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,VACACDFRAC,CN,RV_FDAYSFRAC + 0,N,,Y,,N,"Vacaciones.
+LOTTT Artículo 190.
+Cuando el trabajador o la trabajadora cumpla un año de trabajo ininterrumpido para un patrono o una patrona, disfrutará de un período de vacaciones remuneradas de quince días hábiles.
+Los años sucesivos tendrá derecho además a un día adicional remunerado por cada año de servicio, hasta un máximo de quince días hábiles.
+Las vacaciones que se interrumpan por hechos no imputables al trabajador o a la trabajadora, se reactivarán al cesar esas circunstancias.
+Durante el periodo de vacaciones el trabajador o la trabajadora tendrá derecho a percibir el beneficio de alimentación, conforme a las previsiones establecidas en la ley que regula la materia.
+Durante el periodo de vacaciones no podrá intentarse ni iniciarse algún procedimiento para despido, traslado o desmejora contra el trabajador o la trabajadora.
+El servicio de un trabajador o una trabajadora no se considerará interrumpido por sus vacaciones anuales, a los fines del pago de cotizaciones, contribuciones a la Seguridad Social o cualquiera otra análoga pagadera en su interés mientras preste sus servicios.
+
+Bono vacacional.
+LOTTT Artículo 192.
+Los patronos y las patronas pagarán al trabajador o a la trabajadora en la oportunidad de sus vacaciones, además del salario correspondiente, una bonificación especial para su disfrute equivalente a un mínimo de quince días de salario normal más un día por cada año de servicios hasta un total de treinta días de salario normal.
+Este bono vacacional tiene carácter salarial.",
+400260,VACACFRAC,Dias,A,Vacaciones Fraccionadas Art 190,Vacaciones Fraccionadas Art 190 del Período Actual,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,VACACFRAC,RS_SALBASLIQ*CN,RV_FVACAC190 ,N,,Y,,N,,
+400270,VACACFRACADI,Dias,A,Vacaciones Fraccionadas Art 190 Días Adicionales,Vacaciones Fraccionadas Art 190 Días Adicionales del Período Actual,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,VACACFRACADI,RS_SALBASLIQ*CN,RV_FVACAC190ADI,N,,Y,,N,,
+400280,BONOVACACF,Dias,A,Bono Vacacional Fraccionado Art 192,Bono Vacacional Fraccionado Art 192,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,BONOVACACF,RS_SALBASLIQ*CN,RV_FVACAC192 + 0,N,,Y,,N,,
+400300,UTILFRAC,Dias,A,Bonificación Fin de Año Fraccionado,Bonificación Fin de Año Fraccionado del Período Actual,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,UTILFRAC,CN * (QT_PLSALMEN/30),60 * ( RV_FDAYS_THISYEAR / 365 ),N,,Y,,N,,
+400610,PREAVISODB,Dias,A,Preaviso Otorgado,Preaviso Otorgado al Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,PREAVISODB,RS_SALBASLIQ*CN,30,N,,Y,,N,,
+400620,PREAVISOCR,Dias,D,Preaviso Descontado,Preaviso Descontado al Trabajador,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,PREAVISOCR,RS_SALBASLIQ*CN,30,N,,Y,,N,,
+400800,ANTICIPUTILI,Bs,D,Anticipos Utilidades,Anticipos Utilidades,F,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,N,N,ANTICIPUTILI,CN,0,N,,Y,,N,,
+400810,ANTICIPVACAC,Bs,D,Anticipos Vacaciones,Anticipos Vacaciones,F,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,N,N,ANTICIPVACAC,CN,0,N,,Y,,N,,
+400840,SALDOPRESTAMOS,Bs,D,Saldo de Prestamos,Saldo de Prestamos,F,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,N,N,SALDOPRESTAMOS,CN,0,N,,Y,,N,,
+400900,PRESTAAJUDB,Bs,A,Ajustes Prestaciones DB,Ajustes Indemnización de Saldo de Prestaciones Sociales a Favor del Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,PRESTAAJUDB,CN,0,N,,Y,,N,,
+400910,PRESTAAJUCR,Bs,D,Ajustes Prestaciones CR,Ajustes Indemnizacíon de Saldo de Prestaciones Sociales Descontadas al  Trabajador,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,PRESTAAJUCR,CN,0,N,,Y,,N,,
+500100,INTERPRESTAC,Bs,A,Pago Intereses de Prestaciones,Pago Indemnización de Intereses de Prestaciones Sociales Acumulada al Trabajador,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,INTERPRESTAC,CN,0,N,,Y,,N,,
+600050,ACUANTPRESTAC,Bs,R,Saldo Acumulado de Anticipos de Prestaciones Sociales,Saldo Acumulado de Anticipos de Prestaciones Sociales,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,ACUANTPRESTAC,CN,DV_ACUANTPRESTAC,N,,Y,L,N,,
+600060,ACUMPRESTAC,Bs,R,Saldo Acumulado Prestaciones Sociales,Saldo Acumulado Prestaciones Sociales,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,ACUMPRESTAC,CN,DV_ACUMPRESTAC,N,,Y,L,N,,
+600100,ANTICPRESTAC,Bs,A,Pago Anticipo de Prestaciones Sociales,Pago de Prestaciones Sociales Anticipadas al Trabajador,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,Y,Y,ANTICPRESTAC,CN,0,N,,Y,,N,,
+600150,REINTPRESTAC,Bs,D,Reintegro de Prestaciones Sociales,Reintegro de Prestaciones Sociales Anticipadas por el Trabajador,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,Y,Y,REINTPRESTAC,CN,0,N,,Y,,N,,
+700050,SBPR,Bs,R,Salario Básico Trabajador,Salario Básico Mensual del Trabajador,F,N,N,N,N,N,N,N,N,N,D,Payroll,N,N,Y,Y,Y,SBPR,CN,SB,N,,Y,L,N,SB/30*DT,
+700100,PRESTAMODB,Bs,B,Prestamos Registro,Registro de Préstamos al Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,PRESTAMODB,CN,0,N,,Y,,N,,
+700130,COMPRATERC,Bs,B,Compras a Terceros por cuenta de Trabajadores,Compras de Bienes y Servicios por cuenta de Trabajadores,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,COMPRATERC,CN,0,N,,Y,,N,,
+700150,ANTICIUTIL,Bs,B,Anticipo Utilidades,Anticipo Utilidades al Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,ANTICIUTIL,CN,0,N,,Y,,N,,
+700160,ANTICIVACAC,Bs,B,Anticipo Vacaciones,Anticipo Vacaciones al Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,ANTICIVACAC,CN,0,N,,Y,,N,,
+700170,ANTICITICKET,Bs,B,Anticipo Cesta Ticket,Anticipo Cesta Ticket al Trabajador,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,ANTICITICKET,CN,0,N,,Y,,N,,
+800100,SSO_T_NN,%,W,Aporte Seguro Social Obligatorio Trabajador NN,TOPE CINCO SALARIOS MINIMOS NN,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,SSO_T_NN,Ver Script,4.0,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,L,N,"if (SB > 5*SBMIN ) {DTPER*5*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); }
+if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+
+var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+        if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+        break;
+     default:
+        if (SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+}",
+800104,SSO_T_NV,%,W,Aporte Seguro Social Obligatorio Trabajador NV,TOPE CINCO SALARIOS MINIMOS NV,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,SSO_T_NV,Ver Script,4.0,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SALVACAC*30 > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SALVACAC*30*12)/52)*(CN/100); }
+    }
+  }",Y,L,N,"if (SB > 5*SBMIN ) {DTPER*5*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); }
+if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+
+var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+        if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+        break;
+     default:
+        if (SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+}",
+800110,SSO_P_NN,%,W,Aporte Seguro Social Obligatorio Patrón NN,TOPE 5 SALARIOS MINIMOS,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,SSO_P_NN,Script,9,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,L,N,if (SB > 5*SBMIN ) {DTPER*5*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); },
+800114,SSO_P_NV,%,W,Aporte Seguro Social Obligatorio Patrón NV,TOPE 5 SALARIOS MINIMOS,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,SSO_P_NV,Script,9,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SALVACAC*30 > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SALVACAC*30*12)/52)*(CN/100); }
+    }
+  }",Y,L,N,if (SB > 5*SBMIN ) {DTPER*5*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); },
+800120,SPF_T_NN,%,W,Aporte Pérdida Involuntaria del Empleo Trabajador NN,TOPE 10 SALARIOS MINIMOS NN,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,SPF_T_NN,ver Script,0.5,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+        if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+        break;
+     default:
+        if (SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+}",
+800124,SPF_T_NV,%,W,Aporte Pérdida Involuntaria del Empleo Trabajador NV,TOPE 10 SALARIOS MINIMOS NN,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,SPF_T_NV,ver Script,0.5,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SALVACAC*30 > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SALVACAC*30*12)/52)*(CN/100); }
+    }
+  }",Y,,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+        if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+        break;
+     default:
+        if (SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+}",
+800130,SPF_P_NN,%,W,Aporte Pérdida Involuntaria del Empleo Patrón NN,TOPE 10 SALARIOS MINIMOS,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,SPF_P_NN,Script,2.0,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,,N,if (SB > 10*SBMIN ) {DTPER*10*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); },
+800134,SPF_P_NV,%,W,Aporte Pérdida Involuntaria del Empleo Patrón NV,TOPE 10 SALARIOS MINIMOS,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,SPF_P_NV,Script,2.0,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SALVACAC*30 > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SALVACAC*30*12)/52)*(CN/100); }
+    }
+  }",Y,,N,if (SB > 10*SBMIN ) {DTPER*10*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); },
+800140,FAOV_T_NN,%,W,Aporte F.A.O.V. Trabajador NN,1 % SALARIO INTEGRAL NN,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,FAOV_T_NN,(QT_SB/2)*CN/100,1,N,,Y,,N,Antes: R_FAOV*CN/100,
+800144,FAOV_T_NV,%,W,Aporte F.A.O.V. Trabajador NV,1 % SALARIO INTEGRAL NV,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,FAOV_T_NV,(QT_SALVACAC * DTREC)*(CN/100),1,N,,Y,,N,Anterior: (QT_SALVACAC*30)*CN/100,
+800146,FAOV_T_NU,%,W,Aporte F.A.O.V. Trabajador NU,1 % SALARIO INTEGRAL NU,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,FAOV_T_NU,(QT_SALUTIL/2)*CN/100,1,N,,Y,,N,,
+800150,FAOV_P_NN,%,W,Aporte F.A.O.V. Patrón NN,2 % SALARIO INTEGRAL,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,FAOV_P_NN,(QT_SB/2)*CN/100,2,N,,Y,,N,Antes: R_FAOV*CN/100,
+800154,FAOV_P_NV,%,W,Aporte F.A.O.V. Patrón NV,2 % SALARIO INTEGRAL,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,FAOV_P_NV,DTREC * QT_SALVACAC * (CN/100),2,N,,Y,,N,Antes: R_FAOV*CN/100,
+800156,FAOV_P_NU,%,W,Aporte F.A.O.V. Patrón NU,2 % SALARIO INTEGRAL,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,FAOV_P_NU,(QT_SALUTIL/2)*CN/100,2,N,,Y,,N,Antes: R_FAOV*CN/100,
+800160,INCES_T_NU,%,W,Aporte I.N.C.E.S. Trabajador Utilidades NU,Aporte I.N.C.E.S. Trabajador Utilidades NU,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,INCES_T_NU,R_INCES*CN/100,5/10,N,,Y,,N,,
+800170,INCES_P,%,W,Aporte I.N.C.E.S. Patrón,Aporte I.N.C.E.S. Patrón,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,INCES_P,R_INCES*CN/100,2.0,N,,Y,L,N,,
+800180,CAJAAH_T,%,W,Aporte Caja de Ahorros Trabajador,Porcentajes asociados a períodos. Usualmente,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,CAJAAH_T,(R_ASIG*CN/100),10,N,,Y,,N,,
+800190,CAJAAH_P,%,W,Aporte Caja de Ahorros Patrón,Porcentajes asociados a perí­odos. Usualmente,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,N,Y,N,N,CAJAAH_P,(R_ASIG*CN/100),10,N,,Y,,N,,
+800200,ISLR_NN,%,W,Impuesto sobre la Renta Retenido al Trabajador NN,Porcentajes asociados a períodos fiscales NN,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,ISLR_NN,R_ARC*CN/100,TAXRATE + 0,N,,Y,,N,,
+800204,ISLR_NU,%,W,Impuesto sobre la Renta Retenido al Trabajador NU,Porcentajes asociados a períodos fiscales NU,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,ISLR_NU,R_ARC*CN/100,TAXRATE + 0,N,,Y,,N,,
+800206,ISLR_NV,%,W,Impuesto sobre la Renta Retenido al Trabajador NV,Porcentajes asociados a períodos fiscales NV,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,ISLR_NV,R_ARC*CN/100,TAXRATE + 0,N,,Y,,N,,
+800210,PNRM,Dias,A,Permiso No Remunerado FALTAS,Acumula Cantidades para efectos estadísticos,V,N,N,N,N,N,N,N,N,N,D,Payroll,Y,Y,Y,Y,Y,PNRM,CN*0,1,N,,Y,L,N,,
+800215,RPISLR,%,W,Retencion Pendiente ISLR,Porcentajes asociados a períodos fiscales,V,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,Y,N,N,RPISLR,CN,TAXRATE + 0,N,,Y,,N,,
+800220,ASSA_NN,%,A,Ajuste Seguro Social Aporte por Nomina NN,Ajuste Seguro Social Aporte por Nomina NN,V,N,N,N,N,N,N,N,N,N,D,Payroll,N,Y,Y,N,N,ASSA_NN,CN,,N,"
+  ",Y,L,N,"
+",
+800245,AJUSTE,Bs,D,Descuento,Descuento,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,N,N,AJUSTE,CN ,1,N,,Y,,N,,
+800400,CUOTASIND,Bs,D,Cuota Sindical,Cuota Sindical,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,N,N,N,CUOTASIND,((QT_SB/2)*0.005)*CN,1,N,,Y,,N,,
+800404,CUOTASINV,Bs,D,Cuota Sindical NV,Cuota Sindical NV,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,N,N,N,CUOTASINV,DTREC*(QT_SALVACAC)*(0.005)*CN,1,N,,Y,,N,CN*NLUNES*((QT_SALVACAC*30*12)/52)*(0.005),
+800410,CUOTASINDUT,Bs,D,Cuota Sindical Bonificacón Fin de Año,Cuota Sindical Bonificacón Fin de Año,F,N,N,N,N,N,N,N,N,N,C,Payroll,N,Y,N,N,N,CUOTASINDUT,((0.5)*CN)/100,SBMIN + 0,N,,Y,,N,,
+860100,PRESTAMOCR_NN,Bs,B,Pago Prestamos por NN,Pago Prestamos por NN,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,Y,Y,PRESTAMOCR_NN,CN,0,N,,Y,,N,,
+860110,PRESTAMOCR_NU,Bs,B,Pago Prestamos por NU,Pago Prestamos por NU,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,Y,Y,PRESTAMOCR_NU,CN,0,N,,Y,,N,,
+860120,PRESTAMOCR_NV,Bs,B,Pago Prestamos por NV,Pago Prestamos por NV,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,Y,Y,PRESTAMOCR_NV,CN,0,N,,Y,,N,,
+860130,PRESTAMOCR_TI,Bs,B,Pago Prestamos por TI,Pago Prestamos por TI,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,Y,Y,PRESTAMOCR_TI,CN,0,N,,Y,,N,,
+860140,PRESTAMOCR_NO,Bs,B,Pago Prestamos por NO,Pago Prestamos por NO,V,N,N,N,N,N,N,N,N,N,C,Payroll,Y,Y,Y,Y,Y,PRESTAMOCR_NO,CN,0,N,,Y,,N,,
+900000,PRUEBA,Bs,A,Prueba Concepto,Prueba Concepto,V,N,N,N,N,N,N,N,N,N,D,,Y,Y,N,N,N,PRUEBA,R_FAOV,0,N,,Y,,N,,

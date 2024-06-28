@@ -1,0 +1,35 @@
+// RV_FDAYSFRAC
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+// CalIni Employee Income date
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calc Diff in days elapsed
+int i365 = 365;
+int diffdayslast = 0;
+if (secondDayValue >= firstDayValue )
+	diffdayslast = secondDayValue - firstDayValue;
+if (secondDayValue < firstDayValue )
+	diffdayslast = secondDayValue + (i365 - firstDayValue);
+BigDecimal DBdiffDays = new BigDecimal(diffdayslast);
+DBdiffDays.setScale(2, RoundingMode.HALF_UP);
+return DBdiffDays;

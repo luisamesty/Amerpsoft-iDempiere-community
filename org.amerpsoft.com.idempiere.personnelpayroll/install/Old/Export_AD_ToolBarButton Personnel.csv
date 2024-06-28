@@ -1,0 +1,75 @@
+Name,ComponentName,Action,IsCustomization,ActionClassName,IsActive,IsAdvancedButton,SeqNo,IsAddSeparator,AD_Tab_ID[Name],AD_Process_ID[Value]
+Period Create,Period Create,W,N,,Y,N,10,N,Personnel and Payroll Contract,AmperProcPeriodCreate
+Amper Payroll Create,Amper Payroll Create,W,N,,Y,N,10,N,Personnel and Payroll Periods,AmperProcPayrollCreate
+AMNPayroll Refresh,AMNPayroll Refresh,W,N,,Y,N,10,N,Personnel and Payroll Invoice,AmperProcPayrollRefresh
+Payroll Create One Document for this Employee,Payroll Create One Document for this Employee,W,N,,Y,N,10,N,Personnel and Payroll Invoice,AmperProcPayrollCreateOneDoc
+Payroll Process and Accounting One Document,Payroll Process and Accounting One Document,W,N,,Y,N,50,N,Personnel and Payroll Invoice,AmperProcPayrollProcessCompleteOneDoc
+AMNPayroll Refresh,AMNPayroll Refresh,W,N,,Y,N,10,N,Personnel and Payroll Invoice Detail,AmperProcPayrollRefresh
+Amper Payroll Create Docs,Amper Payroll Create Docs,W,N,,Y,N,10,N,Personnel and Payroll Periods,AmperProcPayrollCreate
+Amper Payroll Process and Accounting Docs,Amper Payroll Process  and Accounting Docs,W,N,,Y,N,40,N,Personnel and Payroll Periods,AmperProcPayrollProcessCompleteOnePer
+Payroll Refresh Recalculate,Payroll Refresh Recalculate,W,N,,Y,N,20,N,Personnel and Payroll Invoice,AmperProcPayrollRefresh
+Employee File,Employee File,W,N,,Y,N,10,N,Personnel and Payroll Employee,AmperRepEmployeeFile
+Antiquity File,Antiquity File,W,N,,Y,N,10,N,Personnel and Payroll Employee,AmperRepAntiquityFileToolbar
+Process Payroll Attendance One Period,Process Payroll Attendance One Period,W,N,,Y,N,20,N,Personnel and Payroll Periods,AmperProcPayrollProcessPayrollAssistOneP
+Attendance Period Create,Attendance Period Create,W,N,,Y,N,10,N,Calendar Periods,AmperProcPeriodCreateAssistPeriod
+Process Payroll Attendance One Employee,Process Payroll Attendance One Employee,W,N,,Y,N,30,N,Personnel and Payroll Invoice,AmperProcPayrollProcessPayrollAssistOneE
+Transfer Payroll Attendance One Period,Transfer Payroll Attendance One Period,W,N,,Y,N,30,N,Personnel and Payroll Periods,AmperProcPayrollTransferPayrollAssistOnP
+Transfer Payroll Attendance One Employee,Transfer Payroll Attendance One Employee,W,N,,Y,N,40,N,Personnel and Payroll Invoice,AmperProcPayrollTransferPayrollAssistOnE
+Amper Payroll Process Payroll Attendance One Day,Amper Payroll Process Payroll Attendance One Day,W,N,,Y,N,10,N,Attendance Days,AmperProcPayrollProcessPayrollAssistOneD
+Payroll Receipt NN,Payroll Receipt NN,W,N,,Y,N,43,N,Personnel and Payroll Invoice,AmperRepPayrollNNReceiptToolbar
+Payroll Receipt NV,Payroll Receipt NV,W,N,,Y,N,45,N,Personnel and Payroll Invoice,AmperRepPayrollNVReceiptsToolbar
+Payroll Receipt NU,Payroll Receipt NU,W,N,,Y,N,47,N,Personnel and Payroll Invoice,AmperRepPayrollNUReceiptsToolbar
+AmFormPaymentReceiptFormat,AmFormPaymentReceiptFormat,W,N,,Y,N,10,N,Payment,AmFormPaymentReceiptFormat
+AmForm Payment Receip tFormat Accounting,AmForm Payment Receipt Format Accounting,W,N,,Y,N,10,N,Payment,AmFormPaymentReceiptFormatAccounting
+AmForm Payment Receipt Format Check Blank Guide,AmForm Payment Receipt Format Check Blank Guide,W,N,,Y,N,10,N,Payment,AmFormPaymentReceiptFormatCheckBlankGuid
+AmForm PaymentReceipt Format Check Model,AmForm PaymentReceipt Format Check Model,W,N,,Y,N,10,N,Payment,AmFormPaymentReceiptFormatCheckModel
+Period Create for Social Benefits,Period Create for Social Benefits,W,N,,Y,N,10,N,Personnel and Payroll Contract or Social Benefits,AmperProcPeriodCreate
+Amper Payroll Create Social Benefit Docs,Amper Payroll Create Social Benefit Docs,W,N,,Y,N,10,N,Personnel and Payroll Periods,AmperProcPayrollCreate
+Amper Payroll Process  and Accounting Social Benefit Docs,Amper Payroll Process  and Accounting Social Benefit Docs,W,N,,Y,N,20,N,Personnel and Payroll Periods,AmperProcPayrollProcessCompleteOnePer
+Social Benefit Create One Document for this Employee,Social Benefit Create One Document for this Employee,W,N,,Y,N,10,N,Personnel and Payroll Invoice,AmperProcPayrollCreateOneDoc
+ Social Benefit Refresh Recalculate, Social Benefit Refresh Recalculate,W,N,,Y,N,20,N,Personnel and Payroll Invoice,AmperProcPayrollRefresh
+Payroll Process and Accounting One Document,Payroll Process and Accounting One Document,W,N,,Y,N,30,N,Personnel and Payroll Invoice,AmperProcPayrollProcessCompleteOneDoc
+AMNPayroll Refresh,AMNPayroll Refresh,W,N,,Y,N,10,N,Personnel and Payroll Invoice Detail,AmperProcPayrollRefresh
+Payroll Receipt NP,Payroll Receipt NP,W,N,,Y,N,40,N,Personnel and Payroll Invoice,AmperRepPayrollNPReceiptsToolbar
+Period Create for Social Benefits,Period Create for Social Benefits,W,N,,Y,N,10,N,Personnel and Payroll Contract or Social Benefits,AmperProcPeriodCreate
+Amper Payroll Create Docs,Amper Payroll Create Docs,W,N,,Y,N,10,N,Personnel and Payroll Periods,AmperProcPayrollCreate
+Process Payroll Attendance One Period,Process Payroll Attendance One Period,W,N,,Y,N,20,N,Personnel and Payroll Periods,AmperProcPayrollProcessPayrollAssistOneP
+Transfer Payroll Attendance One Period,Transfer Payroll Attendance One Period,W,N,,Y,N,30,N,Personnel and Payroll Periods,AmperProcPayrollTransferPayrollAssistOnP
+Amper Payroll Complete and Accounting Docs,Amper Payroll Complete and Accounting Docs,W,N,,Y,N,40,N,Personnel and Payroll Periods,AmperProcPayrollProcessCompleteOnePer
+Payroll Create One Document for this Employee,Payroll Create One Document for this Employee,W,N,,Y,N,10,N,Personnel and Payroll Invoice,AmperProcPayrollCreateOneDoc
+Payroll Refresh Recalculate,Payroll Refresh Recalculate,W,N,,Y,N,20,N,Personnel and Payroll Invoice,AmperProcPayrollRefresh
+Process Payroll Attendance One Employee,Process Payroll Attendance One Employee,W,N,,Y,N,30,N,Personnel and Payroll Invoice,AmperProcPayrollProcessPayrollAssistOneE
+Transfer Payroll Attendance One Employee,Transfer Payroll Attendance One Employee,W,N,,Y,N,40,N,Personnel and Payroll Invoice,AmperProcPayrollTransferPayrollAssistOnE
+Payroll Receipt NN,Payroll Receipt NN,W,N,,Y,N,50,N,Personnel and Payroll Invoice,AmperRepPayrollNNReceiptToolbar
+Payroll Receipt NV,Payroll Receipt NV,W,N,,Y,N,60,N,Personnel and Payroll Invoice,AmperRepPayrollNVReceiptsToolbar
+Payroll Receipt NU,Payroll Receipt NU,W,N,,Y,N,70,N,Personnel and Payroll Invoice,AmperRepPayrollNUReceiptsToolbar
+Payroll Complete and Accounting One Document,Payroll Complete and Accounting One Document,W,N,,Y,N,80,N,Personnel and Payroll Invoice,AmperProcPayrollProcessCompleteOneDoc
+AMNPayroll Refresh,AMNPayroll Refresh,W,N,,Y,N,10,N,Personnel and Payroll Invoice Detail,AmperProcPayrollRefresh
+Payroll Loan Refresh Recalculate,Payroll Loan Refresh Recalculate,W,N,,Y,N,10,N,Personnel and Payroll Loan Invoice,AmperProcPayrollRefresh
+Payroll Deferred NN Payment Calculation,Payroll Deferred NN Payment Calculation,W,N,,Y,N,20,N,Personnel and Payroll Loan Invoice,AmperProcPayrollProcessPayrollDeferredNN
+Amper Payroll Create Social Benefit Docs,Amper Payroll Create Social Benefit Docs,W,N,,Y,N,10,N,Personnel and Payroll Periods,AmperProcPayrollCreate
+Amper Payroll Complete and Accounting Social Benefit Docs,Amper Payroll Complete and Accounting Social Benefit Docs,W,N,,Y,N,20,N,Personnel and Payroll Periods,AmperProcPayrollProcessCompleteOnePer
+Social Benefit Create One Document for this Employee,Social Benefit Create One Document for this Employee,W,N,,Y,N,10,N,Personnel and Payroll Invoice,AmperProcPayrollCreateOneDoc
+ Social Benefit Refresh Recalculate, Social Benefit Refresh Recalculate,W,N,,Y,N,20,N,Personnel and Payroll Invoice,AmperProcPayrollRefresh
+Payroll Complete and Accounting One Document,Payroll Complete and Accounting One Document,W,N,,Y,N,30,N,Personnel and Payroll Invoice,AmperProcPayrollProcessCompleteOneDoc
+Payroll Receipt NP,Payroll Receipt NP,W,N,,Y,N,50,N,Personnel and Payroll Invoice,AmperRepPayrollNPReceiptsToolbar
+AMNPayroll Refresh,AMNPayroll Refresh,W,N,,Y,N,10,N,Personnel and Payroll Invoice Detail,AmperProcPayrollRefresh
+Period Create,Period Create,W,N,,Y,N,10,N,Personnel and Payroll Contract,AmperProcPeriodCreate
+Payroll Complete and Accounting One Document,Payroll Complete and Accounting One Document,W,N,,Y,N,30,N,Personnel and Payroll Loan Invoice,AmperProcPayrollProcessCompleteOneDoc
+Payroll Receipt PO,Payroll Receipt PO,W,N,,Y,N,50,N,Personnel and Payroll Loan Invoice,AmperRepPayrollPOReceiptsToolbar
+Production Single Product Report,Production Single Product Report,W,N,,Y,N,10,N,Production,AmproRepMMProductionSingleProductToolbar
+AmForm Invoice Multiple CxP VAT Withhold Forma,AmForm Invoice Multiple CxP VAT Withhold Forma,W,N,,Y,N,10,N,Invoice Withholding Document,AmFormInvoiceMultiCxPVATWithhold
+Payroll Reactivate and UnAccounting One Document,Payroll Reactivate and UnAccounting One Document,W,N,,Y,N,40,N,Personnel and Payroll Loan Invoice,AmperProcPayrollProcessReactivateOneDoc
+Amper Payroll Reactivate and UnAccounting Docs,Amper Payroll Reactivate and UnAccounting Docs,W,N,,Y,N,50,N,Personnel and Payroll Periods,AmperProcPayrollProcessReactivateOnePer
+Payroll Reactivate and UnAccounting One Document,Payroll Reactivate and UnAccounting One Document,W,N,,Y,N,90,N,Personnel and Payroll Invoice,AmperProcPayrollProcessReactivateOneDoc
+Payroll Reactivate and Accounting One Document,Payroll Reactivate and Accounting One Document,W,N,,Y,N,40,N,Personnel and Payroll Invoice,AmperProcPayrollProcessReactivateOneDoc
+Amper Payroll Complete and Accounting Social Benefit Docs,Amper Payroll Complete and Accounting Social Benefit Docs,W,N,,Y,N,30,N,Personnel and Payroll Periods,AmperProcPayrollProcessReactivateOnePer
+Payroll Receipt PI,Payroll Receipt PI,W,N,,Y,N,60,N,Personnel and Payroll Invoice,AmperRepPayrollPIReceiptsToolbar
+Payroll Receipt PR,Payroll Receipt PR,W,N,,Y,N,70,N,Personnel and Payroll Invoice,AmperRepPayrollPRReceiptsToolbar
+Payroll Receipt PL,Payroll Receipt PL,W,N,,Y,N,80,N,Personnel and Payroll Invoice,AmperRepPayrollPLReceiptsToolbar
+Amper Payroll Loans Report,Amper Payroll Loans Report,W,N,,Y,N,10,N,Personnel and Payroll Employee,AmperRepPayrollLoanToolBar
+Payroll Deferred NU Payment Calculation,Payroll Deferred NU Payment Calculation,W,N,,Y,N,22,N,Personnel and Payroll Loan Invoice,AmperProcPayrollProcessPayrollDeferredNU
+Payroll Deferred NV Payment Calculation,Payroll Deferred NV Payment Calculation,W,N,,Y,N,24,N,Personnel and Payroll Loan Invoice,AmperProcPayrollProcessPayrollDeferredNV
+Payroll Receipt TI,Payroll Receipt TI,W,N,,Y,N,75,N,Personnel and Payroll Invoice,AmperRepPayrollReceiptsTI
+Amper Payroll Complete and Accounting Docs,Amper Payroll Complete and Accounting Docs,W,N,,Y,N,10,N,Personnel and Payroll Loan Periods,AmperProcPayrollProcessCompleteOnePer
+Amper Payroll Reactivate and UnAccounting Docs,Amper Payroll Reactivate and UnAccounting Docs,W,N,,Y,N,20,N,Personnel and Payroll Loan Periods,AmperProcPayrollProcessReactivateOnePer
