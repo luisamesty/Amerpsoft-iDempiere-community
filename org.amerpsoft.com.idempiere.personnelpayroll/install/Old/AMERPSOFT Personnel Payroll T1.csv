@@ -1,0 +1,52 @@
+AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],AD_Table_ID[Name],AD_Reference_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
+AMERPSOFT Personnel Payroll T1,10,ET,AMERP,,,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2150,REF,,,,AMN_Assist_Process_Mode,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2160,REF,,,,AMN_Concept_ValidFor,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2170,REF,,,,AMN_Event_Type,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2180,REF,,,,AMN_Status,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2190,REF,,,,AMN_Workforce,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2200,REF,,,,AMN_bloodrh,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2210,REF,,,,AMN_bloodtype,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2220,REF,,,,AMN_civilstatus,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2230,REF,,,,AMN_conceptmode,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2240,REF,,,,AMN_conceptrepeat,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2250,REF,,,,AMN_conceptrule,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2260,REF,,,,AMN_conceptshow,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2270,REF,,,,AMN_conceptsign,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2280,REF,,,,AMN_conceptsource,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2290,REF,,,,AMN_dayofweek,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2300,REF,,,,AMN_educationalgrade,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2310,REF,,,,AMN_egresscondition,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2320,REF,,,,AMN_handuse,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2330,REF,,,,AMN_jobcondition,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2340,REF,,,,AMN_paymenttype,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2350,REF,,,,AMN_payrollmode,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2360,REF,,,,AMN_period_processed,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2370,REF,,,,AMN_period_status,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2380,REF,,,,AMN_privateassit,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2390,REF,,,,AMN_sex,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2400,REF,,,,AMN_spouse,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2430,REF,,,,AMN_DocType,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2460,REF,,,,AMN_Process_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2520,T,,,Personnel and Payroll Schema ,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2530,T,,,Payroll Rates,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2540,T,,,Payroll Process,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2550,T,,,Payroll Contract,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2560,T,,,Payroll Role Access ,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2570,T,,,AMN_Role_Access_Proc,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,2580,T,,,AMN_Role_Access_Contract_V,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3100,T,,,Payroll Department,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3110,T,,,Payroll Location,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3120,T,,,Payroll Job Unit,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3130,T,,,Payroll Job Station,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3140,T,,,Payroll Job Title,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3150,T,,,Shift,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3160,T,,,Shift Detail,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3500,T,,,Payroll Concepts UOM,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3510,REF,,,,AMN_Concept_Uom_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3520,T,,,Payroll Concepts Types,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3530,T,,,AMN_Concept_Types_Contract,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3540,T,,,Payroll Concept Types Process,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3550,T,,,Payroll Concepts,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3560,T,,,Payroll Concepts Types Accounts,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T1,3570,T,,,Payroll Position,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info

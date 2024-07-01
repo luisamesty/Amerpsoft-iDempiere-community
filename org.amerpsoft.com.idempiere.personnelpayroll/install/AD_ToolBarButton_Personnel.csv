@@ -1,0 +1,82 @@
+AD_TOOLBARBUTTON_ID,WINDOW_NAME,TAB_NAME,PROCESS_NAME
+1000023,Personnel and Payroll Attendance Registry by Periods,Attendance Days,Amper Payroll Process Payroll Attendance One Day
+1000019,Personnel and Payroll Attendance Registry by Periods,Calendar Periods,Amper Period Create Process for Assist Period
+1000101,Personnel and Payroll Consulting Loans by RoleAccess,Personnel and Payroll Employee,Amper Payroll Loans Report ToolBar
+1000141,Personnel and Payroll Employee as BP,Personnel and Payroll Employee,Amper Payroll Loans Report ToolBar
+1000016,Personnel and Payroll Employee as BP,Personnel and Payroll Employee,Amper Antiquity File Report Toolbar
+1000015,Personnel and Payroll Employee as BP,Personnel and Payroll Employee,Amper Employee File Report
+1000006,Personnel and Payroll Periods for Payroll,Personnel and Payroll Contract,Amper Period Create Process
+1000032,Personnel and Payroll Periods for Social Benefits,Personnel and Payroll Contract or Social Benefits,Amper Period Create Process
+1000204,Personnel and Payroll Periods Payroll by Fiscal Year,Personnel and Payroll Contract,Amper Period Create From Period Process
+1000069,Personnel and Payroll Periods Payroll by Fiscal Year,Personnel and Payroll Contract,Amper Period Create Process
+1000044,Personnel and Payroll Periods Social Benefits by Fiscal Yr,Personnel and Payroll Contract or Social Benefits,Amper Period Create Process
+1000008,Personnel and Payroll Preparing,Personnel and Payroll Invoice,Amper Payroll Recalculate and Refresh Process
+1000007,Personnel and Payroll Preparing,Personnel and Payroll Periods,Amper Payroll Create Docs Process for this Period
+1000071,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Receipts PO Report Toolbar
+1000144,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Process Payroll Deferred for TI One Employee
+1000103,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Process Payroll Deferred for NV One Employee
+1000058,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Recalculate and Refresh Process
+1000102,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Process Payroll Deferred for NU One Employee
+1000059,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Process Payroll Deferred for NN One Employee
+1000075,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Reactivate One Doc for this Period
+1000070,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Invoice,Amper Payroll Complete One Doc for this Period
+1000126,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Periods,Amper Payroll Complete Docs for this Period
+1000162,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Periods,Amper Payroll Recalculate and Refresh Process One Period
+1000127,Personnel and Payroll Preparing Loans by RoleAccess2,Personnel and Payroll Loan Periods,Amper Payroll Reactivate Docs for this Period
+1000025,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Receipts NN Report Toolbar
+1000009,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Create One Doc for this Employee
+1000027,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Receipts NU Report Toolbar
+1000014,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Recalculate and Refresh Process
+1000010,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Complete One Doc for this Period
+1000022,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Transfer Payroll Assist One Employee
+1000020,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Process Payroll Attendance One Employee
+1000026,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Receipts NV Report Toolbar
+1000011,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Invoice Detail,Amper Payroll Recalculate and Refresh Process
+1000017,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Periods,Amper Payroll Process Payroll Attendance One Period
+1000012,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Periods,Amper Payroll Create Docs Process for this Period
+1000013,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Periods,Amper Payroll Complete Docs for this Period
+1000021,Personnel and Payroll Preparing Payroll by RoleAccess,Personnel and Payroll Periods,Amper Payroll Transfer Payroll Assist One Period
+1000055,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Receipts NU Report Toolbar
+1000049,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Create One Doc for this Employee
+1000050,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Recalculate and Refresh Process
+1000056,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Complete One Doc for this Period
+1000051,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Process Payroll Attendance One Employee
+1000052,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Transfer Payroll Assist One Employee
+1000054,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Receipts NV Report Toolbar
+1000053,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Receipts NN Report Toolbar
+1000077,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Reactivate One Doc for this Period
+1000114,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Receipts TI Report Toolbar
+1000147,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Receipts TO Report Toolbar
+1000172,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice,Amper Payroll Receipts NO Report Toolbar
+1000057,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Invoice Detail,Amper Payroll Recalculate and Refresh Process
+1000046,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Process Payroll Attendance One Period
+1000170,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Receipts NN Report
+1000160,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Recalculate and Refresh Process One Period
+1000171,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Receipts NO Report
+1000076,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Reactivate Docs for this Period
+1000048,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Complete Docs for this Period
+1000047,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Transfer Payroll Assist One Period
+1000045,Personnel and Payroll Preparing Payroll by RoleAccess2,Personnel and Payroll Periods,Amper Payroll Create Docs Process for this Period
+1000082,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Receipts PL Report Toolbar
+1000064,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Create One Doc for this Employee
+1000135,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Receipts PR Reverse Report Toolbar
+1000146,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Process Social Benefits Historic SalaryOne Doc
+1000066,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Complete One Doc for this Period
+1000067,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Receipts NP Report Toolbar
+1000065,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Recalculate and Refresh Process
+1000078,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Reactivate One Doc for this Period
+1000080,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Receipts PI Report Toolbar
+1000081,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice,Amper Payroll Receipts PR Report Toolbar
+1000068,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Invoice Detail,Amper Payroll Recalculate and Refresh Process
+1000062,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Periods,Amper Payroll Create Docs Process for this Period
+1000063,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Periods,Amper Payroll Complete Docs for this Period
+1000079,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Periods,Amper Payroll Reactivate Docs for this Period
+1000145,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Periods,Amper Payroll Process Social Benefits Historic SalaryOne Per
+1000161,Personnel and Payroll Preparing Social Benefit by RoleAcces2,Personnel and Payroll Periods,Amper Payroll Recalculate and Refresh Process One Period
+1000039,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Receipts NP Report Toolbar
+1000035,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Create One Doc for this Employee
+1000037,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Complete One Doc for this Period
+1000036,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Invoice,Amper Payroll Recalculate and Refresh Process
+1000038,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Invoice Detail,Amper Payroll Recalculate and Refresh Process
+1000034,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Periods,Amper Payroll Complete Docs for this Period
+1000033,Personnel and Payroll Preparing Social Benefit by RoleAccess,Personnel and Payroll Periods,Amper Payroll Create Docs Process for this Period

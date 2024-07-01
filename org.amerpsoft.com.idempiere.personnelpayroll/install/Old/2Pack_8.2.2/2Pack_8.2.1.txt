@@ -1,0 +1,4 @@
+AMNPayrollProvision class. 
+Changes to carry on Currency Reconversion.
+query changes currencyconvert function.
+NO HAY ARCHIVOS 2PACK

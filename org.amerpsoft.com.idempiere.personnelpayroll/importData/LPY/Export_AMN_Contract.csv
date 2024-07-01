@@ -1,0 +1,2 @@
+AD_Org_ID[Name],Value,Name,Description,isAllowLotInvoices,C_Activity_ID[Value],IsActive,PayRollDays,InitDow,AcctDow,SlackDays,NetDays,ValidFrom,ValidTo,C_Currency_ID,C_ConversionType_ID[Value]
+*,MOLI,Contrato Monalisa Generico,,N,,Y,"30,00",5,0,0,30,,,344,S

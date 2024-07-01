@@ -1,0 +1,11 @@
+AD_Org_ID[Name],Value,Name,Description,IsActive,AMN_Process_Value,isAllowLotInvoices
+Maracaibo Country Club,NN,Nómina de Personal STD,Elaboración de Nómina de Personal,Y,NN,N
+Maracaibo Country Club,NP,Nómina de Prestaciones,Elaboración de Nómina de Prestaciones,Y,NP,N
+Maracaibo Country Club,NU,Nómina de Utilidades,Elaboración de Nómina de Utilidades,Y,NU,N
+Maracaibo Country Club,NV,Nómina de Vacaciones,Elaboración de Nómina de Vacaciones,Y,NV,N
+Maracaibo Country Club,PI,Nómina de Intereses de Prestaciones,Elaboraciónn de Nómina de Intereses de Prestaciones,Y,PI,N
+Maracaibo Country Club,PL,Liquidación de Prestaciones Sociales,Liquidación de Prestaciones Sociales,Y,PL,N
+Maracaibo Country Club,PO,Nómina de Préstamos,Elaboración de Nómina de Préstamos,Y,PO,N
+Maracaibo Country Club,PR,Nómina de Anticipos de Prestaciones,Elaboración de Anticipos de Prestaciones y Reintegros,Y,PR,N
+Maracaibo Country Club,TI,Nómina de Beneficio de Alimentación,Elaboración de Nómina de Beneficio de Alimentación,Y,TI,N
+Maracaibo Country Club,TO,Nómina Otros Beneficios Contractuales,Elaboración de Nómina Otros Beneficios Contractuales,Y,TO,N

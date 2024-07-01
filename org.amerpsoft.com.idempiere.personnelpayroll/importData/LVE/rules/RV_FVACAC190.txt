@@ -1,0 +1,44 @@
+// Rule: RV_FVACAC190
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+// CalIni Employee Income date
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calc Diff in days elapsed
+int i365 = 365;
+int i15 = 15;
+int iZero = 0;
+int diffdayslast = 0;
+if (secondDayValue >= firstDayValue )
+	diffdayslast = secondDayValue - firstDayValue;
+if (secondDayValue < firstDayValue )
+	diffdayslast = secondDayValue + (i365 - firstDayValue);
+// Calc Fraction in Big Decimal
+BigDecimal BDVacacDays = new BigDecimal(iZero);
+BigDecimal DBdiffDays= new BigDecimal(diffdayslast);
+BigDecimal BD365 = new BigDecimal(i365);
+BigDecimal BD15 = new BigDecimal(i15);
+BigDecimal BDVacacDays = DBdiffDays.divide(BD365,6, RoundingMode.HALF_UP);
+BDVacacDays = BDVacacDays.multiply(BD15);
+BDVacacDays.setScale(2, RoundingMode.HALF_UP);
+// TRAZA
+return BDVacacDays;

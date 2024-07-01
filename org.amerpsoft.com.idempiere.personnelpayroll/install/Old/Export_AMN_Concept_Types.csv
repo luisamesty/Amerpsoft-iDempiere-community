@@ -1,0 +1,360 @@
+AD_Org_ID[Name],CalcOrder,Value/K,Name,Description,arc,utilidad,vacacion,prestacion,sso,ince,faov,spf,salario,AMN_Concept_Uom_ID[Value],optmode,sign,C_DocType_ID[Name],rule,isrepeat,isshow,isValue,isQty,isDate,variable,formula,DefaultValue,daydiscriminated,Script,IsActive,conceptsource,feriado,Note,AMN_Cre_Acct,AMN_Deb_Acct,AMN_Deb_DW_Acct,AMN_Deb_IW_Acct,AMN_Deb_SW_Acct,AMN_Cre_DW_Acct,AMN_Cre_IW_Acct,AMN_Cre_SW_Acct,AMN_Concept_Types_Proc>AD_Org_ID[Name],AMN_Concept_Types_Proc>AMN_Process_ID[Value],AMN_Concept_Types_Proc>AMN_Concept_Types_ID[Value],AMN_Concept_Types_Proc>Value,AMN_Concept_Types_Proc>Name,AMN_Concept_Types_Proc>Description,AMN_Concept_Types_Proc>IsActive
+*,100050,SB,Salario Básico Trabajador,Salario Básico Mensual del Trabajador,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,N,Y,Y,Y,SB,CN,SB,N,,Y,L,N,SB/30*DT,1000084,1000083,1000929,1000930,1000931,1000084,1000084,1000084,*,NN,SB,NN100050,NN-Salario Básico Trabajador,NN-Salario Básico Trabajador,Y
+*,100100,DIAS,Dias Trabajados,Valor por defecto No Días del Tipo de Contrato,N,N,N,N,N,N,N,N,N,Dias,R,D,Payroll,F,N,Y,N,Y,Y,DIAS,DT,DT*1,N,,Y,L,Y,,1000084,1000083,1000929,1000930,1000931,1000084,1000084,1000084,,,,,,,
+*,100110,HORAS,Horas Trabajadas,Valor por defecto según LOTT,N,N,N,N,N,N,N,N,N,Horas,R,D,Payroll,V,N,Y,N,Y,Y,HORAS,CN,0,N,,Y,L,N,,1000084,1000083,1000929,1000930,1000931,1000084,1000084,1000084,,,,,,,
+*,100120,SALARIO,Salario Trabajador,Salario Mensual Trabajador,Y,Y,Y,Y,Y,Y,Y,Y,Y,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,SALARIO,CN,SB/30*DT,N,,Y,L,Y,SB/30*DT,1000084,1000083,,,,,,,*,NN,SALARIO,NN100120,NN-Salario Trabajador,NN-Salario Trabajador,Y
+*,100122,SALADIDB,Salario Directores DB,Salario Mensual Directores DB,Y,Y,Y,Y,Y,Y,Y,Y,Y,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,SALADIDB,CN,0,N,,Y,L,Y,SB/30*DT,1000061,1000083,,,,,,,*,NN,SALADIDB,NN100122,NN-Salario Directores,NN-Salario Directores,Y
+*,100123,SALADICR,Salario Directores CR,Salario Mensual Directores CR,Y,Y,Y,Y,Y,Y,Y,Y,Y,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,SALADICR,CN,0,N,,Y,L,Y,SB/30*DT,1000005,1000083,,,,,,,*,NN,SALADICR,NN100123,NN-Salario Directores CR,NN-Salario Directores CR,Y
+*,100125,RETROACTIVO,Retroactivo,Retroactivo,Y,Y,Y,Y,N,Y,Y,N,Y,Horas,A,D,Payroll,V,N,Y,Y,Y,Y,RETROACTIVO,CN,0,N,,Y,C,Y,,1000084,1000083,,,,,,,*,NN,RETROACTIVO,NN100125,NN-Retroactivo,NN-Retroactivo,Y
+*,100126,REINTGIVSS,Reintegro Indemnizaciones IVSS,Reintegro Indemnizaciones IVSS NO TIENE INCIDENCIA,N,N,N,N,N,N,N,N,N,Horas,A,D,Payroll,V,Y,Y,Y,Y,Y,RETROACTIVO,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,REINTGIVSS,NN100126,NN-Reintegro Indemnizaciones IVSS,NN-Reintegro Indemnizaciones IVSS,Y
+*,100130,HND,Horas Normales Laboradas,Horas Normales Laboradas,Y,Y,Y,Y,Y,Y,Y,Y,Y,Horas,A,D,Payroll,F,Y,Y,Y,Y,Y,HND,((QT_SB/30)/8)*CN,BUSINESSDAYS*8,N,,Y,L,Y,,1000084,1000083,1000929,1000930,1000931,1000084,1000084,1000084,*,NN,HND,NN100130,NN-Horas Normales Diurnas,NN-Horas Normales Diurnas,Y
+*,100140,HNN,Horas Normales Nocturnas,Según Turno 18:01 a 4:59 sig. Dí­a,Y,Y,Y,Y,N,Y,Y,N,Y,Horas,A,D,Payroll,V,Y,Y,Y,Y,Y,HNN,((QT_SB/30)/8)*CN*1.3,0,N,,Y,L,Y,,1000084,1000083,1000929,1000930,1000931,1000084,1000084,1000084,*,NN,HNN,NN100140,NN-Horas Normales Nocturnas,NN-Horas Normales Nocturnas,Y
+*,100150,HED,Horas Extras Diurnas,Según Turno des 05:00 a 18:00,Y,Y,Y,Y,N,Y,Y,N,Y,Horas,A,D,Payroll,V,Y,Y,Y,Y,Y,HED,((QT_SB/30)/8)*CN*1.6,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,HED,NN100150,NN-Horas Extras Diurnas,NN-Horas Extras Diurnas,Y
+*,100160,HEN,Horas Extras Nocturnas,Según Turno 18:01 a 4:59 siguiente dí­a,Y,Y,Y,Y,N,Y,Y,N,Y,Horas,A,D,Payroll,V,Y,Y,Y,Y,Y,HEN,((QT_SB/30)/8)*CN*1.5*1.3,0,N,,Y,L,Y,,1000084,1000083,,,,,,,*,NN,HEN,NN100160,NN-Horas Extras Nocturnas,NN-Horas Extras Nocturnas,Y
+*,100165,HORFALTJUS,Horas faltadas Justificadas,Horas faltadas Justificadas,N,N,N,N,N,N,N,N,N,Horas,R,D,Payroll,V,Y,Y,Y,Y,Y,HORFALTJUS,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,HORFALTJUS,NN100165,NN-Horas faltadas Justificadas,NN-Horas faltadas Justificadas,Y
+*,100170,HORFALTINJUS,Horas faltadas Injustificadas,Horas faltadas Injustificadas,N,N,N,N,N,N,N,N,N,Horas,R,D,Payroll,V,Y,Y,Y,Y,Y,HORFALTINJUS,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,HORFALTINJUS,NN100170,NN-Horas faltadas Injustificadas,NN-Horas faltadas Injustificadas,Y
+*,100174,DIASFALTJUS,Días faltados Justificados,Dias faltados Justificados,N,N,N,N,N,N,N,N,N,Dias,R,D,Payroll,V,Y,Y,Y,Y,Y,DIASFALTJUS,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,DIASFALTJUS,NN100174,NN-Días faltadas Justificadas,NN-Días faltadas Justificadas,Y
+*,100176,DIASFALTINJUS,Días faltados Injustificados,Días faltados Injustificados,N,N,N,N,N,N,N,N,N,Dias,R,D,Payroll,V,Y,Y,Y,Y,Y,DIASFALTINJUS,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,DIASFALTINJUS,NN100176,NN-Días faltadas Injustificadas,NN-Días faltadas Injustificadas,Y
+*,100178,PERMISOREM,Permiso Remunerado,Permiso Remunerado,Y,N,N,N,N,Y,Y,N,N,Dias,A,D,Payroll,V,Y,Y,Y,Y,Y,PERMISOREM,((QT_SB/30)/8)*CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,PERMISOREM,NN100176,NN-Permiso Remunerado,NN-Permiso Remunerado,Y
+*,100180,OTRASA,Reintegro Por Descuento Indebido,Reintegro Por Descuento Indebido,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,Y,Y,Y,N,N,OTRASA,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,OTRASA,NN100180,NN-Otras Asignaciones,NN-Otras Asignaciones,Y
+*,100190,DINDILRS,Descuento  Indebido ISLR,Descuento  Indebido ISLR,Y,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,AJUSTE,CN,1,N,,Y,C,N,,1000074,1000167,,,,,,,*,NN,DINDILRS,NN100190,NN-Descuentos  Indedido ISLR,NN-Descuentos  Indedido ISLR,Y
+*,100200,AJUSTEN,Dia Pendiente de Vacaciones,Dia Pendiente de Vacaciones,N,Y,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,Y,Y,Y,N,N,AJUSTEN,CN,1,N,,Y,,N,,1000084,1000083,,,,,,,*,NN,AJUSTEN,NN100200,NN-Dia Pendiente de Vacaciones,NN-Dia Pendiente de Vacaciones,Y
+*,100203,AJUSTEPR,Ajustes Asignaciones Afecta Prestaciones y Utilidades,Ajustes Asignaciones Afecta Prestaciones y Utilidades,N,N,N,Y,N,N,N,N,N,Bs,A,D,Payroll,V,Y,Y,Y,N,N,AJUSTEPR,CN,0,N,,Y,C,N,,1000084,1000083,,,,,,,*,NN,AJUSTEPR,NN100203,NN-Ajustes Asignaciones Afecta Prestaciones y Utilidades,NN-Ajustes Asignaciones Afecta Prestaciones y Utilidades,Y
+*,100205,DESTAJO,Destajo,Destajo,Y,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,F,Y,Y,Y,N,N,DESTAJO,CN,0,N,,Y,C,Y,,1000084,1000083,,,,,,,*,NN,DESTAJO,NN100205,NN-Destajo,NN-Destajo,Y
+*,100206,COMPLEMENTO DE DESTAJO,Complemento de destajo,Destajo,Y,Y,Y,Y,N,N,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,DESTAJO,CN,0,N,,Y,L,N,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,COMPLEMENTO DE DESTAJO,NN100206,NN-Complemento de destajo,NN-Complemento de destajo,Y
+*,100207,RETROACTIVO,Retroactivo,Retroactivo,Y,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,N,Y,Y,N,N,RETROACTIVO,CN,0,N,,Y,L,Y,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,RETROACTIVO,NN100207,NN-Retroactivo,NN-Retroactivo,Y
+*,100230,BONOASIST,Bono por Asistencia Puntual,Claúsula 54 del contrato colectivo,N,Y,Y,Y,N,Y,Y,N,Y,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,BONOASIST,12*CN + 0,DTPER - HOLLIDAYS - NONLABORDAYS + 0,N,,Y,C,Y,,1000084,1000083,,,,,,,*,NN,BONOASIST,NN100230,NN-Bono por Asistencia Puntual,NN-Bono por Asistencia Puntual,Y
+*,100240,BONOTRANSP,Compensación por gasto de Transporte,Clausula 40 del contrato colectivo 15% de Unidad Tributaria,N,Y,Y,Y,N,Y,Y,N,Y,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,BONOTRANSP,0.15*(UNIDADTRIBUTARIA)*CN,DTPER - HOLLIDAYS - NONLABORDAYS + 0,N,,Y,C,Y,,1000084,1000083,,,,,,,*,NN,BONOTRANSP,NN100240,NN-Compensación por gasto de Transporte,NN-Compensación por gasto de Transporte,Y
+*,100250,BONOPOSTVAC,Bono Post Vacacional,Según Turno desde 05:00 a 18:00,N,Y,N,Y,N,Y,Y,N,N,Horas,A,D,Payroll,V,Y,Y,Y,Y,Y,BONOPOSTVAC,1200*CN,1,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,BONOPOSTVAC,NN100250,NN-Bono Post Vacacional,NN-Bono Post Vacacional,Y
+*,100260,RETRIBHR,Retribución Horas Faltadas,Según Turno desde 05:00 a 18:00,Y,N,N,N,N,Y,Y,N,N,Horas,A,D,Payroll,V,Y,Y,Y,Y,Y,RETRIBHR,((QT_SB/30)/8)*CN,LABORDAYS*8,N,,Y,L,N,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,RETRIBHR,NN100260,NN-Retribución Horas Faltadas,NN-Retribución Horas Faltadas,Y
+*,100290,BONOEFEC,Bono por Efectividad y Productividad,Bono por Efectividad y Productividad,N,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,BONOEFEC,CN,1000,N,,Y,C,Y,,1000084,1000083,,,,,,,*,NN,BONOEFEC,NN100290,NN-Bono por Efectividad y Productividad,NN-Bono por Efectividad y Productividad,Y
+*,100300,BONOPROD,Bono de Producción Plantas,Bono de Producción Plantas,N,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,BONOPROD,CN,1,N,,Y,C,N,,1000084,1000083,,,,,,,*,NN,BONOPROD,NN100300,NN-Bono de Producción Plantas,NN-Bono de Producción Plantas,Y
+*,100301,BONOPRODEXT,Bono de Producción Extemporaneo,Bono de Producción Plantas Extemporaneo,N,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,BONOPRO,CN,1,N,,Y,C,N,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,BONOPRODEXT,NN100301,NN-Bono de Producción Extemporaneo,NN-Bono de Producción Extemporaneo,Y
+*,100305,BONOSUPLENCIA,Bonificación por Suplencia,Bonificación por Suplencia,Y,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,BONOSUPLENCIA,CN,1,N,,Y,C,Y,,1000084,1000083,,,,,,,*,NN,BONOSUPLENCIA,NN100305,NN-Bonificación por Suplencia,NN-Bonificación por Suplencia,Y
+*,100310,BONOPRODINC,Incidencia Descanso y Feriados por Bono Producción,Incidencia Descanso y Feriados por Bono Producción,Y,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,BONOPRODINC,RS_BONOPROD/17*CN,1,N,,Y,C,N,,1000084,1000083,,,,,,,*,NN,BONOPRODINC,NN100310,NN-Incidencia Descanso y Feriados por Bono Producción,NN-Incidencia Descanso y Feriados por Bono Producción,Y
+*,100311,BONOPRODINCEXT,Incidencia Descanso Feriados Bono Producción Extemporaneo,Incidencia Descanso Feriados por Bono Producción,Y,Y,Y,Y,N,Y,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,BONOPRODINCEXT,CN,1,N,,Y,C,N,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,BONOPRODINCEXT,NN100311,NN-Incidencia Descanso y Feriados por Bono Producción,NN-Incidencia Descanso y Feriados por Bono Producción,Y
+*,100320,UTILESESCOLARES,UTILES ESCOLARES,UTILES ESCOLARES,Y,N,N,N,N,N,Y,N,N,Bs,A,D,Payroll,V,Y,Y,Y,N,N,UTILESESCOLARES,CN*885,1,N,,Y,C,N,,1000084,1000083,,,,,,,*,NN,UTILESESCOLARES,NN100320,NN-UTILES ESCOLARES,NN-UTILES ESCOLARES,Y
+*,100400,COMPVAC,Complemento Vacaciones Directores,Complemento Vacaciones Directores,N,Y,N,Y,N,N,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,COMPVAC,CN,1,N,,Y,C,N,,1000061,1000130,,,,,,,*,NN,COMPVAC,NN100400,NN-Complemento Vacaciones,NN-Complemento Vacaciones,Y
+*,100405,COMPVACLV,Complemento VacacionesLVC,Complemento VacacionesLVC ,N,Y,N,Y,N,N,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,COMPVACLV,CN,1,N,,Y,C,N,,1000005,1000130,,,,,,,*,NN,COMPVACLV,NN100405,NN-Complemento Vacaciones Luis Vargas,NN-Complemento Vacaciones Luis Vargas,Y
+*,100410,COMPUTIL,Complemento Utilidades Directores,Complemento Utilidades Directores,N,N,N,Y,N,N,N,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,COMPUTIL,CN,1,N,,Y,C,N,,1000061,1000097,,,,,,,*,NN,COMPUTIL,NN100410,NN-Complemento Utilidades,NN-Complemento Utilidades,Y
+*,100415,COMPUTILLV,Complemento Utilidades Luis Vargas,Complemento Utilidades Luis Vargas,N,N,N,Y,N,N,Y,N,Y,Bs,A,D,Payroll,V,Y,Y,Y,N,N,COMPUTILLV,CN,1,N,,Y,C,N,,1000005,1000097,,,,,,,*,NN,COMPUTILLV,NN100415,NN-Complemento Utilidades Directores,NN-Complemento Utilidades Directores,Y
+*,100550,FERIADORE,Dí­as Feriados Regionales,Dí­as Feriados Regionales,Y,Y,Y,Y,N,Y,Y,N,Y,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,FERIADORE,Script,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+       R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE);
+        break;
+     default:
+	   if ((BUSINESSDAYS-QT_FERIADORE) == 0) {
+	      (QT_SB/30*CN );
+	   } else {
+          if (R_DESCANSO/(BUSINESSDAYS-CN) > QT_SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-CN); } else { QT_SB/30*CN; } 
+	   }
+}",Y,L,N,R_DESCANSO*CN/LABORDAYS,1000084,1000083,,,,,,,*,NN,FERIADORE,NN100550,NN-Dí­as Feriados Regionales,NN-Dí­as Feriados Regionales,Y
+*,100600,DESCANSO,Días de Descanso,Días de Descanso,Y,Y,Y,Y,Y,Y,Y,Y,Y,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,DESCANSO,Ver Script,NONLABORDAYS + 0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+       R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE);
+        break;
+     default:
+	   if ((BUSINESSDAYS-QT_FERIADORE) == 0) {
+	      QT_SB/30*CN;
+	   } else {
+              if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > QT_SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { QT_SB/30*CN; } 
+	   }
+}",Y,L,N,"if (R_DESCANSO/LABORDAYS > SB/30 ) {R_DESCANSO*CN/LABORDAYS; } else { SB/30*CN; }
+if (R_DESCANSO/5 > SB/30 ) {R_DESCANSO*CN/LABORDAYS; } else { SB/30*CN; }
+if (R_DESCANSO/(QTY_HND/8) > SB/30 ) {R_DESCANSO*CN/(QTY_HND/8); } else { SB/30*CN; }
+if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { SB/30*CN; }
+if (R_DESCANSO/(LABORDAYS-HOLLIDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(LABORDAYS-HOLLIDAYS-QT_FERIADORE); } else { SB/30*CN; }",1000084,1000083,,,,,,,*,NN,DESCANSO,NN100600,NN-Dí­as de Descanso,NN-Dí­as de Descando,Y
+*,100605,DESCANSOV,Descanso,Días de Descanso Vendedores,Y,Y,Y,Y,Y,Y,Y,Y,Y,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,DESCANSOV,CN,0,N,,Y,L,N,"if (R_DESCANSO/LABORDAYS > SB/30 ) {R_DESCANSO*CN/LABORDAYS; } else { SB/30*CN; }
+if (R_DESCANSO/5 > SB/30 ) {R_DESCANSO*CN/LABORDAYS; } else { SB/30*CN; }
+if (R_DESCANSO/(QTY_HND/8) > SB/30 ) {R_DESCANSO*CN/(QTY_HND/8); } else { SB/30*CN; }
+if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { SB/30*CN; }
+if (R_DESCANSO/(LABORDAYS-HOLLIDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(LABORDAYS-HOLLIDAYS-QT_FERIADORE); } else { SB/30*CN; }",1000084,1000083,,,,,,,*,NN,DESCANSOV,NN100605,NN-Descanso,NN-Descanso,Y
+*,100610,DESCANSOT,Días de Descanso Trabajado,Días de Descanso Trabajado,Y,Y,Y,Y,Y,Y,Y,Y,Y,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,DESCANSOT,if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > QT_SB/30 ) {R_DESCANSO*1.5*CN/(BUSINESSDAYS-QT_FERIADORE); } else { QT_SB/30*CN*1.5; },0,N,,Y,L,N,,1000084,1000083,,,,,,,"Tamanaco, C.A.",NN,DESCANSOT,NN100610,NN-Días de Descanso Trabajado,NN-Días de Descanso Trabajado,Y
+*,100700,FERIADO,Días Feriados,Días Feriados,Y,Y,Y,Y,Y,Y,Y,Y,Y,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,FERIADO,Ver Script,HOLLIDAYS + 0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+       R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE);
+        break;
+     default:
+	   if ((BUSINESSDAYS-QT_FERIADORE) == 0) {
+	      (QT_SB/30*CN );
+	   } else {
+          if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > QT_SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { QT_SB/30*CN; } 
+	   }
+}",Y,L,N,"R_DESCANSO*CN/LABORDAYS
+if (R_DESCANSO/(QTY_HND/8) > SB/30 ) {R_DESCANSO*CN/(QTY_HND/8); } else { SB/30*CN; }
+if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { SB/30*CN; }",1000084,1000083,,,,,,,*,NN,FERIADO,NN100700,NN-Dí­as Feriados,NN-Dí­as Feriados,Y
+*,100705,FERIADOV,Feriados,Días Feriados Vendedores,Y,Y,Y,Y,Y,Y,Y,Y,Y,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,FERIADOV,CN,0,N,,Y,L,N,"R_DESCANSO*CN/LABORDAYS
+if (R_DESCANSO/(QTY_HND/8) > SB/30 ) {R_DESCANSO*CN/(QTY_HND/8); } else { SB/30*CN; }
+if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > SB/30 ) {R_DESCANSO*CN/(BUSINESSDAYS-QT_FERIADORE); } else { SB/30*CN; }",1000084,1000083,,,,,,,*,NN,FERIADOV,NN100705,NN-Feriados,NN-Feriados,Y
+*,100710,FERIADOT,Dí­as Feriados Trabajados,Dí­as Feriados Trabajados,Y,Y,Y,Y,N,Y,Y,N,Y,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,FERIADOT,if (R_DESCANSO/(BUSINESSDAYS-QT_FERIADORE) > QT_SB/30 ) {R_DESCANSO*1.6*CN/(BUSINESSDAYS-QT_FERIADORE); } else { QT_SB/30*CN*1.6; },0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,FERIADOT,NN100710,NN-Dí­as Feriados Trabajados,NN-Dí­as Feriados Trabajados,Y
+*,140110,RECALCVAC,Recalculo de vacaciones,Recalculo de vacaciones,Y,Y,N,Y,N,N,Y,N,Y,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,RECALCVAC,CN,0,N,,Y,C,N,,1000084,1000083,,,,,,,*,NN,RECALCVAC,NN140110,NN-Recalculo de vacaciones,NN-Recalculo de vacaciones,Y
+*,140115,REPOSO,Reposo 33.33%,Reposo 33.33%,Y,N,N,Y,N,N,Y,N,Y,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,REPOSO,((QT_SB/30)/8)*CN*33.33/100,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,REPOSO,NN140115,NN-Reposo 33.33%,NN-Reposo 33.33%,Y
+*,140120,REPOSO,Reposo 100%,Reposo 100%,Y,N,N,Y,N,N,Y,N,Y,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,REPOSO,((QT_SB/30)/8)*CN*100/100,0,N,,Y,L,N,,1000084,1000083,,,,,,,*,NN,REPOSO,NN140120,NN-Reposo 100%,NN-Reposo 100%,Y
+*,150005,UTTICKET1,Unidad Tributaria Programa de Alimentación M1,Unidad Tributaria Programa de Alimentación M1,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,Y,Y,Y,UTTICKET1,(UNIDADTRIBUTARIA) + 0,(UNIDADTRIBUTARIA) + 0,N,,Y,L,N,,1000148,1000091,,,,,,,*,TI,UTTICKET1,TI150005,TI-Programa de Alimentación M1,TI-Programa de Alimentación M1,Y
+*,150010,TICKET1,Programa de Alimentación M1,Programa de Alimentación M1,N,N,N,N,N,N,N,N,N,Horas,A,D,Payroll,F,N,Y,Y,Y,Y,TICKET1,(8*(UNIDADTRIBUTARIA))/8*CN,40,N,,Y,L,N,,1000148,1000091,,,,,,,*,TI,TICKET1,TI150010,TI-Programa de Alimentación M1,TI-Programa de Alimentación M1,Y
+*,150105,UTTICKET2,Unidad Tributaria Programa de Alimentación M2,Unidad Tributaria Programa de Alimentación M2,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,Y,Y,Y,UTTICKET2,(UNIDADTRIBUTARIA) + 0,(UNIDADTRIBUTARIA) + 0,N,,Y,L,N,,1000148,1000091,,,,,,,*,TI,UTTICKET2,TI150105,TI-Programa de Alimentación M2,TI-Programa de Alimentación M2,Y
+*,150110,TICKET2,Programa de Alimentación M2,Bono de Alimentación,N,N,N,N,N,N,N,N,N,Horas,A,D,Payroll,F,N,Y,Y,Y,Y,TICKET2,(12*(UNIDADTRIBUTARIA))/8*CN,200,N,,Y,L,N,,1000148,1000091,,,,,,,*,TI,TICKET2,TI150110,TI-Programa de Alimentación M2,TI-Programa de Alimentación M2,Y
+*,150500,TICKETDES,Descuento Convenio de Alimentación,Descuento Convenio de Alimentación,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,N,N,N,TICKETDES,CN,0,N,,Y,C,N,,1000086,1000148,,,,,,,*,TI,TICKETDES,TI150500,TI-Descuento Convenio de Alimentación,TI-Descuento Convenio de Alimentación,Y
+*,200100,SALVACAC,Salario Promedio Vacaciones,SalarioPromedio Base del Calculo de Vacaciones,N,N,N,N,N,N,N,N,N,Dias,R,D,Payroll,F,N,Y,Y,Y,Y,SALVACAC,CN,(DV_SALVACAC)/30,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,SALVACAC,NV200100,NV-Salario Promedio Vaciones,NV-Salario Promedio Vaciones,Y
+*,200102,VACACION,Vacaciones Art  190 LOTTT,DIAS DE DISFRUTE de Vacaciones,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACACION,QT_SALVACAC*CN,15,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACACION,NV200102,NV-Asignación Vacaciones Art  190 LOT,NV-Asignación Vacaciones Art  190 LOT,Y
+*,200105,VACAC190,Días Adicionales Vacaciones Art. 190 LOTTT,Días Adicionales Vacaciones Art. 190 LOTTT,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACAC190,QT_SALVACAC*CN,DV_VACAC190,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACAC190,NV200105,NV-Días Adicionales Vacación Art. 190 LOT,NV-Días Adicionales Vacación Art. 190 LOT,Y
+*,200110,VACAC192,Bono Vacacional Art. 192 LOTTT,Bono 15 Días Art 192 Con Carácter Salarial,N,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACAC192,QT_SALVACAC*CN,15,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACAC192,NV200110,NV-Bono Vacacional Art. 192 LOT,NV-Bono Vacacional Art. 192 LOT,Y
+*,200120,VACAC192A,Días Adicionales Bono Vacacional Art. 192 LOTTT,Bono Adicional Art 192 por cada año de servicio,N,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACAC192A,QT_SALVACAC*CN,DV_VACAC192A,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACAC192A,NV200120,NV-Bono Vacacional Adicional Art. 192 LOT,NV-Bono Vacacional Adicional Art. 192 LOT,Y
+*,200130,VACACFER,Días Feriados ,Días Feriados durante el período de vaciones,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACACFER,QT_SALVACAC*CN,DV_VACACFER + 0,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACACFER,NV200130,NV-Dí­as Feriados,NV-Dí­as Feriados,Y
+*,200135,VACACFERRE,Días Feriados Regionales,Días Feriados Regionales durante el período de vaciones,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,VACACFERRE,QT_SALVACAC*CN,0,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACACFERRE,NV200135,NV-Dí­as Feriados Regionales,NV-Dí­as Feriados Regionales,Y
+*,200140,VACACDES,Días de Descanso Vacaciones,Días de Descanso Vacaciones,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACACDES,QT_SALVACAC*CN,DV_VACACDES,N,,Y,L,N,,1000084,1000130,,,,,,,*,NV,VACACDES,NV200140,NV-Dí­as de Descanso Vacaciones,NV-Dí­as de Descanso Vacaciones,Y
+*,200150,VACACDIADIC,Días Adicionales Vacaciones Convenio Colectivo,Días Adicionales Vacaciones Convenio Colectivo,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACACDIADIC,QT_SALVACAC*CN,DV_VACACDIADIC,N,,Y,C,N,,1000084,1000130,,,,,,,*,NV,VACACDIADIC,NV200150,NV-Días Adicionales Vacaciones Contrato Colectivo,NV-Días Adicionales Vacaciones Contrato Colectivo,Y
+*,200160,VACACDIA45,Días de Bonificación por Vacaciones,Días Adicionales para completar máximo de 45 dí­as,Y,Y,N,N,Y,N,Y,Y,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,VACACDIA45,QT_SALVACAC*CN,if ((QT_VACAC190 + QT_VACAC192 + QT_VACAC192A + QT_VACACDIADIC) > 30) { 0.0;} else { 30 - (QT_VACAC190 + QT_VACAC192 + QT_VACAC192A + QT_VACACDIADIC);},N,,Y,C,N,,1000084,1000130,,,,,,,*,NV,VACACDIA45,NV200160,NV-Días Complemento Vacaciones,NV-Días Complemento Vacaciones,Y
+*,200170,REPOSO33,"Reposo 33,33%","Reposo 33,33%",Y,N,N,Y,N,Y,Y,N,N,Bs,A,D,,V,Y,Y,N,N,N,REPOSO33,((QT_SALVAC/8)*CN)*33.33/100,1,N,,Y,L,N,,1000084,1000083,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,REPOSO33,NV200170,"NV-Reposo 33,33%","NV-Reposo 33,33%",Y
+*,250100,SALPREST,Salario Diario Base de Prestaciones,Salario Diario Base para el Cálculo de Acumulación de Prestaciones,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,N,N,N,SALPREST,CN,(DV_SALPREST)/30,N,,Y,L,N,,1000088,1000087,,,,,,,*,NP,SALPREST,NP250100,NP-Salario Diario Base de Prestaciones,NP-Salario Diario Base de Prestaciones,Y
+*,250120,INCUTILID,Incidencia por Utilidades,Incidencia por Utilidades en Abono de Prestaciones,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,N,N,N,INCUTILID,VER SCRIPT,120,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    default:
+         CN*(QT_SALPREST/ 360 )
+}
+",Y,L,N,,1000088,1000087,,,,,,,*,NP,INCUTILID,NP250120,NP-Incidencia por Utilidades en Abono de Prestaciones,NP-Incidencia por Utilidades en Abono de Prestaciones,Y
+*,250130,INCVACAC,Incidencia por Vacaciones,Incidencia por Vacaciones en Abono de Prestaciones,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,N,N,N,INCVACAC,VER SCRIPT,if ((DV_INCVACAC +3 ) > 30)  { 30 ;} else { (DV_INCVACAC + 3 );},N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALPREST/ 365 )
+          break;
+    default:
+         CN*(QT_SALPREST/ 360 )
+}
+",Y,L,N,,1000088,1000087,,,,,,,*,NP,INCVACAC,NP250130,NP-Incidencia por Vacaciones en Abono de Prestaciones,NP-Incidencia por Vacaciones en Abono de Prestaciones,Y
+*,250140,SALINTEPR,    Total Salario Integral Prestaciones,Total Salario Integral Prestaciones,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,N,N,N,SALINTEPR,VER SCRIPT,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         QT_SALPREST  + QT_INCVACAC*(QT_SALPREST/ 365 ) + QT_INCUTILID*(QT_SALPREST/ 365 )
+          break;
+    case  'ME':
+        QT_SALPREST  + QT_INCVACAC*(QT_SALPREST/ 365 ) + QT_INCUTILID*(QT_SALPREST/ 365 )
+          break;
+    default:
+         QT_SALPREST  + QT_INCVACAC*(QT_SALPREST/ 360 ) + QT_INCUTILID*(QT_SALPREST/ 360 )
+}
+",Y,L,N,,1000088,1000087,,,,,,,*,NP,SALINTEPR,NP250140,NP-Total Salario Integral Prestaciones,NP-Total Salario Integral Prestaciones,Y
+*,250150,ABONOPS,Depósito de Garantía de Prestaciones Sociales Art. 143 LOTT,Abono por Concepto de Prestaciones Sociales Art. 143 LOTT,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,N,N,N,ABONOPS,Ver Script,DV_ABONOPS,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    default:
+         CN*(QT_SALPREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 360 )
+}",Y,L,N,,1000088,1000087,,,,,,,*,NP,ABONOPS,NP250150,NP-Abono por Concepto de Prestaciones Sociales Art. 143 LOT,NP-Abono por Concepto de Prestaciones Sociales Art. 143 LOT,Y
+*,250185,SALM12PREST,Salario Diario Promedio CM de Prestaciones Art.142 B,Salario Diario Promedio Ultimos 12 meses Calculado Manual  Base para el Cálculo de Acumulación de Días Adicionales de Prestaciones Art 142 B,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,V,N,Y,N,N,N,SALM12PREST,CN,0,N,,Y,L,N,,1000088,1000087,,,,,,,*,NP,SALM12PREST,NP250185,NP-Salario Diario Promedio CM de Prestaciones Art.142 B,NP-Salario Diario Promedio CM de Prestaciones Art.142 B,Y
+*,250200,SAL12PREST,Salario Diario Promedio de Prestaciones Art.142 B,Salario Diario Promedio Ultimos 12 meses Base para el Cálculo de Acumulación de Días Adicionales de Prestaciones Art 142 B,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,N,N,N,SAL12PREST,CN,(DV_SAL12PREST)/30,N,,Y,L,N,,1000088,1000087,,,,,,,*,NP,SAL12PREST,NP250200,NP-Salario Diario Base de Prestaciones Art.142 B,NP-Salario Diario Base de Prestaciones Art.142 B,Y
+*,250220,ABONOPSA,Abono por Deposito Anual Prestaciones Sociales Adicionales,Abono por Deposito Anual de Prestaciones Sociales Adicionales Art. 143 LOTT,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,N,N,N,ABONOPSA,Ver Script,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SAL12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    case  'ME':
+         CN*(QT_SAL12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    default:
+         CN*(QT_SAL12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 360 )
+}",Y,L,N,,1000088,1000087,,,,,,,"Tamanaco, C.A.",NP,ABONOPSA,NP250220,NP-Abono por Concepto de Prestaciones Sociales Adicionales,NP-Abono por Concepto de Prestaciones Sociales Adicionales,Y
+*,250225,ABONOMPSA,Abono CM Deposito Anual Prestaciones Sociales Adicionales ,Abono por Deposito Anual de Prestaciones Sociales Adicionales Art. 143 LOTT,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,N,N,N,ABONOMPSA,Ver Script,0,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+    case  'S':
+         CN*(QT_SALM12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    case  'ME':
+         CN*(QT_SALM12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 365 )
+          break;
+    default:
+         CN*(QT_SALM12PREST)*(1 + (QT_INCVACAC+QT_INCUTILID) / 360 )
+}",Y,L,N,,1000088,1000087,,,,,,,*,NP,ABONOMPSA,NP250225,NP-Abono CM Deposito Anual Prestaciones Sociales Adicionale,NP-Abono CM Deposito Anual Prestaciones Sociales Adicionale,Y
+*,250230,AJUSTEPSDB,Ajustes de Prestaciones A Favor,Ajustes Indemnización de Prestaciones Sociales a Favor del Trabajador,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,N,N,N,AJUSTEPSDB,CN,0,N,,Y,L,N,,1000088,1000087,,,,,,,"Tamanaco, C.A.",NP,AJUSTEPSDB,NP250230,NP-Ajustes de Prestaciones DB,NP-Ajustes de Prestaciones DB,Y
+*,250240,AJUSTEPSCR,Ajustes de Prestaciones En Contra,Ajustes Indemnización de Prestaciones Sociales en Contra del Trabajador,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,N,N,N,AJUSTEPSCR,CN,0,N,,Y,L,N,,1000087,1000088,,,,,,,"Tamanaco, C.A.",NP,AJUSTEPSCR,NP250240,NP-Ajustes de Prestaciones CR,NP-Ajustes de Prestaciones CR,Y
+*,250250,INTERPRESTDB,Ajustes Intereses de Prestaciones A Favor,Ajustes Indemnización de Intereses de Prestaciones Sociales a Favor del Trabajador,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,Y,INTERPRESTDB,CN,0,N,,Y,,N,,1000096,1000087,,,,,,,*,PI,INTERPRESTDB,PI250250,PI-Ajustes Intereses de Prestaciones DB,PI-Ajustes Intereses de Prestaciones DB,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NP,INTERPRESTDB,NP250250,NP-Ajustes Intereses de Prestaciones DB,NP-Ajustes Intereses de Prestaciones DB,Y
+*,250260,INTERPRESTCR,Ajustes Intereses de Prestaciones Descuento,Ajustes Indemnización de Intereses de Prestaciones Sociales descontadas al Trabajador,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,N,Y,Y,N,Y,INTERPRESTCR,CN,0,N,,Y,,N,,1000087,1000096,,,,,,,*,PI,INTERPRESTCR,PI250260,PI-Ajustes Intereses de Prestaciones CR,PI-Ajustes Intereses de Prestaciones CR,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NP,INTERPRESTCR,NP250260,NP-Ajustes Intereses de Prestaciones CR,NP-Ajustes Intereses de Prestaciones CR,Y
+*,300050,SALUTIL,Salario Utilidades,Salario Base de Cáculo de Utilidades,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,Y,Y,Y,SALUTIL,CN,(DV_SALUTIL)/30,N,,Y,L,N,,1000084,1000097,,,,,,,*,NU,SALUTIL,NU300050,NU-Salario Utilidades,NU-Salario Utilidades,Y
+*,300080,UTILIDDEV,Asignaciones del Período,Asignaciones del Período Base de Cáculo de Utilidades,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,N,N,N,UTILIDDEV,CN,(DV_UTILIDDEV) + 0,N,,Y,C,N,,1000134,1000097,,,,,,,*,NU,UTILIDDEV,NU300080,NU-Asignaciones del Período,NU-Asignaciones del Período,Y
+*,300100,UTIL30D,Asignación 120 Días Utilidades,Asignación 120 Días Utilidades,N,N,N,N,N,Y,Y,N,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,UTIL30D,Ver Script,120,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+       case  'S':
+         ((QT_UTILIDDEV)*CN)/360 + 0
+          break;
+       case  'C':
+         ((QT_UTILIDDEV)*CN)/360 + 0
+          break;
+       case  'ME':
+         ((QT_UTILIDDEV)*CN)/360 + 0
+          break;
+       default:
+         ((QT_UTILIDDEV)*CN)/360 + 0
+  }",Y,C,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+       case  'S':
+         
+          break;
+       case  'C':
+
+          break;
+       case  'ME':
+
+          break;
+       default:
+
+  }",1000084,1000097,,,,,,,*,NU,UTIL30D,NU300100,NU-Asignación 120 Días Utilidades,NU-Asignación 120 Días Utilidades,Y
+*,300110,UTILANT,Asignación Anticipo Utilidades Antes del Cierre,Asignación Anticipo Utilidades Antes del Cierre,N,N,N,N,N,N,N,N,N,Dias,A,D,Payroll,F,N,Y,Y,Y,Y,UTILANT,SB/30*CN,30,N,,Y,,N,,1000084,1000097,,,,,,,*,NU,UTILANT,NU300110,NU-Asignación Anticipo Utilidades Antes del Cierre,NU-Asignación Anticipo Utilidades Antes del Cierre,Y
+*,300120,UTILDEF,Asignación Definitiva Utilidades Cierre de ejercicio,Asignación Definitiva Utilidades Cierre de ejercicio,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,UTILDEF,SB/30*CN,1,N,,Y,,N,,1000084,1000097,,,,,,,*,NU,UTILDEF,NU300120,NU-Asignación Definitiva Utilidades Cierre de ejercicio,NU-Asignación Definitiva Utilidades Cierre de ejercicio,Y
+*,300130,UTILADIC,Asignación Utilidad Adicional,Asignación Utilidad Adicional,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,N,UTILADIC,CN,0,N,,Y,,N,,1000084,1000097,,,,,,,*,NU,UTILADIC,NU300130,NU-Asignación Utilidad Adicional,NU-Asignación Utilidad Adicional,Y
+*,400100,ANTIGUEDADAB,Antiguedad Acumulada Periodo XX/XXXX,Indemnización Antiguedad Según Artículo 142 Literal A y B,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,Y,Y,Y,N,N,ANTIGUEDADAB,CN,0,N,,Y,,N,,1000096,1000088,,,,,,,*,PL,ANTIGUEDADAB,PL400100,PL-Antiguedad Acumulada Periodo XX/XXXX,PL-Antiguedad Acumulada Periodo XX/XXXX,Y
+*,400110,ANTIGUEDADC,Antiguedad Basada en Ultimo Salario,Indemnización Antiguedad Según Artículo 142 Literal C,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,N,ANTIGUEDADC,CN,,N,,Y,,N,,1000096,1000088,,,,,,,*,PL,ANTIGUEDADC,PL400110,PL-Antiguedad Basada en Ultimo Salario,PL-Antiguedad Basada en Ultimo Salario,Y
+*,400120,VACACVENC,Vacaciones Vencidas Perí­odo XX/XXXX,Vacaciones Vencidas Perí­odos anteriores,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,Y,Y,Y,N,N,VACACVENC,CN,0,N,,Y,,N,,1000096,1000090,,,,,,,*,PL,VACACVENC,PL400120,PL-Vacaciones Vencidas Perí­odo XX/XXXX,PL-Vacaciones Vencidas Perí­odo XX/XXXX,Y
+*,400130,VACACFRAC,Vacaciones Fraccionadas,Vacaciones Fraccionadas del Período Actual,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,Y,N,N,VACACFRAC,CN,0,N,,Y,,N,,1000096,1000090,,,,,,,*,PL,VACACFRAC,PL400130,PL-Vacaciones Fraccionadas,PL-Vacaciones Fraccionadas,Y
+*,400140,UTILFRAC,Utilidades Fraccionadas,Utilidades Fraccionadas del Período Actual,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,Y,N,N,UTILFRAC,CN,0,N,,Y,,N,,1000096,1000089,,,,,,,*,PL,UTILFRAC,PL400140,PL-Utilidades Fraccionadas,PL-Utilidades Fraccionadas,Y
+*,400150,BONOVACACV,Bono Vacacional Vencido,Bono Vacacional Vencido,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,N,BONOVACACV,CN,0,N,,Y,,N,,1000096,1000090,,,,,,,*,PL,BONOVACACV,PL400150,PL-Bono Vacacional Vencido,PL-Bono Vacacional Vencido,Y
+*,400160,BONOVACACF,Bono Vacacional Fraccionado,Bono Vacacional Fraccionado,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,N,BONOVACACF,CN,0,N,,Y,,N,,1000096,1000090,,,,,,,*,PL,BONOVACACF,PL400160,PL-Bono Vacacional Fraccionado,PL-Bono Vacacional Fraccionado,Y
+*,400170,PREAVISODB,Preaviso Otorgado,Preaviso Otorgado al Trabajador,N,N,N,N,N,N,N,N,N,Dias,A,D,Payroll,V,N,Y,Y,N,N,PREAVISODB,SB/30*CN,30,N,,Y,,N,,1000096,1000097,,,,,,,*,PL,PREAVISODB,PL400170,PL-Preaviso Otorgado,PL-Preaviso Otorgado,Y
+*,400180,PREAVISOCR,Preaviso Descontado,Preaviso Descontado al Trabajador,N,N,N,N,N,N,N,N,N,Dias,D,C,Payroll,V,N,Y,Y,N,N,PREAVISOCR,SB/30*CN,30,N,,Y,,N,,1000097,1000096,,,,,,,*,PL,PREAVISOCR,PL400180,PL-Preaviso Descontado,PL-Preaviso Descontado,Y
+*,400190,PRESTAAJUDB,Ajustes Prestaciones DB,Ajustes Indemnización de Saldo de Prestaciones Sociales a Favor del Trabajador,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,N,PRESTAAJUDB,CN,0,N,,Y,,N,,1000096,1000087,,,,,,,*,PL,PRESTAAJUDB,PL400190,PL-Ajustes Prestaciones DB,PL-Ajustes Prestaciones DB,Y
+*,400200,PRESTAAJUCR,Ajustes Prestaciones CR,Ajustes Indemnizacíon de Saldo de Prestaciones Sociales Descontadas al  Trabajador,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,N,Y,Y,N,N,PRESTAAJUCR,CN,0,N,,Y,,N,,1000087,1000096,,,,,,,*,PL,PRESTAAJUCR,PL400200,PL-Ajustes Prestaciones CR,PL-Ajustes Prestaciones CR,Y
+*,400210,ANTICIPPREST,Anticipos Prestaciones,Anticipos Prestaciones,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,Y,N,N,ANTICIPPREST,CN,0,N,,Y,,N,,1000088,1000096,,,,,,,*,PL,ANTICIPPREST,PL400210,PL-Anticipos Prestaciones,PL-Anticipos Prestaciones,Y
+*,400220,ANTICIPUTILI,Anticipos Utilidades,Anticipos Utilidades,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,Y,N,N,ANTICIPUTILI,CN,0,N,,Y,,N,,1000089,1000096,,,,,,,*,PL,ANTICIPUTILI,PL400220,PL-Anticipos Utilidades,PL-Anticipos Utilidades,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,PO,ANTICIPUTILI,PO400220,PO-Anticipos Utilidades,PO-Anticipos Utilidades,Y
+*,400230,ANTICIPVACAC,Anticipos Vacaciones,Anticipos Vacaciones,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,Y,N,N,ANTICIPVACAC,CN,0,N,,Y,,N,,1000090,1000096,,,,,,,*,PL,ANTICIPVACAC,PL400230,PL-Anticipos Vacaciones,PL-Anticipos Vacaciones,Y
+*,400240,SALDOPRESTAMOS,Saldo de Prestamos,Saldo de Prestamos,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,Y,N,N,SALDOPRESTAMOS,CN,0,N,,Y,,N,,1000086,1000096,,,,,,,*,PL,SALDOPRESTAMOS,PL400240,PL-Saldo de Prestamos,PL-Saldo de Prestamos,Y
+*,500100,INTERPRESTAC,Pago Intereses de Prestaciones,Pago Indemnización de Intereses de Prestaciones Sociales Acumulada al Trabajador,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,INTERPRESTAC,CN,0,N,,Y,,N,,1000096,1000088,,,,,,,*,PI,INTERPRESTAC,PI500100,PI-Pago Intereses de Prestaciones,PI-Pago Intereses de Prestaciones,Y
+*,600050,ACUANTPRESTAC,Saldo Acumulado de Anticipos de Prestaciones Sociales,Saldo Acumulado de Anticipos de Prestaciones Sociales,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,Y,Y,Y,ACUANTPRESTAC,CN,DV_ACUANTPRESTAC,N,,Y,L,N,,1000096,1000088,,,,,,,"Tamanaco, C.A.",PR,ACUANTPRESTAC,PR600050,PR-Saldo Acumulado de Anticipos de Prestaciones Sociales,PR-Saldo Acumulado de Anticipos de Prestaciones Sociales,Y
+*,600060,ACUMPRESTAC,Saldo Acumulado Prestaciones Sociales,Saldo Acumulado Prestaciones Sociales,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,Y,Y,Y,Y,ACUMPRESTAC,CN,DV_ACUMPRESTAC,N,,Y,L,N,,1000096,1000088,,,,,,,"Tamanaco, C.A.",PR,ACUMPRESTAC,PR600060,PR-Saldo Acumulado Prestaciones Sociales,PR-Saldo Acumulado Prestaciones Sociales,Y
+*,600100,ANTICPRESTAC,Pago Anticipo de Prestaciones Sociales,Pago de Prestaciones Sociales Anticipadas al Trabajador,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,F,N,Y,Y,Y,Y,ANTICPRESTAC,CN,0,N,,Y,,N,,1000096,1000088,,,,,,,*,PR,ANTICPRESTAC,PR600100,PR-Anticipo de Prestaciones Sociales,PR-Anticipo de Prestaciones Sociales,Y
+*,700050,SBPR,Salario Básico Trabajador,Salario Básico Mensual del Trabajador,N,N,N,N,N,N,N,N,N,Bs,R,D,Payroll,F,N,N,Y,Y,Y,SBPR,CN,SB,N,,Y,L,N,SB/30*DT,1000084,1000083,1000929,1000930,1000931,1000084,1000084,1000084,*,PO,SBPR,PO700050,PO-Salario Básico Trabajador,PO-Salario Básico Trabajador,Y
+*,700100,PRESTAMODB,Prestamos Registro,Registro de Préstamos al Trabajador,N,N,N,N,N,N,N,N,N,Bs,B,D,Payroll,V,Y,Y,Y,Y,Y,PRESTAMODB,CN,0,N,,Y,,N,,1000084,1000086,,,,,,,*,PO,PRESTAMODB,PO700100,PO-Prestamos Registro,PO-Prestamos Registro,Y
+*,700110,MOVISTAR,Consumo Movistar,Consumo Movistar,N,N,N,N,N,N,N,N,N,Bs,B,D,Payroll,V,Y,Y,Y,Y,Y,MOVISTAR,CN,0,N,,Y,,N,,1000118,1000086,,,,,,,"Tamanaco, C.A.",PO,MOVISTAR,PO700110,PO-Consumo Movistar,PO-Consumo Movistar,Y
+*,700120,ESTACIONA,Puesto de Estacionamiento,Puesto de Estacionamiento,N,N,N,N,N,N,N,N,N,Bs,B,D,Payroll,V,Y,Y,Y,Y,Y,ESTACIONA,CN,0,N,,Y,,N,,1000118,1000086,,,,,,,"Tamanaco, C.A.",PO,ESTACIONA,PO700120,PO-Puesto de Estacionamiento,PO-Puesto de Estacionamiento,Y
+*,700130,COMPRATERC,Compras a Terceros por cuenta de Trabajadores,Compras de Bienes y Servicios por cuenta de Trabajadores,N,N,N,N,N,N,N,N,N,Bs,B,D,Payroll,V,Y,Y,Y,Y,Y,COMPRATERC,CN,0,N,,Y,,N,,1000118,1000086,,,,,,,*,PO,COMPRATERC,PO700130,PO-Compras a Terceros por cuenta de Trabajadores,PO-Compras a Terceros por cuenta de Trabajadores,Y
+*,700150,ANTICIUTIL,Anticipo Utilidades,Anticipo Utilidades al Trabajador,N,N,N,N,N,N,N,N,N,Bs,B,D,Payroll,V,Y,Y,Y,Y,Y,ANTICIUTIL,CN,0,N,,Y,,N,,1000084,1000086,,,,,,,*,PO,ANTICIUTIL,PO700150,PO-Anticipo Utilidades,PO-Anticipo Utilidades,Y
+*,700160,ANTICIVACAC,Anticipo Vacaciones,Anticipo Vacaciones al Trabajador,N,N,N,N,N,N,N,N,N,Bs,B,D,Payroll,V,Y,Y,Y,Y,Y,ANTICIVACAC,CN,0,N,,Y,,N,,1000084,1000086,,,,,,,*,PO,ANTICIVACAC,PO700160,PO-Anticipo Vacaciones,PO-Anticipo Vacaciones,Y
+*,800100,SSO_T,Aporte Seguro Social Obligatorio Trabajador,TOPE CINCO SALARIOS MINIMOS,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,Y,Y,N,N,SSO_T,Ver Script,4,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,L,N,"if (SB > 5*SBMIN ) {DTPER*5*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); }
+if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+
+var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+        if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+        break;
+     default:
+        if (SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+}",1000085,1000084,,,,,,,*,NN,SSO_T,NN800100,NN-Seguro Social Obligatorio Trabajador,NN-Seguro Social Obligatorio Trabajador,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,SSO_T,NV800100,NV-Seguro Social Obligatorio Trabajador,NV-Seguro Social Obligatorio Trabajador,Y
+*,800110,SSO_P,Aporte Seguro Social Obligatorio Patrón,TOPE 5 SALARIOS MINIMOS,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,N,Y,N,N,SSO_P,Script,10,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SSO > 5*SBMIN ) {NLUNES*5*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SSO*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 5*SBMIN ) {NLUNES*5*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,L,N,if (SB > 5*SBMIN ) {DTPER*5*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); },1000085,1000095,,,,,,,*,NN,SSO_P,NN800110,NN-Seguro Social Obligatorio Patrón,NN-Seguro Social Obligatorio Patrón,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,SSO_P,NV800110,NV-Seguro Social Obligatorio Patrón,NV-Seguro Social Obligatorio Patrón,Y
+*,800120,SPF_T,Aporte Pérdida Involuntaria del Empleo Trabajador,TOPE 10 SALARIOS MINIMOS,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,Y,Y,N,N,SPF_T,ver Script,0.5,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,,N,"var Contrato= AM_Contract;
+switch(Contrato ) {
+     case  'VE':
+        if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+        break;
+     default:
+        if (SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((SB*12)/52)*(CN/100); }
+}",1000085,1000084,,,,,,,*,NN,SPF_T,NN800120,NN-Pérdida Involuntaria de Empleo Trabajador,NN-Seguro de Paro Forzozo Trabajador,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,SPF_T,NV800120,NV-Seguro de Paro Forzozo Trabajador,NV-Seguro de Paro Forzozo Trabajador,Y
+*,800130,SPF_P,Aporte Pérdida Involuntaria del Empleo Patrón,TOPE 10 SALARIOS MINIMOS,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,N,Y,N,N,SPF_P,Script,2,N,"var Contrato= AM_Contract;
+if (AM_IsPensioned == 'Y') {   
+    NLUNES*((SBMIN*12)/52)*(CN/100);
+  } else {
+    switch(Contrato ) {
+       case  'VE':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       case  'DI':
+          if (R_SPF> 10*SBMIN ) {NLUNES*10*(((SBMIN *12)/52)*(CN/100)) ; } else { NLUNES*((R_SPF*12)/52)*(CN/100); }
+          break;
+       default:
+          if (QT_SB > 10*SBMIN ) {NLUNES*10*(((SBMIN*12)/52)*(CN/100)) ; } else { NLUNES*((QT_SB*12)/52)*(CN/100); }
+    }
+  }",Y,,N,if (SB > 10*SBMIN ) {DTPER*10*((SBMIN/30)*(CN/100)) ; } else { DTPER*(SB/30)*(CN/100); },1000085,1000095,,,,,,,*,NN,SPF_P,NN800130,NN-Pérdida Involuntaria de Empleo Patrón,NN-Pérdida Involuntaria de Empleo Patrón,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,SPF_P,NV800130,NV-Pérdida Involuntaria de Empleo Patrón,NV-Pérdida Involuntaria de Empleo Patrón,Y
+*,800140,FAOV_T,Aporte F.A.O.V. Trabajador,1 % SALARIO INTEGRAL,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,Y,Y,N,N,FAOV_T,R_FAOV*CN/100,1,N,,Y,,N,,1000094,1000084,,,,,,,*,NN,FAOV_T,NN800140,NN-Aporte F.A.O.V. Trabajador,NN-Aporte F.A.O.V. Trabajador,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,FAOV_T,NV800140,NV-Aporte F.A.O.V. Trabajador,NV-Aporte F.A.O.V. Trabajador,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NU,FAOV_T,NU800140,NU-Aporte F.A.O.V. Trabajador,NU-Aporte F.A.O.V. Trabajador,Y
+*,800150,FAOV_P,Aporte F.A.O.V. Patrón,2 % SALARIO INTEGRAL,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,N,Y,N,N,FAOV_P,R_FAOV*CN/100,2,N,,Y,,N,,1000094,1000141,,,,,,,*,NN,FAOV_P,NN800150,NN-Aporte F.A.O.V. Patrón,NN-Aporte F.A.O.V. Patrón,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,FAOV_P,NV800150,NV-Aporte F.A.O.V. Patrón,NV-Aporte F.A.O.V. Patrón,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NU,FAOV_P,NU800150,NU-Aporte F.A.O.V. Patrón,NU-Aporte F.A.O.V. Patrón,Y
+*,800160,INCES_T,Aporte I.N.C.E.S. Trabajador Utilidades,Aporte I.N.C.E.S. Trabajador Utilidades,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,Y,Y,N,N,INCES_T,R_INCES*CN/100,.5,N,,Y,,N,,1000093,1000084,,,,,,,*,NU,INCES_T,NU800160,NU-Aporte I.N.C.E.S. Trabajador Utilidades,NU-Aporte I.N.C.E.S. Trabajador Utilidades,Y
+*,800170,INCES_P,Aporte I.N.C.E.S. Patrón,Aporte I.N.C.E.S. Patrón,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,N,Y,N,N,INCES_P,R_INCES*CN/100,2,N,,Y,L,N,,1000093,1000142,,,,,,,*,NU,INCES_P,NU800170,NU-Aporte I.N.C.E.S. Patrón,NU-Aporte I.N.C.E.S. Patrón,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NN,INCES_P,NN800170,NN-Aporte I.N.C.E.S. Patrón,NN-Aporte I.N.C.E.S. Patrón,Y
+*,800180,CAJAAH_T,Aporte Caja de Ahorros Trabajador,Porcentajes asociados a períodos. Usualmente,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,Y,Y,N,N,CAJAAH_T,(R_ASIG*CN/100),10,N,,Y,,N,,1000092,1000084,,,,,,,,,,,,,
+*,800190,CAJAAH_P,Aporte Caja de Ahorros Patrón,Porcentajes asociados a perí­odos. Usualmente,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,N,Y,N,N,CAJAAH_P,(R_ASIG*CN/100),10,N,,Y,,N,,1000092,1000091,,,,,,,,,,,,,
+*,800200,ISLR,Impuesto sobre la Renta Retenido al Trabajador,Porcentajes asociados a períodos fiscales,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,F,N,Y,Y,N,N,ISLR,R_ARC*CN/100,TAXRATE + 0,N,,Y,,N,,1000074,1000084,,,,,,,*,NN,ISLR,NN800200,NN-Impuesto sobre la Renta Retenido al Trabajador,NN-Impuesto sobre la Renta Retenido al Trabajador,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,ISLR,NV800200,NV-Impuesto sobre la Renta Retenido al Trabajador,NV-Impuesto sobre la Renta Retenido al Trabajador,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NU,ISLR,NU800200,NU-Impuesto sobre la Renta Retenido al Trabajador,NU-Impuesto sobre la Renta Retenido al Trabajador,Y
+*,800210,PNRM,Permiso No Remunerado FALTAS,Acumula Cantidades para efectos estadísticos,N,N,N,N,N,N,N,N,N,Dias,A,D,Payroll,V,Y,Y,Y,Y,Y,PNRM,CN*0,1,N,,Y,L,N,,1000083,1000084,,,,,,,,,,,,,
+*,800215,RPISLR,Retencion Pendiente ISLR,Porcentajes asociados a períodos fiscales,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,V,N,Y,Y,N,N,ISLR,CN,TAXRATE + 0,N,,Y,,N,,1000074,1000084,,,,,,,*,NN,RPISLR,NN800215,NN-Retencion Pendiente ISLR,NN-Retencion Pendiente ISLR,Y
+*,800220,PREM,Permiso Remunerado,Permiso Remunerado,N,N,N,N,N,N,N,N,N,Dias,A,D,Payroll,V,N,Y,Y,Y,Y,PREM,QT_SB/30*CN*DT,1,N,,Y,,N,,1000084,1000083,,,,,,,,,,,,,
+*,800230,OTRASD,Otras Deducciones,Otras Deducciones,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,Y,N,N,OTRASD,CN ,1,N,,Y,,N,,1000083,1000084,,,,,,,,,,,,,
+*,800240,AJUSTED,Ajustes Deducciones,Ajustes Deducciones,N,N,N,N,N,N,N,N,N,Bs,D,C,Payroll,V,Y,Y,Y,N,N,AJUSTED,CN ,1,N,,Y,,N,,1000083,1000084,,,,,,,,,,,,,
+*,800900,ANTICIPOVE,Anticipo Comisión Adicional,Anticipo Comisión Adicional,N,N,N,N,N,N,N,N,N,Bs,A,D,Payroll,V,N,Y,Y,N,N,ANTICIPOVE,(RS_SSO_T + RS_SPF_T + RS_FAOV_T ) + 0,1,N,,Y,C,N,+ RS_SPF_T + RS_FAOV_T,1000084,1000083,,,,,,,*,NN,ANTICIPOVE,NN800900,NN-Anticipo Comisión Adicional,NN-Anticipo Comisión Adicional,Y
+*,820100,PROVVACAC,Provisión Vacaciones,Provisión Vacaciones,N,N,N,N,N,N,N,N,N,%,P,D,Payroll,F,N,N,Y,N,N,PROVVACAC,(R_ASIG*CN/12),1,N,,Y,,N,,1000090,1000087,,,,,,,,,,,,,
+*,830100,PROVUTILD,Provisión Utilidades,Provisión Utilidades,N,N,N,N,N,N,N,N,N,%,P,D,Payroll,F,N,N,Y,N,N,PROVUTILD,(R_ASIG*CN/12),1,N,,Y,,N,,1000089,1000087,,,,,,,,,,,,,
+*,840100,PROVPREST,Provisón Prestaciones Sociales,Provisón Prestaciones Sociales,N,N,N,N,N,N,N,N,N,Dias,P,D,Payroll,F,N,N,Y,N,Y,PROVPREST,(R_ASIG*CN/30),5,N,,Y,,N,,1000088,1000087,,,,,,,,,,,,,
+*,850100,PROVINTPR,Provisión Intereses Prestaciones Sociales,Provisión Intereses Prestaciones Sociales,N,N,N,N,N,N,N,N,N,%,P,D,Payroll,F,N,N,Y,Y,Y,PROVINTPR,(R_ASIG*(CN/100)),1,N,,Y,,N,,1000088,1000087,,,,,,,,,,,,,
+*,860100,PRESTAMOCR,Pago Prestamos,Pago Prestamos,N,N,N,N,N,N,N,N,N,Bs,B,C,Payroll,V,Y,Y,Y,Y,Y,PRESTAMOCR,CN,0,N,,Y,,N,,1000086,1000084,,,,,,,*,NN,PRESTAMOCR,NN860100,NN-Pago Prestamos,NN-Pago Prestamos,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,PRESTAMOCR,NV860100,NV-Pago Prestamos,NV-Pago Prestamos,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NU,PRESTAMOCR,NU860100,NU-Pago Prestamos,NU-Pago Prestamos,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,PO,PRESTAMOCR,PO860100,PO-Pago Prestamos,PO-Pago Prestamos,Y
+*,999999,APRUEBA,PRUEBA CONCEPTO,TOPE CINCO SALARIOS MINIMOS,N,N,N,N,N,N,N,N,N,%,W,C,Payroll,V,N,Y,Y,N,N,APRUEBA,BUSINESSDAYS-QT_FERIADORE,1,N,,Y,L,N,if (SB > 5*SBMIN ) { 7*5*((SBMIN/30)*(CN/100)) ; } else { 7*(SB/30)*(CN/100) ; },1000085,1000084,,,,,,,*,NN,APRUEBA,NN999999,NN-PRUEBA CONCEPTO,NN-PRUEBA CONCEPTO,Y
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*,NV,APRUEBA,NV999999,NV-PRUEBA CONCEPTO,NV-PRUEBA CONCEPTO,Y

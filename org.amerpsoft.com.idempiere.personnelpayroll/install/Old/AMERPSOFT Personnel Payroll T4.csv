@@ -1,0 +1,29 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
+*,AMERPSOFT Personnel Payroll T4,1010,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Concepts UOM,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1020,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Attendance Registry by Periods,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1030,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Concepts ,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1040,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Concepts Types and Contracts,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1050,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Consulting Loans by RoleAccess,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1060,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Contract,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1065,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Default Accounts,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1070,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Department,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1080,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Dependent Type,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1090,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Employee,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1100,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Employee Consultation,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1110,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Job Stations,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1120,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Job Titles,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1130,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Job Units,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1140,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Location,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1150,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Periods Payroll by Fiscal Year,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1160,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Shift,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1200,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Process,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1210,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Rates,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1220,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Role Access,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1230,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Concepts Types and Process,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1240,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Concepts Types,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1250,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Periods Social Benefits by Fiscal Yr,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1260,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Position,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1270,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Preparing Loans by RoleAccess2,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1280,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Preparing Payroll by RoleAccess2,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1290,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Preparing Social Benefit by RoleAcces2,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T4,1295,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Preparing Receipts by Lot,,System Administrator,,,,,,,,,,Product Info

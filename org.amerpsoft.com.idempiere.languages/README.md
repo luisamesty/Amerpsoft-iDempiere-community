@@ -70,3 +70,23 @@ Español (Paraguay)  for es_PY
 Español (Venezuela)  for es_VE
 ```
 
+### <b>5-Enable/Disable Login Language</b>
+
+Menu (System Admin/General Rules/SystemRules/Language)
+
+Go to Specific Language, as an example 'es_CO'.
+
+On <b>'Login Locale'</b> Field:
+
+```text
+Check for Login Enabled.
+Uncheck for Login Disabled
+```
+
+
+<div align="left">
+  <a href="ISO_CODE">
+    <img src="./images/language_select_login.png" alt="Logo" width="800" >
+  </a>
+</div>
+

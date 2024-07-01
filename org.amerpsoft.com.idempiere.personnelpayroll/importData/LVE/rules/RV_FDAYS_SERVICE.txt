@@ -1,0 +1,52 @@
+// RV_FDAYS_SERVICE
+// RETURN ABSOLUTE SERVICES DAYS
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+BigDecimal BDdaysService = BigDecimal.ZERO;
+boolean negative = false;
+int diffdays = 0;
+if (end.before(start))  {
+   negative = true;
+   Timestamp temp = start;
+   start = end;
+   end = temp;
+}
+// Calculates using Calendar class
+// start  (calIni)
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+calIni.set(Calendar.HOUR_OF_DAY, 0);
+calIni.set(Calendar.MINUTE, 0);
+calIni.set(Calendar.SECOND, 0);
+calIni.set(Calendar.MILLISECOND, 0);
+// end (calEnd)
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+calEnd.set(Calendar.HOUR_OF_DAY, 0);
+calEnd.set(Calendar.MINUTE, 0);
+calEnd.set(Calendar.SECOND, 0);
+calEnd.set(Calendar.MILLISECOND, 0);
+// Calculates days
+diffdays = 0;
+while (calEnd.after(calIni))    {
+      calIni.add (Calendar.DAY_OF_YEAR, 1);
+      diffdays++;
+}
+if (negative)
+     diffdays = diffdays * -1;
+// Convert to Big Decimal
+BDdaysService = new BigDecimal(diffdays);
+//BDdaysService.setScale(0, RoundingMode.HALF_UP);
+return BDdaysService;

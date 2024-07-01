@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2021-03-05T09:22:04 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="JobOrganization" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" resourceBundle="JobOrganization" uuid="be58b075-342d-45c6-acf0-49c74342d296">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="IdempiereTAM8.2pro_Strato M4erp DEMO"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Jobunit_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Jobstation_ID" class="java.lang.Integer"/>
+	<parameter name="ShowEmployee" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="print_Break" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[-- AMN_Jobunit 
+-- FROM DEfault AD_Tree FROM A GIVEN AD_Client_ID and table AMN_Jobunit
+-- FOR NEW ORGANIZATION REPORTS
+WITH RECURSIVE Nodos AS (
+    SELECT TRN1.AD_Tree_ID,TRN1.Node_ID, 0 as level, TRN1.Parent_ID, 
+	ARRAY [TRN1.Node_ID::text]  AS ancestry, 
+	TRN1.Node_ID as Star_An
+	FROM ad_treenode TRN1 
+	WHERE TRN1.AD_tree_ID=(
+		SELECT tree.AD_Tree_ID
+		FROM AD_Client adcli
+		LEFT JOIN AD_Tree tree ON tree.AD_Client_ID= adcli.AD_Client_ID
+		left join AD_Table tabl on tabl.ad_table_id = tree.ad_table_id 
+		WHERE adcli.AD_client_ID=$P{AD_Client_ID} and tabl.tablename = 'AMN_Jobunit'
+	) 
+	AND TRN1.isActive='Y' AND TRN1.Parent_ID = 0
+    UNION ALL
+	SELECT TRN1.AD_Tree_ID, TRN1.Node_ID, TRN2.level+1 as level,TRN1.Parent_ID, 
+	TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
+	COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An
+	FROM ad_treenode TRN1 
+	INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
+	WHERE TRN1.AD_tree_ID=(
+		SELECT tree.AD_Tree_ID
+		FROM AD_Client adcli
+		LEFT JOIN AD_Tree tree ON tree.AD_Client_ID= adcli.AD_Client_ID
+		left join AD_Table tabl on tabl.ad_table_id = tree.ad_table_id 
+		WHERE adcli.AD_client_ID=$P{AD_Client_ID} and tabl.tablename = 'AMN_Jobunit'
+	)  AND TRN1.isActive='Y' 
+) 
+SELECT 
+ org_name, org_description, org_taxid, org_logo,
+ cod_unidad,
+ -- SE DEFINE LA UNIDAD "PADRE" (RECURSIVIDAD)
+ CASE WHEN unidad.parent_uni IS NOT NULL 
+     THEN (SELECT COALESCE(name, description) FROM adempiere.amn_jobunit WHERE unidad.parent_uni= amn_jobunit_id ) 
+      ELSE '(-)' 
+ END as unidad,
+ unidad.unidad_h,
+ unidad.cod_estacion, unidad.estacion, unidad.recurso,
+ unidad.num_plazas, unidad.cod_cargo, unidad.cargo, unidad.fuerza, unidad.employee
+FROM
+ (SELECT 
+    -- ORGANIZACIÓN
+		CASE WHEN $P{AD_Org_ID}  =0 THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
+		CASE WHEN $P{AD_Org_ID} =0 THEN concat(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
+		COALESCE(orginfo.taxid,'') as org_taxid,
+		CASE WHEN $P{AD_Org_ID}= 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+  	-- UNIDAD
+     	uni.value as cod_unidad, -- ORDEN JERARQUICO
+   		PAR.Parent_ID as parent_uni,
+        COALESCE(uni.name, uni.description) as unidad_h,
+        CASE WHEN ($P{AMN_Jobunit_ID} IS NULL OR uni.amn_jobunit_id = $P{AMN_Jobunit_ID}) THEN 1 ELSE 0 END AS imprimir_unidad,
+    -- ESTACIÓN
+        est.value as cod_estacion,
+        COALESCE(est.name, est.description) as estacion, est.numberofjobs as num_plazas,
+        CASE WHEN ($P{AMN_Jobstation_ID} IS NULL OR est.amn_jobstation_id = $P{AMN_Jobstation_ID}) THEN 1 ELSE 0 END AS imprimir_estacion,
+    -- RECURSO
+		COALESCE(rec.name, rec.description) as recurso,
+    -- CARGO
+        crg.value as cod_cargo,
+	    COALESCE(crg.name, crg.description) as cargo,
+	    CASE WHEN reflistr.name IS NULL THEN 'Fuerza de Trabajo *** SIN DEFINIR ***' ELSE reflistr.name END  as fuerza,
+	-- TRABAJADORES
+		CONCAT(empl.value,'-',empl.name) as employee
+   FROM Nodos PAR
+   LEFT JOIN  adempiere.amn_jobunit as uni ON uni.AMN_Jobunit_ID = PAR.NODE_ID
+   INNER JOIN adempiere.ad_client as cli ON (uni.ad_client_id = cli.ad_client_id)
+   INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+    LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+   INNER JOIN adempiere.ad_org as org ON (uni.ad_org_id = org.ad_org_id)
+   INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+    LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+    LEFT JOIN adempiere.amn_jobstation as est ON (uni.amn_jobunit_id= est.amn_jobunit_id) AND (uni.ad_client_id= est.ad_client_id)
+    LEFT JOIN adempiere.s_resource as rec ON (est.s_resource_id = rec.s_resource_id)
+    LEFT JOIN adempiere.amn_jobtitle as crg ON (est.amn_jobstation_id= crg.amn_jobstation_id)
+    LEFT JOIN adempiere.amn_employee as empl ON (empl.amn_jobtitle_id = crg.amn_jobtitle_id)
+    LEFT JOIN adempiere.ad_reference as ref ON(ref.name='AMN_Workforce')
+    LEFT JOIN adempiere.ad_ref_list as reflis ON (ref.ad_reference_id = reflis.ad_reference_id AND reflis.value =crg.workforce)
+    LEFT JOIN adempiere.ad_ref_list_trl as reflistr ON (reflis.ad_ref_list_id = reflistr.ad_ref_list_id AND reflistr.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) )
+   WHERE uni.isactive= 'Y' AND est.isactive= 'Y' AND crg.isactive= 'Y' AND empl.isactive='Y' AND empl.status <> 'R'
+     AND uni.ad_client_id= $P{AD_Client_ID} AND uni.ad_org_id=  $P{AD_Org_ID} 
+  ) as unidad
+ WHERE imprimir_unidad= 1 AND imprimir_estacion= 1
+ORDER BY cod_unidad, unidad, unidad.unidad_h, unidad.estacion, unidad.cargo]]>
+	</queryString>
+	<field name="org_name" class="java.lang.String"/>
+	<field name="org_description" class="java.lang.String"/>
+	<field name="org_taxid" class="java.lang.String"/>
+	<field name="org_logo" class="java.io.InputStream"/>
+	<field name="cod_unidad" class="java.lang.String"/>
+	<field name="unidad" class="java.lang.String"/>
+	<field name="unidad_h" class="java.lang.String"/>
+	<field name="cod_estacion" class="java.lang.String"/>
+	<field name="estacion" class="java.lang.String"/>
+	<field name="recurso" class="java.lang.String"/>
+	<field name="num_plazas" class="java.math.BigDecimal"/>
+	<field name="cod_cargo" class="java.lang.String"/>
+	<field name="cargo" class="java.lang.String"/>
+	<field name="fuerza" class="java.lang.String"/>
+	<field name="employee" class="java.lang.String"/>
+	<group name="Group_porUnidad">
+		<groupExpression><![CDATA[$F{unidad}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<property name="local_mesure_unitheight" value="pixel"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="1" y="0" width="109" height="18" isRemoveLineWhenBlank="true" uuid="2189f8da-bacf-48e9-9874-e4638505de21">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cod_unidad}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="110" y="0" width="552" height="18" isRemoveLineWhenBlank="true" uuid="65b7c96f-62ce-4f7d-a853-0ae36b35a23e">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{unidad_h}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="1">
+				<break>
+					<reportElement x="0" y="0" width="100" height="1" uuid="0d7fb176-5bb0-468f-a32f-5f8c91065e73">
+						<printWhenExpression><![CDATA[$P{print_Break}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
+					</reportElement>
+				</break>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_porEstacion">
+		<groupExpression><![CDATA[$F{estacion}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="110" y="0" width="270" height="16" isRemoveLineWhenBlank="true" uuid="ebcbcd96-312f-464c-80ac-7b4d61224856">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="6"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estacion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="110" height="16" isRemoveLineWhenBlank="true" uuid="4682ca05-1573-4e13-af61-a0fe1fd4d34f">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="6"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cod_estacion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="470" y="0" width="192" height="16" isRemoveLineWhenBlank="true" uuid="f63d0e30-ef84-4af0-9022-94b6ab189a7c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{recurso}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="380" y="0" width="90" height="16" isRemoveLineWhenBlank="true" uuid="06344e77-b81b-41d0-b767-1561181127cc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{num_plazas}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group_porCargo">
+		<groupExpression><![CDATA[$F{cargo}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="110" y="0" width="480" height="16" isRemoveLineWhenBlank="true" uuid="95b02524-3c97-4edc-ac94-c25cb1d42eee">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cod_cargo}+"-"+$F{cargo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="590" y="0" width="232" height="16" isRemoveLineWhenBlank="true" uuid="2661d9f8-6c97-46db-8757-dc4daadfd715">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fuerza}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="662" y="15" width="88" height="15" uuid="56a74aa2-fb14-4a2d-b046-a0e85c02944d">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="0" width="270" height="15" uuid="2d8acd1c-9b25-4865-a938-1277b72cac4e">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="15" width="270" height="15" uuid="6a813329-b7b5-499e-b4ce-f36c311385b0">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_taxid}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="662" y="0" width="160" height="15" uuid="79849d12-2338-4ab6-8c4f-c006f446f3ba">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="750" y="15" width="72" height="15" uuid="419d8615-506a-4071-a953-07e5ee2dea29">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image onErrorType="Blank">
+				<reportElement x="0" y="0" width="110" height="50" uuid="3d7d2bf0-a4e8-416f-b3f8-12b14996b8c4">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$F{org_logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="110" y="30" width="552" height="20" uuid="77949642-1412-4077-b4ba-77fbfb5d060d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<line>
+				<reportElement x="1" y="4" width="821" height="1" uuid="565a3192-9238-4391-a1a3-7c650793cd06">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="24" width="821" height="1" uuid="be979e91-a5da-4e11-8810-7c2461c27e9f">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="27" width="821" height="1" uuid="8608a76b-8949-4808-8e6e-10f3446d97a0">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="1" y="0" width="821" height="1" uuid="37161139-3ae3-4d69-b5c6-fe69c0d1d5d3">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="1" y="5" width="108" height="18" uuid="15c27f94-cdab-46b9-a297-14f27e044440"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="5" width="270" height="18" uuid="28c96f49-2033-41d1-8a84-b8de4b2ce3f8">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.unit}+" / "+$R{report.station}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="5" width="90" height="18" uuid="fd70f1fe-07c8-433b-baa2-9de5612939cd">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.workplace}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="470" y="5" width="120" height="18" uuid="de7934ff-42bf-4250-9d3e-b29988a73e35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.resource}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="590" y="5" width="232" height="18" uuid="74733eef-82ed-4651-8377-36a29f9a2ce7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.workforce}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$P{ShowEmployee}.compareToIgnoreCase( "Y" )== 0]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="0" width="480" height="12" isRemoveLineWhenBlank="true" uuid="495b5759-751f-4ccb-93f7-437ed776f7ff">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+				</reportElement>
+				<box leftPadding="18"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employee}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
