@@ -48,7 +48,19 @@ Follow steps:
 
 ## <a name="step2"></a>⭐️2. Installing plugin
 
-Before installing ....
+Before installing plugin be sure all SQL Scripts were applied to database.
+
+See:
+
+```text
+
+sql/postgresql/css_styles.sql
+
+or 
+
+sql/oracle/css_styles.sql
+```
+
 
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
