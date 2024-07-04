@@ -14,11 +14,14 @@ package org.amerp.amnmodel;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.adempiere.exceptions.TaxNoExemptFoundException;
 import org.adempiere.util.IProcessUI;
+import org.amerp.amndocument.Doc_AMNPayroll;
 import org.amerp.amnutilities.AmerpDateUtils;
 import org.amerp.amnutilities.AmerpUtilities;
 import org.compiere.model.*;
@@ -151,7 +154,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	}
 	
 	/**
-	 * 
+	 * createAmnPayroll:
+	 * Creates AMN_payroll Record
 	 * @param ctx
 	 * @param locale
 	 * @param int p_AMN_Process_ID	Payroll Process
@@ -199,6 +203,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
    		Employee_Value=amnemployee.getValue().trim();
    		Employee_Name=amnemployee.getName().trim();
    		Period_Value=amnperiod.getValue().trim();
+   		if (p_AD_Org_ID == 0 && amnemployee.getAD_OrgTo_ID()!=0)
+   			p_AD_Org_ID = amnemployee.getAD_OrgTo_ID();
    		// Default Currency  for Contract
    		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(p_AMN_Contract_ID);
    		if (Currency_ID == null )
@@ -256,6 +262,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			amnpayroll = new MAMN_Payroll(getCtx(), 0, get_TrxName());
 //			amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Period_ID, get_TrxName());
 			amnpayroll.setAD_Client_ID(p_AD_Client_ID);
+			
 			amnpayroll.setAD_Org_ID(p_AD_Org_ID);
 			amnpayroll.setAMN_Process_ID(p_AMN_Process_ID);
 			amnpayroll.setAMN_Contract_ID(p_AMN_Contract_ID);
@@ -337,6 +344,245 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		
 	}	//	createAmnPayroll
 
+	/**
+	 * createCInvoice: 
+	 * Create Payroll Invoice Header
+	 * @param ctx
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @param p_AMN_Payroll_ID
+	 * @param minvoice
+	 * @param trxName
+	 * @return
+	 */
+	public int createCInvoice(Properties ctx, 
+			int p_AD_Client_ID, int p_AD_Org_ID,  int p_AMN_Payroll_ID, MInvoice minvoice, String trxName) {
+		int retValue = 0;
+		Integer Currency_ID = 0;
+		Integer ConversionType_ID = MConversionType.TYPE_SPOT;
+		String Process_Value = "",Contract_Value="",Employee_Value="",Payroll_Value="",Period_Value="";
+		String Employee_Name="",Payroll_Name="";
+		String PayrollDescription="";
+		String DocumentNo="";
+		Integer DocType_ID;
+		// AMN_Contract Attributes Variables
+		BigDecimal PayRollDays;
+		Integer AcctDow;
+		Integer InitDow;
+		// Rest of Variables
+		GregorianCalendar cal = new GregorianCalendar();
+    	// 
+		MAMN_Payroll amnpayroll = null;
+		if (p_AMN_Payroll_ID == 0) {
+			return retValue;
+		} else {
+			amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+		}
+		// Continue amnpayroll 
+		MAMN_Process amnprocess = new MAMN_Process(ctx, amnpayroll.getAMN_Process_ID(), trxName);
+    	MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+    	MAMN_Period amnperiod = new MAMN_Period(ctx, amnpayroll.getAMN_Period_ID(), trxName);
+    	MAMN_Contract amncontract = new MAMN_Contract(ctx, amnpayroll.getAMN_Contract_ID(), trxName);
+    	MBPartner bp = null;
+    	// Default Org Location Location
+    	MOrgInfo oi = MOrgInfo.get( amnemployee.getAD_OrgTo_ID(), trxName);
+    	int Default_C_BPartner_Location_ID = oi.getC_Location_ID();
+    	// Get employe  BPartner for Invoice		
+    	if (amnemployee.getBill_BPartner_ID() != 0) {
+    		bp = new MBPartner(ctx, amnemployee.getBill_BPartner_ID(), trxName);
+    	} else {
+    		bp = new MBPartner(ctx, amnemployee.getC_BPartner_ID(), trxName);
+    	}
+    	// AMN_Period Cache
+    	Process_Value=amnprocess.getValue().trim();
+   		Contract_Value=amncontract.getValue().trim();
+   		Employee_Value=amnemployee.getValue().trim();
+   		Employee_Name=amnemployee.getName().trim();
+   		Period_Value=amnperiod.getValue().trim();
+   		// Default Currency  for Contract
+   		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(amncontract.getAMN_Contract_ID());
+   		if (Currency_ID == null )
+   			Currency_ID = AmerpUtilities.defaultAcctSchemaCurrency(p_AD_Client_ID);	
+   		// Default ConversionType for Contract
+   		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amncontract.getAMN_Contract_ID());
+   		if (ConversionType_ID == null)	
+   			ConversionType_ID = MConversionType.TYPE_SPOT;
+   		DocumentNo=DocumentNo+Employee_Value+01;
+    	Payroll_Value=AmerpUtilities.truncate((Process_Value+"-"+Contract_Value+"-"+Employee_Value+"-"+Period_Value),39);
+		Payroll_Name=AmerpUtilities.truncate((Process_Value+"-"+Contract_Value+"-"+Employee_Name),59);
+		PayrollDescription=AmerpUtilities.truncate((Process_Value+"-"+Contract_Value+"-"+Employee_Name+"-"+Period_Value),255);		
+    	PayRollDays = amncontract.getPayRollDays();
+    	AcctDow = Integer.parseInt(amncontract.getAcctDow().trim());	    	
+    	InitDow = Integer.parseInt(amncontract.getInitDow().trim());	
+    	// Get Default Price List
+		MPriceList pl = new MPriceList(getCtx(), 0, null);
+		pl = MPriceList.getDefault(getCtx(), false);
+		if (pl == null)
+			pl = new MPriceList(getCtx(), 1000000, null);
+    	// C_Doctype_ID
+    	String sql = "select c_doctype_id from c_doctype WHERE ad_client_id="+p_AD_Client_ID+"  AND docbasetype='HRP' " ;
+    	DocType_ID = (Integer) DB.getSQLValue(null, sql);
+    	// Verify if Seven
+    	if (PayRollDays.equals(BigDecimal.valueOf(7))) {
+			if (InitDow <= AcctDow ) {
+				cal.setTime(amnperiod.getAMNDateIni());
+				cal.add(Calendar.DAY_OF_YEAR,  AcctDow - InitDow );
+			} else {
+				cal.setTime(amnperiod.getAMNDateEnd());
+				cal.add(Calendar.DAY_OF_YEAR, AcctDow - InitDow );
+			}		
+    	} else {
+    		cal.setTime(amnperiod.getAMNDateEnd());
+    	}
+		IProcessUI processMonitor = Env.getProcessUI(ctx);
+		// CReates Invoice Header
+		if (trxName == null) {
+			trxName = Trx.createTrxName("PayrollInvoice");
+		}
+		amnpayroll.set_TrxName(trxName);
+		// C_Doctype
+		MDocType mdct = null;
+		if (amnprocess.getC_DocTypeTarget_ID() !=0) {
+			mdct = 	new MDocType(getCtx(), amnprocess.getC_DocTypeTarget_ID(), get_TrxName());
+		} else {
+			mdct = new MDocType(getCtx(), amnpayroll.getC_DocType_ID(), get_TrxName());
+		}
+		// C_Invoice
+		minvoice.setAD_Org_ID(amnemployee.getAD_OrgTo_ID());
+		minvoice.setDescription(PayrollDescription);
+		minvoice.setC_Activity_ID(amnemployee.getC_Activity_ID());
+		minvoice.setC_Project_ID(amnemployee.getC_Project_ID());
+		minvoice.setC_Currency_ID(Currency_ID);
+		minvoice.setC_ConversionType_ID(ConversionType_ID);
+		minvoice.setGrandTotal(amnpayroll.getAmountNetpaid());
+		minvoice.setC_DocType_ID(mdct.getC_DocType_ID());
+		minvoice.setC_DocTypeTarget_ID(mdct.getC_DocType_ID());
+		minvoice.setDocumentNo(amnpayroll.getDocumentNo());
+		minvoice.setDateAcct(amnpayroll.getDateAcct());
+		minvoice.setDateInvoiced(amnpayroll.getDateAcct());
+		minvoice.setC_Currency_ID(amnpayroll.getC_Currency_ID());
+		minvoice.setC_ConversionType_ID(amnpayroll.getC_ConversionType_ID());
+		if (amnemployee.getBill_BPartner_ID() != 0) {
+			minvoice.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+		} else {
+			minvoice.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+		}
+		if (bp.getPrimaryC_BPartner_Location_ID() != 0)
+			minvoice.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+		else
+		minvoice.setC_BPartner_Location_ID(Default_C_BPartner_Location_ID);
+		minvoice.setSalesRep_ID(bp.getSalesRep_ID());
+		minvoice.setM_PriceList_ID(pl.getM_PriceList_ID());
+		// Save C_Invoice header
+		minvoice.save(trxName);
+		// 
+		if (minvoice.getC_BPartner_Location_ID() == 0) {
+			minvoice.setC_BPartner_Location_ID(Default_C_BPartner_Location_ID);
+			minvoice.save(trxName);
+
+		}
+		retValue = minvoice.getC_Invoice_ID();
+		if (processMonitor != null)
+		{
+			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
+			processMonitor.statusUpdate(String.format("%-15s","Receipt ").replace(' ', '_')+
+				Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
+				String.format("%-50s",amnemployee.getValue()+"-"+amnemployee.getName()).replace(' ', '_')+
+				Msg.getElement(Env.getCtx(), "AMN_Concept_Types_ID")+": "+
+				String.format("%-50s",Payroll_Value+"-"+Payroll_Name).replace(' ', '_'));
+		}
+		//amnpayroll.saveEx(get_TrxName());	//	Creates AMNPayroll Control
+
+		return retValue;
+		
+	}	//	createCInvoice
+
+	/**
+	 * createCInvoiceLines:
+	 * Creates Payroll Invoice Line
+	 * @param ctx
+	 * @param invoice
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @param p_AMN_Payroll_ID
+	 * @param p_AMN_Process_ID
+	 * @param trxName
+	 * @return
+	 */
+	public boolean createCInvoiceLines(Properties ctx, MInvoice invoice, 
+			int p_AD_Client_ID, int p_AD_Org_ID,  int p_AMN_Payroll_ID, int p_AMN_Process_ID, String trxName) {
+		// 
+		boolean retValue = false;
+		// Default Exent Tax
+		int C_Tax_ID = getExemptTax(ctx, p_AD_Client_ID, trxName);
+				
+		MInvoiceLine invlin = null;
+		// Verify if previouss line
+		if (invoice != null) {
+			MInvoiceLine[] invlines = invoice.getLines();
+			if (invlines.length == 0 ) {
+				invlin  = new MInvoiceLine(ctx, 0, trxName);
+			}  else {
+				deleteInvoiceLines(ctx, invoice,  trxName);
+				invlin  = new MInvoiceLine(ctx, 0, trxName);
+			}
+		} else {
+			return retValue;
+		}
+		// 
+		MAMN_Payroll amnpayroll = null;
+		if (p_AMN_Payroll_ID == 0) {
+			return retValue;
+		} else {
+			amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+		}
+		// Workforce from AMN_payroll --ª AMN_Jobtitle
+		MAMN_Jobtitle jobtitle = new MAMN_Jobtitle(ctx, amnpayroll.getAMN_Jobtitle_ID(), trxName);
+		// 
+		MAMN_Charge amncha = new MAMN_Charge(ctx, 0, trxName);
+		int C_Charge_ID = amncha.findC_Charge_ID(ctx, p_AMN_Process_ID, jobtitle.getWorkforce());
+		// 
+		invlin.setInvoice(invoice);
+		invlin.setC_Invoice_ID(invoice.getC_Invoice_ID());
+		invlin.setLine(10);
+		// Tax Line and BAse
+		invlin.setQty(BigDecimal.ONE);
+		invlin.setPrice(invoice.getGrandTotal());
+		invlin.setPriceActual(invoice.getGrandTotal());
+		invlin.setLineTotalAmt(invoice.getGrandTotal());
+		invlin.setTaxAmt(BigDecimal.ZERO);
+		invlin.setC_Tax_ID(C_Tax_ID);
+		invlin.setPriceList(invoice.getGrandTotal());
+		// Other line attributes
+		invlin.setC_Charge_ID(C_Charge_ID);
+		invlin.setDescription(invoice.getDescription());
+		invlin.setAD_Org_ID(invoice.getAD_Org_ID());
+		invlin.setC_Activity_ID(invoice.getC_Activity_ID());
+		invlin.setC_Project_ID(invoice.getC_Project_ID());
+		invlin.saveEx(trxName);
+		retValue=true;
+		// 
+		return retValue;
+		
+	}	//	createCInvoice
+	
+	
+	
+	/**
+	 * deleteInvoiceLines
+	 * When Lines ere generated remove them from credit memo
+	 * @param ctx
+	 * @param cm
+	 * @param trxName
+	 */
+	private void deleteInvoiceLines(Properties ctx, MInvoice inv, String trxName) {
+			
+			MInvoiceLine[] invlines = inv.getLines();
+			for( MInvoiceLine invlin : invlines) {
+				// Delete
+				invlin.deleteEx(true);
+			}
+	}
 	
 	/**************************************************************************
 	 * 	Before Save
@@ -392,86 +638,22 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     	return PayrollDays;	
 	}
 	
-	/** Deprecated
-	 * sqlGetAMNPayrollDays (BigDecimal PayrollDays)
-	 * @param p_AMN_Payroll_ID	Payroll_ID
-	 */
-	public static BigDecimal sqlGetAMNPayrollDays (int p_AMN_Payroll_ID)
-	
-	{
-		String sql;
-		BigDecimal PayrollDays = BigDecimal.valueOf(0);
-		// PayrollDays
-    	sql = "select CAST((age(invdateini) - age(invdateend) +1 ) as numeric) as payrolldays from amn_payroll WHERE amn_payroll_id=?" ;
-    	PayrollDays = DB.getSQLValueBD(null, sql, p_AMN_Payroll_ID);
-    	//
-    	return PayrollDays;	
-	}
-
-	/**
-	 * sqlGetAMNPayrollInvDateIni (Timestamp )
-	 * @param p_AMN_Payroll_ID	Payroll_ID
-	 */
-	public static Timestamp sqlGetAMNPayrollInvDateIni (int p_AMN_Payroll_ID)
-	
-	{
-		String sql;
-		Timestamp InvDateIni;
-		// PayrollDays
-    	sql = "select invdateini \n" + 
-    			"	from amn_payroll \n" + 
-    			"	WHERE amn_payroll_id=?" ;
-    	InvDateIni = DB.getSQLValueTS(null, sql, p_AMN_Payroll_ID);	
-		return InvDateIni;	
-	}
-	
-	/**
-	 * sqlGetAMNPayrollInvDateIni (Timestamp )
-	 * @param p_AMN_Payroll_ID	Payroll_ID
-	 */
-	public static Timestamp sqlGetAMNPayrollInvDateEnd (int p_AMN_Payroll_ID)
-	
-	{
-		String sql;
-		Timestamp InvDateEnd;
-		// PayrollDays
-    	sql = "select invdateend \n" + 
-    			"	from amn_payroll \n" + 
-    			"	WHERE amn_payroll_id=?" ;
-    	InvDateEnd = DB.getSQLValueTS(null, sql, p_AMN_Payroll_ID);	
-		return InvDateEnd;	
-	}
-	
 		
 	/**
 	 * sqlGetAMNPayrollDetailNoLines (int Employee_ID)
 	 * @param p_AMN_Payroll_ID	Payroll_ID
 	 */
-	public static int sqlGetAMNPayrollDetailNoLines (int p_AMN_Payroll_ID)
+	public static int sqlGetAMNPayrollDetailNoLines (int p_AMN_Payroll_ID, String trxName)
 	
 	{
 		String sql;
 		int AMNPayrollDetailNoLines = 0;
 		// AMN_Employee_ID
     	sql = "select count(*) from adempiere.amn_payroll_detail where AMN_Payroll_ID=?" ;
-    	AMNPayrollDetailNoLines = DB.getSQLValue(null, sql, p_AMN_Payroll_ID);
+    	AMNPayrollDetailNoLines = DB.getSQLValue(trxName, sql, p_AMN_Payroll_ID);
     	return AMNPayrollDetailNoLines;	
 	}
 	
-	/** Deprecated
-	 * sqlGetAMNEmployeeID (int Employee_ID)
-	 * @param p_AMN_Payroll_ID	Payroll_ID
-	 */
-	public static int sqlGetAMNEmployeeID (int p_AMN_Payroll_ID)
-	
-	{
-		String sql;
-		int Employee_ID = 0;
-		// AMN_Employee_ID
-    	sql = "select amn_employee_id from amn_payroll WHERE amn_payroll_id=?" ;
-    	Employee_ID = DB.getSQLValue(null, sql, p_AMN_Payroll_ID);	
-		return Employee_ID;	
-	}
 	
 	/** DocStatus AD_Reference_ID=131 */
 	public static final int DOCSTATUS_AD_Reference_ID=131;
@@ -1118,4 +1300,92 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		
 		return m_payrolldetail2;
 	}	//	getLines
+	
+	/**
+	 * getExemptTax
+	 * @param ctx
+	 * @param AD_Client_ID
+	 * @param trxName
+	 * @return
+	 */
+	public static int getExemptTax (Properties ctx, int AD_Client_ID, String trxName)
+	{
+		final String sql = "SELECT t.C_Tax_ID "
+			+ " FROM C_Tax t "
+			+ " WHERE t.ad_client_id = ? AND t.taxindicator ='Exenta' AND t.isactive='Y' AND t.name LIKE '%Exenta Compras%' "
+			+ " ORDER BY t.Rate DESC ";
+		int C_Tax_ID = DB.getSQLValueEx(trxName, sql, AD_Client_ID);
+		if (log.isLoggable(Level.FINE)) log.fine("getExemptTax - TaxExempt=Y - C_Tax_ID=" + C_Tax_ID);
+		if (C_Tax_ID <= 0)
+		{
+			throw new TaxNoExemptFoundException(AD_Client_ID);
+		}
+		else
+		{
+			return C_Tax_ID;
+		}
+	}	//	getExemptTax
+	
+	/**
+	 * reActivateCInvoice
+	 * 	Re-activate Payroll CInvoice
+	 * 	@return false
+	 */
+	public boolean reActivateCInvoice(MInvoice invoice, String trxName)
+	{
+
+		// Reactivate HEADER
+		MPeriod.testPeriodOpen(getCtx(), getDateAcct(), invoice.getC_DocType_ID(), invoice.getAD_Org_ID());
+		MFactAcct.deleteEx(MInvoice.Table_ID, invoice.getC_Invoice_ID(), trxName);
+		// Invoice
+		invoice.setDocAction("CL");
+		invoice.setDocStatus("DR");
+		invoice.setProcessed(false);
+		invoice.setPosted(false);
+		invoice.save(trxName);
+		// Reactivate LINES
+//		AMTMInvoiceLine[] lines = (AMTMInvoiceLine[]) getLines(false);
+//		for (int i = 0; i < lines.length; i++)
+//		{
+//			AMTMInvoiceLine line = lines[i];
+//log.warning("reactivateIt Lines:" +line.getName());
+//			line.setProcessed(false);
+//			line.save(get_TrxName());
+//		}
+		return true;
+
+	}	//	reActivateIt
+	
+	/**
+	 * sqlGet C_AllocationLine_C_Payment (int p_C_Invoice_ID)
+	 * @param p_C_Invoice_ID	Invoice ID
+	 * Verify if Invoice has C_Allocationline or C_Payment Records associated
+	 */
+	public String C_AllocationLine_C_Payment (int p_C_Invoice_ID, String trxName)
+	
+	{
+		String sql;
+		int C_AllocationLine_ID=0;
+		int C_Payment_ID=0;
+		String retValue="";
+		// LCO_InvoiceWHDocLines
+    	sql = "SELECT DISTINCT C_AllocationLine_ID FROM C_AllocationLine WHERE C_Invoice_ID=?" ;
+    	C_AllocationLine_ID = DB.getSQLValue(null, sql, p_C_Invoice_ID);	
+//log.warning("sql:"+sql+"  p_C_Invoice_ID:"+p_C_Invoice_ID+"  C_AllocationLine_ID:"+C_AllocationLine_ID);
+		if (C_AllocationLine_ID > 0) {
+			retValue=Msg.getElement(Env.getCtx(),"C_AllocationLine_ID")+":"+C_AllocationLine_ID;
+		   	sql = "SELECT DISTINCT C_Payment_ID FROM C_AllocationLine WHERE C_Invoice_ID=?" ;
+    		C_Payment_ID = DB.getSQLValue(null, sql, p_C_Invoice_ID);	
+//log.warning("sql:"+sql+"  p_C_Invoice_ID:"+p_C_Invoice_ID+"  C_Payment_ID:"+C_Payment_ID);
+    		if (C_Payment_ID > 0) {
+    			MPayment mpayment = new MPayment(getCtx(), C_Payment_ID, null);
+    			retValue=retValue+"  "+Msg.getElement(Env.getCtx(),"C_Payment_ID")+":"
+    					+ mpayment.getDocumentNo()+"-"+mpayment.getDescription();
+    		}
+		} else {
+			//retValue=Msg.getElement(Env.getCtx(),"C_AllocationLine_ID")+": ** NO TIENE **";
+			retValue="OK";
+		}
+    	return retValue;	
+	}
 }

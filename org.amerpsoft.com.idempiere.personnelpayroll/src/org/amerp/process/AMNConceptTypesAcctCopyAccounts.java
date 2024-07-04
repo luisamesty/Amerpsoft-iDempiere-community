@@ -19,7 +19,7 @@ public class AMNConceptTypesAcctCopyAccounts extends SvrProcess {
 	private int p_AMN_Concept_Types_To_ID = 0;
 	@Override
 	protected void prepare() {
-		// TODO Auto-generated method stub
+		// Parameters
 		ProcessInfoParameter[] params = getParameter();
 		for (ProcessInfoParameter parameter : params)
 		{
@@ -42,7 +42,7 @@ public class AMNConceptTypesAcctCopyAccounts extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		// TODO Auto-generated method stub
+		// 
 		//log.warning("...........Parametros...................");
 		//log.warning("SourceAcctSchema_ID="+p_SourceAcctSchema_ID+"  p_AMN_Concept_Types_From_ID:"+p_AMN_Concept_Types_From_ID+"  p_AMN_Concept_Types_To_ID:"+p_AMN_Concept_Types_To_ID);
 		

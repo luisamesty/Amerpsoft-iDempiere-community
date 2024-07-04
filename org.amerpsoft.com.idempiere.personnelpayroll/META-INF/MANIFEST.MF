@@ -27,7 +27,8 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/AMNCalloutFactory.xml, OSGI-INF/AMNDocumentFactory.xml,OSGI-INF/AMNEventFactory.xml, OSGI-INF/AMNFormFactory.xml, OSGI-INF/AMNModelFactory.xml, OSGI-INF/AMNProcessFactory.xml 
 Bundle-ActivationPolicy: lazy
-Import-Package: org.compiere.model,
+Import-Package: org.amerp.amndocument,
+ org.compiere.model,
  org.mozilla.classfile;version="1.7.6",
  org.mozilla.javascript;version="1.7.6"
 Bundle-Vendor: Amerpsoft

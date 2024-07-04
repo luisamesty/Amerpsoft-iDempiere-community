@@ -155,7 +155,14 @@ public class AMNProcessFactory implements IProcessFactory {
           	try {
     			process =   AMNConceptTypesAcctCopyAccounts.class.newInstance();
     		} catch (Exception e) {}
-        		//return new AMNConceptTypesCopyAccounts();     	
+        		//return new AMNConceptTypesCopyAccounts();   
+        // return AMNConceptTypesChargeCopyCharges
+        if (p_className.equals("org.amerp.process.AMNConceptTypesChargeCopyCharges")) 
+          	//log.warning("AMNConceptTypesChargeCopyCharges........PAso");
+          	try {
+    			process =   AMNConceptTypesChargeCopyCharges.class.newInstance();
+    		} catch (Exception e) {}
+        		//return new AMNConceptTypesChargeCopyCharges();    
         //AMNPayrollProvision
         if (p_className.equals("org.amerp.process.AMNPayrollProvision")) 
           	//log.warning("AMNPayrollProvision........PAso");

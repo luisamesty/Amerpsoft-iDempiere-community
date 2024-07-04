@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Payroll
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Payroll 
@@ -32,7 +32,7 @@ public interface I_AMN_Payroll
     /** TableName=AMN_Payroll */
     public static final String Table_Name = "AMN_Payroll";
 
-    /** AD_Table_ID=1000042 */
+    /** AD_Table_ID=1000028 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -275,6 +275,21 @@ public interface I_AMN_Payroll
 
 	public org.compiere.model.I_C_Currency getC_Currency() throws RuntimeException;
 
+    /** Column name C_DocType_ID */
+    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
+
+	/** Set Document Type.
+	  * Document type or rules
+	  */
+	public void setC_DocType_ID (int C_DocType_ID);
+
+	/** Get Document Type.
+	  * Document type or rules
+	  */
+	public int getC_DocType_ID();
+
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
+
     /** Column name C_DocTypeTarget_ID */
     public static final String COLUMNNAME_C_DocTypeTarget_ID = "C_DocTypeTarget_ID";
 
@@ -290,20 +305,20 @@ public interface I_AMN_Payroll
 
 	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException;
 
-    /** Column name C_DocType_ID */
-    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
+    /** Column name C_Invoice_ID */
+    public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
 
-	/** Set Document Type.
-	  * Document type or rules
+	/** Set Invoice.
+	  * Invoice Identifier
 	  */
-	public void setC_DocType_ID (int C_DocType_ID);
+	public void setC_Invoice_ID (int C_Invoice_ID);
 
-	/** Get Document Type.
-	  * Document type or rules
+	/** Get Invoice.
+	  * Invoice Identifier
 	  */
-	public int getC_DocType_ID();
+	public int getC_Invoice_ID();
 
-	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
+	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException;
 
     /** Column name C_Payment_ID */
     public static final String COLUMNNAME_C_Payment_ID = "C_Payment_ID";
@@ -335,21 +350,6 @@ public interface I_AMN_Payroll
 
 	public org.compiere.model.I_C_Project getC_Project() throws RuntimeException;
 
-    /** Column name C_SalesRegion_ID */
-    public static final String COLUMNNAME_C_SalesRegion_ID = "C_SalesRegion_ID";
-
-	/** Set Sales Region.
-	  * Sales coverage region
-	  */
-	public void setC_SalesRegion_ID (int C_SalesRegion_ID);
-
-	/** Get Sales Region.
-	  * Sales coverage region
-	  */
-	public int getC_SalesRegion_ID();
-
-	public org.compiere.model.I_C_SalesRegion getC_SalesRegion() throws RuntimeException;
-
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -365,6 +365,21 @@ public interface I_AMN_Payroll
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name C_SalesRegion_ID */
+    public static final String COLUMNNAME_C_SalesRegion_ID = "C_SalesRegion_ID";
+
+	/** Set Sales Region.
+	  * Sales coverage region
+	  */
+	public void setC_SalesRegion_ID (int C_SalesRegion_ID);
+
+	/** Get Sales Region.
+	  * Sales coverage region
+	  */
+	public int getC_SalesRegion_ID();
+
+	public org.compiere.model.I_C_SalesRegion getC_SalesRegion() throws RuntimeException;
 
     /** Column name DateAcct */
     public static final String COLUMNNAME_DateAcct = "DateAcct";
@@ -479,12 +494,12 @@ public interface I_AMN_Payroll
     public static final String COLUMNNAME_IsPaid = "IsPaid";
 
 	/** Set Paid.
-	  * The document is paid
+	  * The document is fully paid
 	  */
 	public void setIsPaid (boolean IsPaid);
 
 	/** Get Paid.
-	  * The document is paid
+	  * The document is fully paid
 	  */
 	public boolean isPaid();
 

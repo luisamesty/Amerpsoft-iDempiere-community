@@ -38,6 +38,8 @@ public class AMN_Payroll_callout implements IColumnCallout {
 	GregorianCalendar cal = new GregorianCalendar();
 	// AMN_Employee Attributes Variables
 	Integer Client_ID = 0;
+	Integer Org_ID =0;
+	Integer OrgTo_ID =0;
 	Integer Employee_ID = 0;
 	Integer Location_ID = 0;
 	Integer Jobtitle_ID = 0;
@@ -92,6 +94,12 @@ public class AMN_Payroll_callout implements IColumnCallout {
 	    	Period_ID = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_AMN_Period_ID);
 	    	// AMN_Employee Cache
 	    	MAMN_Employee amnemployee = new MAMN_Employee(p_ctx, Employee_ID, null);
+	    	// AD_Org
+	    	Org_ID = amnemployee.getAD_Org_ID();
+	    	OrgTo_ID = amnemployee.getAD_OrgTo_ID();
+	    	if (Org_ID == 0 && OrgTo_ID !=0) {
+	    		p_mTab.setValue("AD_Org_ID", OrgTo_ID);
+	    	}
 	    	// Location_ID = MAMN_Employee.
 	    	Location_ID = amnemployee.getAMN_Location_ID();
 	    	// Jobtitle_ID = MAMN_Employee.

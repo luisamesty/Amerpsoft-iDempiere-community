@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.amerp.process;
 
+import java.util.Properties;
 /** AMNPayrollProcessReactivateOneDoc
  * Description: Procedure called from iDempiere AD
  * 			Process and Accounts Payroll Receipt for One Employee
@@ -26,6 +27,8 @@ package org.amerp.process;
 import java.util.logging.Level;
 
 import org.amerp.amnmodel.MAMN_Payroll;
+import org.amerp.amnmodel.MAMN_Process;
+import org.compiere.model.MInvoice;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.*;
@@ -39,11 +42,14 @@ public class AMNPayrollProcessReactivateOneDoc extends SvrProcess {
 
 	int p_AMN_Payroll_ID=0;
 	String Msg_Value="";
+	String Msg_Value0="";
 	String AMN_Payroll_Value="";
 	String AMN_Payroll_Name="";
-	String AMN_Payroll_Description="";
 	String sql="";
-
+	boolean ok = false;
+   	boolean okinvoice = false;
+	String AMN_Process_Value="";
+	
 	/* (non-Javadoc)
 	 * @see org.compiere.process.SvrProcess#prepare()
 	 */
@@ -73,23 +79,84 @@ public class AMNPayrollProcessReactivateOneDoc extends SvrProcess {
 	    // TODO Auto-generated method stub
 		// Message Value Init
     	// Determines Process Value to see if NN
-    	sql = "SELECT value FROM amn_payroll WHERE amn_payroll_id=?" ;
-		AMN_Payroll_Value = DB.getSQLValueString(null, sql, p_AMN_Payroll_ID).trim();
-    	sql = "SELECT name FROM amn_payroll WHERE amn_payroll_id=?" ;
-		AMN_Payroll_Name = DB.getSQLValueString(null, sql, p_AMN_Payroll_ID).trim();
-    	sql = "SELECT description FROM amn_payroll WHERE amn_payroll_id=?" ;
-		AMN_Payroll_Description = DB.getSQLValueString(null, sql, p_AMN_Payroll_ID).trim();
+		int C_Invoice_ID = 0;
 
-		Msg_Value=Msg_Value+ Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+AMN_Payroll_Name.trim()+" \n";
-		MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, null);
-		//log.warning("Process_ID:"+p_AMN_Process_ID+"  AMN_Contract_ID:"+p_AMN_Contract_ID+"  AMN_Period_ID:"+p_AMN_Period_ID);
-		//log.warning("------------------Payroll_ID:"+p_AMN_Payroll_ID+"  AMN_Payroll_Name:"+AMN_Payroll_Name);
-		//  PROCESS MAMN_Payroll (DOCUMENT HEADER)
-		if (amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
+    	MInvoice invoice = null;
+		MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, get_TrxName()); 
+		MAMN_Process amnprocess = new MAMN_Process(getCtx(), amnpayroll.getAMN_Process_ID(), get_TrxName());
+		AMN_Payroll_Value = amnpayroll.getValue();
+		AMN_Payroll_Name = amnpayroll.getName();
+		AMN_Process_Value = amnprocess.getAMN_Process_Value();
+		
+		Msg_Value=Msg_Value+ Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+AMN_Payroll_Name.trim()+" \r\n";
+		addLog(Msg_Value);
+		C_Invoice_ID = amnpayroll.getC_Invoice_ID();
+		
+		Msg_Value0=Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+AMN_Payroll_Name.trim()+" \r\n";
+		addLog(amnpayroll.getSummary());
+		Msg_Value=Msg_Value+Msg_Value0;
+		// Reactivate document
+		Msg_Value0 = reactivateAMN_Payroll(getCtx(), amnpayroll, amnprocess, get_TrxName());
+		Msg_Value=Msg_Value+Msg_Value0;
+		addLog(Msg_Value);
+		if (okinvoice &&  ok)
+			Msg_Value = "@Ok@";
+		else 
+			Msg_Value = "@KO@";
+	    return  Msg_Value;
+	}
+
+	/**
+     * reactivateAMN_Payroll
+     * Tractivate AMN_Payroll and C_Invoice if apply
+     * @param ctx
+     * @param amnpayroll
+     * @param amnprocess
+     * @param trxName
+     * @return
+     */
+    private String reactivateAMN_Payroll(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String trxName) {
+    
+      	int C_Invoice_ID = 0;
+    	MInvoice invoice = null;
+    	String P_Msg_Value="";
+    	C_Invoice_ID = amnpayroll.getC_Invoice_ID();
+		addLog(amnpayroll.getSummary());
+		// Verify if it is Document Controlled
+		if (amnprocess.isDocControlled()) {
+			// Find Invoice and Reactivate it
+			if(C_Invoice_ID != 0) {
+				invoice = MInvoice.get(getCtx(),C_Invoice_ID);
+				if (invoice == null) {
+					C_Invoice_ID = 0;
+					invoice = new MInvoice(getCtx(), C_Invoice_ID, trxName);
+				}
+			} else {
+				invoice = new MInvoice(getCtx(), C_Invoice_ID, trxName);
+			}
+			// Reactivate Invoice
+			if (invoice.getDocStatus().equalsIgnoreCase(MInvoice.STATUS_Completed)) {
+				String AllocPay = amnpayroll.C_AllocationLine_C_Payment(C_Invoice_ID, trxName);
+				if (AllocPay.compareToIgnoreCase("OK")==0) {
+					okinvoice = amnpayroll.reActivateCInvoice(invoice,  trxName);
+				} else {
+					Msg_Value=" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  \r\n"+ AllocPay;
+					okinvoice=false;
+				}
+				if (!okinvoice)
+				{
+					Msg_Value=Msg_Value+" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
+							Msg.getElement(Env.getCtx(),"C_Invoice_ID")+":"+invoice.getDocumentNo()+" \r\n";
+				}
+			} else {
+				okinvoice= true;
+			}
+		}
+		// Verify Payroll Status
+		if (okinvoice && amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
 		{
-			// Process document
-			Msg_Value=Msg_Value+amnpayroll.getSummary();
-			boolean ok = amnpayroll.reActivateIt();
+			// Reactivate AMN_Payroll
+			ok = amnpayroll.reActivateIt();
 			amnpayroll.saveEx();
 			if (!ok)
 			{
@@ -97,13 +164,9 @@ public class AMNPayrollProcessReactivateOneDoc extends SvrProcess {
 				Msg_Value=Msg_Value+" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
 						Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+":"+AMN_Payroll_Name+" \r\n";
 			}
-		} else {
-			Msg_Value=Msg_Value+" ** NOT PROCESSED **  Payroll:"+AMN_Payroll_Name+" \r\n";
-			Msg_Value=Msg_Value+" ** NOT PROCESSED ** "+
-					Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+":"+AMN_Payroll_Name+" \r\n";
 		}
-
-	    return null;
-	}
-
+    	
+    	return P_Msg_Value;
+    	
+    }
 }

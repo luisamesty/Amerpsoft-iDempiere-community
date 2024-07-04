@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2022-06-09T18:41:21 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollReceiptNN" pageWidth="612" pageHeight="792" columnWidth="592" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" resourceBundle="PayrollReceipt" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="IdempiereTAM8.2pro_Strato M4erp DEMO"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="333"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="660"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_Currency_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Department_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<parameter name="Record_ID" class="java.lang.Integer"/>
+	<parameter name="isShow" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowZERO" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="receiptNote" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Observaciones:"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isPrintCopy" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT * FROM
+(SELECT DISTINCT
+-- ORGANIZATION
+    org.ad_client_id as org_client, org.ad_org_id as org_org,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
+	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.regionname END as region,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
+    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
+	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
+-- LOCATION
+	 lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
+-- PERIOD
+	 prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend, prd.amn_period_status,
+	 prd.refdateini, prd.refdateend,
+-- TIPO DE CONCEPTO
+	cty.amn_concept_types_id, cty.optmode, cty.calcorder, cty.isshow, cty.value as cty_value, COALESCE(cty.name, cty.description) as concept_type,
+-- TIPO DE CONCEPTO (PROCESO)
+	ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
+-- PROCESS
+	prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
+     --CASE WHEN ( {AMN_Process_ID}  IS NULL OR prc.amn_process_id= AMN_Process_ID} ) THEN 1 ELSE 0 END AS imp_proceso,
+-- CONTRACT
+   amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+-- DEPARTAMENT
+   COALESCE(dep.name,dep.description) as departamento,
+-- EMPLOYEE
+   emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso,
+   COALESCE(jtt.name, jtt.description) as cargo, 
+   COALESCE(cbp.taxid,'') as nro_id, 
+   COALESCE(emp.salary,CAST(0 as numeric)) as salario,
+   COALESCE(histo.salary_hist,CAST(0 as numeric)) as salary_hist,
+-- PAYROLL
+   CASE WHEN $P{isPrintCopy} = 'Y' THEN 'Original Trabajador' Else  'Original ' END as copia,
+   '01' as copiaforma,
+   COALESCE(pyr.documentno,'') as documentno,
+   	pyr.description as recibo,
+	pyr.amn_payroll_id,
+	pyr.amountallocated as amountallocated_t, 
+	pyr.amountdeducted as amountdeducted_t, 
+	pyr.amountcalculated as amountcalculated_t,
+-- PYR AMOUNTS CONVERTED
+	currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
+	currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
+	currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
+-- CURRENCY
+	curr1.iso_code as iso_code1,
+	COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
+	COALESCE(currt1.description,curr1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+	curr2.iso_code as iso_code2,
+	COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
+	COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
+-- PAYROLL DETAIL
+   -- MONTOS Y CIFRAS	   
+  	   CASE WHEN cty.Value='SB' THEN pyr_d.amountcalculated  ELSE 0 END  as sb_rec,
+	 pyr_d.qtyvalue as cantidad, 
+	 pyr_d.amountallocated, 
+	 pyr_d.amountdeducted, 
+	 pyr_d.amountcalculated,
+	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
+	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
+	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
+	 
+FROM adempiere.amn_payroll as pyr
+LEFT JOIN (
+	SELECT DISTINCT ON (pyr.amn_payroll_id) pyr.amn_payroll_id, pyh.salary as salary_hist , pyh.amn_period_yyyymm 
+	FROM adempiere.amn_payroll as pyr
+	left join AMN_Payroll_Historic pyh on pyr.amn_employee_id = pyh.amn_employee_id  and to_char(pyr.dateacct,'YYYY-MM') = to_char(pyh.validto ,'YYYY-MM')
+) as histo on histo.amn_payroll_id = pyr.amn_payroll_id
+INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
+INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+ LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+ LEFT JOIN adempiere.ad_org   as org ON (pyr.ad_org_id = pyr.ad_org_id)
+INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+ LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id = loc.c_location_id)
+ LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+ LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+ LEFT JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+ LEFT JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
+ LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
+ INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
+ LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
+ LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
+ LEFT JOIN adempiere.c_bpartner 						as cbp 	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+ LEFT JOIN adempiere.amn_period   					    as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+ LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
+ LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 
+-- LEFT JOIN adempiere.amn_rates as rat ON (pyr.RefDateIni between rat.startdate AND rat.enddate)
+LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
+LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AND prc.value= 'NN' 
+    AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
+    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
+
+UNION
+SELECT DISTINCT
+-- ORGANIZATION
+    org.ad_client_id as org_client, org.ad_org_id as org_org,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
+	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.regionname END as region,
+	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
+    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
+	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
+-- LOCATION
+	 lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
+-- PERIOD
+	 prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend, prd.amn_period_status,
+	 prd.refdateini, prd.refdateend,
+-- TIPO DE CONCEPTO
+	 cty.amn_concept_types_id, cty.optmode, cty.calcorder, cty.isshow, cty.value as cty_value, COALESCE(cty.name, cty.description) as concept_type,
+-- TIPO DE CONCEPTO (PROCESO)
+	 ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
+-- PROCESS
+	 prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
+     --CASE WHEN ( {AMN_Process_ID}  IS NULL OR prc.amn_process_id= AMN_Process_ID} ) THEN 1 ELSE 0 END AS imp_proceso,
+-- CONTRACT
+	 amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+-- DEPARTAMENT
+       COALESCE(dep.name,dep.description) as departamento,
+-- EMPLOYEE
+	 emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso,
+   COALESCE(jtt.name, jtt.description) as cargo, 
+   COALESCE(cbp.taxid,'') as nro_id, 
+   COALESCE(emp.salary,CAST(0 as numeric)) as salario,
+   COALESCE(histo.salary_hist,CAST(0 as numeric)) as salary_hist,
+-- PAYROLL
+   CASE WHEN $P{isPrintCopy} = 'Y' THEN 'Copia Empresa' Else  'Copia' END as copia,
+   CASE WHEN $P{isPrintCopy} = 'Y' THEN '02' ELSE 'XX' END as copiaforma,
+    COALESCE(pyr.documentno,'') as documentno,
+   	pyr.description as recibo,
+	pyr.amn_payroll_id,
+	pyr.amountallocated as amountallocated_t, pyr.amountdeducted as amountdeducted_t, pyr.amountcalculated as amountcalculated_t,
+-- PYR AMOUNTS CONVERTED
+	currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
+	currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
+	currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
+-- CURRENCY
+	curr1.iso_code as iso_code1,
+	COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
+	COALESCE(currt1.description,curr1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+	curr2.iso_code as iso_code2,
+	COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
+	COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 	
+-- PAYROLL DETAIL
+   -- MONTOS Y CIFRAS	   
+  	   CASE WHEN cty.Value='SB' THEN pyr_d.amountcalculated  ELSE 0 END  as sb_rec,
+	 pyr_d.qtyvalue as cantidad, 
+	 pyr_d.amountallocated, 
+	 pyr_d.amountdeducted, 
+	 pyr_d.amountcalculated,
+	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
+	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
+	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
+	 
+FROM adempiere.amn_payroll as pyr
+LEFT JOIN (
+	SELECT DISTINCT ON (pyr.amn_payroll_id) pyr.amn_payroll_id, pyh.salary as salary_hist , pyh.amn_period_yyyymm 
+	FROM adempiere.amn_payroll as pyr
+	left join AMN_Payroll_Historic pyh on pyr.amn_employee_id = pyh.amn_employee_id  and to_char(pyr.dateacct,'YYYY-MM') = to_char(pyh.validto ,'YYYY-MM')
+) as histo on histo.amn_payroll_id = pyr.amn_payroll_id
+INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
+INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+ LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+ LEFT JOIN adempiere.ad_org   as org ON (pyr.ad_org_id = pyr.ad_org_id)
+INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+ LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id = loc.c_location_id)
+ LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+ LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+ LEFT JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+ LEFT JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
+ LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
+ INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
+ LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
+ LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
+ LEFT JOIN adempiere.c_bpartner 						as cbp 	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+ LEFT JOIN adempiere.amn_period   					    as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+ LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
+ LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 
+-- LEFT JOIN adempiere.amn_rates as rat ON (pyr.RefDateIni between rat.startdate AND rat.enddate)
+LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
+LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AND prc.value= 'NN' 
+    AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
+    AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )    
+    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
+    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
+) as nomina
+WHERE copiaforma IN ('01','02')
+ORDER BY  value_emp ASC,  documentno, copia DESC,  calcorder ASC,  isshow DESC]]>
+	</queryString>
+	<field name="org_client" class="java.math.BigDecimal"/>
+	<field name="org_org" class="java.math.BigDecimal"/>
+	<field name="org_name" class="java.lang.String"/>
+	<field name="org_description" class="java.lang.String"/>
+	<field name="org_taxid" class="java.lang.String"/>
+	<field name="org_logo" class="java.io.InputStream"/>
+	<field name="region" class="java.lang.String"/>
+	<field name="ciudad" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="imp_org" class="java.lang.Integer"/>
+	<field name="amn_location_id" class="java.math.BigDecimal"/>
+	<field name="loc_value" class="java.lang.String"/>
+	<field name="localidad" class="java.lang.String"/>
+	<field name="amn_period_id" class="java.math.BigDecimal"/>
+	<field name="periodo" class="java.lang.String"/>
+	<field name="amndateini" class="java.sql.Timestamp"/>
+	<field name="amndateend" class="java.sql.Timestamp"/>
+	<field name="amn_period_status" class="java.lang.String"/>
+	<field name="refdateini" class="java.sql.Timestamp"/>
+	<field name="refdateend" class="java.sql.Timestamp"/>
+	<field name="amn_concept_types_id" class="java.math.BigDecimal"/>
+	<field name="optmode" class="java.lang.String"/>
+	<field name="calcorder" class="java.math.BigDecimal"/>
+	<field name="isshow" class="java.lang.String"/>
+	<field name="cty_value" class="java.lang.String"/>
+	<field name="concept_type" class="java.lang.String"/>
+	<field name="ctp_value" class="java.lang.String"/>
+	<field name="concept_type_process" class="java.lang.String"/>
+	<field name="amn_process_id" class="java.math.BigDecimal"/>
+	<field name="proceso" class="java.lang.String"/>
+	<field name="c_value" class="java.lang.String"/>
+	<field name="c_tipo" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="amn_employee_id" class="java.math.BigDecimal"/>
+	<field name="value_emp" class="java.lang.String"/>
+	<field name="empleado" class="java.lang.String"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="cargo" class="java.lang.String"/>
+	<field name="nro_id" class="java.lang.String"/>
+	<field name="salario" class="java.math.BigDecimal"/>
+	<field name="salary_hist" class="java.math.BigDecimal"/>
+	<field name="copia" class="java.lang.String"/>
+	<field name="copiaforma" class="java.lang.String"/>
+	<field name="documentno" class="java.lang.String"/>
+	<field name="recibo" class="java.lang.String"/>
+	<field name="amn_payroll_id" class="java.math.BigDecimal"/>
+	<field name="amountallocated_t" class="java.math.BigDecimal"/>
+	<field name="amountdeducted_t" class="java.math.BigDecimal"/>
+	<field name="amountcalculated_t" class="java.math.BigDecimal"/>
+	<field name="amountallocated_t2" class="java.math.BigDecimal"/>
+	<field name="amountdeducted_t2" class="java.math.BigDecimal"/>
+	<field name="amountcalculated_t2" class="java.math.BigDecimal"/>
+	<field name="iso_code1" class="java.lang.String"/>
+	<field name="cursymbol1" class="java.lang.String"/>
+	<field name="currname1" class="java.lang.String"/>
+	<field name="iso_code2" class="java.lang.String"/>
+	<field name="cursymbol2" class="java.lang.String"/>
+	<field name="currname2" class="java.lang.String"/>
+	<field name="sb_rec" class="java.math.BigDecimal"/>
+	<field name="cantidad" class="java.math.BigDecimal"/>
+	<field name="amountallocated" class="java.math.BigDecimal"/>
+	<field name="amountdeducted" class="java.math.BigDecimal"/>
+	<field name="amountcalculated" class="java.math.BigDecimal"/>
+	<field name="amountallocated2" class="java.math.BigDecimal"/>
+	<field name="amountdeducted2" class="java.math.BigDecimal"/>
+	<field name="amountcalculated2" class="java.math.BigDecimal"/>
+	<variable name="v_asignaciones" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountallocated}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_deducciones" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountdeducted}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_calculado" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountcalculated}!= null && $F{isshow}.compareToIgnoreCase("N")== 0
+ ? $F{amountcalculated}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_asignaciones_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountallocated2}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountallocated2}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_deducciones_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountdeducted2}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountdeducted2}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="dateini" class="java.sql.Timestamp" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[$F{amndateini}]]></variableExpression>
+	</variable>
+	<variable name="dateend" class="java.sql.Timestamp" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[$F{amndateend}]]></variableExpression>
+	</variable>
+	<variable name="salario_rec" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[$F{sb_rec}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="Group_porEmpleado" keepTogether="true">
+		<groupExpression><![CDATA[$F{amn_employee_id}]]></groupExpression>
+		<groupHeader>
+			<band height="1">
+				<property name="local_mesure_unitheight" value="pixel"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{amn_employee_id}!= null]]></printWhenExpression>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group_porRecibo">
+		<groupExpression><![CDATA[$F{documentno}]]></groupExpression>
+		<groupFooter>
+			<band height="1">
+				<property name="local_mesure_unitheight" value="pixel"/>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_porCopia">
+		<groupExpression><![CDATA[$F{copia}]]></groupExpression>
+		<groupHeader>
+			<band height="101">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<rectangle radius="4">
+					<reportElement mode="Transparent" x="0" y="53" width="590" height="48" uuid="f8e291b7-a8ab-40cb-8923-4377e4a16aa3"/>
+				</rectangle>
+				<image hAlign="Center" onErrorType="Icon">
+					<reportElement key="" x="0" y="0" width="80" height="38" uuid="645e8c69-6363-492f-a474-fcf88880e1d9">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression><![CDATA[$F{org_logo}]]></imageExpression>
+				</image>
+				<textField isBlankWhenNull="true">
+					<reportElement x="80" y="0" width="310" height="14" isRemoveLineWhenBlank="true" uuid="e296e979-a200-4013-a370-ca1b5f4df3cd">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{org_name}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="">
+					<reportElement x="390" y="0" width="200" height="14" uuid="6357906f-af82-4dc5-b1ac-4beda26be54c">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{amn_period_id}!= null 
+ ? ( "("+$R{report.dateacct}+": " + new SimpleDateFormat("dd/MM/yy").format($F{amndateend}) + ")")
+ : $F{periodo} + " "  )]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="80" y="14" width="510" height="12" isRemoveLineWhenBlank="true" uuid="0905e17e-5fd4-4571-a564-335cb7770a96">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box leftPadding="10"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{direccion}.trim() + ", " + $F{ciudad}.toUpperCase()+ ", "+ $F{region}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="80" y="26" width="220" height="12" isRemoveLineWhenBlank="true" uuid="223ae3b6-d7ad-4fcc-87e5-1b63aecb0f9f">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box leftPadding="10"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.taxid}+": " + $F{org_taxid}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="">
+					<reportElement x="300" y="26" width="290" height="12" uuid="76b1e07d-f281-46d5-b3ea-ab996b3b0d08">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{amn_period_id}!= null 
+ ? ("("+$R{report.period}+": " + new SimpleDateFormat("dd/MM/yy").format($V{dateini}) + " "+$R{report.to}+"  " + new SimpleDateFormat("dd/MM/yy").format($V{dateend}) + ")")
+ : $F{periodo} + " ("+$R{report.allperiods}+")"
+)]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="">
+					<reportElement x="490" y="38" width="100" height="14" uuid="6a156d54-491b-4bdf-9656-07b15db03c45">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["No."+$F{documentno}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement x="0" y="65" width="300" height="12" uuid="eba4b424-052b-4a37-9046-cad820b68d7f">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.department}+": "+$F{departamento}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="390" y="77" width="200" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e394b5bf-3451-4215-a574-80fb2e797bb8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="5" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.location}+": "+$F{localidad}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="300" y="65" width="290" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9731c939-543b-4072-9e85-93959fd1369c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="5" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.jobtitle}+": "+$F{cargo}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="300" y="77" width="90" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="69f573c4-9b66-4c01-a6ce-3402b02bc039">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.taxid}+": "+$F{nro_id}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="0" y="53" width="590" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f86af457-fc86-4e00-b8e8-a1d6e791e5d4">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.employee}+": "+$F{value_emp}.toUpperCase() + " " + $F{empleado}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="0" y="77" width="140" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f6f9c29c-2379-4b53-8661-2b2a942c92e8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.dateincome}+": "+new SimpleDateFormat("dd/MM/yyyy").format($F{fecha_ingreso})]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porCopia">
+					<reportElement mode="Transparent" x="140" y="77" width="90" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="b931255b-bd97-46f3-9cda-5ec88ac7e4c1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.salary}+": "]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porCopia" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="230" y="77" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="638b15cc-4e9c-4b14-95ee-678d2d002cf5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(($V{salario_rec}.compareTo(BigDecimal.ZERO)== 0.0) == true   ? ( ($F{salary_hist}.compareTo( java.math.BigDecimal.ZERO )== 0.0 ) == true  ? $F{salario} : $F{salary_hist} ) :  $V{salario_rec})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="80" y="38" width="410" height="14" isRemoveLineWhenBlank="true" uuid="f1e89d6c-21a3-4bc6-ba24-e4a6ef04287f">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.title}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="89" width="230" height="12" uuid="316bcd23-869a-4fff-a4b8-77d172f0b9a3">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.concept}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="230" y="89" width="70" height="12" uuid="f6911e48-2d6e-4fcd-a594-48e50514abef">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.qty}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="300" y="89" width="90" height="12" uuid="c84db5dc-e1c6-4c7e-8f20-c4eddbdbcd38">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.value}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="390" y="89" width="100" height="12" uuid="b2a38d53-7aa3-42d2-90ec-6f6e94a3e8de">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.earning}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="490" y="89" width="100" height="12" uuid="6593de2b-95b7-4fda-856b-8ed5734805e0">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.deduction}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="100">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Transparent" x="490" y="1" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1cafb719-7fab-4b67-9216-6430d46be2bc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<printWhenExpression><![CDATA[$V{v_deducciones}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+					</reportElement>
+					<box padding="6" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_deducciones}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Transparent" x="390" y="1" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e6517cc4-9222-4220-b6b5-4db46c5a76c0">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[$V{v_asignaciones}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="302" y="70" width="188" height="1" uuid="533a2b52-05fa-4fde-ae3b-dfe34ad77c83">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+				</line>
+				<line>
+					<reportElement x="276" y="0" width="294" height="1" uuid="e370deaf-f163-4331-8bd5-593e7f8aa6e0">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="80" y="69" width="153" height="1" uuid="b1241bf0-1f1c-48bc-8574-3f42c8c66009">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+				</line>
+				<textField pattern="">
+					<reportElement mode="Transparent" x="390" y="13" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5a411f3a-3530-40f1-8a65-a911993eeed5">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$V{v_asignaciones}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+"  ("+$F{cursymbol1}+"):"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="96" width="572" height="1" uuid="83077131-3803-439a-8d9a-f7c0ddc4364c">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dotted"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="0" y="97" width="5" height="1" uuid="07f40918-9bb3-4213-a969-10c8a38f3d83">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dotted"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="0" y="83" width="230" height="12" uuid="4338160e-34bc-40fc-b2cb-f4850bda5901"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{copiaforma}.compareToIgnoreCase( "01" ) == 0 ? $R{report.original}: $R{report.copyorg}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Transparent" x="490" y="13" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c09376aa-5597-41dd-9c60-8913082dce0a">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$V{v_asignaciones}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones}.subtract($V{v_deducciones})]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement mode="Transparent" x="230" y="25" width="260" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="89eab133-22ea-47e2-ac7f-3c8532b860fa">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$V{v_asignaciones}.compareTo( BigDecimal.ZERO ) != 0 && ($F{cursymbol1}.compareToIgnoreCase( $F{cursymbol2} ) != 0.0)]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+"  ("+$F{cursymbol2}+"-"+$F{currname2}.trim()+"):"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Transparent" x="490" y="25" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d92a51c5-0ad3-4b6b-a4d9-b62b0699213c">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$V{v_asignaciones}.compareTo( BigDecimal.ZERO ) != 0 && ($F{cursymbol1}.compareToIgnoreCase( $F{cursymbol2} ) != 0.0)]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_2}.subtract($V{v_deducciones_2})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="80" y="70" width="152" height="12" forecolor="#968C8C" uuid="70e88d78-3382-4a22-8097-b6b86a379250"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.byorg}+": "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="302" y="71" width="188" height="12" forecolor="#968C8C" uuid="3475dc68-7099-44fd-bce4-d37bf18042bf"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.signature}+": "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="490" y="71" width="100" height="12" forecolor="#968C8C" uuid="a2b5f66d-2a98-4a47-9793-2f044c1aaf64"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.fingerprint}+": "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null &&
+(($P{isShow}.compareToIgnoreCase("Y")== 0.0 ) == true
+|| ( ($P{isShow}.compareToIgnoreCase("N")== 0.0) == true 
+ && $F{isshow}.compareTo("Y")== 0.0 == true) )]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="0" width="230" height="10" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="1ec16f65-fd5f-48f5-8a38-d36cac4c3fa3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{calcorder}+" "+$F{concept_type})]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="230" y="0" width="70" height="10" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="4f46f2a6-c368-4606-b622-90961266b2ba">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cantidad} )]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="300" y="0" width="90" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="e4ed1fde-1e17-49a0-ba9d-ea1361feabb9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{amountcalculated} )]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement mode="Transparent" x="390" y="0" width="100" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="e450d6e0-9d97-47ca-a1d0-759f1793fbe4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0.0
+ ? (($F{amountallocated}.compareTo(BigDecimal.ZERO)!= 0.0)== true ? $F{amountallocated} : "")
+ : ""
+ ))]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement mode="Transparent" x="490" y="0" width="100" height="10" forecolor="#000000" backcolor="#FFFFFF" uuid="efdbd6af-a1e4-4869-8e33-f72c2e64c156">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box padding="5" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0.0
+ ? (($F{amountdeducted}.compareTo(BigDecimal.ZERO)!= 0.0)== true ? $F{amountdeducted} : "")
+ : ""
+ ))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

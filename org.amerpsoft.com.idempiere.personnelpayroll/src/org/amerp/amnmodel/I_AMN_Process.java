@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Process
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Process 
@@ -32,7 +32,7 @@ public interface I_AMN_Process
     /** TableName=AMN_Process */
     public static final String Table_Name = "AMN_Process";
 
-    /** AD_Table_ID=1000034 */
+    /** AD_Table_ID=1000005 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -91,6 +91,21 @@ public interface I_AMN_Process
 	/** Get Process Value	  */
 	public String getAMN_Process_Value();
 
+    /** Column name C_DocTypeTarget_ID */
+    public static final String COLUMNNAME_C_DocTypeTarget_ID = "C_DocTypeTarget_ID";
+
+	/** Set Target Document Type.
+	  * Target document type for conversing documents
+	  */
+	public void setC_DocTypeTarget_ID (int C_DocTypeTarget_ID);
+
+	/** Get Target Document Type.
+	  * Target document type for conversing documents
+	  */
+	public int getC_DocTypeTarget_ID();
+
+	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException;
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -132,6 +147,28 @@ public interface I_AMN_Process
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name isAllowLotInvoices */
+    public static final String COLUMNNAME_isAllowLotInvoices = "isAllowLotInvoices";
+
+	/** Set Allow Lot Invoices	  */
+	public void setisAllowLotInvoices (boolean isAllowLotInvoices);
+
+	/** Get Allow Lot Invoices	  */
+	public boolean isAllowLotInvoices();
+
+    /** Column name IsDocControlled */
+    public static final String COLUMNNAME_IsDocControlled = "IsDocControlled";
+
+	/** Set Document Controlled.
+	  * Control account - If an account is controlled by a document, you cannot post manually to it
+	  */
+	public void setIsDocControlled (boolean IsDocControlled);
+
+	/** Get Document Controlled.
+	  * Control account - If an account is controlled by a document, you cannot post manually to it
+	  */
+	public boolean isDocControlled();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";

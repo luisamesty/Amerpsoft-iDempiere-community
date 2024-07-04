@@ -1309,4 +1309,64 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	{
 		return (String)get_Value(COLUMNNAME_zodiacsign);
 	}
+	
+    /**
+     * MOLI Changes Bill_BPartner
+     */
+
+	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
+			.getPO(getBill_BPartner_ID(), get_TrxName());
+	}
+
+	/** Set Invoice Partner.
+		@param Bill_BPartner_ID Business Partner to be invoiced
+	*/
+	public void setBill_BPartner_ID (int Bill_BPartner_ID)
+	{
+		if (Bill_BPartner_ID < 1)
+			set_Value (COLUMNNAME_Bill_BPartner_ID, null);
+		else
+			set_Value (COLUMNNAME_Bill_BPartner_ID, Integer.valueOf(Bill_BPartner_ID));
+	}
+
+	/** Get Invoice Partner.
+		@return Business Partner to be invoiced
+	  */
+	public int getBill_BPartner_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Bill_BPartner_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/**
+     * MOLI Changes AD_OrgTo_ID
+     */
+	/**
+	 * Set Inter-Organization.
+	 * 
+	 * @param AD_OrgTo_ID Organization valid for intercompany documents
+	 */
+	public void setAD_OrgTo_ID(int AD_OrgTo_ID) {
+		if (AD_OrgTo_ID < 1)
+			set_ValueNoCheck(COLUMNNAME_AD_OrgTo_ID, null);
+		else
+			set_ValueNoCheck(COLUMNNAME_AD_OrgTo_ID, Integer.valueOf(AD_OrgTo_ID));
+	}
+
+	/**
+	 * Get Inter-Organization.
+	 * 
+	 * @return Organization valid for intercompany documents
+	 */
+	public int getAD_OrgTo_ID() {
+		Integer ii = (Integer) get_Value(COLUMNNAME_AD_OrgTo_ID);
+		if (ii == null)
+			return 0;
+		return ii.intValue();
+	}
+
 }

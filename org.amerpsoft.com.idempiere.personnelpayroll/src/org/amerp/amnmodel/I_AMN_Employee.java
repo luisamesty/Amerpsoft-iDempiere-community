@@ -767,4 +767,40 @@ public interface I_AMN_Employee
 
 	/** Get zodiacsign	  */
 	public String getzodiacsign();
+	
+    /**
+     * MOLI Changes Bill_BPartner
+     */
+	/** Set Invoice Partner.
+	  * Business Partner to be invoiced
+	  */
+	
+	 /** Column name Bill_BPartner_ID */
+    public static final String COLUMNNAME_Bill_BPartner_ID = "Bill_BPartner_ID";
+
+	public void setBill_BPartner_ID (int Bill_BPartner_ID);
+
+	/** Get Invoice Partner.
+	  * Business Partner to be invoiced
+	  */
+	public int getBill_BPartner_ID();
+
+	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException;
+	
+	
+    /**
+     * MOLI Changes AD_OrgTo_ID
+     */
+	/** Column name AD_OrgTo_ID */
+    public static final String COLUMNNAME_AD_OrgTo_ID = "AD_OrgTo_ID";
+
+	/** Set Inter-Organization.
+	  * Organization valid for intercompany documents
+	  */
+	public void setAD_OrgTo_ID (int AD_OrgTo_ID);
+
+	/** Get Inter-Organization.
+	  * Organization valid for intercompany documents
+	  */
+	public int getAD_OrgTo_ID();
 }

@@ -153,12 +153,11 @@ public class Doc_AMNPayroll extends Doc {
 			//  --  Converted Amounts Zero 
 			MasterdocLineCR.setConvertedAmt (m_C_AcctSchema_ID, Zero, Zero);
 			// Business Partner - SalesRegion - Project - Campaign -Activity
-			MASTERAccountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
-			// Changed to p_amnpayroll For Overriding Receipts  to Employee's Values
-//			MASTERAccountCR.setC_SalesRegion_ID(amnemployee.getC_SalesRegion_ID());
-//			MASTERAccountCR.setC_Project_ID(amnemployee.getC_Project_ID());
-//			MASTERAccountCR.setC_Campaign_ID(amnemployee.getC_Campaign_ID());
-//			MASTERAccountCR.setC_Activity_ID(amnemployee.getC_Activity_ID());
+			if (amnemployee.getBill_BPartner_ID() != 0) {
+				MASTERAccountCR.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+			} else {
+				MASTERAccountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+			}
 			MASTERAccountCR.setC_SalesRegion_ID(p_amnpayroll.getC_SalesRegion_ID());
 			MASTERAccountCR.setC_Project_ID(p_amnpayroll.getC_Project_ID());
 			MASTERAccountCR.setC_Campaign_ID(p_amnpayroll.getC_Campaign_ID());
@@ -205,8 +204,13 @@ public class Doc_AMNPayroll extends Doc {
 			//  --  Converted Amounts
 			docLineCR.setConvertedAmt (m_C_AcctSchema_ID, Zero, line.getAmountCalculated());
 			//  --  Account
-			if (accountCR.getC_BPartner_ID() == 0)
-				accountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+			if (accountCR.getC_BPartner_ID() == 0) {
+				if (amnemployee.getBill_BPartner_ID() != 0) {
+					accountCR.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+				} else {
+					accountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+				}
+			}				
 			accountCR.setC_SalesRegion_ID(p_amnpayroll.getC_SalesRegion_ID());
 			accountCR.setC_Project_ID(p_amnpayroll.getC_Project_ID());
 			accountCR.setC_Campaign_ID(p_amnpayroll.getC_Campaign_ID());
@@ -244,8 +248,13 @@ public class Doc_AMNPayroll extends Doc {
 			//  --  Account
 // Inmutable accountDB = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Deb_Acct(line,as));
 			// Business Partner - SalesRegion - Project - Campaign -Activity
-			if (accountDB.getC_BPartner_ID() == 0)
-				accountDB.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+			if (accountDB.getC_BPartner_ID() == 0) {
+				if (amnemployee.getBill_BPartner_ID() != 0) {
+					accountDB.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+				} else {
+					accountDB.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+				}
+			}
 			accountDB.setC_SalesRegion_ID(p_amnpayroll.getC_SalesRegion_ID());
 			accountDB.setC_Project_ID(p_amnpayroll.getC_Project_ID());
 			accountDB.setC_Campaign_ID(p_amnpayroll.getC_Campaign_ID());
@@ -307,8 +316,13 @@ public class Doc_AMNPayroll extends Doc {
 					linea.setConvertedAmt (m_C_AcctSchema_ID, list.get(j).getAmtAcctDr(), list.get(j).getAmtAcctCr());
 					linea.setAccount (list.get(j).getAccount());
 					MAccount accountLIN = list.get(j).getAccount();
-					if (accountLIN.getC_BPartner_ID() == 0)
-						accountLIN.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+					if (accountLIN.getC_BPartner_ID() == 0) {
+						if (amnemployee.getBill_BPartner_ID() != 0) {
+							accountLIN.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+						} else {
+							accountLIN.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+						}
+					}
 					accountLIN.setC_SalesRegion_ID(p_amnpayroll.getC_SalesRegion_ID());
 					accountLIN.setC_Project_ID(p_amnpayroll.getC_Project_ID());
 					accountLIN.setC_Campaign_ID(p_amnpayroll.getC_Campaign_ID());
