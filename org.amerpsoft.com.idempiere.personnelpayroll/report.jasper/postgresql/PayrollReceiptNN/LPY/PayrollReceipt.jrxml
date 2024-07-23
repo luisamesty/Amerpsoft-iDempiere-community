@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2022-06-09T18:41:21 -->
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollReceiptNN" pageWidth="612" pageHeight="792" columnWidth="592" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" resourceBundle="PayrollReceipt" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="IdempiereTAM8.2pro_Strato M4erp DEMO"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="333"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="660"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_Org_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
-	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
 	<parameter name="C_Currency_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
@@ -37,18 +34,21 @@
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[SELECT * FROM
-(SELECT DISTINCT
+		<![CDATA[-- Payroll Receipt
+-- Used for  reports and individual print
+SELECT * FROM
+(
+SELECT DISTINCT
 -- ORGANIZATION
     org.ad_client_id as org_client, org.ad_org_id as org_org,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.regionname END as region,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
-	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
+    coalesce(org.value,'') as org_value,
+	coalesce(org.name,org.value,'') as org_name,
+	COALESCE(org.description,org.name,org.value,'') as org_description, 
+	COALESCE(orginfo.taxid,'') as org_taxid,
+	CASE WHEN img1.binarydata IS NOT NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+    loc.regionname as region,
+	loc.city as ciudad,
+    CONCAT(loc.address1,' ', loc.address2) as direccion,
 -- LOCATION
 	 lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
 -- PERIOD
@@ -67,7 +67,7 @@
    COALESCE(dep.name,dep.description) as departamento,
 -- EMPLOYEE
    emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso,
-   COALESCE(jtt.name, jtt.description) as cargo, 
+   COALESCE(jtt.name, jtt.description,'') as cargo, 
    COALESCE(cbp.taxid,'') as nro_id, 
    COALESCE(emp.salary,CAST(0 as numeric)) as salario,
    COALESCE(histo.salary_hist,CAST(0 as numeric)) as salary_hist,
@@ -101,7 +101,6 @@
 	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
 	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
 	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
-	 
 FROM adempiere.amn_payroll as pyr
 LEFT JOIN (
 	SELECT DISTINCT ON (pyr.amn_payroll_id) pyr.amn_payroll_id, pyh.salary as salary_hist , pyh.amn_period_yyyymm 
@@ -111,7 +110,7 @@ LEFT JOIN (
 INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
- LEFT JOIN adempiere.ad_org   as org ON (pyr.ad_org_id = pyr.ad_org_id)
+INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
  LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id = loc.c_location_id)
  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
@@ -131,7 +130,8 @@ LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AND prc.value= 'NN' 
+WHERE prc.value= 'NN' AND org.ad_client_id=  $P{AD_Client_ID}  
+	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -140,19 +140,18 @@ WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AN
     AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
     			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
-
 UNION
 SELECT DISTINCT
 -- ORGANIZATION
     org.ad_client_id as org_client, org.ad_org_id as org_org,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.regionname END as region,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
-	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
+    coalesce(org.value,'') as org_value,
+	coalesce(org.name,org.value,'') as org_name,
+	COALESCE(org.description,org.name,org.value,'') as org_description, 
+	COALESCE(orginfo.taxid,'') as org_taxid,
+	CASE WHEN img1.binarydata IS NOT NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+    loc.regionname as region,
+	loc.city as ciudad,
+    CONCAT(loc.address1,' ', loc.address2) as direccion,
 -- LOCATION
 	 lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
 -- PERIOD
@@ -202,8 +201,7 @@ SELECT DISTINCT
 	 pyr_d.amountcalculated,
 	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
 	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
-	 
+	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2 
 FROM adempiere.amn_payroll as pyr
 LEFT JOIN (
 	SELECT DISTINCT ON (pyr.amn_payroll_id) pyr.amn_payroll_id, pyh.salary as salary_hist , pyh.amn_period_yyyymm 
@@ -213,7 +211,7 @@ LEFT JOIN (
 INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
- LEFT JOIN adempiere.ad_org   as org ON (pyr.ad_org_id = pyr.ad_org_id)
+INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
  LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id = loc.c_location_id)
  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
@@ -233,7 +231,8 @@ LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AND prc.value= 'NN' 
+WHERE prc.value= 'NN'  AND org.ad_client_id=  $P{AD_Client_ID}  
+	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -244,74 +243,272 @@ WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AN
     			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 ) as nomina
 WHERE copiaforma IN ('01','02')
-ORDER BY  value_emp ASC,  documentno, copia DESC,  calcorder ASC,  isshow DESC]]>
+ORDER BY  org_name ASC, value_emp ASC,  documentno, copia DESC,  calcorder ASC,  isshow DESC]]>
 	</queryString>
-	<field name="org_client" class="java.math.BigDecimal"/>
-	<field name="org_org" class="java.math.BigDecimal"/>
-	<field name="org_name" class="java.lang.String"/>
-	<field name="org_description" class="java.lang.String"/>
-	<field name="org_taxid" class="java.lang.String"/>
-	<field name="org_logo" class="java.io.InputStream"/>
-	<field name="region" class="java.lang.String"/>
-	<field name="ciudad" class="java.lang.String"/>
-	<field name="direccion" class="java.lang.String"/>
-	<field name="imp_org" class="java.lang.Integer"/>
-	<field name="amn_location_id" class="java.math.BigDecimal"/>
-	<field name="loc_value" class="java.lang.String"/>
-	<field name="localidad" class="java.lang.String"/>
-	<field name="amn_period_id" class="java.math.BigDecimal"/>
-	<field name="periodo" class="java.lang.String"/>
-	<field name="amndateini" class="java.sql.Timestamp"/>
-	<field name="amndateend" class="java.sql.Timestamp"/>
-	<field name="amn_period_status" class="java.lang.String"/>
-	<field name="refdateini" class="java.sql.Timestamp"/>
-	<field name="refdateend" class="java.sql.Timestamp"/>
-	<field name="amn_concept_types_id" class="java.math.BigDecimal"/>
-	<field name="optmode" class="java.lang.String"/>
-	<field name="calcorder" class="java.math.BigDecimal"/>
-	<field name="isshow" class="java.lang.String"/>
-	<field name="cty_value" class="java.lang.String"/>
-	<field name="concept_type" class="java.lang.String"/>
-	<field name="ctp_value" class="java.lang.String"/>
-	<field name="concept_type_process" class="java.lang.String"/>
-	<field name="amn_process_id" class="java.math.BigDecimal"/>
-	<field name="proceso" class="java.lang.String"/>
-	<field name="c_value" class="java.lang.String"/>
-	<field name="c_tipo" class="java.lang.String"/>
-	<field name="departamento" class="java.lang.String"/>
-	<field name="amn_employee_id" class="java.math.BigDecimal"/>
-	<field name="value_emp" class="java.lang.String"/>
-	<field name="empleado" class="java.lang.String"/>
-	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
-	<field name="cargo" class="java.lang.String"/>
-	<field name="nro_id" class="java.lang.String"/>
-	<field name="salario" class="java.math.BigDecimal"/>
-	<field name="salary_hist" class="java.math.BigDecimal"/>
-	<field name="copia" class="java.lang.String"/>
-	<field name="copiaforma" class="java.lang.String"/>
-	<field name="documentno" class="java.lang.String"/>
-	<field name="recibo" class="java.lang.String"/>
-	<field name="amn_payroll_id" class="java.math.BigDecimal"/>
-	<field name="amountallocated_t" class="java.math.BigDecimal"/>
-	<field name="amountdeducted_t" class="java.math.BigDecimal"/>
-	<field name="amountcalculated_t" class="java.math.BigDecimal"/>
-	<field name="amountallocated_t2" class="java.math.BigDecimal"/>
-	<field name="amountdeducted_t2" class="java.math.BigDecimal"/>
-	<field name="amountcalculated_t2" class="java.math.BigDecimal"/>
-	<field name="iso_code1" class="java.lang.String"/>
-	<field name="cursymbol1" class="java.lang.String"/>
-	<field name="currname1" class="java.lang.String"/>
-	<field name="iso_code2" class="java.lang.String"/>
-	<field name="cursymbol2" class="java.lang.String"/>
-	<field name="currname2" class="java.lang.String"/>
-	<field name="sb_rec" class="java.math.BigDecimal"/>
-	<field name="cantidad" class="java.math.BigDecimal"/>
-	<field name="amountallocated" class="java.math.BigDecimal"/>
-	<field name="amountdeducted" class="java.math.BigDecimal"/>
-	<field name="amountcalculated" class="java.math.BigDecimal"/>
-	<field name="amountallocated2" class="java.math.BigDecimal"/>
-	<field name="amountdeducted2" class="java.math.BigDecimal"/>
-	<field name="amountcalculated2" class="java.math.BigDecimal"/>
+	<field name="org_client" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="org_client"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_client"/>
+	</field>
+	<field name="org_org" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="org_org"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_org"/>
+	</field>
+	<field name="org_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
+	</field>
+	<field name="org_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
+	</field>
+	<field name="org_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_description"/>
+	</field>
+	<field name="org_taxid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_taxid"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_taxid"/>
+	</field>
+	<field name="org_logo" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="org_logo"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_logo"/>
+	</field>
+	<field name="region" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="region"/>
+		<property name="com.jaspersoft.studio.field.label" value="region"/>
+	</field>
+	<field name="ciudad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ciudad"/>
+		<property name="com.jaspersoft.studio.field.label" value="ciudad"/>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="direccion"/>
+		<property name="com.jaspersoft.studio.field.label" value="direccion"/>
+	</field>
+	<field name="amn_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_location_id"/>
+	</field>
+	<field name="loc_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="loc_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="loc_value"/>
+	</field>
+	<field name="localidad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="localidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="localidad"/>
+	</field>
+	<field name="amn_period_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_period_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_period_id"/>
+	</field>
+	<field name="periodo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="periodo"/>
+		<property name="com.jaspersoft.studio.field.label" value="periodo"/>
+	</field>
+	<field name="amndateini" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="amndateini"/>
+		<property name="com.jaspersoft.studio.field.label" value="amndateini"/>
+	</field>
+	<field name="amndateend" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="amndateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="amndateend"/>
+	</field>
+	<field name="amn_period_status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="amn_period_status"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_period_status"/>
+	</field>
+	<field name="refdateini" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="refdateini"/>
+		<property name="com.jaspersoft.studio.field.label" value="refdateini"/>
+	</field>
+	<field name="refdateend" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="refdateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="refdateend"/>
+	</field>
+	<field name="amn_concept_types_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_concept_types_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_concept_types_id"/>
+	</field>
+	<field name="optmode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="optmode"/>
+		<property name="com.jaspersoft.studio.field.label" value="optmode"/>
+	</field>
+	<field name="calcorder" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="calcorder"/>
+		<property name="com.jaspersoft.studio.field.label" value="calcorder"/>
+	</field>
+	<field name="isshow" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isshow"/>
+		<property name="com.jaspersoft.studio.field.label" value="isshow"/>
+	</field>
+	<field name="cty_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cty_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="cty_value"/>
+	</field>
+	<field name="concept_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="concept_type"/>
+		<property name="com.jaspersoft.studio.field.label" value="concept_type"/>
+	</field>
+	<field name="ctp_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ctp_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="ctp_value"/>
+	</field>
+	<field name="concept_type_process" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="concept_type_process"/>
+		<property name="com.jaspersoft.studio.field.label" value="concept_type_process"/>
+	</field>
+	<field name="amn_process_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_process_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_process_id"/>
+	</field>
+	<field name="proceso" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="proceso"/>
+		<property name="com.jaspersoft.studio.field.label" value="proceso"/>
+	</field>
+	<field name="c_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
+	</field>
+	<field name="c_tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
+	</field>
+	<field name="departamento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="departamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="departamento"/>
+	</field>
+	<field name="amn_employee_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
+	</field>
+	<field name="value_emp" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value_emp"/>
+		<property name="com.jaspersoft.studio.field.label" value="value_emp"/>
+	</field>
+	<field name="empleado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="empleado"/>
+		<property name="com.jaspersoft.studio.field.label" value="empleado"/>
+	</field>
+	<field name="fecha_ingreso" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_ingreso"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_ingreso"/>
+	</field>
+	<field name="cargo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cargo"/>
+		<property name="com.jaspersoft.studio.field.label" value="cargo"/>
+	</field>
+	<field name="nro_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nro_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="nro_id"/>
+	</field>
+	<field name="salario" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salario"/>
+		<property name="com.jaspersoft.studio.field.label" value="salario"/>
+	</field>
+	<field name="salary_hist" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salary_hist"/>
+		<property name="com.jaspersoft.studio.field.label" value="salary_hist"/>
+	</field>
+	<field name="copia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="copia"/>
+		<property name="com.jaspersoft.studio.field.label" value="copia"/>
+	</field>
+	<field name="copiaforma" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="copiaforma"/>
+		<property name="com.jaspersoft.studio.field.label" value="copiaforma"/>
+	</field>
+	<field name="documentno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="documentno"/>
+		<property name="com.jaspersoft.studio.field.label" value="documentno"/>
+	</field>
+	<field name="recibo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="recibo"/>
+		<property name="com.jaspersoft.studio.field.label" value="recibo"/>
+	</field>
+	<field name="amn_payroll_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_payroll_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_payroll_id"/>
+	</field>
+	<field name="amountallocated_t" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountallocated_t"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountallocated_t"/>
+	</field>
+	<field name="amountdeducted_t" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountdeducted_t"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountdeducted_t"/>
+	</field>
+	<field name="amountcalculated_t" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountcalculated_t"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountcalculated_t"/>
+	</field>
+	<field name="amountallocated_t2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountallocated_t2"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountallocated_t2"/>
+	</field>
+	<field name="amountdeducted_t2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountdeducted_t2"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountdeducted_t2"/>
+	</field>
+	<field name="amountcalculated_t2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountcalculated_t2"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountcalculated_t2"/>
+	</field>
+	<field name="iso_code1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iso_code1"/>
+		<property name="com.jaspersoft.studio.field.label" value="iso_code1"/>
+	</field>
+	<field name="cursymbol1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cursymbol1"/>
+		<property name="com.jaspersoft.studio.field.label" value="cursymbol1"/>
+	</field>
+	<field name="currname1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="currname1"/>
+		<property name="com.jaspersoft.studio.field.label" value="currname1"/>
+	</field>
+	<field name="iso_code2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iso_code2"/>
+		<property name="com.jaspersoft.studio.field.label" value="iso_code2"/>
+	</field>
+	<field name="cursymbol2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cursymbol2"/>
+		<property name="com.jaspersoft.studio.field.label" value="cursymbol2"/>
+	</field>
+	<field name="currname2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="currname2"/>
+		<property name="com.jaspersoft.studio.field.label" value="currname2"/>
+	</field>
+	<field name="sb_rec" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="sb_rec"/>
+		<property name="com.jaspersoft.studio.field.label" value="sb_rec"/>
+	</field>
+	<field name="cantidad" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
+	</field>
+	<field name="amountallocated" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountallocated"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountallocated"/>
+	</field>
+	<field name="amountdeducted" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountdeducted"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountdeducted"/>
+	</field>
+	<field name="amountcalculated" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountcalculated"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountcalculated"/>
+	</field>
+	<field name="amountallocated2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountallocated2"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountallocated2"/>
+	</field>
+	<field name="amountdeducted2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountdeducted2"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountdeducted2"/>
+	</field>
+	<field name="amountcalculated2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountcalculated2"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountcalculated2"/>
+	</field>
 	<variable name="v_asignaciones" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
 		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
  ? $F{amountallocated}

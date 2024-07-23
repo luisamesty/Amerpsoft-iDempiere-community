@@ -1,15 +1,18 @@
+-- Payroll Receipt
+-- Used for  reports and individual print
 SELECT * FROM
-(SELECT DISTINCT
+(
+SELECT DISTINCT
 -- ORGANIZATION
     org.ad_client_id as org_client, org.ad_org_id as org_org,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.regionname END as region,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
-	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
+    coalesce(org.value,'') as org_value,
+	coalesce(org.name,org.value,'') as org_name,
+	COALESCE(org.description,org.name,org.value,'') as org_description, 
+	COALESCE(orginfo.taxid,'') as org_taxid,
+	CASE WHEN img1.binarydata IS NOT NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+    loc.regionname as region,
+	loc.city as ciudad,
+    CONCAT(loc.address1,' ', loc.address2) as direccion,
 -- LOCATION
 	 lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
 -- PERIOD
@@ -28,7 +31,7 @@ SELECT * FROM
    COALESCE(dep.name,dep.description) as departamento,
 -- EMPLOYEE
    emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso,
-   COALESCE(jtt.name, jtt.description) as cargo, 
+   COALESCE(jtt.name, jtt.description,'') as cargo, 
    COALESCE(cbp.taxid,'') as nro_id, 
    COALESCE(emp.salary,CAST(0 as numeric)) as salario,
    COALESCE(histo.salary_hist,CAST(0 as numeric)) as salary_hist,
@@ -62,7 +65,6 @@ SELECT * FROM
 	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
 	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
 	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
-	 
 FROM adempiere.amn_payroll as pyr
 LEFT JOIN (
 	SELECT DISTINCT ON (pyr.amn_payroll_id) pyr.amn_payroll_id, pyh.salary as salary_hist , pyh.amn_period_yyyymm 
@@ -72,7 +74,7 @@ LEFT JOIN (
 INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
- LEFT JOIN adempiere.ad_org   as org ON (pyr.ad_org_id = pyr.ad_org_id)
+INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
  LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id = loc.c_location_id)
  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
@@ -92,7 +94,8 @@ LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AND prc.value= 'NN' 
+WHERE prc.value= 'NN' AND org.ad_client_id=  $P{AD_Client_ID}  
+	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -101,19 +104,18 @@ WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AN
     AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
     			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
-
 UNION
 SELECT DISTINCT
 -- ORGANIZATION
     org.ad_client_id as org_client, org.ad_org_id as org_org,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN CONCAT(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.regionname END as region,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
-    CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
-	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
+    coalesce(org.value,'') as org_value,
+	coalesce(org.name,org.value,'') as org_name,
+	COALESCE(org.description,org.name,org.value,'') as org_description, 
+	COALESCE(orginfo.taxid,'') as org_taxid,
+	CASE WHEN img1.binarydata IS NOT NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+    loc.regionname as region,
+	loc.city as ciudad,
+    CONCAT(loc.address1,' ', loc.address2) as direccion,
 -- LOCATION
 	 lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
 -- PERIOD
@@ -163,8 +165,7 @@ SELECT DISTINCT
 	 pyr_d.amountcalculated,
 	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
 	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
-	 
+	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2 
 FROM adempiere.amn_payroll as pyr
 LEFT JOIN (
 	SELECT DISTINCT ON (pyr.amn_payroll_id) pyr.amn_payroll_id, pyh.salary as salary_hist , pyh.amn_period_yyyymm 
@@ -174,7 +175,7 @@ LEFT JOIN (
 INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
- LEFT JOIN adempiere.ad_org   as org ON (pyr.ad_org_id = pyr.ad_org_id)
+INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
  LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id = loc.c_location_id)
  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
@@ -194,7 +195,8 @@ LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AND prc.value= 'NN' 
+WHERE prc.value= 'NN'  AND org.ad_client_id=  $P{AD_Client_ID}  
+	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -205,4 +207,4 @@ WHERE org.ad_client_id=  $P{AD_Client_ID}  AND org.ad_org_id =  $P{AD_Org_ID} AN
     			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 ) as nomina
 WHERE copiaforma IN ('01','02')
-ORDER BY  value_emp ASC,  documentno, copia DESC,  calcorder ASC,  isshow DESC
+ORDER BY  org_name ASC, value_emp ASC,  documentno, copia DESC,  calcorder ASC,  isshow DESC
