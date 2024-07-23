@@ -1,12 +1,15 @@
+-- Employees.jrxml
+-- Employees Report
 SELECT DISTINCT *
 FROM (SELECT DISTINCT 
+-- REPORT HEADER
+	CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
+	CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
+    CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as rep_name,
 -- CLIENT
 	emp.ad_client_id,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
-	CASE WHEN $P{AD_Org_ID}= 0 THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
-    CASE WHEN $P{AD_Org_ID}= 0 THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as rep_name,
-	CASE WHEN $P{AD_Org_ID}= 0 THEN concat(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
 -- ORGANIZATION
+	emp.ad_orgto_id,
     coalesce(org.value,'') as org_value,
     coalesce(org.name,org.value,'') as org_name,
 	COALESCE(org.description,org.name,org.value,'') as org_description, 
@@ -17,7 +20,7 @@ FROM (SELECT DISTINCT
 -- EMPLOYEE 
     emp.value as codigo,   
     DATE(emp.birthday) as fecha_nacimiento,
-    CASE WHEN ( $P{AD_Org_ID} IS NULL OR emp.ad_org_id = $P{AD_Org_ID} ) THEN 1 ELSE 0 END AS imprimir_org,
+    CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1 ELSE 0 END AS imprimir_org,
     CASE WHEN 
          (DATE_PART('month', current_date::date) <= DATE_PART('month', emp.birthday::date)) AND (DATE_PART('day', current_date::date) <> DATE_PART('day', emp.birthday::date))
          THEN (DATE_PART('year', current_date::date) - DATE_PART('year', emp.birthday::date) - 1)
@@ -92,8 +95,8 @@ FROM (SELECT DISTINCT
     COALESCE(ctr_e.name, ctr_e.description) as pais_emp,
     CASE WHEN ( $P{AMN_Employee_ID} IS NULL or emp.amn_employee_id = $P{AMN_Employee_ID} ) THEN 1 ELSE 0 END AS imprimir_emp,
  -- BPARTNER LOCATION
-    cbp_l.c_bpartner_id as cbpl_id, cbp_l.name as zona, cbp_l.phone as tel1, cbp_l.phone2 as tel2, cbp_l.fax as fax, 
- -- LOCATION
+    cbp_l.c_bpartner_id as cbpl_id, cbp_l.bplname as zona, cbp_l.bplphone as tel1, cbp_l.bplphone2 as tel2, cbp_l.bplfax as fax, 
+    -- LOCATION
     loc.postal as cod_postal, loc.address1 as adr1, loc.address2 as adr2, loc.address3 as adr3, loc.address4 as adr4,
  -- CITY
     cit.name as ciudad_dir,
@@ -131,7 +134,11 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  LEFT JOIN adempiere.ad_user as usr ON (usr.c_bpartner_id= cbp.c_bpartner_id) AND (usr.password!= '')
  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
  LEFT JOIN adempiere.c_bp_group as bpg ON (bpg.c_bp_group_id= cbp.c_bp_group_id)
- LEFT JOIN adempiere.c_bpartner_location as cbp_l ON (cbp_l.c_bpartner_id = cbp.c_bpartner_id) AND (cbp_l.isactive= 'Y')
+ LEFT JOIN ( 
+	SELECT DISTINCT ON (c_bpartner_id) 
+	c_bpartner_id, c_bpartner_location_id, c_location_id, name as bplname, phone as bplphone, phone2 as bplphone2, fax as bplfax 
+	FROM adempiere.c_bpartner_location as cbp_loc WHERE cbp_loc.isbillto='Y'
+ ) as cbp_l ON cbp_l.c_bpartner_id  = cbp.c_bpartner_id
  LEFT JOIN adempiere.c_country as ctr_e ON (ctr_e.c_country_id= emp.c_country_id)
  LEFT JOIN adempiere.c_location as loc ON (cbp_l.c_location_id= loc.c_location_id)
  LEFT JOIN adempiere.c_country as ctr ON (ctr.c_country_id= loc.c_country_id)
@@ -153,8 +160,9 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  LEFT JOIN adempiere.amn_jobstation as job_s ON (job_s.amn_jobstation_id= job.amn_jobstation_id)
  LEFT JOIN adempiere.amn_location as loc_n ON (loc_n.amn_location_id= emp.amn_location_id)
  LEFT JOIN adempiere.amn_dependent as dep ON (dep.amn_employee_id= emp.amn_employee_id)
-WHERE cbp.isemployee= 'Y' AND cbp.isactive= 'Y' AND
-      cbp.ad_client_id=  $P{AD_Client_ID} 
+ WHERE emp.isactive= 'Y' AND
+       emp.ad_client_id=  $P{AD_Client_ID} 
+       AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) as trabajadores
 WHERE imprimir_dep= 1 AND imprimir_est= 1 AND imprimir_nom= 1 AND imprimir_emp= 1
 AND imprimir_org=1 AND ad_client_id = $P{AD_Client_ID}
