@@ -33,7 +33,7 @@ public class AMN_Concept_Types_Proc_callout implements IColumnCallout {
 	@Override
 	public String start(Properties p_ctx, int WindowNo, GridTab p_mTab,
 			GridField mField, Object value, Object oldValue) {
-		// TODO Auto-generated method stub
+		// 
 		// ******************************
 		// FieldRef: AMN_Concept_Types_ID - 
 	    //	(Verify if null)	    		
@@ -45,7 +45,7 @@ public class AMN_Concept_Types_Proc_callout implements IColumnCallout {
 		    	Process_Type_ID= (Integer) p_mTab.getValue(MAMN_Concept_Types_Proc.COLUMNNAME_AMN_Process_ID);
 		    	MAMN_Process amnprocess = new MAMN_Process(p_ctx, Process_Type_ID, null);
 		    	p_mTab.setValue("Value", amnprocess.getValue().trim()+amnconcepttypes.getCalcOrder());
-		    	Concept_Type_Proc_Name = AmerpUtilities.truncate( amnprocess.getValue().trim()+'-'+amnconcepttypes.getName().trim(), 59);
+		    	Concept_Type_Proc_Name = AmerpUtilities.truncate(String.format("%08d", amnconcepttypes.getCalcOrder()) +'-'+amnconcepttypes.getName().trim() , 59);
 		    	p_mTab.setValue("Name", Concept_Type_Proc_Name);
 		    	p_mTab.setValue("Description", Concept_Type_Proc_Name);
 		    }
@@ -61,7 +61,7 @@ public class AMN_Concept_Types_Proc_callout implements IColumnCallout {
 		    	Concept_Type_ID= (Integer) p_mTab.getValue(MAMN_Concept_Types_Proc.COLUMNNAME_AMN_Concept_Types_ID);
 		    	MAMN_Concept_Types amnconcepttypes = new MAMN_Concept_Types(p_ctx, Concept_Type_ID, null);
 		    	p_mTab.setValue("Value", amnprocess.getValue().trim()+amnconcepttypes.getCalcOrder());
-		    	Concept_Type_Proc_Name = AmerpUtilities.truncate( amnprocess.getValue().trim()+'-'+amnconcepttypes.getName().trim(), 59);
+		    	Concept_Type_Proc_Name = AmerpUtilities.truncate( String.format("%08d", amnconcepttypes.getCalcOrder())+'-'+amnconcepttypes.getName().trim() , 59);
 		    	p_mTab.setValue("Name", Concept_Type_Proc_Name);
 		    	p_mTab.setValue("Description", Concept_Type_Proc_Name);
 	    	}

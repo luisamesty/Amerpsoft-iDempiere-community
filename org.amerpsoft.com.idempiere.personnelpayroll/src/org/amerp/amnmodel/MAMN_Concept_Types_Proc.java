@@ -72,7 +72,7 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
     	if (actp != null) {
     		
     		actp.setValue(p_Process_Value.trim()+p_CalcOrder);
-    		actp.setName(p_Process_Value.trim()+'-'+p_Name.trim());
+    		actp.setName(String.format("%08d", p_CalcOrder)+'-'+p_Name.trim());
     		actp.setDescription(p_Value.trim()+'-'+p_Name.trim());
     		actp.save();
         	return true;

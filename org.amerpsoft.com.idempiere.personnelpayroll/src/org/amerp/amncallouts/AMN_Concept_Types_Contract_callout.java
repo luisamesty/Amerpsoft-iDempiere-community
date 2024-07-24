@@ -36,7 +36,7 @@ public class AMN_Concept_Types_Contract_callout implements IColumnCallout {
 	
     @Override
     public String start(Properties p_ctx, int WindowNo, GridTab p_mTab, GridField p_mField, Object p_value, Object p_oldValue) {
-	    // TODO Auto-generated method stub
+	    // 
 		// ******************************
 		// FieldRef: AMN_Concept_Types_ID - 
 	    //	(Verify if null)	    		
@@ -48,7 +48,7 @@ public class AMN_Concept_Types_Contract_callout implements IColumnCallout {
 		    	Contract_Type_ID= (Integer) p_mTab.getValue(MAMN_Concept_Types_Contract.COLUMNNAME_AMN_Contract_ID);
 		    	MAMN_Contract amncontract = new MAMN_Contract(p_ctx, Contract_Type_ID, null);
 		    	p_mTab.setValue("Value", amncontract.getValue().trim()+amnconcepttypes.getCalcOrder());
-		    	Concept_Type_Contract_Name = AmerpUtilities.truncate( amncontract.getValue().trim()+'-'+amnconcepttypes.getName().trim(), 59);
+		    	Concept_Type_Contract_Name = AmerpUtilities.truncate( amncontract.getValue().trim()+String.format("%08d", amnconcepttypes.getCalcOrder())+'-'+amnconcepttypes.getName().trim(), 59);
 		    	p_mTab.setValue("Name", Concept_Type_Contract_Name);
 		    	p_mTab.setValue("Description", Concept_Type_Contract_Name);
 	    	}
@@ -64,7 +64,7 @@ public class AMN_Concept_Types_Contract_callout implements IColumnCallout {
 		    	Concept_Type_ID= (Integer) p_mTab.getValue(MAMN_Concept_Types_Contract.COLUMNNAME_AMN_Concept_Types_ID);
 		    	MAMN_Concept_Types amnconcepttypes = new MAMN_Concept_Types(p_ctx, Concept_Type_ID, null);
 		    	p_mTab.setValue("Value", amncontract.getValue().trim()+amnconcepttypes.getCalcOrder());
-		    	Concept_Type_Contract_Name = AmerpUtilities.truncate( amncontract.getValue().trim()+'-'+amnconcepttypes.getName().trim(), 59);
+		    	Concept_Type_Contract_Name = AmerpUtilities.truncate( amncontract.getValue().trim()+String.format("%08d", amnconcepttypes.getCalcOrder())+'-'+amnconcepttypes.getName().trim(), 59);
 		    	p_mTab.setValue("Name", Concept_Type_Contract_Name);
 		    	p_mTab.setValue("Description", Concept_Type_Contract_Name);
 		    }
