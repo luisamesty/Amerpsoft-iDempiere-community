@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Rates
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Rates 
@@ -32,7 +32,7 @@ public interface I_AMN_Rates
     /** TableName=AMN_Rates */
     public static final String Table_Name = "AMN_Rates";
 
-    /** AD_Table_ID=1000038 */
+    /** AD_Table_ID=1000004 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -42,6 +42,24 @@ public interface I_AMN_Rates
     BigDecimal accessLevel = BigDecimal.valueOf(6);
 
     /** Load Meta Data */
+
+    /** Column name active_int_rate */
+    public static final String COLUMNNAME_active_int_rate = "active_int_rate";
+
+	/** Set active_int_rate	  */
+	public void setactive_int_rate (BigDecimal active_int_rate);
+
+	/** Get active_int_rate	  */
+	public BigDecimal getactive_int_rate();
+
+    /** Column name active_int_rate2 */
+    public static final String COLUMNNAME_active_int_rate2 = "active_int_rate2";
+
+	/** Set active_int_rate2	  */
+	public void setactive_int_rate2 (BigDecimal active_int_rate2);
+
+	/** Get active_int_rate2	  */
+	public BigDecimal getactive_int_rate2();
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -82,6 +100,21 @@ public interface I_AMN_Rates
 	/** Get AMN_Rates_UU	  */
 	public String getAMN_Rates_UU();
 
+    /** Column name C_ConversionType_ID */
+    public static final String COLUMNNAME_C_ConversionType_ID = "C_ConversionType_ID";
+
+	/** Set Currency Type.
+	  * Currency Conversion Rate Type
+	  */
+	public void setC_ConversionType_ID (int C_ConversionType_ID);
+
+	/** Get Currency Type.
+	  * Currency Conversion Rate Type
+	  */
+	public int getC_ConversionType_ID();
+
+	public org.compiere.model.I_C_ConversionType getC_ConversionType() throws RuntimeException;
+
     /** Column name C_Currency_ID */
     public static final String COLUMNNAME_C_Currency_ID = "C_Currency_ID";
 
@@ -96,6 +129,21 @@ public interface I_AMN_Rates
 	public int getC_Currency_ID();
 
 	public org.compiere.model.I_C_Currency getC_Currency() throws RuntimeException;
+
+    /** Column name C_Currency_ID_To */
+    public static final String COLUMNNAME_C_Currency_ID_To = "C_Currency_ID_To";
+
+	/** Set Currency To.
+	  * Target currency
+	  */
+	public void setC_Currency_ID_To (int C_Currency_ID_To);
+
+	/** Get Currency To.
+	  * Target currency
+	  */
+	public int getC_Currency_ID_To();
+
+	public org.compiere.model.I_C_Currency getC_Currency_To() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -112,6 +160,19 @@ public interface I_AMN_Rates
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name CurrencyRate */
+    public static final String COLUMNNAME_CurrencyRate = "CurrencyRate";
+
+	/** Set Rate.
+	  * Currency Conversion Rate
+	  */
+	public void setCurrencyRate (BigDecimal CurrencyRate);
+
+	/** Get Rate.
+	  * Currency Conversion Rate
+	  */
+	public BigDecimal getCurrencyRate();
 
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
@@ -139,6 +200,24 @@ public interface I_AMN_Rates
 	  */
 	public Timestamp getEndDate();
 
+    /** Column name inflation */
+    public static final String COLUMNNAME_inflation = "inflation";
+
+	/** Set inflation	  */
+	public void setinflation (BigDecimal inflation);
+
+	/** Get inflation	  */
+	public BigDecimal getinflation();
+
+    /** Column name ipc */
+    public static final String COLUMNNAME_ipc = "ipc";
+
+	/** Set ipc	  */
+	public void setipc (BigDecimal ipc);
+
+	/** Get ipc	  */
+	public BigDecimal getipc();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -151,6 +230,28 @@ public interface I_AMN_Rates
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsOverrideCurrencyRate */
+    public static final String COLUMNNAME_IsOverrideCurrencyRate = "IsOverrideCurrencyRate";
+
+	/** Set Override Currency Conversion Rate.
+	  * Override Currency Conversion Rate
+	  */
+	public void setIsOverrideCurrencyRate (boolean IsOverrideCurrencyRate);
+
+	/** Get Override Currency Conversion Rate.
+	  * Override Currency Conversion Rate
+	  */
+	public boolean isOverrideCurrencyRate();
+
+    /** Column name month */
+    public static final String COLUMNNAME_month = "month";
+
+	/** Set month	  */
+	public void setmonth (int month);
+
+	/** Get month	  */
+	public int getmonth();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
@@ -173,6 +274,57 @@ public interface I_AMN_Rates
 
 	/** Get Salary Day	  */
 	public BigDecimal getSalary_Day();
+
+    /** Column name salary_day_20 */
+    public static final String COLUMNNAME_salary_day_20 = "salary_day_20";
+
+	/** Set salary_day_20	  */
+	public void setsalary_day_20 (BigDecimal salary_day_20);
+
+	/** Get salary_day_20	  */
+	public BigDecimal getsalary_day_20();
+
+    /** Column name salary_day_ru */
+    public static final String COLUMNNAME_salary_day_ru = "salary_day_ru";
+
+	/** Set Salary Rural	  */
+	public void setsalary_day_ru (BigDecimal salary_day_ru);
+
+	/** Get Salary Rural	  */
+	public BigDecimal getsalary_day_ru();
+
+    /** Column name salary_mo */
+    public static final String COLUMNNAME_salary_mo = "salary_mo";
+
+	/** Set salary_mo	  */
+	public void setsalary_mo (BigDecimal salary_mo);
+
+	/** Get salary_mo	  */
+	public BigDecimal getsalary_mo();
+
+    /** Column name salary_mo_20 */
+    public static final String COLUMNNAME_salary_mo_20 = "salary_mo_20";
+
+	/** Set salary_mo_20.
+	  * Salary Mo &lt;
+ 20T
+	  */
+	public void setsalary_mo_20 (BigDecimal salary_mo_20);
+
+	/** Get salary_mo_20.
+	  * Salary Mo &lt;
+ 20T
+	  */
+	public BigDecimal getsalary_mo_20();
+
+    /** Column name salary_mo_ru */
+    public static final String COLUMNNAME_salary_mo_ru = "salary_mo_ru";
+
+	/** Set salary_mo_ru	  */
+	public void setsalary_mo_ru (BigDecimal salary_mo_ru);
+
+	/** Get salary_mo_ru	  */
+	public BigDecimal getsalary_mo_ru();
 
     /** Column name StartDate */
     public static final String COLUMNNAME_StartDate = "StartDate";
@@ -224,100 +376,6 @@ public interface I_AMN_Rates
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
-
-    /** Column name active_int_rate */
-    public static final String COLUMNNAME_active_int_rate = "active_int_rate";
-
-	/** Set active_int_rate	  */
-	public void setactive_int_rate (BigDecimal active_int_rate);
-
-	/** Get active_int_rate	  */
-	public BigDecimal getactive_int_rate();
-
-    /** Column name active_int_rate2 */
-    public static final String COLUMNNAME_active_int_rate2 = "active_int_rate2";
-
-	/** Set active_int_rate2	  */
-	public void setactive_int_rate2 (BigDecimal active_int_rate2);
-
-	/** Get active_int_rate2	  */
-	public BigDecimal getactive_int_rate2();
-
-    /** Column name inflation */
-    public static final String COLUMNNAME_inflation = "inflation";
-
-	/** Set inflation	  */
-	public void setinflation (BigDecimal inflation);
-
-	/** Get inflation	  */
-	public BigDecimal getinflation();
-
-    /** Column name ipc */
-    public static final String COLUMNNAME_ipc = "ipc";
-
-	/** Set ipc	  */
-	public void setipc (BigDecimal ipc);
-
-	/** Get ipc	  */
-	public BigDecimal getipc();
-
-    /** Column name month */
-    public static final String COLUMNNAME_month = "month";
-
-	/** Set month	  */
-	public void setmonth (int month);
-
-	/** Get month	  */
-	public int getmonth();
-
-    /** Column name salary_day_20 */
-    public static final String COLUMNNAME_salary_day_20 = "salary_day_20";
-
-	/** Set salary_day_20	  */
-	public void setsalary_day_20 (BigDecimal salary_day_20);
-
-	/** Get salary_day_20	  */
-	public BigDecimal getsalary_day_20();
-
-    /** Column name salary_day_ru */
-    public static final String COLUMNNAME_salary_day_ru = "salary_day_ru";
-
-	/** Set Salary Rural	  */
-	public void setsalary_day_ru (BigDecimal salary_day_ru);
-
-	/** Get Salary Rural	  */
-	public BigDecimal getsalary_day_ru();
-
-    /** Column name salary_mo */
-    public static final String COLUMNNAME_salary_mo = "salary_mo";
-
-	/** Set salary_mo	  */
-	public void setsalary_mo (BigDecimal salary_mo);
-
-	/** Get salary_mo	  */
-	public BigDecimal getsalary_mo();
-
-    /** Column name salary_mo_20 */
-    public static final String COLUMNNAME_salary_mo_20 = "salary_mo_20";
-
-	/** Set salary_mo_20.
-	  * Salary Mo < 20T
-	  */
-	public void setsalary_mo_20 (BigDecimal salary_mo_20);
-
-	/** Get salary_mo_20.
-	  * Salary Mo < 20T
-	  */
-	public BigDecimal getsalary_mo_20();
-
-    /** Column name salary_mo_ru */
-    public static final String COLUMNNAME_salary_mo_ru = "salary_mo_ru";
-
-	/** Set salary_mo_ru	  */
-	public void setsalary_mo_ru (BigDecimal salary_mo_ru);
-
-	/** Get salary_mo_ru	  */
-	public BigDecimal getsalary_mo_ru();
 
     /** Column name year */
     public static final String COLUMNNAME_year = "year";

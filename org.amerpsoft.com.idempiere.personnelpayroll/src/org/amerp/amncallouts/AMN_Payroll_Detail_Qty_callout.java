@@ -197,18 +197,18 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 					// *******************************************************
 					// Calculate Concepts VARIABLES
 					// *******************************************************
-					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder,forceRulesInit, forceDVInit);
+					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder,forceRulesInit, forceDVInit, false);
 
 					// IF script is not Empty or formula equals ("script")
 					if (formula.trim().equalsIgnoreCase("script") || ((!script.isEmpty() && script!=null))) {
 						RetVal = AmerpPayrollCalc.FormulaEvaluationScript(
-								Payroll_ID, Concept_Value, script, qtyRead, va_SB, workdaysDT,Concept_OptMode);
+								Payroll_ID, Concept_Value, script, qtyRead, va_SB, workdaysDT,Concept_OptMode, false);
 						ErrorMessage = RetVal.getErrorMessage();
 						calcAmnt = RetVal.getBDCalcAmnt();
 						// 
 					} else { 	       				
 						RetVal = AmerpPayrollCalc.FormulaEvaluationScript(
-								Payroll_ID, Concept_Value, formula, qtyRead, va_SB, workdaysDT,Concept_OptMode);
+								Payroll_ID, Concept_Value, formula, qtyRead, va_SB, workdaysDT,Concept_OptMode, false);
 						ErrorMessage = RetVal.getErrorMessage();
 						calcAmnt = RetVal.getBDCalcAmnt();
 					}

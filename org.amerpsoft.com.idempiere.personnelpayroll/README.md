@@ -15,7 +15,10 @@
 
 AMERPSOFT Personnel and Payroll Plugin is related to Idempiere processes related with Employees. This plugin includes some new tasks, processes and reports.
 
-New set of tables with AMN_ prefix are create to acomplish this tasks.
+This plugin is a complete new module, initially adapted to Venezuelan legislation and with the possibility of adapting it to any other legislation through Processes and Concept Formulas in Javascript Language.
+
+A data dictionary is used through the set of tables ‘AMN_’, which are part of the AMERP localization.
+
 
 <b>Content:</b>
 
@@ -39,9 +42,10 @@ Follow steps:
 
 ## <a name="step1"></a>⭐️1.	Initial installation procedures.
 
-```text
+It is recommeded to install Extended Editor, LCO, BuParteners ans Financial plugins before installing this one.
 
-```
+You may download jar file from repository or generate from sources.
+Jar file name is like: org.amerpsoft.com.idempiere.personnelpayroll_11.0.0.202408050959.jar
 
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
@@ -61,31 +65,107 @@ or
 sql/oracle/css_styles.sql
 ```
 
-
-
-<p align="left">(<a href="#readme-top">back to top</a>)</p>
-
-## <a name="step3"></a>⭐️3. Install Personnel and Payroll plugin 
-
-<b>Install Plugin using Apache felix Web Console</b>
+Install plugin using Apache Felix.
 
 ```text
 	- Download plugin jar file from Repository.
-    (Named as: org.amerpsoft.com.idempiere.personellpayroll_11.0.0.202404091015.jar )
+    (Named as: org.amerpsoft.com.idempiere.personnelpayroll_11.0.0.202408050959.jar )
 	- Install using Osgi Apache Felix Web Console
 	- or Any Manual procedure
 	- Verify plugin is running and updated
 ```
 
-<b>Pack-IN AMERPSFOT Personnel and Payroll # 1 to 6.zip</b>
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_01_apache_felix.png" alt="Logo" width="800">
+  </a>
+</div>
 
-```text
-	 1. Download ‘AMERPSOFT Financial.zip’
-	 2. Pack-IN using Application Dictionary --> Pack In menu 
-	 3. Run Synchronize Terminology, Sequence Check and Role Access Update
-	 4. Restart Server
- ```
 
+<b>Verify Pack-IN /Pack-OUT were propertly created. AMERPSFOT Personnel and Payroll # 1 to 6.zip</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_02_packs.png" alt="Logo" width="800">
+  </a>
+</div>
+
+
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
+
+## <a name="step3"></a>⭐️3. Configuring basic tables 
+
+<b>Rates</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_031_rates.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Processes</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_032_processes.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Contracts</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_033_contracts.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Roles</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_034_roles.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Default account combinations</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_035_defaults.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Concepts</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_04_concepts.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Concepts Unit of Measure</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_04_uom.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Additional Tables</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_04_tables.png" alt="Logo" width="800">
+  </a>
+</div>
+
+<b>Employees</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_05_employees.png" alt="Logo" width="800">
+  </a>
+</div>
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
@@ -93,29 +173,35 @@ sql/oracle/css_styles.sql
 
 AMERPSOFT Personnel and Payroll  Processes
 
-```text
-- Process 1
-- Process 2
-```
+Verify these processes are installed on menu:
+
+<b>Processes</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_05_processes.png" alt="Logo" width="800">
+  </a>
+</div>
+
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ## <a name="step5"></a>⭐️5. Personnel and Payroll Reports 
 
 AMERPSOFT Personnel and Payroll Reports
 
-```text
-- Report 1
-- Report 2
+Verify these reports are installed on menu:
+
+<b>Reports</b>
+
+<div align="center">
+  <a href="AMERPSOFT_logo">
+    <img src="./install/images/personnel_payroll_06_reports.png" alt="Logo" width="800">
+  </a>
+</div>
 ```
 
-These reports have been tested with Postgresql database. Oracle versions are coming soon.
+These reports have been tested with Postgresql database.
 
-PDF samples:
-
-- [Account Elements](./install/pdf/CatalogoElementosCuenta.pdf)
-- [State Financial Balance](./install/pdf/BalanceSituacionFinanciera.pdf)
-- [State Financial Integral Results](./install/pdf/EstadoResultadosIntegrales.pdf)
-- [Trial Balance](./install/pdf/BalanceComprobacionPeríodo.pdf)
 
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>

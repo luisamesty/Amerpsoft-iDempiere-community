@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240716L;
+	private static final long serialVersionUID = 20240807L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)
@@ -64,6 +64,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCurrencyRate (false);
+// N
 			setIsPaid (false);
 // N
 			setIsPrinted (false);
@@ -103,6 +105,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCurrencyRate (false);
+// N
 			setIsPaid (false);
 // N
 			setIsPrinted (false);
@@ -142,6 +146,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCurrencyRate (false);
+// N
 			setIsPaid (false);
 // N
 			setIsPrinted (false);
@@ -181,6 +187,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCurrencyRate (false);
+// N
 			setIsPaid (false);
 // N
 			setIsPrinted (false);
@@ -656,6 +664,31 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return ii.intValue();
 	}
 
+	public org.compiere.model.I_C_Currency getC_Currency_To() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_Currency)MTable.get(getCtx(), org.compiere.model.I_C_Currency.Table_ID)
+			.getPO(getC_Currency_ID_To(), get_TrxName());
+	}
+
+	/** Set Currency To.
+		@param C_Currency_ID_To Target currency
+	*/
+	public void setC_Currency_ID_To (int C_Currency_ID_To)
+	{
+		set_ValueNoCheck (COLUMNNAME_C_Currency_ID_To, Integer.valueOf(C_Currency_ID_To));
+	}
+
+	/** Get Currency To.
+		@return Target currency
+	  */
+	public int getC_Currency_ID_To()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Currency_ID_To);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
@@ -710,6 +743,12 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_Invoice)MTable.get(getCtx(), org.compiere.model.I_C_Invoice.Table_ID)
+			.getPO(getC_Invoice_ID(), get_TrxName());
 	}
 
 	/** Set Invoice.
@@ -816,6 +855,25 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Rate.
+		@param CurrencyRate Currency Conversion Rate
+	*/
+	public void setCurrencyRate (BigDecimal CurrencyRate)
+	{
+		set_Value (COLUMNNAME_CurrencyRate, CurrencyRate);
+	}
+
+	/** Get Rate.
+		@return Currency Conversion Rate
+	  */
+	public BigDecimal getCurrencyRate()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_CurrencyRate);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Account Date.
@@ -1000,6 +1058,29 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public boolean isApproved()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApproved);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Override Currency Conversion Rate.
+		@param IsOverrideCurrencyRate Override Currency Conversion Rate
+	*/
+	public void setIsOverrideCurrencyRate (boolean IsOverrideCurrencyRate)
+	{
+		set_Value (COLUMNNAME_IsOverrideCurrencyRate, Boolean.valueOf(IsOverrideCurrencyRate));
+	}
+
+	/** Get Override Currency Conversion Rate.
+		@return Override Currency Conversion Rate
+	  */
+	public boolean isOverrideCurrencyRate()
+	{
+		Object oo = get_Value(COLUMNNAME_IsOverrideCurrencyRate);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
@@ -1212,11 +1293,5 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
-	}
-
-	@Override
-	public I_C_Invoice getC_Invoice() throws RuntimeException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

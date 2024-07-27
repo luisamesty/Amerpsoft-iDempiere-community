@@ -275,6 +275,21 @@ public interface I_AMN_Payroll
 
 	public org.compiere.model.I_C_Currency getC_Currency() throws RuntimeException;
 
+    /** Column name C_Currency_ID_To */
+    public static final String COLUMNNAME_C_Currency_ID_To = "C_Currency_ID_To";
+
+	/** Set Currency To.
+	  * Target currency
+	  */
+	public void setC_Currency_ID_To (int C_Currency_ID_To);
+
+	/** Get Currency To.
+	  * Target currency
+	  */
+	public int getC_Currency_ID_To();
+
+	public org.compiere.model.I_C_Currency getC_Currency_To() throws RuntimeException;
+
     /** Column name C_DocType_ID */
     public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
 
@@ -380,6 +395,19 @@ public interface I_AMN_Payroll
 	public int getC_SalesRegion_ID();
 
 	public org.compiere.model.I_C_SalesRegion getC_SalesRegion() throws RuntimeException;
+
+    /** Column name CurrencyRate */
+    public static final String COLUMNNAME_CurrencyRate = "CurrencyRate";
+
+	/** Set Rate.
+	  * Currency Conversion Rate
+	  */
+	public void setCurrencyRate (BigDecimal CurrencyRate);
+
+	/** Get Rate.
+	  * Currency Conversion Rate
+	  */
+	public BigDecimal getCurrencyRate();
 
     /** Column name DateAcct */
     public static final String COLUMNNAME_DateAcct = "DateAcct";
@@ -489,6 +517,19 @@ public interface I_AMN_Payroll
 	  * Indicates if this document requires approval
 	  */
 	public boolean isApproved();
+
+    /** Column name IsOverrideCurrencyRate */
+    public static final String COLUMNNAME_IsOverrideCurrencyRate = "IsOverrideCurrencyRate";
+
+	/** Set Override Currency Conversion Rate.
+	  * Override Currency Conversion Rate
+	  */
+	public void setIsOverrideCurrencyRate (boolean IsOverrideCurrencyRate);
+
+	/** Get Override Currency Conversion Rate.
+	  * Override Currency Conversion Rate
+	  */
+	public boolean isOverrideCurrencyRate();
 
     /** Column name IsPaid */
     public static final String COLUMNNAME_IsPaid = "IsPaid";

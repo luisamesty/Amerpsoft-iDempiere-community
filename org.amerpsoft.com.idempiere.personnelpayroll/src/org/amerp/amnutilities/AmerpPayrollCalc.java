@@ -115,10 +115,11 @@ public class AmerpPayrollCalc  {
 	 *  boolean forceDVInit
 	 *  (Force Rules and Vars Init, usually true on first payroll 
 	 *  	row receipt only)   ** DISABLED BY MOMENT ***
-	 * Notes: This Method is Used by PayrollDetail Callout on Concept_Types_Proc Value
+	 *  forceRounding: force when true Currency roundind when false default 2
+	* Notes: This Method is Used by PayrollDetail Callout on Concept_Types_Proc Value
 	 *******************************************************************************************/
 	public static BigDecimal PayrollEvaluation 	(Properties p_ctx, int p_AMN_Payroll_ID , 
-			int p_calcorder, boolean forceRulesInit, boolean forceDVInit) //throws ScriptException
+			int p_calcorder, boolean forceRulesInit, boolean forceDVInit, boolean forceRounding) //throws ScriptException
 	{
 		//log.warning(".PayrollEvaluation..Init forceRulesInit="+forceRulesInit+"  p_calcorder="+p_calcorder+"...............................");
 		//log.warning("Parameters: p_AMN_Payroll_ID="+p_AMN_Payroll_ID+"  p_calcorder="+p_calcorder);	
@@ -154,10 +155,10 @@ public class AmerpPayrollCalc  {
 		// Init Rules
    		// Executes only one time per payroll Receipt i forceRulesInit=true
     	if (forceRulesInit)
-    		RTInit(AD_Client_ID, p_AMN_Payroll_ID, Process_ID);
+    		RTInit(AD_Client_ID, p_AMN_Payroll_ID, Process_ID, forceRounding);
 		// Init DV_XXXX Variables if forceDVInit=true
     	if(forceDVInit) {
-    		DVInit(AD_Client_ID,p_AMN_Payroll_ID, Process_ID);
+    		DVInit(AD_Client_ID,p_AMN_Payroll_ID, Process_ID, forceRounding);
     		ConIndexFT = 0;   // Force VariablesInit procedure to force init array 
     	}
 //    	// Variables allways init
@@ -582,15 +583,15 @@ public class AmerpPayrollCalc  {
             		forceRulesInit=false;
             		forceDVInit=false;
             	}
-    			AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,CalcOrder, forceRulesInit, forceDVInit);
+    			AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,CalcOrder, forceRulesInit, forceDVInit, true);
             	// CALCULATE VALUE from Concept_Script
                 if (Formula.trim().equalsIgnoreCase("script") || ((!Concept_Script.isEmpty() && Concept_Script!=null))) {
-       				RetVal = AmerpPayrollCalc.FormulaEvaluationScript(Payroll_ID, Concept_Reference, Concept_Script, BigDecimal.valueOf(QtyValue), va_SB, WorkingDaysBD,ConceptOptmode);
+       				RetVal = AmerpPayrollCalc.FormulaEvaluationScript(Payroll_ID, Concept_Reference, Concept_Script, BigDecimal.valueOf(QtyValue), va_SB, WorkingDaysBD,ConceptOptmode, true);
        				ErrorMessage = RetVal.getErrorMessage();
        				calcAmnt = RetVal.getBDCalcAmnt();
        			// CALCULATE Value FROM Formula
        			} else {	       				
-       				RetVal = AmerpPayrollCalc.FormulaEvaluationScript(Payroll_ID, Concept_Reference, Formula, BigDecimal.valueOf(QtyValue), va_SB, WorkingDaysBD,ConceptOptmode);
+       				RetVal = AmerpPayrollCalc.FormulaEvaluationScript(Payroll_ID, Concept_Reference, Formula, BigDecimal.valueOf(QtyValue), va_SB, WorkingDaysBD,ConceptOptmode, true);
        				ErrorMessage = RetVal.getErrorMessage();
        				calcAmnt = RetVal.getBDCalcAmnt();
        			}
@@ -699,6 +700,7 @@ public class AmerpPayrollCalc  {
 	// 	Bigdecimal	p_va_SB
 	//	Integer		p_workdays
 	//  String 		p_OptMode ("DV" or "")
+	//  forceRounding: force when true Currency roundind when false default 2
 	//
 	// 	Returns: scriptResult RetVal 
 	//				(BigDecimal) BDCalcAmnt
@@ -709,7 +711,7 @@ public class AmerpPayrollCalc  {
 	public static scriptResult FormulaEvaluationScript 	(
 			int p_AMN_Payroll_ID,
 			String p_Concept_Reference, String p_script, BigDecimal p_qtyValueRead, 
-			BigDecimal p_va_SB, BigDecimal p_workdays, String p_OptMode ) throws ScriptException
+			BigDecimal p_va_SB, BigDecimal p_workdays, String p_OptMode, boolean forceRounding) throws ScriptException
 	{
 		CLogger log = CLogger.getCLogger(AmerpPayrollCalc.class);
 		
@@ -762,6 +764,10 @@ public class AmerpPayrollCalc  {
 			AM_Currency=curr.getISO_Code();
 		else
 			AM_Currency="VES";
+		// Rounding Mode
+		int roundingMode = 2;
+		if (forceRounding )  
+			roundingMode = curr.getStdPrecision();
 		// SHOW VARIABLES
 		//logVariablesShow();
 		//log.warning("AM_Currency="+AM_Currency);
@@ -1410,7 +1416,7 @@ public class AmerpPayrollCalc  {
 			BDCalcAmnt = BigDecimal.valueOf(CalcAmnt);
 			// ROUND two Decimals
 			//BDCalcAmnt= BDCalcAmnt.round(new MathContext(2, RoundingMode.CEILING));
-			BDCalcAmnt = BDCalcAmnt.setScale(2, RoundingMode.CEILING);
+			BDCalcAmnt = BDCalcAmnt.setScale(roundingMode, RoundingMode.CEILING);
 			//return BDCalcAmnt;
 			RetVal.setBDCalcAmnt(BDCalcAmnt);
 			RetVal.setErrorMessage(ErrorMessage.trim());			
@@ -1933,13 +1939,19 @@ public class AmerpPayrollCalc  {
 	 * @param p_AMN_Payroll_ID
 	 * @return
 	 */
-	static public boolean DVInit(Integer p_AD_Client_ID, Integer p_AMN_Payroll_ID, Integer p_AMN_Process_ID) {
+	static public boolean DVInit(Integer p_AD_Client_ID, Integer p_AMN_Payroll_ID, Integer p_AMN_Process_ID, boolean forceRounding) {
 
 		// Default Values Init
 		int i =0;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Env.getCtx(), p_AMN_Payroll_ID, null);
 		BigDecimal VarDefValueBD = BigDecimal.ZERO;
-		
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		// Rounding Mode
+		int roundingMode = 2;
+		if (forceRounding )  
+			roundingMode = curr.getStdPrecision();
+		//
 		List<String> DV_Variables = AmerpPayrollCalcUtilDVFormulas.initDV_Variables (Env.getCtx(), p_AMN_Process_ID);
 		String Mess ="\r\n";
 		String errorResult="";
@@ -1970,7 +1982,7 @@ public class AmerpPayrollCalc  {
 			if (VarDefValueBD == null) {
 				VarDefValueBD = BigDecimal.ZERO;
 			}
-			DVRulesTypes[i].setResultValue(VarDefValueBD.setScale(2, RoundingMode.HALF_UP));
+			DVRulesTypes[i].setResultValue(VarDefValueBD.setScale(roundingMode, RoundingMode.HALF_UP));
 			DVRulesTypes[i].setErrorMessage(errorResult);
 			Mess = Mess + "No.="+i+"  "+element + "(created)="+VarDefValueBD+"\r\n";
 		}
@@ -1985,7 +1997,7 @@ public class AmerpPayrollCalc  {
      * @param p_aD_Client_ID 
      * @param p_AMN_Payroll_ID
      */
-	static public boolean RTInit(Integer p_AD_Client_ID, Integer p_AMN_Payroll_ID, Integer p_AMN_Process_ID) {
+	static public boolean RTInit(Integer p_AD_Client_ID, Integer p_AMN_Payroll_ID, Integer p_AMN_Process_ID, boolean forceRounding) {
 		int i =0;
 		String RuleVariable="";
 		String RuleDescription="";
@@ -1993,6 +2005,12 @@ public class AmerpPayrollCalc  {
 		BigDecimal RTVarMRuleBD = BigDecimal.ZERO;
 		// AMN Payroll
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Env.getCtx(), p_AMN_Payroll_ID, null);
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		// Rounding Mode
+		int roundingMode = 2;
+		if (forceRounding )  
+			roundingMode = curr.getStdPrecision();
 		// sql1
 		String sql1 = "SELECT "
 				+   "name as codigo, "
@@ -2046,7 +2064,7 @@ public class AmerpPayrollCalc  {
 			try {
 				RuleVariable = RulesTypes[i].getRuleVariable();
 				RTVarMRuleBD = AmerpPayrollCalcRules.processRule(Env.getCtx(), RuleVariable, p_AMN_Payroll_ID, amnpayroll.get_TrxName() );
-	    		RulesTypes[i].setResultValue(RTVarMRuleBD.setScale(2, RoundingMode.HALF_UP));
+	    		RulesTypes[i].setResultValue(RTVarMRuleBD.setScale(roundingMode, RoundingMode.HALF_UP));
 	    		//log.warning("....RTInit CReate...i:"+i+"   RuleVariable:"+RuleVariable+"  RuleOrder:"+RulesTypes[i].getRuleOrder()+"  QtyValue:"+RulesTypes[i].getQtyValue()+"  ResultValue:("+RTVarMRuleBD+")="+RulesTypes[i].getResultValue());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

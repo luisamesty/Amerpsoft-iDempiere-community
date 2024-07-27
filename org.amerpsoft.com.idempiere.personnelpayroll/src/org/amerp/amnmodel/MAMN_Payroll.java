@@ -14,7 +14,6 @@ package org.amerp.amnmodel;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -383,16 +382,17 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     	MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
     	MAMN_Period amnperiod = new MAMN_Period(ctx, amnpayroll.getAMN_Period_ID(), trxName);
     	MAMN_Contract amncontract = new MAMN_Contract(ctx, amnpayroll.getAMN_Contract_ID(), trxName);
-    	MBPartner bp = null;
+    	MBPartner billBp = null;
     	// Default Org Location Location
     	MOrgInfo oi = MOrgInfo.get( amnemployee.getAD_OrgTo_ID(), trxName);
     	int Default_C_BPartner_Location_ID = oi.getC_Location_ID();
-    	// Get employe  BPartner for Invoice		
+    	// Get employe  BPartner for Invoice	
     	if (amnemployee.getBill_BPartner_ID() != 0) {
-    		bp = new MBPartner(ctx, amnemployee.getBill_BPartner_ID(), trxName);
+    		billBp = new MBPartner(ctx, amnemployee.getBill_BPartner_ID(), trxName);
     	} else {
-    		bp = new MBPartner(ctx, amnemployee.getC_BPartner_ID(), trxName);
+    		billBp = new MBPartner(ctx, amnemployee.getC_BPartner_ID(), trxName);
     	}
+    	MBPGroup bpg = new MBPGroup(ctx, billBp.getC_BP_Group_ID(), trxName);
     	// AMN_Period Cache
     	Process_Value=amnprocess.getValue().trim();
    		Contract_Value=amncontract.getValue().trim();
@@ -457,7 +457,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		minvoice.setGrandTotal(amnpayroll.getAmountNetpaid());
 		minvoice.setC_DocType_ID(mdct.getC_DocType_ID());
 		minvoice.setC_DocTypeTarget_ID(mdct.getC_DocType_ID());
-		minvoice.setDocumentNo(amnpayroll.getDocumentNo());
+		//minvoice.setDefiniteDocumentNo();
+		//minvoice.setDocumentNo(amnpayroll.getDocumentNo());
 		minvoice.setDateAcct(amnpayroll.getDateAcct());
 		minvoice.setDateInvoiced(amnpayroll.getDateAcct());
 		minvoice.setC_Currency_ID(amnpayroll.getC_Currency_ID());
@@ -467,12 +468,13 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		} else {
 			minvoice.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
 		}
-		if (bp.getPrimaryC_BPartner_Location_ID() != 0)
-			minvoice.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+		if (billBp.getPrimaryC_BPartner_Location_ID() != 0)
+			minvoice.setC_BPartner_Location_ID(billBp.getPrimaryC_BPartner_Location_ID());
 		else
 		minvoice.setC_BPartner_Location_ID(Default_C_BPartner_Location_ID);
-		minvoice.setSalesRep_ID(bp.getSalesRep_ID());
-		minvoice.setM_PriceList_ID(pl.getM_PriceList_ID());
+		minvoice.setSalesRep_ID(billBp.getSalesRep_ID());
+		minvoice.setM_PriceList_ID(billBp.getPO_PriceList_ID());
+		minvoice.setIsSOTrx(false);
 		// Save C_Invoice header
 		minvoice.save(trxName);
 		// 

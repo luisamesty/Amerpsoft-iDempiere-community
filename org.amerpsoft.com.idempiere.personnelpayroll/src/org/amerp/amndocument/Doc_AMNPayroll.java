@@ -4,6 +4,7 @@
 package org.amerp.amndocument;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -21,6 +22,17 @@ public class Doc_AMNPayroll extends Doc {
 	/** Posting Type				*/
 	private String			m_PostingType = "A";
 	private int				m_C_AcctSchema_ID = 1000000;
+	// Default Local Currency for Client
+	private int m_defaultCurrency_ID=0;
+	// Default Currency Rate entered to override
+	private BigDecimal defaulCurrencyRate = BigDecimal.ZERO;
+	// Currency to defaulCurrencyRate apply
+	private Integer m_Currency_ID = 0;
+	private Integer m_Currency_ID_to = 0;
+	// Set AMERP New Fields for Currency Handling
+	BigDecimal CurrencyRate = BigDecimal.ZERO;
+	private boolean IsOverrideCurrencyRate;
+	int C_ConversionType_ID = 0;
 	
 	public Doc_AMNPayroll (MAcctSchema as, ResultSet rs, String trxName)
 	{
@@ -34,8 +46,11 @@ public class Doc_AMNPayroll extends Doc {
 	protected String loadDocumentDetails() {
 		MAMN_Payroll amnpayroll = (MAMN_Payroll)getPO();
 		// Set Doc Date 
-		//log.warning("====== loadDocumentDetails ============== AMN_Payroll_ID:"+amnpayroll.getAMN_Payroll_ID());
+//		log.warning("====== loadDocumentDetails ============== AMN_Payroll_ID:"+amnpayroll.getAMN_Payroll_ID()+
+//				" AcctSchema:"+getAcctSchema());
 		setDateDoc(amnpayroll.getDateAcct());
+		// Default Local Currency for Client
+		m_defaultCurrency_ID = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
 		//	Contained Objects
 		p_lines = loadLines(amnpayroll);
 		if (log.isLoggable(Level.FINE)) log.fine("Lines=" + p_lines.length);
@@ -49,7 +64,8 @@ public class Doc_AMNPayroll extends Doc {
 	 */
 	private MAMN_Docline[] loadLines(MAMN_Payroll p_amnpayroll)
 	{
-//log.warning("====loadLines===== AMN_Payroll_ID:"+p_amnpayroll.getAMN_Payroll_ID());
+//		log.warning("====loadLines===== AMN_Payroll_ID:"+p_amnpayroll.getAMN_Payroll_ID()+
+//				" AcctSchema:"+getAcctSchema());
 		// Decimal Values
 		MAMN_Docline linea = (null);
 		MAMN_Concept_Types amnct = null ;
@@ -60,12 +76,14 @@ public class Doc_AMNPayroll extends Doc {
 		BigDecimal AmountAccSrcDebres = Zero;
 		BigDecimal AmountAccSrcCreres = Zero;
 		String AMN_Process_Value="NN";
+		// m_Currency_ID_to
+		m_Currency_ID = m_defaultCurrency_ID;
+		m_Currency_ID_to = m_defaultCurrency_ID;
 		// Employee from AMN_Payroll
 		MAMN_Employee amnemployee = new MAMN_Employee(getCtx(), p_amnpayroll.getAMN_Employee_ID(), null);
 		// Default Account Schema
 		MClientInfo info = MClientInfo.get(Env.getCtx(), p_amnpayroll.getAD_Client_ID(), null); 
-		MAcctSchema asdef = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
-		MAcctSchema as = asdef;
+		MAcctSchema as = getAcctSchema();
 		m_C_AcctSchema_ID= as.getC_AcctSchema_ID();
 		// get AMN_Schema
 		MAMN_Schema amnas =  MAMN_Schema.get(Env.getCtx(), as.getC_AcctSchema_ID(), null);
@@ -73,6 +91,22 @@ public class Doc_AMNPayroll extends Doc {
 		AMN_Process_Value = amnpr.getAMN_Process_Value();
 		amnemployee.getValue().trim();
 		amnemployee.getName().trim();	
+		if (p_amnpayroll != null ) {
+			// Set Currency
+			if ((Integer) p_amnpayroll.getC_Currency_ID() != null )
+				m_Currency_ID = p_amnpayroll.getC_Currency_ID();
+			if ((Integer) p_amnpayroll.getC_Currency_ID_To() != null )
+				m_Currency_ID_to = p_amnpayroll.getC_Currency_ID_To();
+			if ((Integer) p_amnpayroll.getC_ConversionType_ID() != null )
+				C_ConversionType_ID = p_amnpayroll.getC_ConversionType_ID();
+			IsOverrideCurrencyRate = p_amnpayroll.isOverrideCurrencyRate();
+			// CurrencyRate
+			if (p_amnpayroll.getCurrencyRate() != null && p_amnpayroll.isOverrideCurrencyRate()) {
+				CurrencyRate = p_amnpayroll.getCurrencyRate();
+			} else {
+				CurrencyRate = MConversionRate.getRate( p_amnpayroll.getC_Currency_ID(), as.getC_Currency_ID(), p_amnpayroll.getDateAcct(), C_ConversionType_ID, p_amnpayroll.getAD_Client_ID(), p_amnpayroll.getAD_Org_ID());	
+			}
+		}		
 		// MASTER POINTERS
 		MAccount MASTERAccountCR = (null);
 		MAccount defMASTERAccountCR = (null);
@@ -117,11 +151,6 @@ public class Doc_AMNPayroll extends Doc {
 		//log.warning("Std lines size:"+lines.length);
 		if(lines.length == 0) {
 			linesref= p_amnpayroll.getFirstReferenceLine(false);
-//log.warning("Zero Lines Payroll Description:"+p_amnpayroll.getDescription()+"  Firts Reference lines length:"+linesref.length);
-			// Verify if at least one Ref Concept.
-//if (linesref != null)
-//	log.warning("linesref ...:"+linesref.length);
-
 			if (linesref.length==0) {
 				MAMN_Docline[] dlsnull = new MAMN_Docline[0];
 				list.toArray(dlsnull);
@@ -130,16 +159,13 @@ public class Doc_AMNPayroll extends Doc {
 			MAMN_Payroll_Detail lineREF = linesref[0];
 			//log.warning("Reference lines size:"+lines.length);
 			if(linesref.length != 0) {
-//Inmutable				MASTERAccountCR = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(lineREF, as));
 				MASTERAccountCR = new MAccount(Env.getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(lineREF, as),null);
 			} 
 			// Default reference Concept
 			else {
 				linesref= p_amnpayroll.getFirstLine(false);
-//Inmutable				MASTERAccountCR = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(lineREF, as));
 				MASTERAccountCR = new MAccount(Env.getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(lineREF, as), null);
 			}
-			//log.warning("MASTERAccountCR:"+MASTERAccountCR.getDescription());
 			// HEADER  int i = 0
 			MasterdocLineCR = new MAMN_Docline (lineREF, this);
 			MasterdocLineCR.setAccount(MASTERAccountCR);
@@ -180,7 +206,6 @@ public class Doc_AMNPayroll extends Doc {
 		if (defMASTERAccountCR != null) 
 			MASTERAccountCR = defMASTERAccountCR ;
 		else
-// Inmutable			MASTERAccountCR = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(lineM,as));
 			MASTERAccountCR = new MAccount(Env.getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(lineM,as), null);
 		// --------------
 		// CREDITS
@@ -194,7 +219,6 @@ public class Doc_AMNPayroll extends Doc {
 			amnct = new MAMN_Concept_Types(getCtx(),amnctpr.getAMN_Concept_Types_ID(),null);
 			// Credit c_validcombination_id
 			// Take First ONE MASTERAccountCR For RESUME HEADER ACCOUNT		
-// Inmutable	accountCR = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(line,as));
 			accountCR = new MAccount(Env.getCtx(), MAMN_Payroll_Detail.getAMN_Cre_Acct(line,as),null);
 			MAMN_Docline docLineCR = new MAMN_Docline (line, this);
 			docLineCR.setAccount(accountCR);				// -- Quantity
@@ -221,9 +245,7 @@ public class Doc_AMNPayroll extends Doc {
 				docLineCR.setConcept_Value(amnct.getValue());
 				docLineCR.setConcept_Name(amnct.getName());
 			}
-//log.warning("CREDITS Concepto="+line.getValue()+"  accountCR="+accountCR.getDescription()+" Amount="+line.getAmountCalculated());
 			list.add(docLineCR);	
-//log.warning(list.toString());
 		}
 		// --------------
 		//  DEBITS
@@ -235,8 +257,7 @@ public class Doc_AMNPayroll extends Doc {
 			MAMN_Payroll_Detail line = lines[i];
 			amnctpr = new MAMN_Concept_Types_Proc(getCtx(),line.getAMN_Concept_Types_Proc_ID(),null);
 			amnct = new MAMN_Concept_Types(getCtx(),amnctpr.getAMN_Concept_Types_ID(),null);
-		// *******  PAyroll DEBIT *********
-// Inmutable			accountDB = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Deb_Acct(line,as));
+			// *******  PAyroll DEBIT *********
 			accountDB = new MAccount(Env.getCtx(), MAMN_Payroll_Detail.getAMN_Deb_Acct(line,as),null);			
 			MAMN_Docline docLineDB = new MAMN_Docline (line, this);
 			// -- Quantity
@@ -246,7 +267,6 @@ public class Doc_AMNPayroll extends Doc {
 			//  --  Converted Amounts
 			docLineDB.setConvertedAmt (m_C_AcctSchema_ID, line.getAmountCalculated(), Zero);
 			//  --  Account
-// Inmutable accountDB = MAccount.get(getCtx(), MAMN_Payroll_Detail.getAMN_Deb_Acct(line,as));
 			// Business Partner - SalesRegion - Project - Campaign -Activity
 			if (accountDB.getC_BPartner_ID() == 0) {
 				if (amnemployee.getBill_BPartner_ID() != 0) {
@@ -265,16 +285,13 @@ public class Doc_AMNPayroll extends Doc {
 				docLineDB.setConcept_Value(amnct.getValue());
 				docLineDB.setConcept_Name(amnct.getName());
 			}
-//log.warning("DEBITS Concepto="+line.getValue()+"  accountDB="+accountDB.getDescription()+" Amount="+line.getAmountCalculated());
 			list.add(docLineDB);
-//log.warning(list.toString());
 		}
 		// ----------------------------------
 		// RESUME DUPLICITY Master Account
 		// MASTERAccountCR
 		// ----------------------------------
 		// 
-//log.warning("list.size()="+list.size());		
 		Boolean isResume = false;
 		if ( list.size() > 2)
 			isResume = true;
@@ -287,7 +304,6 @@ public class Doc_AMNPayroll extends Doc {
 			AmountAccSrcDebres=Zero;
 			AmountAccSrcCreres=Zero;
 			// CREATE listres REGISTERS
-//log.warning("Master account="+MASTERAccountCR.getAccount());
 			for (int j = 0; j < list.size(); j++)
 			{
 				linea = list.get(j);
@@ -304,11 +320,6 @@ public class Doc_AMNPayroll extends Doc {
 					} else {
 						
 					}
-//log.warning("account"+linea.getAccount()+"  Reg:"+reslin+" j:"+j +
-//"  DB:"+list.get(j).getAmtAcctDr()+
-//"  CR:"+list.get(j).getAmtAcctCr()+
-//"  DB SOURCE:"+list.get(j).getAmtSourceDr()+
-//"  CR SOURCE:"+list.get(j).getAmtSourceCr());					
 				} else {
 					// -- Quantity  --  Source Amounts --  Converted Amounts --  Account
 					linea.setQty(list.get(j).getQty(), false);
@@ -333,10 +344,7 @@ public class Doc_AMNPayroll extends Doc {
 					// Increment reslin
 					reslin=reslin+1;
 				} 
-//log.warning("account="+linea.getAccount().getAccount()+" AmountDB="+linea.getAmtAcctDr()+" AmountCR="+linea.getAmtAcctCr()+
-//		" ResDB="+AmountAccDebres+" ResCR="+AmountAccCreres+" SoResDB="+AmountAccSrcDebres+" SoResCR="+AmountAccSrcCreres);
 			}	//	END VERIFY DUPLICITY	
-//log.warning("Resumen: ResDB="+AmountAccDebres+" ResCR="+AmountAccCreres+" SoResDB="+AmountAccSrcDebres+" SoResCR="+AmountAccSrcCreres);
 			// ADD MASTERAccountCR
 			MAMN_Docline lineares = new MAMN_Docline(p_po, null);
 			lineares = list.get(0);
@@ -357,8 +365,12 @@ public class Doc_AMNPayroll extends Doc {
 			MASTERAccountCR.setC_Campaign_ID(p_amnpayroll.getC_Campaign_ID());
 			MASTERAccountCR.setC_Activity_ID(p_amnpayroll.getC_Activity_ID());	
 			MASTERAccountCR.setDescription(amnemployee.getValue()+"_"+amnemployee.getName()+"_"+linea.getDescription());
-
-			reslin=reslin+1;
+			// ADD Currency and Conversion
+			lineares.setIsOverrideCurrencyRate(IsOverrideCurrencyRate);
+			lineares.setC_ConversionType_ID(C_ConversionType_ID);
+			lineares.setC_Currency_ID_to(m_Currency_ID);
+			lineares.setCurrencyRate(CurrencyRate);
+			log.warning("loadLines: CurrencyRate="+CurrencyRate+"  C_ConversionType_ID="+C_ConversionType_ID);
 			// ADD lineares
 			listres.add(lineares);
 		} else {
@@ -375,7 +387,7 @@ public class Doc_AMNPayroll extends Doc {
 	}	//	loadLines
 
 	public BigDecimal getBalance() {
-//log.warning("=== getBalance ==========");
+		//log.warning("=== getBalance ==========");
 		BigDecimal retValue = Env.ZERO;
 		StringBuilder sb = new StringBuilder (" [");
 		//  Lines
@@ -387,8 +399,8 @@ public class Doc_AMNPayroll extends Doc {
 		sb.append("]");
 		//
 		if (log.isLoggable(Level.FINE)) log.fine(toString() + " Balance=" + retValue + sb.toString());
-//log.warning("========== Balance=" + retValue + sb.toString());
-//		return retValue;
+		//log.warning("========== Balance=" + retValue + sb.toString());
+		//		return retValue;
 		return Env.ZERO;
 		
 	}
@@ -396,38 +408,55 @@ public class Doc_AMNPayroll extends Doc {
 	 *  createFacts
 	 */
 	public ArrayList<Fact> createFacts(MAcctSchema as) {
-//log.warning("===== createFacts =========");
+		//log.warning("===== createFacts =========");
 		ArrayList<Fact> facts = new ArrayList<Fact>();
 		//int c_elementvalue_id =0;
+		MClientInfo info = MClientInfo.get(Env.getCtx(), getAD_Client_ID(), null); 
+		MAcctSchema asdef = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
+		BigDecimal amtAcctDr = BigDecimal.ZERO;
+		BigDecimal amtAcctCr = BigDecimal.ZERO;
+		// Default Currency Variables
+		p_po.set_CustomColumn("CurrencyRate", CurrencyRate);
+		p_po.set_CustomColumn("IsOverrideCurrencyRate", IsOverrideCurrencyRate);
+		p_po.set_CustomColumn("C_ConversionType_ID", C_ConversionType_ID);
+		p_po.set_CustomColumn("C_Currency_ID_to", m_Currency_ID_to);
 		//  create Fact Header
 		Fact fact = new Fact (this, as, m_PostingType);
-log.warning("MAcctSchema="+as.getC_AcctSchema_ID()+"  m_PostingType:"+m_PostingType+"  p_lines.length:"+p_lines.length);
+		// log.warning("MAcctSchema="+as.getC_AcctSchema_ID()+"  m_PostingType:"+m_PostingType+"  p_lines.length:"+p_lines.length);
 		//  account     DR      CR
 		for (int i = 0; i < p_lines.length; i++)
 		{
-log.warning(" AmtDr:"+p_lines[i].getAmtAcctDr().toString()+
-			" AmtCr:"+p_lines[i].getAmtAcctCr().toString()+
-			" Currency:"+p_lines[i].getC_Currency_ID () + //getC_Currency_ID()+
-			" AS="+p_lines[i].getC_AcctSchema_ID () +
-			" AmtSourceDr:"+p_lines[i].getAmtSourceDr().toString()+
-			" AmtSourceCr:"+p_lines[i].getAmtSourceCr().toString()	);
+			amtAcctDr = BigDecimal.ZERO;
+			amtAcctCr = BigDecimal.ZERO;
+			// Convert Amounts 
+			if (as != asdef && CurrencyRate != null && CurrencyRate.signum() > 0)
+			{
+				int stdPrecision = MCurrency.getStdPrecision(getCtx(), as.getC_Currency_ID());
+				if (p_lines[i].getAmtAcctDr().compareTo(BigDecimal.ZERO) != 0) {
+					amtAcctDr = p_lines[i].getAmtAcctDr().multiply(CurrencyRate);
+					if (amtAcctDr.scale() > stdPrecision)
+						amtAcctDr = amtAcctDr.setScale(stdPrecision, RoundingMode.HALF_UP);
+				}
+				if (p_lines[i].getAmtAcctCr().compareTo(BigDecimal.ZERO) != 0) {
+					amtAcctCr = p_lines[i].getAmtSourceCr().multiply(CurrencyRate);
+					if (amtAcctCr.scale() > stdPrecision)
+						amtAcctCr = amtAcctCr.setScale(stdPrecision, RoundingMode.HALF_UP);
+				}
+				p_lines[i].setConvertedAmt(as.getC_AcctSchema_ID(), amtAcctDr, amtAcctCr);
+			}
+//			log.warning(" AmtDr:"+p_lines[i].getAmtAcctDr().toString()+
+//						" AmtCr:"+p_lines[i].getAmtAcctCr().toString()+
+//						" Currency:"+m_Currency_ID+
+//						" AS="+p_lines[i].getC_AcctSchema_ID () +
+//						" AmtSourceDr:"+p_lines[i].getAmtSourceDr().toString()+
+//						" AmtSourceCr:"+p_lines[i].getAmtSourceCr().toString()	);
 			@SuppressWarnings("unused")
-//			FactLine line = fact.createLine (p_lines[i],
-//								p_lines[i].getAccount (),
-//								getC_Currency_ID(),
-//								p_lines[i].getAmtAcctDr (),
-//								p_lines[i].getAmtAcctCr ());
+			// 
 			FactLine line =	fact.createLine (p_lines[i],
 									p_lines[i].getAccount(),
-									p_lines[i].getC_Currency_ID(),
+									m_Currency_ID,
 									p_lines[i].getAmtSourceDr (),
 									p_lines[i].getAmtSourceCr ());
-				// ADD DESCRIPTION 
-//			if(p_lines[i].getDescription() == null)
-//				line.addDescription("");
-//			else
-//				line.addDescription(p_lines[i].getDescription());
-
 		}	//	for all lines
 		//
 		facts.add(fact);
