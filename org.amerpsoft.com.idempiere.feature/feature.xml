@@ -39,5 +39,8 @@
    <plugin
          id="org.amerpsoft.com.idempiere.personnelpayroll"
          version="0.0.0"/>
-
+         
+   <plugin
+         id="org.amerpsoft.com.idempiere.tools"
+         version="0.0.0"/>
 </feature>

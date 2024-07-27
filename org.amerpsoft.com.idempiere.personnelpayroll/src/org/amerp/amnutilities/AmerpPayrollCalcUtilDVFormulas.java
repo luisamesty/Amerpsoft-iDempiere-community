@@ -18,8 +18,10 @@ import org.amerp.amnmodel.MAMN_Employee_Salary;
 import org.amerp.amnmodel.MAMN_NonBusinessDay;
 import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Process;
+import org.compiere.model.MCurrency;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.compiere.util.Env;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -2355,6 +2357,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		Timestamp EmployeeIncomeDate;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
 		MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		int roundingMode = curr.getStdPrecision();
 		InvDateEnd=amnpayroll.getInvDateEnd();
 		EmployeeIncomeDate=amnemployee.getincomedate();
 		
@@ -2385,7 +2390,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		BigDecimal BD15 = new BigDecimal(i15);
 		BDVacacDays = DBdiffDays.divide(BD360,6, RoundingMode.HALF_UP);
 		BDVacacDays = BDVacacDays.multiply(BD15);
-		BDVacacDays.setScale(2, RoundingMode.HALF_UP);
+		BDVacacDays.setScale(roundingMode, RoundingMode.HALF_UP);
 		// 
 		return BDVacacDays;
 
@@ -2415,6 +2420,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 		InvDateEnd=amnpayroll.getInvDateEnd();
 		EmployeeIncomeDate=amnemployee.getincomedate();
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		int roundingMode = curr.getStdPrecision();
 		// calIni EmployeeIncomeDate
 		Calendar calIni = Calendar.getInstance();
 		calIni.setTime(EmployeeIncomeDate);
@@ -2450,7 +2458,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		BigDecimal BD360 = new BigDecimal(i360);
 		BigDecimal DBBonVacacFrac = BDdiffdayslast.divide(BD360,6, RoundingMode.HALF_UP);
 		DBBonVacacFrac = DBBonVacacFrac.multiply(BDdiffyears);
-		DBBonVacacFrac.setScale(2, RoundingMode.HALF_UP);
+		DBBonVacacFrac.setScale(roundingMode, RoundingMode.HALF_UP);
 		return DBBonVacacFrac;
 		
 	}
@@ -2476,6 +2484,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 		InvDateEnd=amnpayroll.getInvDateEnd();
 		EmployeeIncomeDate=amnemployee.getincomedate();
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		int roundingMode = curr.getStdPrecision();	
 		//Timestamp start =A_EmployeeIncomeDate;
 		//Timestamp end =A_InvDateEnd;
 		// CalIni Employee Income date
@@ -2516,7 +2527,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// RESULTADO
 		BD15 = BD15.add(BDdiffyears);
 		BDVacacDays = BDVacacDays.multiply(BD15);
-		BDVacacDays.setScale(2, RoundingMode.HALF_UP);
+		BDVacacDays.setScale(roundingMode, RoundingMode.HALF_UP);
 		// TRAZA
 		return BDVacacDays;
 	}	
@@ -2710,6 +2721,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 		InvDateEnd=amnpayroll.getInvDateEnd();
 		EmployeeIncomeDate=amnemployee.getincomedate();
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		int roundingMode = curr.getStdPrecision();	
 		// CalIni Employee Income date
 		Calendar calIni = Calendar.getInstance();
 		calIni.setTime(EmployeeIncomeDate);
@@ -2729,7 +2743,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		diffdayslast= (diffdayslast / 30 ) * 30 ;
 		//
 		BigDecimal DBdiffDays = new BigDecimal(diffdayslast);
-		DBdiffDays.setScale(2, RoundingMode.HALF_UP);
+		DBdiffDays.setScale(roundingMode, RoundingMode.HALF_UP);
 		return DBdiffDays;
 	}
 		
@@ -2751,6 +2765,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		Timestamp InvDateEnd;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
 		InvDateEnd=amnpayroll.getInvDateEnd();
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		int roundingMode = curr.getStdPrecision();	
 		// CalIni Fist day of YEAR
 		Calendar calIni = Calendar.getInstance();
 		calIni.set(Calendar.DAY_OF_YEAR, 1);
@@ -2765,7 +2782,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		    diffdayslast=0;
 		diffdayslast = diffdayslast +1;
 		BigDecimal DBdiffDays = new BigDecimal(diffdayslast);
-		DBdiffDays.setScale(2, RoundingMode.HALF_UP);
+		DBdiffDays.setScale(roundingMode, RoundingMode.HALF_UP);
 		return DBdiffDays;
 
 	}	
@@ -2793,6 +2810,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		BigDecimal DByearService = BigDecimal.ZERO;
 		int diffdays = 0;
 		int diffyears = 0;
+		// Rounding Mode
+		MCurrency curr = new MCurrency(Env.getCtx(),amnpayroll.getC_Currency_ID(),null);
+		int roundingMode = curr.getStdPrecision();	
 		// Calculates using Calendar class
 		Calendar calIni = Calendar.getInstance();
 		calIni.setTime(EmployeeIncomeDate);
@@ -2827,7 +2847,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			diffyears = diffyears + 1;
 		}
 		DByearService = new BigDecimal(diffyears);
-		DByearService.setScale(2, RoundingMode.HALF_UP);
+		DByearService.setScale(roundingMode, RoundingMode.HALF_UP);
 		return DByearService;
 
 	}	
