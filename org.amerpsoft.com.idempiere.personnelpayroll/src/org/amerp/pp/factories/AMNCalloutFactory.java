@@ -51,15 +51,7 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 		// TableRef: amn_concept
 		// *********************************
 		if (tableName.equalsIgnoreCase(MAMN_Concept.Table_Name)) {
-			// FieldRef: amn_process_ID
-			if (columnName.equalsIgnoreCase(MAMN_Concept.COLUMNNAME_AMN_Process_ID))
-				list.add(new AMN_Concept_callout());
-			// FieldRef: amn_concept_types_Proc_ID
-			if (columnName.equalsIgnoreCase(MAMN_Concept.COLUMNNAME_AMN_Concept_Types_Proc_ID))
-				list.add(new AMN_Concept_callout());
-			// FieldRef: amn_concept_types_ID
-			if (columnName.equalsIgnoreCase(MAMN_Concept.COLUMNNAME_AMN_Concept_Types_ID))
-				list.add(new AMN_Concept_callout());
+			// NO callout Field, for future use
 		}
 		// *********************************
 		// TableRef: amn_concept_types_

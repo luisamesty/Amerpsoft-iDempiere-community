@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Concept
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Concept 
@@ -32,7 +32,7 @@ public interface I_AMN_Concept
     /** TableName=AMN_Concept */
     public static final String Table_Name = "AMN_Concept";
 
-    /** AD_Table_ID=1000036 */
+    /** AD_Table_ID=1000047 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,6 +64,21 @@ public interface I_AMN_Concept
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name AD_Tree_ID */
+    public static final String COLUMNNAME_AD_Tree_ID = "AD_Tree_ID";
+
+	/** Set Tree.
+	  * Identifies a Tree
+	  */
+	public void setAD_Tree_ID (int AD_Tree_ID);
+
+	/** Get Tree.
+	  * Identifies a Tree
+	  */
+	public int getAD_Tree_ID();
+
+	public org.compiere.model.I_AD_Tree getAD_Tree() throws RuntimeException;
+
     /** Column name AMN_Concept_ID */
     public static final String COLUMNNAME_AMN_Concept_ID = "AMN_Concept_ID";
 
@@ -73,26 +88,6 @@ public interface I_AMN_Concept
 	/** Get Payroll Concepts	  */
 	public int getAMN_Concept_ID();
 
-    /** Column name AMN_Concept_Types_ID */
-    public static final String COLUMNNAME_AMN_Concept_Types_ID = "AMN_Concept_Types_ID";
-
-	/** Set Payroll Concepts Types	  */
-	public void setAMN_Concept_Types_ID (int AMN_Concept_Types_ID);
-
-	/** Get Payroll Concepts Types	  */
-	public int getAMN_Concept_Types_ID();
-
-    /** Column name AMN_Concept_Types_Proc_ID */
-    public static final String COLUMNNAME_AMN_Concept_Types_Proc_ID = "AMN_Concept_Types_Proc_ID";
-
-	/** Set Payroll Concept Types Process	  */
-	public void setAMN_Concept_Types_Proc_ID (int AMN_Concept_Types_Proc_ID);
-
-	/** Get Payroll Concept Types Process	  */
-	public int getAMN_Concept_Types_Proc_ID();
-
-	public I_AMN_Concept_Types_Proc getAMN_Concept_Types_Proc() throws RuntimeException;
-
     /** Column name AMN_Concept_UU */
     public static final String COLUMNNAME_AMN_Concept_UU = "AMN_Concept_UU";
 
@@ -101,24 +96,6 @@ public interface I_AMN_Concept
 
 	/** Get AMN_Concept_UU	  */
 	public String getAMN_Concept_UU();
-
-    /** Column name AMN_Process_ID */
-    public static final String COLUMNNAME_AMN_Process_ID = "AMN_Process_ID";
-
-	/** Set Payroll Process	  */
-	public void setAMN_Process_ID (int AMN_Process_ID);
-
-	/** Get Payroll Process	  */
-	public int getAMN_Process_ID();
-
-    /** Column name AMN_Process_Value */
-    public static final String COLUMNNAME_AMN_Process_Value = "AMN_Process_Value";
-
-	/** Set Process Value	  */
-	public void setAMN_Process_Value (String AMN_Process_Value);
-
-	/** Get Process Value	  */
-	public String getAMN_Process_Value();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -136,21 +113,6 @@ public interface I_AMN_Concept
 	  */
 	public int getCreatedBy();
 
-    /** Column name DefaultValue */
-    public static final String COLUMNNAME_DefaultValue = "DefaultValue";
-
-	/** Set Default Logic.
-	  * Default value hierarchy, separated by ;
-
-	  */
-	public void setDefaultValue (String DefaultValue);
-
-	/** Get Default Logic.
-	  * Default value hierarchy, separated by ;
-
-	  */
-	public String getDefaultValue();
-
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 
@@ -163,6 +125,19 @@ public interface I_AMN_Concept
 	  * Optional short description of the record
 	  */
 	public String getDescription();
+
+    /** Column name Help */
+    public static final String COLUMNNAME_Help = "Help";
+
+	/** Set Comment/Help.
+	  * Comment or Hint
+	  */
+	public void setHelp (String Help);
+
+	/** Get Comment/Help.
+	  * Comment or Hint
+	  */
+	public String getHelp();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -189,34 +164,6 @@ public interface I_AMN_Concept
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
-
-    /** Column name Script */
-    public static final String COLUMNNAME_Script = "Script";
-
-	/** Set Script.
-	  * Dynamic Java Language Script to calculate result
-	  */
-	public void setScript (String Script);
-
-	/** Get Script.
-	  * Dynamic Java Language Script to calculate result
-	  */
-	public String getScript();
-
-    /** Column name SeqNo */
-    public static final String COLUMNNAME_SeqNo = "SeqNo";
-
-	/** Set Sequence.
-	  * Method of ordering records;
- lowest number comes first
-	  */
-	public void setSeqNo (int SeqNo);
-
-	/** Get Sequence.
-	  * Method of ordering records;
- lowest number comes first
-	  */
-	public int getSeqNo();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -246,13 +193,4 @@ public interface I_AMN_Concept
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
-
-    /** Column name formula */
-    public static final String COLUMNNAME_formula = "formula";
-
-	/** Set formula	  */
-	public void setformula (String formula);
-
-	/** Get formula	  */
-	public String getformula();
 }

@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Concept_Types
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Concept_Types 
@@ -32,7 +32,7 @@ public interface I_AMN_Concept_Types
     /** TableName=AMN_Concept_Types */
     public static final String Table_Name = "AMN_Concept_Types";
 
-    /** AD_Table_ID=1000035 */
+    /** AD_Table_ID=1000016 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,35 +64,16 @@ public interface I_AMN_Concept_Types
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_CT_Cre_Acct_ID */
-    public static final String COLUMNNAME_AMN_CT_Cre_Acct_ID = "AMN_CT_Cre_Acct_ID";
+    /** Column name AMN_Concept_ID */
+    public static final String COLUMNNAME_AMN_Concept_ID = "AMN_Concept_ID";
 
-	/** Set Payroll Concept Type Credit Account.
-	  * Payroll Concept Type Credit Account
-	  */
-	public void setAMN_CT_Cre_Acct_ID (int AMN_CT_Cre_Acct_ID);
+	/** Set Payroll Concepts	  */
+	public void setAMN_Concept_ID (int AMN_Concept_ID);
 
-	/** Get Payroll Concept Type Credit Account.
-	  * Payroll Concept Type Credit Account
-	  */
-	public int getAMN_CT_Cre_Acct_ID();
+	/** Get Payroll Concepts	  */
+	public int getAMN_Concept_ID();
 
-	public org.compiere.model.I_C_ElementValue getAMN_CT_Cre_Acct() throws RuntimeException;
-
-    /** Column name AMN_CT_Deb_Acct_ID */
-    public static final String COLUMNNAME_AMN_CT_Deb_Acct_ID = "AMN_CT_Deb_Acct_ID";
-
-	/** Set Payroll Concept Type Debit Account.
-	  * Payroll Concept Type Debit Account
-	  */
-	public void setAMN_CT_Deb_Acct_ID (int AMN_CT_Deb_Acct_ID);
-
-	/** Get Payroll Concept Type Debit Account.
-	  * Payroll Concept Type Debit Account
-	  */
-	public int getAMN_CT_Deb_Acct_ID();
-
-	public org.compiere.model.I_C_ElementValue getAMN_CT_Deb_Acct() throws RuntimeException;
+	public I_AMN_Concept getAMN_Concept() throws RuntimeException;
 
     /** Column name AMN_Concept_Types_ID */
     public static final String COLUMNNAME_AMN_Concept_Types_ID = "AMN_Concept_Types_ID";
@@ -125,12 +106,12 @@ public interface I_AMN_Concept_Types
     public static final String COLUMNNAME_AMN_Cre_Acct = "AMN_Cre_Acct";
 
 	/** Set Concept Credit Administrative Work Force Account.
-	  * Concept Credit Administrative Work Force  Account
+	  * Concept Credit Administrative Work Force Account
 	  */
 	public void setAMN_Cre_Acct (int AMN_Cre_Acct);
 
 	/** Get Concept Credit Administrative Work Force Account.
-	  * Concept Credit Administrative Work Force  Account
+	  * Concept Credit Administrative Work Force Account
 	  */
 	public int getAMN_Cre_Acct();
 
@@ -196,16 +177,46 @@ public interface I_AMN_Concept_Types
 
 	public I_C_ValidCombination getAMN_Cre_SW_A() throws RuntimeException;
 
+    /** Column name AMN_CT_Cre_Acct_ID */
+    public static final String COLUMNNAME_AMN_CT_Cre_Acct_ID = "AMN_CT_Cre_Acct_ID";
+
+	/** Set Payroll Concept Type Credit Account.
+	  * Payroll Concept Type Credit Account
+	  */
+	public void setAMN_CT_Cre_Acct_ID (int AMN_CT_Cre_Acct_ID);
+
+	/** Get Payroll Concept Type Credit Account.
+	  * Payroll Concept Type Credit Account
+	  */
+	public int getAMN_CT_Cre_Acct_ID();
+
+	public org.compiere.model.I_C_ElementValue getAMN_CT_Cre_Acct() throws RuntimeException;
+
+    /** Column name AMN_CT_Deb_Acct_ID */
+    public static final String COLUMNNAME_AMN_CT_Deb_Acct_ID = "AMN_CT_Deb_Acct_ID";
+
+	/** Set Payroll Concept Type Debit Account.
+	  * Payroll Concept Type Debit Account
+	  */
+	public void setAMN_CT_Deb_Acct_ID (int AMN_CT_Deb_Acct_ID);
+
+	/** Get Payroll Concept Type Debit Account.
+	  * Payroll Concept Type Debit Account
+	  */
+	public int getAMN_CT_Deb_Acct_ID();
+
+	public org.compiere.model.I_C_ElementValue getAMN_CT_Deb_Acct() throws RuntimeException;
+
     /** Column name AMN_Deb_Acct */
     public static final String COLUMNNAME_AMN_Deb_Acct = "AMN_Deb_Acct";
 
 	/** Set Concept Debit Administrative Work Force  Account.
-	  * Concept Debit Administrative Work Force   Account
+	  * Concept Debit Administrative Work Force  Account
 	  */
 	public void setAMN_Deb_Acct (int AMN_Deb_Acct);
 
 	/** Get Concept Debit Administrative Work Force  Account.
-	  * Concept Debit Administrative Work Force   Account
+	  * Concept Debit Administrative Work Force  Account
 	  */
 	public int getAMN_Deb_Acct();
 
@@ -215,12 +226,12 @@ public interface I_AMN_Concept_Types
     public static final String COLUMNNAME_AMN_Deb_DW_Acct = "AMN_Deb_DW_Acct";
 
 	/** Set Concept Debit Direct Work Force Account.
-	  * Concept Debit Direct Work Account
+	  * Concept Debit Direct Work Force Debit Account
 	  */
 	public void setAMN_Deb_DW_Acct (int AMN_Deb_DW_Acct);
 
 	/** Get Concept Debit Direct Work Force Account.
-	  * Concept Debit Direct Work Account
+	  * Concept Debit Direct Work Force Debit Account
 	  */
 	public int getAMN_Deb_DW_Acct();
 
@@ -230,12 +241,12 @@ public interface I_AMN_Concept_Types
     public static final String COLUMNNAME_AMN_Deb_IW_Acct = "AMN_Deb_IW_Acct";
 
 	/** Set Concept Debit Indirect Work Force Account.
-	  * Concept Debit Indirect Work Account
+	  * Concept Debit Indirect Work Force Debit Account
 	  */
 	public void setAMN_Deb_IW_Acct (int AMN_Deb_IW_Acct);
 
 	/** Get Concept Debit Indirect Work Force Account.
-	  * Concept Debit Indirect Work Account
+	  * Concept Debit Indirect Work Force Debit Account
 	  */
 	public int getAMN_Deb_IW_Acct();
 
@@ -245,12 +256,12 @@ public interface I_AMN_Concept_Types
     public static final String COLUMNNAME_AMN_Deb_MW_Acct = "AMN_Deb_MW_Acct";
 
 	/** Set Concept Debit Management Work Force Account.
-	  * Concept Debit Management Work Account
+	  * Concept Debit Management Work Force Debit Account
 	  */
 	public void setAMN_Deb_MW_Acct (int AMN_Deb_MW_Acct);
 
 	/** Get Concept Debit Management Work Force Account.
-	  * Concept Debit Management Work Account
+	  * Concept Debit Management Work Force Debit Account
 	  */
 	public int getAMN_Deb_MW_Acct();
 
@@ -260,16 +271,34 @@ public interface I_AMN_Concept_Types
     public static final String COLUMNNAME_AMN_Deb_SW_Acct = "AMN_Deb_SW_Acct";
 
 	/** Set Concept Debit Sales Work Force Account.
-	  * Concept Debit Sales Work Account
+	  * Concept Debit Sales Work Force  Debit Account
 	  */
 	public void setAMN_Deb_SW_Acct (int AMN_Deb_SW_Acct);
 
 	/** Get Concept Debit Sales Work Force Account.
-	  * Concept Debit Sales Work Account
+	  * Concept Debit Sales Work Force  Debit Account
 	  */
 	public int getAMN_Deb_SW_Acct();
 
 	public I_C_ValidCombination getAMN_Deb_SW_A() throws RuntimeException;
+
+    /** Column name arc */
+    public static final String COLUMNNAME_arc = "arc";
+
+	/** Set arc	  */
+	public void setarc (boolean arc);
+
+	/** Get arc	  */
+	public boolean isarc();
+
+    /** Column name CalcOrder */
+    public static final String COLUMNNAME_CalcOrder = "CalcOrder";
+
+	/** Set CalcOrder	  */
+	public void setCalcOrder (int CalcOrder);
+
+	/** Get CalcOrder	  */
+	public int getCalcOrder();
 
     /** Column name C_DocType_ID */
     public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
@@ -286,14 +315,18 @@ public interface I_AMN_Concept_Types
 
 	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
 
-    /** Column name CalcOrder */
-    public static final String COLUMNNAME_CalcOrder = "CalcOrder";
+    /** Column name conceptsource */
+    public static final String COLUMNNAME_conceptsource = "conceptsource";
 
-	/** Set CalcOrder	  */
-	public void setCalcOrder (int CalcOrder);
+	/** Set Concept Source.
+	  * Origen or Source for Concept Type
+	  */
+	public void setconceptsource (String conceptsource);
 
-	/** Get CalcOrder	  */
-	public int getCalcOrder();
+	/** Get Concept Source.
+	  * Origen or Source for Concept Type
+	  */
+	public String getconceptsource();
 
     /** Column name CopyFrom */
     public static final String COLUMNNAME_CopyFrom = "CopyFrom";
@@ -324,6 +357,15 @@ public interface I_AMN_Concept_Types
 	  */
 	public int getCreatedBy();
 
+    /** Column name daydiscriminated */
+    public static final String COLUMNNAME_daydiscriminated = "daydiscriminated";
+
+	/** Set daydiscriminated	  */
+	public void setdaydiscriminated (boolean daydiscriminated);
+
+	/** Get daydiscriminated	  */
+	public boolean isdaydiscriminated();
+
     /** Column name DefaultValue */
     public static final String COLUMNNAME_DefaultValue = "DefaultValue";
 
@@ -351,131 +393,6 @@ public interface I_AMN_Concept_Types
 	  * Optional short description of the record
 	  */
 	public String getDescription();
-
-    /** Column name IsActive */
-    public static final String COLUMNNAME_IsActive = "IsActive";
-
-	/** Set Active.
-	  * The record is active in the system
-	  */
-	public void setIsActive (boolean IsActive);
-
-	/** Get Active.
-	  * The record is active in the system
-	  */
-	public boolean isActive();
-
-    /** Column name Name */
-    public static final String COLUMNNAME_Name = "Name";
-
-	/** Set Name.
-	  * Alphanumeric identifier of the entity
-	  */
-	public void setName (String Name);
-
-	/** Get Name.
-	  * Alphanumeric identifier of the entity
-	  */
-	public String getName();
-
-    /** Column name Note */
-    public static final String COLUMNNAME_Note = "Note";
-
-	/** Set Note.
-	  * Optional additional user defined information
-	  */
-	public void setNote (String Note);
-
-	/** Get Note.
-	  * Optional additional user defined information
-	  */
-	public String getNote();
-
-    /** Column name Script */
-    public static final String COLUMNNAME_Script = "Script";
-
-	/** Set Script.
-	  * Dynamic Java Language Script to calculate result
-	  */
-	public void setScript (String Script);
-
-	/** Get Script.
-	  * Dynamic Java Language Script to calculate result
-	  */
-	public String getScript();
-
-    /** Column name ScriptDefaultValue */
-    public static final String COLUMNNAME_ScriptDefaultValue = "ScriptDefaultValue";
-
-	/** Set Script Default Value.
-	  * Dynamic Java Language Script to calculate result for Default Value  (alternative to DefaultValue)
-	  */
-	public void setScriptDefaultValue (String ScriptDefaultValue);
-
-	/** Get Script Default Value.
-	  * Dynamic Java Language Script to calculate result for Default Value  (alternative to DefaultValue)
-	  */
-	public String getScriptDefaultValue();
-
-    /** Column name Updated */
-    public static final String COLUMNNAME_Updated = "Updated";
-
-	/** Get Updated.
-	  * Date this record was updated
-	  */
-	public Timestamp getUpdated();
-
-    /** Column name UpdatedBy */
-    public static final String COLUMNNAME_UpdatedBy = "UpdatedBy";
-
-	/** Get Updated By.
-	  * User who updated this records
-	  */
-	public int getUpdatedBy();
-
-    /** Column name Value */
-    public static final String COLUMNNAME_Value = "Value";
-
-	/** Set Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public void setValue (String Value);
-
-	/** Get Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public String getValue();
-
-    /** Column name arc */
-    public static final String COLUMNNAME_arc = "arc";
-
-	/** Set arc	  */
-	public void setarc (boolean arc);
-
-	/** Get arc	  */
-	public boolean isarc();
-
-    /** Column name conceptsource */
-    public static final String COLUMNNAME_conceptsource = "conceptsource";
-
-	/** Set Concept Source.
-	  * Origen or Source for Concept Type
-	  */
-	public void setconceptsource (String conceptsource);
-
-	/** Get Concept Source.
-	  * Origen or Source for Concept Type
-	  */
-	public String getconceptsource();
-
-    /** Column name daydiscriminated */
-    public static final String COLUMNNAME_daydiscriminated = "daydiscriminated";
-
-	/** Set daydiscriminated	  */
-	public void setdaydiscriminated (boolean daydiscriminated);
-
-	/** Get daydiscriminated	  */
-	public boolean isdaydiscriminated();
 
     /** Column name faov */
     public static final String COLUMNNAME_faov = "faov";
@@ -517,6 +434,19 @@ public interface I_AMN_Concept_Types
 	/** Get ince	  */
 	public boolean isince();
 
+    /** Column name IsActive */
+    public static final String COLUMNNAME_IsActive = "IsActive";
+
+	/** Set Active.
+	  * The record is active in the system
+	  */
+	public void setIsActive (boolean IsActive);
+
+	/** Get Active.
+	  * The record is active in the system
+	  */
+	public boolean isActive();
+
     /** Column name isDate */
     public static final String COLUMNNAME_isDate = "isDate";
 
@@ -535,15 +465,6 @@ public interface I_AMN_Concept_Types
 	/** Get isQty	  */
 	public boolean isQty();
 
-    /** Column name isValue */
-    public static final String COLUMNNAME_isValue = "isValue";
-
-	/** Set isValue	  */
-	public void setisValue (boolean isValue);
-
-	/** Get isValue	  */
-	public boolean isValue();
-
     /** Column name isrepeat */
     public static final String COLUMNNAME_isrepeat = "isrepeat";
 
@@ -561,6 +482,54 @@ public interface I_AMN_Concept_Types
 
 	/** Get isshow	  */
 	public String getisshow();
+
+    /** Column name IsSummary */
+    public static final String COLUMNNAME_IsSummary = "IsSummary";
+
+	/** Set Summary Level.
+	  * This is a summary entity
+	  */
+	public void setIsSummary (boolean IsSummary);
+
+	/** Get Summary Level.
+	  * This is a summary entity
+	  */
+	public boolean isSummary();
+
+    /** Column name isValue */
+    public static final String COLUMNNAME_isValue = "isValue";
+
+	/** Set isValue	  */
+	public void setisValue (boolean isValue);
+
+	/** Get isValue	  */
+	public boolean isValue();
+
+    /** Column name Name */
+    public static final String COLUMNNAME_Name = "Name";
+
+	/** Set Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public void setName (String Name);
+
+	/** Get Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public String getName();
+
+    /** Column name Note */
+    public static final String COLUMNNAME_Note = "Note";
+
+	/** Set Note.
+	  * Optional additional user defined information
+	  */
+	public void setNote (String Note);
+
+	/** Get Note.
+	  * Optional additional user defined information
+	  */
+	public String getNote();
 
     /** Column name optmode */
     public static final String COLUMNNAME_optmode = "optmode";
@@ -598,6 +567,32 @@ public interface I_AMN_Concept_Types
 	/** Get salario	  */
 	public boolean issalario();
 
+    /** Column name Script */
+    public static final String COLUMNNAME_Script = "Script";
+
+	/** Set Script.
+	  * Dynamic Java Language Script to calculate result
+	  */
+	public void setScript (String Script);
+
+	/** Get Script.
+	  * Dynamic Java Language Script to calculate result
+	  */
+	public String getScript();
+
+    /** Column name ScriptDefaultValue */
+    public static final String COLUMNNAME_ScriptDefaultValue = "ScriptDefaultValue";
+
+	/** Set ScriptDefaultValue.
+	  * Dynamic Java Language Script to calculate result for Default Value  (alternative to DefaultValue)
+	  */
+	public void setScriptDefaultValue (String ScriptDefaultValue);
+
+	/** Get ScriptDefaultValue.
+	  * Dynamic Java Language Script to calculate result for Default Value  (alternative to DefaultValue)
+	  */
+	public String getScriptDefaultValue();
+
     /** Column name sign */
     public static final String COLUMNNAME_sign = "sign";
 
@@ -625,6 +620,22 @@ public interface I_AMN_Concept_Types
 	/** Get sso	  */
 	public boolean issso();
 
+    /** Column name Updated */
+    public static final String COLUMNNAME_Updated = "Updated";
+
+	/** Get Updated.
+	  * Date this record was updated
+	  */
+	public Timestamp getUpdated();
+
+    /** Column name UpdatedBy */
+    public static final String COLUMNNAME_UpdatedBy = "UpdatedBy";
+
+	/** Get Updated By.
+	  * User who updated this records
+	  */
+	public int getUpdatedBy();
+
     /** Column name utilidad */
     public static final String COLUMNNAME_utilidad = "utilidad";
 
@@ -642,6 +653,19 @@ public interface I_AMN_Concept_Types
 
 	/** Get vacacion	  */
 	public boolean isvacacion();
+
+    /** Column name Value */
+    public static final String COLUMNNAME_Value = "Value";
+
+	/** Set Search Key.
+	  * Search key for the record in the format required - must be unique
+	  */
+	public void setValue (String Value);
+
+	/** Get Search Key.
+	  * Search key for the record in the format required - must be unique
+	  */
+	public String getValue();
 
     /** Column name variable */
     public static final String COLUMNNAME_variable = "variable";
