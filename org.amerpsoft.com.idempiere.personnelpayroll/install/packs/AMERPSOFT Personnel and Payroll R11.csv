@@ -31,6 +31,7 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Personnel and Payroll R11,2230,P,,,,,,,,,ALL,,,,,AmperRepPayrollListByPeriods,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11,2240,P,,,,,,,,,ALL,,,,,AmperRepPayrollSummary,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11,2250,P,,,,,,,,,ALL,,,,,AmperRepPayrollListforBank,,,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11,2260,P,,,,,,,,,ALL,,,,,AmperRepPayrollConcepts,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11,3000,M,,Personnel and Payroll Concepts ,,,,,,,ALL,,,,,AmperRepEmployees,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11,3010,M,,Amper Employees Report Selective,,,,,,,ALL,,,,,AmperRepEmployees,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11,3020,M,,Amper Employees Report,,,,,,,ALL,,,,,AmperRepEmployeesSelective,,,,,,,,,,,,,,
