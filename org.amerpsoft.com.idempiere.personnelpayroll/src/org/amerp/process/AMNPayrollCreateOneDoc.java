@@ -50,6 +50,14 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	private int p_AMN_Employee_ID = 0;
 	private int p_AMN_Payroll_Lot_ID = 0;
 	private int p_AMN_Payroll_ID = 0;
+	// New Possible Parameters 
+	// Only Updated on Receipt header if NOT NULL
+	// DateAcct, InvDateEnd, InvDateIni, RefDateEnd, RefDateIni
+	static Timestamp p_DateAcct = null;
+	static Timestamp p_InvDateEnd = null; 
+	static Timestamp p_InvDateIni = null;
+	static Timestamp p_RefDateEnd = null;
+	static Timestamp p_RefDateIni = null;
 	String Employee_Name,AMN_Process_Value="";
 	String sql="";
     String Msg_Value="";
@@ -81,6 +89,16 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 				p_AMN_Employee_ID = para.getParameterAsInt();
 			else if (paraName.equals("AMN_Payroll_ID"))
 				p_AMN_Payroll_ID = para.getParameterAsInt();
+			else if (paraName.equals("DateAcct"))
+				p_DateAcct = para.getParameterAsTimestamp();
+			else if (paraName.equals("InvDateIni"))
+				p_InvDateIni = para.getParameterAsTimestamp();
+			else if (paraName.equals("InvDateEnd"))
+				p_InvDateEnd = para.getParameterAsTimestamp();
+			else if (paraName.equals("RefDateIni"))
+				p_RefDateIni = para.getParameterAsTimestamp();
+			else if (paraName.equals("RefDateEnd"))
+				p_RefDateEnd = para.getParameterAsTimestamp();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
@@ -137,7 +155,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	    	Msg_Value=Msg_Value+(Msg.getMsg(getCtx(), "Process")+":"+AMN_Process_Value.trim()+"-"+amnprocess.getName().trim());
 	    	//log.warning("p_AMN_Process_ID:"+p_AMN_Process_ID+"  p_AMN_Contract_ID"+ p_AMN_Contract_ID+"  p_AMN_Period_ID"+ p_AMN_Period_ID);
 	    	okProcess = AMNPayrollCreateInvoiceNN(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-	    			p_AMN_Payroll_ID, Currency_ID, ConversionType_ID, get_TrxName());
+	    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, Currency_ID, ConversionType_ID, get_TrxName());
 		    // Nominal Salary UPDATE ONLY ON NN Process
 		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.updateSalaryAmnPayrollHistoric(getCtx(), null, p_AMN_Employee_ID, 
 		    		amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), Currency_ID, get_TrxName())+"\r\n";
@@ -160,7 +178,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	    	AMN_Process_Value.trim()+"-"+amnprocess.getName().trim()+" "+Msg.getMsg(getCtx(),"NotAvailable")+" \n")+
 	    	Msg.getMsg(getCtx(),"Description")+":"+amnprocess.getDescription();
 	    	okProcess = AMNPayrollCreateInvoiceNP(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-	    			p_AMN_Payroll_ID,Currency_ID, ConversionType_ID, get_TrxName());
+	    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, Currency_ID, ConversionType_ID, get_TrxName());
 	    } else if (AMN_Process_Value.equalsIgnoreCase("NU")) {
 	    	// ************************
 	    	// Process NU
@@ -222,6 +240,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
      */
     static public boolean AMNPayrollCreateInvoiceNN(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
+    		Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
     	
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
@@ -233,11 +252,15 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	    	// Create Docs Headers and Lines
     		// Document Header
 	     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, 
-	     			p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n"; 
+	     			p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,
+	     			p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,
+	     			trxName)+"\r\n"; 
 	     	//log.warning("After CreatePayrollOneDocument ="+Msg_Value1);
 	     	// Document Lines
 		    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, 
-		    		p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n";
+		    		p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,
+		    		p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, 
+		    		trxName)+"\r\n";
 		    //log.warning("After CreatePayrollOneDocumentLines ="+Msg_Value2);
 		    // Calculate Document
 		    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,
@@ -266,10 +289,11 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
      */
     public boolean AMNPayrollCreateInvoiceNP(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID,
+    		Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
 
        	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	Timestamp NextPPDateIni = null;
@@ -277,9 +301,9 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 
     	// Create Docs Headers and Lines
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n"; 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName)+"\r\n"; 
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n";
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName)+"\r\n";
 	    // Calculate Document
 	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n";
 		// SALARY HISTORIC
@@ -332,7 +356,8 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
     	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,  C_Currency_ID, C_ConversionType_ID, 
+    			trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
 		//MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
@@ -340,9 +365,9 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 
     	// Create Docs Headers and Lines
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
 	    // Calculate Document
 	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
 		// SALARY HISTORIC
@@ -359,7 +384,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
        	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID,
-    			p_AMN_Payroll_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	Timestamp NextPPDateIni = null;
@@ -367,9 +392,9 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
    	
     	// Create Docs Headers and Lines
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
      	// Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
 	    // Calculate Document
 	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
 	    // SALARY HISTORIC
@@ -471,15 +496,15 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
        	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	
     	// Create Docs Headers and Lines
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,trxName);
 	    // Calculate Document
 	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
 		// SALARY HISTORIC
@@ -496,15 +521,15 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
        	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	
     	// Create Docs Headers and Lines
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
 	    // Calculate Document
 	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
 		// SALARY HISTORIC
@@ -521,15 +546,15 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
        	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	
     	// Create Docs Headers and Lines
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
 	    // Calculate Document
 	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
 		// SALARY HISTORIC

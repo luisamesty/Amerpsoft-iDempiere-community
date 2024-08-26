@@ -47,7 +47,11 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 	private int p_AMN_Process_ID = 0;
 	private int p_C_Period_ID = 0;
 	private int p_AMN_Payroll_Lot_ID = 0;
-	private Timestamp p_DateAcct = null;
+	static Timestamp p_DateAcct = null;
+	static Timestamp p_InvDateEnd = null; 
+	static Timestamp p_InvDateIni = null;
+	static Timestamp p_RefDateEnd = null;
+	static Timestamp p_RefDateIni = null;
 	private int p_AMN_Concept_Types_Proc_ID=0;
 	private BigDecimal p_LoanAmount = BigDecimal.valueOf(0);
 	private int p_LoanQuotaNo = 0;
@@ -83,6 +87,16 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 				p_AMN_FirstPeriod_ID = para.getParameterAsInt();
 			else if (paraName.equals("LoanDescription"))
 				p_LoanDescription = para.getParameterAsString();
+			else if (paraName.equals("DateAcct"))
+				p_DateAcct = para.getParameterAsTimestamp();
+			else if (paraName.equals("InvDateIni"))
+				p_InvDateIni = para.getParameterAsTimestamp();
+			else if (paraName.equals("InvDateEnd"))
+				p_InvDateEnd = para.getParameterAsTimestamp();
+			else if (paraName.equals("RefDateIni"))
+				p_RefDateIni = para.getParameterAsTimestamp();
+			else if (paraName.equals("RefDateEnd"))
+				p_RefDateEnd = para.getParameterAsTimestamp();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
@@ -222,8 +236,8 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 						} else {
 					    	// Document Header
 							addLog(Msg.getElement(getCtx(), "AMN_Employee_ID")+":"+Employee_Value+"-"+Employee_Name);
-							AMN_Payroll_ID=  AMNPayrollCreateDocs.CreatePayrollOneDocument(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), get_TrxName());
-							Msg_Header= AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), get_TrxName());
+							AMN_Payroll_ID=  AMNPayrollCreateDocs.CreatePayrollOneDocument(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, get_TrxName());
+							Msg_Header= AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,  get_TrxName());
 							addLog(Msg_Header);
 						}
 					} else {

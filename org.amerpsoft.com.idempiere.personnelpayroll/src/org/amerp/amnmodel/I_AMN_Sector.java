@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Location
+/** Generated Interface for AMN_Sector
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Location 
+public interface I_AMN_Sector 
 {
 
-    /** TableName=AMN_Location */
-    public static final String Table_Name = "AMN_Location";
+    /** TableName=AMN_Sector */
+    public static final String Table_Name = "AMN_Sector";
 
-    /** AD_Table_ID=1000010 */
+    /** AD_Table_ID=1000097 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -73,44 +73,27 @@ public interface I_AMN_Location
 	/** Get Payroll Location	  */
 	public int getAMN_Location_ID();
 
-    /** Column name AMN_Location_UU */
-    public static final String COLUMNNAME_AMN_Location_UU = "AMN_Location_UU";
+    /** Column name AMN_Sector_ID */
+    public static final String COLUMNNAME_AMN_Sector_ID = "AMN_Sector_ID";
 
-	/** Set AMN_Location_UU	  */
-	public void setAMN_Location_UU (String AMN_Location_UU);
-
-	/** Get AMN_Location_UU	  */
-	public String getAMN_Location_UU();
-
-    /** Column name C_Activity_ID */
-    public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
-
-	/** Set Activity.
-	  * Business Activity
+	/** Set Work Sector .
+	  * Work Sector in Location
 	  */
-	public void setC_Activity_ID (int C_Activity_ID);
+	public void setAMN_Sector_ID (int AMN_Sector_ID);
 
-	/** Get Activity.
-	  * Business Activity
+	/** Get Work Sector .
+	  * Work Sector in Location
 	  */
-	public int getC_Activity_ID();
+	public int getAMN_Sector_ID();
 
-	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException;
+    /** Column name AMN_Sector_UU */
+    public static final String COLUMNNAME_AMN_Sector_UU = "AMN_Sector_UU";
 
-    /** Column name C_Location_ID */
-    public static final String COLUMNNAME_C_Location_ID = "C_Location_ID";
+	/** Set AMN_Sector_UU	  */
+	public void setAMN_Sector_UU (String AMN_Sector_UU);
 
-	/** Set Address.
-	  * Location or Address
-	  */
-	public void setC_Location_ID (int C_Location_ID);
-
-	/** Get Address.
-	  * Location or Address
-	  */
-	public int getC_Location_ID();
-
-	public I_C_Location getC_Location() throws RuntimeException;
+	/** Get AMN_Sector_UU	  */
+	public String getAMN_Sector_UU();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -140,6 +123,19 @@ public interface I_AMN_Location
 	  * Optional short description of the record
 	  */
 	public String getDescription();
+
+    /** Column name Help */
+    public static final String COLUMNNAME_Help = "Help";
+
+	/** Set Comment/Help.
+	  * Comment or Hint
+	  */
+	public void setHelp (String Help);
+
+	/** Get Comment/Help.
+	  * Comment or Hint
+	  */
+	public String getHelp();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";

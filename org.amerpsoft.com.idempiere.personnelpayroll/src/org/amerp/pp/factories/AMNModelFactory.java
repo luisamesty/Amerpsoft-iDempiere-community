@@ -117,6 +117,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Rules
 		if(tableName.equalsIgnoreCase(MAMN_Rules.Table_Name))
 			return MAMN_Rules.class;
+		// MAMN_Sector
+		if(tableName.equalsIgnoreCase(MAMN_Sector.Table_Name))
+			return MAMN_Sector.class;
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
@@ -217,6 +220,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Rules
 		if(tableName.equalsIgnoreCase(MAMN_Rules.Table_Name))
 			return new MAMN_Rules(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Sector
+		if(tableName.equalsIgnoreCase(MAMN_Sector.Table_Name))
+			return new MAMN_Sector(Env.getCtx(),Record_ID, trxName);
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
@@ -317,6 +323,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Rules
 		if(tableName.equalsIgnoreCase(MAMN_Rules.Table_Name))
 			return new MAMN_Rules(Env.getCtx(),rs, trxName);
+		// MAMN_Sector
+		if(tableName.equalsIgnoreCase(MAMN_Sector.Table_Name))
+			return new MAMN_Sector(Env.getCtx(),rs, trxName);
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
