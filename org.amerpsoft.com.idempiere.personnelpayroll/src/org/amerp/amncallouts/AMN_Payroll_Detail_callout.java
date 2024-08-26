@@ -204,9 +204,9 @@ public class AMN_Payroll_Detail_callout implements IColumnCallout {
 		            //log.warning(".....................AMN_Payroll_Detail_callout.java...QUANTITY..CALCULATE..........................................");
 		            //log.warning("Concept_DefaultValueST:"+Concept_DefaultValueST+"  va_SB="+va_SB+"   workdaysDT"+workdaysDT);	
 					// Calculate Concepts VARIABLES
-					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, true);
+					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, false);
 					Concept_ValueResult=AmerpPayrollCalc.FormulaEvaluationScript(
-							Payroll_ID, Concept_Value, Concept_DefaultValueST, Concept_DefaultValueBD, va_SB, workdaysDT, "DV", true);
+							Payroll_ID, Concept_Value, Concept_DefaultValueST, Concept_DefaultValueBD, va_SB, workdaysDT, "DV", false);
 		            Concept_DefaultValueBD=Concept_ValueResult.getBDCalcAmnt();
 		            Concept_DefaultValueERROR=Concept_ValueResult.getErrorMessage();
 
@@ -224,9 +224,9 @@ public class AMN_Payroll_Detail_callout implements IColumnCallout {
 				scriptResult Concept_ValueResult = null;
 				try {
 					// Calculate Concepts VARIABLES
-					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, true);
+					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, false);
                     Concept_ValueResult=AmerpPayrollCalc.FormulaEvaluationScript(
-                    		Payroll_ID, Concept_Value, Concept_DefaultValueST, Concept_DefaultValueBD, va_SB, workdaysDT, "DV", true);
+                    		Payroll_ID, Concept_Value, Concept_DefaultValueST, Concept_DefaultValueBD, va_SB, workdaysDT, "DV", false);
                 }
                 catch (ScriptException ex) {
                     // TODO Auto-generated catch block

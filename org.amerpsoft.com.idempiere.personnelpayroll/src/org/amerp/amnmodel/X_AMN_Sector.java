@@ -20,13 +20,12 @@ package org.amerp.amnmodel;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
-import org.compiere.util.KeyNamePair;
 
-/** Generated Model for AMN_Location
+/** Generated Model for AMN_Sector
  *  @author iDempiere (generated)
  *  @version Release 11 - $Id$ */
-@org.adempiere.base.Model(table="AMN_Location")
-public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
+@org.adempiere.base.Model(table="AMN_Sector")
+public class X_AMN_Sector extends PO implements I_AMN_Sector, I_Persistent
 {
 
 	/**
@@ -35,55 +34,55 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	private static final long serialVersionUID = 20240823L;
 
     /** Standard Constructor */
-    public X_AMN_Location (Properties ctx, int AMN_Location_ID, String trxName)
+    public X_AMN_Sector (Properties ctx, int AMN_Sector_ID, String trxName)
     {
-      super (ctx, AMN_Location_ID, trxName);
-      /** if (AMN_Location_ID == 0)
+      super (ctx, AMN_Sector_ID, trxName);
+      /** if (AMN_Sector_ID == 0)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
+			setAMN_Sector_ID (0);
 			setName (null);
         } */
     }
 
     /** Standard Constructor */
-    public X_AMN_Location (Properties ctx, int AMN_Location_ID, String trxName, String ... virtualColumns)
+    public X_AMN_Sector (Properties ctx, int AMN_Sector_ID, String trxName, String ... virtualColumns)
     {
-      super (ctx, AMN_Location_ID, trxName, virtualColumns);
-      /** if (AMN_Location_ID == 0)
+      super (ctx, AMN_Sector_ID, trxName, virtualColumns);
+      /** if (AMN_Sector_ID == 0)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
+			setAMN_Sector_ID (0);
 			setName (null);
         } */
     }
 
     /** Standard Constructor */
-    public X_AMN_Location (Properties ctx, String AMN_Location_UU, String trxName)
+    public X_AMN_Sector (Properties ctx, String AMN_Sector_UU, String trxName)
     {
-      super (ctx, AMN_Location_UU, trxName);
-      /** if (AMN_Location_UU == null)
+      super (ctx, AMN_Sector_UU, trxName);
+      /** if (AMN_Sector_UU == null)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
+			setAMN_Sector_ID (0);
 			setName (null);
         } */
     }
 
     /** Standard Constructor */
-    public X_AMN_Location (Properties ctx, String AMN_Location_UU, String trxName, String ... virtualColumns)
+    public X_AMN_Sector (Properties ctx, String AMN_Sector_UU, String trxName, String ... virtualColumns)
     {
-      super (ctx, AMN_Location_UU, trxName, virtualColumns);
-      /** if (AMN_Location_UU == null)
+      super (ctx, AMN_Sector_UU, trxName, virtualColumns);
+      /** if (AMN_Sector_UU == null)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
+			setAMN_Sector_ID (0);
 			setName (null);
         } */
     }
 
     /** Load Constructor */
-    public X_AMN_Location (Properties ctx, ResultSet rs, String trxName)
+    public X_AMN_Sector (Properties ctx, ResultSet rs, String trxName)
     {
       super (ctx, rs, trxName);
     }
@@ -105,7 +104,7 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 
     public String toString()
     {
-      StringBuilder sb = new StringBuilder ("X_AMN_Location[")
+      StringBuilder sb = new StringBuilder ("X_AMN_Sector[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
@@ -116,9 +115,9 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	public void setAMN_Location_ID (int AMN_Location_ID)
 	{
 		if (AMN_Location_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_AMN_Location_ID, null);
+			set_Value (COLUMNNAME_AMN_Location_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_AMN_Location_ID, Integer.valueOf(AMN_Location_ID));
+			set_Value (COLUMNNAME_AMN_Location_ID, Integer.valueOf(AMN_Location_ID));
 	}
 
 	/** Get Payroll Location.
@@ -131,75 +130,41 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set AMN_Location_UU.
-		@param AMN_Location_UU AMN_Location_UU
+	/** Set Work Sector .
+		@param AMN_Sector_ID Work Sector in Location
 	*/
-	public void setAMN_Location_UU (String AMN_Location_UU)
+	public void setAMN_Sector_ID (int AMN_Sector_ID)
 	{
-		set_ValueNoCheck (COLUMNNAME_AMN_Location_UU, AMN_Location_UU);
-	}
-
-	/** Get AMN_Location_UU.
-		@return AMN_Location_UU	  */
-	public String getAMN_Location_UU()
-	{
-		return (String)get_Value(COLUMNNAME_AMN_Location_UU);
-	}
-
-	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
-	{
-		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_ID)
-			.getPO(getC_Activity_ID(), get_TrxName());
-	}
-
-	/** Set Activity.
-		@param C_Activity_ID Business Activity
-	*/
-	public void setC_Activity_ID (int C_Activity_ID)
-	{
-		if (C_Activity_ID < 1)
-			set_Value (COLUMNNAME_C_Activity_ID, null);
+		if (AMN_Sector_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Sector_ID, null);
 		else
-			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+			set_ValueNoCheck (COLUMNNAME_AMN_Sector_ID, Integer.valueOf(AMN_Sector_ID));
 	}
 
-	/** Get Activity.
-		@return Business Activity
+	/** Get Work Sector .
+		@return Work Sector in Location
 	  */
-	public int getC_Activity_ID()
+	public int getAMN_Sector_ID()
 	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Sector_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
 	}
 
-	public I_C_Location getC_Location() throws RuntimeException
-	{
-		return (I_C_Location)MTable.get(getCtx(), I_C_Location.Table_ID)
-			.getPO(getC_Location_ID(), get_TrxName());
-	}
-
-	/** Set Address.
-		@param C_Location_ID Location or Address
+	/** Set AMN_Sector_UU.
+		@param AMN_Sector_UU AMN_Sector_UU
 	*/
-	public void setC_Location_ID (int C_Location_ID)
+	public void setAMN_Sector_UU (String AMN_Sector_UU)
 	{
-		if (C_Location_ID < 1)
-			set_Value (COLUMNNAME_C_Location_ID, null);
-		else
-			set_Value (COLUMNNAME_C_Location_ID, Integer.valueOf(C_Location_ID));
+		set_Value (COLUMNNAME_AMN_Sector_UU, AMN_Sector_UU);
 	}
 
-	/** Get Address.
-		@return Location or Address
-	  */
-	public int getC_Location_ID()
+	/** Get AMN_Sector_UU.
+		@return AMN_Sector_UU	  */
+	public String getAMN_Sector_UU()
 	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_C_Location_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
+		return (String)get_Value(COLUMNNAME_AMN_Sector_UU);
 	}
 
 	/** Set Description.
@@ -218,6 +183,22 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	/** Set Comment/Help.
+		@param Help Comment or Hint
+	*/
+	public void setHelp (String Help)
+	{
+		set_Value (COLUMNNAME_Help, Help);
+	}
+
+	/** Get Comment/Help.
+		@return Comment or Hint
+	  */
+	public String getHelp()
+	{
+		return (String)get_Value(COLUMNNAME_Help);
+	}
+
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -233,14 +214,6 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	{
 		return (String)get_Value(COLUMNNAME_Name);
 	}
-
-    /** Get Record ID/ColumnName
-        @return ID/ColumnName pair
-      */
-    public KeyNamePair getKeyNamePair()
-    {
-        return new KeyNamePair(get_ID(), getName());
-    }
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique

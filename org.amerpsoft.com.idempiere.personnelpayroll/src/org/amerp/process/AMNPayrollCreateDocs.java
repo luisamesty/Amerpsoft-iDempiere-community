@@ -65,7 +65,9 @@ public class AMNPayrollCreateDocs {
 	 * @return AMN_Payroll_ID
 	 */
 	public static int CreatePayrollOneDocument (Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, String trxName) {
+			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
+			Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd,
+			String trxName) {
 	    String AMN_Process_Value="NN";
 	    Msg_Value="";
 		// Determines Process Value to see if NN
@@ -81,7 +83,9 @@ public class AMNPayrollCreateDocs {
 		}
 		amnpayroll.createAmnPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
 				amnperiod.getAD_Client_ID(), amnperiod.getAD_Org_ID(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,
-				p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);	
+				p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, 
+				p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,
+				trxName);	
 		// Return Messages
 		if (AMN_Process_Value.equalsIgnoreCase("NN") ||
 				AMN_Process_Value.equalsIgnoreCase("TI") ) {
@@ -109,6 +113,71 @@ public class AMNPayrollCreateDocs {
 		return amnpayroll.getAMN_Payroll_ID();
 	}
 
+//	/**
+//	 * UpdatePayrollOneDocument 
+//	 * 
+//	 * @param ctx
+//	 * @param p_AMN_Process_ID
+//	 * @param p_AMN_Contract_ID
+//	 * @param p_AMN_Period_ID
+//	 * @param p_AMN_Payroll_Lot_ID
+//	 * @param p_AMN_Employee_ID
+//	 * @param p_AMN_Payroll_ID
+//	 * @param p_DateAcct
+//	 * @param p_InvDateEnd
+//	 * @param p_InvDateIni
+//	 * @param p_RefDateEnd
+//	 * @param p_RefDateIni
+//	 * @param trxName
+//	 * @return
+//	 */
+//	public static int UpdatePayrollOneDocument (Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
+//			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
+//			Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd,
+//			String trxName) {
+//	    String AMN_Process_Value="NN";
+//	    Msg_Value="";
+//		// Determines Process Value to see if NN
+//		MAMN_Process amnprocess = new MAMN_Process(ctx, p_AMN_Process_ID, null);
+//		AMN_Process_Value = amnprocess.getAMN_Process_Value();
+//		MAMN_Period amnperiod = new MAMN_Period(ctx,p_AMN_Period_ID,null);
+//		// UPDATE 
+//		MAMN_Payroll amnpayroll = null;
+//		//  CREATE MAMN_Payroll (DOCUMENT HEADER)
+//		if (p_AMN_Payroll_ID > 0) {
+//			amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+//			amnpayroll.updateAmnPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
+//					amnperiod.getAD_Client_ID(), amnperiod.getAD_Org_ID(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,
+//					p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, 
+//					p_DateAcct, p_InvDateEnd, p_InvDateIni, p_RefDateEnd, p_RefDateIni, trxName);	
+//			// Return Messages
+//			if (AMN_Process_Value.equalsIgnoreCase("NN") ||
+//					AMN_Process_Value.equalsIgnoreCase("TI") ) {
+//				// ************************
+//				// Process NNN an TI	
+//				// ************************		
+//				
+//			} else if (AMN_Process_Value.equalsIgnoreCase("NV")) {
+//				// ************************
+//				// Process NV	
+//				// ************************
+//				
+//			} else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
+//				// ************************
+//				// Process NP
+//				// ************************
+//				
+//			} else if (AMN_Process_Value.equalsIgnoreCase("NU")) {
+//				// ************************
+//				// Process NU
+//				// ************************
+//			} else {
+//				Msg_Value=Msg_Value+(Msg.getMsg(ctx, "Process")+":"+AMN_Process_Value.trim()+"NotAvailable"+" \n");
+//			}
+//		}
+//		return amnpayroll.getAMN_Payroll_ID();
+//	}
+
 	/**
 	 * CreatePayrollOneDocumentLines
 	 * Description: Creates Records on Table AMN_PAyroll 
@@ -120,7 +189,9 @@ public class AMNPayrollCreateDocs {
 	 * @return Msg_Value
 	 */
 	public static String CreatePayrollOneDocumentLines (Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, String trxName) {
+			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
+			Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd,
+			String trxName) {
 	    String AMN_Process_Value="NN";
 	    Msg_Value="";
 		// MAMN_Contract
@@ -136,7 +207,9 @@ public class AMNPayrollCreateDocs {
 			//  CREATE MAMN_Payroll (DOCUMENT HEADER)
 			amnpayroll.createAmnPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
 					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,
-					p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+					p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, 
+					p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,
+					trxName);
 			// GET AMN_Payroll_ID FROM DOCUMENT CREATED
 			amnpayroll = MAMN_Payroll.findByAMNPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
 					p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
@@ -346,38 +419,6 @@ public class AMNPayrollCreateDocs {
 			// CreatePayrollOneDocDetailDeferredLines(ctx, ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxName);
 			// LOANS 		
 		}	
-		
-//		rsod1 = null; 
-//		pstmt1 = null;
-//		try
-//		{
-//			pstmt1 = DB.prepareStatement(sql, null);
-//            pstmt1.setInt (1, p_AMN_Process_ID);
-//            pstmt1.setInt (2, p_AMN_Contract_ID);
-//            rsod1 = pstmt1.executeQuery();
-//			while (rsod1.next())
-//			{
-//				AMN_Concept_Types_Proc_ID = rsod1.getInt(4);
-//				//log.warning("  AMN_Payroll_ID="+p_AMN_Payroll_ID+"  AMN_Concept_Types_Proc_ID="+AMN_Concept_Types_Proc_ID);
-//				//  CREATE MAMN_Payroll Detail
-//				amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
-//						amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(),  p_AMN_Process_ID, p_AMN_Contract_ID,
-//						p_AMN_Payroll_ID, AMN_Concept_Types_Proc_ID, trxName);
-//			}
-//		}
-//	    catch (SQLException e)
-//	    {
-//	    }
-//		finally
-//		{
-//			DB.close(rsod1, pstmt1);
-//			rsod1 = null; 
-//			pstmt1 = null;
-//		}
-//		DB.close(rsod1, pstmt1);
-//		
-//		rsod1 = null; 
-//		pstmt1 = null;
 		
 		return Msg_Value;
 	}

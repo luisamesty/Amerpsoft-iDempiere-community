@@ -1,4 +1,4 @@
--- PayrollReceipt NN Internal
+-- PAYROLL RECEIPT NV INTERNAL
 -- FROM AD_Tree 1000008  FROM A GIVEN AD_Client_ID
 -- FOR NEW Payroll REPORTS
 WITH Conceptos AS (
@@ -230,7 +230,7 @@ FROM
 	LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 	LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 	LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-	WHERE prc.value= 'NN' AND pyr.ad_client_id=  $P{AD_Client_ID}  
+	WHERE prc.value= 'NV' AND pyr.ad_client_id=  $P{AD_Client_ID}  
 		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
 	    AND ( CASE WHEN ( $P{AMN_Payroll_ID} IS NULL OR pyr.amn_payroll_id= $P{AMN_Payroll_ID} ) THEN 1=1 ELSE 1=0 END )
 	    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -315,7 +315,7 @@ UNION
 	LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 	LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 	LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-	WHERE prc.value= 'NN' AND pyr.ad_client_id=  $P{AD_Client_ID}  
+	WHERE prc.value= 'NV' AND pyr.ad_client_id=  $P{AD_Client_ID}  
 		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
 	    AND ( CASE WHEN ( $P{AMN_Payroll_ID} IS NULL OR pyr.amn_payroll_id= $P{AMN_Payroll_ID} ) THEN 1=1 ELSE 1=0 END )
 	    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -331,3 +331,4 @@ departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, co
 documentno,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
+

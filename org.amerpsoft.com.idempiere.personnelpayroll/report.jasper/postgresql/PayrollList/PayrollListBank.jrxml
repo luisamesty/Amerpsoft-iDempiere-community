@@ -52,7 +52,7 @@ SELECT
     -- EMPLOYEE
     emp.amn_employee_id, emp.value as value_emp, emp.name as empleado,emp.incomedate as fecha_ingreso,
     COALESCE(jtt.name, jtt.description,'''') as cargo, 
-    COALESCE(cbp.taxid,'') as nro_id,
+    COALESCE(emp.idnumber, cbp.taxid,'') as nro_id,
      -- PAYROLL
     pyr.amn_payroll_id, pyr.description as recibo,
     --pyr.amountallocated as amountallocated_t, pyr.amountdeducted as amountdeducted_t, pyr.amountcalculated as amountcalculated_t,

@@ -358,8 +358,14 @@ public class Doc_AMNPayroll extends Doc {
 				lineares.setConvertedAmt (m_C_AcctSchema_ID, Zero, AmountAccCreres.subtract(AmountAccDebres));
 			else
 				lineares.setConvertedAmt (m_C_AcctSchema_ID, AmountAccDebres.subtract(AmountAccCreres), Zero);
-			if (MASTERAccountCR.getC_BPartner_ID() == 0)
-				MASTERAccountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+			if (MASTERAccountCR.getC_BPartner_ID() == 0) {
+				if (amnemployee.getBill_BPartner_ID() != 0) {
+					MASTERAccountCR.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+				} else {
+					MASTERAccountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+				}	
+//				MASTERAccountCR.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+			}
 			MASTERAccountCR.setC_SalesRegion_ID(p_amnpayroll.getC_SalesRegion_ID());
 			MASTERAccountCR.setC_Project_ID(p_amnpayroll.getC_Project_ID());
 			MASTERAccountCR.setC_Campaign_ID(p_amnpayroll.getC_Campaign_ID());

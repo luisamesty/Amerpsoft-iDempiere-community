@@ -167,7 +167,9 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
 	public boolean createAmnPayroll(Properties ctx, Locale locale, 
 			int p_AD_Client_ID, int p_AD_Org_ID, int p_AMN_Process_ID, int p_AMN_Contract_ID,
-			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, String trxName) {
+			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
+			Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd, 
+			String trxName) {
 		
 		Integer Currency_ID = 0;
 		Integer ConversionType_ID = MConversionType.TYPE_SPOT;
@@ -213,8 +215,6 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
    		if (ConversionType_ID == null)	
    			ConversionType_ID = MConversionType.TYPE_SPOT;
    		DocumentNo=DocumentNo+Employee_Value+01;
-//log.warning("................AMN_Period Cache ...................");
-//log.warning("p_AD_Client_ID:"+p_AD_Client_ID+"  p_AD_Org_ID:"+p_AD_Org_ID+"  "+Process_Value+"-"+Contract_Value+"-"+Employee_Value+"-"+Period_Value+"-"+Employee_Name);
     	Payroll_Value=AmerpUtilities.truncate((Process_Value+"-"+Contract_Value+"-"+Employee_Value+"-"+Period_Value),39);
 		Payroll_Name=AmerpUtilities.truncate((Process_Value+"-"+Contract_Value+"-"+Employee_Name),59);
 		PayrollDescription=AmerpUtilities.truncate((Process_Value+"-"+Contract_Value+"-"+Employee_Name+"-"+Period_Value),255);		
@@ -254,14 +254,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		if (amnpayroll == null)
 		{
 			//log.warning("................Values in MAMN_Payroll (NUEVO)...................");
-			//log.warning("Currency_ID:"+Currency_ID+" p_AMN_Period_ID:"+p_AMN_Period_ID+"  p_AMN_Contract_ID:"+p_AMN_Contract_ID+"  p_AMN_Process_ID:"+p_AMN_Process_ID+"  p_AMN_Employee_ID:"+p_AMN_Employee_ID);
-			//log.warning("p_AD_Org_ID="+p_AD_Org_ID+"  Value+Name:"+Payroll_Value+Payroll_Name);	
-			//log.warning("Description:"+PayrollDescription);
-			//p_AMN_Period_ID
 			amnpayroll = new MAMN_Payroll(getCtx(), 0, get_TrxName());
-//			amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Period_ID, get_TrxName());
 			amnpayroll.setAD_Client_ID(p_AD_Client_ID);
-			
 			amnpayroll.setAD_Org_ID(p_AD_Org_ID);
 			amnpayroll.setAMN_Process_ID(p_AMN_Process_ID);
 			amnpayroll.setAMN_Contract_ID(p_AMN_Contract_ID);
@@ -277,12 +271,31 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			amnpayroll.setC_Campaign_ID(amnemployee.getC_Campaign_ID());
 			amnpayroll.setC_SalesRegion_ID(amnemployee.getC_SalesRegion_ID());
 			amnpayroll.setIsActive(true);
-			amnpayroll.setInvDateIni(amnperiod.getAMNDateIni());
-			amnpayroll.setInvDateEnd(amnperiod.getAMNDateEnd());
-			amnpayroll.setRefDateEnd(amnperiod.getRefDateEnd());
-			amnpayroll.setRefDateIni(amnperiod.getRefDateIni());
-			//amnpayroll.setDateAcct((Timestamp) AMNDateAcctTS);
-			amnpayroll.setDateAcct(amnperiod.getAMNDateEnd());
+	    	if (p_DateAcct != null ) {
+	    		amnpayroll.setDateAcct(p_DateAcct);
+	    	} else {
+				amnpayroll.setDateAcct(amnperiod.getAMNDateEnd());
+	    	}
+	    	if (p_InvDateIni != null ) {
+	    		amnpayroll.setInvDateIni(p_InvDateIni);
+	    	} else {
+	    		amnpayroll.setInvDateIni(amnperiod.getAMNDateIni());
+	    	}
+	    	if (p_InvDateEnd != null ) {
+				amnpayroll.setInvDateEnd(p_InvDateEnd);
+	    	} else {
+				amnpayroll.setInvDateEnd(amnperiod.getAMNDateEnd());
+	    	}
+	    	if (p_RefDateIni != null ) {
+	    		amnpayroll.setRefDateEnd(p_RefDateIni);
+	    	} else {
+	    		amnpayroll.setRefDateEnd(amnperiod.getRefDateEnd());
+	    	}
+	    	if (p_RefDateEnd != null  ) {
+	    		amnpayroll.setRefDateIni(p_RefDateEnd);
+	    	} else {
+	    		amnpayroll.setRefDateIni(amnperiod.getRefDateIni());
+	    	}
 			amnpayroll.setC_DocType_ID(0);
 			amnpayroll.setC_DocTypeTarget_ID(DocType_ID);
 			amnpayroll.setValue(Payroll_Value);
@@ -313,8 +326,31 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			amnpayroll.setValue(Payroll_Value);
 			amnpayroll.setName(Payroll_Name);
 			amnpayroll.setDescription(PayrollDescription);
-			amnpayroll.setRefDateEnd(amnperiod.getRefDateEnd());
-			amnpayroll.setRefDateIni(amnperiod.getRefDateIni());
+	    	if (p_DateAcct != null ) {
+	    		amnpayroll.setDateAcct(p_DateAcct);
+	    	} else {
+				amnpayroll.setDateAcct(amnperiod.getAMNDateEnd());
+	    	}
+	    	if (p_InvDateIni != null ) {
+	    		amnpayroll.setInvDateIni(p_InvDateIni);
+	    	} else {
+	    		amnpayroll.setInvDateIni(amnperiod.getAMNDateIni());
+	    	}
+	    	if (p_InvDateEnd != null ) {
+				amnpayroll.setInvDateEnd(p_InvDateEnd);
+	    	} else {
+				amnpayroll.setInvDateEnd(amnperiod.getAMNDateEnd());
+	    	}
+	    	if (p_RefDateIni != null ) {
+	    		amnpayroll.setRefDateEnd(p_RefDateIni);
+	    	} else {
+	    		amnpayroll.setRefDateEnd(amnperiod.getRefDateEnd());
+	    	}
+	    	if (p_RefDateEnd != null  ) {
+	    		amnpayroll.setRefDateIni(p_RefDateEnd);
+	    	} else {
+	    		amnpayroll.setRefDateIni(amnperiod.getRefDateIni());
+	    	}
 			amnpayroll.setAMN_Department_ID(amnemployee.getAMN_Department_ID());
 			amnpayroll.setAMN_Location_ID(amnemployee.getAMN_Location_ID());
 			amnpayroll.setAMN_Jobtitle_ID(amnemployee.getAMN_Jobtitle_ID());
@@ -343,6 +379,67 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		
 	}	//	createAmnPayroll
 
+//	/**
+//	 * updateAmnPayroll
+//	 * @param ctx
+//	 * @param locale
+//	 * @param p_AD_Client_ID
+//	 * @param p_AD_Org_ID
+//	 * @param p_AMN_Process_ID
+//	 * @param p_AMN_Contract_ID
+//	 * @param p_AMN_Period_ID
+//	 * @param p_AMN_Payroll_Lot_ID
+//	 * @param p_AMN_Employee_ID
+//	 * @param p_AMN_Payroll_ID
+//	 * @param p_DateAcct
+//	 * @param p_InvDateEnd
+//	 * @param p_InvDateIni
+//	 * @param p_RefDateEnd
+//	 * @param p_RefDateIni
+//	 * @param trxName
+//	 * @return
+//	 */
+//	public boolean updateAmnPayroll(Properties ctx, Locale locale, 
+//			int p_AD_Client_ID, int p_AD_Org_ID, int p_AMN_Process_ID, int p_AMN_Contract_ID,
+//			int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
+//			Timestamp p_DateAcct, Timestamp p_InvDateEnd, Timestamp p_InvDateIni, Timestamp p_RefDateEnd, Timestamp p_RefDateIni,
+//			String trxName) {
+//		
+//		MAMN_Payroll amnpayroll = null;
+//	    // VERIFY Additional Optional Parameters
+//	    //  p_DateAcct, p_InvDateEnd, p_InvDateIni, p_RefDateEnd, p_RefDateIni
+//	    boolean addParams = false;
+//	    if (p_AMN_Payroll_ID > 0) {
+//	    	amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, null);
+//	    	if (p_DateAcct != null && p_DateAcct !=amnpayroll.getDateAcct()) {
+//	    		amnpayroll.setDateAcct(p_DateAcct);
+//	    		addParams = true;
+//	    	}
+//	    	if (p_InvDateIni != null && p_InvDateIni != amnpayroll.getInvDateIni()) {
+//	    		amnpayroll.setInvDateIni(p_InvDateIni);
+//	    		addParams = true;
+//	    	}
+//	    	if (p_InvDateEnd != null && p_InvDateEnd != amnpayroll.getInvDateEnd()) {
+//	    		amnpayroll.setInvDateEnd(p_InvDateEnd);
+//	    		addParams = true;
+//	    	}
+//	    	if (p_RefDateIni != null && p_RefDateIni != amnpayroll.getRefDateIni()) {
+//	    		amnpayroll.setRefDateIni(p_RefDateIni);
+//	    		addParams = true;
+//	    	}
+//	    	if (p_RefDateEnd != null && p_RefDateEnd != amnpayroll.getRefDateEnd()) {
+//	    		amnpayroll.setRefDateEnd(p_RefDateEnd);
+//	    		addParams = true;
+//	    	}
+//	    	if (addParams)
+//	    		amnpayroll.save(get_TrxName());
+//	    }
+//	    // END VERIFY Additional Optional Parameters
+//
+//		return true;
+//		
+//	}
+	
 	/**
 	 * createCInvoice: 
 	 * Create Payroll Invoice Header
