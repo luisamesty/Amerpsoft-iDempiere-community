@@ -41,6 +41,7 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 	String Concept_Formula = "" ;
 	String Concept_Description = "Descripcon del Concepto" ;
 	String Concept_Script = "Script del Concepto" ;
+	String Concept_ScriptDefaultValue = "ScriptDefaultValue del Concepto" ;
 	String Concept_DefaultValueERROR="";
 	String Process_Value="XX";
 	int Process_ID=0;
@@ -94,7 +95,8 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 					"cty.isshow as isshow, " +
 					"cty.defaultvalue, " +
 					"coalesce(cty.variable,'') as cvariable, " +
-					"coalesce(cty.script,'') as script " +
+					"coalesce(cty.script,'') as script, " +
+					"coalesce(cty.scriptdefaultvalue,'') as scriptdefaultvalue " +
 					"FROM amn_concept_types as cty " + 
 					"LEFT JOIN amn_concept_types_proc as ctp ON (ctp.amn_concept_types_id = cty.amn_concept_types_id) " + 
 					"LEFT JOIN amn_concept_uom as cum on (cty.amn_concept_uom_id = cum.amn_concept_uom_id) " +
@@ -127,6 +129,7 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 					Concept_DefaultValueST=rs.getString(15);
 					Concept_Variable=rs.getString(16);
 					Concept_Script= rs.getString(17).trim();
+					Concept_ScriptDefaultValue= rs.getString(18).trim();
 				}
 			}
 			catch (SQLException e)

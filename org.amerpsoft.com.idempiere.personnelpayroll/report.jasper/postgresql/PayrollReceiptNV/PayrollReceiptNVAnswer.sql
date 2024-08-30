@@ -23,7 +23,10 @@ SELECT * FROM (
 	END as emp_prefix,
 	pyrq.qtyvalue,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.InvDateIni, pyr.InvDateEnd, pyr.DateReEntry,
+	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateIni), 'L','es') AS  diaInvDateIni,
+	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateEnd), 'L','es') AS  diaInvDateEnd,
+	adempiere.amf_dow2letter(extract(dow from  pyr.DateReEntry), 'L','es') AS  diaDateReEntry,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 

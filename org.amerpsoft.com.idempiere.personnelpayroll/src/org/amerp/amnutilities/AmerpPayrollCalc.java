@@ -53,6 +53,10 @@ public class AmerpPayrollCalc  {
 	public static Double BUSINESSDAYS, NONBUSINESSDAYS, WEEKENDDAYS, NONWEEKENDDAYS;
 	public static Double NLUNES,NMONDAY;
 	public static Double LASTVALUE;
+	public static Double CTL_AmountAllocated;	// Default Value ZERO
+	public static Double CTL_QtyTimes;  		// Default Value ONE
+	public static Double CTL_Rate;				// Default Value ZERO
+	public static String ORGSECTOR=""; 
 	public static Double UNIDADTRIBUTARIA,SBMIN,TAXRATE;
 	public static Double QTY_HND,QTY_HNN,QTY_HED,QTY_HEN;
 	public static Double RSU_HND,RSU_HNN,RSU_HED,RSU_HEN;
@@ -759,6 +763,7 @@ public class AmerpPayrollCalc  {
 		AM_PaymentType=amnemployee.getpaymenttype();
 		AM_CivilStatus=amnemployee.getcivilstatus();
 		AM_Sex=amnemployee.getsex();
+		ORGSECTOR = amnemployee.getORGSECTOR();
 		AM_Spouse=amnemployee.getspouse();
 		if (curr.getISO_Code()!=null)
 			AM_Currency=curr.getISO_Code();
@@ -779,6 +784,7 @@ public class AmerpPayrollCalc  {
 		AM_BirthDate=dateFormat.format(amnemployee.getBirthday());
 		// Work Force (, Department Value, Location Value, Project Value,
 		// Activity Value, Jobtitle Value, Jobstation Value , Shift Value
+		MAMN_Concept_Types amnct = new MAMN_Concept_Types(p_ctx, AMN_Concept_Types_ID, null);
 		MAMN_Jobtitle amnjt = new MAMN_Jobtitle(p_ctx, amnemployee.getAMN_Jobtitle_ID(), null);
 		MAMN_Jobstation amnjs = new MAMN_Jobstation(p_ctx, amnemployee.getAMN_Jobstation_ID(), null);
 		MAMN_Jobunit amnju = new MAMN_Jobunit(p_ctx, amnjs.getAMN_Jobunit_ID(),null);
@@ -794,6 +800,15 @@ public class AmerpPayrollCalc  {
 		AM_Jobtitle=amnjt.getValue();
 		AM_Jobstation=amnjs.getValue();
 		AM_Jobunit=amnju.getValue();
+		// AMN_Concept_Types_Limit
+		int C_Currency_ID = amnpayroll.getC_Currency_ID();
+		int C_Currency_ID_To = C_Currency_ID;
+		if (amnpayroll.getC_Currency_ID_To() != 0)
+			C_Currency_ID_To = amnpayroll.getC_Currency_ID_To();
+		
+		CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+		CTL_QtyTimes=MAMN_Concept_Types_Limit.getCTL_QtyTimes(C_Currency_ID, C_Currency_ID_To,  amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+		CTL_Rate=MAMN_Concept_Types_Limit.getCTL_Rate(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
 		//scriptResult RetVal = null ;
 		scriptResult RetVal = new scriptResult();
 		// Reference Concepts Returns OK 
@@ -1205,6 +1220,24 @@ public class AmerpPayrollCalc  {
 				ScriptableObject.putProperty(scope,"RSU_HEN", BigDecimal.valueOf(RSU_HEN));
 				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
 			}
+			// AMN_Concept_Types_Limits CTLD
+			if (p_script.contains("CTL_AmountAllocated")) {
+				ScriptableObject.putProperty(scope,"CTL_AmountAllocated", BigDecimal.valueOf(CTL_AmountAllocated));
+				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
+			}
+			if (p_script.contains("CTL_QtyTimes")) {
+				ScriptableObject.putProperty(scope,"CTL_QtyTimes", BigDecimal.valueOf(CTL_QtyTimes));
+				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
+			}
+			if (p_script.contains("CTL_Rate")) {
+				ScriptableObject.putProperty(scope,"CTL_Rate", BigDecimal.valueOf(CTL_Rate));
+				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
+			}
+			// ORGSECTOR
+			if (p_script.contains("ORGSECTOR")) {
+				ScriptableObject.putProperty(scope,"ORGSECTOR", ORGSECTOR );
+				//ctx.setAttribute("ORGSECTOR", ORGSECTOR, ScriptContext.ENGINE_SCOPE);
+			}
 			// **********************************************************
 			// PUT FIXED VARIABLES VALUES
 			// Qty Starts with 				QT_
@@ -1573,7 +1606,10 @@ public class AmerpPayrollCalc  {
 		WEEKENDDAYS=(Zero);
 		NONWEEKENDDAYS=(Zero);
 		LASTVALUE=(Zero);
-		
+		CTL_AmountAllocated=(Zero);
+		CTL_QtyTimes=(One);
+		CTL_Rate=(Zero);
+		ORGSECTOR="";
 		// Logical Variables
 		IS_FAOV ="N" ;
 		IS_SALARIO ="N" ;

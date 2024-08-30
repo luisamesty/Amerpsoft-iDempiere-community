@@ -105,7 +105,10 @@ SELECT * FROM (
 	END as emp_prefix,
 	pyrq.qtyvalue,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.InvDateIni, pyr.InvDateEnd, pyr.DateReEntry,
+	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateIni), 'L','es') AS  diaInvDateIni,
+	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateEnd), 'L','es') AS  diaInvDateEnd,
+	adempiere.amf_dow2letter(extract(dow from  pyr.DateReEntry), 'L','es') AS  diaDateReEntry,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
@@ -244,6 +247,23 @@ ORDER BY empleado ASC]]>
 		<property name="com.jaspersoft.studio.field.label" value="invdateend"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
 	</field>
+	<field name="datereentry" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="datereentry"/>
+		<property name="com.jaspersoft.studio.field.label" value="datereentry"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="diainvdateini" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="diainvdateini"/>
+		<property name="com.jaspersoft.studio.field.label" value="diainvdateini"/>
+	</field>
+	<field name="diainvdateend" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="diainvdateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="diainvdateend"/>
+	</field>
+	<field name="diadatereentry" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="diadatereentry"/>
+		<property name="com.jaspersoft.studio.field.label" value="diadatereentry"/>
+	</field>
 	<field name="tipo_contrato" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="tipo_contrato"/>
 		<property name="com.jaspersoft.studio.field.label" value="tipo_contrato"/>
@@ -323,13 +343,13 @@ ORDER BY empleado ASC]]>
 		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
 	</variable>
 	<variable name="monthDateIni" class="java.lang.String">
-		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{InvDateIni})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
+		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
 	</variable>
 	<variable name="monthDateEnd" class="java.lang.String">
-		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{InvDateEnd})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
+		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{invdateend})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
 	</variable>
 	<variable name="monthDateReEntry" class="java.lang.String">
-		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{DateReEntry})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
+		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{datereentry})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -650,7 +670,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[", "+ new SimpleDateFormat("dd").format($P{InvDateIni}) + " de "+$V{monthDateIni}+ " de "+ new SimpleDateFormat("yyyy").format($P{InvDateIni})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diainvdateini}+", "+ new SimpleDateFormat("dd").format($P{InvDateIni}) + " de "+$V{monthDateIni}+ " de "+ new SimpleDateFormat("yyyy").format($P{InvDateIni})]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="210" y="132" width="308" height="15" isRemoveLineWhenBlank="true" uuid="ff0e1a8a-f78d-4000-9c92-af4bca7cb264">
@@ -662,7 +682,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[", "+ new SimpleDateFormat("dd").format($P{InvDateEnd}) + " de "+$V{monthDateEnd}+ " de "+ new SimpleDateFormat("yyyy").format($P{InvDateEnd})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diainvdateend}+", "+ new SimpleDateFormat("dd").format($F{invdateend}) + " de "+$V{monthDateEnd}+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateend})]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="210" y="147" width="308" height="15" isRemoveLineWhenBlank="true" uuid="496a8634-57a3-4a1d-92f9-92f9921c66d5">
@@ -675,7 +695,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[", "+ new SimpleDateFormat("dd").format($P{DateReEntry}) + " de "+$V{monthDateReEntry}+ " de "+ new SimpleDateFormat("yyyy").format($P{DateReEntry})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diadatereentry}+", "+ new SimpleDateFormat("dd").format($F{datereentry}) + " de "+$V{monthDateReEntry}+ " de "+ new SimpleDateFormat("yyyy").format($F{datereentry})]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
