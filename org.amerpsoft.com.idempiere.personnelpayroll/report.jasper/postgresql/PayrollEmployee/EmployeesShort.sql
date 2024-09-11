@@ -16,8 +16,12 @@ FROM (
 	COALESCE(org.description,org.name,org.value,'') as org_description, 
 	-- EMPLOYEE 
 	    emp.amn_employee_id,
-	    emp.value as codigo,   
+	    emp.value as codigo,  
+        emp.idnumber as cedula,
 	    emp.salary as sueldo, emp.incomedate as fecha_ingreso, emp.Birthday as fecha_nacimiento,
+        date_part('year',age(current_date, emp.incomedate)) a_servicio, 
+        date_part('month',age(current_date, emp.incomedate)) m_servicio, 
+        date_part('day',age(current_date, emp.incomedate)) d_servicio,
 	    emp.status, 
 	    CASE WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN 1
 	         WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN 1
@@ -47,44 +51,34 @@ FROM (
 	-- EMPLOYEE
 	    CASE WHEN ( $P{AMN_Employee_ID} IS NULL OR emp.amn_employee_id = $P{AMN_Employee_ID} ) THEN 1 ELSE 0 END AS imprimir_emp,
 	-- CONTRACT
-	    c.value as contrato_tipo,
-	    COALESCE(c.name, c.description) as contrato_nombre,
-	    CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR c.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_con,
-	-- DEPARTMENT 
-	    CASE WHEN ( $P{AMN_Department_ID} IS NULL or d.amn_department_id = $P{AMN_Department_ID}) THEN 1 ELSE 0 END AS imprimir_dep,
-	    CASE WHEN ($P{AMN_Department_ID} IS NULL AND $P{ShowDepartment} = 'N' ) THEN 0
-	         ELSE d.amn_department_id 
-	         END AS amn_department_id,
-	     CASE WHEN ($P{AMN_Department_ID} IS NULL AND $P{ShowDepartment} = 'N' ) THEN 'XX'
-	          ELSE d.value  
-	          END AS departamento_codigo ,
-	     CASE WHEN ($P{AMN_Department_ID} IS NULL AND $P{ShowDepartment} = 'N' ) THEN '** Todas los Departamentos **'
-	          ELSE  COALESCE(d.name, d.description)
-	          END AS departamento_nombre ,
+	    cok.value as contrato_tipo,
+    	COALESCE(cok.value, cok.name, cok.description) as contrato_nombre,
+	    CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR cok.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_con,
+	-- CONTRACT
+    	CASE WHEN ( $P{AMN_Contract_ID} IS NULL or cok.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_nom,	    
 	-- JobTitle
 		j.value as jobtitle_value, 	j.name as jobtitle_name,	j.description as jobtitle_description,
 	-- LOCATION
 	    CASE WHEN ( $P{AMN_Location_ID} IS NULL or l.amn_location_id = $P{AMN_Location_ID}) THEN 1 ELSE 0 END AS imprimir_loc,
-	    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN 0
+	    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 0
 	         ELSE l.amn_location_id 
 	         END AS amn_location_id,
-	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN 'XX'
+	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 'XX'
 	          ELSE l.value  
 	          END AS localidad_codigo ,
-	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN '** Todas las Localidades **'
+	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las Localidades **'
 	          ELSE COALESCE(l.name, l.description)
 	          END AS localidad_nombre 
 	FROM AMN_Employee emp
 	LEFT OUTER JOIN C_BPartner cbp ON (cbp.C_BPartner_ID=emp.C_BPartner_ID  AND emp.IsActive='Y')
-	LEFT OUTER JOIN AMN_Contract c ON (c.AMN_contract_ID=emp.AMN_Contract_ID)
-	LEFT JOIN (
-		SELECT DISTINCT con.AMN_Contract_ID, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
-		FROM AMN_Contract con
-		LEFT JOIN (
-			SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM AMN_Role_Access 
-			WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM AMN_Process WHERE AMN_Process_Value='NN') AND AD_Role_ID = $P{AD_Role_ID}
-		) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID
-	) cok on cok.AMN_Contract_ID = c.AMN_Contract_ID
+	INNER JOIN (
+		SELECT DISTINCT con.AMN_Contract_ID, con.value, con.name, con.description, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
+		FROM adempiere.AMN_Contract con
+		INNER JOIN (
+			SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM adempiere.AMN_Role_Access 
+			WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM adempiere.AMN_Process WHERE AMN_Process_Value='NN') AND AD_Role_ID = $P{AD_Role_ID}
+		) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID	
+	) cok on cok.AMN_Contract_ID = emp.AMN_Contract_ID
 	LEFT OUTER JOIN AMN_Department d ON (d.AMN_Department_ID=emp.AMN_Department_ID)
 	LEFT OUTER JOIN AMN_Jobtitle j ON(j.AMN_Jobtitle_ID = emp.AMN_Jobtitle_ID)
 	LEFT OUTER JOIN AMN_Shift s ON(s.AMN_Shift_ID = emp.AMN_Shift_ID)
@@ -112,7 +106,7 @@ FROM (
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) trab
-WHERE trab.imprimir_status=1 AND trab.imprimir_con=1 AND trab.imprimir_dep =1 
+WHERE trab.imprimir_status=1 AND trab.imprimir_con=1
 	AND trab.imprimir_loc=1 AND trab.imprimir_org = 1
-ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
+ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.codigo
  

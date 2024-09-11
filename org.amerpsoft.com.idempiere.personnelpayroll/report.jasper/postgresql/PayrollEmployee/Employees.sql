@@ -19,6 +19,7 @@ FROM (SELECT DISTINCT
 	 cbp.name as nombre, COALESCE(cbp.taxid, cbp.amerp_rifseniat) as rif,
 -- EMPLOYEE 
     emp.value as codigo,   
+    emp.idnumber as cedula,
     DATE(emp.birthday) as fecha_nacimiento,
     CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1 ELSE 0 END AS imprimir_org,
     CASE WHEN 
@@ -87,6 +88,9 @@ FROM (SELECT DISTINCT
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
 		 WHERE rfr.name = 'amn_payrollmode' AND rlt.ad_language= 'es_VE' and rfl.value= emp.payrollmode) as tipo_nomina, 
     cok.OK_salary, emp.salary as sueldo, emp.incomedate as fecha_ingreso, emp.Birthday as fecha_nacimiento,
+    date_part('year',age(current_date, emp.incomedate)) a_servicio, 
+    date_part('month',age(current_date, emp.incomedate)) m_servicio, 
+    date_part('day',age(current_date, emp.incomedate)) d_servicio,
     emp.increasingloads as carga_asc, emp.downwardloads as carga_desc, 
     emp.hobbyes as hobby, emp.sports as deportes,
     emp.alergic as alergias, emp.deseases as enfermedades,
@@ -96,7 +100,7 @@ FROM (SELECT DISTINCT
     CASE WHEN ( $P{AMN_Employee_ID} IS NULL or emp.amn_employee_id = $P{AMN_Employee_ID} ) THEN 1 ELSE 0 END AS imprimir_emp,
  -- BPARTNER LOCATION
     cbp_l.c_bpartner_id as cbpl_id, cbp_l.bplname as zona, cbp_l.bplphone as tel1, cbp_l.bplphone2 as tel2, cbp_l.bplfax as fax, 
-    -- LOCATION
+ -- LOCATION
     loc.postal as cod_postal, loc.address1 as adr1, loc.address2 as adr2, loc.address3 as adr3, loc.address4 as adr4,
  -- CITY
     cit.name as ciudad_dir,
@@ -109,19 +113,23 @@ FROM (SELECT DISTINCT
  -- COUNTRY DIR
 	 COALESCE(ctr_e.name, ctr_e.description) as pais_dir,
  -- CONTRACT
-    COALESCE(amn_c.value, amn_c.name, amn_c.description) as tipo_contrato,
-    CASE WHEN ( $P{AMN_Contract_ID} IS NULL or amn_c.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_nom,
+ 	cok.value as codigo_contrato,
+    COALESCE(cok.value, cok.name, cok.description) as tipo_contrato,
+    CASE WHEN ( $P{AMN_Contract_ID} IS NULL or cok.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_nom,
  -- DEPARTMENT 
  	COALESCE(adp.value, '') as departamento_value,
     COALESCE(adp.name, adp.description) as departamento,
-	CASE WHEN ( $P{AMN_Department_ID} IS NULL or adp.amn_department_id = $P{AMN_Department_ID}) THEN 1 ELSE 0 END AS imprimir_dep,
  -- STATION
     COALESCE(job_s.name, job_s.description) as estacion,
-    CASE WHEN ( $P{AMN_Jobstation_ID} IS NULL or job.amn_jobstation_id = $P{AMN_Jobstation_ID} ) THEN 1 ELSE 0 END AS imprimir_est,
  -- JOBTITLE
     COALESCE(job.name, job.description) as puesto_trabajo,
  -- LOCATION (NÓMINA)
-    loc_n.name as localidad_nomina,
+    loc_n.amn_location_id AS amn_location_id,
+    loc_n.value AS loc_value ,
+    COALESCE(loc_n.name, loc_n.description)  AS loc_name,
+ -- SECTOR (NOMINA)
+    sector.value AS sector_value ,
+    COALESCE(sector.name, sector.description) AS sector_name,
  -- DEPENDENT (CORREO E)
     usr.email as correoe
 FROM adempiere.amn_employee as emp
@@ -146,24 +154,24 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  LEFT JOIN adempiere.c_municipality as mun ON (mun.c_municipality_id= loc.c_municipality_id)
  LEFT JOIN adempiere.c_parish as par ON (par.c_parish_id= loc.c_parish_id)
  LEFT JOIN adempiere.c_city as cit ON (cit.c_city_id= loc.c_city_id)
- LEFT JOIN adempiere.amn_contract as amn_c ON (amn_c.amn_contract_id= emp.amn_contract_id)
- LEFT JOIN (
-	SELECT DISTINCT con.AMN_Contract_ID, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
-	FROM AMN_Contract con
-	LEFT JOIN (
-		SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM AMN_Role_Access 
-		WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM AMN_Process WHERE AMN_Process_Value='NN') AND AD_Role_ID = $P{AD_Role_ID}
+ INNER JOIN (
+	SELECT DISTINCT con.AMN_Contract_ID, con.value, con.name, con.description, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
+	FROM adempiere.AMN_Contract con
+	INNER JOIN (
+		SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM adempiere.AMN_Role_Access 
+		WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM adempiere.AMN_Process WHERE AMN_Process_Value='NN') AND AD_Role_ID = $P{AD_Role_ID}
 	) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID
- ) cok on cok.AMN_Contract_ID = amn_c.AMN_Contract_ID
- LEFT JOIN adempiere.amn_department as adp ON (adp.amn_department_id= emp.amn_department_id)
- LEFT JOIN adempiere.amn_jobtitle as job ON (job.amn_jobtitle_id= emp.amn_jobtitle_id)
+ ) cok on cok.AMN_Contract_ID = emp.AMN_Contract_ID
+ INNER JOIN adempiere.amn_department as adp ON (adp.amn_department_id= emp.amn_department_id)
+ INNER JOIN adempiere.amn_jobtitle as job ON (job.amn_jobtitle_id= emp.amn_jobtitle_id)
  LEFT JOIN adempiere.amn_jobstation as job_s ON (job_s.amn_jobstation_id= job.amn_jobstation_id)
- LEFT JOIN adempiere.amn_location as loc_n ON (loc_n.amn_location_id= emp.amn_location_id)
+ INNER JOIN adempiere.amn_location as loc_n ON (loc_n.amn_location_id= emp.amn_location_id)
+ INNER JOIN adempiere.amn_sector as sector ON sector.amn_sector_id = emp.amn_sector_id
  LEFT JOIN adempiere.amn_dependent as dep ON (dep.amn_employee_id= emp.amn_employee_id)
  WHERE emp.isactive= 'Y' AND
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) as trabajadores
-WHERE imprimir_dep= 1 AND imprimir_est= 1 AND imprimir_nom= 1 AND imprimir_emp= 1
+WHERE imprimir_nom= 1 AND imprimir_emp= 1
 AND imprimir_org=1 AND ad_client_id = $P{AD_Client_ID}
-ORDER BY org_value, departamento, estacion, grupo, codigo, nombre ASC
+ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC

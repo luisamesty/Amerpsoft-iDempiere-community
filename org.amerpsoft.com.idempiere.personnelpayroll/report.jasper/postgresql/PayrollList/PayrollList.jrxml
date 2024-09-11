@@ -27,7 +27,7 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
-	<parameter name="ShowLocation" class="java.lang.String">
+	<parameter name="isShowLocation" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="ShowDepartment" class="java.lang.String">
@@ -85,8 +85,8 @@ SELECT DISTINCT
 	 pyro.value AS org_value, pyro.name AS org_name,
 	  -- LOCATION
      lct.amn_location_id AS amn_location_id,
-     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN 'Todas' ELSE lct.value END AS loc_value ,
-     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description)
+     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 'Todas' ELSE lct.value END AS loc_value ,
+     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description)
      	END AS localidad ,
  	 -- DEPARTMENT
 	 dpt.amn_department_id, 
@@ -170,7 +170,8 @@ WHERE
 	(imp_header= 1) OR 
 	(client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY nomina.org_value, nomina.amn_period_id, nomina.loc_value, nomina.dpto_value,  nomina.value_emp ASC, nomina.dateacct ASC,  nomina.calcorder,nomina.isshow DESC, header_info ASC]]>
+ORDER BY nomina.org_value, nomina.amn_period_id, nomina.loc_value, nomina.dpto_value,  nomina.value_emp ASC, nomina.dateacct ASC,  nomina.calcorder,nomina.isshow DESC, header_info ASC
+]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -658,7 +659,7 @@ ORDER BY nomina.org_value, nomina.amn_period_id, nomina.loc_value, nomina.dpto_v
 		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
 		<groupHeader>
 			<band height="14" splitType="Stretch">
-				<printWhenExpression><![CDATA[$P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="0" y="0" width="802" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6f1035bb-1950-4040-8309-7a8c4d6984e9">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -674,7 +675,7 @@ ORDER BY nomina.org_value, nomina.amn_period_id, nomina.loc_value, nomina.dpto_v
 		</groupHeader>
 		<groupFooter>
 			<band height="12">
-				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null) && $P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null) && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="0" y="0" width="472" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
 						<property name="local_mesure_unitheight" value="pixel"/>

@@ -31,16 +31,12 @@
 	</parameter>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
-	<parameter name="ShowLocation" class="java.lang.String">
+	<parameter name="AMN_Department_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<parameter name="isShowLocation" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AMN_Department_ID" class="java.lang.Integer"/>
-	<parameter name="ShowDepartment" class="java.lang.String">
-		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<parameter name="isShowHeader" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
@@ -66,8 +62,12 @@ FROM (
 	COALESCE(org.description,org.name,org.value,'') as org_description, 
 	-- EMPLOYEE 
 	    emp.amn_employee_id,
-	    emp.value as codigo,   
+	    emp.value as codigo,  
+        emp.idnumber as cedula,
 	    emp.salary as sueldo, emp.incomedate as fecha_ingreso, emp.Birthday as fecha_nacimiento,
+        date_part('year',age(current_date, emp.incomedate)) a_servicio, 
+        date_part('month',age(current_date, emp.incomedate)) m_servicio, 
+        date_part('day',age(current_date, emp.incomedate)) d_servicio,
 	    emp.status, 
 	    CASE WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN 1
 	         WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN 1
@@ -97,44 +97,34 @@ FROM (
 	-- EMPLOYEE
 	    CASE WHEN ( $P{AMN_Employee_ID} IS NULL OR emp.amn_employee_id = $P{AMN_Employee_ID} ) THEN 1 ELSE 0 END AS imprimir_emp,
 	-- CONTRACT
-	    c.value as contrato_tipo,
-	    COALESCE(c.name, c.description) as contrato_nombre,
-	    CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR c.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_con,
-	-- DEPARTMENT 
-	    CASE WHEN ( $P{AMN_Department_ID} IS NULL or d.amn_department_id = $P{AMN_Department_ID}) THEN 1 ELSE 0 END AS imprimir_dep,
-	    CASE WHEN ($P{AMN_Department_ID} IS NULL AND $P{ShowDepartment} = 'N' ) THEN 0
-	         ELSE d.amn_department_id 
-	         END AS amn_department_id,
-	     CASE WHEN ($P{AMN_Department_ID} IS NULL AND $P{ShowDepartment} = 'N' ) THEN 'XX'
-	          ELSE d.value  
-	          END AS departamento_codigo ,
-	     CASE WHEN ($P{AMN_Department_ID} IS NULL AND $P{ShowDepartment} = 'N' ) THEN '** Todas los Departamentos **'
-	          ELSE  COALESCE(d.name, d.description)
-	          END AS departamento_nombre ,
+	    cok.value as contrato_tipo,
+    	COALESCE(cok.value, cok.name, cok.description) as contrato_nombre,
+	    CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR cok.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_con,
+	-- CONTRACT
+    	CASE WHEN ( $P{AMN_Contract_ID} IS NULL or cok.amn_contract_id = $P{AMN_Contract_ID}) THEN 1 ELSE 0 END AS imprimir_nom,	    
 	-- JobTitle
 		j.value as jobtitle_value, 	j.name as jobtitle_name,	j.description as jobtitle_description,
 	-- LOCATION
 	    CASE WHEN ( $P{AMN_Location_ID} IS NULL or l.amn_location_id = $P{AMN_Location_ID}) THEN 1 ELSE 0 END AS imprimir_loc,
-	    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN 0
+	    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 0
 	         ELSE l.amn_location_id 
 	         END AS amn_location_id,
-	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN 'XX'
+	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 'XX'
 	          ELSE l.value  
 	          END AS localidad_codigo ,
-	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN '** Todas las Localidades **'
+	     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las Localidades **'
 	          ELSE COALESCE(l.name, l.description)
 	          END AS localidad_nombre 
 	FROM AMN_Employee emp
 	LEFT OUTER JOIN C_BPartner cbp ON (cbp.C_BPartner_ID=emp.C_BPartner_ID  AND emp.IsActive='Y')
-	LEFT OUTER JOIN AMN_Contract c ON (c.AMN_contract_ID=emp.AMN_Contract_ID)
-	LEFT JOIN (
-		SELECT DISTINCT con.AMN_Contract_ID, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
-		FROM AMN_Contract con
-		LEFT JOIN (
-			SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM AMN_Role_Access 
-			WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM AMN_Process WHERE AMN_Process_Value='NN') AND AD_Role_ID = $P{AD_Role_ID}
-		) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID
-	) cok on cok.AMN_Contract_ID = c.AMN_Contract_ID
+	INNER JOIN (
+		SELECT DISTINCT con.AMN_Contract_ID, con.value, con.name, con.description, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
+		FROM adempiere.AMN_Contract con
+		INNER JOIN (
+			SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM adempiere.AMN_Role_Access 
+			WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM adempiere.AMN_Process WHERE AMN_Process_Value='NN') AND AD_Role_ID = $P{AD_Role_ID}
+		) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID	
+	) cok on cok.AMN_Contract_ID = emp.AMN_Contract_ID
 	LEFT OUTER JOIN AMN_Department d ON (d.AMN_Department_ID=emp.AMN_Department_ID)
 	LEFT OUTER JOIN AMN_Jobtitle j ON(j.AMN_Jobtitle_ID = emp.AMN_Jobtitle_ID)
 	LEFT OUTER JOIN AMN_Shift s ON(s.AMN_Shift_ID = emp.AMN_Shift_ID)
@@ -162,9 +152,9 @@ FROM (
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) trab
-WHERE trab.imprimir_status=1 AND trab.imprimir_con=1 AND trab.imprimir_dep =1 
+WHERE trab.imprimir_status=1 AND trab.imprimir_con=1
 	AND trab.imprimir_loc=1 AND trab.imprimir_org = 1
-ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
+ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.codigo
  ]]>
 	</queryString>
 	<field name="rep_taxid" class="java.lang.String">
@@ -211,6 +201,11 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
+	<field name="cedula" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cedula"/>
+		<property name="com.jaspersoft.studio.field.label" value="cedula"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
 	<field name="sueldo" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="sueldo"/>
 		<property name="com.jaspersoft.studio.field.label" value="sueldo"/>
@@ -225,6 +220,18 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 		<property name="com.jaspersoft.studio.field.name" value="fecha_nacimiento"/>
 		<property name="com.jaspersoft.studio.field.label" value="fecha_nacimiento"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="a_servicio" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="a_servicio"/>
+		<property name="com.jaspersoft.studio.field.label" value="a_servicio"/>
+	</field>
+	<field name="m_servicio" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="m_servicio"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_servicio"/>
+	</field>
+	<field name="d_servicio" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="d_servicio"/>
+		<property name="com.jaspersoft.studio.field.label" value="d_servicio"/>
 	</field>
 	<field name="status" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="status"/>
@@ -308,21 +315,9 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 		<property name="com.jaspersoft.studio.field.name" value="imprimir_con"/>
 		<property name="com.jaspersoft.studio.field.label" value="imprimir_con"/>
 	</field>
-	<field name="imprimir_dep" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imprimir_dep"/>
-		<property name="com.jaspersoft.studio.field.label" value="imprimir_dep"/>
-	</field>
-	<field name="amn_department_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_department_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_department_id"/>
-	</field>
-	<field name="departamento_codigo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="departamento_codigo"/>
-		<property name="com.jaspersoft.studio.field.label" value="departamento_codigo"/>
-	</field>
-	<field name="departamento_nombre" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="departamento_nombre"/>
-		<property name="com.jaspersoft.studio.field.label" value="departamento_nombre"/>
+	<field name="imprimir_nom" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="imprimir_nom"/>
+		<property name="com.jaspersoft.studio.field.label" value="imprimir_nom"/>
 	</field>
 	<field name="jobtitle_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="jobtitle_value"/>
@@ -361,9 +356,6 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 	<variable name="v_employee_count_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
 		<variableExpression><![CDATA[($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 ? 1 : 0 )]]></variableExpression>
 	</variable>
-	<variable name="v_employee_count_dpto" class="java.lang.Integer" resetType="Group" resetGroup="Group_porDepartamento" calculation="Sum">
-		<variableExpression><![CDATA[($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 ? 1 : 0 )]]></variableExpression>
-	</variable>
 	<variable name="v_employee_count_A" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[(($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 && $F{status}.compareToIgnoreCase( "A" ) == 0) ? 1 : 0 )]]></variableExpression>
 	</variable>
@@ -400,6 +392,30 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 			</band>
 		</groupFooter>
 	</group>
+	<group name="Group_porContrato" isReprintHeaderOnEachPage="true" minHeightToStartNewPage="5">
+		<groupExpression><![CDATA[$F{contrato_tipo}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="1050" height="14" isRemoveLineWhenBlank="true" uuid="3b816b18-6cb0-465a-bda8-eff6be628b0c">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="6"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Contrato: " + ($F{contrato_tipo}!= null ? $F{contrato_tipo}.trim() : "N/A") +
+ ($F{contrato_nombre}!= null ? "-"+$F{contrato_nombre}.trim() : "")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="5">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupFooter>
+	</group>
 	<group name="Group_porLocalidad" isReprintHeaderOnEachPage="true">
 		<groupHeader>
 			<band height="14">
@@ -411,7 +427,7 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box leftPadding="10"/>
+					<box leftPadding="12"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
@@ -436,45 +452,6 @@ ORDER BY trab.localidad_codigo, trab.departamento_codigo, trab.codigo
 					<textFieldExpression><![CDATA["Total Trabajadores Localidad: " + ($F{localidad_codigo}!= null ? $F{localidad_codigo}.trim() : "N/A") +
  ($F{localidad_nombre}!= null ? "-"+$F{localidad_nombre}.trim() : "  ")+"  ("+
 $V{v_employee_count_loc}+")"]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupFooter>
-	</group>
-	<group name="Group_porDepartamento" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{departamento_codigo}]]></groupExpression>
-		<groupHeader>
-			<band height="14">
-				<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1050" height="14" isRemoveLineWhenBlank="true" uuid="749050e6-40a0-48ab-86a2-3d08ab1bc450">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box leftPadding="15"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Departamento: " + ($F{departamento_codigo}!= null ? $F{departamento_codigo}.trim() : "N/A") +
- ($F{departamento_nombre}!= null ? "-"+$F{departamento_nombre}.trim() : "")]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band height="16">
-				<property name="local_mesure_unitheight" value="pixel"/>
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<textField>
-					<reportElement mode="Transparent" x="0" y="0" width="790" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="fa49d54f-c67a-4226-849e-e3d299c0957c">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box leftPadding="2"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Total Trabajadores Departamento " + ($F{departamento_codigo}!= null ? $F{departamento_codigo}.trim() : "N/A") +
- ($F{departamento_nombre}!= null ? "-"+$F{departamento_nombre}.trim() : "  ")+"  ("+
-$V{v_employee_count_dpto}+")"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -699,7 +676,7 @@ $V{v_employee_count_dpto}+")"]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[R.I.F]]></text>
+				<text><![CDATA[CEDULA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="75" y="3" width="240" height="20" uuid="e542dd78-316a-4ef7-b0f0-f3b3911409d0">
@@ -785,7 +762,7 @@ $V{v_employee_count_dpto}+")"]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rif}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cedula}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="475" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="8bf6896b-f6b3-4d5e-b526-1d68f0f7906a">

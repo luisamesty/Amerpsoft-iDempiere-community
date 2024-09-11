@@ -21,7 +21,7 @@
 	</parameter>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
-	<parameter name="ShowLocation" class="java.lang.String">
+	<parameter name="isShowLocation" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
@@ -598,7 +598,7 @@ ORDER BY hist.value_emp, hist.startdate, header_info ASC]]>
 				<reportElement x="0" y="0" width="1550" height="15" isRemoveLineWhenBlank="true" uuid="66b3e921-0d5f-49d7-8d4b-ad1b48583bdc">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>

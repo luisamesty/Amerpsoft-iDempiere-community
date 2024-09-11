@@ -32,8 +32,8 @@ SELECT DISTINCT
 	 pyro.value AS org_value, pyro.name AS org_name,
 	  -- LOCATION
      lct.amn_location_id AS amn_location_id,
-     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN 'Todas' ELSE lct.value END AS loc_value ,
-     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description)
+     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 'Todas' ELSE lct.value END AS loc_value ,
+     CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description)
      	END AS localidad ,
  	 -- DEPARTMENT
 	 dpt.amn_department_id, 
