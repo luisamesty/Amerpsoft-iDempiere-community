@@ -198,6 +198,7 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  WHERE emp.isactive= 'Y' AND
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
+       AND ( CASE WHEN ( ( $P{AMN_Location_ID} = 0 OR $P{AMN_Location_ID} IS NULL ) OR emp.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 ) as trabajadores
 WHERE imprimir_nom= 1 AND imprimir_emp= 1
 AND imprimir_org=1 AND ad_client_id = $P{AD_Client_ID}
