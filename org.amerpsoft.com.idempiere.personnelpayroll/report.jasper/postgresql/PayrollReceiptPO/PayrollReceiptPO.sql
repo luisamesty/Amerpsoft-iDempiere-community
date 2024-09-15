@@ -1,5 +1,5 @@
 -- Payroll Receipt PO Prestamos
--- PO UPDATED FOR ORG *
+-- PO UPDATED FROM Org *
 SELECT * FROM
 (SELECT DISTINCT
 -- ORGANIZATION
@@ -11,7 +11,7 @@ SELECT * FROM
 	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
     CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN '' ELSE loc.regionname END as region,
     CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) OR ( pyr.ad_org_id = 0 ) THEN ''   ELSE COALESCE(loc.regionname, '') END as estado,
-	CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE loc.city END as ciudad,
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN '' ELSE loc.city END as ciudad,
     CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN '' ELSE CONCAT(loc.address1,' ', loc.address2) END as direccion,
 	CASE WHEN 0 = 0 THEN 1 ELSE 0 END as imp_org,
 -- LOCATION
@@ -92,7 +92,6 @@ LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = 'es_VE'
 WHERE prc.value= 'PO' AND org.ad_client_id=  $P{AD_Client_ID}  
 	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )     
---AND org.ad_org_id =  $P{AD_Org_ID}  
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
