@@ -81,6 +81,8 @@ public class AmerpPayrollCalc  {
 	public static String ACCT_Date="";
 	public static String REF_InitDate="";
 	public static String REF_EndDate="";
+	public static Double AMN_downwardloads;
+	public static Double AMN_increasingloads;
 	// Work Force (M.A.D.I.S), Department Value, Location Value, Project Value, 
 	// Activity Value, Jobtitle Value, Jobstation Value
 	public static String AM_Workforce="A";
@@ -759,6 +761,8 @@ public class AmerpPayrollCalc  {
 		AM_Shift = amnshift.getValue();
 		AM_PayrollMode=amnemployee.getpayrollmode();
 		AM_Status =amnemployee.getStatus();
+		AMN_downwardloads = amnemployee.getdownwardloads().doubleValue();
+		AMN_increasingloads = amnemployee.getincreasingloads().doubleValue();
 		AM_IncomeDate=dateFormat.format(amnemployee.getincomedate());
 		AM_PaymentType=amnemployee.getpaymenttype();
 		AM_CivilStatus=amnemployee.getcivilstatus();
@@ -1122,6 +1126,18 @@ public class AmerpPayrollCalc  {
 			if (p_script.contains("REF_EndDate")) {
 				ScriptableObject.putProperty(scope,"REF_EndDate", REF_EndDate );
 				//ctx.setAttribute("REF_EndDate", REF_EndDate, ScriptContext.ENGINE_SCOPE);
+			}	
+			// AMN_downwardloads
+			if (p_script.contains("AMN_downwardloads") ) {					
+				// log.warning("p_script:"+p_script.trim()+"  AMN_downwardloads:"+AMN_downwardloads);
+				ScriptableObject.putProperty(scope,"AMN_downwardloads", BigDecimal.valueOf(AMN_downwardloads));
+				//ctx.setAttribute("NLUNES", BigDecimal.valueOf(NLUNES), ScriptContext.ENGINE_SCOPE);
+			}
+			// AMN_increasingloads
+			if (p_script.contains("AMN_increasingloads") ) {					
+				// log.warning("p_script:"+p_script.trim()+"  AMN_increasingloads:"+AMN_increasingloads);
+				ScriptableObject.putProperty(scope,"NLUNES", BigDecimal.valueOf(AMN_increasingloads));
+				//ctx.setAttribute("NLUNES", BigDecimal.valueOf(NLUNES), ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_Currency")) {
 				ScriptableObject.putProperty(scope,"AM_Currency", AM_Currency );

@@ -120,6 +120,15 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Sector
 		if(tableName.equalsIgnoreCase(MAMN_Sector.Table_Name))
 			return MAMN_Sector.class;
+		// MAMN_Leaves
+		if(tableName.equalsIgnoreCase(MAMN_Leaves.Table_Name))
+			return MAMN_Leaves.class;
+		// MAMN_Leaves_Types
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Types.Table_Name))
+			return MAMN_Leaves_Types.class;
+		// MAMN_Payroll_Schedulle
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Schedulle.Table_Name))
+			return MAMN_Payroll_Schedulle.class;	
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
@@ -223,6 +232,15 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Sector
 		if(tableName.equalsIgnoreCase(MAMN_Sector.Table_Name))
 			return new MAMN_Sector(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Leaves
+		if(tableName.equalsIgnoreCase(MAMN_Leaves.Table_Name))
+			return new MAMN_Leaves(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Leaves_Types
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Types.Table_Name))
+			return new MAMN_Leaves_Types(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Payroll_Schedulle
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Schedulle.Table_Name))
+			return new MAMN_Payroll_Schedulle(Env.getCtx(),Record_ID, trxName);
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
@@ -326,6 +344,15 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Sector
 		if(tableName.equalsIgnoreCase(MAMN_Sector.Table_Name))
 			return new MAMN_Sector(Env.getCtx(),rs, trxName);
+		// MAMN_Leaves
+		if(tableName.equalsIgnoreCase(MAMN_Leaves.Table_Name))
+			return new MAMN_Leaves(Env.getCtx(),rs, trxName);
+		// MAMN_Leaves_Types
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Types.Table_Name))
+			return new MAMN_Leaves_Types(Env.getCtx(),rs, trxName);
+		// MAMN_Payroll_Schedulle
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Schedulle.Table_Name))
+			return new MAMN_Payroll_Schedulle(Env.getCtx(),rs, trxName);
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
