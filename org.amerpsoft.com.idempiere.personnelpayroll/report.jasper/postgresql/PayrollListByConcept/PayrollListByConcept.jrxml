@@ -11,29 +11,28 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="477"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="523"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
+	<parameter name="AD_Role_ID" class="java.lang.Integer"/>
 	<parameter name="C_Currency_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AMN_Process_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Concept_Types_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
 	<parameter name="ShowLocation" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
-	<parameter name="print_Break" class="java.lang.String">
-		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
-	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- PayrollListByConcepts
+		<![CDATA[-- PayrollListByContractsConcepts
 -- Payroll List By Concept in a Period
 SELECT * FROM
 (
@@ -73,9 +72,6 @@ FULL JOIN
      CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN '** Todas las Localidades **'
               ELSE COALESCE(lct.name, lct.description)
      END AS localidad , 
-	  -- LOCATION
-	 --lct.amn_location_id,
-	 --lct.value as loc_value,
 	 --COALESCE(lct.name, lct.description) as localidad,
      CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad,
      -- PERIOD
@@ -87,10 +83,8 @@ FULL JOIN
 	 ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
 	 -- PROCESS
 	 prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
-   CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1 ELSE 0 END AS imp_proceso,
      -- CONTRACT
 	 amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-     CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato,
 	-- CURRENCY
 	curr1.iso_code as iso_code1,
 	COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
@@ -111,14 +105,23 @@ FULL JOIN
 	   currencyConvert(pyr_d.amountdeducted, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountdeducted,
 	   currencyConvert(pyr_d.amountcalculated, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountcalculated
  	FROM adempiere.amn_payroll as pyr
-     LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
-     LEFT JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
-     LEFT JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
-     LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
-     LEFT JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
-	 LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
-	 LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
-	 LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	
+    INNER JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+    INNER JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+    INNER JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
+    INNER JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
+    INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
+	LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+	LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
+	INNER JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	
+	INNER JOIN (
+		SELECT DISTINCT con.AMN_Contract_ID, con.value, con.name, con.description, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
+		FROM adempiere.AMN_Contract con
+		INNER JOIN (
+			SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM adempiere.AMN_Role_Access 
+			WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM adempiere.AMN_Process WHERE AMN_Process_Value='NN') 
+			AND ( CASE WHEN ( $P{AD_Role_ID}  IS NULL OR AD_Role_ID= $P{AD_Role_ID} ) THEN 1=1 ELSE 1=0 END )
+		) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID
+	 ) cok on cok.AMN_Contract_ID = emp.AMN_Contract_ID
 	 LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
      LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
      LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
@@ -127,10 +130,11 @@ WHERE pyr.AD_Client_ID =$P{AD_Client_ID}
 	AND	( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Concept_Types_ID}  IS NULL OR ctp.amn_concept_types_id= $P{AMN_Concept_Types_ID} ) THEN 1=1 ELSE 1=0 END )
 	) as nomina ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.calcorder ASC, nomina.value_emp ASC
+ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value ASC, nomina.calcorder ASC, nomina.value_emp ASC
 ]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
@@ -259,10 +263,6 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 		<property name="com.jaspersoft.studio.field.name" value="proceso"/>
 		<property name="com.jaspersoft.studio.field.label" value="proceso"/>
 	</field>
-	<field name="imp_proceso" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_proceso"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_proceso"/>
-	</field>
 	<field name="c_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
 		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
@@ -271,10 +271,6 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 	<field name="c_tipo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
 		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
-	</field>
-	<field name="imp_contrato" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_contrato"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_contrato"/>
 	</field>
 	<field name="iso_code1" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="iso_code1"/>
@@ -338,23 +334,16 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 		<property name="com.jaspersoft.studio.field.name" value="amountcalculated"/>
 		<property name="com.jaspersoft.studio.field.label" value="amountcalculated"/>
 	</field>
-	<variable name="v_asignaciones" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+	<variable name="v_asignaciones_loc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
 		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
  ? $F{amountallocated}
  : BigDecimal.ZERO
 )]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="v_deducciones" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+	<variable name="v_deducciones_loc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
 		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
  ? $F{amountdeducted}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_calculado" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountcalculated}!= null && $F{isshow}.compareToIgnoreCase("N")== 0
- ? $F{amountcalculated}
  : BigDecimal.ZERO
 )]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -380,16 +369,224 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 )]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="v_asignaciones_contract" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porContrato" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountallocated}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_deducciones_contract" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porContrato" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountdeducted}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_asignaciones_period" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porPeriodo" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountallocated}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_deducciones_period" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porPeriodo" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
+ ? $F{amountdeducted}
+ : BigDecimal.ZERO
+)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_no_trabajadores_contract" class="java.lang.Integer" resetType="Group" resetGroup="Group_porContrato" calculation="Sum">
+		<variableExpression><![CDATA[($F{amn_employee_id}!= null && $F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 ? 1:0)]]></variableExpression>
+	</variable>
+	<variable name="v_no_trabajadores_report" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[($F{amn_employee_id}!= null && $F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 ? 1:0)]]></variableExpression>
+	</variable>
+	<variable name="v_periodo" class="java.lang.String">
+		<variableExpression><![CDATA[$F{periodo}!= null ? $F{periodo} : $V{v_periodo}]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<group name="Group_porContrato" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{c_value}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<printWhenExpression><![CDATA[$F{c_value}!=null && $F{amndateini}!=null &&$F{loc_value}!=null && $F{cty_value}!=null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato">
+					<reportElement x="0" y="0" width="968" height="18" uuid="217d1109-a841-4903-87e3-b360826d3c1a">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.contract}+": "+$F{c_value}.trim()+"-"+$F{c_tipo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{c_value}!=null && $F{amndateini}!=null &&$F{loc_value}!=null && $F{cty_value}!=null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato">
+					<reportElement x="0" y="0" width="728" height="12" uuid="25926b47-5636-4fe7-a31c-62222c73dc11">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{c_value}.trim()+"-"+$F{c_tipo}.trim()+" --->"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8bf4470d-e21c-4a67-bad4-a5d3701d1b40">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_contract}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="84a40510-10c2-4210-beae-0c118636e70e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_deducciones_contract}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c5b01920-ac91-485c-b053-ee423dd6dff6">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_contract}.subtract($V{v_deducciones_contract})]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
+					<reportElement x="0" y="12" width="538" height="12" uuid="4ba1e006-839c-40f5-839d-55fe05fa0dc5">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.employees}.trim()+" "+" --->"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
+					<reportElement mode="Transparent" x="540" y="12" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="14d4e74b-8bd9-4ee3-a992-90a5198aa2a7">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_no_trabajadores_report}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_porPeriodo" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{amndateini}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<printWhenExpression><![CDATA[ $F{amndateini}!=null &&$F{loc_value}!=null]]></printWhenExpression>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porPeriodo">
+					<reportElement x="0" y="0" width="968" height="16" uuid="428e3bcf-8d4c-4d57-a7f8-b14e02ac4455">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<printWhenExpression><![CDATA[$F{periodo}!=null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+						<paragraph lineSpacingSize="1.5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{periodo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo">
+					<reportElement x="0" y="0" width="728" height="12" uuid="48baee6b-0128-4faa-8868-2433d2f8bdc0">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{periodo}.trim()+" --->"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8ef55e0b-0b96-43d5-8d07-0be7c74d5c39">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_period}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="538" y="0" width="430" height="1" uuid="25170ab5-8bd7-4d80-965c-7ee2ca1d2d84">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="fad4e177-60fa-437b-8d2a-3bae95846f99">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_deducciones_period}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ab5a7dab-5237-4c06-b8ea-1d77f0ccb4ca">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_period}.subtract($V{v_deducciones_period})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
 	<group name="Group_porLocalidad" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{amn_location_id}]]></groupExpression>
+		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
 				<printWhenExpression><![CDATA[$F{amn_location_id}!= null && $P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				<textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad">
 					<reportElement x="0" y="0" width="968" height="18" uuid="323f8cae-3688-4444-9077-f3581ce5d701">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<box leftPadding="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.location}+": "+$F{loc_value}.trim()+"-"+$F{localidad}]]></textFieldExpression>
@@ -397,9 +594,9 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="26">
-				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null]]></printWhenExpression>
-				<textField pattern="#,##0.00">
+			<band height="24">
+				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e66e3f61-db26-4321-8e85-405fb6243ca4">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -408,9 +605,9 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{v_asignaciones}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_loc}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00">
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0ec8f9db-c8d9-4ac0-b1ff-a697cf288b48">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -419,9 +616,9 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{v_asignaciones}.subtract($V{v_deducciones})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_loc}.subtract($V{v_deducciones_loc})]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00">
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1b5ac934-014c-4a00-9703-8b2583e63963">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -430,13 +627,8 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{v_deducciones}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{v_deducciones_loc}]]></textFieldExpression>
 				</textField>
-				<break>
-					<reportElement x="0" y="25" width="100" height="1" uuid="6c0f2bf1-cbdb-4aee-b09a-bfc35108da0c">
-						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					</reportElement>
-				</break>
 				<line>
 					<reportElement x="538" y="0" width="430" height="1" uuid="4dc8c82e-d50d-4642-a503-3448ad682217">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -450,37 +642,17 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 					</graphicElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad">
-					<reportElement x="0" y="12" width="728" height="12" uuid="ae8a7da6-3592-4d5f-9c90-0f3b804158cf">
+					<reportElement x="0" y="0" width="728" height="12" uuid="ae8a7da6-3592-4d5f-9c90-0f3b804158cf">
 						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{loc_value}.trim()+"-"+$F{localidad}.trim()+" --->"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+  ($F{loc_value}.compareTo( "XX" )!=0 ?  $F{loc_value}.trim()+"-" : " ")+$F{localidad}.trim()+" --->"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
-	</group>
-	<group name="Group_porPeriodo" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{amn_period_id}]]></groupExpression>
-		<groupHeader>
-			<band height="16">
-				<printWhenExpression><![CDATA[$F{amn_period_id}!= null]]></printWhenExpression>
-				<textField textAdjust="StretchHeight">
-					<reportElement x="0" y="0" width="968" height="16" uuid="428e3bcf-8d4c-4d57-a7f8-b14e02ac4455">
-						<property name="local_mesure_unitheight" value="pixel"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
-						<paragraph lineSpacingSize="1.5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($F{periodo}!= null
- ? $F{periodo} + ($F{c_tipo}!= null ? "\n" + $R{report.contract}+": " + $F{c_tipo} : "N/A" )
- : "N/A" + ($F{c_tipo}!= null ? "\n" + $R{report.contract}+": " + $F{c_tipo} : "N/A")
- )]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
 	</group>
 	<group name="Group_porConcepto" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{concept_type}]]></groupExpression>
@@ -489,29 +661,32 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{amn_concept_types_id}!= null]]></printWhenExpression>
-				<textField>
-					<reportElement x="0" y="0" width="158" height="15" uuid="37744d7b-9cff-4786-a340-39502da46a0d">
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
+					<reportElement x="0" y="0" width="178" height="15" uuid="37744d7b-9cff-4786-a340-39502da46a0d">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					</reportElement>
+					<box leftPadding="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cty_value}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement x="158" y="0" width="100" height="15" uuid="12ad7609-5351-4adb-adc2-d33d4a905b16">
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
+					<reportElement x="178" y="0" width="80" height="15" uuid="12ad7609-5351-4adb-adc2-d33d4a905b16">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{calcorder}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
 					<reportElement x="258" y="0" width="710" height="15" uuid="ae8030de-0232-4b0c-b19b-522052b480db">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -527,7 +702,7 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 		<groupFooter>
 			<band height="24">
 				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null]]></printWhenExpression>
-				<textField pattern="#,##0.00">
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f7afb09a-2372-4a9f-8e61-048b64ff9ac3">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$V{v_asignaciones_concepto}!= BigDecimal.ZERO]]></printWhenExpression>
@@ -539,7 +714,7 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_concepto}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="361f585a-afda-4ac3-8387-40fcdf8bf82f">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -558,7 +733,7 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
-				<textField pattern="#,##0.00">
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1773bdd9-6507-4179-b56c-4c3e08806b70">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -574,13 +749,36 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 )]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="0" y="12" width="728" height="12" uuid="5a988787-f0d6-4f55-8380-6f247d487ba0">
+					<reportElement x="0" y="0" width="728" height="12" uuid="5a988787-f0d6-4f55-8380-6f247d487ba0">
 						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{cty_value}.trim()+"("+$F{calcorder}+")"+$F{concept_type}+" --->"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
+					<reportElement x="0" y="12" width="538" height="12" uuid="19de003f-7944-405f-8a29-f4faff1dbcd6">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.employees}.trim()+" ("+$F{c_value}.trim()+"-"+$F{periodo}.trim()+" "+$F{cty_value}+") --->"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
+					<reportElement mode="Transparent" x="540" y="12" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="94642729-5fb5-48ab-9c7b-ae56f21847a7">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_no_trabajadores_contract}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -664,19 +862,6 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report" pattern="">
-				<reportElement x="258" y="30" width="470" height="14" uuid="3e080210-c549-4be7-9ffa-606477e18cc2">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($P{AMN_Period_ID}!= null 
- ? ($R{report.period}+": "+ ($F{periodo}) ) 
- : "("+$R{report.allperiods}+")"
-)]]></textFieldExpression>
-			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="728" y="30" width="240" height="14" uuid="2fbbb53c-e66b-4403-a559-964a37cb6cff">
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -698,6 +883,19 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="">
+				<reportElement x="258" y="30" width="470" height="14" uuid="9a069d31-c6f9-4b3a-830c-60566896d59a">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{AMN_Period_ID}!= null 
+ ? ($R{report.period}+": "+ ($V{v_periodo} ) )
+ : "("+$R{report.allperiods}+")"
+)]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -749,7 +947,7 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 				<textFieldExpression><![CDATA[$R{report.contract}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="4" width="58" height="14" uuid="a6281265-3188-4404-9f44-5bf1338e6601">
+				<reportElement x="100" y="4" width="78" height="14" uuid="a6281265-3188-4404-9f44-5bf1338e6601">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -759,9 +957,10 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 				<textFieldExpression><![CDATA[$R{report.concept}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="158" y="4" width="100" height="14" uuid="cccc32ea-7679-48ba-b9bd-19b0814b9243">
+				<reportElement x="178" y="4" width="80" height="14" uuid="cccc32ea-7679-48ba-b9bd-19b0814b9243">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" isBold="true"/>
@@ -822,7 +1021,7 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 	</columnHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 && $F{amountallocated}!=null]]></printWhenExpression>
 			<textField pattern="#,##0.00">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="618" y="0" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e4ed1fde-1e17-49a0-ba9d-ea1361feabb9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -841,12 +1040,12 @@ ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.cal
 )]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="158" y="0" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="de07e6cd-c9c4-4e8f-b59a-e89e6ba0a0bd">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="178" y="0" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="de07e6cd-c9c4-4e8f-b59a-e89e6ba0a0bd">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
