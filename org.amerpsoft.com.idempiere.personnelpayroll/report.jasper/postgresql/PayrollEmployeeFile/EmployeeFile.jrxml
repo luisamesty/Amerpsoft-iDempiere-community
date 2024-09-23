@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Ficha del Trabajador" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="559467b1-9c63-4cff-9068-19ccd8f6f1f7">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<queryString language="SQL">
@@ -35,62 +35,62 @@ SELECT * FROM (
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_sex' and rfl.value= emp.sex) as sexo,
+		 WHERE LOWER(rfr.name) = 'amn_sex' and rfl.value= emp.sex) as sexo,
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_civilstatus' and rfl.value= emp.civilstatus) as estado_civil, 
+		 WHERE LOWER(rfr.name) = 'amn_civilstatus' and rfl.value= emp.civilstatus) as estado_civil, 
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_spouse' and rfl.value= emp.spouse) as conyuge,
+		 WHERE LOWER(rfr.name) = 'amn_spouse' and rfl.value= emp.spouse) as conyuge,
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_handuse' and rfl.value= emp.handuse) as mano_dominante, 
+		 WHERE LOWER(rfr.name) = 'amn_handuse' and rfl.value= emp.handuse) as mano_dominante, 
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_spouse' and rfl.value= emp.isstudying) as estudia, 
+		 WHERE LOWER(rfr.name) = 'amn_spouse' and rfl.value= emp.isstudying) as estudia, 
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_spouse' and rfl.value= emp.ismedicated) as usa_medicamentos,
+		 WHERE LOWER(rfr.name) = 'amn_spouse' and rfl.value= emp.ismedicated) as usa_medicamentos,
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_spouse' and rfl.value= emp.uselenses) as lentes, 
+		 WHERE LOWER(rfr.name) = 'amn_spouse' and rfl.value= emp.uselenses) as lentes, 
 		(SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_educationalgrade' and rfl.value= emp.educationgrade) as grado_instruccion, 
+		 WHERE LOWER(rfr.name) = 'amn_educationalgrade' and rfl.value= emp.educationgrade) as grado_instruccion, 
 		COALESCE((SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_jobcondition' and rfl.value= emp.jobcondition), '-') as condicion_trabajo, 
+		 WHERE LOWER(rfr.name) = 'amn_jobcondition' and rfl.value= emp.jobcondition), '-') as condicion_trabajo, 
 		COALESCE((SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_paymenttype' and rfl.value= emp.paymenttype),'-') as tipo_pago, 
+		 WHERE LOWER(rfr.name) = 'amn_paymenttype' and rfl.value= emp.paymenttype),'-') as tipo_pago, 
 		COALESCE((SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_payrollmode' and rfl.value= emp.payrollmode),'-') as tipo_nomina, 
+		 WHERE LOWER(rfr.name) = 'amn_payrollmode' and rfl.value= emp.payrollmode),'-') as tipo_nomina, 
 		 COALESCE((SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) )
-		 WHERE rfr.name = 'amn_privateassit' and rfl.value= emp.privateassist),'-') as seguro, 
+		 WHERE LOWER(rfr.name) = 'amn_privateassit' and rfl.value= emp.privateassist),'-') as seguro, 
 		COALESCE(emp.salary, 0) as sueldo, COALESCE(emp.incomedate, '01/01/0001') as fecha_ingreso,
 		COALESCE(emp.increasingloads, 0) as carga_asc, COALESCE(emp.downwardloads, 0) as carga_desc, 
 		COALESCE(emp.hobbyes, '-') as hobby, COALESCE(emp.sports, '-') as deportes,
@@ -186,7 +186,9 @@ FULL JOIN
 		  FROM adempiere.ad_reference as rfr
 		  INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		  INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		  WHERE rfr.name = 'C_Bank Account Type' AND rlt.ad_language= 'es_VE' and rfl.value= cba.bankaccounttype), '-') as tipo_cuenta,
+		  WHERE LOWER(rfr.name) = 'C_Bank Account Type' 
+		  	AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =( SELECT AD_Client_ID FROM C_invoice WHERE C_Invoice_ID=$P{AMN_Employee_ID} ) ) 
+		  	and rfl.value= cba.bankaccounttype), '-') as tipo_cuenta,
      COALESCE(cba.a_country,'-') as pais_cuenta
 	FROM adempiere.amn_employee as emp
 	 INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
