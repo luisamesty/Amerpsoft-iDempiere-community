@@ -1,0 +1,335 @@
+AD_Org_ID[Name],Value,Name,Description,Help,AccessLevel,EntityType,EventType,RuleType,Script,IsActive,RuleOrder
+*,beanshell:RV_FVACAC190,RV_FVACAC190,RV_FVACAC190 Vacaciones fraccionadas para liquidacion de prestaciones,"Fraccion de Vacciones desde la ultima fecha de cumplimiento de años de servicios del trabajador
+No Días = 15 ( Dias desde el cumpleaños de servicio / 360 )",3,AMERP,P,S,"// Rule: RV_FVACAC190
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+// CalIni Employee Income date
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calc Diff in days elapsed
+int i365 = 365;
+int i15 = 15;
+int iZero = 0;
+int diffdayslast = 0;
+if (secondDayValue >= firstDayValue )
+	diffdayslast = secondDayValue - firstDayValue;
+if (secondDayValue < firstDayValue )
+	diffdayslast = secondDayValue + (i365 - firstDayValue);
+// Calc Fraction in Big Decimal
+BigDecimal BDVacacDays = new BigDecimal(iZero);
+BigDecimal DBdiffDays= new BigDecimal(diffdayslast);
+BigDecimal BD365 = new BigDecimal(i365);
+BigDecimal BD15 = new BigDecimal(i15);
+BigDecimal BDVacacDays = DBdiffDays.divide(BD365,6, RoundingMode.HALF_UP);
+BDVacacDays = BDVacacDays.multiply(BD15);
+BDVacacDays.setScale(2, RoundingMode.HALF_UP);
+// TRAZA
+return BDVacacDays;
+",Y,100000
+*,beanshell:RV_FVACAC190ADI,RV_FVACAC190ADI,RV_FVACAC190ADI Días Adicionales Artículo 190 fraccionado para liquidacion de prestaciones,"Fraccion de Días Adicionales  desde la ultima fecha de cumplimiento de años de servicios del trabajador
+No Días Máximo= 15 ( Dias desde el cumpleaños de servicio / 360 )",3,AMERP,P,S,"// RV_FVACAC190ADI
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+// CalIni Employee Income date
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calc Diff in days elapsed
+int i365 = 365;
+int diffdayslast = 0;
+if (secondDayValue >= firstDayValue )
+	diffdayslast = secondDayValue - firstDayValue;
+if (secondDayValue < firstDayValue )
+	diffdayslast = secondDayValue + (i365 - firstDayValue);
+// Calculates No of years
+int diffyears = secondYearValue - firstYearValue;
+// Year Validation > 180  means one year
+if (diffyears <= 0 )
+	DByearService = BigDecimal.ZERO;
+// Calculates No of years (Max to 15)
+if (diffyears >= 1 )
+   diffyears = diffyears - 1;
+if (diffyears > 15 )
+    diffyears=15;
+// Final Big Decimal Calc
+BigDecimal BDdiffyears= new BigDecimal(diffyears);
+BigDecimal BDdiffdayslast= new BigDecimal(diffdayslast);
+
+BigDecimal BD365 = new BigDecimal(i365);
+BigDecimal DBBonVacacFrac = BDdiffdayslast.divide(BD365,6, RoundingMode.HALF_UP);
+DBBonVacacFrac = DBBonVacacFrac.multiply(BDdiffyears);
+DBBonVacacFrac.setScale(2, RoundingMode.HALF_UP);
+return DBBonVacacFrac;",Y,100010
+*,beanshell:RV_FDAYSFRAC,RV_FDAYSFRAC,RV_FDAYSFRAC Dás transcurridos desde el ultmo aniversario del trabajador,"Dás transcurridos desde el ultmo aniversario del trabajador
+Util para calcular valores fraccionados como VACACIONES y otros beneficios",3,AMERP,P,S,"// RV_FDAYSFRAC
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+// CalIni Employee Income date
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calc Diff in days elapsed
+int i365 = 365;
+int diffdayslast = 0;
+if (secondDayValue >= firstDayValue )
+	diffdayslast = secondDayValue - firstDayValue;
+if (secondDayValue < firstDayValue )
+	diffdayslast = secondDayValue + (i365 - firstDayValue);
+BigDecimal DBdiffDays = new BigDecimal(diffdayslast);
+DBdiffDays.setScale(2, RoundingMode.HALF_UP);
+return DBdiffDays;",Y,100020
+*,beanshell:RV_FDAYS_THISYEAR,RV_FDAYS_THISYEAR,RV_FDAYS_THISYEAR Días transcurridos desde el 01/01/XXXX,"Días transcurridos desde el 01/01/XXXX
+Util para calcular valores fraccionados como VACACIONES, UTILIDADES y otros beneficios",3,U,P,S,"// RV_FDAYS_THISYEAR
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp end =A_InvDateEnd;
+// CalIni Fist day of YEAR
+Calendar calIni = Calendar.getInstance();
+calIni.set(Calendar.DAY_OF_YEAR, 1);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calculates Days from Begining of the year
+int firstDayofYear = calIni.get(Calendar.DAY_OF_YEAR);
+int diffdayslast = secondDayValue - firstDayofYear;
+if (diffdayslast < 0 )
+    diffdayslast=0;
+diffdayslast = diffdayslast +1;
+BigDecimal DBdiffDays = new BigDecimal(diffdayslast);
+DBdiffDays.setScale(2, RoundingMode.HALF_UP);
+return DBdiffDays;",Y,100030
+*,beanshell:RV_FYEAR_SERVICE,RV_FYEAR_SERVICE,RV_FYEAR_SERVICE Numero de Años de servicio para el cálculo de la indemnización por prestaciones sociales,"Numero de Años de servicio para el cálculo de la indemnización por prestaciones sociales.
+Si el numero de días es superio a 180 el primer año, entonces se calculará como 1.
+",3,AMERP,P,S,"// RV_FYEAR_SERVICE
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+BigDecimal DByearService = BigDecimal.ZERO;
+int diffdays = 0;
+int diffyears = 0;
+// Calculates using Calendar class
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calculates Days from Income Date
+if (secondDayValue > firstDayValue) {
+	diffdays = secondDayValue - firstDayValue;
+} else {
+	diffdays = secondDayValue + (365 - firstDayValue);
+}
+// Calculates Years elapsed from Income date
+diffyears = secondYearValue - firstYearValue -1;
+// Year Validation > 180  means one year
+if (diffyears < 0 ) {
+	DByearService = BigDecimal.ZERO;
+}
+if (diffyears > 0  ) {
+	// IF Fragment of days is greater than 180 then add a year
+	if (diffdays > 180) {
+		diffyears = diffyears + 1;
+	}
+	DByearService = new BigDecimal(diffyears);
+}
+// IF Fragment of days is greater than 180 then add a year
+if (diffyears == 0 && diffdays > 180) {
+	diffyears = diffyears + 1;
+}
+DByearService = new BigDecimal(diffyears);
+DByearService.setScale(2, RoundingMode.HALF_UP);
+return DByearService;",Y,100050
+*,beanshell:RV_FDAYS_SERVICE,RV_FDAYS_SERVICE,RV_FDAYS_SERVICE Numero de días de servicio para el cálculo de la indemnización por prestaciones sociales,"Numero de Días de servicio para el cálculo de la indemnización por prestaciones sociales.
+Para el caso de que el Número de años sea cero, considerando menor a seis meses de servicio.
+",3,AMERP,P,S,"// RV_FDAYS_SERVICE
+// RETURN ABSOLUTE SERVICES DAYS
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+BigDecimal BDdaysService = BigDecimal.ZERO;
+boolean negative = false;
+int diffdays = 0;
+if (end.before(start))  {
+   negative = true;
+   Timestamp temp = start;
+   start = end;
+   end = temp;
+}
+// Calculates using Calendar class
+// start  (calIni)
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+calIni.set(Calendar.HOUR_OF_DAY, 0);
+calIni.set(Calendar.MINUTE, 0);
+calIni.set(Calendar.SECOND, 0);
+calIni.set(Calendar.MILLISECOND, 0);
+// end (calEnd)
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+calEnd.set(Calendar.HOUR_OF_DAY, 0);
+calEnd.set(Calendar.MINUTE, 0);
+calEnd.set(Calendar.SECOND, 0);
+calEnd.set(Calendar.MILLISECOND, 0);
+// Calculates days
+diffdays = 0;
+while (calEnd.after(calIni))    {
+      calIni.add (Calendar.DAY_OF_YEAR, 1);
+      diffdays++;
+}
+if (negative)
+     diffdays = diffdays * -1;
+// Convert to Big Decimal
+BDdaysService = new BigDecimal(diffdays);
+//BDdaysService.setScale(0, RoundingMode.HALF_UP);
+return BDdaysService;",Y,100060
+*,beanshell:RV_FVACAC192,RV_FVACAC192,RV_FVACAC192 Vacaciones fraccionadas para liquidacion de prestaciones,"Fraccion de Vacciones desde la ultima fecha de cumplimiento de años de servicios del trabajador
+No Días = 15 ( Dias desde el cumpleaños de servicio / 365 )",3,U,P,S,"// Rule: RV_FVACAC192
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+// CalIni Employee Income date
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calc Diff in days elapsed
+int i365 = 365;
+int i15 = 15;
+int iZero = 0;
+int diffdayslast = 0;
+if (secondDayValue >= firstDayValue )
+	diffdayslast = secondDayValue - firstDayValue;
+if (secondDayValue < firstDayValue )
+	diffdayslast = secondDayValue + (i365 - firstDayValue);
+// Calc Fraction in Big Decimal
+BigDecimal BDVacacDays = new BigDecimal(iZero);
+BigDecimal DBdiffDays= new BigDecimal(diffdayslast);
+BigDecimal BD365 = new BigDecimal(i365);
+BigDecimal BD15 = new BigDecimal(i15);
+BigDecimal BDVacacDays = DBdiffDays.divide(BD365,6, RoundingMode.HALF_UP);
+// Calculates No of years
+int diffyears = secondYearValue - firstYearValue;
+// Year Validation > 180  means one year
+if (diffyears <= 0 )
+	DByearService = BigDecimal.ZERO;
+// Calculates No of years (Max to 15)
+//if (diffyears > 1 )
+//   diffyears = diffyears - 1;
+if (diffyears > 15 )
+    diffyears=15;
+// Final Big Decimal Calc
+BigDecimal BDdiffyears= new BigDecimal(diffyears);
+// RESULTADO
+BD15 = BD15.add(BDdiffyears);
+BDVacacDays = BDVacacDays.multiply(BD15);
+BDVacacDays.setScale(2, RoundingMode.HALF_UP);
+// TRAZA
+return BDVacacDays;",Y,100000

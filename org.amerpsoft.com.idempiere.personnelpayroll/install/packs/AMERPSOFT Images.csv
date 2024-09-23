@@ -1,0 +1,7 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT Images,10,D,,,,,,,,Image,ALL,"SELECT * FROM AD_IMAGE WHERE ad_image_uu IN (
+'be4614aa-e2cf-411d-86aa-db547ff9fcf3'
+,'c453d25c-0de9-47c6-93d7-df39fd83d0ab'
+,'f63e5a69-646e-49b6-8839-762cfb8845d9'
+,'6096ee37-522e-4ced-8186-9ac6df948245') ",,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Images,20,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='4213617b-7945-4ca2-858c-79d9d021de7a';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,

@@ -1,0 +1,10 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
+*,AMERPSOFT Personnel Payroll T5,10,M,,Personnel and Payroll Main Tables,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,20,M,,Personnel and Payroll Concepts,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,30,M,,Personnel and Payroll Tables Maintainance,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,40,M,,Personnel and Payroll Processes,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,50,M,,Personnel and Payroll Social Benefits Processes,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,60,M,,Personnel and Payroll Provision Processes,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,70,M,,Personnel and Payroll Reports,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,80,M,,Personnel and Payroll Employee Consultation,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info
+*,AMERPSOFT Personnel Payroll T5,90,M,,Personnel and Payroll Consulting Loans by RoleAccess,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,,Product Info

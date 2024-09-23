@@ -1,0 +1,31 @@
+// RV_FDAYS_THISYEAR
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp end =A_InvDateEnd;
+// CalIni Fist day of YEAR
+Calendar calIni = Calendar.getInstance();
+calIni.set(Calendar.DAY_OF_YEAR, 1);
+// CalEnd A_InvDateEnd
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calculates Days from Begining of the year
+int firstDayofYear = calIni.get(Calendar.DAY_OF_YEAR);
+int diffdayslast = secondDayValue - firstDayofYear;
+if (diffdayslast < 0 )
+    diffdayslast=0;
+diffdayslast = diffdayslast +1;
+BigDecimal DBdiffDays = new BigDecimal(diffdayslast);
+DBdiffDays.setScale(2, RoundingMode.HALF_UP);
+return DBdiffDays;

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.amerp.amnmodel.document.factory">
+   <implementation class="org.amerp.pp.factories.AMNDocumentFactory"/>
+   <property name="service.ranking" type="Integer" value="100"/>
+   <property name="gaap" type="String" value="*"/>
+   <service>
+      <provide interface="org.adempiere.base.IDocFactory"/>
+   </service>
+</scr:component>

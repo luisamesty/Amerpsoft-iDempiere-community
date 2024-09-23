@@ -1,0 +1,239 @@
+PARAMETER XSCCOST,XSSA,XSTnomina,XSCodigo
+XSESTATUS = "AS"
+*****   OJO    *****************
+IF	PNO_CONDPT
+	*-	Inicializa los valores del arreglo de conceptos totales por departamento
+	SELECT &A_DEPTO
+	lnNROREG = RECNO()
+	SET ORDER TO DEPTA   && CCOST+TNOMINA+DEPTO
+	SET EXACT ON
+	SEEK XSCCost + XSTnomina + maemp.depto
+	DO	WHILE	!EOF() AND depto.ccost=XSCCost AND depto.tnomina=XSTnomina AND depto.depto=maemp.depto
+		lcDEPTO = depto.depto
+	  	CDP&lcDEPTO=IIF(AT(",",depto.desdepto)>0,VAL(SUBSTR(depto.desdepto,1,AT(",",depto.desdepto)-1)),0)
+		SELECT &A_MACOD
+		SET EXACT OFF
+		SEEK XSCCost + XSSA + XSTnomina
+		DO WHILE !EOF() AND macod.ccost = XSCCost AND macod.sa = XSSA ;
+			AND macod.tnomina = XSTnomina
+	   	XCODIGO = macod.concepto
+	   	lcDEPTO = depto.depto
+			CNDP&lcDEPTO&XCODIGO=0
+	   	SELECT &A_MACOD
+	   	IF !EOF()
+	    		SKIP
+			ENDIF
+		ENDDO
+		SELECT &A_DEPTO
+		SKIP
+	ENDDO
+
+	SELECT &A_DEPTO
+	GO lnNROREG
+ENDIF
+
+*!*	SELECT &A_MACOD
+*!*	SET EXACT OFF
+*!*	SEEK XSCCost + XSSA + XSTnomina
+*!*	DO WHILE !EOF() AND macod.ccost = XSCCost AND macod.sa = XSSA ;
+*!*		AND macod.tnomina = XSTnomina
+*!*		XCODIGO = macod.concepto
+*!*		RS&XCODIGO=0
+*!*		CN&XCODIGO=0
+*!*		SELECT &A_MACOD
+*!*		IF !EOF()
+*!*		 	SKIP
+*!*		ENDIF
+*!*	ENDDO
+*-
+*****   OJO    *****************
+*-	Inicializa los valores del arreglo de conceptos
+SELECT &A_MACOD
+SET EXACT OFF
+SEEK XSCCost + XSSA + XSTnomina
+DO WHILE !EOF() AND macod.ccost = XSCCost AND macod.sa = XSSA ;
+	AND macod.tnomina = XSTnomina
+	XCODIGO = macod.concepto
+	RS&XCODIGO=0
+	CN&XCODIGO=0
+	SELECT &A_MACOD
+	IF !EOF()
+ 		SKIP
+	ENDIF
+ENDDO
+*-
+*****   OJO    *****************
+*-	Inicializa todas las variables para la fórmula
+SELECT &A_TIPNO
+NLUNES=Numero_de_lunes(TIPNO.FECHAINI,TIPNO.FECHAFIN)
+
+SELECT &A_MANOM
+OLD_REC=RECNO()
+
+SELECT &A_MACOD
+SET EXACT OFF
+SEEK XSCCost + XSSA + XSTnomina
+STORE 0.00 TO R_ASIG, R_DEDUC,XTotal
+STORE 0.00 TO RA_ASIG, RA_DEDUC
+STORE 0.00 TO RB_ASIG, RB_DEDUC
+STORE 0.00 TO RC_ASIG, RC_DEDUC
+STORE 0.00 TO R_FAOV,R_SALARIO,R_INCE,R_SSO,R_ARC,R_SPF
+STORE 0.00 TO R_DESCANSO,R_FERIADO
+DO WHILE !EOF() AND macod.ccost = XSCCost AND macod.sa = XSSA ;
+	AND macod.tnomina = XSTnomina
+	SELECT &A_MANOM
+	SET ORDER TO MANOA
+	SET EXACT ON
+	SEEK XSCCost + XSSA + XSTnomina + XSCodigo + macod.concepto
+	XCODIGO = macod.concepto
+	IF FOUND()
+		&& Por si esta repetido el concepto
+		DO WHILE !EOF() AND manom.ccost=XSCCost AND manom.sa=XSSA AND manom.codigo=XSCodigo AND manom.concepto=macod.concepto
+			SB = maemp.salario
+			SALVAC = maemp.salariovac
+			SALUTI = maemp.salariouti
+			SMAH = maemp.sueldoah
+			SMSANE = maemp.sueldom
+			SMASANE = maemp.sueldoa
+			UTIL = manom.monto
+			PREST = manom.monto
+	 		CN = manom.cantidad
+	 		DT = tipno.ndias
+			CN&XCODIGO = CN
+	 		XFormula = ALLTRIM(macod.formula)
+	 		XTot = NOM_round(&Xformula)
+			RS&XCODIGO = XTot
+			IF SubStr(XCODIGO,1,1)="A"
+				* VARIABLES GLOBALES DE RESUMENES DE ASIGNACIONES
+				* AUMENTA CUANDO ES ASIGNACION
+				IF MACOD.AH =1
+					R_FAOV=R_FAOV+XTot
+				ENDIF
+				IF MACOD.SALARIO =1
+					R_SALARIO=R_SALARIO+XTot
+				ENDIF
+				IF MACOD.INCE =1
+					R_INCE=R_INCE+XTot
+				ENDIF
+				IF MACOD.SSO =1
+					R_SSO=R_SSO+XTot
+				ENDIF
+				IF MACOD.ARC =1
+					R_ARC=R_ARC+XTot
+				ENDIF
+				IF MACOD.SPF =1
+					R_SPF=R_SPF+XTot
+				ENDIF
+				IF MACOD.FER =1
+					R_FERIADO=R_FERIADO+XTot
+				ENDIF
+				IF MACOD.DES =1
+					R_DESCANSO=R_DESCANSO+XTot
+				ENDIF
+				R_ASIG = R_ASIG + XTot
+				IF !ISALPHA(SubStr(XCODIGO,2,1))
+						DO CASE
+							CASE MACOD.GRUPO="A" OR MACOD.GRUPO=" "
+								RA_ASIG = RA_ASIG + XTot
+							CASE MACOD.GRUPO="B"
+								RB_ASIG = RB_ASIG + XTot
+							CASE MACOD.GRUPO="C"
+								RC_ASIG = RC_ASIG + XTot
+						ENDCASE
+				ENDIF
+			ELSE
+				* VARIABLES GLOBALES DE RESUMENES DE ASIGNACIONES
+				* DISMINUYE CUANDO ES DEDUCCION
+				IF MACOD.AH =1
+					R_FAOV=R_FAOV-XTot
+				ENDIF
+				IF MACOD.SALARIO =1
+					R_SALARIO=R_SALARIO-XTot
+				ENDIF
+				IF MACOD.INCE =1
+					R_INCE=R_INCE-XTot
+				ENDIF
+				IF MACOD.SSO =1
+					R_SSO=R_SSO-XTot
+				ENDIF
+				IF MACOD.ARC =1
+					R_ARC=R_ARC-XTot
+				ENDIF
+				IF MACOD.SPF =1
+					R_SPF=R_SPF-XTot
+				ENDIF
+				IF MACOD.FER =1
+					R_FERIADO=R_FERIADO-XTot
+				ENDIF
+				IF MACOD.DES =1
+					R_DESCANSO=R_DESCANSO-XTot
+				ENDIF				
+				R_DEDUC = R_DEDUC + XTot
+				DO CASE
+					CASE MACOD.GRUPO="A" OR MACOD.GRUPO=" "
+						RA_DEDUC = RA_DEDUC + XTot
+					CASE MACOD.GRUPO="B"
+						RB_DEDUC = RB_DEDUC + XTot
+					CASE MACOD.GRUPO="C"
+						RC_DEDUC = RC_DEDUC + XTot
+				ENDCASE
+			ENDIF
+			SELECT &A_MANOM
+			IF !EOF()
+				SKIP
+			endif
+		enddo
+	ELSE
+		RS&XCODIGO = 0.00
+		CN&XCODIGO = 0.00
+	ENDIF
+
+	IF	PNO_CONDPT
+		*-	Calcula los valores generales de los departamentos
+		SELECT &A_MAEMP
+		lcORDER = ORDER()
+		lcNROREG = RECNO()
+		lcDEPTO = maemp.depto
+		SET ORDER TO MAEMC
+		SET EXACT OFF
+		SEEK XSCCost+XSTNomina+lcDEPTO
+		DO WHILE	!EOF() AND maemp.ccost=XSCCost AND maemp.tnomina = XSTnomina  AND maemp.depto = lcDEPTO
+			IF	AT(maemp.status,XSESTATUS)=0
+				SELECT &A_MAEMP
+				SKIP
+				LOOP
+			ENDIF
+
+			SELECT &A_MANOM
+			SET ORDER TO MANOA
+			SET EXACT ON
+			SEEK XSCCost + XSSA + XSTnomina + maemp.codigo + macod.concepto
+			XCODIGO = macod.concepto
+			IF FOUND()
+				CNDP&lcDEPTO&XCODIGO = CNDP&lcDEPTO&XCODIGO + manom.cantidad
+			ELSE
+				CNDP&lcDEPTO&XCODIGO = CNDP&lcDEPTO&XCODIGO + 0.00
+			ENDIF
+			
+			lcHS=CNDP&lcDEPTO&XCODIGO
+			
+			SELECT &A_MAEMP
+			SKIP
+		ENDDO
+		
+		
+		SELECT &A_MAEMP
+		SET ORDER TO "&lcORDER"
+		GO lcNROREG
+		*-
+	ENDIF
+	SELECT &A_MACOD
+	IF !EOF()
+		SKIP
+	ENDIF
+ENDDO
+
+SELECT &A_MANOM
+SET ORDER TO MANOA
+GO OLD_REC
+*-

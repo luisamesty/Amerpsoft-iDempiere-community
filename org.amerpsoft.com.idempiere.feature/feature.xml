@@ -18,22 +18,29 @@
 
    <plugin
          id="org.amerpsoft.com.idempiere.editors-com"
-         version="11.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.zk_themes"
-         version="11.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.lco.withholding"
-         version="11.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.financial"
-         version="11.0.0.qualifier"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.idempiere.zk.iceblue_c.theme"
          version="0.0.0"/>
 
+   <plugin
+         id="org.amerpsoft.com.idempiere.personnelpayroll"
+         version="0.0.0"/>
+         
+   <plugin
+         id="org.amerpsoft.com.idempiere.tools"
+         version="0.0.0"/>
 </feature>

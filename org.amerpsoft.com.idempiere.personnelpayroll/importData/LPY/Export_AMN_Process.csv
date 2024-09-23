@@ -1,0 +1,12 @@
+Value,Name,Description,IsActive,AMN_Process_Value,isAllowLotInvoices
+NN,Nómina de Personal STD,Elaboración de Nómina de Personal,Y,NN,N
+NO,Compensación por Desempeño,Nómina de Compensación por Desempeño,Y,NO,N
+NP,Nómina de Prestaciones,Elaboración de Nómina de Prestaciones,Y,NP,N
+NU,Nómina de Utilidades,Elaboración de Nómina de Utilidades,Y,NU,N
+NV,Nómina de Vacaciones,Elaboración de Nómina de Vacaciones,Y,NV,N
+PI,Nómina de Intereses de Prestaciones,Elaboraciónn de Nómina de Intereses de Prestaciones,Y,PI,N
+PL,Liquidación de Prestaciones Sociales,Liquidación de Prestaciones Sociales,Y,PL,N
+PO,Nómina de Préstamos,Elaboración de Nómina de Préstamos,Y,PO,N
+PR,Nómina de Anticipos de Prestaciones,Elaboración de Anticipos de Prestaciones y Reintegros,Y,PR,N
+TI,Nómina de Beneficio de Alimentación,Elaboración de Nómina de Beneficio de Alimentación,Y,TI,N
+TO,Nómina Otros Beneficios Contractuales,Elaboración de Nómina Otros Beneficios Contractuales,Y,TO,N

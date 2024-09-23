@@ -17,9 +17,7 @@ Special considerations and notes for LVE, LPY and LES localization.
 - [Language Pack](./org.amerpsoft.com.idempiere.languages/README.md)
 - [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 - [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
-- [Cash and Banks (Next coming, under Construction..)](./README.md)
-- [Payroll (Next coming, under construction..)](./README.md)
-- [Electronic Invoice (Next coming, under construction..)](./README.md)
+- [Payroll (Release-11, under test)](./org.amerpsoft.com.idempiere.personnelpayroll/README.md)
 
 </div>
 

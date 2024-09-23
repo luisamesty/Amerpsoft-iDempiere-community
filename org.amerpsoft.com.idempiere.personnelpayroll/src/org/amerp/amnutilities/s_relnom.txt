@@ -1,0 +1,53 @@
+*-	Libera todas las variables para la fórmula
+SELECT &A_MACOD
+SET EXACT OFF
+SEEK XCCost + XSA + XtipNo
+DO WHILE !EOF() AND macod.ccost = XCCost AND macod.sa = XSA ;
+   AND macod.tnomina = XTipNo
+   XCODIGO = macod.concepto
+   RELEASE RS&XCODIGO, CN&XCODIGO
+   SELECT &A_MACOD
+   IF !EOF()
+    	SKIP
+	ENDIF
+ENDDO
+*-
+RELEASE SB,UTIL,PREST,ELA_GRUPO,ELA_DESGRUPO,SMSANE,SMAH,SMASANE,SALVAC,SALUTI
+RELEASE R_ASIG, R_DEDUC
+RELEASE RA_ASIG, RA_DEDUC
+RELEASE RB_ASIG, RB_DEDUC
+RELEASE RC_ASIG, RC_DEDUC
+RELEASE R_FAOV,R_SALARIO,R_INCE,R_SSO,R_ARC,R_SPF
+RELEASE R_DESCANSO,R_FERIADO
+IF	PNO_CONDPT
+	*-	Inicializa los valores del arreglo de conceptos totales por departamento
+	SELECT &A_DEPTO
+	lnNROREG = RECNO()
+	SET ORDER TO DEPTA   && CCOST+TNOMINA+DEPTO
+	SET EXACT OFF
+	SEEK XCCost + XTipNo
+	DO	WHILE	!EOF() AND depto.ccost=XCCost AND depto.tnomina=XTipNo
+		lcDEPTO = depto.depto
+	  	RELEASE CDP&lcDEPTO
+		SELECT &A_MACOD
+		SET EXACT OFF
+		SEEK XCCost + XSA + XTipNo
+		DO WHILE !EOF() AND macod.ccost = XCCost AND macod.sa = XSA ;
+			AND macod.tnomina = XTipNo
+	   	XCODIGO = macod.concepto
+	   	lcDEPTO = depto.depto
+
+	   	RELEASE CNDP&lcDEPTO&XCODIGO
+
+	   	SELECT &A_MACOD
+	   	IF !EOF()
+	    		SKIP
+			ENDIF
+		ENDDO
+		SELECT &A_DEPTO
+		SKIP
+	ENDDO
+
+	SELECT &A_DEPTO
+	GO lnNROREG
+ENDIF

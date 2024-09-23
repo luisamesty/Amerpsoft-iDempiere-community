@@ -1,0 +1,53 @@
+// RV_FYEAR_SERVICE
+import org.compiere.model.*;	
+import org.compiere.util.*;
+import java.math.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.math.BigDecimal;
+// BEGIN
+Timestamp start =A_EmployeeIncomeDate;
+Timestamp end =A_InvDateEnd;
+BigDecimal DByearService = BigDecimal.ZERO;
+int diffdays = 0;
+int diffyears = 0;
+// Calculates using Calendar class
+Calendar calIni = Calendar.getInstance();
+calIni.setTime(start);
+int firstYearValue = calIni.get(Calendar.YEAR);
+int firstDayValue = calIni.get(Calendar.DAY_OF_YEAR);
+Calendar calEnd = Calendar.getInstance();
+calEnd.setTime(end);
+int secondYearValue = calEnd.get(Calendar.YEAR);
+int secondDayValue = calEnd.get(Calendar.DAY_OF_YEAR);
+// Calculates Days from Income Date
+if (secondDayValue > firstDayValue) {
+	diffdays = secondDayValue - firstDayValue;
+} else {
+	diffdays = secondDayValue + (365 - firstDayValue);
+}
+// Calculates Years elapsed from Income date
+diffyears = secondYearValue - firstYearValue -1;
+// Year Validation > 180  means one year
+if (diffyears < 0 ) {
+	DByearService = BigDecimal.ZERO;
+}
+if (diffyears > 0  ) {
+	// IF Fragment of days is greater than 180 then add a year
+	if (diffdays > 180) {
+		diffyears = diffyears + 1;
+	}
+	DByearService = new BigDecimal(diffyears);
+}
+// IF Fragment of days is greater than 180 then add a year
+if (diffyears == 0 && diffdays > 180) {
+	diffyears = diffyears + 1;
+}
+DByearService = new BigDecimal(diffyears);
+DByearService.setScale(2, RoundingMode.HALF_UP);
+return DByearService;

@@ -1,0 +1,65 @@
+AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],AD_Table_ID[Name],AD_Reference_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Workbench_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name]
+AMERPSOFT Personnel Payroll T2,3410,REF,,,,AMN_Contract_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3420,REF,,,,AMN_Department_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3440,REF,,,,AMN_Location_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3450,REF,,,,AMN_Position_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3470,REF,,,,AMN_Shift_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3480,REF,,,,AMN_Jobstation_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3490,REF,,,,AMN_Jobtitle_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3600,SQL,,,,,,,,,,ALL,"UPDATE AD_Element  
+SET columnname='Salary', name='Salary', printname='Salary',  entitytype = 'AMERP', ad_element_uu='525897ba-3ecd-4473-9c76-53ae5f9ee5f6'
+WHERE  lower(columnname) ='salary'",,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3610,SQL,,,,,,,,,,ALL,"UPDATE AD_Element  
+SET columnname='civilstatus', name='Civil Status', printname='Civil Status', entitytype = 'AMERP', ad_element_uu='9f9291c5-1194-4308-9da8-b90fb39d5012'
+WHERE  lower(columnname) ='civilstatus'",,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3620,SQL,,,,,,,,,,ALL,"UPDATE AD_Element  
+SET columnname='civilstatus', name='Civil Status', printname='Civil Status', entitytype = 'AMERP', ad_element_uu='9f9291c5-1194-4308-9da8-b90fb39d5012'
+WHERE  lower(columnname) ='civilstatus'",,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3630,SQL,,,,,,,,,,ALL,"UPDATE AD_Element  
+SET columnname='bloodtype', name='Blood Type', printname='Blood Type', entitytype = 'AMERP', ad_element_uu='ab6a36ee-4bf5-4d82-b334-bd3d1bb88cde'
+WHERE  lower(columnname) ='bloodtype'",,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3750,T,,,Payroll employee,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3760,T,,,Employee Salary,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3770,T,,,Employee Tax Definition,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3780,T,,,AMN_Employee_Salary_Hist_V,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3790,T,,,Employee Dependent Type,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3800,T,,,Employee Dependent,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3810,REF,,,,AMN_Employee_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3820,REF,,,,AMN_Employee_ID - Contract,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3830,REF,,,,AMN_Jobunit_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3840,REF,,,,AMN_Jobunit NON Summary,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3850,T,,,Payroll Period Assist,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3860,T,,,Payroll Period,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3870,T,,,Payroll Concepts UOM,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3880,REF,,,,AMN_Concept_Uom_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3890,T,,,Payroll Concepts Types,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3900,T,,,Payroll Concept Types Process,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3910,T,,,AMN_Concept_Types_Contract,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3920,T,,,Payroll Concepts Types Accounts,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3930,T,,,Concept Types Limits and Dates,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3940,T,,,Payroll Concepts,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3950,T,,,Payroll employee,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3960,REF,,,,AMN_Employee_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3970,REF,,,,AMN_Employee_ID - Contract,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3980,T,,,Employee Salary,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,3990,T,,,Employee Tax Definition,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4000,T,,,AMN_Employee_Salary_Hist_V,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4010,T,,,Employee Dependent Type,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4020,T,,,Employee Dependent,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4030,T,,,Payroll Receipt Lot,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4040,T,,,Payroll Invoice,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4050,REF,,,,AMN_Payroll_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4060,REF,,,,AMN_Payroll_Lot_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4070,REF,,,,AMN_Period_ID DateIni,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4080,REF,,,,AMN_Period_ID for PO,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4090,REF,,,,AMN_Period_ID order DESC,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4100,REF,,,,AMN_Period_ID,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4110,REF,,,,AMN_period_processed,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4120,REF,,,,AMN_period_status,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4130,T,,,Payroll Assist ,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4140,T,,,AMN_Payroll_Assist_Proc_ID,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4150,T,,,Payroll Historic Accumulated ,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4160,T,,,Payroll Invoices Detail,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4170,T,,,Payroll Invoices Detail Deferred ,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4180,T,,,AMN_Process_Contract_V,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
+AMERPSOFT Personnel Payroll T2,4190,T,,,Payroll Rules and variables,,,,,,,ALL,,,,,,,,,System Administrator,,,,,,,,,Product Info
