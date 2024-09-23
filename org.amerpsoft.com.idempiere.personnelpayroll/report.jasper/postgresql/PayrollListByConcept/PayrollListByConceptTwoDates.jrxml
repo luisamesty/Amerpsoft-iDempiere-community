@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListByConcept" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollListByConcept" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListByConceptTwoDates" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollListByConcept" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -14,6 +14,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="477"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="523"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -24,6 +25,8 @@
 	</parameter>
 	<parameter name="AMN_Process_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
+	<parameter name="AMNDateIni" class="java.sql.Timestamp"/>
+	<parameter name="AMNDateEnd" class="java.sql.Timestamp"/>
 	<parameter name="AMN_Concept_Types_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
@@ -33,7 +36,7 @@
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<queryString language="SQL">
 		<![CDATA[-- PayrollListByContractsConcepts
--- Payroll List By Concept in a Period
+-- Payroll List By Concept in a Period Between two dates
 SELECT * FROM
 (
 	-- REPORT HEADER
@@ -74,6 +77,7 @@ FULL JOIN
      END AS localidad , 
 	 --COALESCE(lct.name, lct.description) as localidad,
      CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad,
+	 
      -- PERIOD
 	 prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend, prd.amn_period_status,
      CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1 ELSE 0 END AS imp_periodo,
@@ -110,7 +114,16 @@ FULL JOIN
     INNER JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
     INNER JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
     INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
-	LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+    INNER JOIN (
+    SELECT 
+		tiper.amn_period_id, tiper.amn_contract_id , tiper.amn_contract_id ,
+		tiper.name, tiper.amndateini, tiper.amndateend, tiper.amn_period_status
+		FROM AMN_Period tiper
+		INNER JOIN C_Period per ON (per.c_period_id = tiper.c_period_id )
+		WHERE tiper.amn_process_id IN (Select AMN_process_ID FROM AMN_Process pro WHERE pro.Value = 'NN')
+		AND  CASE WHEN (tiper.amndateini BETWEEN $P{AMNDateIni} AND $P{AMNDateEnd} ) THEN 1=1 ELSE 1=0 END
+		AND  CASE WHEN (tiper.amndateend BETWEEN $P{AMNDateIni} AND $P{AMNDateEnd} ) THEN 1=1 ELSE 1=0 END
+    ) as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
 	LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
 	INNER JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	
 	INNER JOIN (
@@ -129,12 +142,11 @@ FULL JOIN
 WHERE pyr.AD_Client_ID =$P{AD_Client_ID}
 	AND	( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Concept_Types_ID}  IS NULL OR ctp.amn_concept_types_id= $P{AMN_Concept_Types_ID} ) THEN 1=1 ELSE 1=0 END )
 	) as nomina ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value ASC, nomina.calcorder ASC, nomina.value_emp ASC
+ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.calcorder ASC, nomina.value_emp ASC
 ]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
@@ -404,7 +416,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 		<variableExpression><![CDATA[($F{amn_employee_id}!= null && $F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 ? 1:0)]]></variableExpression>
 	</variable>
 	<variable name="v_periodo" class="java.lang.String">
-		<variableExpression><![CDATA[$F{periodo}!= null ? $F{periodo} : $V{v_periodo}]]></variableExpression>
+		<variableExpression><![CDATA[$P{AMNDateIni}!= null && $P{AMNDateEnd}!=null? new SimpleDateFormat("dd/MM/yyyy").format($P{AMNDateIni})+ "  - "+new SimpleDateFormat("dd/MM/yyyy").format($P{AMNDateEnd}) : $V{v_periodo}]]></variableExpression>
 		<initialValueExpression><![CDATA[""]]></initialValueExpression>
 	</variable>
 	<group name="Group_porContrato" isReprintHeaderOnEachPage="true">
@@ -470,28 +482,6 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_contract}.subtract($V{v_deducciones_contract})]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="0" y="12" width="538" height="12" uuid="4ba1e006-839c-40f5-839d-55fe05fa0dc5">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.employees}.trim()+" "+" --->"]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
-					<reportElement mode="Transparent" x="540" y="12" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="14d4e74b-8bd9-4ee3-a992-90a5198aa2a7">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{v_no_trabajadores_report}]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -499,7 +489,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 		<groupExpression><![CDATA[$F{amndateini}]]></groupExpression>
 		<groupHeader>
 			<band height="16">
-				<printWhenExpression><![CDATA[ $F{amndateini}!=null &&$F{loc_value}!=null]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{amndateini}!=null &&$F{loc_value}!=null]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porPeriodo">
 					<reportElement x="0" y="0" width="968" height="16" uuid="428e3bcf-8d4c-4d57-a7f8-b14e02ac4455">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -885,16 +875,16 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="">
-				<reportElement x="258" y="30" width="470" height="14" uuid="9a069d31-c6f9-4b3a-830c-60566896d59a">
+				<reportElement x="258" y="30" width="470" height="14" uuid="f28801d3-af70-4e57-987c-f45d99bdff9c">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{AMN_Period_ID}!= null 
+				<textFieldExpression><![CDATA[($P{AMNDateIni}!= null && $P{AMNDateEnd}!=null
  ? ($R{report.period}+": "+ ($V{v_periodo} ) )
- : "("+$R{report.allperiods}+")"
+ : "(N/D)"
 )]]></textFieldExpression>
 			</textField>
 		</band>
@@ -1105,4 +1095,30 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 			</textField>
 		</band>
 	</detail>
+	<lastPageFooter>
+		<band height="12">
+			<printWhenExpression><![CDATA[$P{AMN_Concept_Types_ID}!= null]]></printWhenExpression>
+			<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
+				<reportElement x="0" y="0" width="543" height="12" uuid="f4f09b4c-b58f-42de-bc84-5489919efb47">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.employees}.trim()+" "+" --->"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
+				<reportElement mode="Transparent" x="545" y="0" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d9057788-2c3c-4789-944e-2cd2d626c38f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{v_no_trabajadores_report}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
 </jasperReport>

@@ -1,5 +1,5 @@
 -- PayrollListByContractsConcepts
--- Payroll List By Concept in a Period
+-- Payroll List By Concept in a Period Between two dates
 SELECT * FROM
 (
 	-- REPORT HEADER
@@ -40,6 +40,7 @@ FULL JOIN
      END AS localidad , 
 	 --COALESCE(lct.name, lct.description) as localidad,
      CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad,
+	 
      -- PERIOD
 	 prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend, prd.amn_period_status,
      CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1 ELSE 0 END AS imp_periodo,
@@ -76,7 +77,16 @@ FULL JOIN
     INNER JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
     INNER JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
     INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
-	LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+    INNER JOIN (
+    SELECT 
+		tiper.amn_period_id, tiper.amn_contract_id , tiper.amn_contract_id ,
+		tiper.name, tiper.amndateini, tiper.amndateend, tiper.amn_period_status
+		FROM AMN_Period tiper
+		INNER JOIN C_Period per ON (per.c_period_id = tiper.c_period_id )
+		WHERE tiper.amn_process_id IN (Select AMN_process_ID FROM AMN_Process pro WHERE pro.Value = 'NN')
+		AND  CASE WHEN (tiper.amndateini BETWEEN $P{AMNDateIni} AND $P{AMNDateEnd} ) THEN 1=1 ELSE 1=0 END
+		AND  CASE WHEN (tiper.amndateend BETWEEN $P{AMNDateIni} AND $P{AMNDateEnd} ) THEN 1=1 ELSE 1=0 END
+    ) as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
 	LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
 	INNER JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	
 	INNER JOIN (
@@ -95,9 +105,8 @@ FULL JOIN
 WHERE pyr.AD_Client_ID =$P{AD_Client_ID}
 	AND	( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Concept_Types_ID}  IS NULL OR ctp.amn_concept_types_id= $P{AMN_Concept_Types_ID} ) THEN 1=1 ELSE 1=0 END )
 	) as nomina ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value ASC, nomina.calcorder ASC, nomina.value_emp ASC
+ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.calcorder ASC, nomina.value_emp ASC
