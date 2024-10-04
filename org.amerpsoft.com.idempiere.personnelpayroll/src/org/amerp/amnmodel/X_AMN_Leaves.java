@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240918L;
+	private static final long serialVersionUID = 20241001L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -42,15 +42,21 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_ID, trxName);
       /** if (AMN_Leaves_ID == 0)
         {
+			setAction (null);
+// CO
 			setAMN_Employee_ID (0);
 // @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
+			setAMN_Leaves_Types_ID (0);
+			setDateDoc (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
 			setDocAction (null);
 // CO
 			setDocStatus (null);
 // DR
+			setDocumentNo (null);
 			setIsApproved (false);
 // N
 			setProcessed (false);
@@ -66,15 +72,21 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_ID, trxName, virtualColumns);
       /** if (AMN_Leaves_ID == 0)
         {
+			setAction (null);
+// CO
 			setAMN_Employee_ID (0);
 // @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
+			setAMN_Leaves_Types_ID (0);
+			setDateDoc (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
 			setDocAction (null);
 // CO
 			setDocStatus (null);
 // DR
+			setDocumentNo (null);
 			setIsApproved (false);
 // N
 			setProcessed (false);
@@ -90,15 +102,21 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_UU, trxName);
       /** if (AMN_Leaves_UU == null)
         {
+			setAction (null);
+// CO
 			setAMN_Employee_ID (0);
 // @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
+			setAMN_Leaves_Types_ID (0);
+			setDateDoc (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
 			setDocAction (null);
 // CO
 			setDocStatus (null);
 // DR
+			setDocumentNo (null);
 			setIsApproved (false);
 // N
 			setProcessed (false);
@@ -114,15 +132,21 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_UU, trxName, virtualColumns);
       /** if (AMN_Leaves_UU == null)
         {
+			setAction (null);
+// CO
 			setAMN_Employee_ID (0);
 // @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
+			setAMN_Leaves_Types_ID (0);
+			setDateDoc (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
 			setDocAction (null);
 // CO
 			setDocStatus (null);
 // DR
+			setDocumentNo (null);
 			setIsApproved (false);
 // N
 			setProcessed (false);
@@ -159,6 +183,41 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
+
+	/** Filed = AR */
+	public static final String ACTION_Filed = "AR";
+	/** Closed = CL */
+	public static final String ACTION_Closed = "CL";
+	/** Completed = CO */
+	public static final String ACTION_Completed = "CO";
+	/** Drafted = DR */
+	public static final String ACTION_Drafted = "DR";
+	/** HR Approved = RA */
+	public static final String ACTION_HRApproved = "RA";
+	/** Reactivate = RE */
+	public static final String ACTION_Reactivate = "RE";
+	/** HR Rejected = RR */
+	public static final String ACTION_HRRejected = "RR";
+	/** Supervisor Approved = SA */
+	public static final String ACTION_SupervisorApproved = "SA";
+	/** Supervisor Rejected = SR */
+	public static final String ACTION_SupervisorRejected = "SR";
+	/** Set Action.
+		@param Action Indicates the Action to be performed
+	*/
+	public void setAction (String Action)
+	{
+
+		set_Value (COLUMNNAME_Action, Action);
+	}
+
+	/** Get Action.
+		@return Indicates the Action to be performed
+	  */
+	public String getAction()
+	{
+		return (String)get_Value(COLUMNNAME_Action);
+	}
 
 	public I_AMN_Employee getAMN_Employee() throws RuntimeException
 	{
@@ -221,9 +280,9 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public void setAMN_Leaves_Types_ID (int AMN_Leaves_Types_ID)
 	{
 		if (AMN_Leaves_Types_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_AMN_Leaves_Types_ID, null);
+			set_Value (COLUMNNAME_AMN_Leaves_Types_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_AMN_Leaves_Types_ID, Integer.valueOf(AMN_Leaves_Types_ID));
+			set_Value (COLUMNNAME_AMN_Leaves_Types_ID, Integer.valueOf(AMN_Leaves_Types_ID));
 	}
 
 	/** Get Leaves Types.
@@ -249,6 +308,78 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public String getAMN_Leaves_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_UU);
+	}
+
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
+			.getPO(getC_DocType_ID(), get_TrxName());
+	}
+
+	/** Set Document Type.
+		@param C_DocType_ID Document type or rules
+	*/
+	public void setC_DocType_ID (int C_DocType_ID)
+	{
+		if (C_DocType_ID < 0)
+			set_ValueNoCheck (COLUMNNAME_C_DocType_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_C_DocType_ID, Integer.valueOf(C_DocType_ID));
+	}
+
+	/** Get Document Type.
+		@return Document type or rules
+	  */
+	public int getC_DocType_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_DocType_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
+			.getPO(getC_DocTypeTarget_ID(), get_TrxName());
+	}
+
+	/** Set Target Document Type.
+		@param C_DocTypeTarget_ID Target document type for conversing documents
+	*/
+	public void setC_DocTypeTarget_ID (int C_DocTypeTarget_ID)
+	{
+		if (C_DocTypeTarget_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_C_DocTypeTarget_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_C_DocTypeTarget_ID, Integer.valueOf(C_DocTypeTarget_ID));
+	}
+
+	/** Get Target Document Type.
+		@return Target document type for conversing documents
+	  */
+	public int getC_DocTypeTarget_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_DocTypeTarget_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Document Date.
+		@param DateDoc Date of the Document
+	*/
+	public void setDateDoc (Timestamp DateDoc)
+	{
+		set_Value (COLUMNNAME_DateDoc, DateDoc);
+	}
+
+	/** Get Document Date.
+		@return Date of the Document
+	  */
+	public Timestamp getDateDoc()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateDoc);
 	}
 
 	/** Set Date From.
@@ -389,6 +520,22 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return (String)get_Value(COLUMNNAME_DocStatus);
 	}
 
+	/** Set Document No.
+		@param DocumentNo Document sequence number of the document
+	*/
+	public void setDocumentNo (String DocumentNo)
+	{
+		set_Value (COLUMNNAME_DocumentNo, DocumentNo);
+	}
+
+	/** Get Document No.
+		@return Document sequence number of the document
+	  */
+	public String getDocumentNo()
+	{
+		return (String)get_Value(COLUMNNAME_DocumentNo);
+	}
+
 	/** Set Approved.
 		@param IsApproved Indicates if this document requires approval
 	*/
@@ -426,6 +573,22 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
+	}
+
+	/** Set Note.
+		@param Note Optional additional user defined information
+	*/
+	public void setNote (String Note)
+	{
+		set_Value (COLUMNNAME_Note, Note);
+	}
+
+	/** Get Note.
+		@return Optional additional user defined information
+	  */
+	public String getNote()
+	{
+		return (String)get_Value(COLUMNNAME_Note);
 	}
 
 	/** Set Processed.
