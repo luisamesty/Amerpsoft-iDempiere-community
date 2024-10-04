@@ -32,7 +32,7 @@ public interface I_AMN_Leaves
     /** TableName=AMN_Leaves */
     public static final String Table_Name = "AMN_Leaves";
 
-    /** AD_Table_ID=1000098 */
+    /** AD_Table_ID=1000085 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -42,6 +42,19 @@ public interface I_AMN_Leaves
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
+
+    /** Column name Action */
+    public static final String COLUMNNAME_Action = "Action";
+
+	/** Set Action.
+	  * Indicates the Action to be performed
+	  */
+	public void setAction (String Action);
+
+	/** Get Action.
+	  * Indicates the Action to be performed
+	  */
+	public String getAction();
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -108,6 +121,36 @@ public interface I_AMN_Leaves
 	/** Get AMN_Leaves_UU	  */
 	public String getAMN_Leaves_UU();
 
+    /** Column name C_DocType_ID */
+    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
+
+	/** Set Document Type.
+	  * Document type or rules
+	  */
+	public void setC_DocType_ID (int C_DocType_ID);
+
+	/** Get Document Type.
+	  * Document type or rules
+	  */
+	public int getC_DocType_ID();
+
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
+
+    /** Column name C_DocTypeTarget_ID */
+    public static final String COLUMNNAME_C_DocTypeTarget_ID = "C_DocTypeTarget_ID";
+
+	/** Set Target Document Type.
+	  * Target document type for conversing documents
+	  */
+	public void setC_DocTypeTarget_ID (int C_DocTypeTarget_ID);
+
+	/** Get Target Document Type.
+	  * Target document type for conversing documents
+	  */
+	public int getC_DocTypeTarget_ID();
+
+	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException;
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -123,6 +166,19 @@ public interface I_AMN_Leaves
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name DateDoc */
+    public static final String COLUMNNAME_DateDoc = "DateDoc";
+
+	/** Set Document Date.
+	  * Date of the Document
+	  */
+	public void setDateDoc (Timestamp DateDoc);
+
+	/** Get Document Date.
+	  * Date of the Document
+	  */
+	public Timestamp getDateDoc();
 
     /** Column name DateFrom */
     public static final String COLUMNNAME_DateFrom = "DateFrom";
@@ -189,6 +245,19 @@ public interface I_AMN_Leaves
 	  */
 	public String getDocStatus();
 
+    /** Column name DocumentNo */
+    public static final String COLUMNNAME_DocumentNo = "DocumentNo";
+
+	/** Set Document No.
+	  * Document sequence number of the document
+	  */
+	public void setDocumentNo (String DocumentNo);
+
+	/** Get Document No.
+	  * Document sequence number of the document
+	  */
+	public String getDocumentNo();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -227,6 +296,19 @@ public interface I_AMN_Leaves
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name Note */
+    public static final String COLUMNNAME_Note = "Note";
+
+	/** Set Note.
+	  * Optional additional user defined information
+	  */
+	public void setNote (String Note);
+
+	/** Get Note.
+	  * Optional additional user defined information
+	  */
+	public String getNote();
 
     /** Column name Processed */
     public static final String COLUMNNAME_Processed = "Processed";
