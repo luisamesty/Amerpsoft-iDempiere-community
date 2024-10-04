@@ -1,4 +1,4 @@
--- PayrollListByConcepts
+-- PayrollListByContractsConcepts
 -- Payroll List By Concept in a Period
 SELECT * FROM
 (
@@ -38,9 +38,6 @@ FULL JOIN
      CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{ShowLocation} = 'N' ) THEN '** Todas las Localidades **'
               ELSE COALESCE(lct.name, lct.description)
      END AS localidad , 
-	  -- LOCATION
-	 --lct.amn_location_id,
-	 --lct.value as loc_value,
 	 --COALESCE(lct.name, lct.description) as localidad,
      CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad,
      -- PERIOD
@@ -52,10 +49,8 @@ FULL JOIN
 	 ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
 	 -- PROCESS
 	 prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
-   CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1 ELSE 0 END AS imp_proceso,
      -- CONTRACT
 	 amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-     CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato,
 	-- CURRENCY
 	curr1.iso_code as iso_code1,
 	COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
@@ -76,14 +71,23 @@ FULL JOIN
 	   currencyConvert(pyr_d.amountdeducted, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountdeducted,
 	   currencyConvert(pyr_d.amountcalculated, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountcalculated
  	FROM adempiere.amn_payroll as pyr
-     LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
-     LEFT JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
-     LEFT JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
-     LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
-     LEFT JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
-	 LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
-	 LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
-	 LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	
+    INNER JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+    INNER JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+    INNER JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
+    INNER JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
+    INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
+	LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+	LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
+	INNER JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	
+	INNER JOIN (
+		SELECT DISTINCT con.AMN_Contract_ID, con.value, con.name, con.description, CASE WHEN rol.AMN_Process_ID IS NULL THEN 'N' ELSE 'Y' END as OK_salary
+		FROM adempiere.AMN_Contract con
+		INNER JOIN (
+			SELECT AMN_Process_ID, AMN_Contract_ID, AD_Role_ID FROM adempiere.AMN_Role_Access 
+			WHERE  AMN_Process_ID IN (SELECT AMN_Process_ID FROM adempiere.AMN_Process WHERE AMN_Process_Value='NN') 
+			AND ( CASE WHEN ( $P{AD_Role_ID}  IS NULL OR AD_Role_ID= $P{AD_Role_ID} ) THEN 1=1 ELSE 1=0 END )
+		) rol ON rol.AMN_Contract_ID = con.AMN_Contract_ID
+	 ) cok on cok.AMN_Contract_ID = emp.AMN_Contract_ID
 	 LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
      LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
      LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
@@ -92,7 +96,8 @@ WHERE pyr.AD_Client_ID =$P{AD_Client_ID}
 	AND	( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Concept_Types_ID}  IS NULL OR ctp.amn_concept_types_id= $P{AMN_Concept_Types_ID} ) THEN 1=1 ELSE 1=0 END )
 	) as nomina ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY nomina.amndateini, nomina.loc_value ASC, nomina.isshow DESC, nomina.calcorder ASC, nomina.value_emp ASC
+ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value ASC, nomina.calcorder ASC, nomina.value_emp ASC
