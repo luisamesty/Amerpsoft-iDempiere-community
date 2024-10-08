@@ -35,58 +35,58 @@ FROM (SELECT DISTINCT
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_sex' AND rlt.ad_language= cli.ad_language and rfl.value= emp.sex) as sexo,
+		 WHERE rfr.name = 'amn_sex' AND rlt.ad_language= 'es_VE' and rfl.value= emp.sex) as sexo,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_civilstatus' AND rlt.ad_language= cli.ad_language and rfl.value= emp.civilstatus) as estado_civil, 
+		 WHERE rfr.name = 'amn_civilstatus' AND rlt.ad_language= 'es_VE' and rfl.value= emp.civilstatus) as estado_civil, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_spouse' AND rlt.ad_language= cli.ad_language and rfl.value= emp.spouse) as conyuge,
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.spouse) as conyuge,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_handuse' AND rlt.ad_language= cli.ad_language and rfl.value= emp.handuse) as mano_dominante, 
+		 WHERE rfr.name = 'amn_handuse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.handuse) as mano_dominante, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_spouse' AND rlt.ad_language= cli.ad_language and rfl.value= emp.isstudying) as estudia, 
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.isstudying) as estudia, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_spouse' AND rlt.ad_language= cli.ad_language and rfl.value= emp.ismedicated) as usa_medicamentos,
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.ismedicated) as usa_medicamentos,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_spouse' AND rlt.ad_language= cli.ad_language and rfl.value= emp.uselenses) as lentes, 
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.uselenses) as lentes, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_educationalgrade' AND rlt.ad_language= cli.ad_language and rfl.value= emp.educationgrade) as grado_instruccion, 
+		 WHERE rfr.name = 'amn_educationalgrade' AND rlt.ad_language= 'es_VE' and rfl.value= emp.educationgrade) as grado_instruccion, 
     emp.educationlevel as nivel_instruccion, emp.profession as profesion,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_jobcondition' AND rlt.ad_language= cli.ad_language and rfl.value= emp.jobcondition) as condicion_trabajo, 
+		 WHERE rfr.name = 'amn_jobcondition' AND rlt.ad_language= 'es_VE' and rfl.value= emp.jobcondition) as condicion_trabajo, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_paymenttype' AND rlt.ad_language= cli.ad_language and rfl.value= emp.paymenttype) as tipo_pago, 
+		 WHERE rfr.name = 'amn_paymenttype' AND rlt.ad_language= 'es_VE' and rfl.value= emp.paymenttype) as tipo_pago, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_payrollmode' AND rlt.ad_language= cli.ad_language and rfl.value= emp.payrollmode) as tipo_nomina, 
+		 WHERE rfr.name = 'amn_payrollmode' AND rlt.ad_language= 'es_VE' and rfl.value= emp.payrollmode) as tipo_nomina, 
     cok.OK_salary, emp.salary as sueldo, emp.incomedate as fecha_ingreso, emp.Birthday as fecha_nacimiento,
     date_part('year',age(current_date, emp.incomedate)) a_servicio, 
     date_part('month',age(current_date, emp.incomedate)) m_servicio, 
