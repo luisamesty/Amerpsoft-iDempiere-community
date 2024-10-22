@@ -1,0 +1,4 @@
+
+$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"
+
+String.format("%15s",$V{v_asignaciones_t}.subtract($V{v_deducciones_t} ).setScale(2, RoundingMode.DOWN).toString().replace(".","")).replace(" ","0")

@@ -211,7 +211,8 @@ FROM
 		COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
-	   -- MONTOS Y CIFRAS cty.concept_value	   
+	   -- MONTOS Y CIFRAS cty.concept_value	
+	   	pyr_d.amn_payroll_detail_id,   
 		pyr_d.qtyvalue as cantidad, 
 		pyr_d.amountallocated, 
 		pyr_d.amountdeducted, 
@@ -299,6 +300,7 @@ UNION
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
 	   -- MONTOS Y CIFRAS cty.concept_value	   
+		pyr_d.amn_payroll_detail_id,
 		pyr_d.qtyvalue as cantidad, 
 		pyr_d.amountallocated, 
 		pyr_d.amountdeducted, 
@@ -334,8 +336,9 @@ UNION
 	    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
 	    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 ) AS recibo
+WHERE recibo.copiaforma <> 'XX'
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, nro_id, copia, copiaforma,
-documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno, amn_payroll_detail_id, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2

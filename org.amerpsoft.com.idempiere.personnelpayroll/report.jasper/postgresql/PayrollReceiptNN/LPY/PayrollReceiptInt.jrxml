@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollReceiptNN" pageWidth="595" pageHeight="842" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" resourceBundle="PayrollReceipt" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="333"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="660"/>
@@ -249,7 +249,8 @@ FROM
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
 	   -- MONTOS Y CIFRAS cty.concept_value	   
-		pyr_d.qtyvalue as cantidad, 
+	    pyr_d.amn_payroll_detail_id, 
+	    pyr_d.qtyvalue as cantidad, 
 		pyr_d.amountallocated, 
 		pyr_d.amountdeducted, 
 		pyr_d.amountcalculated,
@@ -333,7 +334,8 @@ UNION
 		COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
-	   -- MONTOS Y CIFRAS cty.concept_value	   
+	   -- MONTOS Y CIFRAS cty.concept_value	
+	    pyr_d.amn_payroll_detail_id,   
 		pyr_d.qtyvalue as cantidad, 
 		pyr_d.amountallocated, 
 		pyr_d.amountdeducted, 
@@ -371,7 +373,7 @@ UNION
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 ]]>
@@ -546,8 +548,12 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 )]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="salario_rec" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+	<variable name="salario_basico" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOBASICO" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="salario_rec" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="dias_trabajados" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
@@ -812,7 +818,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{salario_rec}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{salario_basico}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porCopia">
 					<reportElement mode="Transparent" x="446" y="65" width="128" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c8bdc20f-0e66-41c9-85fc-0de630d00550">

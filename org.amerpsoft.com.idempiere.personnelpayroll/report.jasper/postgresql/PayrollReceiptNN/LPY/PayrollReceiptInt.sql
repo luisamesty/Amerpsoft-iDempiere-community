@@ -206,7 +206,8 @@ FROM
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
 	   -- MONTOS Y CIFRAS cty.concept_value	   
-		pyr_d.qtyvalue as cantidad, 
+	    pyr_d.amn_payroll_detail_id, 
+	    pyr_d.qtyvalue as cantidad, 
 		pyr_d.amountallocated, 
 		pyr_d.amountdeducted, 
 		pyr_d.amountcalculated,
@@ -290,7 +291,8 @@ UNION
 		COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
-	   -- MONTOS Y CIFRAS cty.concept_value	   
+	   -- MONTOS Y CIFRAS cty.concept_value	
+	    pyr_d.amn_payroll_detail_id,   
 		pyr_d.qtyvalue as cantidad, 
 		pyr_d.amountallocated, 
 		pyr_d.amountdeducted, 
@@ -328,6 +330,6 @@ UNION
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
