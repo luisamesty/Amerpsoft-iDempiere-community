@@ -23,7 +23,7 @@ SELECT
     emp.value as codigo_trabajador, 
     emp.name as nombre_trabajador,
     COALESCE(jtt.name, jtt.description,'''') as cargo, 
-    COALESCE(emp.idnumber, cbp.taxid,'') as nro_id,
+    COALESCE(emp.idnumber, cbp.taxid,CONCAT('**-',RTRIM(emp.value),'-**')) as nro_id,
     -- DESCRIPCION PAGO
     CASE WHEN prc.amn_process_value = 'NN' THEN 'SALARIO PAGO'
     	WHEN prc.amn_process_value = 'NU' THEN 'AGUINALDOS PAGO'
@@ -47,13 +47,13 @@ SELECT
 --ITITRA	Alfa	2		2	3		S	Tipo Transferencia ‘01’ Pago de Salarios ‘02’ Pago a Proveedores ‘03’ Cobro de Factura/Cuota '09' Débitos comandados
 '01' AS ITITRA,
 --ICDSRV	Num/A	3	0	4	6		S	Código empresa (asignado por el Banco)
-'147' AS ICDSRV,
+'471' AS ICDSRV,
 --ICTDEB	Num		10	0	7	16		S N Cobro Cuotas	Nro. de cuenta para débito/Cuenta empresa
-RPAD(TRIM(employ1.accountno), 10, ' ') AS ICTDEB,
+COALESCE(RPAD(TRIM(employ1.accountno), 10, ' '),RPAD('',10, '*')) AS ICTDEB,
 --IBCOCR	Num		3	0	17	19		S	Nro. de Banco para crédito Obs: siempre 017
 '017' AS IBCOCR,
 --ICTCRE	Num		10	0	20	29		S N Cobro Cuotas	Nro. de cuenta para crédito Obs: Si pago en cheque relleno con ceros
-RPAD(TRIM(employ2.accountno), 10, ' ') AS ICTCRE,
+COALESCE(RPAD(TRIM(employ2.accountno), 10, ' '),RPAD('',10, '*')) AS ICTCRE,
 --ITCRDB	Alfa	1		30	30		S	Tipo débito/crédito ‘D’ Débito ‘C’ Crédito ‘H’ Cheque ‘F’ Cobro de Factura/Cuota
 'C' AS ITCRDB,
 --IORDEN	Alfa	50		31	80		S-Pgo.Proveedor. N-demas casos	Cheque a la orden de/Cliente Facturado/Beneficiario/Pagador 
@@ -61,9 +61,9 @@ RPAD(TRIM(pyr.documentno),50,' ') AS IORDEN,
 --IMONED	Num		1	0	81	81		S	Moneda correspondiente al monto 0 Guaraníes 1 Dolares Obs: Para transferencias la cuenta origen debe ser de la misma moneda que la cuenta destino.
 '0' AS IMONED,
 --IMTOTR	Num		15	2	82	96		S	Monto Transferencia/Monto Factura, cuota Obs: últimos dos dígitos corresponde a decimales.
-REPLACE(to_char(currencyConvert(pyr.amountnetpaid ,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ), '0000000000000.00'),'.','') AS IMTOTR,
+TRIM(REPLACE(to_char(currencyConvert(pyr.amountnetpaid ,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ), '0000000000000.00'),'.','')) AS IMTOTR,
 --IMTOT2	Num		15	2	97	111		N	Monto Transferencia (segundo vencimiento) Obs: últimos dos dígitos corresponde a decimales. Solo para Cobro de Factura/Cuota.Demas 0
-RPAD('',15, '0') AS IMTOT2,
+TRIM(RPAD('',15, '0')) AS IMTOT2,
 --INRODO	Alfa	12		112	123		S-Cobro Fact/Cuo N-Demás casos	Nro. de documento Obs: cédula de identidad, RUC, Pasaporte, otros. Del beneficiario, proveedor, cliente.
 RPAD('',12, ' ') AS INRODO,
 --ITIFAC	Num		1		124	124		S-Pgo.Proveedor. N-demas casos	Tipo Factura 1 Factura Contado 2 Factura Crédito Solo para Pago a Proveedores. Demás 0
@@ -73,7 +73,7 @@ RPAD('',20, ' ') AS INRFAC,
 --INRCUO	Num		3	0	145	147		S-Cobro Fact/Cuo N-Demás casos	Nro. de Cuota pagada/a cobrar. Solo para ‘F’ Cobro de Factura/Cuota
 '000' AS INRCUO,
 --IFCHCR	Num		8	0	148	155	Aaaammdd	S	Fecha para realizar el crédito/Fecha vencimiento-
- TO_CHAR(CAST($P{PayDate} AS Timestamp), 'YYYYMMDD')  AS IFCHCR,
+TO_CHAR(CAST($P{PayDate} AS Timestamp), 'YYYYMMDD')  AS IFCHCR,
 --IFCHC2	Num		8	0	156	163	Aaaammdd	N	Fecha segundo vencimiento. Solo para ’ F’ Cobro de Factura/Cuota
 '00000000' AS IFCHC2,
 --ICEPTO	Alfa	50		164	213		N	Comentario de concepto cobrado/pagado
@@ -83,9 +83,9 @@ RPAD('',15, ' ') AS INRREF,
 --IFECCA	Num		8	0	229	236	Aaaammdd	N	Fecha de carga de transacción
 TO_CHAR(CAST($P{PayDate} AS Timestamp), 'YYYYMMDD')  AS IFECCA,
 --IHORCA	Num		6		237	242	Hhmmss	N	Hora de carga de transacción
-TO_CHAR(CAST($P{PayDate} AS Timestamp), 'HH12:MI:SS')   AS IHORCA,
+REPLACE(TO_CHAR(CAST($P{PayDate} AS Timestamp), 'HH12:MI:SS'),':','')   AS IHORCA,
 --IUSUCA	Alfa	10		243	252		N	Nombre del usuario que cargó
-RPAD(TRIM($P{UserName}),10, ' ')   AS IUSUCA
+COALESCE(RPAD(TRIM($P{UserName}),10, ' '),'LAGIOCONDA')   AS IUSUCA
 FROM adempiere.amn_payroll as pyr
 INNER JOIN adempiere.amn_employee as emp  ON (emp.amn_employee_id= pyr.amn_employee_id) 
 INNER JOIN adempiere.c_bpartner   as cbp  ON (emp.c_bpartner_id= cbp.c_bpartner_id)
