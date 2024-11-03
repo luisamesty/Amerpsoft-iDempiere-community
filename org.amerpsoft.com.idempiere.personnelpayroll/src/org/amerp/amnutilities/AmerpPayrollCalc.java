@@ -56,6 +56,7 @@ public class AmerpPayrollCalc  {
 	public static Double CTL_AmountAllocated;	// Default Value ZERO
 	public static Double CTL_QtyTimes;  		// Default Value ONE
 	public static Double CTL_Rate;				// Default Value ZERO
+	public static Double CTL_QtyReceipts;		// Default Value ZERO
 	public static String ORGSECTOR=""; 
 	public static Double UNIDADTRIBUTARIA,SBMIN,TAXRATE;
 	public static Double QTY_HND,QTY_HNN,QTY_HED,QTY_HEN;
@@ -767,7 +768,7 @@ public class AmerpPayrollCalc  {
 		AM_PaymentType=amnemployee.getpaymenttype();
 		AM_CivilStatus=amnemployee.getcivilstatus();
 		AM_Sex=amnemployee.getsex();
-		ORGSECTOR = amnemployee.getORGSECTOR();
+		ORGSECTOR = amnemployee.getOrgSector();
 		AM_Spouse=amnemployee.getspouse();
 		if (curr.getISO_Code()!=null)
 			AM_Currency=curr.getISO_Code();
@@ -809,10 +810,31 @@ public class AmerpPayrollCalc  {
 		int C_Currency_ID_To = C_Currency_ID;
 		if (amnpayroll.getC_Currency_ID_To() != 0)
 			C_Currency_ID_To = amnpayroll.getC_Currency_ID_To();
-		
-		CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
-		CTL_QtyTimes=MAMN_Concept_Types_Limit.getCTL_QtyTimes(C_Currency_ID, C_Currency_ID_To,  amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
-		CTL_Rate=MAMN_Concept_Types_Limit.getCTL_Rate(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+		// COMMISSION CONCEPTS
+		// AMN_Concept_Types_Limits CTLD
+		CTL_AmountAllocated = 0.00; 
+		CTL_QtyTimes= 1.00;
+		CTL_Rate= 0.0;
+		CTL_QtyReceipts = 0.00;
+		Integer AMN_CommissionGroup_ID = amnemployee.getAMN_CommissionGroup_ID();
+		Integer AMN_Concept_Types_Limit_ID = 0;
+		// Verify if contains CTL_AmountAllocated
+		if ( AMN_CommissionGroup_ID != null && AMN_CommissionGroup_ID > 0 ) {
+			// Commission Group
+			MAMN_CommissionGroup amncomgru = new MAMN_CommissionGroup(p_ctx, AMN_CommissionGroup_ID, null);
+			// Search AMN_Concept_Types_Limit_ID
+			AMN_Concept_Types_Limit_ID =MAMN_Concept_Types_Limit.searchAMN_Concept_Types_Limit_ID_(AMN_Concept_Types_ID, amnpayroll.getAD_Client_ID(), 0, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd());
+			if ( amncomgru != null && AMN_Concept_Types_Limit_ID != null && AMN_Concept_Types_Limit_ID > 0) {
+				MAMN_Concept_Types_Limit amncontyl = new MAMN_Concept_Types_Limit(p_ctx,AMN_Concept_Types_Limit_ID, null);
+				CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+				CTL_QtyTimes=MAMN_Concept_Types_Limit.getCTL_QtyTimes(C_Currency_ID, C_Currency_ID_To,  amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+				CTL_Rate= amncomgru.getCommission().doubleValue();
+				if (p_script.contains("CTL_QtyReceipts")) {
+					CTL_QtyReceipts = amncomgru.calculateCTL_QtyReceipts(amnpayroll.getAD_Client_ID(), amncomgru.getValue(), AMN_Concept_Types_ID, AMN_Concept_Types_Limit_ID).doubleValue();
+				}
+			}
+			//CTL_QtyReceipts = amncomgru
+		}
 		//scriptResult RetVal = null ;
 		scriptResult RetVal = new scriptResult();
 		// Reference Concepts Returns OK 
@@ -1247,6 +1269,10 @@ public class AmerpPayrollCalc  {
 			}
 			if (p_script.contains("CTL_Rate")) {
 				ScriptableObject.putProperty(scope,"CTL_Rate", BigDecimal.valueOf(CTL_Rate));
+				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
+			}
+			if (p_script.contains("CTL_QtyReceipts")) {
+				ScriptableObject.putProperty(scope,"CTL_QtyReceipts", BigDecimal.valueOf(CTL_QtyReceipts));
 				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
 			}
 			// ORGSECTOR
