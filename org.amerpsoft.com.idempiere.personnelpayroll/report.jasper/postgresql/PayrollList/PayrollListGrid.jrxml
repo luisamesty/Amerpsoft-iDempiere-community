@@ -34,6 +34,7 @@
 	<queryString language="SQL">
 		<![CDATA[-- Payroll List CrossTab (Column View)
 -- Used for  reports and individual print
+-- Currency Rate Added and Conversion reviewed
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -183,117 +184,145 @@ SELECT
 	amndateend,
 	amountallocated_t,
 	amountdeducted_t,
-	amountallocated_t2,
-	amountdeducted_t2,
 	iso_code1,
 	iso_code2,
 	cursymbol1,currname1,
 	cursymbol2,currname2, 
-	SUM(cantidad) AS cantidad,
-	SUM(amountallocated) AS amountallocated,
-	SUM(amountdeducted) AS amountdeducted, 
-	SUM(amountcalculated) AS amountcalculated,
-	SUM(amountallocated2) AS amountallocated2,
-	SUM(amountdeducted2) AS amountdeducted2, 
-	SUM(amountcalculated2) AS amountcalculated2
-FROM 
-(
+	cantidad,
+	amountallocated,
+	amountdeducted,
+	amountcalculated,
+	currencyrate
+	FROM (
 	SELECT 
-		-- ORG
-	    coalesce(org.value,'') as org_value,
-		coalesce(org.name,org.value,'') as org_name,
-		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
-		cty.value2,
-		cty.name2,
-		cty.calcorder2,
-		-- PERIOD
-		prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend,
-		-- TIPO DE CONCEPTO
-		cty.amn_concept_types_id, 
-		cty.optmode, 
-		cty.calcorder, 
-		cty.isshow, 
-		cty.concept_value as cty_value, 
-		COALESCE(cty.concept_name, cty.concept_description) as concept_type,
-		-- TIPO DE CONCEPTO (PROCESO)
-		ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
-		-- PROCESS
-		prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
-	     --CASE WHEN ( {AMN_Process_ID}  IS NULL OR prc.amn_process_id= AMN_Process_ID} ) THEN 1 ELSE 0 END AS imp_proceso,
-		-- CONTRACT
-	   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-		-- DEPARTAMENT
-	   	COALESCE(dep.name,dep.description) as departamento,
-	   	-- LOCATION
-	   	emp.amn_location_id, lct.value AS location_value, lct.name AS location_name,
-		-- EMPLOYEE
-	   	emp.amn_employee_id,
-	  	emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso, emp.paymenttype,
-	   	COALESCE(jtt.name, jtt.description,'') as cargo, 
-	   	COALESCE(cbp.taxid,'') as nro_id, 
-		-- PAYROLL
-	   	pyr.amn_payroll_id,
-	   	COALESCE(pyr.documentno,'') as documentno,
-	   	pyr.description as recibo,
-		pyr.amountallocated as amountallocated_t, 
-		pyr.amountdeducted as amountdeducted_t, 
-		pyr.amountcalculated as amountcalculated_t,
-		-- PYR AMOUNTS CONVERTED
-		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
-		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
-		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
-		-- CURRENCY
-		curr1.iso_code as iso_code1,
-		COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
-		COALESCE(currt1.description,curr1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
-		curr2.iso_code as iso_code2,
-		COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
-		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
-		-- PAYROLL DETAIL
-	   -- MONTOS Y CIFRAS cty.concept_value	ç
-	   pyr_d.amn_payroll_detail_id,   
-		pyr_d.qtyvalue as cantidad, 
-		pyr_d.amountallocated, 
-		pyr_d.amountdeducted, 
-		pyr_d.amountcalculated,
-		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
-		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
-	FROM adempiere.amn_payroll as pyr
-	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
-	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
-	LEFT JOIN Conceptos 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
-	LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
-	INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
-	LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
-	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
-	LEFT JOIN adempiere.c_bpartner 						as cbp 	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
-	LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
-	LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
-	LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 
-	INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
-	LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
-	LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-	LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
-	LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-	INNER JOIN adempiere.ad_clientinfo as cliinfo ON (pyr.ad_client_id = cliinfo.ad_client_id)
-    LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
-    INNER JOIN adempiere.ad_orginfo as orginfo ON (pyr.ad_org_id = orginfo.ad_org_id)
-	LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
-	WHERE prc.value= 'NN' AND pyr.ad_client_id=  $P{AD_Client_ID}  
-	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
-	    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
-	    AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-	    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
-	    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
-) AS recibo
-GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
-departamento, amn_employee_id, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
-amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
-iso_code1, iso_code2, cursymbol1, currname1, cursymbol2,currname2
-ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
+		org_value,
+		org_name,
+		rep_logo,
+		value2,
+		name2,
+		calcorder2,
+		isshow,
+		c_value,
+		departamento,
+		amn_employee_id,
+		value_emp,
+		empleado, 
+		fecha_ingreso, paymenttype,
+		cargo,
+		amn_location_id, location_value, location_name,
+		nro_id,
+		amn_payroll_id,
+		amn_payroll_detail_id,
+		documentno,
+		amn_period_id, 
+		periodo,
+		amndateini, 
+		amndateend,
+		amountallocated_t,
+		amountdeducted_t,
+		iso_code1,
+		iso_code2,
+		cursymbol1,currname1,
+		cursymbol2,currname2, 
+		SUM(cantidad) AS cantidad,
+		SUM(amountallocated) AS amountallocated,
+		SUM(amountdeducted) AS amountdeducted, 
+		SUM(amountcalculated) AS amountcalculated,
+		currencyrate
+	FROM 
+	(
+		SELECT 
+			-- ORG
+		    coalesce(org.value,'') as org_value,
+			coalesce(org.name,org.value,'') as org_name,
+			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
+			cty.value2,
+			cty.name2,
+			cty.calcorder2,
+			-- PERIOD
+			prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend,
+			-- TIPO DE CONCEPTO
+			cty.amn_concept_types_id, 
+			cty.optmode, 
+			cty.calcorder, 
+			cty.isshow, 
+			cty.concept_value as cty_value, 
+			COALESCE(cty.concept_name, cty.concept_description) as concept_type,
+			-- TIPO DE CONCEPTO (PROCESO)
+			ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
+			-- PROCESS
+			prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
+		     --CASE WHEN ( {AMN_Process_ID}  IS NULL OR prc.amn_process_id= AMN_Process_ID} ) THEN 1 ELSE 0 END AS imp_proceso,
+			-- CONTRACT
+		   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+			-- DEPARTAMENT
+		   	COALESCE(dep.name,dep.description) as departamento,
+		   	-- LOCATION
+		   	emp.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+			-- EMPLOYEE
+		   	emp.amn_employee_id,
+		  	emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso, emp.paymenttype,
+		   	COALESCE(jtt.name, jtt.description,'') as cargo, 
+		   	COALESCE(cbp.taxid,'') as nro_id, 
+			-- PAYROLL
+		   	pyr.amn_payroll_id,
+		   	COALESCE(pyr.documentno,'') as documentno,
+		   	pyr.description as recibo,
+			-- PYR AMOUNTS CONVERTED
+			currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t, 
+			currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t, 
+			currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t, 
+			-- CURRENCY
+			curr1.iso_code as iso_code1,
+			COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
+			COALESCE(currt1.description,curr1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+			curr2.iso_code as iso_code2,
+			COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
+			COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
+			-- PAYROLL DETAIL
+		    -- MONTOS Y CIFRAS cty.concept_value	
+		    pyr_d.amn_payroll_detail_id,   
+			pyr_d.qtyvalue as cantidad, 
+			currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
+			currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
+			currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated,
+			COALESCE(currencyrate(pyr.c_currency_id, $P{C_Currency_ID},  pyr.dateacct,  pyr.c_conversiontype_id, pyr.AD_Client_ID, pyr.AD_Org_ID ),0) as currencyrate
+		FROM adempiere.amn_payroll as pyr
+		LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+		LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+		LEFT JOIN Conceptos 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
+		LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
+		INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
+		LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
+		LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
+		LEFT JOIN adempiere.c_bpartner 						as cbp 	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+		LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+		LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
+		LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 
+		INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
+		LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
+		LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+		LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+		LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+		INNER JOIN adempiere.ad_clientinfo as cliinfo ON (pyr.ad_client_id = cliinfo.ad_client_id)
+	    LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+	    INNER JOIN adempiere.ad_orginfo as orginfo ON (pyr.ad_org_id = orginfo.ad_org_id)
+		LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+		WHERE prc.value= 'NN' AND pyr.ad_client_id=  $P{AD_Client_ID}  
+		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
+		    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
+			AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
+			AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
+		    AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+		    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
+		    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
+	) AS recibo
+	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
+	departamento, amn_employee_id, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
+	amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
+	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate
+	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
+) AS recibocur
 ]]>
 	</queryString>
 	<field name="org_value" class="java.lang.String">
@@ -436,14 +465,6 @@ ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 		<property name="com.jaspersoft.studio.field.label" value="amountdeducted_t"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
 	</field>
-	<field name="amountallocated_t2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountallocated_t2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountallocated_t2"/>
-	</field>
-	<field name="amountdeducted_t2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountdeducted_t2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountdeducted_t2"/>
-	</field>
 	<field name="iso_code1" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="iso_code1"/>
 		<property name="com.jaspersoft.studio.field.label" value="iso_code1"/>
@@ -487,17 +508,9 @@ ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 		<property name="com.jaspersoft.studio.field.name" value="amountcalculated"/>
 		<property name="com.jaspersoft.studio.field.label" value="amountcalculated"/>
 	</field>
-	<field name="amountallocated2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountallocated2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountallocated2"/>
-	</field>
-	<field name="amountdeducted2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountdeducted2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountdeducted2"/>
-	</field>
-	<field name="amountcalculated2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountcalculated2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountcalculated2"/>
+	<field name="currencyrate" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="currencyrate"/>
+		<property name="com.jaspersoft.studio.field.label" value="currencyrate"/>
 	</field>
 	<variable name="v_asignaciones_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
@@ -554,6 +567,9 @@ ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 	</variable>
 	<variable name="currency" class="java.lang.String">
 		<variableExpression><![CDATA[$F{iso_code2}!= null ? $F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2} : $V{currency}]]></variableExpression>
+	</variable>
+	<variable name="currencyrate" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{currencyrate}!= null ?    $F{currencyrate} : $V{currencyrate}]]></variableExpression>
 	</variable>
 	<variable name="v_asignaciones_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
 		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
@@ -1216,7 +1232,7 @@ ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement key="" x="1400" y="26" width="100" height="14" uuid="d6a39ccf-9ce9-44f3-820b-72162d5266a6">
+				<reportElement key="" x="1240" y="28" width="160" height="14" uuid="d6a39ccf-9ce9-44f3-820b-72162d5266a6">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1225,18 +1241,17 @@ ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.currency}+ ": "+($F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2})]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
 				<reportElement key="" x="1400" y="28" width="100" height="14" uuid="6e10d617-9a42-415f-87ed-6c4de6ed1208">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{iso_code2}== null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{currency}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{currencyrate}.compareTo( java.math.BigDecimal .ZERO)>=0 ? "Tasa: "+$F{currencyrate}.setScale(8, java.math.RoundingMode.HALF_UP): ""]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="70" y="28" width="510" height="14" isRemoveLineWhenBlank="true" uuid="2d9ba5ae-c77a-415e-b85d-441d9db29f6d">

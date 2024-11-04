@@ -147,17 +147,12 @@ SELECT
 	amndateend,
 	amountallocated_t,
 	amountdeducted_t,
-	amountallocated_t2,
-	amountdeducted_t2,
 	iso_code1,
 	iso_code2,
 	SUM(cantidad) AS cantidad,
 	SUM(amountallocated) AS amountallocated,
 	SUM(amountdeducted) AS amountdeducted, 
-	SUM(amountcalculated) AS amountcalculated,
-	SUM(amountallocated2) AS amountallocated2,
-	SUM(amountdeducted2) AS amountdeducted2, 
-	SUM(amountcalculated2) AS amountcalculated2
+	SUM(amountcalculated) AS amountcalculated
 FROM 
 (
 	SELECT DISTINCT
@@ -196,13 +191,10 @@ FROM
 	   	'01' as copiaforma,
 	   	COALESCE(pyr.documentno,'') as documentno,
 	   	pyr.description as recibo,
-		pyr.amountallocated as amountallocated_t, 
-		pyr.amountdeducted as amountdeducted_t, 
-		pyr.amountcalculated as amountcalculated_t,
 		-- PYR AMOUNTS CONVERTED
-		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
-		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
-		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
+		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t, 
+		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t, 
+		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t, 
 		-- CURRENCY
 		curr1.iso_code as iso_code1,
 		COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
@@ -214,12 +206,9 @@ FROM
 	   -- MONTOS Y CIFRAS cty.concept_value	
 	   	pyr_d.amn_payroll_detail_id,   
 		pyr_d.qtyvalue as cantidad, 
-		pyr_d.amountallocated, 
-		pyr_d.amountdeducted, 
-		pyr_d.amountcalculated,
-		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
-		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
+		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
+		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
+		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
 	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
@@ -284,13 +273,10 @@ UNION
 	   CASE WHEN $P{isPrintCopy} = 'Y' THEN '02' ELSE 'XX' END as copiaforma,
 	   	COALESCE(pyr.documentno,'') as documentno,
 	   	pyr.description as recibo,
-		pyr.amountallocated as amountallocated_t, 
-		pyr.amountdeducted as amountdeducted_t, 
-		pyr.amountcalculated as amountcalculated_t,
 		-- PYR AMOUNTS CONVERTED
-		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
-		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
-		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
+		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t, 
+		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t, 
+		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t, 
 		-- CURRENCY
 		curr1.iso_code as iso_code1,
 		COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
@@ -302,12 +288,9 @@ UNION
 	   -- MONTOS Y CIFRAS cty.concept_value	   
 		pyr_d.amn_payroll_detail_id,
 		pyr_d.qtyvalue as cantidad, 
-		pyr_d.amountallocated, 
-		pyr_d.amountdeducted, 
-		pyr_d.amountcalculated,
-		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
-		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
+		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
+		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
+		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
 	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
@@ -339,6 +322,6 @@ UNION
 WHERE recibo.copiaforma <> 'XX'
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, nro_id, copia, copiaforma,
-documentno, amn_payroll_detail_id, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno, amn_payroll_detail_id, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, 
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2

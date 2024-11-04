@@ -193,17 +193,12 @@ SELECT
 	amndateend,
 	amountallocated_t,
 	amountdeducted_t,
-	amountallocated_t2,
-	amountdeducted_t2,
 	iso_code1,
 	iso_code2,
 	SUM(cantidad) AS cantidad,
 	SUM(amountallocated) AS amountallocated,
 	SUM(amountdeducted) AS amountdeducted, 
-	SUM(amountcalculated) AS amountcalculated,
-	SUM(amountallocated2) AS amountallocated2,
-	SUM(amountdeducted2) AS amountdeducted2, 
-	SUM(amountcalculated2) AS amountcalculated2
+	SUM(amountcalculated) AS amountcalculated
 FROM 
 (
 	SELECT DISTINCT
@@ -242,13 +237,10 @@ FROM
 	   	'01' as copiaforma,
 	   	COALESCE(pyr.documentno,'') as documentno,
 	   	pyr.description as recibo,
-		pyr.amountallocated as amountallocated_t, 
-		pyr.amountdeducted as amountdeducted_t, 
-		pyr.amountcalculated as amountcalculated_t,
 		-- PYR AMOUNTS CONVERTED
-		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
-		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
-		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
+		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t, 
+		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t, 
+		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t, 
 		-- CURRENCY
 		curr1.iso_code as iso_code1,
 		COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
@@ -260,12 +252,9 @@ FROM
 	   -- MONTOS Y CIFRAS cty.concept_value	
 	   	pyr_d.amn_payroll_detail_id,   
 		pyr_d.qtyvalue as cantidad, 
-		pyr_d.amountallocated, 
-		pyr_d.amountdeducted, 
-		pyr_d.amountcalculated,
-		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
-		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
+		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
+		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
+		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
 	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
@@ -330,13 +319,10 @@ UNION
 	   CASE WHEN $P{isPrintCopy} = 'Y' THEN '02' ELSE 'XX' END as copiaforma,
 	   	COALESCE(pyr.documentno,'') as documentno,
 	   	pyr.description as recibo,
-		pyr.amountallocated as amountallocated_t, 
-		pyr.amountdeducted as amountdeducted_t, 
-		pyr.amountcalculated as amountcalculated_t,
 		-- PYR AMOUNTS CONVERTED
-		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
-		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
-		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
+		currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t, 
+		currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t, 
+		currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t, 
 		-- CURRENCY
 		curr1.iso_code as iso_code1,
 		COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
@@ -348,12 +334,9 @@ UNION
 	   -- MONTOS Y CIFRAS cty.concept_value	   
 		pyr_d.amn_payroll_detail_id,
 		pyr_d.qtyvalue as cantidad, 
-		pyr_d.amountallocated, 
-		pyr_d.amountdeducted, 
-		pyr_d.amountcalculated,
-		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated2, 
-		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted2, 
-		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated2
+		currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
+		currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
+		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
 	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
@@ -385,9 +368,10 @@ UNION
 WHERE recibo.copiaforma <> 'XX'
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, nro_id, copia, copiaforma,
-documentno, amn_payroll_detail_id, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno, amn_payroll_detail_id, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t, 
 iso_code1, iso_code2
-ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2]]>
+ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
+]]>
 	</queryString>
 	<field name="org_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
@@ -493,14 +477,6 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2]]>
 		<property name="com.jaspersoft.studio.field.name" value="amountdeducted_t"/>
 		<property name="com.jaspersoft.studio.field.label" value="amountdeducted_t"/>
 	</field>
-	<field name="amountallocated_t2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountallocated_t2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountallocated_t2"/>
-	</field>
-	<field name="amountdeducted_t2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountdeducted_t2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountdeducted_t2"/>
-	</field>
 	<field name="iso_code1" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="iso_code1"/>
 		<property name="com.jaspersoft.studio.field.label" value="iso_code1"/>
@@ -525,18 +501,6 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2]]>
 		<property name="com.jaspersoft.studio.field.name" value="amountcalculated"/>
 		<property name="com.jaspersoft.studio.field.label" value="amountcalculated"/>
 	</field>
-	<field name="amountallocated2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountallocated2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountallocated2"/>
-	</field>
-	<field name="amountdeducted2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountdeducted2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountdeducted2"/>
-	</field>
-	<field name="amountcalculated2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountcalculated2"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountcalculated2"/>
-	</field>
 	<variable name="dateini" class="java.sql.Timestamp" resetType="Group" resetGroup="Group_porEmpleado">
 		<variableExpression><![CDATA[$F{amndateini}]]></variableExpression>
 	</variable>
@@ -560,20 +524,6 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2]]>
 	<variable name="v_calculado" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
 		<variableExpression><![CDATA[($F{amountcalculated}!= null && $F{isshow}.compareToIgnoreCase("N")== 0
  ? $F{amountcalculated}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_asignaciones_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountallocated2}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountallocated2}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_deducciones_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porCopia" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountdeducted2}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountdeducted2}
  : BigDecimal.ZERO
 )]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -1128,7 +1078,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[ $V{dias_trabajados}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{dias_trabajados}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

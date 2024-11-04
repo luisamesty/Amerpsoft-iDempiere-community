@@ -173,6 +173,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		
 		Integer Currency_ID = 0;
 		Integer ConversionType_ID = MConversionType.TYPE_SPOT;
+		// Default Local Currency for Client
+		Integer m_defaultCurrency_ID = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
 		String Process_Value = "",Contract_Value="",Employee_Value="",Payroll_Value="",Period_Value="";
 		String Employee_Name="",Payroll_Name="";
 		String PayrollDescription="";
@@ -307,6 +309,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			amnpayroll.setAmountNetpaid(BigDecimal.valueOf(0.00));
 			amnpayroll.setC_Currency_ID(Currency_ID);
 			amnpayroll.setC_ConversionType_ID(ConversionType_ID);
+			amnpayroll.setC_Currency_ID_To(m_defaultCurrency_ID);
 			amnpayroll.setIsActive(true);
 			amnpayroll.setIsPrinted(false);
 			amnpayroll.setIsApproved(false);
@@ -361,6 +364,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			amnpayroll.setC_SalesRegion_ID(amnemployee.getC_SalesRegion_ID());
 			amnpayroll.setC_Currency_ID(Currency_ID);
 			amnpayroll.setC_ConversionType_ID(ConversionType_ID);
+			amnpayroll.setC_Currency_ID_To(m_defaultCurrency_ID);
 			//log.warning("get_TrxName()="+get_TrxName());
 			amnpayroll.save(get_TrxName());
 		}
