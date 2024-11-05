@@ -158,7 +158,7 @@ FROM
 	SELECT DISTINCT
 		-- ORG
 	    coalesce(org.value,'') as org_value,
-		coalesce(org.name,org.value,'') as org_name,
+		coalesce(lct.orgname, org.name,org.value,'') as org_name,
 		cty.value2,
 		cty.name2,
 		cty.calcorder2,
@@ -240,7 +240,7 @@ UNION
 	SELECT DISTINCT
 		-- ORG
 	    coalesce(org.value,'') as org_value,
-		coalesce(org.name,org.value,'') as org_name,
+		coalesce(lct.orgname, org.name,org.value,'') as org_name,
 		cty.value2,
 		cty.name2,
 		cty.calcorder2,

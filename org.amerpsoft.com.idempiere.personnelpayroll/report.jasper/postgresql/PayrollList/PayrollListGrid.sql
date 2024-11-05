@@ -199,8 +199,10 @@ SELECT
 	(
 		SELECT 
 			-- ORG
-		    coalesce(org.value,'') as org_value,
-			coalesce(org.name,org.value,'') as org_name,
+		    CASE WHEN ( $P{isShowOrganization} = 'N' ) THEN 'Todas' ELSE coalesce(org.value,'') END AS org_value ,
+		    CASE WHEN ( $P{isShowOrganization} = 'N' ) THEN '** Todas las Organizaciones **' ELSE coalesce(org.name,org.value,'') END AS org_name ,		   	
+--		    coalesce(org.value,'') as org_value,
+--			coalesce(org.name,org.value,'') as org_name,
 			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
 			cty.value2,
 			cty.name2,
@@ -223,8 +225,10 @@ SELECT
 		   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
 			-- DEPARTAMENT
 		   	COALESCE(dep.name,dep.description) as departamento,
-		   	-- LOCATION
-		   	emp.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+			-- LOCATION
+		    lct.amn_location_id AS amn_location_id,
+		    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 'Todas' ELSE lct.value END AS location_value ,
+		    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description) END AS location_name ,		   	
 			-- EMPLOYEE
 		   	emp.amn_employee_id,
 		  	emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso, emp.paymenttype,

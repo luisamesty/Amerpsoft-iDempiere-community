@@ -16,8 +16,13 @@ FROM (SELECT DISTINCT
 -- BPARTNER GROUP
 	 COALESCE(bpg.value, bpg.name, bpg.description) as grupo,
 -- BPARTNER
-	 cbp.name as nombre, COALESCE(cbp.taxid, cbp.amerp_rifseniat) as rif,
+	 COALESCE(cbp.taxid, cbp.amerp_rifseniat) as rif,
 -- EMPLOYEE 
+    emp.name as nombre,
+    COALESCE(emp.lastname1,'') AS apellido1,
+    COALESCE(emp.lastname2,'') AS apellido2,
+    COALESCE(emp.firstname1,'') AS nombre1,
+    COALESCE(emp.firstname2,'') AS nombre2,
     emp.value as codigo,   
     emp.idnumber as cedula,
     DATE(emp.birthday) as fecha_nacimiento,
