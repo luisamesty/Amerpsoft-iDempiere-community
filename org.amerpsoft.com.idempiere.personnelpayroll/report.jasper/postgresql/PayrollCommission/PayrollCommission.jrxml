@@ -112,9 +112,7 @@ SELECT * FROM
 WHERE (imp_header = 1) OR 
 	(commission.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR commission.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY commission.comm_value, commission.contract_value, commission.emp_value, header_info ASC
-
-]]>
+ORDER BY commission.comm_value, commission.contract_value, commission.emp_value, header_info ASC]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -536,7 +534,7 @@ ORDER BY commission.comm_value, commission.contract_value, commission.emp_value,
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Arial" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{documentno}.isEmpty() ? "*** Revisar Planilla ***" : "OK"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{documentno}.isEmpty() || $F{qtyvalue}.compareTo( java.math.BigDecimal.ZERO) == 0 ? "*** Revisar Planilla ***" : "OK"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="635" y="0" width="134" height="14" isRemoveLineWhenBlank="true" uuid="d97517ba-749d-41da-bf97-2c664f850b0d">
@@ -563,7 +561,7 @@ ORDER BY commission.comm_value, commission.contract_value, commission.emp_value,
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Total Trabajadores: ("+$V{v_employee_count}+")" ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Total Trabajadores: ("+$V{v_employee_count}+")"]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
