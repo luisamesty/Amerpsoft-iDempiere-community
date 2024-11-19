@@ -47,7 +47,10 @@ SELECT * FROM
 		COALESCE(emprec.AMN_Payroll_ID,0) AS amn_payroll_id,
 		COALESCE(emprec.comm_value_rec,'N/D') AS comm_value_rec,
 		COALESCE(emprec.qtyvalue,0) AS qtyvalue,
-		COALESCE(emprec.amountallocated,0) AS amountallocated
+		COALESCE(emprec.amountallocated,0) AS amountallocated,
+		iso_code1, 
+		COALESCE(emprec.amountallocated2,0) AS amountallocated2,
+		iso_code2
 		FROM adempiere.amn_employee emp 
 		INNER JOIN adempiere.amn_commissiongroup ac ON ac.amn_commissiongroup_id = emp.amn_commissiongroup_id 
 		INNER JOIN adempiere.amn_contract amc ON amc.amn_contract_id = emp.amn_contract_id 
@@ -60,8 +63,17 @@ SELECT * FROM
 				ac2.value AS comm_value_rec,
 				pyr2_d.qtyvalue,
 				pyr2_d.amountallocated,
+				currencyConvert(pyr2_d.amountallocated,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, pyr2.C_ConversionType_ID, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as amountallocated2, 
 				ct.value AS concepto,
-				ct.calcorder AS calcorder
+				ct.calcorder AS calcorder,
+				pyr2.c_conversiontype_id,
+				-- CURRENCY
+				curr1.iso_code as iso_code1,
+				currt1.cursymbol as cursymbol1,
+				COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+				curr2.iso_code as iso_code2,
+				currt2.cursymbol as cursymbol2,
+				COALESCE(currt2.description,curr2.iso_code,curr2.cursymbol,'') as currname2
 			FROM adempiere.amn_employee emp2 
 			INNER JOIN adempiere.amn_commissiongroup ac2 ON ac2.amn_commissiongroup_id = emp2.amn_commissiongroup_id 
 			INNER JOIN adempiere.amn_payroll pyr2 ON emp2.amn_employee_id = pyr2.amn_employee_id 
@@ -88,6 +100,10 @@ SELECT * FROM
 			) AS periodo ON periodo.amn_period_id = pyr2.amn_period_id
 			INNER JOIN adempiere.amn_concept_types_proc ctp ON ctp.amn_concept_types_proc_id = pyr2_d.amn_concept_types_proc_id
 			INNER JOIN adempiere.amn_concept_types ct ON ct.amn_concept_types_id =ctp.amn_concept_types_id AND ct.amn_concept_types_id = $P{AMN_Concept_Types_ID}
+			INNER JOIN c_currency curr1 on pyr2.c_currency_id = curr1.c_currency_id
+		    LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
+     		INNER JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+     		LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 			) emprec ON emprec.amn_employee_id = emp.amn_employee_id
 		WHERE emp.isactive ='Y' AND emp.status IN ('A','V')
 	) as commission ON (1= 0)
