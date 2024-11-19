@@ -180,6 +180,11 @@ public class AMNProcessFactory implements IProcessFactory {
     		try {
 				process =   AMNYearCreateSchedule.class.newInstance();
 			} catch (Exception e) {}
+        // AMNPayrollRefreshOnePeriodConcept
+        if (p_className.equals("org.amerp.process.AMNPayrollRefreshOnePeriodConcept"))
+    		try {
+				process =   AMNPayrollRefreshOnePeriodConcept.class.newInstance();
+			} catch (Exception e) {}
         // **************************
         // Import Processes 
         // **************************

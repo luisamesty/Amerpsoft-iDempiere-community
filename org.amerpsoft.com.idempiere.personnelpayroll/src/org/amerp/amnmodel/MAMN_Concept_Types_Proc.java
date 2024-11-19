@@ -102,6 +102,26 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 	}
 
 	/**
+	 * sqlGetAMNConceptTypesProc_FromConcept ()
+	 * @param int p_AMNConcept_Types_ID
+	 * @param int p_AMNProcess_ID
+	 */
+	public static int sqlGetAMNConceptTypesProc_FromConcept (int p_AMNConcept_Types_ID,
+			int p_AMNProcess_ID)
+	{
+		String sql;
+		int AMN_Concept_Type_Proc_ID = 0;
+		// AMN_Location
+    	sql = "select amn_concept_types_proc_id "+
+    			"from adempiere.amn_concept_types_proc "+
+    			"WHERE amn_concept_types_id = ? "+
+    			"AND amn_process_id=? " ;
+    	AMN_Concept_Type_Proc_ID = DB.getSQLValue(null, sql, p_AMNConcept_Types_ID,p_AMNProcess_ID);	
+		return AMN_Concept_Type_Proc_ID;	
+	}
+	
+	
+	/**
 	 * sqlGetAMNConceptTypesProcPRESTAMODB ()
 	 * @param int p_AMNConcept_Types_ID
 	 * @param int p_AMNProcess_ID

@@ -62,7 +62,7 @@ public class MAMN_CommissionGroup extends X_AMN_CommissionGroup{
 				+ "	INNER JOIN amn_contract ac2 ON ac2.amn_contract_id = emp.amn_contract_id "
 				+ "	INNER JOIN amn_commissiongroup ac ON ac.amn_commissiongroup_id = emp.amn_commissiongroup_id "
 				+ "	INNER JOIN amn_concept_types_proc ctp ON ctp.amn_concept_types_proc_id = apd.amn_concept_types_proc_id "
-				+ "	INNER JOIN amn_concept_types ct ON ct.amn_concept_types_id =ctp.amn_concept_types_id AND ct.amn_concept_types_id = "+AMN_Concept_Types_Limit_ID
+				+ "	INNER JOIN amn_concept_types ct ON ct.amn_concept_types_id =ctp.amn_concept_types_id AND ct.amn_concept_types_id = "+AMN_Concept_Types_ID
 				+ "	WHERE ac.value = '"+CommissionGroup+"'"
 				+ ") AS norec";
 		Integer retValue = 0;

@@ -24,7 +24,7 @@ SELECT * FROM
 		WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
 	) as header_info
 	FULL JOIN
-	( SELECT 
+	( SELECT DISTINCT 
 		-- AD_Client 
 		emp.ad_client_id,
 		-- AD_org_id
@@ -37,6 +37,8 @@ SELECT * FROM
 		emp.amn_employee_id,
 		emp.value AS emp_value,
 		emp.name AS emp_name,
+		emp.isactive,
+		emp.status,
 		-- AMN_Concept_Types
 		COALESCE(emprec.concepto,'') AS concepto,
 		COALESCE(emprec.calcorder,0) AS calcorder,
@@ -44,10 +46,11 @@ SELECT * FROM
 		COALESCE(emprec.documentno,'') AS documentno,
 		COALESCE(emprec.AMN_Payroll_ID,0) AS amn_payroll_id,
 		COALESCE(emprec.comm_value_rec,'N/D') AS comm_value_rec,
-		COALESCE(emprec.qtyvalue,0) AS qtyvalue
-		FROM amn_employee emp 
-		INNER JOIN amn_commissiongroup ac ON ac.amn_commissiongroup_id = emp.amn_commissiongroup_id 
-		INNER JOIN amn_contract amc ON amc.amn_contract_id = emp.amn_contract_id 
+		COALESCE(emprec.qtyvalue,0) AS qtyvalue,
+		COALESCE(emprec.amountallocated,0) AS amountallocated
+		FROM adempiere.amn_employee emp 
+		INNER JOIN adempiere.amn_commissiongroup ac ON ac.amn_commissiongroup_id = emp.amn_commissiongroup_id 
+		INNER JOIN adempiere.amn_contract amc ON amc.amn_contract_id = emp.amn_contract_id 
 		LEFT JOIN (
 			-- TRABAJADORES CON CONCEPTOS DE COMMISSION EN EL RECIBO
 			SELECT 
@@ -56,34 +59,37 @@ SELECT * FROM
 				pyr2.documentno,
 				ac2.value AS comm_value_rec,
 				pyr2_d.qtyvalue,
+				pyr2_d.amountallocated,
 				ct.value AS concepto,
 				ct.calcorder AS calcorder
-			FROM amn_employee emp2 
-			INNER JOIN amn_commissiongroup ac2 ON ac2.amn_commissiongroup_id = emp2.amn_commissiongroup_id 
-			INNER JOIN amn_payroll pyr2 ON emp2.amn_employee_id = pyr2.amn_employee_id 
-			INNER JOIN amn_payroll_detail pyr2_d ON pyr2_d.amn_payroll_id = pyr2.amn_payroll_id 
+			FROM adempiere.amn_employee emp2 
+			INNER JOIN adempiere.amn_commissiongroup ac2 ON ac2.amn_commissiongroup_id = emp2.amn_commissiongroup_id 
+			INNER JOIN adempiere.amn_payroll pyr2 ON emp2.amn_employee_id = pyr2.amn_employee_id 
+			INNER JOIN adempiere.amn_payroll_detail pyr2_d ON pyr2_d.amn_payroll_id = pyr2.amn_payroll_id 
 			INNER JOIN (
-				SELECT DISTINCT ap.amn_period_id, ap.amndateini, ap.amndateend, amnct.value, amnct.amn_concept_types_id
-				FROM amn_period ap 
-				INNER JOIN amn_contract cnt ON cnt.amn_contract_id = ap.amn_contract_id 
-				INNER JOIN amn_concept_types_limit amctl ON amctl.ad_client_id = ap.ad_client_id 
-				INNER JOIN amn_concept_types amnct ON amnct.amn_concept_types_id = amctl.amn_concept_types_id
+				SELECT DISTINCT ON (ap.amn_period_id)
+				ap.amn_period_id, ap.amndateini, ap.amndateend, amnct.value, amnct.amn_concept_types_id, amctl.amn_concept_types_limit_id
+				FROM adempiere.amn_period ap 
+				INNER JOIN adempiere.amn_contract cnt ON cnt.amn_contract_id = ap.amn_contract_id 
+				INNER JOIN adempiere.amn_concept_types_limit amctl ON amctl.ad_client_id = ap.ad_client_id 
+				INNER JOIN adempiere.amn_concept_types amnct ON amnct.amn_concept_types_id = amctl.amn_concept_types_id
 				WHERE ap.amndateini >= amctl.validfrom AND ap.amndateend <= amctl.validto
 					AND ap.amn_contract_id IN (
-						SELECT AMN_Contract_ID 	FROM amn_concept_types_contract	WHERE AMN_Concept_Types_ID= $P{AMN_Concept_Types_ID}
+						SELECT AMN_Contract_ID 	FROM adempiere.amn_concept_types_contract	WHERE AMN_Concept_Types_ID= $P{AMN_Concept_Types_ID}
 					)
 					AND ap.amn_process_id IN (
-						SELECT AMN_Process_ID FROM amn_concept_types_proc WHERE AMN_Concept_Types_ID=$P{AMN_Concept_Types_ID}
+						SELECT AMN_Process_ID FROM adempiere.amn_concept_types_proc WHERE AMN_Concept_Types_ID=$P{AMN_Concept_Types_ID}
 					)
-					AND amctl.amn_concept_types_limit_id = (
+					AND amctl.amn_concept_types_limit_id IN (
 						SELECT DISTINCT AMN_Concept_Types_Limit_ID 
-						FROM amn_concept_types_limit actl 
-						WHERE actl.validfrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd} ) 
+						FROM adempiere.amn_concept_types_limit actl 
+						WHERE actl.validfrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd} ) AND actl.ad_client_id= $P{AD_Client_ID} 
 				)
 			) AS periodo ON periodo.amn_period_id = pyr2.amn_period_id
-			INNER JOIN amn_concept_types_proc ctp ON ctp.amn_concept_types_proc_id = pyr2_d.amn_concept_types_proc_id
-			INNER JOIN amn_concept_types ct ON ct.amn_concept_types_id =ctp.amn_concept_types_id AND ct.amn_concept_types_id = $P{AMN_Concept_Types_ID}
-		) emprec ON emprec.amn_employee_id = emp.amn_employee_id
+			INNER JOIN adempiere.amn_concept_types_proc ctp ON ctp.amn_concept_types_proc_id = pyr2_d.amn_concept_types_proc_id
+			INNER JOIN adempiere.amn_concept_types ct ON ct.amn_concept_types_id =ctp.amn_concept_types_id AND ct.amn_concept_types_id = $P{AMN_Concept_Types_ID}
+			) emprec ON emprec.amn_employee_id = emp.amn_employee_id
+		WHERE emp.isactive ='Y' AND emp.status IN ('A','V')
 	) as commission ON (1= 0)
 WHERE (imp_header = 1) OR 
 	(commission.ad_client_id= $P{AD_Client_ID} 
