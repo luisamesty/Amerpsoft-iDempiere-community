@@ -22,6 +22,12 @@ FROM (
 	CONCAT(COALESCE(emp.firstname1,''),' ',COALESCE(emp.firstname2,'')) AS empfirstname,
 	emp.name as emp_name, 
 	emp.status, emp.incomedate as fecha_ingreso, emp.Birthday as fecha_nacimiento,
+	CASE WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN 1
+	         WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN 1
+	         WHEN ($P{AMN_Status_R} = 'Y' AND emp.status='R') THEN 1
+	         WHEN ($P{AMN_Status_S} = 'Y' AND emp.status='S') THEN 1
+	         ELSE 0 END 
+	    AS imprimir_status,
 	CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_org_id = $P{AD_Org_ID} ) THEN 1 ELSE 0 END AS imprimir_org,
 	employ1.accountno AS cuenta_pagadora,
 	employ2.accountno AS cuenta_acreedora,
@@ -80,11 +86,11 @@ FROM (
 			)  cbb2 ON cbb2.C_BPartner_ID = emp2.C_BPartner_ID
 			WHERE emp2.AD_Client_ID=$P{AD_Client_ID}
 	) AS employ2 ON employ2.amn_employee_id = emp.amn_employee_id 	
-	WHERE emp.isactive= 'Y' AND
-       emp.ad_client_id=  $P{AD_Client_ID} 
+	WHERE emp.isactive= 'Y'  
+       AND emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) trab
-WHERE trab.imprimir_con=1
+WHERE trab.imprimir_status=1 AND trab.imprimir_con=1
 	AND trab.imprimir_loc=1 AND trab.imprimir_org = 1
 ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.emp_value
  

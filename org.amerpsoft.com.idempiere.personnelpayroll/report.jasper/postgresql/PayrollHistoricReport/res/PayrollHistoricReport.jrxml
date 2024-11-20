@@ -113,9 +113,9 @@ FULL JOIN
 	   currencyConvert(pyr_d.amountcalculated, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	INNER JOIN adempiere.amn_payroll_detail as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
-	INNER JOIN adempiere.amn_concept_types_proc as ctp ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
-	INNER JOIN adempiere.amn_concept_types	as cty ON ((cty.amn_concept_types_id= ctp.amn_concept_types_id))
-	INNER JOIN adempiere.amn_process as prc ON (prc.amn_process_id= ctp.amn_process_id)
+	 LEFT JOIN adempiere.amn_concept_types_proc as ctp ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+	 LEFT JOIN adempiere.amn_concept_types	as cty ON ((cty.amn_concept_types_id= ctp.amn_concept_types_id))
+	 LEFT JOIN adempiere.amn_process as prc ON (prc.amn_process_id= ctp.amn_process_id)
 	INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
 	 LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
 	 LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
@@ -183,16 +183,16 @@ FULL JOIN
      LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 	WHERE prc.value IN ('NN','NO','NV','NU','PO','TI','TO') 
 		--AND emp.isactive = 'Y'
-		AND CASE WHEN ($P{AMN_Concept_ValidFor} = 'AA' ) THEN 1=1 
-                  WHEN ($P{AMN_Concept_ValidFor} = 'IM' AND  cty.arc='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'NU' AND  cty.utilidad='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'NV' AND  cty.vacacion='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'NP' AND  cty.prestacion='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'IN' AND  cty.ince='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'SS' AND  cty.sso='Y') THEN 1=1 
-                  WHEN ($P{AMN_Concept_ValidFor} = 'FA' AND  cty.faov='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'PI' AND  cty.spf='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'SA' AND  cty.salario='Y') THEN 1=1
+		AND CASE WHEN ($P{AMN_Concept_ValidFor} = 'AA' AND cty.optmode != 'R' ) THEN 1=1 
+                  WHEN ($P{AMN_Concept_ValidFor} = 'IM' AND cty.optmode != 'R' AND cty.arc='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'NU' AND cty.optmode != 'R' AND cty.utilidad='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'NV' AND cty.optmode != 'R' AND cty.vacacion='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'NP' AND cty.optmode != 'R' AND cty.prestacion='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'IN' AND cty.optmode != 'R' AND cty.ince='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'SS' AND cty.optmode != 'R' AND cty.sso='Y') THEN 1=1 
+                  WHEN ($P{AMN_Concept_ValidFor} = 'FA' AND cty.optmode != 'R' AND cty.faov='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'PI' AND cty.optmode != 'R' AND cty.spf='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'SA' AND cty.optmode != 'R' AND cty.salario='Y') THEN 1=1
             END
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -662,58 +662,6 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 	</variable>
 	<variable name="total" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto">
 		<variableExpression><![CDATA[($V{period01}.add( $V{period02}.add($V{period03}.add($V{period04}.add($V{period05}.add( $V{period06}.add( $V{period07}.add( $V{period08}.add( $V{period09}.add( $V{period10}.add( $V{period11}.add( $V{period12} ))))))))))))]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period01_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id01} ) == 0 ? $F{amountcalculated}: BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period02_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id02} ) == 0 ?  $F{amountcalculated} : BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period03_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id03} ) == 0 ?  $F{amountcalculated}: BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period04_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id04} ) == 0 ?  $F{amountcalculated}: BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period05_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id05} ) == 0 ?  $F{amountcalculated} : BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period06_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id06} ) == 0 ?  $F{amountcalculated}: BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period07_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id07} ) == 0 ?  $F{amountcalculated} : BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period08_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id08} ) == 0 ?  $F{amountcalculated} : BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period09_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id09} ) == 0 ?  $F{amountcalculated}: BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period10_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id10} ) == 0 ?  $F{amountcalculated}: BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period11_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id11} ) == 0 ?  $F{amountcalculated} : BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="period12_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{cty_value}!= null ? ($F{c_period_id}.compareTo( $F{c_period_id12} ) == 0 ?  $F{amountcalculated} : BigDecimal.ZERO) : BigDecimal.ZERO)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="total_NoShow" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto">
-		<variableExpression><![CDATA[($V{period01_NoShow}.add( $V{period02_NoShow}.add($V{period03_NoShow}.add($V{period04_NoShow}.add($V{period05_NoShow}.add( $V{period06_NoShow}.add( $V{period07_NoShow}.add( $V{period08_NoShow}.add( $V{period09_NoShow}.add( $V{period10_NoShow}.add( $V{period11_NoShow}.add( $V{period12_NoShow} ))))))))))))]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="period01_0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porProceso" incrementType="Group" incrementGroup="Group_porConcepto" calculation="Sum">
@@ -1509,15 +1457,10 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 	<group name="Group_porConcepto">
 		<groupExpression><![CDATA[$F{cty_value}]]></groupExpression>
 		<groupHeader>
-			<band height="12">
-				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0 && $F{isshow}.compareToIgnoreCase( "Y" )== 0 && "ABDPW".contains($F{optmode})
-]]></printWhenExpression>
+			<band height="17">
+				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="0" width="100" height="12" isRemoveLineWhenBlank="true" uuid="af8ec979-5f56-4dbd-b09a-5d18ccad0db5">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="5" y="5" width="99" height="12" isRemoveLineWhenBlank="true" uuid="af8ec979-5f56-4dbd-b09a-5d18ccad0db5"/>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
@@ -1525,41 +1468,22 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $F{cty_value} : null)]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="100" y="0" width="210" height="12" isRemoveLineWhenBlank="true" uuid="b0b43e17-7f26-4b91-9554-1cc739965c83">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="104" y="5" width="251" height="12" isRemoveLineWhenBlank="true" uuid="b0b43e17-7f26-4b91-9554-1cc739965c83"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $F{concept_type} : null)]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="310" y="0" width="39" height="12" isRemoveLineWhenBlank="true" uuid="2756d936-6c26-402a-bc4a-b177af29fc81">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $F{optmode} : null)]]></textFieldExpression>
-				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="350" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="39b42c6e-3172-45fb-92f2-0eb7c1c2237a">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="355" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="39b42c6e-3172-45fb-92f2-0eb7c1c2237a"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period01}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period01} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="445" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="e5ea89e5-37d3-449d-bf70-bae1c797eb22">
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="445" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="e5ea89e5-37d3-449d-bf70-bae1c797eb22">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
@@ -1567,63 +1491,50 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 					<textFieldExpression><![CDATA[($V{period02}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period02} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="535" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="83a91dc8-b215-47fe-a1ac-91677865dffd">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="535" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="83a91dc8-b215-47fe-a1ac-91677865dffd"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period03}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period03} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="625" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="144101e9-ceed-4c7a-bcf4-a183eb9f06f0">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="625" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="144101e9-ceed-4c7a-bcf4-a183eb9f06f0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period04}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period04} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="715" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="b3271984-e31e-4c54-9f55-4402b7eef3f0">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="715" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="b3271984-e31e-4c54-9f55-4402b7eef3f0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period05}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period05} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="805" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="6b3a857e-c897-400c-bb49-017b78e0e00d">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="805" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="6b3a857e-c897-400c-bb49-017b78e0e00d"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period06}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period06} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="895" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="ab55ecbd-e25d-4f32-aea7-15167513e51a">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="895" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="ab55ecbd-e25d-4f32-aea7-15167513e51a"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period07}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period07} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1165" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="7b6d70c8-b0f1-491e-a46b-fa05fd2de31b">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1165" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="7b6d70c8-b0f1-491e-a46b-fa05fd2de31b"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period10}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period10} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="985" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="97ca2ae7-e2a5-4b6f-bad2-bda43994901e">
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="985" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="97ca2ae7-e2a5-4b6f-bad2-bda43994901e">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
@@ -1634,207 +1545,34 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
  )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1075" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="9d5ae1eb-b3bf-4098-8aab-cdd938d89730">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1075" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="9d5ae1eb-b3bf-4098-8aab-cdd938d89730"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period09}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period09} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1255" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="33693965-e024-4481-9db2-31d36d3eaa2c">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1255" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="33693965-e024-4481-9db2-31d36d3eaa2c"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period11}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period11} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1345" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="4951527e-4b74-407b-8111-bed350bc5fee">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1345" y="5" width="90" height="12" isRemoveLineWhenBlank="true" uuid="4951527e-4b74-407b-8111-bed350bc5fee"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{period12}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period12} : null )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1435" y="0" width="110" height="12" isRemoveLineWhenBlank="true" uuid="a85fdc48-4cb2-4a88-9096-1e1b9eb741ff">
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1435" y="5" width="110" height="12" isRemoveLineWhenBlank="true" uuid="a85fdc48-4cb2-4a88-9096-1e1b9eb741ff">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $V{total} : null)]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="Group_prConceptoNoShow">
-		<groupExpression><![CDATA[$F{cty_value}]]></groupExpression>
-		<groupHeader>
-			<band height="12">
-				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0 && ( $F{isshow}.compareToIgnoreCase( "N" )== 0 ||  "R".contains($F{optmode}) )]]></printWhenExpression>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="0" width="100" height="12" isRemoveLineWhenBlank="true" uuid="59e245db-91c7-48d0-8288-296a75022f77">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<box leftPadding="10"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $F{cty_value} : null)]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="100" y="0" width="210" height="12" isRemoveLineWhenBlank="true" uuid="b427a9e9-15ab-4286-8837-edb063c46c2f">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $F{concept_type} : null)]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="310" y="0" width="39" height="12" isRemoveLineWhenBlank="true" uuid="2c90fa13-b60b-497b-a7a0-1d6648305800">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{total}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $F{optmode} : null)]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="350" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="e129ac95-dbec-4749-89d2-ce590017751a">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period01_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period01_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="445" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="71a4543c-4562-4724-9b6a-5a9ac0e8c8ef">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period02_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period02_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="535" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="063c11f9-2550-4c32-826d-e747eae5f32f">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period03_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period03_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="625" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="9cb518aa-09d3-4e52-88c2-88471bdb73ed">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period04_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period04_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="715" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="8f2178d8-c9a4-4d70-b320-b858d06f6372">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period05_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period05_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="805" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="5c1a7fb9-c118-4df3-8b8b-7c44515ea882">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period06_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period06_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="895" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="d580c681-35ad-41dd-8e86-e56258aaf78f">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period07_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period07_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1165" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="a6720f21-ab83-4389-9be6-8d00b472240d">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period10_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period10_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="985" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="75f55b23-2a7c-4955-80c2-c0ce62a1aaa7">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period08_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  
- ? $V{period08_NoShow}
- : null
- )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1075" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="1c4155f9-9a43-4c75-bbe6-d22d158b5294">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period09_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period09_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1255" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="d88ebfd7-c555-459f-89b4-155c861b9046">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period11_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period11_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1345" y="0" width="90" height="12" isRemoveLineWhenBlank="true" uuid="25749754-ab80-4424-adf8-1bf67444e262">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{period12_NoShow}.compareTo(BigDecimal.ZERO)!= 0 == true  ? $V{period12_NoShow} : null )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="1435" y="0" width="110" height="12" isRemoveLineWhenBlank="true" uuid="63ef1a66-a748-48c7-96e2-3044bc9b1f9f">
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false" isItalic="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($V{total_NoShow}.compareTo(BigDecimal.ZERO)!= 0  ||  $P{isShowZERO}.compareToIgnoreCase( "Y" ) == 0 ? $V{total_NoShow} : null)]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1897,14 +1635,13 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 +" )"   +  "  Trabajadores Retirados: ("+($P{isShowRetired}.compareToIgnoreCase( "Y" ) == 0 ? "SI" : "NO"  ) +")"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="100" y="18" width="250" height="15" uuid="f7e65d91-047b-4435-ad52-0ff35f8ded80">
+				<reportElement x="99" y="18" width="251" height="15" uuid="f7e65d91-047b-4435-ad52-0ff35f8ded80">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -1913,12 +1650,10 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="100" y="0" width="250" height="18" uuid="8f3299d6-8486-40a9-b138-66190f6d7099">
+				<reportElement x="99" y="0" width="251" height="18" uuid="8f3299d6-8486-40a9-b138-66190f6d7099">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -1927,15 +1662,15 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="100" height="48" uuid="0fcd402a-9188-4fef-a66a-2c5fa3e92be8">
+				<reportElement key="" x="0" y="0" width="99" height="48" uuid="0fcd402a-9188-4fef-a66a-2c5fa3e92be8">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1978,7 +1713,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="23" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<printWhenExpression><![CDATA[$F{startdate}!= null]]></printWhenExpression>
 			<line>
 				<reportElement x="0" y="0" width="1540" height="1" uuid="9ef21d5d-f26a-43ea-bfb3-db64fbd51c43">
@@ -2014,12 +1749,12 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="3" width="100" height="15" uuid="a861c33b-eb63-427f-af13-7716b793079c">
+				<reportElement x="0" y="3" width="99" height="15" uuid="a861c33b-eb63-427f-af13-7716b793079c">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -2028,10 +1763,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<text><![CDATA[Concepto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="3" width="210" height="15" uuid="82629fa6-b38d-4d92-8cef-35baaba7dc1c">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
+				<reportElement x="99" y="3" width="251" height="15" uuid="82629fa6-b38d-4d92-8cef-35baaba7dc1c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
@@ -2162,16 +1894,6 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				</textElement>
 				<textFieldExpression><![CDATA["Totales"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="310" y="3" width="39" height="15" uuid="9832edd7-6e72-40b1-b57f-94b76189be46">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Tipo]]></text>
-			</staticText>
 		</band>
 	</columnHeader>
 	<summary>

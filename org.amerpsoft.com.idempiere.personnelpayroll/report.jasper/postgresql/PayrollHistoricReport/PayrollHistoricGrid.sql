@@ -266,7 +266,15 @@ SELECT
 		INNER JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
 		INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
 		INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
-		INNER JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+		INNER JOIN (
+				SELECT cpe.amn_period_id ,
+				cpe.name, cpe.amndateini, cpe.amndateend
+				FROM AMN_Period cpe 
+				WHERE cpe.amndateini BETWEEN DATE($P{DateIni} ) AND DATE($P{DateEnd} ) 
+		 		AND cpe.AD_Client_ID= $P{AD_Client_ID}
+				ORDER BY cpe.amndateini ASC
+		) as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
+		--adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
 		INNER JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
 		INNER JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
 		INNER JOIN adempiere.c_bpartner 						as cbp 	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
@@ -285,8 +293,7 @@ SELECT
 		    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 		    AND ( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR prc.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 			AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR emp.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-			AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
-		    AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+			AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
 		    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
 		    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 	) AS recibo
@@ -294,5 +301,5 @@ SELECT
 	departamento, amn_employee_id, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
 	amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
 	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate
-	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
+	ORDER BY  org_value, location_value, value_emp, amndateini, documentno, calcorder2
 ) AS recibocur

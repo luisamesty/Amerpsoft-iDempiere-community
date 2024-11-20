@@ -76,9 +76,9 @@ FULL JOIN
 	   currencyConvert(pyr_d.amountcalculated, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	INNER JOIN adempiere.amn_payroll_detail as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
-	 LEFT JOIN adempiere.amn_concept_types_proc as ctp ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
-	 LEFT JOIN adempiere.amn_concept_types	as cty ON ((cty.amn_concept_types_id= ctp.amn_concept_types_id))
-	 LEFT JOIN adempiere.amn_process as prc ON (prc.amn_process_id= ctp.amn_process_id)
+	INNER JOIN adempiere.amn_concept_types_proc as ctp ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+	INNER JOIN adempiere.amn_concept_types	as cty ON ((cty.amn_concept_types_id= ctp.amn_concept_types_id))
+	INNER JOIN adempiere.amn_process as prc ON (prc.amn_process_id= ctp.amn_process_id)
 	INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
 	 LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
 	 LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
@@ -146,16 +146,16 @@ FULL JOIN
      LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 	WHERE prc.value IN ('NN','NO','NV','NU','PO','TI','TO') 
 		--AND emp.isactive = 'Y'
-		AND CASE WHEN ($P{AMN_Concept_ValidFor} = 'AA' AND cty.optmode != 'R' ) THEN 1=1 
-                  WHEN ($P{AMN_Concept_ValidFor} = 'IM' AND cty.optmode != 'R' AND cty.arc='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'NU' AND cty.optmode != 'R' AND cty.utilidad='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'NV' AND cty.optmode != 'R' AND cty.vacacion='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'NP' AND cty.optmode != 'R' AND cty.prestacion='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'IN' AND cty.optmode != 'R' AND cty.ince='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'SS' AND cty.optmode != 'R' AND cty.sso='Y') THEN 1=1 
-                  WHEN ($P{AMN_Concept_ValidFor} = 'FA' AND cty.optmode != 'R' AND cty.faov='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'PI' AND cty.optmode != 'R' AND cty.spf='Y') THEN 1=1
-                  WHEN ($P{AMN_Concept_ValidFor} = 'SA' AND cty.optmode != 'R' AND cty.salario='Y') THEN 1=1
+		AND CASE WHEN ($P{AMN_Concept_ValidFor} = 'AA' ) THEN 1=1 
+                  WHEN ($P{AMN_Concept_ValidFor} = 'IM' AND  cty.arc='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'NU' AND  cty.utilidad='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'NV' AND  cty.vacacion='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'NP' AND  cty.prestacion='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'IN' AND  cty.ince='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'SS' AND  cty.sso='Y') THEN 1=1 
+                  WHEN ($P{AMN_Concept_ValidFor} = 'FA' AND  cty.faov='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'PI' AND  cty.spf='Y') THEN 1=1
+                  WHEN ($P{AMN_Concept_ValidFor} = 'SA' AND  cty.salario='Y') THEN 1=1
             END
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
