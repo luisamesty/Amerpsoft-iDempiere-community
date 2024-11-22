@@ -32,7 +32,7 @@ public interface I_AMN_Leaves_Types
     /** TableName=AMN_Leaves_Types */
     public static final String Table_Name = "AMN_Leaves_Types";
 
-    /** AD_Table_ID=1000099 */
+    /** AD_Table_ID=1000083 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -133,6 +133,32 @@ public interface I_AMN_Leaves_Types
 	  */
 	public boolean isActive();
 
+    /** Column name LeadTime */
+    public static final String COLUMNNAME_LeadTime = "LeadTime";
+
+	/** Set Lead Time.
+	  * Lead TimeLead time for a request
+	  */
+	public void setLeadTime (int LeadTime);
+
+	/** Get Lead Time.
+	  * Lead TimeLead time for a request
+	  */
+	public int getLeadTime();
+
+    /** Column name MinimumDays */
+    public static final String COLUMNNAME_MinimumDays = "MinimumDays";
+
+	/** Set Minimum Days.
+	  * Minimum Days for requiring Leaves
+	  */
+	public void setMinimumDays (int MinimumDays);
+
+	/** Get Minimum Days.
+	  * Minimum Days for requiring Leaves
+	  */
+	public int getMinimumDays();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -145,6 +171,19 @@ public interface I_AMN_Leaves_Types
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name ResponseTime */
+    public static final String COLUMNNAME_ResponseTime = "ResponseTime";
+
+	/** Set Response Time.
+	  * Request Response Time
+	  */
+	public void setResponseTime (int ResponseTime);
+
+	/** Get Response Time.
+	  * Request Response Time
+	  */
+	public int getResponseTime();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

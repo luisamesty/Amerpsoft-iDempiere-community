@@ -101,6 +101,15 @@ public interface I_AMN_Leaves
 	  */
 	public int getAMN_Leaves_ID();
 
+    /** Column name AMN_Leaves_Status */
+    public static final String COLUMNNAME_AMN_Leaves_Status = "AMN_Leaves_Status";
+
+	/** Set Leaves Status	  */
+	public void setAMN_Leaves_Status (String AMN_Leaves_Status);
+
+	/** Get Leaves Status	  */
+	public String getAMN_Leaves_Status();
+
     /** Column name AMN_Leaves_Types_ID */
     public static final String COLUMNNAME_AMN_Leaves_Types_ID = "AMN_Leaves_Types_ID";
 

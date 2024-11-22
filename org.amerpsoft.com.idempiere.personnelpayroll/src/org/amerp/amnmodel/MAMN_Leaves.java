@@ -31,6 +31,16 @@ public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions 
 	/* Is reactivating isRecativating  **/
 	private boolean		isReactivating = false;
 	
+	public static final String AMN_Leaves_None = "--";
+	public static final String AMN_Leaves_Draft = "DR"; 		//	DR Draft - Borrador	Emitida por el Usuario, o en condición de Devuelta
+	public static final String AMN_Leaves_Supervisor = "SU"; 	//	SU  Revisión Supervisor	En revisión por el Supervisor del Trabajador
+	public static final String AMN_Leaves_Rejected = "SR"; 		//	SR Solicitud Rechazada	Rechazada por el Supervisor del Trabajador
+	public static final String AMN_Leaves_HHRR = "RH"; 			//	RH Revisión Recursos Humanos	En Revisión por Recursos Humanos
+	public static final String AMN_Leaves_HHRR_Rejected = "RR";	//	RR Rechazada RRHH	Rechazada por Recursos Humanos
+	public static final String AMN_Leaves_Filed = "AR";			//	AR Archivo.	Archivo
+	public static final String AMN_Leaves_Complete = "CO";		// 	CO Completada	Completada
+	public static final String AMN_Leaves_Close = "CL";			// 	CL Closed 
+	
 	public MAMN_Leaves(Properties ctx, int AMN_Leaves_ID, String trxName) {
 		super(ctx, AMN_Leaves_ID, trxName);
 		// 

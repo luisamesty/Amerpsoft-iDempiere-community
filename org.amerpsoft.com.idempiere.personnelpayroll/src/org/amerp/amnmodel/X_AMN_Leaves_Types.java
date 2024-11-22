@@ -31,7 +31,7 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240918L;
+	private static final long serialVersionUID = 20241122L;
 
     /** Standard Constructor */
     public X_AMN_Leaves_Types (Properties ctx, int AMN_Leaves_Types_ID, String trxName)
@@ -40,6 +40,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_ID == 0)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -51,6 +53,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_ID == 0)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -62,6 +66,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_UU == null)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -73,6 +79,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_UU == null)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -178,6 +186,44 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	/** Set Lead Time.
+		@param LeadTime Lead TimeLead time for a request
+	*/
+	public void setLeadTime (int LeadTime)
+	{
+		set_Value (COLUMNNAME_LeadTime, Integer.valueOf(LeadTime));
+	}
+
+	/** Get Lead Time.
+		@return Lead TimeLead time for a request
+	  */
+	public int getLeadTime()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_LeadTime);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Minimum Days.
+		@param MinimumDays Minimum Days for requiring Leaves
+	*/
+	public void setMinimumDays (int MinimumDays)
+	{
+		set_Value (COLUMNNAME_MinimumDays, Integer.valueOf(MinimumDays));
+	}
+
+	/** Get Minimum Days.
+		@return Minimum Days for requiring Leaves
+	  */
+	public int getMinimumDays()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_MinimumDays);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -192,6 +238,25 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
+	}
+
+	/** Set Response Time.
+		@param ResponseTime Request Response Time
+	*/
+	public void setResponseTime (int ResponseTime)
+	{
+		set_Value (COLUMNNAME_ResponseTime, Integer.valueOf(ResponseTime));
+	}
+
+	/** Get Response Time.
+		@return Request Response Time
+	  */
+	public int getResponseTime()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_ResponseTime);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Search Key.
