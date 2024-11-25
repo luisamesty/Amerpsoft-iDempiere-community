@@ -26,15 +26,16 @@ import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for AMN_Contract
- *  @author iDempiere (generated) 
- *  @version Release 2.1 - $Id$ */
-public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent 
+ *  @author iDempiere (generated)
+ *  @version Release 11 - $Id$ */
+@org.adempiere.base.Model(table="AMN_Contract")
+public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20180703L;
+	private static final long serialVersionUID = 20241128L;
 
     /** Standard Constructor */
     public X_AMN_Contract (Properties ctx, int AMN_Contract_ID, String trxName)
@@ -42,11 +43,67 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
       super (ctx, AMN_Contract_ID, trxName);
       /** if (AMN_Contract_ID == 0)
         {
-			setAMN_Contract_ID (0);
 			setAcctDow (null);
 // 0
+			setAMN_Contract_ID (0);
 			setInitDow (null);
 // 5
+			setisAllowLotInvoices (false);
+// N
+			setName (null);
+			setNetDays (0);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_AMN_Contract (Properties ctx, int AMN_Contract_ID, String trxName, String ... virtualColumns)
+    {
+      super (ctx, AMN_Contract_ID, trxName, virtualColumns);
+      /** if (AMN_Contract_ID == 0)
+        {
+			setAcctDow (null);
+// 0
+			setAMN_Contract_ID (0);
+			setInitDow (null);
+// 5
+			setisAllowLotInvoices (false);
+// N
+			setName (null);
+			setNetDays (0);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_AMN_Contract (Properties ctx, String AMN_Contract_UU, String trxName)
+    {
+      super (ctx, AMN_Contract_UU, trxName);
+      /** if (AMN_Contract_UU == null)
+        {
+			setAcctDow (null);
+// 0
+			setAMN_Contract_ID (0);
+			setInitDow (null);
+// 5
+			setisAllowLotInvoices (false);
+// N
+			setName (null);
+			setNetDays (0);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_AMN_Contract (Properties ctx, String AMN_Contract_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, AMN_Contract_UU, trxName, virtualColumns);
+      /** if (AMN_Contract_UU == null)
+        {
+			setAcctDow (null);
+// 0
+			setAMN_Contract_ID (0);
+			setInitDow (null);
+// 5
+			setisAllowLotInvoices (false);
+// N
 			setName (null);
 			setNetDays (0);
         } */
@@ -59,7 +116,7 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
     }
 
     /** AccessLevel
-      * @return 3 - Client - Org 
+      * @return 3 - Client - Org
       */
     protected int get_AccessLevel()
     {
@@ -75,63 +132,28 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 
     public String toString()
     {
-      StringBuffer sb = new StringBuffer ("X_AMN_Contract[")
-        .append(get_ID()).append("]");
+      StringBuilder sb = new StringBuilder ("X_AMN_Contract[")
+        .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
-	/** Set Payroll Contract.
-		@param AMN_Contract_ID Payroll Contract	  */
-	public void setAMN_Contract_ID (int AMN_Contract_ID)
-	{
-		if (AMN_Contract_ID < 1) 
-			set_ValueNoCheck (COLUMNNAME_AMN_Contract_ID, null);
-		else 
-			set_ValueNoCheck (COLUMNNAME_AMN_Contract_ID, Integer.valueOf(AMN_Contract_ID));
-	}
-
-	/** Get Payroll Contract.
-		@return Payroll Contract	  */
-	public int getAMN_Contract_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Contract_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	/** Set AMN_Contract_UU.
-		@param AMN_Contract_UU AMN_Contract_UU	  */
-	public void setAMN_Contract_UU (String AMN_Contract_UU)
-	{
-		set_ValueNoCheck (COLUMNNAME_AMN_Contract_UU, AMN_Contract_UU);
-	}
-
-	/** Get AMN_Contract_UU.
-		@return AMN_Contract_UU	  */
-	public String getAMN_Contract_UU () 
-	{
-		return (String)get_Value(COLUMNNAME_AMN_Contract_UU);
-	}
-
-	/** Sunday = 0 */
-	public static final String ACCTDOW_Sunday = "0";
-	/** Monday = 1 */
-	public static final String ACCTDOW_Monday = "1";
-	/** Tuesday = 2 */
-	public static final String ACCTDOW_Tuesday = "2";
-	/** Wednesday = 3 */
-	public static final String ACCTDOW_Wednesday = "3";
-	/** Thursday = 4 */
-	public static final String ACCTDOW_Thursday = "4";
-	/** Friday = 5 */
-	public static final String ACCTDOW_Friday = "5";
-	/** Saturday = 6 */
-	public static final String ACCTDOW_Saturday = "6";
+	/** Sunday = 1 */
+	public static final String ACCTDOW_Sunday = "1";
+	/** Monday = 2 */
+	public static final String ACCTDOW_Monday = "2";
+	/** Tuesday = 3 */
+	public static final String ACCTDOW_Tuesday = "3";
+	/** Wednesday = 4 */
+	public static final String ACCTDOW_Wednesday = "4";
+	/** Thursday = 5 */
+	public static final String ACCTDOW_Thursday = "5";
+	/** Friday = 6 */
+	public static final String ACCTDOW_Friday = "6";
+	/** Saturday = 7 */
+	public static final String ACCTDOW_Saturday = "7";
 	/** Set AcctDow.
-		@param AcctDow 
-		Accounting Day of Week
-	  */
+		@param AcctDow Accounting Day of Week
+	*/
 	public void setAcctDow (String AcctDow)
 	{
 
@@ -141,32 +163,68 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get AcctDow.
 		@return Accounting Day of Week
 	  */
-	public String getAcctDow () 
+	public String getAcctDow()
 	{
 		return (String)get_Value(COLUMNNAME_AcctDow);
 	}
 
+	/** Set Payroll Contract.
+		@param AMN_Contract_ID Payroll Contract
+	*/
+	public void setAMN_Contract_ID (int AMN_Contract_ID)
+	{
+		if (AMN_Contract_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Contract_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Contract_ID, Integer.valueOf(AMN_Contract_ID));
+	}
+
+	/** Get Payroll Contract.
+		@return Payroll Contract	  */
+	public int getAMN_Contract_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Contract_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set AMN_Contract_UU.
+		@param AMN_Contract_UU AMN_Contract_UU
+	*/
+	public void setAMN_Contract_UU (String AMN_Contract_UU)
+	{
+		set_ValueNoCheck (COLUMNNAME_AMN_Contract_UU, AMN_Contract_UU);
+	}
+
+	/** Get AMN_Contract_UU.
+		@return AMN_Contract_UU	  */
+	public String getAMN_Contract_UU()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_Contract_UU);
+	}
+
 	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
-			.getPO(getC_Activity_ID(), get_TrxName());	}
+	{
+		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_ID)
+			.getPO(getC_Activity_ID(), get_TrxName());
+	}
 
 	/** Set Activity.
-		@param C_Activity_ID 
-		Business Activity
-	  */
+		@param C_Activity_ID Business Activity
+	*/
 	public void setC_Activity_ID (int C_Activity_ID)
 	{
-		if (C_Activity_ID < 1) 
+		if (C_Activity_ID < 1)
 			set_Value (COLUMNNAME_C_Activity_ID, null);
-		else 
+		else
 			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
 	}
 
 	/** Get Activity.
 		@return Business Activity
 	  */
-	public int getC_Activity_ID () 
+	public int getC_Activity_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
 		if (ii == null)
@@ -175,26 +233,26 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	}
 
 	public org.compiere.model.I_C_ConversionType getC_ConversionType() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_ConversionType)MTable.get(getCtx(), org.compiere.model.I_C_ConversionType.Table_Name)
-			.getPO(getC_ConversionType_ID(), get_TrxName());	}
+	{
+		return (org.compiere.model.I_C_ConversionType)MTable.get(getCtx(), org.compiere.model.I_C_ConversionType.Table_ID)
+			.getPO(getC_ConversionType_ID(), get_TrxName());
+	}
 
 	/** Set Currency Type.
-		@param C_ConversionType_ID 
-		Currency Conversion Rate Type
-	  */
+		@param C_ConversionType_ID Currency Conversion Rate Type
+	*/
 	public void setC_ConversionType_ID (int C_ConversionType_ID)
 	{
-		if (C_ConversionType_ID < 1) 
+		if (C_ConversionType_ID < 1)
 			set_Value (COLUMNNAME_C_ConversionType_ID, null);
-		else 
+		else
 			set_Value (COLUMNNAME_C_ConversionType_ID, Integer.valueOf(C_ConversionType_ID));
 	}
 
 	/** Get Currency Type.
 		@return Currency Conversion Rate Type
 	  */
-	public int getC_ConversionType_ID () 
+	public int getC_ConversionType_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_ConversionType_ID);
 		if (ii == null)
@@ -203,26 +261,26 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	}
 
 	public org.compiere.model.I_C_Currency getC_Currency() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_Currency)MTable.get(getCtx(), org.compiere.model.I_C_Currency.Table_Name)
-			.getPO(getC_Currency_ID(), get_TrxName());	}
+	{
+		return (org.compiere.model.I_C_Currency)MTable.get(getCtx(), org.compiere.model.I_C_Currency.Table_ID)
+			.getPO(getC_Currency_ID(), get_TrxName());
+	}
 
 	/** Set Currency.
-		@param C_Currency_ID 
-		The Currency for this record
-	  */
+		@param C_Currency_ID The Currency for this record
+	*/
 	public void setC_Currency_ID (int C_Currency_ID)
 	{
-		if (C_Currency_ID < 1) 
+		if (C_Currency_ID < 1)
 			set_Value (COLUMNNAME_C_Currency_ID, null);
-		else 
+		else
 			set_Value (COLUMNNAME_C_Currency_ID, Integer.valueOf(C_Currency_ID));
 	}
 
 	/** Get Currency.
 		@return The Currency for this record
 	  */
-	public int getC_Currency_ID () 
+	public int getC_Currency_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Currency_ID);
 		if (ii == null)
@@ -231,9 +289,8 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	}
 
 	/** Set Description.
-		@param Description 
-		Optional short description of the record
-	  */
+		@param Description Optional short description of the record
+	*/
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -242,29 +299,28 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
-	public String getDescription () 
+	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
-	/** Sunday = 0 */
-	public static final String INITDOW_Sunday = "0";
-	/** Monday = 1 */
-	public static final String INITDOW_Monday = "1";
-	/** Tuesday = 2 */
-	public static final String INITDOW_Tuesday = "2";
-	/** Wednesday = 3 */
-	public static final String INITDOW_Wednesday = "3";
-	/** Thursday = 4 */
-	public static final String INITDOW_Thursday = "4";
-	/** Friday = 5 */
-	public static final String INITDOW_Friday = "5";
-	/** Saturday = 6 */
-	public static final String INITDOW_Saturday = "6";
+	/** Sunday = 1 */
+	public static final String INITDOW_Sunday = "1";
+	/** Monday = 2 */
+	public static final String INITDOW_Monday = "2";
+	/** Tuesday = 3 */
+	public static final String INITDOW_Tuesday = "3";
+	/** Wednesday = 4 */
+	public static final String INITDOW_Wednesday = "4";
+	/** Thursday = 5 */
+	public static final String INITDOW_Thursday = "5";
+	/** Friday = 6 */
+	public static final String INITDOW_Friday = "6";
+	/** Saturday = 7 */
+	public static final String INITDOW_Saturday = "7";
 	/** Set InitDow.
-		@param InitDow 
-		Init Day of Week
-	  */
+		@param InitDow Init Day of Week
+	*/
 	public void setInitDow (String InitDow)
 	{
 
@@ -274,15 +330,36 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get InitDow.
 		@return Init Day of Week
 	  */
-	public String getInitDow () 
+	public String getInitDow()
 	{
 		return (String)get_Value(COLUMNNAME_InitDow);
 	}
 
+	/** Set Allow Lot Invoices.
+		@param isAllowLotInvoices Allow Lot Invoices
+	*/
+	public void setisAllowLotInvoices (boolean isAllowLotInvoices)
+	{
+		set_Value (COLUMNNAME_isAllowLotInvoices, Boolean.valueOf(isAllowLotInvoices));
+	}
+
+	/** Get Allow Lot Invoices.
+		@return Allow Lot Invoices	  */
+	public boolean isAllowLotInvoices()
+	{
+		Object oo = get_Value(COLUMNNAME_isAllowLotInvoices);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Name.
-		@param Name 
-		Alphanumeric identifier of the entity
-	  */
+		@param Name Alphanumeric identifier of the entity
+	*/
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -291,7 +368,7 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
-	public String getName () 
+	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
 	}
@@ -299,15 +376,14 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
     /** Get Record ID/ColumnName
         @return ID/ColumnName pair
       */
-    public KeyNamePair getKeyNamePair() 
+    public KeyNamePair getKeyNamePair()
     {
         return new KeyNamePair(get_ID(), getName());
     }
 
 	/** Set Net Days.
-		@param NetDays 
-		Net Days in which payment is due
-	  */
+		@param NetDays Net Days in which payment is due
+	*/
 	public void setNetDays (int NetDays)
 	{
 		set_Value (COLUMNNAME_NetDays, Integer.valueOf(NetDays));
@@ -316,7 +392,7 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Net Days.
 		@return Net Days in which payment is due
 	  */
-	public int getNetDays () 
+	public int getNetDays()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_NetDays);
 		if (ii == null)
@@ -325,9 +401,8 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	}
 
 	/** Set PayRollDays.
-		@param PayRollDays 
-		Payroll Days of Period in Contract
-	  */
+		@param PayRollDays Payroll Days of Period in Contract
+	*/
 	public void setPayRollDays (BigDecimal PayRollDays)
 	{
 		set_Value (COLUMNNAME_PayRollDays, PayRollDays);
@@ -336,7 +411,7 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get PayRollDays.
 		@return Payroll Days of Period in Contract
 	  */
-	public BigDecimal getPayRollDays () 
+	public BigDecimal getPayRollDays()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_PayRollDays);
 		if (bd == null)
@@ -345,9 +420,8 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	}
 
 	/** Set Slack Days to Calculate Payroll.
-		@param SlackDays 
-		Minimun days transcurred from the end of Attendance and the End of the Period
-	  */
+		@param SlackDays Minimun days transcurred from the end of Attendance and the End of the Period
+	*/
 	public void setSlackDays (int SlackDays)
 	{
 		set_Value (COLUMNNAME_SlackDays, Integer.valueOf(SlackDays));
@@ -356,7 +430,7 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Slack Days to Calculate Payroll.
 		@return Minimun days transcurred from the end of Attendance and the End of the Period
 	  */
-	public int getSlackDays () 
+	public int getSlackDays()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_SlackDays);
 		if (ii == null)
@@ -364,10 +438,28 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set Valid from.
-		@param ValidFrom 
-		Valid from including this date (first day)
+	/** Set Standard Precision.
+		@param StdPrecision Rule for rounding  calculated amounts
+	*/
+	public void setStdPrecision (int StdPrecision)
+	{
+		set_Value (COLUMNNAME_StdPrecision, Integer.valueOf(StdPrecision));
+	}
+
+	/** Get Standard Precision.
+		@return Rule for rounding  calculated amounts
 	  */
+	public int getStdPrecision()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_StdPrecision);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Valid from.
+		@param ValidFrom Valid from including this date (first day)
+	*/
 	public void setValidFrom (Timestamp ValidFrom)
 	{
 		set_Value (COLUMNNAME_ValidFrom, ValidFrom);
@@ -376,15 +468,14 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Valid from.
 		@return Valid from including this date (first day)
 	  */
-	public Timestamp getValidFrom () 
+	public Timestamp getValidFrom()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_ValidFrom);
 	}
 
 	/** Set Valid to.
-		@param ValidTo 
-		Valid to including this date (last day)
-	  */
+		@param ValidTo Valid to including this date (last day)
+	*/
 	public void setValidTo (Timestamp ValidTo)
 	{
 		set_Value (COLUMNNAME_ValidTo, ValidTo);
@@ -393,15 +484,14 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Valid to.
 		@return Valid to including this date (last day)
 	  */
-	public Timestamp getValidTo () 
+	public Timestamp getValidTo()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_ValidTo);
 	}
 
 	/** Set Search Key.
-		@param Value 
-		Search key for the record in the format required - must be unique
-	  */
+		@param Value Search key for the record in the format required - must be unique
+	*/
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -410,29 +500,8 @@ public class X_AMN_Contract extends PO implements I_AMN_Contract, I_Persistent
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
-	public String getValue () 
+	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
-	}
-
-	/** Set Allow Lot Invoices.
-		@param isAllowLotInvoices Allow Lot Invoices	  */
-	public void setisAllowLotInvoices (boolean isAllowLotInvoices)
-	{
-		set_Value (COLUMNNAME_isAllowLotInvoices, Boolean.valueOf(isAllowLotInvoices));
-	}
-
-	/** Get Allow Lot Invoices.
-		@return Allow Lot Invoices	  */
-	public boolean isAllowLotInvoices () 
-	{
-		Object oo = get_Value(COLUMNNAME_isAllowLotInvoices);
-		if (oo != null) 
-		{
-			 if (oo instanceof Boolean) 
-				 return ((Boolean)oo).booleanValue(); 
-			return "Y".equals(oo);
-		}
-		return false;
 	}
 }

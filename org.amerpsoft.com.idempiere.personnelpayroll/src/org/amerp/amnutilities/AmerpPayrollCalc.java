@@ -777,7 +777,9 @@ public class AmerpPayrollCalc  {
 		// Rounding Mode
 		int roundingMode = 2;
 		if (forceRounding )  
-			roundingMode = curr.getStdPrecision();
+			// roundingMode = curr.getStdPrecision();
+			// Precision from Contract Variable
+			roundingMode = amncontract.getStdPrecision();
 		// SHOW VARIABLES
 		//logVariablesShow();
 		//log.warning("AM_Currency="+AM_Currency);
@@ -1491,7 +1493,7 @@ public class AmerpPayrollCalc  {
 			BDCalcAmnt = BigDecimal.valueOf(CalcAmnt);
 			// ROUND two Decimals
 			//BDCalcAmnt= BDCalcAmnt.round(new MathContext(2, RoundingMode.CEILING));
-			BDCalcAmnt = BDCalcAmnt.setScale(roundingMode, RoundingMode.CEILING);
+			BDCalcAmnt = BDCalcAmnt.setScale(roundingMode, RoundingMode.HALF_UP);
 			//return BDCalcAmnt;
 			RetVal.setBDCalcAmnt(BDCalcAmnt);
 			RetVal.setErrorMessage(ErrorMessage.trim());			
