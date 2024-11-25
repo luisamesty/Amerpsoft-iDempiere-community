@@ -24,6 +24,8 @@ class AMNReceiptLines {
 	public BigDecimal AmountAllocated;
 	public BigDecimal AmountDeducted;
 	public BigDecimal AmountCalculated;
+	public int AMN_Payroll_ID;
+	public int AMN_Payroll_Detail_ID;
 	
 	public AMNReceiptLines() {
 		AMN_Concept_Type_ID = 0;
@@ -41,7 +43,8 @@ class AMNReceiptLines {
 		AmountAllocated = BigDecimal.ZERO;
 		AmountDeducted = BigDecimal.ZERO;
 		AmountCalculated = BigDecimal.ZERO;
-		
+		AMN_Payroll_ID = 0;
+		AMN_Payroll_Detail_ID = 0;
 	}
 
 	public AMNReceiptLines(int p_AMN_Concept_Types_ID, int calcOrder, String conceptValue, String conceptName,
@@ -178,6 +181,22 @@ class AMNReceiptLines {
 
 	public void setAmountCalculated(BigDecimal amountCalculated) {
 		AmountCalculated = amountCalculated;
+	}
+
+	public int getAMN_Payroll_ID() {
+		return AMN_Payroll_ID;
+	}
+
+	public void setAMN_Payroll_ID(int aMN_Payroll_ID) {
+		AMN_Payroll_ID = aMN_Payroll_ID;
+	}
+
+	public int getAMN_Payroll_Detail_ID() {
+		return AMN_Payroll_Detail_ID;
+	}
+
+	public void setAMN_Payroll_Detail_ID(int aMN_Payroll_Detail_ID) {
+		AMN_Payroll_Detail_ID = aMN_Payroll_Detail_ID;
 	}
 
 }
