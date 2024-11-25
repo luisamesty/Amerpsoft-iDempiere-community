@@ -614,24 +614,12 @@ SELECT
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOBASICO" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="dias_trabajados" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="salario_rec_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="salario_rec_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="salario_rec_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
 	<variable name="salario_rec" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="dias_trabajados" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="horas_extras" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
@@ -666,10 +654,6 @@ SELECT
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "HORASEXTRAS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="feriados" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
 	<variable name="feriados_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -682,20 +666,8 @@ SELECT
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="feriados_importe_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="feriados_importe_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="feriados_importe_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="feriados_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
+	<variable name="feriados" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="comision_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
@@ -746,84 +718,28 @@ SELECT
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSINGRESOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="loans_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "PRESTAMOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="loans_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "PRESTAMOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="loans_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "PRESTAMOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
 	<variable name="loans" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "PRESTAMOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="vales_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="vales_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="vales_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="vales" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="otros_descuentos_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSDESCUENTOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="otros_descuentos_org" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSDESCUENTOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="otros_descuentos_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSDESCUENTOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
 	<variable name="otros_descuentos" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSDESCUENTOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="descuentos_judiciales" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "DESCUENTOSJUDICIALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="descuentos_judiciales_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "DESCUENTOSJUDICIALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="descuentos_judiciales_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "DESCUENTOSJUDICIALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="descuentos_judiciales_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "DESCUENTOSJUDICIALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="ips" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="ips_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+	<variable name="descuentos_judiciales" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "DESCUENTOSJUDICIALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="ips_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="ips_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+	<variable name="feriados_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
@@ -848,7 +764,7 @@ SELECT
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="490" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb6c51b1-14cf-45e0-8ec0-a012705f0481">
+					<reportElement mode="Transparent" x="0" y="0" width="560" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb6c51b1-14cf-45e0-8ec0-a012705f0481">
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -899,6 +815,19 @@ SELECT
 					<textFieldExpression><![CDATA[$V{v_asignaciones_org}.subtract($V{v_deducciones_org})]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
+				<line>
+					<reportElement x="960" y="0" width="640" height="1" uuid="bee4061f-6ab7-46a4-b7a8-df4d87c1fbc5">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="560" y="0" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f3d4f683-a4d6-48f4-b8b9-297a9b895720">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -938,7 +867,7 @@ SELECT
 						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{feriados_importe_org}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{feriados_org}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
@@ -981,90 +910,6 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_ingresos_org}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="490" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c3d38aa8-bcf4-420f-b18b-6777d5baebaa">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{salario_rec_org}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1060" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb66484b-24ff-4d1e-b916-5994f01b9614">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{loans_org}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1130" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c41c06e3-6181-46f1-bdb6-cee44ed44a75">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{vales_org}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1200" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="acbaaf5f-3e7d-4c26-9b6c-d0eb76b70dd3">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{otros_descuentos_org}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1270" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3629c5f5-2992-4fc9-ba5b-9aedce0c089f">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{descuentos_judiciales_org}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1340" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a732dddb-12e6-4002-ae29-835f43f3f401">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{ips_org}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1133,7 +978,7 @@ SELECT
 			<band height="12">
 				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null) && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="490" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
+					<reportElement mode="Transparent" x="0" y="0" width="560" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
@@ -1185,6 +1030,18 @@ SELECT
 					<textFieldExpression><![CDATA[$V{v_asignaciones_tloc}.subtract($V{v_deducciones_tloc})]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
+				<line>
+					<reportElement x="960" y="0" width="640" height="1" uuid="c7802429-6757-4e44-82df-d4b06f07c5eb">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="560" y="0" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c68375d1-85d2-43c4-b147-d962c099f3a0">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1224,7 +1081,7 @@ SELECT
 						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{feriados_importe_tloc}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{horas_extras_importe_tloc}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
@@ -1267,90 +1124,6 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_ingresos_tloc}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="490" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3237b465-9c57-471a-bbc1-0e141a1d4d1b">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{salario_rec_tloc}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1060" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a6db79b9-a00b-4208-82f3-2e1cae620862">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{loans_tloc}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1130" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d6f6de25-d592-4ba9-9b8e-249e9911ee4c">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{vales_tloc}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1200" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8772f251-86c6-4228-99a3-20d7e47e9594">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{otros_descuentos_tloc}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1270" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3aa33331-2297-4fa1-88b4-b0f27bfb85ec">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{descuentos_judiciales_tloc}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1340" y="0" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="abb8c6dc-2c5c-404d-a6d5-8ca1488cc6be">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{ips_tloc}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1778,7 +1551,7 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["D.Judic."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["D.Judiciales"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="490" y="0" width="70" height="12" uuid="0856c48e-b119-45eb-912e-2d27529dffdc">
@@ -1817,7 +1590,7 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Otros D."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Otros Desc."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="70" height="12" uuid="4e648505-59ac-40e8-ac42-a7fffbd0fbfb">
@@ -1837,7 +1610,7 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Otros Ing."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Otros Ingresos"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -1955,7 +1728,7 @@ SELECT
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="17" splitType="Stretch">
+		<band height="19" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<line>
 				<reportElement x="0" y="0" width="1600" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
@@ -2105,7 +1878,7 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["D.Judic."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["D.Judiciales"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="490" y="3" width="70" height="12" uuid="6d62e5bc-bb5d-4cb1-b959-ef0a7d29f060">
@@ -2142,7 +1915,7 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Otros D."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Otros Desc."]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="3" width="70" height="12" uuid="48d777d0-b263-49ee-9a59-6c79aa9287e8">
@@ -2162,12 +1935,24 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Otros Ing."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Otros Ingresos"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<summary>
 		<band height="87" splitType="Immediate">
+			<line>
+				<reportElement x="960" y="0" width="640" height="1" uuid="de3c2c06-6d33-4fa6-825a-76e78642bfb6">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="960" y="0" width="100" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="1c3c2cf6-dde0-4211-84e2-fc0757598236">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -2212,7 +1997,7 @@ SELECT
 				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="73" width="370" height="1" uuid="14d979a6-460f-49a8-9d8f-923ea508ab1b">
+				<reportElement x="0" y="73" width="225" height="1" uuid="14d979a6-460f-49a8-9d8f-923ea508ab1b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2220,23 +2005,22 @@ SELECT
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="440" y="73" width="240" height="1" uuid="24768531-d0b7-4e2b-b47f-68b8c79184d3">
+				<reportElement x="251" y="73" width="221" height="1" uuid="24768531-d0b7-4e2b-b47f-68b8c79184d3">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 			</line>
 			<textField>
-				<reportElement x="0" y="74" width="370" height="13" uuid="088719ad-2279-4e6b-ae6a-624885bdef84"/>
+				<reportElement x="0" y="74" width="225" height="13" uuid="088719ad-2279-4e6b-ae6a-624885bdef84"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.signedpreparedby}+": " + ($P{sign1}!=null ? $P{sign1} : "")]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="750" y="73" width="210" height="1" uuid="36645c83-4cb2-4022-84cc-a50192fa7333">
+				<reportElement x="582" y="73" width="219" height="1" uuid="36645c83-4cb2-4022-84cc-a50192fa7333">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2244,7 +2028,7 @@ SELECT
 				</reportElement>
 			</line>
 			<textField>
-				<reportElement mode="Transparent" x="440" y="74" width="240" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e94dabc2-0936-4209-b4b0-7c8ab3447245"/>
+				<reportElement mode="Transparent" x="252" y="74" width="220" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e94dabc2-0936-4209-b4b0-7c8ab3447245"/>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="Arial" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -2252,7 +2036,7 @@ SELECT
 				<textFieldExpression><![CDATA[$R{report.signedreviewby}+": " +  ($P{sign2}!=null ? $P{sign2} : "")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Transparent" x="750" y="74" width="210" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="446045c5-f16a-4448-a42f-2bbe8f30354d"/>
+				<reportElement mode="Transparent" x="582" y="74" width="220" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="446045c5-f16a-4448-a42f-2bbe8f30354d"/>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="Arial" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -2267,7 +2051,7 @@ SELECT
 				<textFieldExpression><![CDATA[$R{report.noemployee}+": "+$V{v_employee_count}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="0" width="490" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="307df9bb-86e0-4acd-a915-c1946e021521">
+				<reportElement mode="Transparent" x="0" y="0" width="560" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="307df9bb-86e0-4acd-a915-c1946e021521">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -2315,7 +2099,7 @@ SELECT
 					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{feriados_importe_t}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{horas_extras_importe_t}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
@@ -2358,90 +2142,6 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{otros_ingresos_t}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="490" y="0" width="70" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="4b3d7382-0417-4768-abb9-71e82ee29a6b">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{salario_rec_t}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1060" y="0" width="70" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c2097b40-fb70-41c2-a191-fa985877a4c0">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{otros_ingresos_t}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1130" y="0" width="70" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c4db6acb-cb8e-4889-942d-b512710cec2b">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{vales_t}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1200" y="0" width="70" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f7b1a52e-f589-4027-a208-cdeb8eafa1c3">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{otros_descuentos_t}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1270" y="0" width="70" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="dad387af-e3e7-4ea8-9d6a-635fa68a5a1e">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{descuentos_judiciales_t}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1340" y="0" width="70" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0e8dc8cf-9f00-4cd6-b03a-39b329cfe186">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{ips_t}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 		</band>

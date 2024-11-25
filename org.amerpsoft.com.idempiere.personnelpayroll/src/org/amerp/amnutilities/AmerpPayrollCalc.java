@@ -777,7 +777,9 @@ public class AmerpPayrollCalc  {
 		// Rounding Mode
 		int roundingMode = 2;
 		if (forceRounding )  
-			roundingMode = curr.getStdPrecision();
+			// roundingMode = curr.getStdPrecision();
+			// Precision from Contract Variable
+			roundingMode = amncontract.getStdPrecision();
 		// SHOW VARIABLES
 		//logVariablesShow();
 		//log.warning("AM_Currency="+AM_Currency);

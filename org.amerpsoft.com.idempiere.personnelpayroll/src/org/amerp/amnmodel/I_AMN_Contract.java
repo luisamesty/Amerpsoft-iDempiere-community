@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Contract
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Contract 
@@ -32,7 +32,7 @@ public interface I_AMN_Contract
     /** TableName=AMN_Contract */
     public static final String Table_Name = "AMN_Contract";
 
-    /** AD_Table_ID=1000039 */
+    /** AD_Table_ID=1000006 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -42,6 +42,19 @@ public interface I_AMN_Contract
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
+
+    /** Column name AcctDow */
+    public static final String COLUMNNAME_AcctDow = "AcctDow";
+
+	/** Set AcctDow.
+	  * Accounting Day of Week
+	  */
+	public void setAcctDow (String AcctDow);
+
+	/** Get AcctDow.
+	  * Accounting Day of Week
+	  */
+	public String getAcctDow();
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -81,19 +94,6 @@ public interface I_AMN_Contract
 
 	/** Get AMN_Contract_UU	  */
 	public String getAMN_Contract_UU();
-
-    /** Column name AcctDow */
-    public static final String COLUMNNAME_AcctDow = "AcctDow";
-
-	/** Set AcctDow.
-	  * Accounting Day of Week
-	  */
-	public void setAcctDow (String AcctDow);
-
-	/** Get AcctDow.
-	  * Accounting Day of Week
-	  */
-	public String getAcctDow();
 
     /** Column name C_Activity_ID */
     public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
@@ -195,6 +195,15 @@ public interface I_AMN_Contract
 	  */
 	public boolean isActive();
 
+    /** Column name isAllowLotInvoices */
+    public static final String COLUMNNAME_isAllowLotInvoices = "isAllowLotInvoices";
+
+	/** Set Allow Lot Invoices	  */
+	public void setisAllowLotInvoices (boolean isAllowLotInvoices);
+
+	/** Get Allow Lot Invoices	  */
+	public boolean isAllowLotInvoices();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -246,6 +255,19 @@ public interface I_AMN_Contract
 	  * Minimun days transcurred from the end of Attendance and the End of the Period
 	  */
 	public int getSlackDays();
+
+    /** Column name StdPrecision */
+    public static final String COLUMNNAME_StdPrecision = "StdPrecision";
+
+	/** Set Standard Precision.
+	  * Rule for rounding  calculated amounts
+	  */
+	public void setStdPrecision (int StdPrecision);
+
+	/** Get Standard Precision.
+	  * Rule for rounding  calculated amounts
+	  */
+	public int getStdPrecision();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -301,13 +323,4 @@ public interface I_AMN_Contract
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
-
-    /** Column name isAllowLotInvoices */
-    public static final String COLUMNNAME_isAllowLotInvoices = "isAllowLotInvoices";
-
-	/** Set Allow Lot Invoices	  */
-	public void setisAllowLotInvoices (boolean isAllowLotInvoices);
-
-	/** Get Allow Lot Invoices	  */
-	public boolean isAllowLotInvoices();
 }
