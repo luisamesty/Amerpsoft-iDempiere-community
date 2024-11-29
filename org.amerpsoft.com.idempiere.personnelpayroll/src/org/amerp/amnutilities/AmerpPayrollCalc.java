@@ -828,11 +828,14 @@ public class AmerpPayrollCalc  {
 			AMN_Concept_Types_Limit_ID =MAMN_Concept_Types_Limit.searchAMN_Concept_Types_Limit_ID_(AMN_Concept_Types_ID, amnpayroll.getAD_Client_ID(), 0, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd());
 			if ( amncomgru != null && AMN_Concept_Types_Limit_ID != null && AMN_Concept_Types_Limit_ID > 0) {
 				MAMN_Concept_Types_Limit amncontyl = new MAMN_Concept_Types_Limit(p_ctx,AMN_Concept_Types_Limit_ID, null);
-				CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+				CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(AMN_Concept_Types_Limit_ID, C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
 				CTL_QtyTimes=MAMN_Concept_Types_Limit.getCTL_QtyTimes(C_Currency_ID, C_Currency_ID_To,  amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
 				CTL_Rate= amncomgru.getCommission().doubleValue();
+				log.warning("p_Concept_Reference="+p_Concept_Reference+"  CTL_Rate="+CTL_Rate);
+				log.warning("p_Concept_Reference="+p_Concept_Reference+"  CTL_AmountAllocated="+CTL_AmountAllocated);
 				if (p_script.contains("CTL_QtyReceipts")) {
 					CTL_QtyReceipts = amncomgru.calculateCTL_QtyReceipts(amnpayroll.getAD_Client_ID(), amncomgru.getValue(), AMN_Concept_Types_ID, AMN_Concept_Types_Limit_ID).doubleValue();
+					log.warning("p_Concept_Reference="+p_Concept_Reference+"  CTL_QtyReceipts="+CTL_QtyReceipts);
 				}
 			}
 			//CTL_QtyReceipts = amncomgru
