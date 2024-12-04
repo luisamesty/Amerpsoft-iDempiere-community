@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Jobtitle
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Jobtitle 
@@ -32,7 +32,7 @@ public interface I_AMN_Jobtitle
     /** TableName=AMN_Jobtitle */
     public static final String Table_Name = "AMN_Jobtitle";
 
-    /** AD_Table_ID=1000045 */
+    /** AD_Table_ID=1000013 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -134,6 +134,19 @@ public interface I_AMN_Jobtitle
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsSummary */
+    public static final String COLUMNNAME_IsSummary = "IsSummary";
+
+	/** Set Summary Level.
+	  * This is a summary entity
+	  */
+	public void setIsSummary (boolean IsSummary);
+
+	/** Get Summary Level.
+	  * This is a summary entity
+	  */
+	public boolean isSummary();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";

@@ -15,6 +15,7 @@
   	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
   	<module>org.amerpsoft.com.idempiere.personnelpayroll</module>
   	<module>org.amerpsoft.com.idempiere.tools</module>
+  	<module>org.amerpsoft.com.idempiere.workflow</module>
   </modules>
   <groupId>org.idempiere</groupId>
   <properties>
