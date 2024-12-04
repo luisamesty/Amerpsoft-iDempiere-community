@@ -24,6 +24,9 @@ import org.compiere.util.*;
  *
  */
 public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
+	
+	private static final long serialVersionUID = 3248799250517025407L;
+	
 	/**	Cache							*/
 	private static CCache<Integer,MAMN_Payroll_Assist> s_cache = new CCache<Integer,MAMN_Payroll_Assist>(Table_Name, 10);
 

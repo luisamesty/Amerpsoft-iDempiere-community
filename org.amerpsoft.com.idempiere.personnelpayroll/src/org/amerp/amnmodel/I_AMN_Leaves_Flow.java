@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Jobtitle
+/** Generated Interface for AMN_Leaves_Flow
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Jobtitle 
+public interface I_AMN_Leaves_Flow 
 {
 
-    /** TableName=AMN_Jobtitle */
-    public static final String Table_Name = "AMN_Jobtitle";
+    /** TableName=AMN_Leaves_Flow */
+    public static final String Table_Name = "AMN_Leaves_Flow";
 
-    /** AD_Table_ID=1000013 */
+    /** AD_Table_ID=1000102 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,34 +64,36 @@ public interface I_AMN_Jobtitle
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Jobstation_ID */
-    public static final String COLUMNNAME_AMN_Jobstation_ID = "AMN_Jobstation_ID";
+    /** Column name AMN_Leaves_Flow_ID */
+    public static final String COLUMNNAME_AMN_Leaves_Flow_ID = "AMN_Leaves_Flow_ID";
 
-	/** Set Payroll Job Station	  */
-	public void setAMN_Jobstation_ID (int AMN_Jobstation_ID);
+	/** Set Leaves and Licences Work Flow.
+	  * Leaves and Licences Work Flow
+	  */
+	public void setAMN_Leaves_Flow_ID (int AMN_Leaves_Flow_ID);
 
-	/** Get Payroll Job Station	  */
-	public int getAMN_Jobstation_ID();
+	/** Get Leaves and Licences Work Flow.
+	  * Leaves and Licences Work Flow
+	  */
+	public int getAMN_Leaves_Flow_ID();
 
-	public I_AMN_Jobstation getAMN_Jobstation() throws RuntimeException;
+    /** Column name AMN_Leaves_Flow_UU */
+    public static final String COLUMNNAME_AMN_Leaves_Flow_UU = "AMN_Leaves_Flow_UU";
 
-    /** Column name AMN_Jobtitle_ID */
-    public static final String COLUMNNAME_AMN_Jobtitle_ID = "AMN_Jobtitle_ID";
+	/** Set AMN_Leaves_Flow_UU	  */
+	public void setAMN_Leaves_Flow_UU (String AMN_Leaves_Flow_UU);
 
-	/** Set Payroll Job Title	  */
-	public void setAMN_Jobtitle_ID (int AMN_Jobtitle_ID);
+	/** Get AMN_Leaves_Flow_UU	  */
+	public String getAMN_Leaves_Flow_UU();
 
-	/** Get Payroll Job Title	  */
-	public int getAMN_Jobtitle_ID();
+    /** Column name AMN_Leaves_Status */
+    public static final String COLUMNNAME_AMN_Leaves_Status = "AMN_Leaves_Status";
 
-    /** Column name AMN_Jobtitle_UU */
-    public static final String COLUMNNAME_AMN_Jobtitle_UU = "AMN_Jobtitle_UU";
+	/** Set Leaves Status	  */
+	public void setAMN_Leaves_Status (String AMN_Leaves_Status);
 
-	/** Set AMN_Jobtitle_UU	  */
-	public void setAMN_Jobtitle_UU (String AMN_Jobtitle_UU);
-
-	/** Get AMN_Jobtitle_UU	  */
-	public String getAMN_Jobtitle_UU();
+	/** Get Leaves Status	  */
+	public String getAMN_Leaves_Status();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -135,19 +137,6 @@ public interface I_AMN_Jobtitle
 	  */
 	public boolean isActive();
 
-    /** Column name IsSummary */
-    public static final String COLUMNNAME_IsSummary = "IsSummary";
-
-	/** Set Summary Level.
-	  * This is a summary entity
-	  */
-	public void setIsSummary (boolean IsSummary);
-
-	/** Get Summary Level.
-	  * This is a summary entity
-	  */
-	public boolean isSummary();
-
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -160,6 +149,21 @@ public interface I_AMN_Jobtitle
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name SeqNo */
+    public static final String COLUMNNAME_SeqNo = "SeqNo";
+
+	/** Set Sequence.
+	  * Method of ordering records;
+ lowest number comes first
+	  */
+	public void setSeqNo (int SeqNo);
+
+	/** Get Sequence.
+	  * Method of ordering records;
+ lowest number comes first
+	  */
+	public int getSeqNo();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -176,30 +180,4 @@ public interface I_AMN_Jobtitle
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name Value */
-    public static final String COLUMNNAME_Value = "Value";
-
-	/** Set Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public void setValue (String Value);
-
-	/** Get Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public String getValue();
-
-    /** Column name Workforce */
-    public static final String COLUMNNAME_Workforce = "Workforce";
-
-	/** Set Workforce.
-	  * Indicates Workforce kind Direct-Indirect-Sales-Administrative
-	  */
-	public void setWorkforce (String Workforce);
-
-	/** Get Workforce.
-	  * Indicates Workforce kind Direct-Indirect-Sales-Administrative
-	  */
-	public String getWorkforce();
 }

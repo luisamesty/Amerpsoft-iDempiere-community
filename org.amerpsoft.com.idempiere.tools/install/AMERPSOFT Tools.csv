@@ -1,7 +1,9 @@
 AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
 *,AMERPSOFT Tools,10,ET,AMERP,,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
-*,AMERPSOFT Tools,20,P,,,,,,,,,ALL,,,,,AmtoolsInvoiceReactivate,,,,,,,,,,,,,,
-*,AMERPSOFT Tools,30,P,,,,,,,,,ALL,,,,,AmtoolsPaymentReactivate,,,,,,,,,,,,,,
+*,AMERPSOFT Tools,20,P,,,,,,,,,ALL,,,,,AmtoolsInvoiceReactivateTB,,,,,,,,,,,,,,
+*,AMERPSOFT Tools,30,P,,,,,,,,,ALL,,,,,AmtoolsInvoiceReactivateME,,,,,,,,,,,,,,
+*,AMERPSOFT Tools,40,P,,,,,,,,,ALL,,,,,AmtoolsPaymentReactivateTB,,,,,,,,,,,,,,
+*,AMERPSOFT Tools,50,P,,,,,,,,,ALL,,,,,AmtoolsPaymentReactivateME,,,,,,,,,,,,,,
 *,AMERPSOFT Tools,100,M,,Tools,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
-*,AMERPSOFT Tools,200,D,,,,,,,,ToolBar Button,ALL,"SELECT 	* FROM 	AD_ToolBarButton WHERE 	AD_ToolBarButton_ID IN (1000232,1000233,1000234)",,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Tools,200,D,,,,,,,,ToolBar Button,ALL,"SELECT 	* FROM 	AD_ToolBarButton WHERE 	AD_ToolBarButton_ID IN (1000057,1000058,1000059)",,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Tools,10000,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='f7dd2c85-1006-45ee-9ccd-9aa8647746c7';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,

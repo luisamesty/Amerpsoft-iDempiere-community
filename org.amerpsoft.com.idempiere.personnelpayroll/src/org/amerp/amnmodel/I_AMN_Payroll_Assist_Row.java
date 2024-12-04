@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Jobtitle
+/** Generated Interface for AMN_Payroll_Assist_Row
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Jobtitle 
+public interface I_AMN_Payroll_Assist_Row 
 {
 
-    /** TableName=AMN_Jobtitle */
-    public static final String Table_Name = "AMN_Jobtitle";
+    /** TableName=AMN_Payroll_Assist_Row */
+    public static final String Table_Name = "AMN_Payroll_Assist_Row";
 
-    /** AD_Table_ID=1000013 */
+    /** AD_Table_ID=1000101 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,34 +64,40 @@ public interface I_AMN_Jobtitle
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Jobstation_ID */
-    public static final String COLUMNNAME_AMN_Jobstation_ID = "AMN_Jobstation_ID";
+    /** Column name AMN_Payroll_Assist_Row_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Assist_Row_ID = "AMN_Payroll_Assist_Row_ID";
 
-	/** Set Payroll Job Station	  */
-	public void setAMN_Jobstation_ID (int AMN_Jobstation_ID);
+	/** Set Payroll Assist Row.
+	  * Payroll Attendance Row data
+	  */
+	public void setAMN_Payroll_Assist_Row_ID (int AMN_Payroll_Assist_Row_ID);
 
-	/** Get Payroll Job Station	  */
-	public int getAMN_Jobstation_ID();
+	/** Get Payroll Assist Row.
+	  * Payroll Attendance Row data
+	  */
+	public int getAMN_Payroll_Assist_Row_ID();
 
-	public I_AMN_Jobstation getAMN_Jobstation() throws RuntimeException;
+    /** Column name AMN_Payroll_Assist_Row_UU */
+    public static final String COLUMNNAME_AMN_Payroll_Assist_Row_UU = "AMN_Payroll_Assist_Row_UU";
 
-    /** Column name AMN_Jobtitle_ID */
-    public static final String COLUMNNAME_AMN_Jobtitle_ID = "AMN_Jobtitle_ID";
+	/** Set AMN_Payroll_Assist_Row_UU	  */
+	public void setAMN_Payroll_Assist_Row_UU (String AMN_Payroll_Assist_Row_UU);
 
-	/** Set Payroll Job Title	  */
-	public void setAMN_Jobtitle_ID (int AMN_Jobtitle_ID);
+	/** Get AMN_Payroll_Assist_Row_UU	  */
+	public String getAMN_Payroll_Assist_Row_UU();
 
-	/** Get Payroll Job Title	  */
-	public int getAMN_Jobtitle_ID();
+    /** Column name AMN_Payroll_Assist_Unit_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_ID = "AMN_Payroll_Assist_Unit_ID";
 
-    /** Column name AMN_Jobtitle_UU */
-    public static final String COLUMNNAME_AMN_Jobtitle_UU = "AMN_Jobtitle_UU";
+	/** Set Payroll Assist Unit.
+	  * Payroll Attendance Unit data
+	  */
+	public void setAMN_Payroll_Assist_Unit_ID (String AMN_Payroll_Assist_Unit_ID);
 
-	/** Set AMN_Jobtitle_UU	  */
-	public void setAMN_Jobtitle_UU (String AMN_Jobtitle_UU);
-
-	/** Get AMN_Jobtitle_UU	  */
-	public String getAMN_Jobtitle_UU();
+	/** Get Payroll Assist Unit.
+	  * Payroll Attendance Unit data
+	  */
+	public String getAMN_Payroll_Assist_Unit_ID();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -109,18 +115,18 @@ public interface I_AMN_Jobtitle
 	  */
 	public int getCreatedBy();
 
-    /** Column name Description */
-    public static final String COLUMNNAME_Description = "Description";
+    /** Column name DateTrx */
+    public static final String COLUMNNAME_DateTrx = "DateTrx";
 
-	/** Set Description.
-	  * Optional short description of the record
+	/** Set Transaction Date.
+	  * Transaction Date
 	  */
-	public void setDescription (String Description);
+	public void setDateTrx (Timestamp DateTrx);
 
-	/** Get Description.
-	  * Optional short description of the record
+	/** Get Transaction Date.
+	  * Transaction Date
 	  */
-	public String getDescription();
+	public Timestamp getDateTrx();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -135,31 +141,44 @@ public interface I_AMN_Jobtitle
 	  */
 	public boolean isActive();
 
-    /** Column name IsSummary */
-    public static final String COLUMNNAME_IsSummary = "IsSummary";
+    /** Column name IsVerified */
+    public static final String COLUMNNAME_IsVerified = "IsVerified";
 
-	/** Set Summary Level.
-	  * This is a summary entity
+	/** Set Verified.
+	  * The BOM configuration has been verified
 	  */
-	public void setIsSummary (boolean IsSummary);
+	public void setIsVerified (boolean IsVerified);
 
-	/** Get Summary Level.
-	  * This is a summary entity
+	/** Get Verified.
+	  * The BOM configuration has been verified
 	  */
-	public boolean isSummary();
+	public boolean isVerified();
 
-    /** Column name Name */
-    public static final String COLUMNNAME_Name = "Name";
+    /** Column name PIN */
+    public static final String COLUMNNAME_PIN = "PIN";
 
-	/** Set Name.
-	  * Alphanumeric identifier of the entity
+	/** Set PIN.
+	  * Personal Identification Number
 	  */
-	public void setName (String Name);
+	public void setPIN (String PIN);
 
-	/** Get Name.
-	  * Alphanumeric identifier of the entity
+	/** Get PIN.
+	  * Personal Identification Number
 	  */
-	public String getName();
+	public String getPIN();
+
+    /** Column name Status */
+    public static final String COLUMNNAME_Status = "Status";
+
+	/** Set Status.
+	  * Status of the currently running check
+	  */
+	public void setStatus (int Status);
+
+	/** Get Status.
+	  * Status of the currently running check
+	  */
+	public int getStatus();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -176,30 +195,4 @@ public interface I_AMN_Jobtitle
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name Value */
-    public static final String COLUMNNAME_Value = "Value";
-
-	/** Set Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public void setValue (String Value);
-
-	/** Get Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public String getValue();
-
-    /** Column name Workforce */
-    public static final String COLUMNNAME_Workforce = "Workforce";
-
-	/** Set Workforce.
-	  * Indicates Workforce kind Direct-Indirect-Sales-Administrative
-	  */
-	public void setWorkforce (String Workforce);
-
-	/** Get Workforce.
-	  * Indicates Workforce kind Direct-Indirect-Sales-Administrative
-	  */
-	public String getWorkforce();
 }

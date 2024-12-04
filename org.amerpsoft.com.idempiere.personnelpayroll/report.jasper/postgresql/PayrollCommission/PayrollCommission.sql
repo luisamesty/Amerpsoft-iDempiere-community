@@ -54,7 +54,7 @@ SELECT * FROM
 		FROM adempiere.amn_employee emp 
 		INNER JOIN adempiere.amn_commissiongroup ac ON ac.amn_commissiongroup_id = emp.amn_commissiongroup_id 
 		INNER JOIN adempiere.amn_contract amc ON amc.amn_contract_id = emp.amn_contract_id 
-		LEFT JOIN (
+		INNER JOIN (
 			-- TRABAJADORES CON CONCEPTOS DE COMMISSION EN EL RECIBO
 			SELECT 
 				emp2.amn_employee_id,

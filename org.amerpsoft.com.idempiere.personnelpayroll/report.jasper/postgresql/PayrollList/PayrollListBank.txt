@@ -1,3 +1,13 @@
+1. PayrollListBank.   Both types of Reports for Automatic to Bank Portal loading
+   Parameter:
+   BPBankAcctUse = N  Standanrd Company Account
+				B  Employee account
+
+2. PayrollLisBankManual.  For Manua Purposes
+   Parameter:
+   BPBankAcctUse = N  Standanrd Company Account
+				B  Employee account
+   
 
 $P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"
 

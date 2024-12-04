@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Jobtitle
+/** Generated Interface for AMN_Leaves_Access
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Jobtitle 
+public interface I_AMN_Leaves_Access 
 {
 
-    /** TableName=AMN_Jobtitle */
-    public static final String Table_Name = "AMN_Jobtitle";
+    /** TableName=AMN_Leaves_Access */
+    public static final String Table_Name = "AMN_Leaves_Access";
 
-    /** AD_Table_ID=1000013 */
+    /** AD_Table_ID=1000193 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,34 +64,57 @@ public interface I_AMN_Jobtitle
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Jobstation_ID */
-    public static final String COLUMNNAME_AMN_Jobstation_ID = "AMN_Jobstation_ID";
+    /** Column name AD_Role_ID */
+    public static final String COLUMNNAME_AD_Role_ID = "AD_Role_ID";
 
-	/** Set Payroll Job Station	  */
-	public void setAMN_Jobstation_ID (int AMN_Jobstation_ID);
+	/** Set Role.
+	  * Responsibility Role
+	  */
+	public void setAD_Role_ID (int AD_Role_ID);
 
-	/** Get Payroll Job Station	  */
-	public int getAMN_Jobstation_ID();
+	/** Get Role.
+	  * Responsibility Role
+	  */
+	public int getAD_Role_ID();
 
-	public I_AMN_Jobstation getAMN_Jobstation() throws RuntimeException;
+	public org.compiere.model.I_AD_Role getAD_Role() throws RuntimeException;
 
-    /** Column name AMN_Jobtitle_ID */
-    public static final String COLUMNNAME_AMN_Jobtitle_ID = "AMN_Jobtitle_ID";
+    /** Column name AMN_Leaves_Access_ID */
+    public static final String COLUMNNAME_AMN_Leaves_Access_ID = "AMN_Leaves_Access_ID";
 
-	/** Set Payroll Job Title	  */
-	public void setAMN_Jobtitle_ID (int AMN_Jobtitle_ID);
+	/** Set Leaves and Licences Work Flow Nodes Access.
+	  * Leaves and Licences Work Flow Nodes Access
+	  */
+	public void setAMN_Leaves_Access_ID (int AMN_Leaves_Access_ID);
 
-	/** Get Payroll Job Title	  */
-	public int getAMN_Jobtitle_ID();
+	/** Get Leaves and Licences Work Flow Nodes Access.
+	  * Leaves and Licences Work Flow Nodes Access
+	  */
+	public int getAMN_Leaves_Access_ID();
 
-    /** Column name AMN_Jobtitle_UU */
-    public static final String COLUMNNAME_AMN_Jobtitle_UU = "AMN_Jobtitle_UU";
+    /** Column name AMN_Leaves_Access_UU */
+    public static final String COLUMNNAME_AMN_Leaves_Access_UU = "AMN_Leaves_Access_UU";
 
-	/** Set AMN_Jobtitle_UU	  */
-	public void setAMN_Jobtitle_UU (String AMN_Jobtitle_UU);
+	/** Set AMN_Leaves_Access_UU	  */
+	public void setAMN_Leaves_Access_UU (String AMN_Leaves_Access_UU);
 
-	/** Get AMN_Jobtitle_UU	  */
-	public String getAMN_Jobtitle_UU();
+	/** Get AMN_Leaves_Access_UU	  */
+	public String getAMN_Leaves_Access_UU();
+
+    /** Column name AMN_Leaves_Flow_ID */
+    public static final String COLUMNNAME_AMN_Leaves_Flow_ID = "AMN_Leaves_Flow_ID";
+
+	/** Set Leaves and Licences Work Flow.
+	  * Leaves and Licences Work Flow
+	  */
+	public void setAMN_Leaves_Flow_ID (int AMN_Leaves_Flow_ID);
+
+	/** Get Leaves and Licences Work Flow.
+	  * Leaves and Licences Work Flow
+	  */
+	public int getAMN_Leaves_Flow_ID();
+
+	public I_AMN_Leaves_Flow getAMN_Leaves_Flow() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -135,18 +158,18 @@ public interface I_AMN_Jobtitle
 	  */
 	public boolean isActive();
 
-    /** Column name IsSummary */
-    public static final String COLUMNNAME_IsSummary = "IsSummary";
+    /** Column name IsReadWrite */
+    public static final String COLUMNNAME_IsReadWrite = "IsReadWrite";
 
-	/** Set Summary Level.
-	  * This is a summary entity
+	/** Set Read Write.
+	  * Field is read / write
 	  */
-	public void setIsSummary (boolean IsSummary);
+	public void setIsReadWrite (boolean IsReadWrite);
 
-	/** Get Summary Level.
-	  * This is a summary entity
+	/** Get Read Write.
+	  * Field is read / write
 	  */
-	public boolean isSummary();
+	public boolean isReadWrite();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
@@ -176,30 +199,4 @@ public interface I_AMN_Jobtitle
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name Value */
-    public static final String COLUMNNAME_Value = "Value";
-
-	/** Set Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public void setValue (String Value);
-
-	/** Get Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public String getValue();
-
-    /** Column name Workforce */
-    public static final String COLUMNNAME_Workforce = "Workforce";
-
-	/** Set Workforce.
-	  * Indicates Workforce kind Direct-Indirect-Sales-Administrative
-	  */
-	public void setWorkforce (String Workforce);
-
-	/** Get Workforce.
-	  * Indicates Workforce kind Direct-Indirect-Sales-Administrative
-	  */
-	public String getWorkforce();
 }
