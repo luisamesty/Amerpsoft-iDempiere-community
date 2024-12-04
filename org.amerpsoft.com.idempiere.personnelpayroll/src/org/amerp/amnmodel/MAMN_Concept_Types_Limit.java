@@ -46,7 +46,7 @@ public class MAMN_Concept_Types_Limit  extends X_AMN_Concept_Types_Limit {
 	 * @param AD_Org_ID
 	 * @return
 	 */
-	public static BigDecimal getCTL_AmountAllocated(int CurFrom_ID, int CurTo_ID, Timestamp PeriodDate,
+	public static BigDecimal getCTL_AmountAllocated(int AMN_Concept_Types_Limit_ID, int CurFrom_ID, int CurTo_ID, Timestamp PeriodDate,
 			int ConversionType_ID, int AD_Client_ID, int AD_Org_ID) {
 
 		// Conversion Type
@@ -66,6 +66,7 @@ public class MAMN_Concept_Types_Limit  extends X_AMN_Concept_Types_Limit {
 				+ "	 AND	? BETWEEN ValidFrom AND ValidTo " + "	 AND AD_Client_ID IN (0,?) "
 				+ "	 AND AD_Org_ID IN (0,?) " 
 				+ "	 AND IsActive = 'Y' "
+				+ "  AND amn_concept_types_limit_id = ? "
 				+ "	ORDER BY AD_Client_ID DESC, AD_Org_ID DESC, ValidFrom DESC";
 		BigDecimal retValue = BigDecimal.ZERO;
 		PreparedStatement pstmt = null;
@@ -78,6 +79,7 @@ public class MAMN_Concept_Types_Limit  extends X_AMN_Concept_Types_Limit {
 			pstmt.setTimestamp(4, TimeUtil.getDay(PeriodDate));
 			pstmt.setInt(5, AD_Client_ID);
 			pstmt.setInt(6, AD_Org_ID);
+			pstmt.setInt(7, AMN_Concept_Types_Limit_ID);
 			rs = pstmt.executeQuery();
 			if (rs.next())
 				retValue = rs.getBigDecimal(1);

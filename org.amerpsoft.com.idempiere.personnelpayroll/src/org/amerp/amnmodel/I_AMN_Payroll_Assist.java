@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Payroll_Assist
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Payroll_Assist 
@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Assist
     /** TableName=AMN_Payroll_Assist */
     public static final String Table_Name = "AMN_Payroll_Assist";
 
-    /** AD_Table_ID=1000060 */
+    /** AD_Table_ID=1000030 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -146,6 +146,15 @@ public interface I_AMN_Payroll_Assist
 	  */
 	public int getCreatedBy();
 
+    /** Column name dayofweek */
+    public static final String COLUMNNAME_dayofweek = "dayofweek";
+
+	/** Set dayofweek	  */
+	public void setdayofweek (String dayofweek);
+
+	/** Get dayofweek	  */
+	public String getdayofweek();
+
     /** Column name Descanso */
     public static final String COLUMNNAME_Descanso = "Descanso";
 
@@ -227,13 +236,4 @@ public interface I_AMN_Payroll_Assist
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name dayofweek */
-    public static final String COLUMNNAME_dayofweek = "dayofweek";
-
-	/** Set dayofweek	  */
-	public void setdayofweek (String dayofweek);
-
-	/** Get dayofweek	  */
-	public String getdayofweek();
 }

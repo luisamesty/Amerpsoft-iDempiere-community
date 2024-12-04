@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import org.amerp.amnmodel.*;
 import org.compiere.acct.*;
 import org.compiere.model.*;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 
 /**
@@ -421,6 +422,15 @@ public class Doc_AMNPayroll extends Doc {
 		MAcctSchema asdef = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
 		BigDecimal amtAcctDr = BigDecimal.ZERO;
 		BigDecimal amtAcctCr = BigDecimal.ZERO;
+		// stdPrecision from AMN_Schema
+		String sql = "select distinct amn_schema_id from amn_schema "+
+    			"WHERE ad_client_id="+getAD_Client_ID() +
+    			" AND c_acctschema_id="+info.getC_AcctSchema1_ID();
+		int AMN_Schema_ID = (Integer) DB.getSQLValue(null, sql);
+    	//log.warning("C_AcctSchema_ID="+C_AcctSchema_ID+"  AMN_Schema_ID="+AMN_Schema_ID);
+    	// MAMN_Schema Default Valid Combination Table
+		MAMN_Schema amnschema = new MAMN_Schema(Env.getCtx(), AMN_Schema_ID, null);
+		int stdPrecision = amnschema.getStdPrecision();
 		// Default Currency Variables
 		p_po.set_CustomColumn("CurrencyRate", CurrencyRate);
 		p_po.set_CustomColumn("IsOverrideCurrencyRate", IsOverrideCurrencyRate);
@@ -437,7 +447,7 @@ public class Doc_AMNPayroll extends Doc {
 			// Convert Amounts 
 			if (as != asdef && CurrencyRate != null && CurrencyRate.signum() > 0)
 			{
-				int stdPrecision = MCurrency.getStdPrecision(getCtx(), as.getC_Currency_ID());
+				//int stdPrecision = MCurrency.getStdPrecision(getCtx(), as.getC_Currency_ID());
 				if (p_lines[i].getAmtAcctDr().compareTo(BigDecimal.ZERO) != 0) {
 					amtAcctDr = p_lines[i].getAmtAcctDr().multiply(CurrencyRate);
 					if (amtAcctDr.scale() > stdPrecision)

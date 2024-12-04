@@ -1,0 +1,12 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT WorkFlow,10,ET,AMERP,,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,1010,T,,,,,,,,AMW Work Flows,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,1020,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AMW_WorkFlow,,,
+*,AMERPSOFT WorkFlow,1100,T,,,,,,,,AMW Work Flow Nodes,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,1110,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AMW_WF_Node,,,
+*,AMERPSOFT WorkFlow,1130,T,,,,,,,,AMW Work Flow Node Next ID,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,1140,T,,,,,,,,AMW Work Flow Access,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,2010,W,,,,,,,,,ALL,,,,,,,AMW WorkFlows,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,5000,M,,AM WorkFlow,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,5010,M,,AMW WorkFlows,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,10000,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='a64620b2-a5df-4f71-a5be-4d2d4dc0aa65';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
