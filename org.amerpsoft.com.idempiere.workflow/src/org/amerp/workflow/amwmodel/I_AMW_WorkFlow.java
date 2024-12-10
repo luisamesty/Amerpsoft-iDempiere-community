@@ -14,25 +14,25 @@
  * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
  * or via info@compiere.org or http://www.compiere.org/license.html           *
  *****************************************************************************/
-package org.amerp.amnmodel;
+package org.amerp.workflow.amwmodel;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Payroll_Assist_Unit
+/** Generated Interface for AMW_WorkFlow
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Payroll_Assist_Unit 
+public interface I_AMW_WorkFlow 
 {
 
-    /** TableName=AMN_Payroll_Assist_Unit */
-    public static final String Table_Name = "AMN_Payroll_Assist_Unit";
+    /** TableName=AMW_WorkFlow */
+    public static final String Table_Name = "AMW_WorkFlow";
 
-    /** AD_Table_ID=1000100 */
+    /** AD_Table_ID=1000194 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,27 +64,42 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Payroll_Assist_Unit_ID */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_ID = "AMN_Payroll_Assist_Unit_ID";
+    /** Column name AD_Table_ID */
+    public static final String COLUMNNAME_AD_Table_ID = "AD_Table_ID";
 
-	/** Set Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Set Table.
+	  * Database Table information
 	  */
-	public void setAMN_Payroll_Assist_Unit_ID (int AMN_Payroll_Assist_Unit_ID);
+	public void setAD_Table_ID (int AD_Table_ID);
 
-	/** Get Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Get Table.
+	  * Database Table information
 	  */
-	public int getAMN_Payroll_Assist_Unit_ID();
+	public int getAD_Table_ID();
 
-    /** Column name AMN_Payroll_Assist_Unit_UU */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_UU = "AMN_Payroll_Assist_Unit_UU";
+	public org.compiere.model.I_AD_Table getAD_Table() throws RuntimeException;
 
-	/** Set AMN_Payroll_Assist_Unit_UU	  */
-	public void setAMN_Payroll_Assist_Unit_UU (String AMN_Payroll_Assist_Unit_UU);
+    /** Column name AMW_WorkFlow_ID */
+    public static final String COLUMNNAME_AMW_WorkFlow_ID = "AMW_WorkFlow_ID";
 
-	/** Get AMN_Payroll_Assist_Unit_UU	  */
-	public String getAMN_Payroll_Assist_Unit_UU();
+	/** Set AMW Work Flows.
+	  * Plugin AMW Work Flows defined by User
+	  */
+	public void setAMW_WorkFlow_ID (int AMW_WorkFlow_ID);
+
+	/** Get AMW Work Flows.
+	  * Plugin AMW Work Flows defined by User
+	  */
+	public int getAMW_WorkFlow_ID();
+
+    /** Column name AMW_WorkFlow_UU */
+    public static final String COLUMNNAME_AMW_WorkFlow_UU = "AMW_WorkFlow_UU";
+
+	/** Set AMT_WorkFlow_UU	  */
+	public void setAMW_WorkFlow_UU (String AMW_WorkFlow_UU);
+
+	/** Get AMT_WorkFlow_UU	  */
+	public String getAMW_WorkFlow_UU();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -101,6 +116,19 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -144,6 +172,15 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public int getUpdatedBy();
 
+    /** Column name ValidateWorkflow */
+    public static final String COLUMNNAME_ValidateWorkflow = "ValidateWorkflow";
+
+	/** Set Validate Workflow	  */
+	public void setValidateWorkflow (String ValidateWorkflow);
+
+	/** Get Validate Workflow	  */
+	public String getValidateWorkflow();
+
     /** Column name Value */
     public static final String COLUMNNAME_Value = "Value";
 
@@ -157,16 +194,16 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public String getValue();
 
-    /** Column name WorkCode */
-    public static final String COLUMNNAME_WorkCode = "WorkCode";
+    /** Column name WorkflowType */
+    public static final String COLUMNNAME_WorkflowType = "WorkflowType";
 
-	/** Set WorkCode.
-	  * Work Code
+	/** Set Workflow Type.
+	  * Type of Workflow
 	  */
-	public void setWorkCode (String WorkCode);
+	public void setWorkflowType (String WorkflowType);
 
-	/** Get WorkCode.
-	  * Work Code
+	/** Get Workflow Type.
+	  * Type of Workflow
 	  */
-	public String getWorkCode();
+	public String getWorkflowType();
 }

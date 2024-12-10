@@ -14,25 +14,25 @@
  * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
  * or via info@compiere.org or http://www.compiere.org/license.html           *
  *****************************************************************************/
-package org.amerp.amnmodel;
+package org.amerp.workflow.amwmodel;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Payroll_Assist_Unit
+/** Generated Interface for AMW_WF_Node
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Payroll_Assist_Unit 
+public interface I_AMW_WF_Node 
 {
 
-    /** TableName=AMN_Payroll_Assist_Unit */
-    public static final String Table_Name = "AMN_Payroll_Assist_Unit";
+    /** TableName=AMW_WF_Node */
+    public static final String Table_Name = "AMW_WF_Node";
 
-    /** AD_Table_ID=1000100 */
+    /** AD_Table_ID=1000195 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,27 +64,42 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Payroll_Assist_Unit_ID */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_ID = "AMN_Payroll_Assist_Unit_ID";
+    /** Column name AMW_WF_Node_ID */
+    public static final String COLUMNNAME_AMW_WF_Node_ID = "AMW_WF_Node_ID";
 
-	/** Set Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Set AMW Work Flow Nodes.
+	  * AMW Work Flow Nodes
 	  */
-	public void setAMN_Payroll_Assist_Unit_ID (int AMN_Payroll_Assist_Unit_ID);
+	public void setAMW_WF_Node_ID (int AMW_WF_Node_ID);
 
-	/** Get Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Get AMW Work Flow Nodes.
+	  * AMW Work Flow Nodes
 	  */
-	public int getAMN_Payroll_Assist_Unit_ID();
+	public int getAMW_WF_Node_ID();
 
-    /** Column name AMN_Payroll_Assist_Unit_UU */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_UU = "AMN_Payroll_Assist_Unit_UU";
+    /** Column name AMW_WF_Node_UU */
+    public static final String COLUMNNAME_AMW_WF_Node_UU = "AMW_WF_Node_UU";
 
-	/** Set AMN_Payroll_Assist_Unit_UU	  */
-	public void setAMN_Payroll_Assist_Unit_UU (String AMN_Payroll_Assist_Unit_UU);
+	/** Set AMW_WF_Node_UU	  */
+	public void setAMW_WF_Node_UU (String AMW_WF_Node_UU);
 
-	/** Get AMN_Payroll_Assist_Unit_UU	  */
-	public String getAMN_Payroll_Assist_Unit_UU();
+	/** Get AMW_WF_Node_UU	  */
+	public String getAMW_WF_Node_UU();
+
+    /** Column name AMW_WorkFlow_ID */
+    public static final String COLUMNNAME_AMW_WorkFlow_ID = "AMW_WorkFlow_ID";
+
+	/** Set AMW Work Flows.
+	  * Plugin AMW Work Flows defined by User
+	  */
+	public void setAMW_WorkFlow_ID (int AMW_WorkFlow_ID);
+
+	/** Get AMW Work Flows.
+	  * Plugin AMW Work Flows defined by User
+	  */
+	public int getAMW_WorkFlow_ID();
+
+	public I_AMW_WorkFlow getAMW_WorkFlow() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -101,6 +116,19 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -127,6 +155,21 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name SeqNo */
+    public static final String COLUMNNAME_SeqNo = "SeqNo";
+
+	/** Set Sequence.
+	  * Method of ordering records;
+ lowest number comes first
+	  */
+	public void setSeqNo (int SeqNo);
+
+	/** Get Sequence.
+	  * Method of ordering records;
+ lowest number comes first
+	  */
+	public int getSeqNo();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -156,17 +199,4 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
-
-    /** Column name WorkCode */
-    public static final String COLUMNNAME_WorkCode = "WorkCode";
-
-	/** Set WorkCode.
-	  * Work Code
-	  */
-	public void setWorkCode (String WorkCode);
-
-	/** Get WorkCode.
-	  * Work Code
-	  */
-	public String getWorkCode();
 }

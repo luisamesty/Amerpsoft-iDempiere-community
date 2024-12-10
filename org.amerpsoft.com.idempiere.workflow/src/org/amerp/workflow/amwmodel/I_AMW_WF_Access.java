@@ -14,25 +14,25 @@
  * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
  * or via info@compiere.org or http://www.compiere.org/license.html           *
  *****************************************************************************/
-package org.amerp.amnmodel;
+package org.amerp.workflow.amwmodel;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Payroll_Assist_Unit
+/** Generated Interface for AMW_WF_Access
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Payroll_Assist_Unit 
+public interface I_AMW_WF_Access 
 {
 
-    /** TableName=AMN_Payroll_Assist_Unit */
-    public static final String Table_Name = "AMN_Payroll_Assist_Unit";
+    /** TableName=AMW_WF_Access */
+    public static final String Table_Name = "AMW_WF_Access";
 
-    /** AD_Table_ID=1000100 */
+    /** AD_Table_ID=1000196 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,27 +64,57 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Payroll_Assist_Unit_ID */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_ID = "AMN_Payroll_Assist_Unit_ID";
+    /** Column name AD_Role_ID */
+    public static final String COLUMNNAME_AD_Role_ID = "AD_Role_ID";
 
-	/** Set Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Set Role.
+	  * Responsibility Role
 	  */
-	public void setAMN_Payroll_Assist_Unit_ID (int AMN_Payroll_Assist_Unit_ID);
+	public void setAD_Role_ID (int AD_Role_ID);
 
-	/** Get Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Get Role.
+	  * Responsibility Role
 	  */
-	public int getAMN_Payroll_Assist_Unit_ID();
+	public int getAD_Role_ID();
 
-    /** Column name AMN_Payroll_Assist_Unit_UU */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_UU = "AMN_Payroll_Assist_Unit_UU";
+	public org.compiere.model.I_AD_Role getAD_Role() throws RuntimeException;
 
-	/** Set AMN_Payroll_Assist_Unit_UU	  */
-	public void setAMN_Payroll_Assist_Unit_UU (String AMN_Payroll_Assist_Unit_UU);
+    /** Column name AMW_WF_Access_ID */
+    public static final String COLUMNNAME_AMW_WF_Access_ID = "AMW_WF_Access_ID";
 
-	/** Get AMN_Payroll_Assist_Unit_UU	  */
-	public String getAMN_Payroll_Assist_Unit_UU();
+	/** Set AMW Work Flow Access.
+	  * AMW Work Flow Access
+	  */
+	public void setAMW_WF_Access_ID (int AMW_WF_Access_ID);
+
+	/** Get AMW Work Flow Access.
+	  * AMW Work Flow Access
+	  */
+	public int getAMW_WF_Access_ID();
+
+    /** Column name AMW_WF_Access_UU */
+    public static final String COLUMNNAME_AMW_WF_Access_UU = "AMW_WF_Access_UU";
+
+	/** Set AMW_WF_Access_UU	  */
+	public void setAMW_WF_Access_UU (String AMW_WF_Access_UU);
+
+	/** Get AMW_WF_Access_UU	  */
+	public String getAMW_WF_Access_UU();
+
+    /** Column name AMW_WF_Node_ID */
+    public static final String COLUMNNAME_AMW_WF_Node_ID = "AMW_WF_Node_ID";
+
+	/** Set AMW Work Flow Nodes.
+	  * AMW Work Flow Nodes
+	  */
+	public void setAMW_WF_Node_ID (int AMW_WF_Node_ID);
+
+	/** Get AMW Work Flow Nodes.
+	  * AMW Work Flow Nodes
+	  */
+	public int getAMW_WF_Node_ID();
+
+	public I_AMW_WF_Node getAMW_WF_Node() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -102,6 +132,19 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public int getCreatedBy();
 
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -115,18 +158,18 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public boolean isActive();
 
-    /** Column name Name */
-    public static final String COLUMNNAME_Name = "Name";
+    /** Column name IsReadWrite */
+    public static final String COLUMNNAME_IsReadWrite = "IsReadWrite";
 
-	/** Set Name.
-	  * Alphanumeric identifier of the entity
+	/** Set Read Write.
+	  * Field is read / write
 	  */
-	public void setName (String Name);
+	public void setIsReadWrite (boolean IsReadWrite);
 
-	/** Get Name.
-	  * Alphanumeric identifier of the entity
+	/** Get Read Write.
+	  * Field is read / write
 	  */
-	public String getName();
+	public boolean isReadWrite();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -143,30 +186,4 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name Value */
-    public static final String COLUMNNAME_Value = "Value";
-
-	/** Set Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public void setValue (String Value);
-
-	/** Get Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public String getValue();
-
-    /** Column name WorkCode */
-    public static final String COLUMNNAME_WorkCode = "WorkCode";
-
-	/** Set WorkCode.
-	  * Work Code
-	  */
-	public void setWorkCode (String WorkCode);
-
-	/** Get WorkCode.
-	  * Work Code
-	  */
-	public String getWorkCode();
 }
