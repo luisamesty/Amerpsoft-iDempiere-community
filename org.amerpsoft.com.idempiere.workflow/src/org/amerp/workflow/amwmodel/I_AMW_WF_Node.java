@@ -156,6 +156,19 @@ public interface I_AMW_WF_Node
 	  */
 	public String getName();
 
+    /** Column name NotificationType */
+    public static final String COLUMNNAME_NotificationType = "NotificationType";
+
+	/** Set Notification Type.
+	  * Type of Notifications
+	  */
+	public void setNotificationType (String NotificationType);
+
+	/** Get Notification Type.
+	  * Type of Notifications
+	  */
+	public String getNotificationType();
+
     /** Column name SeqNo */
     public static final String COLUMNNAME_SeqNo = "SeqNo";
 

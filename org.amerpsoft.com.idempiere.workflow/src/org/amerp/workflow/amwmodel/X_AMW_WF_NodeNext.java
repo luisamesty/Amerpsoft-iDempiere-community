@@ -31,7 +31,7 @@ public class X_AMW_WF_NodeNext extends PO implements I_AMW_WF_NodeNext, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241208L;
+	private static final long serialVersionUID = 20241214L;
 
     /** Standard Constructor */
     public X_AMW_WF_NodeNext (Properties ctx, int AMW_WF_NodeNext_ID, String trxName)
@@ -40,6 +40,8 @@ public class X_AMW_WF_NodeNext extends PO implements I_AMW_WF_NodeNext, I_Persis
       /** if (AMW_WF_NodeNext_ID == 0)
         {
 			setAMW_WF_NodeNext_ID (0);
+			setDescription (null);
+			setSeqNo (0);
         } */
     }
 
@@ -50,6 +52,8 @@ public class X_AMW_WF_NodeNext extends PO implements I_AMW_WF_NodeNext, I_Persis
       /** if (AMW_WF_NodeNext_ID == 0)
         {
 			setAMW_WF_NodeNext_ID (0);
+			setDescription (null);
+			setSeqNo (0);
         } */
     }
 
@@ -60,6 +64,8 @@ public class X_AMW_WF_NodeNext extends PO implements I_AMW_WF_NodeNext, I_Persis
       /** if (AMW_WF_NodeNext_UU == null)
         {
 			setAMW_WF_NodeNext_ID (0);
+			setDescription (null);
+			setSeqNo (0);
         } */
     }
 
@@ -70,6 +76,8 @@ public class X_AMW_WF_NodeNext extends PO implements I_AMW_WF_NodeNext, I_Persis
       /** if (AMW_WF_NodeNext_UU == null)
         {
 			setAMW_WF_NodeNext_ID (0);
+			setDescription (null);
+			setSeqNo (0);
         } */
     }
 
@@ -100,6 +108,28 @@ public class X_AMW_WF_NodeNext extends PO implements I_AMW_WF_NodeNext, I_Persis
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	/** Set AMW Work Flow Next ID.
+		@param AMW_WF_Next_ID AMW Work Flow Next ID
+	*/
+	public void setAMW_WF_Next_ID (int AMW_WF_Next_ID)
+	{
+		if (AMW_WF_Next_ID < 1)
+			set_Value (COLUMNNAME_AMW_WF_Next_ID, null);
+		else
+			set_Value (COLUMNNAME_AMW_WF_Next_ID, Integer.valueOf(AMW_WF_Next_ID));
+	}
+
+	/** Get AMW Work Flow Next ID.
+		@return AMW Work Flow Next ID
+	  */
+	public int getAMW_WF_Next_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMW_WF_Next_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	public I_AMW_WF_Node getAMW_WF_Node() throws RuntimeException
 	{

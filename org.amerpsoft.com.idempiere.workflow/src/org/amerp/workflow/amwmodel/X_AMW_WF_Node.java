@@ -31,7 +31,7 @@ public class X_AMW_WF_Node extends PO implements I_AMW_WF_Node, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241208L;
+	private static final long serialVersionUID = 20241214L;
 
     /** Standard Constructor */
     public X_AMW_WF_Node (Properties ctx, int AMW_WF_Node_ID, String trxName)
@@ -41,6 +41,7 @@ public class X_AMW_WF_Node extends PO implements I_AMW_WF_Node, I_Persistent
         {
 			setAMW_WF_Node_ID (0);
 			setName (null);
+			setSeqNo (0);
         } */
     }
 
@@ -52,6 +53,7 @@ public class X_AMW_WF_Node extends PO implements I_AMW_WF_Node, I_Persistent
         {
 			setAMW_WF_Node_ID (0);
 			setName (null);
+			setSeqNo (0);
         } */
     }
 
@@ -63,6 +65,7 @@ public class X_AMW_WF_Node extends PO implements I_AMW_WF_Node, I_Persistent
         {
 			setAMW_WF_Node_ID (0);
 			setName (null);
+			setSeqNo (0);
         } */
     }
 
@@ -74,6 +77,7 @@ public class X_AMW_WF_Node extends PO implements I_AMW_WF_Node, I_Persistent
         {
 			setAMW_WF_Node_ID (0);
 			setName (null);
+			setSeqNo (0);
         } */
     }
 
@@ -200,6 +204,33 @@ public class X_AMW_WF_Node extends PO implements I_AMW_WF_Node, I_Persistent
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
+	}
+
+	/** NotificationType AD_Reference_ID=344 */
+	public static final int NOTIFICATIONTYPE_AD_Reference_ID=344;
+	/** EMail+Notice = B */
+	public static final String NOTIFICATIONTYPE_EMailPlusNotice = "B";
+	/** EMail = E */
+	public static final String NOTIFICATIONTYPE_EMail = "E";
+	/** Notice = N */
+	public static final String NOTIFICATIONTYPE_Notice = "N";
+	/** None = X */
+	public static final String NOTIFICATIONTYPE_None = "X";
+	/** Set Notification Type.
+		@param NotificationType Type of Notifications
+	*/
+	public void setNotificationType (String NotificationType)
+	{
+
+		set_Value (COLUMNNAME_NotificationType, NotificationType);
+	}
+
+	/** Get Notification Type.
+		@return Type of Notifications
+	  */
+	public String getNotificationType()
+	{
+		return (String)get_Value(COLUMNNAME_NotificationType);
 	}
 
 	/** Set Sequence.

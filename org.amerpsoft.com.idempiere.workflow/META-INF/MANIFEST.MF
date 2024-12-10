@@ -1,4 +1,4 @@
-Manifest-Version: 1.0
+M0anifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Workflow
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.workflow
@@ -25,5 +25,5 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.compiere.model
 Bundle-Vendor: Amerpsoft
 Automatic-Module-Name: org.amerpsoft.com.idempiere.workflow
-Service-Component: OSGI-INF/AMWWorkFlowProcessFactory.xml,
- OSGI-INF/AMWWorkFlowModelFactory.xml
+Service-Component: OSGI-INF/AMWWorkFlowModelFactory.xml
+Export-Package: org.amerp.workflow.amwmodel

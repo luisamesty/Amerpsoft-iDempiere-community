@@ -32,7 +32,7 @@ public interface I_AMN_Leaves
     /** TableName=AMN_Leaves */
     public static final String Table_Name = "AMN_Leaves";
 
-    /** AD_Table_ID=1000085 */
+    /** AD_Table_ID=1000105 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -42,19 +42,6 @@ public interface I_AMN_Leaves
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
-
-    /** Column name Action */
-    public static final String COLUMNNAME_Action = "Action";
-
-	/** Set Action.
-	  * Indicates the Action to be performed
-	  */
-	public void setAction (String Action);
-
-	/** Get Action.
-	  * Indicates the Action to be performed
-	  */
-	public String getAction();
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -101,14 +88,18 @@ public interface I_AMN_Leaves
 	  */
 	public int getAMN_Leaves_ID();
 
-    /** Column name AMN_Leaves_Status */
-    public static final String COLUMNNAME_AMN_Leaves_Status = "AMN_Leaves_Status";
+    /** Column name AMN_Leaves_Process */
+    public static final String COLUMNNAME_AMN_Leaves_Process = "AMN_Leaves_Process";
 
-	/** Set Leaves Status	  */
-	public void setAMN_Leaves_Status (String AMN_Leaves_Status);
+	/** Set Leaves Process.
+	  * Leaves Process to next valid step
+	  */
+	public void setAMN_Leaves_Process (String AMN_Leaves_Process);
 
-	/** Get Leaves Status	  */
-	public String getAMN_Leaves_Status();
+	/** Get Leaves Process.
+	  * Leaves Process to next valid step
+	  */
+	public String getAMN_Leaves_Process();
 
     /** Column name AMN_Leaves_Types_ID */
     public static final String COLUMNNAME_AMN_Leaves_Types_ID = "AMN_Leaves_Types_ID";
@@ -129,6 +120,20 @@ public interface I_AMN_Leaves
 
 	/** Get AMN_Leaves_UU	  */
 	public String getAMN_Leaves_UU();
+
+    /** Column name AMW_WorkFlow_ID */
+    public static final String COLUMNNAME_AMW_WorkFlow_ID = "AMW_WorkFlow_ID";
+
+	/** Set AMW Work Flows.
+	  * Plugin AMW Work Flows defined by User
+	  */
+	public void setAMW_WorkFlow_ID (int AMW_WorkFlow_ID);
+
+	/** Get AMW Work Flows.
+	  * Plugin AMW Work Flows defined by User
+	  */
+	public int getAMW_WorkFlow_ID();
+
 
     /** Column name C_DocType_ID */
     public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
@@ -215,6 +220,19 @@ public interface I_AMN_Leaves
 	  */
 	public Timestamp getDateTo();
 
+    /** Column name DaysTo */
+    public static final String COLUMNNAME_DaysTo = "DaysTo";
+
+	/** Set Days To.
+	  * Number of days To 
+	  */
+	public void setDaysTo (int DaysTo);
+
+	/** Get Days To.
+	  * Number of days To 
+	  */
+	public int getDaysTo();
+
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 
@@ -227,19 +245,6 @@ public interface I_AMN_Leaves
 	  * Optional short description of the record
 	  */
 	public String getDescription();
-
-    /** Column name DocAction */
-    public static final String COLUMNNAME_DocAction = "DocAction";
-
-	/** Set Document Action.
-	  * The targeted status of the document
-	  */
-	public void setDocAction (String DocAction);
-
-	/** Get Document Action.
-	  * The targeted status of the document
-	  */
-	public String getDocAction();
 
     /** Column name DocStatus */
     public static final String COLUMNNAME_DocStatus = "DocStatus";
@@ -266,6 +271,15 @@ public interface I_AMN_Leaves
 	  * Document sequence number of the document
 	  */
 	public String getDocumentNo();
+
+    /** Column name HoursDay */
+    public static final String COLUMNNAME_HoursDay = "HoursDay";
+
+	/** Set Hours per day in a Shift	  */
+	public void setHoursDay (BigDecimal HoursDay);
+
+	/** Get Hours per day in a Shift	  */
+	public BigDecimal getHoursDay();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
