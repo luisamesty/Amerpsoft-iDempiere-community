@@ -32,7 +32,7 @@ public class X_AMN_Payroll_Assist_Row extends PO implements I_AMN_Payroll_Assist
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241205L;
+	private static final long serialVersionUID = 20241210L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Row (Properties ctx, int AMN_Payroll_Assist_Row_ID, String trxName)
@@ -236,5 +236,21 @@ public class X_AMN_Payroll_Assist_Row extends PO implements I_AMN_Payroll_Assist
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set WorkCode.
+		@param WorkCode Work Code
+	*/
+	public void setWorkCode (String WorkCode)
+	{
+		set_Value (COLUMNNAME_WorkCode, WorkCode);
+	}
+
+	/** Get WorkCode.
+		@return Work Code
+	  */
+	public String getWorkCode()
+	{
+		return (String)get_Value(COLUMNNAME_WorkCode);
 	}
 }

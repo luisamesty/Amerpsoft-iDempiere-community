@@ -195,4 +195,17 @@ public interface I_AMN_Payroll_Assist_Row
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name WorkCode */
+    public static final String COLUMNNAME_WorkCode = "WorkCode";
+
+	/** Set WorkCode.
+	  * Work Code
+	  */
+	public void setWorkCode (String WorkCode);
+
+	/** Get WorkCode.
+	  * Work Code
+	  */
+	public String getWorkCode();
 }
