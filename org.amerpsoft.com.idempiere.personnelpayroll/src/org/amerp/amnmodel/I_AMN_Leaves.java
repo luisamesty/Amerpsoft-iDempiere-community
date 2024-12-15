@@ -32,7 +32,7 @@ public interface I_AMN_Leaves
     /** TableName=AMN_Leaves */
     public static final String Table_Name = "AMN_Leaves";
 
-    /** AD_Table_ID=1000105 */
+    /** AD_Table_ID=1000085 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -110,8 +110,6 @@ public interface I_AMN_Leaves
 	/** Get Leaves Types	  */
 	public int getAMN_Leaves_Types_ID();
 
-	public I_AMN_Leaves_Types getAMN_Leaves_Types() throws RuntimeException;
-
     /** Column name AMN_Leaves_UU */
     public static final String COLUMNNAME_AMN_Leaves_UU = "AMN_Leaves_UU";
 
@@ -133,7 +131,6 @@ public interface I_AMN_Leaves
 	  * Plugin AMW Work Flows defined by User
 	  */
 	public int getAMW_WorkFlow_ID();
-
 
     /** Column name C_DocType_ID */
     public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";

@@ -64,60 +64,134 @@ SELECT * FROM
 		WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
 	) as header_info
 	FULL JOIN
-	( SELECT DISTINCT
-		-- ORG 
-	    coalesce(org.value,'') as org_value,
-		coalesce(org.name,org.value,'') as org_name,
-		-- CONTRACT
-	   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-		-- DEPARTAMENT
-	   	COALESCE(dep.name,dep.description) as departamento,
-	   	-- LOCATION
-	   	emp.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+	(
+	SELECT 
+		LTALL.ad_client_id, 
+		org.ad_org_id, org.value AS emp_org_value, org.name AS emp_org_name,
 		-- EMPLOYEE
-	   	emp.amn_employee_id,
-	  	emp.value as emp_value, 
-	  	emp.name as emp_name, 
-	  	emp.incomedate as fecha_ingreso, emp.paymenttype,
-	   	COALESCE(jtt.name, jtt.description,'N/D') as cargo, 
-	   	COALESCE(emp.idnumber ,'') as cedula, 
-		-- AMN_leaves_types	
-		amlt.amn_leaves_types_id ,
-		amlt.value AS leaves_value,
-		amlt.name AS leaves_name,
-		-- AMN_Leaves
-		aml.amn_leaves_id, 
-		aml.ad_client_id, 
-		aml.ad_org_id, 
-		aml.name AS leaves_name,
-		aml.description AS leaves_description, 
-		aml.docstatus, processed, 
-		aml.processedon, processing, 
-		aml.amn_leaves_types_id, 
-		aml.datefrom, dateto, 
-		aml.amn_employee_id, 
-		aml.datedoc, 
-		aml.documentno
-	FROM adempiere.amn_leaves aml
-	INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
-	INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= aml.amn_employee_id)
-	INNER JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
-	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
-	INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp.amn_location_id)
-	INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp.amn_contract_id)	 
-	LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
-	WHERE aml.isActive = 'Y' AND aml.AD_Client_ID= $P{AD_Client_ID} 
-		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
+		LTALL.amn_employee_id, 
+		emp2.value as emp_value, 
+	  	emp2.name as emp_name, 
+		-- CONTRACT
+		amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+		-- LOCATION
+		emp2.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+		-- Leaves Types
+		AJ,
+		CO,
+		DU,
+		DL,
+		MA,
+		MT,
+		LA,
+		RM,
+		PA,
+		PR,
+		RM,
+		SU,
+		VA,
+		PS,
+		PE,
+		RE,
+		LI
+	FROM (
+		SELECT 
+			ad_client_id, ad_org_id,
+			amn_employee_id, 
+			MAX(AJ) AS AJ,
+			MAX(CO) AS CO,
+			MAX(DU) AS DU,
+			MAX(DL) AS DL,
+			MAX(MA) AS MA,
+			MAX(MT) AS MT,
+			MAX(LA) AS LA,
+			MAX(RM) AS RM,
+			MAX(PA) AS PA,
+			MAX(PR) AS PR,
+			MAX(SU) AS SU,
+			MAX(VA) AS VA,
+			MAX(PS) AS PS,
+			MAX(PE) AS PE,
+			MAX(RE) AS RE,
+			MAX(LI) AS LI
+		FROM (
+			SELECT 
+			ad_client_id, ad_org_id,
+			amn_employee_id, 
+			CASE WHEN leaves_value = 'AJ' THEN qty ELSE 0 END AS AJ,
+			CASE WHEN leaves_value = 'CO' THEN qty ELSE 0 END AS CO,
+			CASE WHEN leaves_value = 'DU' THEN qty ELSE 0 END AS DU,
+			CASE WHEN leaves_value = 'DL' THEN qty ELSE 0 END AS DL,
+			CASE WHEN leaves_value = 'MA' THEN qty ELSE 0 END AS MA,
+			CASE WHEN leaves_value = 'MT' THEN qty ELSE 0 END AS MT,
+			CASE WHEN leaves_value = 'LA' THEN qty ELSE 0 END AS LA,
+			CASE WHEN leaves_value = 'RM' THEN qty ELSE 0 END AS RM,
+			CASE WHEN leaves_value = 'PA' THEN qty ELSE 0 END AS PA,
+			CASE WHEN leaves_value = 'PR' THEN qty ELSE 0 END AS PR,
+			CASE WHEN leaves_value = 'SU' THEN qty ELSE 0 END AS SU,
+			CASE WHEN leaves_value = 'VA' THEN qty ELSE 0 END AS VA,
+			CASE WHEN leaves_value = 'PS' THEN qty ELSE 0 END AS PS,
+			CASE WHEN leaves_value = 'PE' THEN qty ELSE 0 END AS PE,
+			CASE WHEN leaves_value = 'RE' THEN qty ELSE 0 END AS RE,
+			CASE WHEN leaves_value = 'LI' THEN qty ELSE 0 END AS LI
+			FROM (
+			 	SELECT
+			 		-- EMPLOYEE
+				   	emp.amn_employee_id,
+					-- AMN_leaves_types	
+					amlt.amn_leaves_types_id,
+					amlt.value AS leaves_value,
+					amltt.name AS leaves_name,
+					-- AMN_Leaves
+					aml.amn_leaves_id, 
+					aml.ad_client_id, 
+					aml.ad_org_id, 
+					aml.description AS leaves_description, 
+					aml.docstatus, aml.processed, 
+					aml.processedon, aml.processing, 
+					aml.datefrom, dateto, 
+					aml.datedoc, 
+					aml.documentno,
+					-- Leaves Count
+					COALESCE(SUM(aml.daysto),1) AS qty,
+					COALESCE(SUM(aml.hoursday),0) AS qtyhours
+				FROM adempiere.amn_employee as emp
+				LEFT JOIN adempiere.amn_leaves aml ON (aml.amn_employee_id = emp.amn_employee_id)
+				INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
+				LEFT JOIN adempiere.amn_leaves_types_trl amltt on amltt.amn_leaves_types_id = amlt.amn_leaves_types_id  
+				 AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID}) 
+				LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
+				WHERE emp.isActive = 'Y' 
+					--AND aml.docstatus IN ('CO','CL') 
+					AND aml.AD_Client_ID= $P{AD_Client_ID} 
+					AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
+					AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+					AND ( CASE WHEN (aml.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
+				GROUP BY emp.amn_employee_id, aml.amn_leaves_types_id, amlt.amn_leaves_types_id, emp.value, emp.name,
+					aml.amn_leaves_id, aml.ad_client_id, aml.ad_org_id, 
+					amltt.name, aml.name, aml.description, aml.docstatus, aml.processed, aml.processedon, aml.processing, 
+					aml.datefrom, dateto, aml.amn_employee_id, aml.datedoc, aml.documentno
+				ORDER BY emp.amn_employee_id, aml.amn_leaves_types_id
+			) AS LT1
+		) AS LT2
+		GROUP BY ad_client_id, ad_org_id, amn_employee_id
+	) AS LTALL
+	INNER JOIN adempiere.amn_employee as emp2 ON emp2.amn_employee_id = LTALL.amn_employee_id
+	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp2.amn_jobtitle_id= jtt.amn_jobtitle_id)
+	INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp2.amn_location_id)
+	INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp2.amn_contract_id)	 
+	LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp2.ad_orgto_id)
+	WHERE emp2.isActive = 'Y' AND emp2.AD_Client_ID= $P{AD_Client_ID} 
+		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp2.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
 		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-		AND ( CASE WHEN (aml.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
-	ORDER BY aml.amn_leaves_types_id
-) as leaves ON (1= 0)
+		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp2.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+	) as leaves ON (1= 0)
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value, header_info ASC]]>
+ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.emp_value, header_info ASC
+]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -148,41 +222,25 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
 		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
 	</field>
-	<field name="org_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
 	</field>
-	<field name="org_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
 	</field>
-	<field name="c_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
+	<field name="emp_org_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_org_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_org_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
 	</field>
-	<field name="c_tipo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
-	</field>
-	<field name="departamento" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="departamento"/>
-		<property name="com.jaspersoft.studio.field.label" value="departamento"/>
-	</field>
-	<field name="amn_location_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_location_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_location_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
-	</field>
-	<field name="location_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="location_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="location_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_location"/>
-	</field>
-	<field name="location_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="location_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="location_name"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_location"/>
+	<field name="emp_org_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_org_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
 	</field>
 	<field name="amn_employee_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
@@ -199,119 +257,201 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 		<property name="com.jaspersoft.studio.field.label" value="emp_name"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="fecha_ingreso" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="fecha_ingreso"/>
-		<property name="com.jaspersoft.studio.field.label" value="fecha_ingreso"/>
+	<field name="c_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
+	</field>
+	<field name="c_tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
+	</field>
+	<field name="amn_location_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_location_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_location_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="paymenttype" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="paymenttype"/>
-		<property name="com.jaspersoft.studio.field.label" value="paymenttype"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	<field name="location_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="location_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="location_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_location"/>
 	</field>
-	<field name="cargo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="cargo"/>
-		<property name="com.jaspersoft.studio.field.label" value="cargo"/>
+	<field name="location_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="location_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="location_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_location"/>
 	</field>
-	<field name="cedula" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="cedula"/>
-		<property name="com.jaspersoft.studio.field.label" value="cedula"/>
+	<field name="aj" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="aj"/>
+		<property name="com.jaspersoft.studio.field.label" value="aj"/>
 	</field>
-	<field name="amn_leaves_types_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_leaves_types_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_leaves_types_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves_types"/>
+	<field name="co" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="co"/>
+		<property name="com.jaspersoft.studio.field.label" value="co"/>
 	</field>
-	<field name="leaves_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="leaves_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="leaves_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves_types"/>
+	<field name="du" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="du"/>
+		<property name="com.jaspersoft.studio.field.label" value="du"/>
 	</field>
-	<field name="leaves_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="leaves_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="leaves_name"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves_types"/>
+	<field name="dl" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="dl"/>
+		<property name="com.jaspersoft.studio.field.label" value="dl"/>
 	</field>
-	<field name="amn_leaves_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_leaves_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_leaves_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="ma" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ma"/>
+		<property name="com.jaspersoft.studio.field.label" value="ma"/>
 	</field>
-	<field name="ad_client_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="mt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="mt"/>
+		<property name="com.jaspersoft.studio.field.label" value="mt"/>
 	</field>
-	<field name="ad_org_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="la" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="la"/>
+		<property name="com.jaspersoft.studio.field.label" value="la"/>
 	</field>
-	<field name="COLUMN_29" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="leaves_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="leaves_name"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="rm" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rm"/>
+		<property name="com.jaspersoft.studio.field.label" value="rm"/>
 	</field>
-	<field name="leaves_description" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="leaves_description"/>
-		<property name="com.jaspersoft.studio.field.label" value="leaves_description"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="pa" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pa"/>
+		<property name="com.jaspersoft.studio.field.label" value="pa"/>
 	</field>
-	<field name="docstatus" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="docstatus"/>
-		<property name="com.jaspersoft.studio.field.label" value="docstatus"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="pr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pr"/>
+		<property name="com.jaspersoft.studio.field.label" value="pr"/>
 	</field>
-	<field name="processed" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="processed"/>
-		<property name="com.jaspersoft.studio.field.label" value="processed"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="COLUMN_30" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rm"/>
+		<property name="com.jaspersoft.studio.field.label" value="rm"/>
 	</field>
-	<field name="processedon" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="processedon"/>
-		<property name="com.jaspersoft.studio.field.label" value="processedon"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="su" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="su"/>
+		<property name="com.jaspersoft.studio.field.label" value="su"/>
 	</field>
-	<field name="processing" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="processing"/>
-		<property name="com.jaspersoft.studio.field.label" value="processing"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="va" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="va"/>
+		<property name="com.jaspersoft.studio.field.label" value="va"/>
 	</field>
-	<field name="COLUMN_35" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_leaves_types_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_leaves_types_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="ps" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ps"/>
+		<property name="com.jaspersoft.studio.field.label" value="ps"/>
 	</field>
-	<field name="datefrom" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="datefrom"/>
-		<property name="com.jaspersoft.studio.field.label" value="datefrom"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="pe" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pe"/>
+		<property name="com.jaspersoft.studio.field.label" value="pe"/>
 	</field>
-	<field name="dateto" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="dateto"/>
-		<property name="com.jaspersoft.studio.field.label" value="dateto"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="re" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="re"/>
+		<property name="com.jaspersoft.studio.field.label" value="re"/>
 	</field>
-	<field name="COLUMN_38" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
-	</field>
-	<field name="datedoc" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="datedoc"/>
-		<property name="com.jaspersoft.studio.field.label" value="datedoc"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
-	</field>
-	<field name="documentno" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="documentno"/>
-		<property name="com.jaspersoft.studio.field.label" value="documentno"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+	<field name="li" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="li"/>
+		<property name="com.jaspersoft.studio.field.label" value="li"/>
 	</field>
 	<variable name="v_employee_count" class="java.lang.Integer" incrementType="Group" incrementGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[(($F{amn_location_id}!= null && $F{amn_employee_id}!= null) ? 1 : 0 )]]></variableExpression>
 	</variable>
+	<variable name="aj_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<variableExpression><![CDATA[$F{aj}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="co_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<variableExpression><![CDATA[$F{co}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="du_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="dl_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="ma_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="mt_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="la_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="rm_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="pa_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="pr_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="su_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="va_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="ps_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="pe_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="re_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="li_org" class="java.lang.Integer" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="aj_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="co_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="du_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="dl_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="ma_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="mt_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="la_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="rm_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="pa_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="pr_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="su_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="va_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="ps_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="pe_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="re_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="li_loc" class="java.lang.Integer" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
 	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
+		<groupExpression><![CDATA[$F{emp_org_value}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
 				<textField isBlankWhenNull="true">
@@ -322,7 +462,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.org}+": "+$F{org_value}.trim()+" "+$F{org_name}.trim()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.org}+": "+$F{emp_org_value}.trim()+" "+$F{emp_org_name}.trim()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -330,7 +470,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 			<band height="12">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="790" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb6c51b1-14cf-45e0-8ec0-a012705f0481">
+					<reportElement mode="Transparent" x="0" y="0" width="370" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb6c51b1-14cf-45e0-8ec0-a012705f0481">
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -338,55 +478,6 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 					</textElement>
 					<textFieldExpression><![CDATA["Sub-Total Organización "]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="790" y="0" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c13ddf2a-e681-4c91-8fb5-1c0a035a3923">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1240" y="0" width="90" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="72280727-5506-4f82-bbc1-cf5ece349780">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1330" y="0" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="31945cc6-cf9f-43a8-8e53-a41833e6fab8">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="790" y="0" width="640" height="1" uuid="bee4061f-6ab7-46a4-b7a8-df4d87c1fbc5">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
 			</band>
 		</groupFooter>
 	</group>
@@ -406,52 +497,13 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.location}+": "+$F{location_value}.trim()+" "+$F{location_name}.trim()]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1330" y="1" width="100" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="e1ecf97d-82c7-45a2-97da-a8b3ef9e021c">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1240" y="1" width="90" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="184a6d1d-4bd5-44bd-9331-93ea1a2dd72a">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="790" y="0" width="100" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="781bf38c-2edc-4518-ad64-4aa37e0a6328">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="12">
 				<printWhenExpression><![CDATA[$F{amn_location_id}!= null && $F{amn_employee_id}!= null && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="790" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
+					<reportElement mode="Transparent" x="0" y="0" width="370" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -459,54 +511,6 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 					</textElement>
 					<textFieldExpression><![CDATA["Sub-Total Localidad "]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="790" y="0" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9d33792f-5cf4-4e07-b488-c61dfef4a51a">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1240" y="0" width="90" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="521ebd70-f772-4fa4-aea4-4b420cad7160">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1330" y="0" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c8f2703f-bd4f-43c1-ad7a-d3db14225901">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="790" y="0" width="640" height="1" uuid="c7802429-6757-4e44-82df-d4b06f07c5eb">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
 			</band>
 		</groupFooter>
 	</group>
@@ -516,7 +520,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 			<band height="12" splitType="Stretch">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{amn_employee_id}!= null && $P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{amn_employee_id}!= null]]></printWhenExpression>
 				<textField textAdjust="StretchHeight">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="70" height="12" uuid="543341a0-3d80-490a-967c-3760dcaa6537">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -528,7 +532,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 					<textFieldExpression><![CDATA[$F{emp_value}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="200" height="12" uuid="7a43b167-7987-4654-bad4-3b695f942b5b">
+					<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="300" height="12" uuid="7a43b167-7987-4654-bad4-3b695f942b5b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -538,6 +542,198 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emp_name}.trim()]]></textFieldExpression>
 				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="370" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="b2f9587e-7b99-4526-9091-7a5f5a5c1bcb">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{aj}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="410" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e63a8a1c-9302-4f52-8791-38bcd6a7f774">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{co}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="450" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2b3c1aa0-1c1a-41c3-b02a-6c663a733bf5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{du}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="490" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="b8e72c87-1b7c-4fd9-b5c7-e7490e74a8f8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dl}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="530" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d0f9b978-c186-4f49-bb0f-0f3341186ff6">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ma}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="570" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7c8e3f54-d1a8-4a4f-8523-1e89be4f2e84">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{mt}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="610" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6460320c-76cb-4e88-9062-7949b6e191e9">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{la}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="650" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2d7ec60b-07d3-4995-baa3-d3a01e02e227">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{rm}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="690" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="35a21a71-fd78-45b6-97ad-2b5f98b5ab3d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pa}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="730" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6445ad69-0c8c-4cde-8a45-2c1cf17f5e25">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pr}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="770" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="aa06378e-1be2-4ff8-b607-041c9757d6d6">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{su}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="810" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="55d67e60-38e5-47d8-86fc-550780d7fef4">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{va}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="850" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cd57366a-928b-48df-b13c-1a59719f42b7">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ps}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="890" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="541d3e5d-52a5-45a5-bb25-312b319bc3b7">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pe}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="930" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cdf35825-5184-49ea-b6f0-611c6c78c8cf">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{re}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.0#">
+					<reportElement mode="Transparent" x="970" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="37f6126e-1d0e-43df-b438-d993210ec9e6">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{li}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
@@ -545,7 +741,8 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="42" splitType="Stretch">
+		<band height="72" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField pattern="dd/MM/yy">
 				<reportElement key="" x="1330" y="0" width="100" height="14" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -568,7 +765,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				<textFieldExpression><![CDATA[$R{report.of}+" "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="70" y="0" width="320" height="14" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
+				<reportElement x="70" y="0" width="300" height="14" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -579,7 +776,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="70" height="42" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
+				<reportElement key="" x="0" y="0" width="70" height="41" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -609,7 +806,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="70" y="14" width="320" height="14" isRemoveLineWhenBlank="true" uuid="ce616051-bfd3-4587-b2c3-f94ebf46035f">
+				<reportElement x="70" y="14" width="300" height="14" isRemoveLineWhenBlank="true" uuid="ce616051-bfd3-4587-b2c3-f94ebf46035f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -619,6 +816,14 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				</textElement>
 				<textFieldExpression><![CDATA["Reporte de Ausencias de Trabajadores"]]></textFieldExpression>
 			</textField>
+			<subreport>
+				<reportElement x="0" y="42" width="1430" height="30" uuid="974ad5ef-e185-4485-8f16-fdaab8c0a9f2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["PayrollEmployeeLeavesTypes.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -656,9 +861,9 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				</reportElement>
 			</line>
 			<textField>
-				<reportElement x="70" y="2" width="200" height="12" uuid="5ef4f3bf-8cd2-4875-a5e8-04d7e1530602">
+				<reportElement x="70" y="2" width="300" height="12" uuid="5ef4f3bf-8cd2-4875-a5e8-04d7e1530602">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
@@ -666,157 +871,154 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				<textFieldExpression><![CDATA["Nombre"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="340" y="2" width="50" height="12" uuid="d819ab9d-fccc-41b8-ba5b-30063e359cec">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Dias"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="790" y="2" width="100" height="12" uuid="068b2b2f-2122-4299-8bd2-c82e1bb6cfee"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Total Ingresos"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1330" y="2" width="100" height="12" uuid="e88284d0-118c-472d-afb4-2ddc149192f5">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{report.net}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="270" y="2" width="70" height="12" uuid="cab4d2fc-6cae-4e7a-aff7-778ca491b00d">
+				<reportElement x="370" y="2" width="40" height="12" uuid="4db72585-0755-4e6d-b4b8-bc92d3f48c9c">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Salario Base"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["AJ"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="510" y="2" width="70" height="12" uuid="d1ebffdf-784e-4b2c-889b-289306cae3fc">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["HE Monto"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="460" y="2" width="50" height="12" uuid="bd8ba2cb-e84e-4d02-b1dc-e74408994226">
+				<reportElement x="410" y="2" width="40" height="12" uuid="acb29a21-35b6-4c35-860f-fab04b6bce0b">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["HE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CO"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="580" y="2" width="70" height="12" uuid="a3bc86ed-4e7e-4ec6-a2e6-3a38c6bd0c9a">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="450" y="2" width="40" height="12" uuid="98e2d43e-28d4-4e76-8253-0834d6d67e4c">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Feriado"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DU"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="650" y="2" width="70" height="12" uuid="02a6153c-d6c0-4633-9ed0-5a60b05ebd60">
+				<reportElement x="490" y="2" width="40" height="12" uuid="fdcb13f0-63a8-48b0-90e5-12e1ec2a85c8">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="530" y="2" width="40" height="12" uuid="82d5ec39-5c2a-4b11-9091-1fcf5a8e2c3f">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="2" width="40" height="12" uuid="78e8f858-5456-4ee5-9c66-34f0c49d77f5">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="610" y="2" width="40" height="12" uuid="6708b69b-9090-4b02-89c1-cde60b09b4b6">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="650" y="2" width="40" height="12" uuid="da9b90f7-46e2-4e8f-bfe7-0b1767607d43">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RM"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="690" y="2" width="40" height="12" uuid="b6f37315-37a7-4b35-9e24-3b8b7170bfb8">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="730" y="2" width="40" height="12" uuid="e3f0ed60-8e6b-40f3-94f0-3a41cdbf7f7b">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="770" y="2" width="40" height="12" uuid="9293f7ef-598d-45b4-b03b-91c6df065f7d">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SU"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="810" y="2" width="40" height="12" uuid="40396092-2b5e-4987-b590-d1dd5a1e9ab9">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["VA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="850" y="2" width="40" height="12" uuid="39a72148-0405-4708-a12f-8bbba5f4dcf4">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="890" y="2" width="40" height="12" uuid="c6c51288-ff9c-46db-9b7c-8fc5a5bfe251">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="930" y="2" width="40" height="12" uuid="e7b6bb2e-61c3-47de-9c04-d0db319ea481">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="970" y="2" width="40" height="12" uuid="518bb6d4-790f-4aa3-a9e6-bc82794a9781">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LI"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="3" width="70" height="12" uuid="6a6530f7-8a22-4dcc-8bd1-8f7aa984c422">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Comision"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="720" y="2" width="70" height="12" uuid="e66c1065-b8a7-4b3e-ac35-2c8ed75463e1">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Bonif"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1170" y="2" width="70" height="12" uuid="3552f419-b101-47c2-aaa2-6b49f73fb8f3">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["I.P.S."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1240" y="2" width="90" height="12" uuid="6c259b14-6123-41c4-ada6-8c7a5561243a"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Total Desc."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1100" y="2" width="70" height="12" uuid="f722b2f4-14fb-4d65-b085-34c94d884b25">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["D.Judiciales"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="390" y="2" width="70" height="12" uuid="6d62e5bc-bb5d-4cb1-b959-ef0a7d29f060">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Salario"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="890" y="2" width="70" height="12" uuid="9eadaf1b-824a-4b0a-9344-3e0672d96f04">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Prestamos"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="960" y="2" width="70" height="12" uuid="0cd150fa-5073-42ae-81ce-6bdd1d98ccb9">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Vale"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1030" y="2" width="70" height="12" uuid="b66c5148-6415-4715-8d1d-7bf231b98651">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Otros Desc."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="0" y="3" width="70" height="12" uuid="48d777d0-b263-49ee-9a59-6c79aa9287e8">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
@@ -826,56 +1028,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 		</band>
 	</columnHeader>
 	<summary>
-		<band height="87" splitType="Immediate">
-			<line>
-				<reportElement x="790" y="0" width="640" height="1" uuid="de3c2c06-6d33-4fa6-825a-76e78642bfb6">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<graphicElement>
-					<pen lineStyle="Dashed"/>
-				</graphicElement>
-			</line>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="790" y="0" width="100" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="1c3c2cf6-dde0-4211-84e2-fc0757598236">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1240" y="0" width="90" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7a65d44b-b077-44d2-b645-3ba4ea7b0019">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-				<reportElement mode="Transparent" x="1330" y="0" width="100" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="20a47382-6f54-497e-a0a0-1bf5982d6eb6">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-				</textElement>
-				<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
-			</textField>
+		<band height="247" splitType="Immediate">
 			<line>
 				<reportElement x="0" y="73" width="225" height="1" uuid="14d979a6-460f-49a8-9d8f-923ea508ab1b">
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -931,7 +1084,7 @@ ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value
 				<textFieldExpression><![CDATA[$R{report.noemployee}+": "+$V{v_employee_count}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="0" width="790" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="307df9bb-86e0-4acd-a915-c1946e021521">
+				<reportElement mode="Transparent" x="0" y="0" width="370" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="307df9bb-86e0-4acd-a915-c1946e021521">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>

@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241214L;
+	private static final long serialVersionUID = 20241216L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -221,12 +221,6 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_Process);
 	}
 
-	public I_AMN_Leaves_Types getAMN_Leaves_Types() throws RuntimeException
-	{
-		return (I_AMN_Leaves_Types)MTable.get(getCtx(), I_AMN_Leaves_Types.Table_ID)
-			.getPO(getAMN_Leaves_Types_ID(), get_TrxName());
-	}
-
 	/** Set Leaves Types.
 		@param AMN_Leaves_Types_ID Leaves Types
 	*/
@@ -262,7 +256,6 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_UU);
 	}
-
 
 	/** Set AMW Work Flows.
 		@param AMW_WorkFlow_ID Plugin AMW Work Flows defined by User

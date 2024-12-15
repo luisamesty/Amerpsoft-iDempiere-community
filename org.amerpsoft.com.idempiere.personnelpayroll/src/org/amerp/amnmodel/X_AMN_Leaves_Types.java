@@ -31,7 +31,7 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241122L;
+	private static final long serialVersionUID = 20241216L;
 
     /** Standard Constructor */
     public X_AMN_Leaves_Types (Properties ctx, int AMN_Leaves_Types_ID, String trxName)
