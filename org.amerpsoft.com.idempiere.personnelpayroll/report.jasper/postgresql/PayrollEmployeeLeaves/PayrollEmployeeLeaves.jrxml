@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListGrid" pageWidth="1470" pageHeight="595" orientation="Landscape" columnWidth="1430" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollList" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollEmployeeLeaves" pageWidth="1470" pageHeight="595" orientation="Landscape" columnWidth="1430" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollEmployeeLeaves" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="297"/>
@@ -17,16 +17,13 @@
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
-	<parameter name="C_Currency_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AMN_Process_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
-	<parameter name="AMN_Period_ID" class="java.lang.Integer">
-		<parameterDescription><![CDATA[]]></parameterDescription>
-	</parameter>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
+	<parameter name="DateIni" class="java.sql.Timestamp"/>
+	<parameter name="DateEnd" class="java.sql.Timestamp"/>
 	<parameter name="isShowLocation" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
@@ -43,47 +40,122 @@
 	<queryString language="SQL">
 		<![CDATA[-- PayrollEmployeeLeaves
 -- Payroll Employee Leaves
-SELECT 
-	-- CONTRACT
-   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-	-- DEPARTAMENT
-   	COALESCE(dep.name,dep.description) as departamento,
-   	-- LOCATION
-   	emp.amn_location_id, lct.value AS location_value, lct.name AS location_name,
-	-- EMPLOYEE
-   	emp.amn_employee_id,
-  	emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso, emp.paymenttype,
-   	COALESCE(jtt.name, jtt.description,'') as cargo, 
-   	COALESCE(emp.idnumber ,'') as cedula, 
-	-- AMN_leaves_types	
-	amlt.amn_leaves_types_id ,
-	-- AMN_Leaves
-	aml.amn_leaves_id, 
-	aml.ad_client_id, 
-	aml.ad_org_id, 
-	aml.name AS leaves_name,
-	aml.description AS leaves_description, 
-	aml.docstatus, processed, 
-	aml.processedon, processing, 
-	aml.amn_leaves_types_id, 
-	aml.datefrom, dateto, 
-	aml.amn_employee_id, 
-	aml.datedoc, 
-	aml.documentno
-FROM adempiere.amn_leaves aml
-INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
-INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= aml.amn_employee_id)
-INNER JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
-INNER JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
-INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp.amn_location_id)
-INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp.amn_contract_id)	 
-WHERE aml.isActive = 'Y' AND aml.AD_Client_ID= $P{AD_Client_ID} 
-	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
-	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-	AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-ORDER BY aml.amn_leaves_types_id]]>
+SELECT * FROM
+	(
+		-- REPORT HEADER
+		SELECT DISTINCT ON (cli.ad_client_id)
+			-- Client
+			cli.ad_client_id as rep_client_id,
+			-- Organization
+			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END as rep_org_id,
+			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as rep_name,
+			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN concat(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as rep_description, 
+			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
+			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
+		    CASE WHEN  org.ad_client_id = $P{AD_Client_ID}   AND ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 1
+		             WHEN  org.ad_client_id = $P{AD_Client_ID}  AND org.ad_org_id= $P{AD_Org_ID}  THEN 1
+		             ELSE 0 END as imp_header
+		FROM adempiere.ad_client as cli
+			 INNER JOIN adempiere.ad_org as org ON (org.ad_client_id = cli.ad_client_id)
+			 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+			  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+			 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+			  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+		WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
+	) as header_info
+	FULL JOIN
+	( SELECT DISTINCT
+		-- ORG 
+	    coalesce(org.value,'') as org_value,
+		coalesce(org.name,org.value,'') as org_name,
+		-- CONTRACT
+	   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+		-- DEPARTAMENT
+	   	COALESCE(dep.name,dep.description) as departamento,
+	   	-- LOCATION
+	   	emp.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+		-- EMPLOYEE
+	   	emp.amn_employee_id,
+	  	emp.value as emp_value, 
+	  	emp.name as emp_name, 
+	  	emp.incomedate as fecha_ingreso, emp.paymenttype,
+	   	COALESCE(jtt.name, jtt.description,'N/D') as cargo, 
+	   	COALESCE(emp.idnumber ,'') as cedula, 
+		-- AMN_leaves_types	
+		amlt.amn_leaves_types_id ,
+		amlt.value AS leaves_value,
+		amlt.name AS leaves_name,
+		-- AMN_Leaves
+		aml.amn_leaves_id, 
+		aml.ad_client_id, 
+		aml.ad_org_id, 
+		aml.name AS leaves_name,
+		aml.description AS leaves_description, 
+		aml.docstatus, processed, 
+		aml.processedon, processing, 
+		aml.amn_leaves_types_id, 
+		aml.datefrom, dateto, 
+		aml.amn_employee_id, 
+		aml.datedoc, 
+		aml.documentno
+	FROM adempiere.amn_leaves aml
+	INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
+	INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= aml.amn_employee_id)
+	INNER JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
+	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
+	INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp.amn_location_id)
+	INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp.amn_contract_id)	 
+	LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
+	WHERE aml.isActive = 'Y' AND aml.AD_Client_ID= $P{AD_Client_ID} 
+		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
+		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
+		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
+		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+		AND ( CASE WHEN (aml.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
+	ORDER BY aml.amn_leaves_types_id
+) as leaves ON (1= 0)
+WHERE (imp_header = 1) OR 
+	(leaves.ad_client_id= $P{AD_Client_ID} 
+	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
+ORDER BY  leaves.c_value, leaves.emp_value, leaves.datefrom, leaves.leaves_value, header_info ASC]]>
 	</queryString>
+	<field name="rep_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_client"/>
+	</field>
+	<field name="rep_org_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="rep_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_org_id"/>
+	</field>
+	<field name="rep_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_name"/>
+	</field>
+	<field name="rep_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_description"/>
+	</field>
+	<field name="rep_taxid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_taxid"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_taxid"/>
+	</field>
+	<field name="rep_logo" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="rep_logo"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_logo"/>
+	</field>
+	<field name="imp_header" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
+		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
+	</field>
+	<field name="org_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
+	</field>
+	<field name="org_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
+	</field>
 	<field name="c_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
 		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
@@ -117,14 +189,14 @@ ORDER BY aml.amn_leaves_types_id]]>
 		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="value_emp" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value_emp"/>
-		<property name="com.jaspersoft.studio.field.label" value="value_emp"/>
+	<field name="emp_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_value"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="empleado" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="empleado"/>
-		<property name="com.jaspersoft.studio.field.label" value="empleado"/>
+	<field name="emp_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_name"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
 	<field name="fecha_ingreso" class="java.sql.Timestamp">
@@ -150,6 +222,16 @@ ORDER BY aml.amn_leaves_types_id]]>
 		<property name="com.jaspersoft.studio.field.label" value="amn_leaves_types_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves_types"/>
 	</field>
+	<field name="leaves_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leaves_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="leaves_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves_types"/>
+	</field>
+	<field name="leaves_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leaves_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="leaves_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves_types"/>
+	</field>
 	<field name="amn_leaves_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_leaves_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_leaves_id"/>
@@ -165,7 +247,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
 	</field>
-	<field name="leaves_name" class="java.lang.String">
+	<field name="COLUMN_29" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="leaves_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="leaves_name"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
@@ -195,7 +277,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 		<property name="com.jaspersoft.studio.field.label" value="processing"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
 	</field>
-	<field name="COLUMN_24" class="java.math.BigDecimal">
+	<field name="COLUMN_35" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_leaves_types_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_leaves_types_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
@@ -210,7 +292,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 		<property name="com.jaspersoft.studio.field.label" value="dateto"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
 	</field>
-	<field name="COLUMN_27" class="java.math.BigDecimal">
+	<field name="COLUMN_38" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
@@ -225,7 +307,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 		<property name="com.jaspersoft.studio.field.label" value="documentno"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
 	</field>
-	<variable name="v_employee_count" class="java.lang.Integer" calculation="Sum">
+	<variable name="v_employee_count" class="java.lang.Integer" incrementType="Group" incrementGroup="Group_porEmpleado" calculation="Sum">
 		<variableExpression><![CDATA[(($F{amn_location_id}!= null && $F{amn_employee_id}!= null) ? 1 : 0 )]]></variableExpression>
 	</variable>
 	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
@@ -367,7 +449,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 		</groupHeader>
 		<groupFooter>
 			<band height="12">
-				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null) && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{amn_location_id}!= null && $F{amn_employee_id}!= null && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="0" y="0" width="790" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -429,7 +511,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 		</groupFooter>
 	</group>
 	<group name="Group_porEmpleado" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{value_emp}]]></groupExpression>
+		<groupExpression><![CDATA[$F{emp_value}]]></groupExpression>
 		<groupHeader>
 			<band height="12" splitType="Stretch">
 				<property name="local_mesure_unitheight" value="pixel"/>
@@ -443,7 +525,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{value_emp}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{emp_value}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
 					<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="200" height="12" uuid="7a43b167-7987-4654-bad4-3b695f942b5b">
@@ -454,7 +536,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{empleado}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{emp_name}.trim()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -494,7 +576,7 @@ ORDER BY aml.amn_leaves_types_id]]>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{org_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
 				<reportElement key="" x="0" y="0" width="70" height="42" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">

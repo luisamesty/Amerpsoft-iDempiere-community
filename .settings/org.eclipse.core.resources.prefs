@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollCommission/PayrollCommission.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/Employees.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesReview.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeLeaves/PayrollEmployeeLeaves.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeLeaves/PayrollLeavesRequest.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollHistoricByConcept/PayrollHistoricByConcept.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollHistoricReport/PayrollHistoricGrid.jrxml=UTF-8
