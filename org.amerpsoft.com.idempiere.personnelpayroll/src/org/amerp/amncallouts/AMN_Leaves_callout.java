@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
 import org.amerp.amnmodel.MAMN_Leaves;
+import org.amerp.amnmodel.MAMN_NonBusinessDay;
 import org.amerp.workflow.amwmodel.MAMW_WF_Node;
 import org.amerp.workflow.amwmodel.MAMW_WorkFlow;
 import org.compiere.model.GridField;
@@ -21,6 +22,8 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 	int AMW_WorkFlow_ID=0;
 	int AMW_WF_Node_ID=0;
 	MAMW_WF_Node amwf = null;
+	Timestamp AMNLeavesStartDate;
+	Timestamp AMNLeavesEndDate;
 	
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	@Override
@@ -35,22 +38,18 @@ public class AMN_Leaves_callout  implements IColumnCallout {
     		// Get Node Form WorkFlow ID and Doc Status
     		amwf = leave.getAMWWorkFlowNodeFromDocStatusSQL(leave.getAMW_WorkFlow_ID(), leave.getDocStatus());
 	    }
+    	
     	if (mTab.getValue(MAMN_Leaves.COLUMNNAME_DocStatus) != null) {
     		DocStatus = (String) mTab.getValue(MAMN_Leaves.COLUMNNAME_DocStatus);
     	}
-//    	if (mTab.getValue(MAMN_Leaves.COLUMNNAME_Note) != null) {
-//    		lNote = (String) mTab.getValue(MAMN_Leaves.COLUMNNAME_Note);
-//    	}
 
 		if (amwf != null  && !DocStatus.isEmpty() &&  DocStatus != null) {
 			mTab.setValue("DocStatus",DocStatus);
-//			mTab.setValue("Note",lNote);
+
 		}
-		// Refresh
-		mTab.dataRefresh();
-		mTab.dataRefreshAll();
 	    return null;
     
+	    
 	}
 
 }

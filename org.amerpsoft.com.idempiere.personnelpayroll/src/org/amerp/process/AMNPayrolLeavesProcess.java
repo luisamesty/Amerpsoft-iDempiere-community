@@ -144,6 +144,8 @@ public class AMNPayrolLeavesProcess extends SvrProcess {
 	        	        for (ProcessInfoParameter pip : pips) {
 	        	        	log.warning(pip.getInfo());
 	        	        }
+	        	        // Updates array
+	        	        awflonodesnext = awfnn.getAMWNodesNextSQL(awfno.getAMW_WF_Node_ID());
 	        	        // Message - Email User
 	        	        if (awfn.getNotificationType()!= null) {
 	        	        	// Send Notification
