@@ -78,22 +78,22 @@ SELECT * FROM
 			SELECT 
 			ad_client_id, ad_org_id,
 			amn_employee_id, 
-			CASE WHEN leaves_value = 'AJ' THEN qty ELSE 0 END AS AJ,
-			CASE WHEN leaves_value = 'CO' THEN qty ELSE 0 END AS CO,
-			CASE WHEN leaves_value = 'DU' THEN qty ELSE 0 END AS DU,
-			CASE WHEN leaves_value = 'DL' THEN qty ELSE 0 END AS DL,
-			CASE WHEN leaves_value = 'MA' THEN qty ELSE 0 END AS MA,
-			CASE WHEN leaves_value = 'MT' THEN qty ELSE 0 END AS MT,
-			CASE WHEN leaves_value = 'LA' THEN qty ELSE 0 END AS LA,
-			CASE WHEN leaves_value = 'RM' THEN qty ELSE 0 END AS RM,
-			CASE WHEN leaves_value = 'PA' THEN qty ELSE 0 END AS PA,
-			CASE WHEN leaves_value = 'PR' THEN qty ELSE 0 END AS PR,
-			CASE WHEN leaves_value = 'SU' THEN qty ELSE 0 END AS SU,
-			CASE WHEN leaves_value = 'VA' THEN qty ELSE 0 END AS VA,
-			CASE WHEN leaves_value = 'PS' THEN qty ELSE 0 END AS PS,
-			CASE WHEN leaves_value = 'PE' THEN qty ELSE 0 END AS PE,
-			CASE WHEN leaves_value = 'RE' THEN qty ELSE 0 END AS RE,
-			CASE WHEN leaves_value = 'LI' THEN qty ELSE 0 END AS LI
+			CASE WHEN leaves_value = 'AJ' THEN qtydays ELSE 0 END AS AJ,
+			CASE WHEN leaves_value = 'CO' THEN qtydays ELSE 0 END AS CO,
+			CASE WHEN leaves_value = 'DU' THEN qtydays ELSE 0 END AS DU,
+			CASE WHEN leaves_value = 'DL' THEN qtydays ELSE 0 END AS DL,
+			CASE WHEN leaves_value = 'MA' THEN qtydays ELSE 0 END AS MA,
+			CASE WHEN leaves_value = 'MT' THEN qtydays ELSE 0 END AS MT,
+			CASE WHEN leaves_value = 'LA' THEN qtydays ELSE 0 END AS LA,
+			CASE WHEN leaves_value = 'RM' THEN qtydays ELSE 0 END AS RM,
+			CASE WHEN leaves_value = 'PA' THEN qtydays ELSE 0 END AS PA,
+			CASE WHEN leaves_value = 'PR' THEN qtydays ELSE 0 END AS PR,
+			CASE WHEN leaves_value = 'SU' THEN qtydays ELSE 0 END AS SU,
+			CASE WHEN leaves_value = 'VA' THEN qtydays ELSE 0 END AS VA,
+			CASE WHEN leaves_value = 'PS' THEN qtydays ELSE 0 END AS PS,
+			CASE WHEN leaves_value = 'PE' THEN qtydays ELSE 0 END AS PE,
+			CASE WHEN leaves_value = 'RE' THEN qtydays ELSE 0 END AS RE,
+			CASE WHEN leaves_value = 'LI' THEN qtydays ELSE 0 END AS LI
 			FROM (
 			 	SELECT
 			 		-- EMPLOYEE
@@ -113,16 +113,47 @@ SELECT * FROM
 					aml.datedoc, 
 					aml.documentno,
 					-- Leaves Count
-					COALESCE(SUM(aml.daysto),1) AS qty,
+					COALESCE(SUM(aml.qtydays),0) AS qtydays,
 					COALESCE(SUM(aml.hoursday),0) AS qtyhours
 				FROM adempiere.amn_employee as emp
-				LEFT JOIN adempiere.amn_leaves aml ON (aml.amn_employee_id = emp.amn_employee_id)
+				LEFT JOIN ( 
+					-- Leaves and Qtys
+				 	SELECT
+				 		-- EMPLOYEE
+					   	emp.amn_employee_id,
+						-- AMN_Leaves
+						amle.amn_leaves_id, 
+						amle.amn_leaves_types_id,
+						amle.ad_client_id, 
+						amle.ad_org_id, 
+						amle.name, amle.description, 
+						amle.docstatus, amle.processed, 
+						amle.processedon, amle.processing, 
+						amle.datefrom, amle.dateto, 
+						amle.datedoc, 
+						amle.documentno,
+						amle.hoursday,
+						-- CASOS
+						CASE WHEN  amle.dateFrom <  $P{DateIni}  AND amle.dateTo <= $P{DateEnd} THEN adempiere.businessdays($P{DateIni}, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID}) 
+							 WHEN amle.dateFrom >= $P{DateIni} AND amle.dateTo <= $P{DateEnd} THEN  businessdays(amle.dateFrom, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
+							WHEN amle.dateFrom >= $P{DateIni} AND amle.dateTo > $P{DateEnd} THEN businessdays(amle.dateFrom, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
+							WHEN amle.dateFrom < $P{DateIni}  AND amle.dateTo > $P{DateEnd} THEN businessdays( $P{DateIni}, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
+							ELSE 0 END AS qtydays
+					FROM adempiere.amn_employee as emp
+					LEFT JOIN adempiere.amn_leaves amle ON (amle.amn_employee_id = emp.amn_employee_id)
+					WHERE emp.isActive = 'Y' 
+						-- DocStatusList: 'DR','CO','CL'
+						AND amle.docstatus IN ('DR','CO','CL' ) 
+						AND amle.AD_Client_ID= $P{AD_Client_ID} 
+						AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+						AND ( CASE WHEN (amle.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd}) OR amle.dateto BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
+					ORDER BY emp.amn_employee_id, amle.amn_leaves_id	
+				) AS aml ON (aml.amn_employee_id = emp.amn_employee_id)
 				INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
 				LEFT JOIN adempiere.amn_leaves_types_trl amltt on amltt.amn_leaves_types_id = amlt.amn_leaves_types_id  
 				 AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID}) 
 				LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
 				WHERE emp.isActive = 'Y' 
-					--AND aml.docstatus IN ('CO','CL') 
 					AND aml.AD_Client_ID= $P{AD_Client_ID} 
 					AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
 					AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )

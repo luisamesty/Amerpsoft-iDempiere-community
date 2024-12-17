@@ -4,7 +4,7 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT WorkFlow,1020,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AMW_WorkFlow,,,
 *,AMERPSOFT WorkFlow,1100,T,,,,,,,,AMW Work Flow Nodes,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT WorkFlow,1110,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AMW_WF_Node,,,
-*,AMERPSOFT WorkFlow,1130,T,,,,,,,,AMW Work Flow Node Next ID,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WorkFlow,1130,T,,,,,,,,AMW Work Flow Node Next,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT WorkFlow,1140,T,,,,,,,,AMW Work Flow Access,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT WorkFlow,2010,W,,,,,,,,,ALL,,,,,,,AMW WorkFlows,,,,,,,,,,,,
 *,AMERPSOFT WorkFlow,5000,M,,AM WorkFlow,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
