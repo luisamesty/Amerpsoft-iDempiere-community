@@ -17,9 +17,11 @@
 /** Generated Model - DO NOT CHANGE */
 package org.amerp.amnmodel;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.compiere.util.Env;
 
 /** Generated Model for AMN_Leaves_Types
  *  @author iDempiere (generated)
@@ -31,7 +33,7 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241216L;
+	private static final long serialVersionUID = 20241220L;
 
     /** Standard Constructor */
     public X_AMN_Leaves_Types (Properties ctx, int AMN_Leaves_Types_ID, String trxName)
@@ -168,6 +170,25 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	public String getAMN_Leaves_Types_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_Types_UU);
+	}
+
+	/** Set Default Days.
+		@param DefaultDays Default Days Quantity
+	*/
+	public void setDefaultDays (BigDecimal DefaultDays)
+	{
+		set_Value (COLUMNNAME_DefaultDays, DefaultDays);
+	}
+
+	/** Get Default Days.
+		@return Default Days Quantity
+	  */
+	public BigDecimal getDefaultDays()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DefaultDays);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Description.

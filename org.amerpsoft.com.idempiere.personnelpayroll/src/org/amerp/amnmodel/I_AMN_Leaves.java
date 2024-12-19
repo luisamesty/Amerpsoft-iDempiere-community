@@ -223,12 +223,12 @@ public interface I_AMN_Leaves
 	/** Set Days To.
 	  * Number of days To 
 	  */
-	public void setDaysTo (int DaysTo);
+	public void setDaysTo (BigDecimal DaysTo);
 
 	/** Get Days To.
 	  * Number of days To 
 	  */
-	public int getDaysTo();
+	public BigDecimal getDaysTo();
 
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
@@ -303,6 +303,19 @@ public interface I_AMN_Leaves
 	  * Indicates if this document requires approval
 	  */
 	public boolean isApproved();
+
+    /** Column name IsOverrideCalc */
+    public static final String COLUMNNAME_IsOverrideCalc = "IsOverrideCalc";
+
+	/** Set Override Calculations.
+	  * Override Calculations on Dates
+	  */
+	public void setIsOverrideCalc (boolean IsOverrideCalc);
+
+	/** Get Override Calculations.
+	  * Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";

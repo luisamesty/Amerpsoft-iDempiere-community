@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241216L;
+	private static final long serialVersionUID = 20241221L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -46,11 +46,15 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -69,11 +73,15 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -92,11 +100,15 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -115,11 +127,15 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -386,20 +402,20 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/** Set Days To.
 		@param DaysTo Number of days To 
 	*/
-	public void setDaysTo (int DaysTo)
+	public void setDaysTo (BigDecimal DaysTo)
 	{
-		set_Value (COLUMNNAME_DaysTo, Integer.valueOf(DaysTo));
+		set_Value (COLUMNNAME_DaysTo, DaysTo);
 	}
 
 	/** Get Days To.
 		@return Number of days To 
 	  */
-	public int getDaysTo()
+	public BigDecimal getDaysTo()
 	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_DaysTo);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DaysTo);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Description.
@@ -505,6 +521,29 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public boolean isApproved()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApproved);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Override Calculations.
+		@param IsOverrideCalc Override Calculations on Dates
+	*/
+	public void setIsOverrideCalc (boolean IsOverrideCalc)
+	{
+		set_Value (COLUMNNAME_IsOverrideCalc, Boolean.valueOf(IsOverrideCalc));
+	}
+
+	/** Get Override Calculations.
+		@return Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc()
+	{
+		Object oo = get_Value(COLUMNNAME_IsOverrideCalc);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)

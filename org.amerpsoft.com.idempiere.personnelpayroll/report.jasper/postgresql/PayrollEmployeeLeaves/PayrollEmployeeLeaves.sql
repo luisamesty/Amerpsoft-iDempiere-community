@@ -49,8 +49,6 @@ SELECT * FROM
 		emp2.amn_location_id, lct.value AS location_value, lct.name AS location_name,
 		-- SHIFT
 		amnsh.name AS shift_name,
-		-- leaves_all
-		leaves_all.leaves_all_txt,
 		-- Leaves Types
 		AJ,
 		CO,
@@ -62,7 +60,6 @@ SELECT * FROM
 		RM,
 		PA,
 		PR,
-		RM,
 		SU,
 		VA,
 		PS,
@@ -93,22 +90,22 @@ SELECT * FROM
 			SELECT 
 			ad_client_id, ad_org_id,
 			amn_employee_id, 
-			CASE WHEN leaves_value = 'AJ' THEN qtydays ELSE 0 END AS AJ,
-			CASE WHEN leaves_value = 'CO' THEN qtydays ELSE 0 END AS CO,
-			CASE WHEN leaves_value = 'DU' THEN qtydays ELSE 0 END AS DU,
-			CASE WHEN leaves_value = 'DL' THEN qtydays ELSE 0 END AS DL,
-			CASE WHEN leaves_value = 'MA' THEN qtydays ELSE 0 END AS MA,
-			CASE WHEN leaves_value = 'MT' THEN qtydays ELSE 0 END AS MT,
-			CASE WHEN leaves_value = 'LA' THEN qtydays ELSE 0 END AS LA,
-			CASE WHEN leaves_value = 'RM' THEN qtydays ELSE 0 END AS RM,
-			CASE WHEN leaves_value = 'PA' THEN qtydays ELSE 0 END AS PA,
-			CASE WHEN leaves_value = 'PR' THEN qtydays ELSE 0 END AS PR,
-			CASE WHEN leaves_value = 'SU' THEN qtydays ELSE 0 END AS SU,
-			CASE WHEN leaves_value = 'VA' THEN qtydays ELSE 0 END AS VA,
-			CASE WHEN leaves_value = 'PS' THEN qtydays ELSE 0 END AS PS,
-			CASE WHEN leaves_value = 'PE' THEN qtydays ELSE 0 END AS PE,
-			CASE WHEN leaves_value = 'RE' THEN qtydays ELSE 0 END AS RE,
-			CASE WHEN leaves_value = 'LI' THEN qtydays ELSE 0 END AS LI
+			CASE WHEN leaves_value = 'AJ' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS AJ,
+			CASE WHEN leaves_value = 'CO' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS CO,
+			CASE WHEN leaves_value = 'DU' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS DU,
+			CASE WHEN leaves_value = 'DL' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS DL,
+			CASE WHEN leaves_value = 'MA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS MA,
+			CASE WHEN leaves_value = 'MT' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS MT,
+			CASE WHEN leaves_value = 'LA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS LA,
+			CASE WHEN leaves_value = 'RM' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS RM,
+			CASE WHEN leaves_value = 'PA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PA,
+			CASE WHEN leaves_value = 'PR' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PR,
+			CASE WHEN leaves_value = 'SU' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS SU,
+			CASE WHEN leaves_value = 'VA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS VA,
+			CASE WHEN leaves_value = 'PS' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PS,
+			CASE WHEN leaves_value = 'PE' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PE,
+			CASE WHEN leaves_value = 'RE' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS RE,
+			CASE WHEN leaves_value = 'LI' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS LI
 			FROM (
 			 	SELECT
 			 		-- EMPLOYEE

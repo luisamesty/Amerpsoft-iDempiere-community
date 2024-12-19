@@ -107,6 +107,19 @@ public interface I_AMN_Leaves_Types
 	  */
 	public int getCreatedBy();
 
+    /** Column name DefaultDays */
+    public static final String COLUMNNAME_DefaultDays = "DefaultDays";
+
+	/** Set Default Days.
+	  * Default Days Quantity
+	  */
+	public void setDefaultDays (BigDecimal DefaultDays);
+
+	/** Get Default Days.
+	  * Default Days Quantity
+	  */
+	public BigDecimal getDefaultDays();
+
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 

@@ -236,17 +236,23 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 		// *********************************
 		if (tableName.equalsIgnoreCase(MAMN_Leaves.Table_Name)) {
 			
-		 	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_ID) ) {
+			if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID) ) {
+		 		list.add(new AMN_Leaves_callout());
+		 	}
+			if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_ID) ) {
 		 		list.add(new AMN_Leaves_callout());
 		 	}
 	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DocStatus)) {
 		 		list.add(new AMN_Leaves_callout());
 	    	}
 	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DateFrom)) {
-		 		list.add(new AMN_Leaves_Dates_callout());
+	    		list.add(new AMN_Leaves_callout());
 	    	}
 	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DateTo)) {
-		 		list.add(new AMN_Leaves_Dates_callout());
+	    		list.add(new AMN_Leaves_callout());
+	    	}
+	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DaysTo)) {
+	    		list.add(new AMN_Leaves_callout());
 	    	}
 //	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_Note)) {
 //		 		list.add(new AMN_Leaves_callout());
