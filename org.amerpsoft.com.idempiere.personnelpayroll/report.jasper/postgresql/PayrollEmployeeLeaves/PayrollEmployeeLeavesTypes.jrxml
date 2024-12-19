@@ -3,9 +3,17 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollEmployeeLeavesTypes" pageWidth="1470" pageHeight="100" columnWidth="1470" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="05309c5c-22ff-47ed-a281-cb0ad1f791dc">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<import value="java.util.concurrent.*"/>
+	<import value="net.sf.jasperreports.engine.analytics.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
+	<parameter name="RESOURCE_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE" class="java.util.ResourceBundle"/>
 	<queryString>
 		<![CDATA[SELECT STRING_AGG(lt_reference, ', ') AS leaves_all
 FROM (

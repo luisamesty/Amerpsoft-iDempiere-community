@@ -12,6 +12,7 @@ SELECT * FROM
 			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN concat(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as rep_description, 
 			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
 			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
+			leaves_all.leaves_all_txt,
 		    CASE WHEN  org.ad_client_id = $P{AD_Client_ID}   AND ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 1
 		             WHEN  org.ad_client_id = $P{AD_Client_ID}  AND org.ad_org_id= $P{AD_Org_ID}  THEN 1
 		             ELSE 0 END as imp_header
@@ -21,6 +22,16 @@ SELECT * FROM
 			  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
 			 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 			  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+			 LEFT JOIN (
+				SELECT ad_client_id, STRING_AGG(lt_reference, ', ') AS leaves_all_txt
+				FROM (
+					SELECT amlt.ad_client_id, CONCAT( amlt.Value,':',amltt.name) AS lt_reference, amlt.Value AS lt_value, amlt.Name AS lt_name, amltt.name AS ltt_name, amltt.description AS ltt_description
+					FROM AMN_leaves_Types amlt
+					INNER JOIN AMN_leaves_Types_Trl amltt ON amltt.amn_leaves_types_id = amlt.amn_leaves_types_id 
+					WHERE amlt.ad_client_id = $P{AD_Client_ID} AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID} )
+				) AS leatyp
+				GROUP BY ad_client_id
+				) AS leaves_all ON leaves_all.ad_client_id = cli.ad_client_id
 		WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
 	) as header_info
 	FULL JOIN
@@ -36,6 +47,10 @@ SELECT * FROM
 		amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
 		-- LOCATION
 		emp2.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+		-- SHIFT
+		amnsh.name AS shift_name,
+		-- leaves_all
+		leaves_all.leaves_all_txt,
 		-- Leaves Types
 		AJ,
 		CO,
@@ -172,6 +187,17 @@ SELECT * FROM
 	INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp2.amn_location_id)
 	INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp2.amn_contract_id)	 
 	LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp2.ad_orgto_id)
+	LEFT JOIN adempiere.amn_shift AS amnsh ON amnsh.amn_shift_id = emp2.amn_shift_id
+	LEFT JOIN (
+		SELECT ad_client_id, STRING_AGG(lt_reference, ', ') AS leaves_all_txt
+		FROM (
+			SELECT amlt.ad_client_id, CONCAT( amlt.Value,':',amltt.name) AS lt_reference, amlt.Value AS lt_value, amlt.Name AS lt_name, amltt.name AS ltt_name, amltt.description AS ltt_description
+			FROM AMN_leaves_Types amlt
+			INNER JOIN AMN_leaves_Types_Trl amltt ON amltt.amn_leaves_types_id = amlt.amn_leaves_types_id 
+			WHERE amlt.ad_client_id = $P{AD_Client_ID} AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID} )
+		) AS leatyp
+		GROUP BY ad_client_id
+	) AS leaves_all ON leaves_all.ad_client_id = emp2.ad_client_id
 	WHERE emp2.isActive = 'Y' AND emp2.AD_Client_ID= $P{AD_Client_ID} 
 		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp2.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
 		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
