@@ -120,6 +120,22 @@ public class AMNPayrollProcessPayrollAssistProc {
 		    if (isError) {
 		    	return locMsg_Value;
 		    }
+		    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
+		    if (amnshiftdetail.getShift_In1()==null)
+		    	amnshiftdetail.setShift_In1(amnshiftdetail.getEntryTime());
+		    if (amnshiftdetail.getShift_Out1()==null)
+		    	amnshiftdetail.setShift_Out1(amnshiftdetail.getBreakStart());
+		    if (amnshiftdetail.getShift_In2()==null) {
+		    	GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(amnshiftdetail.getBreakStart());
+				cal.set(Calendar.DAY_OF_YEAR, 0);
+				cal.set(Calendar.MONTH, 0);
+				cal.set(Calendar.YEAR, 0);
+				cal.add(Calendar.MINUTE, amnshiftdetail.getBreakMinutes());
+		    	amnshiftdetail.setShift_In2(new Timestamp(cal.getTimeInMillis()));
+		    }
+		    if (amnshiftdetail.getShift_Out2()==null)
+		    	amnshiftdetail.setShift_Out2(amnshiftdetail.getTimeOut());
 		    // Get Default Assist Input - Output Times referenced to p_Event_date
 			defShift_In1 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_In1());
 			defShift_In2 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_In2());
@@ -480,6 +496,22 @@ public class AMNPayrollProcessPayrollAssistProc {
 	    // Determines Default Attendance Values HND,HNN,HED,HEN,Attendance,AttendanceBonus from AMN_Shift_Detail
 		defattendancehours = calcDefaultAttendanceValuesofPayrollVars(p_Event_Date, p_AMN_Shift_ID, amnshiftdetail);
 	    //log.warning("Shift_In1:"+amnshiftdetail.getShift_In1().toString());
+	    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
+	    if (amnshiftdetail.getShift_In1()==null)
+	    	amnshiftdetail.setShift_In1(amnshiftdetail.getEntryTime());
+	    if (amnshiftdetail.getShift_Out1()==null)
+	    	amnshiftdetail.setShift_Out1(amnshiftdetail.getBreakStart());
+	    if (amnshiftdetail.getShift_In2()==null) {
+	    	GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(amnshiftdetail.getBreakStart());
+			cal.set(Calendar.DAY_OF_YEAR, 0);
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.YEAR, 0);
+			cal.add(Calendar.MINUTE, amnshiftdetail.getBreakMinutes());
+	    	amnshiftdetail.setShift_In2(new Timestamp(cal.getTimeInMillis()));
+	    }
+	    if (amnshiftdetail.getShift_Out2()==null)
+	    	amnshiftdetail.setShift_Out2(amnshiftdetail.getTimeOut());
 	    // Get Default Asisst Input-Output Times referenced to p_Event_date
 		Timestamp defShift_In1 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_In1());;
 		Timestamp defShift_In2 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_In2());;
@@ -787,7 +819,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 	 * All event Times are Normalized to Event_Date
 	 */
 	public static AttendanceHours calcDefaultAttendanceValuesofPayrollVars(
-			Timestamp p_Event_Date, Integer p_AMN_Shift_ID, MAMN_Shift_Detail p_amnshiftdetail)
+			Timestamp p_Event_Date, Integer p_AMN_Shift_ID, MAMN_Shift_Detail amnshiftdetail)
 	{
 		Boolean bParamEmpty=false;
 		Boolean bDescanso=false;
@@ -796,12 +828,28 @@ public class AMNPayrollProcessPayrollAssistProc {
 		AttendanceHours defattendancehours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
 		// Determines Default Shift Times Values
 	    //log.warning("Shift_In1:"+amnshiftdetail.getShift_In1().toString());
+	    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
+	    if (amnshiftdetail.getShift_In1()==null)
+	    	amnshiftdetail.setShift_In1(amnshiftdetail.getEntryTime());
+	    if (amnshiftdetail.getShift_Out1()==null)
+	    	amnshiftdetail.setShift_Out1(amnshiftdetail.getBreakStart());
+	    if (amnshiftdetail.getShift_In2()==null) {
+	    	GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(amnshiftdetail.getBreakStart());
+			cal.set(Calendar.DAY_OF_YEAR, 0);
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.YEAR, 0);
+			cal.add(Calendar.MINUTE, amnshiftdetail.getBreakMinutes());
+	    	amnshiftdetail.setShift_In2(new Timestamp(cal.getTimeInMillis()));
+	    }
+	    if (amnshiftdetail.getShift_Out2()==null)
+	    	amnshiftdetail.setShift_Out2(amnshiftdetail.getTimeOut());
 	    // Get Default Asisst Input-Output Times referenced to p_Event_date
-		Timestamp defShift_In1 = getTimestampShifdetailEventTime(p_Event_Date,p_amnshiftdetail.getShift_In1());;
-		Timestamp defShift_In2 = getTimestampShifdetailEventTime(p_Event_Date,p_amnshiftdetail.getShift_In2());;
-		Timestamp defShift_Out1 = getTimestampShifdetailEventTime(p_Event_Date,p_amnshiftdetail.getShift_Out1());
-		Timestamp defShift_Out2 = getTimestampShifdetailEventTime(p_Event_Date,p_amnshiftdetail.getShift_Out2());		
-		bDescanso=p_amnshiftdetail.isDescanso();
+		Timestamp defShift_In1 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_In1());;
+		Timestamp defShift_In2 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_In2());;
+		Timestamp defShift_Out1 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_Out1());
+		Timestamp defShift_Out2 = getTimestampShifdetailEventTime(p_Event_Date,amnshiftdetail.getShift_Out2());		
+		bDescanso=amnshiftdetail.isDescanso();
 		// Verify if Any Associated Shift Time is null
 		if ( defShift_In1 == null || defShift_Out1 == null || defShift_In2 == null || defShift_Out2 == null) {
 			bParamEmpty=true;

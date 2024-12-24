@@ -147,7 +147,10 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 			String p_Description
 			)
 	{
-
+		// Verify Shif value not Null
+		if (p_Shift_In1==null || p_Shift_Out1==null || p_Shift_In2==null || p_Shift_Out2==null )
+			return true;
+		// Verify Locale
 		if (locale == null)
 		{
 			MClient client = MClient.get(ctx);
@@ -160,7 +163,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 		//
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
 		// p_DayOfWeek
-		String p_DayOfWeek="0";
+		String p_DayOfWeek="1";
 		String Shift_Value="";
 		String locMessage="";
 		p_DayOfWeek=MAMN_Payroll_Assist.getPayrollAssist_DayofWeek(p_Event_Date);

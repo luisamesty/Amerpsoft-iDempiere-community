@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.amerp.amnmodel;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -279,18 +280,6 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	public static BigDecimal sqlGetWeekEndDaysBetween(Timestamp startDate, Timestamp endDate, int p_AD_Client_ID, String trxName)
 	{
 		double retValue = 0;
-
-		if (startDate.equals(endDate))
-			return BigDecimal.valueOf(0.00);
-
-		boolean negative = false;
-		if (endDate.before(startDate)) {
-			negative = true;
-			Timestamp temp = startDate;
-			startDate = endDate;
-			endDate = temp;
-		}
-
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(startDate);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -304,15 +293,29 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		calEnd.set(Calendar.MINUTE, 0);
 		calEnd.set(Calendar.SECOND, 0);
 		calEnd.set(Calendar.MILLISECOND, 0);
-
-		while (cal.before(calEnd) || cal.equals(calEnd)) {
+		
+		if (startDate.equals(endDate)) {
 			if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 				retValue++;
 			}
-			cal.add(Calendar.DAY_OF_MONTH, 1);
+		} else {
+			boolean negative = false;
+			if (endDate.before(startDate)) {
+				negative = true;
+				Timestamp temp = startDate;
+				startDate = endDate;
+				endDate = temp;
+			}
+	
+			while (cal.before(calEnd) || cal.equals(calEnd)) {
+				if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+					retValue++;
+				}
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			if (negative)
+				retValue = retValue * -1;
 		}
-		if (negative)
-			retValue = retValue * -1;
 		return BigDecimal.valueOf(retValue);
 	}
 	
@@ -330,18 +333,6 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 			Timestamp endDate, int p_AD_Client_ID, String trxName)
 	{
 		double retValue = 0;
-
-		if (startDate.equals(endDate))
-			return BigDecimal.valueOf(0.00);
-
-		boolean negative = false;
-		if (endDate.before(startDate)) {
-			negative = true;
-			Timestamp temp = startDate;
-			startDate = endDate;
-			endDate = temp;
-		}
-
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(startDate);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -355,17 +346,31 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		calEnd.set(Calendar.MINUTE, 0);
 		calEnd.set(Calendar.SECOND, 0);
 		calEnd.set(Calendar.MILLISECOND, 0);
-
-		while (cal.before(calEnd) || cal.equals(calEnd)) {
+		
+		if (startDate.equals(endDate)) {
 			if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
 				retValue++;
-				//log.warning(".....................sqlGetNonWeekEndDaysBetween...................................");
-				//log.warning("retValue: ="+retValue+"  getTimeInMillis()="+cal.getTimeInMillis());	
 			}
-			cal.add(Calendar.DAY_OF_MONTH, 1);
+		} else {
+			boolean negative = false;
+			if (endDate.before(startDate)) {
+				negative = true;
+				Timestamp temp = startDate;
+				startDate = endDate;
+				endDate = temp;
+			}
+	
+			while (cal.before(calEnd) || cal.equals(calEnd)) {
+				if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+					retValue++;
+					//log.warning(".....................sqlGetNonWeekEndDaysBetween...................................");
+					//log.warning("retValue: ="+retValue+"  getTimeInMillis()="+cal.getTimeInMillis());	
+				}
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			if (negative)
+				retValue = retValue * -1;
 		}
-		if (negative)
-			retValue = retValue * -1;
 		return BigDecimal.valueOf(retValue);
 	}
 
@@ -401,6 +406,130 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		calEnd.set(Calendar.MINUTE, 0);
 		calEnd.set(Calendar.SECOND, 0);
 		calEnd.set(Calendar.MILLISECOND, 0);
+		//	log.warning("Start=" + start + ", End=" + end + ", dayStart=" + cal.get(Calendar.DAY_OF_YEAR) + ", dayEnd=" + calEnd.get(Calendar.DAY_OF_YEAR));
+		//	in same year
+		if (cal.get(Calendar.YEAR) == calEnd.get(Calendar.YEAR))
+		{
+			if (negative)
+				difftmp = (calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR)) * -1;
+			difftmp = calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR);
+		} else {
+			//	not very efficient, but correct
+			while (calEnd.after(cal))
+			{
+				cal.add (Calendar.DAY_OF_YEAR, 1);
+				difftmp++;
+			}
+			if (negative)
+				difftmp = difftmp * -1;
+		}	//	getDaysBetween
+		return BigDecimal.valueOf(difftmp);
+	}
+	
+	/**
+	 * getNextBusinessDay
+	 * Returns Next Business Day from a given Date and dayselapsed variable
+	 * @param StartDate
+	 * @param dayselapsed
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public Timestamp getNextBusinessDay(Timestamp StartDate, BigDecimal dayselapsed, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		Timestamp currentDate = StartDate;
+		if (dayselapsed != null && dayselapsed.compareTo(BigDecimal.ZERO) > 0) {
+			int diasInt = dayselapsed.intValue();
+			BigDecimal dias = dayselapsed.subtract(dayselapsed.setScale(0, RoundingMode.DOWN));
+			// Calcular horas totales
+	        BigDecimal horasTotales = dias.multiply(BigDecimal.valueOf(24));
+	        // Obtener la parte entera de horas
+	        BigDecimal horas = horasTotales.setScale(0, RoundingMode.DOWN);
+	        // Obtener los minutos (parte decimal de horas * 60)
+	        BigDecimal minutosDecimal = horasTotales.subtract(horas).multiply(BigDecimal.valueOf(60));
+	        BigDecimal minutos = minutosDecimal.setScale(0, RoundingMode.HALF_UP); // Redondear a entero
+			//
+			if (diasInt > 0 || horasTotales.intValue() > 0) { 
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(StartDate);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Verify if currentDate is Business day
+				if (!isBusinessDay(currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+					while (!isBusinessDay(currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						cal.add(Calendar.DAY_OF_YEAR, 1);
+						currentDate   = new Timestamp(cal.getTimeInMillis());
+					}
+				}
+				// Review Next days
+				int i=0;
+				while ( i < diasInt ) {
+					currentDate   = new Timestamp(cal.getTimeInMillis());
+					if (isBusinessDay(currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						i++;
+					}
+					if (i < diasInt)
+						cal.add(Calendar.DAY_OF_YEAR, 1);
+				}
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+				// Add Hours
+				cal.add(Calendar.HOUR, horas.intValue());
+				cal.add(Calendar.MINUTE, minutos.intValue());
+				// Verify if currentDate is Business day
+				if (!isBusinessDay(currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+					while (!isBusinessDay(currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						cal.add(Calendar.DAY_OF_YEAR, 1);
+						currentDate   = new Timestamp(cal.getTimeInMillis());
+					}
+				}
+				// Final 
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+			}
+		}
+		return currentDate;
+	}
+	
+	/**
+	 * isBusinessDay
+	 * @param reviewDate
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public boolean isBusinessDay(Timestamp reviewDate, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		boolean retValue = true;
+		
+		if (sqlGetBusinessDaysBetween(reviewDate,reviewDate, p_AD_Client_ID, p_AD_Org_ID).compareTo(BigDecimal.ZERO)== 0) {
+			retValue = false;
+		}
+		return retValue;
+	}
+	
+	/**
+	 * getDaysHoursBetween
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	static public BigDecimal getDaysHoursBetween (Timestamp start, Timestamp end)
+	{
+		boolean negative = false;
+		double difftmp=0;
+		if (end.before(start))
+		{
+			negative = true;
+			Timestamp temp = start;
+			start = end;
+			end = temp;
+		}
+		//
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(start);
+		GregorianCalendar calEnd = new GregorianCalendar();
+		calEnd.setTime(end);
 		//	log.warning("Start=" + start + ", End=" + end + ", dayStart=" + cal.get(Calendar.DAY_OF_YEAR) + ", dayEnd=" + calEnd.get(Calendar.DAY_OF_YEAR));
 		//	in same year
 		if (cal.get(Calendar.YEAR) == calEnd.get(Calendar.YEAR))

@@ -90,6 +90,13 @@ public class MAMN_Concept_Types_Limit  extends X_AMN_Concept_Types_Limit {
 			rs = null;
 			pstmt = null;
 		}
+		// Traza
+		s_log.warning(sql);
+		s_log.warning("AMN_Concept_Types_Limit_ID="+AMN_Concept_Types_Limit_ID);
+		s_log.warning("CurFrom=" + CurFrom_ID + ", CurTo=" + CurTo_ID + ", " + PeriodDate
+				+ ", Type=" + ConversionType_ID
+				+ (ConversionType_ID == C_ConversionType_ID ? "" : "->" + C_ConversionType_ID) + ", Client="
+				+ AD_Client_ID + ", Org=" + AD_Org_ID);
 		if (retValue == null)
 			if (s_log.isLoggable(Level.INFO))
 				s_log.info("getRate - not found - CurFrom=" + CurFrom_ID + ", CurTo=" + CurTo_ID + ", " + PeriodDate
@@ -236,13 +243,14 @@ public class MAMN_Concept_Types_Limit  extends X_AMN_Concept_Types_Limit {
 	 * @return
 	 */
 	public static Integer searchAMN_Concept_Types_Limit_ID_(int AMN_Concept_Types_ID, int AD_Client_ID, int AD_Org_ID, 
-			Timestamp p_validFrom, Timestamp p_validTo ) {
+			Timestamp p_validFrom, Timestamp p_validTo, int C_Currency_ID ) {
 
 		// Get ID
 		String sql = "SELECT DISTINCT AMN_Concept_Types_Limit_ID FROM amn_concept_types_limit actl "
 				+ " WHERE AMN_Concept_Types_ID = "+AMN_Concept_Types_ID
 				+ " AND AD_Client_ID = "+ AD_Client_ID
 				+ " AND AD_Org_ID =  "+ AD_Org_ID
+				+ " AND C_Currency_ID =  "+ C_Currency_ID
 				+ " AND actl.validfrom  >= '" +p_validFrom+"' AND actl.validto  <=  '"+p_validTo+"'";
 		Integer retValue =0;
 		PreparedStatement pstmt = null;

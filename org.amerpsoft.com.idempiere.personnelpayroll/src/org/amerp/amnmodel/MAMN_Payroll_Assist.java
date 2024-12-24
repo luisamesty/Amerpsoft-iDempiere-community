@@ -57,13 +57,13 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
      */
 	static public String getPayrollAssist_DayofWeek (Timestamp p_DateAssit) {
 		String retValue="0";
-//		DAYOFWEEK_Sunday = "0";
-//		DAYOFWEEK_Monday = "1";
-//		DAYOFWEEK_Tuesday = "2";
-//		DAYOFWEEK_Wednesday = "3";
-//		DAYOFWEEK_Thursday = "4";
-//		DAYOFWEEK_Friday = "5";
-//		DAYOFWEEK_Saturday = "6";
+//		DAYOFWEEK_Sunday = "0";	//1
+//		DAYOFWEEK_Monday = "1";	//2
+//		DAYOFWEEK_Tuesday = "2";//3
+//		DAYOFWEEK_Wednesday = "3";//4
+//		DAYOFWEEK_Thursday = "4"; 5
+//		DAYOFWEEK_Friday = "5";  6
+//		DAYOFWEEK_Saturday = "6"; 7
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(p_DateAssit);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -71,19 +71,19 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);		
 		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY )
-			retValue = "0";
-		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY )
 			retValue = "1";
+		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY )
+			retValue = "2";
 		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY )
-            retValue = "2";
-        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY )
             retValue = "3";
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY )
+            retValue = "4";
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY )
-             retValue = "4";
-        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY )
             retValue = "5";
-         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY )
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY )
             retValue = "6";
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY )
+            retValue = "7";
 
 		return retValue;
 		

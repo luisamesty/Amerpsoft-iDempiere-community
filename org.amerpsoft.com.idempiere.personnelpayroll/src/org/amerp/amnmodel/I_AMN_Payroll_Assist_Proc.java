@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Payroll_Assist_Proc
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Payroll_Assist_Proc 
@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Assist_Proc
     /** TableName=AMN_Payroll_Assist_Proc */
     public static final String Table_Name = "AMN_Payroll_Assist_Proc";
 
-    /** AD_Table_ID=1000062 */
+    /** AD_Table_ID=1000031 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -129,6 +129,15 @@ public interface I_AMN_Payroll_Assist_Proc
 	  */
 	public int getCreatedBy();
 
+    /** Column name dayofweek */
+    public static final String COLUMNNAME_dayofweek = "dayofweek";
+
+	/** Set dayofweek	  */
+	public void setdayofweek (String dayofweek);
+
+	/** Get dayofweek	  */
+	public String getdayofweek();
+
     /** Column name Descanso */
     public static final String COLUMNNAME_Descanso = "Descanso";
 
@@ -203,12 +212,14 @@ public interface I_AMN_Payroll_Assist_Proc
     public static final String COLUMNNAME_Shift_Attendance = "Shift_Attendance";
 
 	/** Set Shift_Attendance.
-	  * Indicates Employee's Atthendance during one day
+	  * Indicates Employee&#039;
+s Atthendance during one day
 	  */
 	public void setShift_Attendance (BigDecimal Shift_Attendance);
 
 	/** Get Shift_Attendance.
-	  * Indicates Employee's Atthendance during one day
+	  * Indicates Employee&#039;
+s Atthendance during one day
 	  */
 	public BigDecimal getShift_Attendance();
 
@@ -216,12 +227,14 @@ public interface I_AMN_Payroll_Assist_Proc
     public static final String COLUMNNAME_Shift_AttendanceBonus = "Shift_AttendanceBonus";
 
 	/** Set Shift_AttendanceBonus.
-	  * Indicates Employee's Atthendance Bonus during one day
+	  * Indicates Employee&#039;
+s Atthendance Bonus during one day
 	  */
 	public void setShift_AttendanceBonus (BigDecimal Shift_AttendanceBonus);
 
 	/** Get Shift_AttendanceBonus.
-	  * Indicates Employee's Atthendance Bonus during one day
+	  * Indicates Employee&#039;
+s Atthendance Bonus during one day
 	  */
 	public BigDecimal getShift_AttendanceBonus();
 
@@ -328,13 +341,4 @@ public interface I_AMN_Payroll_Assist_Proc
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name dayofweek */
-    public static final String COLUMNNAME_dayofweek = "dayofweek";
-
-	/** Set dayofweek	  */
-	public void setdayofweek (String dayofweek);
-
-	/** Get dayofweek	  */
-	public String getdayofweek();
 }

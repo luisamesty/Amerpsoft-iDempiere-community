@@ -31,7 +31,7 @@ public class X_AMW_WorkFlow extends PO implements I_AMW_WorkFlow, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241208L;
+	private static final long serialVersionUID = 20241214L;
 
     /** Standard Constructor */
     public X_AMW_WorkFlow (Properties ctx, int AMW_WorkFlow_ID, String trxName)

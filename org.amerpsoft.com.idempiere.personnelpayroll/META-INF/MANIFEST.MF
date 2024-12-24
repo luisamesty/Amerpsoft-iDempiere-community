@@ -9,6 +9,8 @@ Export-Package: org.amerp.amndocument,
  org.amerp.amnmodel,
  org.amerp.process
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
+ org.amerpsoft.com.idempiere.tools;bundle-version="11.0.0",
+ org.amerpsoft.com.idempiere.workflow;bundle-version="11.0.0",
  org.adempiere.plugin.utils;bundle-version="0.0.0",
  org.adempiere.report.jasper;bundle-version="0.0.0",
  org.adempiere.base.process;bundle-version="0.0.0",
