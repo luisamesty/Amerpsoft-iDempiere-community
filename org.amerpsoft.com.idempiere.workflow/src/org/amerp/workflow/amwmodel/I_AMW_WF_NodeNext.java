@@ -64,6 +64,19 @@ public interface I_AMW_WF_NodeNext
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name AMW_WF_Next_ID */
+    public static final String COLUMNNAME_AMW_WF_Next_ID = "AMW_WF_Next_ID";
+
+	/** Set AMW Work Flow Next ID.
+	  * AMW Work Flow Next ID
+	  */
+	public void setAMW_WF_Next_ID (int AMW_WF_Next_ID);
+
+	/** Get AMW Work Flow Next ID.
+	  * AMW Work Flow Next ID
+	  */
+	public int getAMW_WF_Next_ID();
+
     /** Column name AMW_WF_Node_ID */
     public static final String COLUMNNAME_AMW_WF_Node_ID = "AMW_WF_Node_ID";
 

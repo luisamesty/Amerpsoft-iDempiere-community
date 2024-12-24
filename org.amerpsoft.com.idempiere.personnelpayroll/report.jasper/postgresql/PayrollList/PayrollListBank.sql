@@ -49,17 +49,18 @@ SELECT
 --ITITRA	Alfa	2		2	3		S	Tipo Transferencia ‘01’ Pago de Salarios ‘02’ Pago a Proveedores ‘03’ Cobro de Factura/Cuota '09' Débitos comandados
 '01' AS ITITRA,
 --ICDSRV	Num/A	3	0	4	6		S	Código empresa (asignado por el Banco)
-'471' AS ICDSRV,
+CASE WHEN cnt.value='GIO' THEN   '471' 
+	WHEN cnt.value='MO2' THEN '468' END  AS ICDSRV,
 --ICTDEB	Num		10	0	7	16		S N Cobro Cuotas	Nro. de cuenta para débito/Cuenta empresa
-COALESCE(RPAD(TRIM(employ1.accountno), 10, ' '),RPAD('',10, '*')) AS ICTDEB,
+COALESCE(LPAD(TRIM(employ1.accountno), 10, '0'),RPAD('',10, '*')) AS ICTDEB,
 --IBCOCR	Num		3	0	17	19		S	Nro. de Banco para crédito Obs: siempre 017
 '017' AS IBCOCR,
 --ICTCRE	Num		10	0	20	29		S N Cobro Cuotas	Nro. de cuenta para crédito Obs: Si pago en cheque relleno con ceros
-COALESCE(RPAD(TRIM(employ2.accountno), 10, ' '),RPAD('',10, '*')) AS ICTCRE,
+COALESCE(LPAD(TRIM(employ2.accountno), 10, '0'),RPAD('',10, '*')) AS ICTCRE,
 --ITCRDB	Alfa	1		30	30		S	Tipo débito/crédito ‘D’ Débito ‘C’ Crédito ‘H’ Cheque ‘F’ Cobro de Factura/Cuota
 'C' AS ITCRDB,
 --IORDEN	Alfa	50		31	80		S-Pgo.Proveedor. N-demas casos	Cheque a la orden de/Cliente Facturado/Beneficiario/Pagador 
-RPAD(TRIM(pyr.documentno),50,' ') AS IORDEN,
+RPAD(TRIM(LEFT(REPLACE(emp.name, ',', ''), 50)),50,' ') AS IORDEN,
 --IMONED	Num		1	0	81	81		S	Moneda correspondiente al monto 0 Guaraníes 1 Dolares Obs: Para transferencias la cuenta origen debe ser de la misma moneda que la cuenta destino.
 '0' AS IMONED,
 --IMTOTR	Num		15	2	82	96		S	Monto Transferencia/Monto Factura, cuota Obs: últimos dos dígitos corresponde a decimales.
@@ -87,13 +88,16 @@ TO_CHAR(CAST($P{PayDate} AS Timestamp), 'YYYYMMDD')  AS IFECCA,
 --IHORCA	Num		6		237	242	Hhmmss	N	Hora de carga de transacción
 REPLACE(TO_CHAR(CAST($P{PayDate} AS Timestamp), 'HH12:MI:SS'),':','')   AS IHORCA,
 --IUSUCA	Alfa	10		243	252		N	Nombre del usuario que cargó
-COALESCE(RPAD(TRIM($P{UserName}),10, ' '),'LAGIOCONDA')   AS IUSUCA
+CASE WHEN cnt.value='GIO' THEN RPAD(TRIM('LAGIOCONDA'),10, ' ')   
+	WHEN cnt.value='MO2' THEN RPAD(TRIM('MONALISA'),10, ' ') 
+END AS IUSUCA
 FROM adempiere.amn_payroll as pyr
 INNER JOIN adempiere.amn_employee as emp  ON (emp.amn_employee_id= pyr.amn_employee_id) 
 INNER JOIN adempiere.c_bpartner   as cbp  ON (emp.c_bpartner_id= cbp.c_bpartner_id)
 LEFT JOIN adempiere.amn_jobtitle as jtt   ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
 INNER JOIN adempiere.amn_period   as prd  ON (prd.amn_period_id= pyr.amn_period_id)
 INNER JOIN adempiere.amn_process AS prc   ON (prc.amn_process_id = pyr.amn_process_id)
+INNER JOIN adempiere.amn_contract AS cnt  ON (cnt.amn_contract_id = emp.amn_contract_id)
 LEFT JOIN adempiere.amn_location as lct	  ON (lct.amn_location_id= pyr.amn_location_id)
 LEFT JOIN adempiere.amn_department as dpt ON (dpt.amn_department_id= pyr.amn_department_id)
 LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id

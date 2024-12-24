@@ -31,7 +31,7 @@ public class X_AMW_WF_Access extends PO implements I_AMW_WF_Access, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241208L;
+	private static final long serialVersionUID = 20241214L;
 
     /** Standard Constructor */
     public X_AMW_WF_Access (Properties ctx, int AMW_WF_Access_ID, String trxName)
@@ -40,6 +40,7 @@ public class X_AMW_WF_Access extends PO implements I_AMW_WF_Access, I_Persistent
       /** if (AMW_WF_Access_ID == 0)
         {
 			setAMW_WF_Access_ID (0);
+			setDescription (null);
 			setIsReadWrite (false);
 // N
         } */
@@ -52,6 +53,7 @@ public class X_AMW_WF_Access extends PO implements I_AMW_WF_Access, I_Persistent
       /** if (AMW_WF_Access_ID == 0)
         {
 			setAMW_WF_Access_ID (0);
+			setDescription (null);
 			setIsReadWrite (false);
 // N
         } */
@@ -64,6 +66,7 @@ public class X_AMW_WF_Access extends PO implements I_AMW_WF_Access, I_Persistent
       /** if (AMW_WF_Access_UU == null)
         {
 			setAMW_WF_Access_ID (0);
+			setDescription (null);
 			setIsReadWrite (false);
 // N
         } */
@@ -76,6 +79,7 @@ public class X_AMW_WF_Access extends PO implements I_AMW_WF_Access, I_Persistent
       /** if (AMW_WF_Access_UU == null)
         {
 			setAMW_WF_Access_ID (0);
+			setDescription (null);
 			setIsReadWrite (false);
 // N
         } */

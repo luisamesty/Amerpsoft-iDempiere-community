@@ -2,22 +2,33 @@ package org.amerp.amnmodel;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.amerp.workflow.amwmodel.MAMW_WF_Node;
 import org.compiere.model.MAcctSchema;
+import org.compiere.model.MBPartner;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MFactAcct;
 import org.compiere.model.MJournal;
+import org.compiere.model.MNote;
 import org.compiere.model.MPeriod;
+import org.compiere.model.MTable;
+import org.compiere.model.MUser;
 import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.ModelValidator;
+import org.compiere.model.PO;
 import org.compiere.process.DocAction;
 import org.compiere.process.DocOptions;
 import org.compiere.process.DocumentEngine;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 
 public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions {
 
@@ -30,6 +41,8 @@ public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions 
 	private boolean		m_justPrepared = false;
 	/* Is reactivating isRecativating  **/
 	private boolean		isReactivating = false;
+	/** Persistent Object			*/
+	private PO					m_po = null;
 	
 	public static final String AMN_Leaves_None = "--";
 	public static final String AMN_Leaves_Draft = "DR"; 		//	DR Draft - Borrador	Emitida por el Usuario, o en condición de Devuelta
@@ -40,6 +53,13 @@ public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions 
 	public static final String AMN_Leaves_Filed = "AR";			//	AR Archivo.	Archivo
 	public static final String AMN_Leaves_Complete = "CO";		// 	CO Completada	Completada
 	public static final String AMN_Leaves_Close = "CL";			// 	CL Closed 
+		
+	/** Drafted = DR */
+	private static final String DOCSTATUS_Drafted = "DR";
+
+	private static final String DOCACTION_Prepare = "PR";
+
+	private static final String DOCACTION_Close = "CL";
 	
 	public MAMN_Leaves(Properties ctx, int AMN_Leaves_ID, String trxName) {
 		super(ctx, AMN_Leaves_ID, trxName);
@@ -88,6 +108,7 @@ public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions 
 		
 		return true;
 		}
+
 
 	@Override
 	public String prepareIt() {
@@ -179,8 +200,13 @@ public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions 
 
 	@Override
 	public String getSummary() {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getDocumentNo());
+		//
+		//	 - Description
+		if (getDescription() != null && getDescription().length() > 0)
+			sb.append(" - ").append(getDescription());
+		return sb.toString();
 	}
 
 	@Override
@@ -252,6 +278,57 @@ public class MAMN_Leaves  extends X_AMN_Leaves implements DocAction, DocOptions 
 
 	}
 
+	@Override
+	public String getDocAction() {
+		// 
+		return this.getDocAction();
+	}
 	
-
+	private void setDocAction(String docactionPrepare) {
+		// 
+		
+	}
+	
+	/**
+	 * getAMWWorkFlowNodeFromDocStatusSQL
+	 *  Returns Work Fflow Node from a given Work Flow and Node Value DR,CO,CL...
+	 * @param AMW_WorkFlow_ID
+	 * @param DocStatus
+	 * @return
+	 */
+	public MAMW_WF_Node getAMWWorkFlowNodeFromDocStatusSQL (int AMW_WorkFlow_ID, String DocStatus )
+	{
+		MAMW_WF_Node retValue = null;
+		String sql= "SELECT DISTINCT *  "+
+				" FROM AMw_WF_Node "+  
+				" WHERE AMW_WorkFlow_ID=? "+ 
+				" AND Value = '"+ DocStatus + "' " +
+				" ORDER BY SeqNo ASC " ;
+		ArrayList<MAMW_WF_Node> list = new ArrayList<MAMW_WF_Node>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try
+		{
+			pstmt = DB.prepareStatement (sql, get_TrxName());
+			pstmt.setInt (1, AMW_WorkFlow_ID);
+			rs = pstmt.executeQuery ();
+			if (rs.next ())
+			{
+				retValue = new MAMW_WF_Node(getCtx(), rs, get_TrxName());
+				//log.warning("MAMW_WF_Node Name:"+line.getName());
+			}
+		} 
+		catch (Exception e)
+		{
+			log.severe(e.getMessage());
+		}
+		finally
+		{
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+		//
+		return retValue;
+	}
+	
 }

@@ -825,7 +825,7 @@ public class AmerpPayrollCalc  {
 			// Commission Group
 			MAMN_CommissionGroup amncomgru = new MAMN_CommissionGroup(p_ctx, AMN_CommissionGroup_ID, null);
 			// Search AMN_Concept_Types_Limit_ID
-			AMN_Concept_Types_Limit_ID =MAMN_Concept_Types_Limit.searchAMN_Concept_Types_Limit_ID_(AMN_Concept_Types_ID, amnpayroll.getAD_Client_ID(), 0, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd());
+			AMN_Concept_Types_Limit_ID =MAMN_Concept_Types_Limit.searchAMN_Concept_Types_Limit_ID_(AMN_Concept_Types_ID, amnpayroll.getAD_Client_ID(), 0, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getC_Currency_ID());
 			if ( amncomgru != null && AMN_Concept_Types_Limit_ID != null && AMN_Concept_Types_Limit_ID > 0) {
 				MAMN_Concept_Types_Limit amncontyl = new MAMN_Concept_Types_Limit(p_ctx,AMN_Concept_Types_Limit_ID, null);
 				CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(AMN_Concept_Types_Limit_ID, C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();

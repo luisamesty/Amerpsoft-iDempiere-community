@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-11-01T19:08:36 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DailyBiometricPersonnelAttendance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="13509fae-42bd-4fce-a356-4ed7a626e88d">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Tamanaco"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer"/>
+	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
+	<parameter name="DateEnd" class="java.sql.Timestamp"/>
+	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Shift_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT * FROM
+   (SELECT DISTINCT
+   -- ORGANIZATION
+      org.ad_client_id as org_client, org.ad_org_id as org_org,
+	  CASE WHEN $P{AD_Org_ID} = 0 THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as org_name,
+	  CASE WHEN $P{AD_Org_ID} = 0 THEN concat(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as org_description, 
+	  CASE WHEN $P{AD_Org_ID} = 0 THEN '' ELSE COALESCE(orginfo.taxid,'') END as org_taxid,
+	  CASE WHEN $P{AD_Org_ID} = 0 THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+	  CASE WHEN  org.ad_client_id = $P{AD_Client_ID} AND $P{AD_Org_ID} = 0 THEN 1
+	             WHEN  org.ad_client_id = $P{AD_Client_ID} AND org.ad_org_id= $P{AD_Org_ID} THEN 1
+	             ELSE 0 
+	  END as imp_org
+   FROM adempiere.ad_org as org
+	 INNER JOIN adempiere.ad_client as cli ON (org.ad_client_id = cli.ad_client_id)
+	 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+	  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+	 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+	  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+  ) as org_inf
+  FULL JOIN
+  (SELECT DISTINCT
+     -- ORGANIZACIÓN
+     pyr_as.ad_client_id as client_id, pyr_as.ad_org_id as org_id,
+     -- LOCATION
+     lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
+     CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad, 
+     -- SHIFT
+     shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
+     CASE WHEN ( $P{AMN_Shift_ID}  IS NULL OR shf.amn_shift_id= $P{AMN_Shift_ID}  ) THEN 1 ELSE 0 END AS imp_shift, 
+     -- CONTRACT
+     amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+     CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato, 
+     -- EMPLOYEE
+     emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp, emp.biocode,
+     CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1 ELSE 0 END AS imp_empleado, 
+     -- BPARTNER
+     cbp.taxid as nro_id,
+     -- PAYROLL_ASSIST
+     pyr_as.event_date as fecha,
+     CONCAT(
+	CASE WHEN CAST(extract(hour from pyr_as.event_time) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_as.event_time) as text))
+	     ELSE CAST(extract(hour from pyr_as.event_time) as text)
+	END, ':', 
+	CASE WHEN CAST(extract(minute from pyr_as.event_time) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from pyr_as.event_time) as text))
+	     ELSE CAST(extract(minute from pyr_as.event_time) as text)
+	END
+     ) as hora, 
+     CASE WHEN pyr_as.event_type = 'I' THEN 'Entrada'
+          WHEN pyr_as.event_type = 'O' THEN 'Salida'
+          ELSE ' '
+     END as tipo,
+     CASE WHEN pyr_as.dayofweek= '1' THEN 'Lunes'
+          WHEN pyr_as.dayofweek= '2' THEN 'Martes'
+          WHEN pyr_as.dayofweek= '3' THEN 'Miércoles'
+          WHEN pyr_as.dayofweek= '4' THEN 'Jueves'
+          WHEN pyr_as.dayofweek= '5' THEN 'Viernes'
+          WHEN pyr_as.dayofweek= '6' THEN 'Sábado'
+          WHEN pyr_as.dayofweek= '0' THEN 'Domingo'
+     END as dia_semana,
+     pyr_as.descanso
+     FROM adempiere.amn_payroll_assist as pyr_as
+	 LEFT JOIN adempiere.amn_employee as emp ON (pyr_as.amn_employee_id = emp.amn_employee_id)
+	 LEFT JOIN adempiere.amn_contract as amc ON (emp.amn_contract_id = amc.amn_contract_id)
+	 LEFT JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id = cbp.c_bpartner_id)
+	 LEFT JOIN adempiere.amn_location as lct ON (emp.amn_location_id= lct.amn_location_id)
+	 LEFT JOIN adempiere.amn_shift as shf ON (shf.amn_shift_id= pyr_as.amn_shift_id)
+	 WHERE pyr_as.isactive= 'Y'
+	) as asistencia ON (1= 0)
+WHERE (imp_org= 1) OR (client_id= $P{AD_Client_ID}  AND org_id= $P{AD_Org_ID}
+  AND imp_localidad= 1 AND imp_shift= 1 AND imp_contrato= 1 AND imp_empleado= 1
+  AND fecha = DATE($P{DateEnd} )
+  )
+ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, asistencia.fecha, asistencia.hora, org_inf ASC]]>
+	</queryString>
+	<field name="org_client" class="java.math.BigDecimal"/>
+	<field name="org_org" class="java.math.BigDecimal"/>
+	<field name="org_name" class="java.lang.String"/>
+	<field name="org_description" class="java.lang.String"/>
+	<field name="org_taxid" class="java.lang.String"/>
+	<field name="org_logo" class="java.io.InputStream"/>
+	<field name="imp_org" class="java.lang.Integer"/>
+	<field name="client_id" class="java.math.BigDecimal"/>
+	<field name="org_id" class="java.math.BigDecimal"/>
+	<field name="amn_location_id" class="java.math.BigDecimal"/>
+	<field name="loc_value" class="java.lang.String"/>
+	<field name="localidad" class="java.lang.String"/>
+	<field name="imp_localidad" class="java.lang.Integer"/>
+	<field name="codigo_shift" class="java.lang.String"/>
+	<field name="nombre_shift" class="java.lang.String"/>
+	<field name="imp_shift" class="java.lang.Integer"/>
+	<field name="c_value" class="java.lang.String"/>
+	<field name="c_tipo" class="java.lang.String"/>
+	<field name="imp_contrato" class="java.lang.Integer"/>
+	<field name="amn_employee_id" class="java.math.BigDecimal"/>
+	<field name="value_emp" class="java.lang.String"/>
+	<field name="nombre_emp" class="java.lang.String"/>
+	<field name="biocode" class="java.lang.String"/>
+	<field name="imp_empleado" class="java.lang.Integer"/>
+	<field name="nro_id" class="java.lang.String"/>
+	<field name="fecha" class="java.sql.Timestamp"/>
+	<field name="hora" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="dia_semana" class="java.lang.String"/>
+	<field name="descanso" class="java.lang.String"/>
+	<group name="Group_Localidad">
+		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="5" width="555" height="18" isRemoveLineWhenBlank="true" uuid="60de435d-2114-40b8-b97a-ee0a6d3842af"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{localidad}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group_Shift">
+		<groupExpression><![CDATA[$F{codigo_shift}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="555" height="18" isRemoveLineWhenBlank="true" uuid="b0cb86fe-7743-463d-b500-379179175002"/>
+					<box leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nombre_shift}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group_Empleado">
+		<groupExpression><![CDATA[$F{amn_employee_id}]]></groupExpression>
+		<groupHeader>
+			<band height="4"/>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="73" splitType="Stretch">
+			<image isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
+				<reportElement x="0" y="1" width="58" height="58" uuid="862a0613-f2e5-4c8c-90c1-8afb06cc1d06">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$F{org_logo}]]></imageExpression>
+			</image>
+			<textField evaluationTime="Report">
+				<reportElement x="58" y="15" width="222" height="15" uuid="144773e7-ae82-4848-bef8-9f2b3876168d">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_taxid}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="58" y="0" width="222" height="15" uuid="924cd175-798a-4aa2-b792-e43a7ff0a831">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="58" y="30" width="438" height="29" backcolor="#FFFFFF" uuid="8d917811-dfc1-4bce-93b9-f26fa9f03e48">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="19" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reporte de Asistencia Diario Biométrico]]></text>
+			</staticText>
+			<textField evaluationTime="Report" pattern="">
+				<reportElement x="0" y="59" width="555" height="14" uuid="e17e7ed3-0865-489a-9aa4-f82f32f14fdf">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["( al " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateEnd}) + " )"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="32" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="27" width="555" height="1" uuid="243a93ad-ad03-4bf7-8eb0-3390b559af35">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="8" width="555" height="1" uuid="4f947f11-3f70-4afb-933b-2d16fd81367d">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="95e637ca-1d3a-4b33-8850-488f4c1dc993">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="5" width="555" height="1" uuid="7438b762-e998-4ee0-a590-7b3f791bb205">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="9" width="70" height="18" uuid="a9255850-2dc6-4906-b05f-e597d75d63f2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="9" width="170" height="18" uuid="e00ce2f1-8091-4401-80a6-8fa78a3cddbf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="9" width="55" height="18" uuid="2a40c56c-0528-4d19-8f13-cbfc6387abb2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Evento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="445" y="9" width="55" height="18" uuid="e1006f1f-e8dc-4f43-a4cb-92657d75e23f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="9" width="55" height="18" uuid="0559827e-ce56-4b76-9509-0e03c54cbca4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descanso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="9" width="80" height="18" uuid="b1bc7a96-5286-441c-9c8b-a28f98af0773">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Id.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="9" width="70" height="18" uuid="17896984-4d79-400c-9c83-e8085db030bd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Bio.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="390" y="0" width="55" height="15" isRemoveLineWhenBlank="true" uuid="a85323cb-81f6-479d-80c8-1dc4afe3d960">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="500" y="0" width="55" height="15" isRemoveLineWhenBlank="true" uuid="3bf49953-6c1c-4133-aea0-ba38178ec65f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descanso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="445" y="0" width="55" height="15" isRemoveLineWhenBlank="true" uuid="864ad692-5a22-4221-bca2-6d12fec85ee0"/>
+				<box>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="140" y="0" width="170" height="15" isRemoveLineWhenBlank="true" uuid="f43ee235-ae1c-4a69-8c40-28f0e1850064">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_emp}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="70" height="15" isRemoveLineWhenBlank="true" uuid="3748f06f-a6b6-4736-b554-6c09724b6297"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{value_emp}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="310" y="0" width="80" height="15" isRemoveLineWhenBlank="true" uuid="0ebeaec9-2373-4b1d-ad89-1c3ade65d415"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_id}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="70" y="0" width="70" height="15" isRemoveLineWhenBlank="true" uuid="91530754-0658-4f15-aaf0-5a289548e86b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{biocode}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

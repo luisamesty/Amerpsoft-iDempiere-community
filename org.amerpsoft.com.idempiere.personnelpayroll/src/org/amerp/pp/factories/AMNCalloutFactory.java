@@ -20,6 +20,7 @@ import org.adempiere.base.IColumnCalloutFactory;
 import org.amerp.amnmodel.*;
 import org.amerp.amncallouts.*;
 import org.compiere.util.CLogger;
+import org.compiere.util.Env;
 
 public class AMNCalloutFactory implements IColumnCalloutFactory {
 	
@@ -229,6 +230,34 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Lot.COLUMNNAME_DateAcct))
 				list.add(new AMN_Payroll_Lot_callout());		}
 
+		
+		// *********************************
+		// TableRef: AMN_Leaves
+		// *********************************
+		if (tableName.equalsIgnoreCase(MAMN_Leaves.Table_Name)) {
+			
+			if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID) ) {
+		 		list.add(new AMN_Leaves_callout());
+		 	}
+			if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_ID) ) {
+		 		list.add(new AMN_Leaves_callout());
+		 	}
+	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DocStatus)) {
+		 		list.add(new AMN_Leaves_callout());
+	    	}
+	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DateFrom)) {
+	    		list.add(new AMN_Leaves_callout());
+	    	}
+	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DateTo)) {
+	    		list.add(new AMN_Leaves_callout());
+	    	}
+	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DaysTo)) {
+	    		list.add(new AMN_Leaves_callout());
+	    	}
+//	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_Note)) {
+//		 		list.add(new AMN_Leaves_callout());
+//	    	}
+		}
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 
