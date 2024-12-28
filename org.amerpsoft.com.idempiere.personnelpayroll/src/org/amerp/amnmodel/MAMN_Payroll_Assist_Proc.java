@@ -147,9 +147,6 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 			String p_Description
 			)
 	{
-		// Verify Shif value not Null
-		if (p_Shift_In1==null || p_Shift_Out1==null || p_Shift_In2==null || p_Shift_Out2==null )
-			return true;
 		// Verify Locale
 		if (locale == null)
 		{
