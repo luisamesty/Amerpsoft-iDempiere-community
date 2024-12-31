@@ -52,11 +52,11 @@ SELECT
 CASE WHEN cnt.value='GIO' THEN   '471' 
 	WHEN cnt.value='MO2' THEN '468' END  AS ICDSRV,
 --ICTDEB	Num		10	0	7	16		S N Cobro Cuotas	Nro. de cuenta para débito/Cuenta empresa
-COALESCE(LPAD(TRIM(employ1.accountno), 10, '0'),RPAD('',10, '*')) AS ICTDEB,
+COALESCE(LPAD(TRIM(employ1.accountno), 10, '0'),RPAD('',10, '0')) AS ICTDEB,
 --IBCOCR	Num		3	0	17	19		S	Nro. de Banco para crédito Obs: siempre 017
 '017' AS IBCOCR,
 --ICTCRE	Num		10	0	20	29		S N Cobro Cuotas	Nro. de cuenta para crédito Obs: Si pago en cheque relleno con ceros
-COALESCE(LPAD(TRIM(employ2.accountno), 10, '0'),RPAD('',10, '*')) AS ICTCRE,
+COALESCE(LPAD(TRIM(employ2.accountno), 10, '0'),RPAD('',10, '0')) AS ICTCRE,
 --ITCRDB	Alfa	1		30	30		S	Tipo débito/crédito ‘D’ Débito ‘C’ Crédito ‘H’ Cheque ‘F’ Cobro de Factura/Cuota
 'C' AS ITCRDB,
 --IORDEN	Alfa	50		31	80		S-Pgo.Proveedor. N-demas casos	Cheque a la orden de/Cliente Facturado/Beneficiario/Pagador 
