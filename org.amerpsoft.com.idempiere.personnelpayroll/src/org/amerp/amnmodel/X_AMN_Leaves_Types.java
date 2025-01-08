@@ -172,6 +172,27 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_Types_UU);
 	}
 
+	/** Business Days = B */
+	public static final String DAYSMODE_BusinessDays = "B";
+	/** Calendar Days = C */
+	public static final String DAYSMODE_CalendarDays = "C";
+	/** Set Days Calculation Mode.
+		@param DaysMode Days Calculation Mode using Calendar  or Business Days
+	*/
+	public void setDaysMode (String DaysMode)
+	{
+
+		set_Value (COLUMNNAME_DaysMode, DaysMode);
+	}
+
+	/** Get Days Calculation Mode.
+		@return Days Calculation Mode using Calendar  or Business Days
+	  */
+	public String getDaysMode()
+	{
+		return (String)get_Value(COLUMNNAME_DaysMode);
+	}
+
 	/** Set Default Days.
 		@param DefaultDays Default Days Quantity
 	*/

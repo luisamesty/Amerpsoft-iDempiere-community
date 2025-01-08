@@ -134,7 +134,6 @@ SELECT * FROM
 	 LEFT JOIN adempiere.amn_payroll_assist_proc as pyr_asp ON (pyr_asp.amn_employee_id = emp.amn_employee_id AND pyr_asp.event_date = gs.fecha)
 	 LEFT JOIN adempiere.amn_shift as shf ON (shf.amn_shift_id= pyr_asp.amn_shift_id)
 	 LEFT JOIN adempiere.c_nonbusinessday as nbd ON (nbd.date1= pyr_asp.event_date)
-	 WHERE emp.isactive='Y' AND emp.status NOT IN ('R')
 	) as asistencia ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID} AND org_id= $P{AD_Org_ID}
   AND CASE WHEN ( $P{AMN_Location_ID} IS NULL OR asistencia.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END     

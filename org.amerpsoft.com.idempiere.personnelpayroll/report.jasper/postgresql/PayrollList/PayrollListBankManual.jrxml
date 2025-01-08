@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListBankManual" pageWidth="1000" pageHeight="595" orientation="Landscape" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollListBank" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="iidempiere-demo MONALISA"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="320"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="674"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -430,7 +430,7 @@ ORDER BY pyr.amn_period_id, cuenta_pagadora_no ASC,  emp.value ASC, pyr.amn_payr
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Fecha: "+new SimpleDateFormat("dd/MM/yy").format($F{amndateend}) ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Fecha: "+new SimpleDateFormat("dd/MM/yy").format($F{amndateend})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

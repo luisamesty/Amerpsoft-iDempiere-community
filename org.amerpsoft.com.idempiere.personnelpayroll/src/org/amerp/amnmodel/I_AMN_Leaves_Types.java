@@ -107,6 +107,19 @@ public interface I_AMN_Leaves_Types
 	  */
 	public int getCreatedBy();
 
+    /** Column name DaysMode */
+    public static final String COLUMNNAME_DaysMode = "DaysMode";
+
+	/** Set Days Calculation Mode.
+	  * Days Calculation Mode using Calendar  or Business Days
+	  */
+	public void setDaysMode (String DaysMode);
+
+	/** Get Days Calculation Mode.
+	  * Days Calculation Mode using Calendar  or Business Days
+	  */
+	public String getDaysMode();
+
     /** Column name DefaultDays */
     public static final String COLUMNNAME_DefaultDays = "DefaultDays";
 

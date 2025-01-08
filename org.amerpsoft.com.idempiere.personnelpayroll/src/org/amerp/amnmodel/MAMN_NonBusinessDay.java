@@ -491,6 +491,50 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		return currentDate;
 	}
 	
+	
+	/**
+	 * getNextCalendarDay
+	 * Returns Next Calendar Day from a given Date and dayselapsed variable
+	 * @param StartDate
+	 * @param dayselapsed
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public Timestamp getNextCalendarDay(Timestamp StartDate, BigDecimal dayselapsed, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		Timestamp currentDate = StartDate;
+		if (dayselapsed != null && dayselapsed.compareTo(BigDecimal.ZERO) > 0) {
+			int diasInt = dayselapsed.intValue();
+			BigDecimal dias = dayselapsed.subtract(dayselapsed.setScale(0, RoundingMode.DOWN));
+			// Calcular horas totales
+	        BigDecimal horasTotales = dias.multiply(BigDecimal.valueOf(24));
+	        // Obtener la parte entera de horas
+	        BigDecimal horas = horasTotales.setScale(0, RoundingMode.DOWN);
+	        // Obtener los minutos (parte decimal de horas * 60)
+	        BigDecimal minutosDecimal = horasTotales.subtract(horas).multiply(BigDecimal.valueOf(60));
+	        BigDecimal minutos = minutosDecimal.setScale(0, RoundingMode.HALF_UP); // Redondear a entero
+			//
+			if (diasInt > 0 || horasTotales.intValue() > 0) { 
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(StartDate);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Add Days
+				cal.add(Calendar.DAY_OF_YEAR, diasInt);
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+				// Add Hours
+				cal.add(Calendar.HOUR, horas.intValue());
+				cal.add(Calendar.MINUTE, minutos.intValue());
+				// Final 
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+			}
+		}
+		return currentDate;
+	}
+	
 	/**
 	 * isBusinessDay
 	 * @param reviewDate
