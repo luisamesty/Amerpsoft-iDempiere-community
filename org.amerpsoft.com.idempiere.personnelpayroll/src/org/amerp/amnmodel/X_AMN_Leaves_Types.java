@@ -33,7 +33,7 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241220L;
+	private static final long serialVersionUID = 20250108L;
 
     /** Standard Constructor */
     public X_AMN_Leaves_Types (Properties ctx, int AMN_Leaves_Types_ID, String trxName)
@@ -207,6 +207,24 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	/** Set Hours per day in a Shift.
+		@param HoursDay Hours per day in a Shift
+	*/
+	public void setHoursDay (BigDecimal HoursDay)
+	{
+		set_Value (COLUMNNAME_HoursDay, HoursDay);
+	}
+
+	/** Get Hours per day in a Shift.
+		@return Hours per day in a Shift	  */
+	public BigDecimal getHoursDay()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_HoursDay);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Lead Time.
 		@param LeadTime Lead TimeLead time for a request
 	*/
@@ -221,6 +239,25 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	public int getLeadTime()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_LeadTime);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Maximun Days To Pay.
+		@param MaximunDaysToPay Maximun Days To Pay witin a month
+	*/
+	public void setMaximunDaysToPay (int MaximunDaysToPay)
+	{
+		set_Value (COLUMNNAME_MaximunDaysToPay, Integer.valueOf(MaximunDaysToPay));
+	}
+
+	/** Get Maximun Days To Pay.
+		@return Maximun Days To Pay witin a month
+	  */
+	public int getMaximunDaysToPay()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_MaximunDaysToPay);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

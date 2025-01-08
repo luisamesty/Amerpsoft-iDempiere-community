@@ -32,7 +32,7 @@ public interface I_AMN_Leaves
     /** TableName=AMN_Leaves */
     public static final String Table_Name = "AMN_Leaves";
 
-    /** AD_Table_ID=1000085 */
+    /** AD_Table_ID=1000107 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -100,6 +100,15 @@ public interface I_AMN_Leaves
 	  * Leaves Process to next valid step
 	  */
 	public String getAMN_Leaves_Process();
+
+    /** Column name AMN_Leaves_Status */
+    public static final String COLUMNNAME_AMN_Leaves_Status = "AMN_Leaves_Status";
+
+	/** Set Leaves Status	  */
+	public void setAMN_Leaves_Status (String AMN_Leaves_Status);
+
+	/** Get Leaves Status	  */
+	public String getAMN_Leaves_Status();
 
     /** Column name AMN_Leaves_Types_ID */
     public static final String COLUMNNAME_AMN_Leaves_Types_ID = "AMN_Leaves_Types_ID";

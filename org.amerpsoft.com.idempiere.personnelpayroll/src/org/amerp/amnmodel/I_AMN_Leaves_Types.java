@@ -32,7 +32,7 @@ public interface I_AMN_Leaves_Types
     /** TableName=AMN_Leaves_Types */
     public static final String Table_Name = "AMN_Leaves_Types";
 
-    /** AD_Table_ID=1000083 */
+    /** AD_Table_ID=1000105 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -133,6 +133,15 @@ public interface I_AMN_Leaves_Types
 	  */
 	public String getDescription();
 
+    /** Column name HoursDay */
+    public static final String COLUMNNAME_HoursDay = "HoursDay";
+
+	/** Set Hours per day in a Shift	  */
+	public void setHoursDay (BigDecimal HoursDay);
+
+	/** Get Hours per day in a Shift	  */
+	public BigDecimal getHoursDay();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -158,6 +167,19 @@ public interface I_AMN_Leaves_Types
 	  * Lead TimeLead time for a request
 	  */
 	public int getLeadTime();
+
+    /** Column name MaximunDaysToPay */
+    public static final String COLUMNNAME_MaximunDaysToPay = "MaximunDaysToPay";
+
+	/** Set Maximun Days To Pay.
+	  * Maximun Days To Pay witin a month
+	  */
+	public void setMaximunDaysToPay (int MaximunDaysToPay);
+
+	/** Get Maximun Days To Pay.
+	  * Maximun Days To Pay witin a month
+	  */
+	public int getMaximunDaysToPay();
 
     /** Column name MinimumDays */
     public static final String COLUMNNAME_MinimumDays = "MinimumDays";

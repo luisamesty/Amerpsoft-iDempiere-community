@@ -27,6 +27,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 	int AD_Client_ID =0;
 	int AD_Org_ID=0;
 	BigDecimal DaysTo = BigDecimal.ZERO;
+	BigDecimal HoursDay = BigDecimal.ZERO;
 	String DocStatus = "";
 	String lNote="";
 	int AMW_WorkFlow_ID=0;
@@ -52,6 +53,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				// Set Default Days 
 				AMN_Leaves_Types_ID =  (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID) ;
 				MAMN_Leaves_Types leavetype = new MAMN_Leaves_Types(Env.getCtx(), AMN_Leaves_Types_ID, null);
+				// DateTo
 				if (leavetype.getDefaultDays()!=null && leavetype.getDefaultDays().compareTo(BigDecimal.ZERO) > 0 ) {
 					DaysTo = (BigDecimal) leavetype.getDefaultDays();
 					mTab.setValue(MAMN_Leaves.COLUMNNAME_DaysTo, DaysTo);
@@ -60,6 +62,11 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 						mTab.setValue(MAMN_Leaves.COLUMNNAME_DateTo,AMNLeavesEndDate);
 					}
+				}
+				// HoursDay
+				if (leavetype.getHoursDay()!=null && leavetype.getHoursDay().compareTo(BigDecimal.ZERO) > 0 ) {
+					HoursDay = (BigDecimal) leavetype.getHoursDay();
+					mTab.setValue(MAMN_Leaves.COLUMNNAME_HoursDay, HoursDay);
 				}
 			}
 		}

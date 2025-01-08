@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241221L;
+	private static final long serialVersionUID = 20250108L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -235,6 +235,44 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public String getAMN_Leaves_Process()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_Process);
+	}
+
+	/** Unknown = ?? */
+	public static final String AMN_LEAVES_STATUS_Unknown = "??";
+	/** Filed = AR */
+	public static final String AMN_LEAVES_STATUS_Filed = "AR";
+	/** Closed = CL */
+	public static final String AMN_LEAVES_STATUS_Closed = "CL";
+	/** Completed = CO */
+	public static final String AMN_LEAVES_STATUS_Completed = "CO";
+	/** Draft = DR */
+	public static final String AMN_LEAVES_STATUS_Draft = "DR";
+	/** HR Approved = RA */
+	public static final String AMN_LEAVES_STATUS_HRApproved = "RA";
+	/** HR Review = RH */
+	public static final String AMN_LEAVES_STATUS_HRReview = "RH";
+	/** HR Rejected = RR */
+	public static final String AMN_LEAVES_STATUS_HRRejected = "RR";
+	/** Supervisor Approved = SA */
+	public static final String AMN_LEAVES_STATUS_SupervisorApproved = "SA";
+	/** Supervisor Rejected = SR */
+	public static final String AMN_LEAVES_STATUS_SupervisorRejected = "SR";
+	/** Supervisor Review = SU */
+	public static final String AMN_LEAVES_STATUS_SupervisorReview = "SU";
+	/** Set Leaves Status.
+		@param AMN_Leaves_Status Leaves Status
+	*/
+	public void setAMN_Leaves_Status (String AMN_Leaves_Status)
+	{
+
+		set_Value (COLUMNNAME_AMN_Leaves_Status, AMN_Leaves_Status);
+	}
+
+	/** Get Leaves Status.
+		@return Leaves Status	  */
+	public String getAMN_Leaves_Status()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_Leaves_Status);
 	}
 
 	/** Set Leaves Types.
