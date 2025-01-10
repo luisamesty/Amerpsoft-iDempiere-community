@@ -277,8 +277,7 @@ GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_val
 departamento, reportorder, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
 documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t,
 iso_code1, iso_code2
-ORDER BY  amndateend, reportorder, documentno, calcorder2
-]]>
+ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 	</queryString>
 	<field name="org_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
@@ -509,7 +508,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<printWhenExpression><![CDATA[$F{copiaforma}.compareToIgnoreCase( "01" )!=0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{AMN_Receipt_Copy}.compareToIgnoreCase( "F" )==0]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1189,7 +1188,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2
 					<textElement verticalAlignment="Bottom">
 						<font fontName="Arial" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{AMN_Receipt_Copy}.compareToIgnoreCase( "E" ) == 0 ? $R{report.original}: $R{report.copyorg}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="10" width="150" height="12" forecolor="#968C8C" uuid="37be9847-3306-43f7-886e-5c640f7647c5">
