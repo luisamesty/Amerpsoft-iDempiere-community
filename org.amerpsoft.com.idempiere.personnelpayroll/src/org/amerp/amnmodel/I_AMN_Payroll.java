@@ -422,6 +422,28 @@ public interface I_AMN_Payroll
 	  */
 	public Timestamp getDateAcct();
 
+    /** Column name DateReEntry */
+    public static final String COLUMNNAME_DateReEntry = "DateReEntry";
+
+	/** Set ReEntry Date	  */
+	public void setDateReEntry (Timestamp DateReEntry);
+
+	/** Get ReEntry Date	  */
+	public Timestamp getDateReEntry();
+
+    /** Column name DaysVacation */
+    public static final String COLUMNNAME_DaysVacation = "DaysVacation";
+
+	/** Set DaysVacation.
+	  * Number of days for Vacations
+	  */
+	public void setDaysVacation (int DaysVacation);
+
+	/** Get DaysVacation.
+	  * Number of days for Vacations
+	  */
+	public int getDaysVacation();
+
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 
@@ -557,6 +579,15 @@ public interface I_AMN_Payroll
 	  */
 	public boolean isPrinted();
 
+    /** Column name month */
+    public static final String COLUMNNAME_month = "month";
+
+	/** Set month	  */
+	public void setmonth (int month);
+
+	/** Get month	  */
+	public int getmonth();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -672,4 +703,13 @@ public interface I_AMN_Payroll
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name year */
+    public static final String COLUMNNAME_year = "year";
+
+	/** Set year	  */
+	public void setyear (int year);
+
+	/** Get year	  */
+	public int getyear();
 }

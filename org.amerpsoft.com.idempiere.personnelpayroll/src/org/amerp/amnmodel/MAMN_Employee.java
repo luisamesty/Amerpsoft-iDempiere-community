@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.compiere.model.MRefList;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Reference;
+import org.compiere.model.X_I_BPartner;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -40,12 +41,32 @@ public class MAMN_Employee extends X_AMN_Employee {
 
 	public MAMN_Employee(Properties ctx, int AMN_Employee_ID, String trxName) {
 		super(ctx, AMN_Employee_ID, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	public MAMN_Employee(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
+		// T
+	}
+	
+	// Import Constructor
+	public MAMN_Employee(X_AMN_I_Employee impEmployee) {
+		
+		this (impEmployee.getCtx(), 0, impEmployee.get_TrxName());
+		setClientOrg(impEmployee);
+		setUpdatedBy(impEmployee.getUpdatedBy());
+		//
+		String value = impEmployee.getValue();
+		if (value == null || value.length() == 0)
+			value = impEmployee.getEMail();
+
+		setValue(value);
+		String name = impEmployee.getName();
+		if (name == null || name.length() == 0)
+			name = impEmployee.getEMail();
+		setName(name);
+		setDescription(impEmployee.getDescription());
+		
 	}
 	
 	/**

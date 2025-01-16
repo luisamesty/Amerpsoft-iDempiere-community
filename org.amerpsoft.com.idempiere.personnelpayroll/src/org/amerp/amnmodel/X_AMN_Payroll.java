@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240807L;
+	private static final long serialVersionUID = 20250116L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)
@@ -52,7 +52,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -93,7 +93,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -134,7 +134,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -175,7 +175,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -675,7 +675,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	*/
 	public void setC_Currency_ID_To (int C_Currency_ID_To)
 	{
-		set_ValueNoCheck (COLUMNNAME_C_Currency_ID_To, Integer.valueOf(C_Currency_ID_To));
+		set_Value (COLUMNNAME_C_Currency_ID_To, Integer.valueOf(C_Currency_ID_To));
 	}
 
 	/** Get Currency To.
@@ -890,6 +890,40 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public Timestamp getDateAcct()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_DateAcct);
+	}
+
+	/** Set ReEntry Date.
+		@param DateReEntry ReEntry Date
+	*/
+	public void setDateReEntry (Timestamp DateReEntry)
+	{
+		set_Value (COLUMNNAME_DateReEntry, DateReEntry);
+	}
+
+	/** Get ReEntry Date.
+		@return ReEntry Date	  */
+	public Timestamp getDateReEntry()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateReEntry);
+	}
+
+	/** Set DaysVacation.
+		@param DaysVacation Number of days for Vacations
+	*/
+	public void setDaysVacation (int DaysVacation)
+	{
+		set_Value (COLUMNNAME_DaysVacation, Integer.valueOf(DaysVacation));
+	}
+
+	/** Get DaysVacation.
+		@return Number of days for Vacations
+	  */
+	public int getDaysVacation()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_DaysVacation);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Description.
@@ -1136,6 +1170,24 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return false;
 	}
 
+	/** Set month.
+		@param month month
+	*/
+	public void setmonth (int month)
+	{
+		set_Value (COLUMNNAME_month, Integer.valueOf(month));
+	}
+
+	/** Get month.
+		@return month	  */
+	public int getmonth()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_month);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -1293,5 +1345,23 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set year.
+		@param year year
+	*/
+	public void setyear (int year)
+	{
+		set_Value (COLUMNNAME_year, Integer.valueOf(year));
+	}
+
+	/** Get year.
+		@return year	  */
+	public int getyear()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_year);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 }

@@ -215,8 +215,26 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 					columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_LastName1) || 
 					columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_LastName2))
 				list.add(new AMN_Employee_DetailedNames_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_Value)) {
+				list.add(new AMN_Employee_callout());
+			}
 		}
 		
+		// *********************************
+		// TableRef: amn_i_employee
+		// *********************************
+		if (tableName.equalsIgnoreCase(MAMN_I_Employee.Table_Name)) {
+			// Detailed Name
+			if ( columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_FirstName1) || 
+					columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_FirstName2) ||
+					columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_LastName1) || 
+					columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_LastName2))
+				list.add(new AMN_Employee_DetailedNames_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_Value)) {
+				list.add(new AMN_Employee_callout());
+			}
+		}
+				
 		// *********************************
 		// TableRef: amn_payroll_lot
 		// *********************************

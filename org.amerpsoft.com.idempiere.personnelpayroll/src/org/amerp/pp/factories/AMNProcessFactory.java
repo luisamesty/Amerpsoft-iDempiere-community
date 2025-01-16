@@ -15,6 +15,7 @@ package org.amerp.pp.factories;
 import org.adempiere.base.IProcessFactory;
 import org.amerp.process.*;
 import org.amerp.process.imp.AMNImportDeleteRecords;
+import org.amerp.process.imp.AMNImportEmployee;
 import org.amerp.process.imp.AMNImportSalarySocialBenefits;
 import org.compiere.process.ProcessCall;
 import org.compiere.util.CLogger;
@@ -211,6 +212,12 @@ public class AMNProcessFactory implements IProcessFactory {
           	try {
     			process =   AMNImportSalarySocialBenefits.class.newInstance();
     		} catch (Exception e) {}
-          return process;
+        // AMNImportEmployee
+        if (p_className.equals("org.amerp.process.imp.AMNImportEmployee")) 
+          	//log.warning("AMNImportEmployee........PAso");
+          	try {
+    			process =   AMNImportEmployee.class.newInstance();
+    		} catch (Exception e) {}
+        return process;
     }
 }
