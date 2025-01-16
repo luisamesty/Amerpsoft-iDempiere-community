@@ -15,6 +15,9 @@ package org.amerp.amnmodel;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -22,6 +25,7 @@ import org.adempiere.exceptions.TaxNoExemptFoundException;
 import org.adempiere.util.IProcessUI;
 import org.amerp.amndocument.Doc_AMNPayroll;
 import org.amerp.amnutilities.AmerpDateUtils;
+import org.amerp.amnutilities.AmerpPayrollCalcUtilDVFormulas;
 import org.amerp.amnutilities.AmerpUtilities;
 import org.compiere.model.*;
 import org.compiere.process.*;
@@ -150,6 +154,80 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			rs = null; pstmt = null;
 		}
 		return retValue;
+	}
+	
+	/**
+	 * updateAMNPayroll
+	 * Updates Header Variables
+	 * @param ctx
+	 * @param p_AMN_Payroll_ID
+	 * @param trxName
+	 * @return
+	 */
+	public boolean updateAMNPayroll(Properties ctx, String AMN_Process_Value,   int p_AMN_Payroll_ID, String trxName) {
+		
+		// PROCESS BUSINESSLOGIC LOGIC
+	    // Process depending
+		if (AMN_Process_Value.equalsIgnoreCase("NN") ||
+				AMN_Process_Value.equalsIgnoreCase("TI") ) {
+			// ************************
+			// Process NN an TI	
+			// ************************		
+			
+		} else if (AMN_Process_Value.equalsIgnoreCase("NV")) {
+			// ************************
+			// Process NV VACATION	
+			// ************************
+			BigDecimal DaysVacation = AmerpPayrollCalcUtilDVFormulas.DV_VACACION(ctx, p_AMN_Payroll_ID, trxName);
+			MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+			MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+			Timestamp employeeIncomeDate=amnemployee.getincomedate();
+			Timestamp receiptDateIni = amnpayroll.getInvDateIni();
+			// Dates
+			LocalDateTime localDTEmployee = employeeIncomeDate.toLocalDateTime();
+			LocalDateTime localDTReceiptDateIni = receiptDateIni.toLocalDateTime();
+			Timestamp receiptDateEnd = Timestamp.valueOf(localDTReceiptDateIni.plusDays(DaysVacation.longValue()));
+			Timestamp receiptDateReEntry = Timestamp.valueOf(localDTReceiptDateIni.plusDays(DaysVacation.longValue()+1));
+			int dia = localDTEmployee.getDayOfMonth();
+			int mes = localDTEmployee.getMonthValue();
+			int anio = localDTReceiptDateIni.getYear()-1;
+			// Crear fecha1 usando LocalDate
+	        LocalDate fecha1 = LocalDate.of(anio, mes, dia);
+	        Timestamp vacationPeriodIni = Timestamp.valueOf(fecha1.atStartOfDay());
+	        // Crear fecha2, un año más tarde
+	        LocalDate fecha2 = fecha1.plusYears(1);
+	        Timestamp vacationPeriodEnd = Timestamp.valueOf(fecha2.atStartOfDay());
+	        // Construir el String con el rango
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String PayrollDescription=AmerpUtilities.truncate(amnemployee.getValue()+"- "+
+					 Msg.translate(ctx, "from") + " "+ fecha1.format(formatter) + " " +
+					 Msg.translate(ctx, "to") + " " + fecha2.format(formatter),255);	
+			// Update AMN_Payroll (HEADER VALUES)
+            String sql = "UPDATE AMN_Payroll "
+            		+ " set DaysVacation="+DaysVacation+","
+            		+ " description='"+PayrollDescription+"',"
+            		+ " InvDateEnd='"+receiptDateEnd+"',"
+            		+ " DateReEntry='"+receiptDateReEntry+"',"
+            		+ " RefDateIni='"+vacationPeriodIni+"',"
+            		+ " RefDateEnd='"+vacationPeriodEnd+"',"
+					+ " month="+mes+","
+					+ " year="+anio
+					+ " where amn_payroll_id ="+p_AMN_Payroll_ID;
+            DB.executeUpdateEx(sql, null);
+            
+		} else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
+			// ************************
+			// Process NP
+			// ************************
+			
+		} else if (AMN_Process_Value.equalsIgnoreCase("NU")) { 
+			// ************************
+			// Process NU
+			// ************************
+		} else {
+			
+		}
+		return true;
 	}
 	
 	/**

@@ -20,10 +20,12 @@ import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Payroll_Assist;
 import org.amerp.amnmodel.MAMN_Process;
 import org.amerp.amnmodel.MAMN_Shift;
+import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.TimeUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -791,7 +793,36 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	 * 	Properties Ctx, int AMN_Payroll_ID, String trxName
 	 */
 	public static BigDecimal DV_VACACION (Properties Ctx, int AMN_Payroll_ID, String trxName) {
+		
 		double retValue = 15;	
+		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+		MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+		MCountry country = MCountry.get(Env.getCtx(), amnemployee.getC_Country_ID());
+		// VE Venezuela
+		if (country.getCountryCode().compareToIgnoreCase("VE")==0 ) {
+			retValue = 15;	
+		// PARAGUAY
+		} else if (country.getCountryCode().compareToIgnoreCase("PY")==0 ) {
+			/* Calculates years of Antiquity */
+			BigDecimal yearsAnt = AmerpDateUtils.getYearsBetween(amnemployee.getincomedate(), amnpayroll.getInvDateIni());
+			//	DE         Hasta        Derecho de Vacaciones 
+			//	1 ano    5 años      12 días hábiles corridos. 
+			//	6 años 10 años     18 días hábiles corridos. 
+			//	11 años Adelante 30 días hábiles corridos.
+			/* Compare with Table */
+			// Lógica de cálculo
+	        if (yearsAnt.compareTo(BigDecimal.ONE) >= 0 && yearsAnt.compareTo(new BigDecimal("5")) <= 0) {
+	        	retValue = 12; // 1 año a 5 años: 12 días hábiles corridos
+	        } else if (yearsAnt.compareTo(new BigDecimal("6")) >= 0 && yearsAnt.compareTo(new BigDecimal("10")) <= 0) {
+	        	retValue = 18; // 6 años a 10 años: 18 días hábiles corridos
+	        } else if (yearsAnt.compareTo(new BigDecimal("11")) >= 0) {
+	        	retValue = 30; // 11 años en adelante: 30 días hábiles corridos
+	        } else {
+	        	retValue = 0; // Por debajo de 1 año, 0 días
+	        }
+		} else if (country.getCountryCode().compareToIgnoreCase("ES")==0 ){
+			retValue = 30;	
+		}
 		return BigDecimal.valueOf(retValue);
 	}
 	

@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250116L;
+	private static final long serialVersionUID = 20250117L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)
@@ -64,6 +64,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -105,6 +107,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -146,6 +150,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -187,6 +193,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -1092,6 +1100,29 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public boolean isApproved()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApproved);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Override Calculations.
+		@param IsOverrideCalc Override Calculations on Dates
+	*/
+	public void setIsOverrideCalc (boolean IsOverrideCalc)
+	{
+		set_Value (COLUMNNAME_IsOverrideCalc, Boolean.valueOf(IsOverrideCalc));
+	}
+
+	/** Get Override Calculations.
+		@return Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc()
+	{
+		Object oo = get_Value(COLUMNNAME_IsOverrideCalc);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
