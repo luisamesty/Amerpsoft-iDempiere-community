@@ -93,7 +93,8 @@ public class AMNPayrollProcessPayrollAssistProc {
 		Shift_Attendance = BDZero;
 		Shift_AttendanceBonus = BDZero;
 	    // LOOK FOR Default Shift if exists
-	    if (defAMN_Shift_ID == 0) defAMN_Shift_ID =  MAMN_Shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
+		MAMN_Shift shift = new MAMN_Shift(); 
+	    if (defAMN_Shift_ID == 0) defAMN_Shift_ID =  shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
 	    // Verify if defAMN_Shift_ID == 0 
 	    if (defAMN_Shift_ID == 0) {
 		    // Get Default Asisst Input - Output Times referenced to p_Event_date
@@ -194,7 +195,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 				}	
 				// Verify for AssistCounter AND AMN_Shift_ID
 				if (AssistCounter == 0 ) {
-					AMN_Shift_ID = MAMN_Shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
+					AMN_Shift_ID = shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
 				}
 				if (AMN_Shift_ID ==0) {
 					locMsg_Value="***** "+Msg.getMsg(Env.getCtx(), "found.none")+" "+

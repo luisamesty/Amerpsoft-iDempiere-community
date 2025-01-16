@@ -17,7 +17,9 @@ import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Employee_Salary;
 import org.amerp.amnmodel.MAMN_NonBusinessDay;
 import org.amerp.amnmodel.MAMN_Payroll;
+import org.amerp.amnmodel.MAMN_Payroll_Assist;
 import org.amerp.amnmodel.MAMN_Process;
+import org.amerp.amnmodel.MAMN_Shift;
 import org.compiere.model.MCurrency;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -67,8 +69,12 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	 */
 	
 	public static List<String> listDV_Variables = new ArrayList<String>();
-
-	/**
+	
+    // Indicates if Saturday is considered Business Day */
+    public static boolean isSaturdayBusinessDay = MAMN_Payroll_Assist.SaturdayBusinessDay;
+    public static boolean SundayBusinessDay = MAMN_Payroll_Assist.SundayBusinessDay;
+    
+    /**
 	 * initDV_Variables
 	 * @return List<String>
 	 */
@@ -581,7 +587,10 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
 		InvDateIni=amnpayroll.getInvDateIni();
 		InvDateEnd=amnpayroll.getInvDateEnd();
-		LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, amnpayroll.getAD_Client_ID(), null).doubleValue();
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
+		LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, amnpayroll.getAD_Client_ID(), null).doubleValue();
 		retValue = LABORDAYS*8;
 		return BigDecimal.valueOf(retValue);
 	}
@@ -604,7 +613,10 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
 			// Calculates LABORDAY from MAMN_Payroll Class
-			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
+			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(LABORDAYS);
 
@@ -627,8 +639,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateIni=amnpayroll.getInvDateIni();
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 			// Calculates LABORDAY from MAMN_Payroll Class
-			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
+			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(LABORDAYS);
 
@@ -653,9 +668,12 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
 			AD_Org_ID=amnpayroll.getAD_Org_ID();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 			// Calculates LABORDAY ,DTREC,NONLABORDAYS,HOLLIDAYS from MAMN_NonBusinessDay Class
-			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
-			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
+			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
+			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
 			DTREC =1.00+ MAMN_NonBusinessDay.getDaysBetween(InvDateIni, InvDateEnd).doubleValue();
 			NONLABORDAYS = DTREC - LABORDAYS;
 			// Return BigDecimal Value
@@ -680,8 +698,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
 			AD_Org_ID=amnpayroll.getAD_Org_ID();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 			// Calculates LABORDAY ,DTREC,NONLABORDAYS,HOLLIDAYS from MAMN_NonBusinessDay Class
-			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
+			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(HOLLIDAYS);
 	}
@@ -856,8 +877,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 
 		double retValue = 15;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 		// HOLLIDAYS ON VACATION PERIOD
-		retValue = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID()).doubleValue();
+		retValue = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID()).doubleValue();
 
 		return BigDecimal.valueOf(retValue);
 	}
@@ -873,8 +897,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
 		// Business Days ON VACATION PERIOD
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 		//retValue = MAMN_NonBusinessDay.sqlGetNonBusinessDay(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID()).doubleValue();
-		double	LABORDAYS = MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), null).doubleValue();
+		double	LABORDAYS = MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), null).doubleValue();
 		double DTREC = 1.00+ MAMN_NonBusinessDay.getDaysBetween(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd()).doubleValue();
 		return BigDecimal.valueOf(DTREC - LABORDAYS);
 	}
@@ -2254,8 +2281,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// AD_Client_ID
 		sql = "SELECT AD_Client_ID FROM amn_payroll WHERE amn_payroll_id=?" ;
 		AD_Client_ID=DB.getSQLValue(trxName, sql, AMN_Payroll_ID);
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 		// Calculates LABORDAY from MAMN_Payroll Class
-		retValue =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, null).doubleValue();
+		retValue =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, null).doubleValue();
 		// Return BigDecimal Value
 		return BigDecimal.valueOf(retValue);
 	}

@@ -9,9 +9,11 @@ import java.util.GregorianCalendar;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
+import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Leaves;
 import org.amerp.amnmodel.MAMN_Leaves_Types;
 import org.amerp.amnmodel.MAMN_NonBusinessDay;
+import org.amerp.amnmodel.MAMN_Shift;
 import org.amerp.workflow.amwmodel.MAMW_WF_Node;
 import org.amerp.workflow.amwmodel.MAMW_WorkFlow;
 import org.compiere.model.GridField;
@@ -23,6 +25,8 @@ import org.compiere.util.Msg;
 public class AMN_Leaves_callout  implements IColumnCallout {
 
 	int AMN_Leaves_ID=0;
+	int AMN_Employeee_ID=0;
+	int AMN_Shift_ID = 0;
 	int AMN_Leaves_Types_ID=0;
 	int AD_Client_ID =0;
 	int AD_Org_ID=0;
@@ -46,6 +50,11 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 		String columnName = mField.getColumnName();
 		AD_Client_ID = (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AD_Client_ID);
 		AD_Org_ID = (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AD_Org_ID);
+		AMN_Employeee_ID=0;
+		MAMN_Shift shift = new MAMN_Shift();
+		AMN_Shift_ID = shift.sqlGetDefaultAMN_Shift_ID(AD_Client_ID);
+		// OJO Buscar dealle 
+   		boolean isSaturdayBusinessDay = false;
 		boolean overrideCalc = (boolean) mTab.getValue(MAMN_Leaves.COLUMNNAME_IsOverrideCalc);
 		// GLOBAL Leaves_types DaysMode VARS
 		if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID)  != null ) {
@@ -54,7 +63,15 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 			MAMN_Leaves_Types leavetype = new MAMN_Leaves_Types(Env.getCtx(), AMN_Leaves_Types_ID, null);
 			DaysMode = leavetype.getDaysMode();
 		}
-		
+		// Employee - Shift
+		if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Employee_ID)  != null ) {
+			AMN_Employeee_ID =  (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Employee_ID) ;
+			MAMN_Employee emp = new MAMN_Employee(ctx, AMN_Employeee_ID, null);
+			if (emp != null) {
+				AMN_Shift_ID = emp.getAMN_Shift_ID();
+				isSaturdayBusinessDay = shift.isSaturdayBusinessDay(AMN_Shift_ID);
+			}
+		}
 		// AMN_Leaves_Types_ID
 		if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID)) {
 			if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID)  != null ) {
@@ -69,7 +86,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 					AMNLeavesStartDate = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom);
 					if (AMNLeavesStartDate != null) {
 						if (DaysMode.compareToIgnoreCase("B")==0) {
-							AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+							AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 						} else {
 							AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 						}
@@ -116,7 +133,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				// Get Next Business Day
 				if (AMNLeavesStartDate != null) {
 					if (DaysMode.compareToIgnoreCase("B")==0) {
-						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 					} else {
 						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 					}
@@ -133,7 +150,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				AMNLeavesEndDate   = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateTo);
 				BigDecimal DTLeave = BigDecimal.ZERO;
 				if (DaysMode.compareToIgnoreCase("B")==0) {
-					DTLeave =MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(AMNLeavesStartDate, AMNLeavesEndDate, AD_Client_ID, AD_Org_ID);
+					DTLeave =MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(isSaturdayBusinessDay, AMNLeavesStartDate, AMNLeavesEndDate, AD_Client_ID, AD_Org_ID);
 				} else  {
 					DTLeave =MAMN_NonBusinessDay.getDaysBetween(AMNLeavesStartDate, AMNLeavesEndDate);
 				}
@@ -150,7 +167,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				// Get Next Business Day
 				if (AMNLeavesStartDate != null) {
 					if (DaysMode.compareToIgnoreCase("B")==0) {
-						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 					} else {
 						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 					}
