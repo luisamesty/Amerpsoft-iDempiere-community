@@ -481,7 +481,9 @@ public class AMNPayrollCreateDocs {
 			// ************************
 			// Process NV	
 			// ************************
-			
+			// Update Header
+			amnpayroll.updateAMNPayroll(ctx, AMN_Process_Value, p_AMN_Payroll_ID, trxName);
+
 		} else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
 			// ************************
 			// Process NP
