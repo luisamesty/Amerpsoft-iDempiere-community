@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeeJobLetter" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35da765c-c0a1-42c7-94f3-f38331872c36">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="362"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="631"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -84,9 +84,9 @@ SELECT * FROM (
 -- Employee file 
 	SELECT DISTINCT
 	-- LOGO
-	img1.binarydata as org_logo,
-	INITCAP(coalesce(org.name,org.value,''))  as org_name,
-    INITCAP(COALESCE(org.description,org.name,org.name,''))  org_description, 
+	CASE WHEN emp.ad_orgto_id IS NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+	INITCAP(coalesce(loc_n.orgname, org.name,org.value,''))  as org_name,
+    INITCAP(COALESCE(loc_n.name, org.description,org.name,org.name,''))  org_description, 
 	COALESCE(orginfo.taxid,'')  as org_taxid,    
    -- IMAGE
     COALESCE(img3.binarydata, img4.binarydata) as foto,
@@ -307,8 +307,8 @@ ORDER BY empleado ASC]]>
 	<variable name="monthDateRequest" class="java.lang.String">
 		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
 	</variable>
-	<variable name="monthDateIncome" class="java.lang.String">
-		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
+	<variable name="monthDateIni" class="java.lang.String">
+		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -356,7 +356,7 @@ ORDER BY empleado ASC]]>
 				<textFieldExpression><![CDATA["Señores:"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="30" y="66" width="490" height="15" isRemoveLineWhenBlank="true" uuid="b1680c6d-f97a-4135-9719-d7fe40114359">
+				<reportElement x="30" y="65" width="490" height="15" isRemoveLineWhenBlank="true" uuid="b1680c6d-f97a-4135-9719-d7fe40114359">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -381,7 +381,7 @@ ORDER BY empleado ASC]]>
 				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+new SimpleDateFormat("yyyy").format($P{DateOrdered}) +".\r\n"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="30" y="174" width="490" height="20" isRemoveLineWhenBlank="true" uuid="469350c4-5e4a-4f48-989c-bca0c76a6c79">
+				<reportElement x="30" y="172" width="490" height="20" isRemoveLineWhenBlank="true" uuid="469350c4-5e4a-4f48-989c-bca0c76a6c79">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -412,7 +412,7 @@ ORDER BY empleado ASC]]>
 				<textFieldExpression><![CDATA[$F{ciudad_dir}.trim() +", "+ new SimpleDateFormat("dd").format($P{DateOrdered}) + " de "+$V{monthDateRequest}+ " de "+ new SimpleDateFormat("yyyy").format($P{DateOrdered})]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="32" y="50" width="490" height="15" isRemoveLineWhenBlank="true" uuid="a6acbc1e-c6aa-4f58-8d6a-4960290b9e02">
+				<reportElement x="30" y="49" width="490" height="15" isRemoveLineWhenBlank="true" uuid="a6acbc1e-c6aa-4f58-8d6a-4960290b9e02">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -421,7 +421,7 @@ ORDER BY empleado ASC]]>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Monalisa SRL"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{org_name}  != null ? $F{org_name} : "Monalisa "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="30" y="137" width="490" height="34" isRemoveLineWhenBlank="true" uuid="9e7f3add-200b-47b4-b7a2-eb4e6cc0c7d2">
@@ -434,7 +434,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Las mismas iniciará desde el día  " + new SimpleDateFormat("dd").format($P{InvDateIni}) + " de "+$V{monthDateIncome}+ " de "+ new SimpleDateFormat("yyyy").format($P{InvDateIni}) +".\r\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Las mismas iniciará desde el día  " + new SimpleDateFormat("dd").format($F{invdateini}) + " de "+$V{monthDateIni}+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateini}) +".\r\n"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="50" y="310" width="248" height="14" isRemoveLineWhenBlank="true" uuid="88f81130-08cc-467f-8342-ef87c39bdb74">
@@ -450,7 +450,7 @@ ORDER BY empleado ASC]]>
 				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="50" y="325" width="248" height="14" isRemoveLineWhenBlank="true" uuid="86f5d092-f731-409a-a210-788848bea46f">
+				<reportElement x="50" y="324" width="248" height="14" isRemoveLineWhenBlank="true" uuid="86f5d092-f731-409a-a210-788848bea46f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -463,7 +463,7 @@ ORDER BY empleado ASC]]>
 				<textFieldExpression><![CDATA["Ficha Nro. "+$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="30" y="196" width="490" height="20" isRemoveLineWhenBlank="true" uuid="3fce2c85-2d53-4a91-a121-decb613c53a8">
+				<reportElement x="30" y="193" width="490" height="20" isRemoveLineWhenBlank="true" uuid="3fce2c85-2d53-4a91-a121-decb613c53a8">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>

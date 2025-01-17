@@ -106,13 +106,26 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			// FieldRef: AMN_Employee_ID 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_AMN_Employee_ID))
 				list.add(new AMN_Payroll_callout());
-			// FieldRef: AMN_Employee_ID 
+			// FieldRef: InvDateIni 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_InvDateIni))
 				list.add(new AMN_Payroll_Dates_callout());
-			// FieldRef: AMN_Employee_ID 
+			// FieldRef: InvDateEnd 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_InvDateEnd))
 				list.add(new AMN_Payroll_Dates_callout());
-
+			// FieldRef: DaysVacation 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_DaysVacation))
+				list.add(new AMN_Payroll_Dates_callout());
+			// DateReEntry
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_month) ||
+				columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_year)) {
+				list.add(new AMN_Payroll_Dates_callout());
+			}
+			// FieldRef: RefDateIni 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_RefDateIni))
+				list.add(new AMN_Payroll_Dates_callout());
+			// FieldRef: RefDateEnd 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_RefDateEnd))
+				list.add(new AMN_Payroll_Dates_callout());
 		}
 		
 		// *********************************

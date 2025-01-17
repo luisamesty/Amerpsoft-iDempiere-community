@@ -1,4 +1,4 @@
--- PAYROLL RECEIPT NV INTERNAL Request
+-- PAYROLL RECEIPT NV INTERNAL CERTIFICATION
 -- Employee Vacaction Reques
 SELECT * FROM (
 -- Employee file 
@@ -18,11 +18,15 @@ SELECT * FROM (
 	emp.birthplace as lugar_nacimiento,
 	emp.incomedate,
 	COALESCE(emp.NAME_IDCARD,'') as nombre_tarjeta,
-	CASE WHEN emp.sex = 'F' THEN 'la señora' 
-		          ELSE 'el señor'
+	CASE WHEN emp.sex = 'F' THEN 'Señora' 
+		          ELSE 'Señor'
 	END as emp_prefix,
+	pyrq.qtyvalue,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.InvDateIni, pyr.InvDateEnd, pyr.DateReEntry, pyr.RefDateIni, pyr.RefDateEnd,
+	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateIni), 'L','es') AS  diaInvDateIni,
+	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateEnd), 'L','es') AS  diaInvDateEnd,
+	adempiere.amf_dow2letter(extract(dow from  pyr.DateReEntry), 'L','es') AS  diaDateReEntry,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
@@ -55,6 +59,13 @@ SELECT * FROM (
 	orginfo.email
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+	INNER JOIN (
+		SELECT
+		pyr2.amn_payroll_id, pyr_d2.qtyvalue
+		FROM adempiere.amn_payroll as pyr2
+		LEFT JOIN adempiere.amn_payroll_detail as pyr_d2 ON (pyr_d2.amn_payroll_id= pyr2.amn_payroll_id)
+		WHERE pyr2.amn_payroll_id=  $P{AMN_Payroll_ID} AND pyr_d2.value = 'VACACDIAS'
+	) AS pyrq ON pyrq.amn_payroll_id = pyr.amn_payroll_id
 	INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
 	 INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
 	INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)

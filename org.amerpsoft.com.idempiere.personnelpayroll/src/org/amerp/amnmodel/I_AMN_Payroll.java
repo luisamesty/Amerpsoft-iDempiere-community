@@ -540,6 +540,19 @@ public interface I_AMN_Payroll
 	  */
 	public boolean isApproved();
 
+    /** Column name IsOverrideCalc */
+    public static final String COLUMNNAME_IsOverrideCalc = "IsOverrideCalc";
+
+	/** Set Override Calculations.
+	  * Override Calculations on Dates
+	  */
+	public void setIsOverrideCalc (boolean IsOverrideCalc);
+
+	/** Get Override Calculations.
+	  * Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc();
+
     /** Column name IsOverrideCurrencyRate */
     public static final String COLUMNNAME_IsOverrideCurrencyRate = "IsOverrideCurrencyRate";
 
