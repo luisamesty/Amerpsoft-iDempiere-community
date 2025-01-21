@@ -37,7 +37,7 @@ import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
-import org.amerp.webform.amwgrid.AMFPayAllocationMultipleBP;
+import org.amerp.webform.amwgrid.AMFAllocationMultipleBP;
 import org.amerp.webform.amwmodel.OrgInfo;
 import org.compiere.model.MAllocationHdr;
 import org.compiere.model.MColumn;
@@ -71,7 +71,7 @@ import org.zkoss.zul.Space;
  * Original Contributor : Fabian Aguilar - Multi Business Partner
  * Luis Amesty: Two Allocations generated using a common Charge 
  */
-public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
+public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 	implements IFormController, EventListener<Event>, WTableModelListener, ValueChangeListener
 {
 
@@ -113,6 +113,8 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 	private Grid parameterLayout = GridFactory.newGridLayout();
 	private Label bpartnerLabel = new Label();
 	private WSearchEditor bpartnerSearch = null;
+	private Label employeeLabel = new Label();
+	private WSearchEditor employeeSearch = null;
 	private Label bpartnerLabel2 = new Label();
 	private WSearchEditor bpartnerSearch2 = null;
 	private WListbox invoiceTable = ListboxFactory.newDataTable();
@@ -173,8 +175,9 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		//
 		parameterPanel.appendChild(parameterLayout);
 		allocationPanel.appendChild(allocationLayout);
-		bpartnerLabel.setText(Msg.translate(Env.getCtx(), "C_BPartner_ID")+" ("+Msg.translate(Env.getCtx(), "C_Payment_ID")+"s)");
-		bpartnerLabel2.setText(Msg.translate(Env.getCtx(), "C_BPartner_ID")+" ("+Msg.translate(Env.getCtx(), "C_Invoice_ID")+"s)");
+		employeeLabel.setText(Msg.translate(Env.getCtx(), "AMN_Employee_ID"));
+		bpartnerLabel.setText(Msg.translate(Env.getCtx(), "C_BPartner_ID")+" ("+Msg.translate(Env.getCtx(), "EmployeePayments")+")");
+		bpartnerLabel2.setText(Msg.translate(Env.getCtx(), "C_BPartner_ID")+" ("+Msg.translate(Env.getCtx(), "PayrollDocuments")+")");
 		paymentLabel.setText(" " + Msg.translate(Env.getCtx(), "C_Payment_ID"));
 		invoiceLabel.setText(" " + Msg.translate(Env.getCtx(), "C_Invoice_ID"));
 		paymentPanel.appendChild(paymentLayout);
@@ -244,15 +247,24 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		//organizationPick.getComponent().setHflex("true");
 		ZKUpdateUtil.setHflex(organizationPick.getComponent(), "true");
 		row.appendCellChild(organizationPick.getComponent(),2);
+
 		row = rows.newRow();
 		row.appendCellChild(bpartnerLabel.rightAlign());
 		//bpartnerSearch.getComponent().setHflex("true");
 		ZKUpdateUtil.setHflex(bpartnerSearch.getComponent(), "true");
 		row.appendCellChild(bpartnerSearch.getComponent(),2);
+		
+		row = rows.newRow();
 		row.appendCellChild(bpartnerLabel2.rightAlign());
 		//bpartnerSearch2.getComponent().setHflex("true");
 		ZKUpdateUtil.setHflex(bpartnerSearch2.getComponent(), "true");
 		row.appendCellChild(bpartnerSearch2.getComponent(),2);
+		
+//		row = rows.newRow();
+		row.appendCellChild(employeeLabel.rightAlign());
+		//employeeSearch.getComponent().setHflex("true");
+		ZKUpdateUtil.setHflex(employeeSearch.getComponent(), "true");
+		row.appendCellChild(employeeSearch.getComponent(),2);
 		
 		row = rows.newRow();
 		row.appendCellChild(currencyLabel.rightAlign(),1);
@@ -438,12 +450,14 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		// Organization filter selection
 		// Organization IF Env AD_Org_ID = 0 load all Orgs ELSE load one Org
 		ArrayList<OrgInfo> orgData = getOrgData(Env.getAD_Org_ID(Env.getCtx()));
-		for(OrgInfo oi : orgData) {
-			m_AD_Org_ID = oi.getAD_Org_ID();	
-		}
+		m_AD_Org_ID = 0;
+//		for(OrgInfo oi : orgData) {
+//			m_AD_Org_ID = oi.getAD_Org_ID();	
+//		}
 		//organizationPick.setValue(Env.getAD_Org_ID(Env.getCtx()));
 		organizationPick.setValue(m_AD_Org_ID);
 		organizationPick.addValueChangeListener(this);
+		
 		//  BPartner
 		AD_Column_ID = COLUMN_C_INVOICE_C_BPARTNER_ID;        //  C_Invoice.C_BPartner_ID
 		MLookup lookupBP = MLookupFactory.get (Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.Search);
@@ -456,6 +470,12 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		bpartnerSearch2 = new WSearchEditor("C_BPartner_ID", true, false, true, lookupBP2);
 		bpartnerSearch2.addValueChangeListener(this);
 
+		//  AMN_Employee
+		AD_Column_ID = MColumn.getColumn_ID("AMN_Employee", "AMN_Employee_ID"); // (1000446)  AMN_Employee_ID.AMN_Employee
+		MLookup lookupEMP = MLookupFactory.get (Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.Search);
+		employeeSearch = new WSearchEditor("AMN_Employee_ID", true, false, true, lookupEMP);
+		employeeSearch.addValueChangeListener(this);
+		
 		//  Translation
 		statusBar.appendChild(new Label(Msg.getMsg(Env.getCtx(), "AllocateStatus")));
 		//statusBar.setVflex("min");
@@ -474,7 +494,7 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		chargePick.addValueChangeListener(this);
 
 		// Activity
-		AD_Column_ID = MColumn.getColumn_ID("C_AllocationLine", "C_Activity_ID"); // C_AllocationLine.C_Activity_ID 
+		AD_Column_ID = MColumn.getColumn_ID("C_Payment", "C_Activity_ID"); // C_AllocationLine.C_Activity_ID 
 		MLookup lookupActivity = MLookupFactory.get (Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.TableDir);
 		activityPick = new WTableDirEditor("C_Activity_ID", false, false, true, lookupActivity);
 		activityPick.setValue(m_C_Activity_ID);
@@ -482,7 +502,7 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		activityPick.setMandatory(true);
 		
 		// Project
-		AD_Column_ID = MColumn.getColumn_ID("C_AllocationLine", "C_Project_ID"); // C_AllocationLine.C_Project_ID 
+		AD_Column_ID = MColumn.getColumn_ID("C_Payment", "C_Project_ID"); // C_AllocationLine.C_Project_ID 
 		MLookup lookupProject = MLookupFactory.get (Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.TableDir);
 		projectPick = new WTableDirEditor("C_Project_ID", false, false, true, lookupProject);
 		projectPick.setValue(m_C_Project_ID);
@@ -513,6 +533,7 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 			paymentTable.clear();
 			descriptionField.setValue("");
 			m_C_BPartner_ID=0;
+			m_AMN_Employee_ID = 0;
 			m_C_BPartner2_ID=0;
 			m_C_Activity_ID=0;
 			m_C_Project_ID=0;
@@ -685,6 +706,14 @@ public class AMWFAllocationMultipleBP extends AMFPayAllocationMultipleBP
 		{
 			m_C_Project_ID = value!=null? ((Integer) value).intValue() : 0;
 			
+			setAllocateButton();
+		}
+		//  Employee
+		if (e.getSource().equals(employeeSearch))
+		{
+			employeeSearch.setValue(value);
+			m_AMN_Employee_ID = ((Integer)value).intValue();
+			loadBPartner2 ();
 			setAllocateButton();
 		}
 		//  BPartner1

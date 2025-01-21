@@ -20,12 +20,12 @@ public class AMWFFormFactory implements IFormFactory {
 		// ******************************
 		// AMWFPayAllocationMultipleBP
 		// ******************************
-		if (formName.equals("org.amerp.webform.amwebui.AMWFPayAllocationMultipleBP")) {
+		if (formName.equals("org.amerp.webform.amwebui.AMWFAllocationMultipleBP")) {
 			//log.warning(".....isEqual........formName:"+formName);
 			//log.warning(".....Igual....");
 			//Object AMform = EquinoxExtensionLocator.instance().locate(Object.class, formName, null).getExtension();		
 			Object AMform = null;
-			String webClassName="org.amerp.webform.amwebui.AMWFPayAllocationMultipleBP";
+			String webClassName="org.amerp.webform.amwebui.AMWFAllocationMultipleBP";
 			Class<?> clazz = null; 
 			ClassLoader loader = getClass().getClassLoader();
     		try
@@ -34,7 +34,7 @@ public class AMWFFormFactory implements IFormFactory {
     		}
     		catch (Exception e)
     		{
-    			log.log(Level.FINE, "Load Form Class Failed in org.amerp.webform.amwebui.AMWFPayAllocationMultipleBP", e);
+    			log.log(Level.FINE, "Load Form Class Failed in org.amerp.webform.amwebui.AMWFAllocationMultipleBP", e);
     		}
 			if (clazz != null) {
 				//log.warning(".....clazz != null....");
@@ -44,7 +44,7 @@ public class AMWFFormFactory implements IFormFactory {
 	    		}
 	    		catch (Exception e)
 	    		{
-	    			log.log(Level.FINE, "Load Form Class Failed in org.amerp.webform.amwebui.AMWFPayAllocationMultipleBP", e);	   
+	    			log.log(Level.FINE, "Load Form Class Failed in org.amerp.webform.amwebui.AMWFAllocationMultipleBP", e);	   
 	    		}
 			}
 
