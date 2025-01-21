@@ -60,6 +60,7 @@ import org.adempiere.webui.window.Dialog;
 import org.amerp.webform.amwgrid.AMFAllocation;
 import org.compiere.apps.form.Allocation;
 import org.compiere.model.MAllocationHdr;
+import org.compiere.model.MColumn;
 import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
 import org.compiere.util.DisplayType;
@@ -123,6 +124,9 @@ public class AMWFAllocation extends AMFAllocation
 	/** Grid layout of {@link #parameterPanel} */
 	private Grid parameterLayout = GridFactory.newGridLayout();		
 	private Label bpartnerLabel = new Label();
+	/** Employee parameter **/
+	private Label employeeLabel = new Label();
+	private WSearchEditor employeeSearch = null;
 	/** bpartner parameter */
 	private WSearchEditor bpartnerSearch = null;
 	private Label currencyLabel = new Label();
@@ -211,6 +215,7 @@ public class AMWFAllocation extends AMFAllocation
 		parameterPanel.appendChild(parameterLayout);
 		allocationPanel.appendChild(allocationLayout);
 		bpartnerLabel.setText(Msg.translate(Env.getCtx(), "C_BPartner_ID"));
+		employeeLabel.setText(Msg.translate(Env.getCtx(), "AMN_Employee_ID"));
 		paymentLabel.setText(" " + Msg.translate(Env.getCtx(), "C_Payment_ID"));
 		invoiceLabel.setText(" " + Msg.translate(Env.getCtx(), "C_Invoice_ID"));
 		paymentPanel.appendChild(paymentLayout);
@@ -337,18 +342,23 @@ public class AMWFAllocation extends AMFAllocation
 		setupParameterColumns();
 		
 		rows = parameterLayout.newRows();
+		
+		row = rows.newRow();
+		row.appendChild(dateLabel.rightAlign());
+		row.appendChild(dateField.getComponent());
+		row.appendCellChild(organizationLabel.rightAlign());
+		ZKUpdateUtil.setHflex(organizationPick.getComponent(), "true");
+		row.appendCellChild(organizationPick.getComponent(),1);
+		organizationPick.showMenu();		
+		
 		row = rows.newRow();
 		row.appendCellChild(bpartnerLabel.rightAlign());
 		ZKUpdateUtil.setHflex(bpartnerSearch.getComponent(), "true");
 		row.appendCellChild(bpartnerSearch.getComponent(),1);
 		bpartnerSearch.showMenu();
-		row.appendChild(dateLabel.rightAlign());
-		row.appendChild(dateField.getComponent());
-		
-		row.appendCellChild(organizationLabel.rightAlign());
-		ZKUpdateUtil.setHflex(organizationPick.getComponent(), "true");
-		row.appendCellChild(organizationPick.getComponent(),1);
-		organizationPick.showMenu();		
+		row.appendCellChild(employeeLabel.rightAlign());
+		ZKUpdateUtil.setHflex(employeeSearch.getComponent(), "true");
+		row.appendCellChild(employeeSearch.getComponent(),1);
 		
 		row = rows.newRow();
 		row.appendCellChild(currencyLabel.rightAlign(),1);
@@ -488,6 +498,12 @@ public class AMWFAllocation extends AMFAllocation
 		bpartnerSearch = new WSearchEditor("C_BPartner_ID", true, false, true, lookupBP);
 		bpartnerSearch.addValueChangeListener(this);
 
+		//  AMN_Employee
+		AD_Column_ID = MColumn.getColumn_ID("AMN_Employee", "AMN_Employee_ID"); // (1000446)  AMN_Employee_ID.AMN_Employee
+		MLookup lookupEMP = MLookupFactory.get (Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.Search);
+		employeeSearch = new WSearchEditor("AMN_Employee_ID", true, false, true, lookupEMP);
+		employeeSearch.addValueChangeListener(this);
+		
 		//  Status bar
 		statusBar.appendChild(new Label(Msg.getMsg(Env.getCtx(), "AllocateStatus")));
 		ZKUpdateUtil.setVflex(statusBar, "min");
@@ -654,6 +670,13 @@ public class AMWFAllocation extends AMFAllocation
 		{
 			bpartnerSearch.setValue(value);
 			setC_BPartner_ID((int) value);
+			loadBPartner();
+		}
+		//  Employee
+		if (e.getSource().equals(employeeSearch))
+		{
+			employeeSearch.setValue(value);
+			m_AMN_Employee_ID = ((Integer)value).intValue();
 			loadBPartner();
 		}
 		//	Currency

@@ -37,18 +37,19 @@ import org.compiere.util.Msg;
 import org.compiere.util.TimeUtil;
 import org.compiere.util.Util;
 
-public class AMFPayAllocationMultipleBP
+public class AMFAllocationMultipleBP
 {
 	public DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount);
 
 	/**	Logger			*/
-	public static CLogger log = CLogger.getCLogger(AMFPayAllocationMultipleBP.class);
+	public static CLogger log = CLogger.getCLogger(AMFAllocationMultipleBP.class);
 
 	private boolean     m_calculating = false;
 	public int         	m_C_Currency_ID = 0;
 	public int         m_C_Charge_ID = 0;
 	public int         	m_C_BPartner_ID = 0;
 	public int         	m_C_BPartner2_ID = 0;
+	public int         	m_AMN_Employee_ID = 0;
 	public int          m_C_Activity_ID = 0;
 	public int         	m_C_Project_ID = 0;
 	private int         m_noInvoices = 0;
@@ -189,8 +190,9 @@ public class AMFPayAllocationMultipleBP
 		StringBuilder sql = new StringBuilder("SELECT p.DateTrx,p.DocumentNo,p.C_Payment_ID,"  //  1..3
 				+ "c.ISO_Code,p.PayAmt,"                            //  4..5
 				+ "currencyConvertPayment(p.C_Payment_ID,?,null,?) as payamount,"//  6   #1, #2
-				+ "currencyConvertPayment(p.C_Payment_ID,?,amf_paymentAvailable(p.C_Payment_ID),?) as payavailable,"  //  7   #3, #4
-				+ "p.MultiplierAP "
+				+ "currencyConvertPayment(p.C_Payment_ID,?,paymentAvailable(p.C_Payment_ID),?) as payavailable,"  //  7   #3, #4
+				+ "p.MultiplierAP, "
+				+ "p.description "
 				+ "FROM C_Payment_v p"		//	Corrected for AP/AR
 				+ " INNER JOIN C_Currency c ON (p.C_Currency_ID=c.C_Currency_ID) "
 				+ "WHERE p.IsAllocated='N' AND p.Processed='Y'"
@@ -236,7 +238,8 @@ public class AMFPayAllocationMultipleBP
 					continue;
 				line.add(available);				//  4/6-ConvOpen/Available
 				line.add(Env.ZERO);					//  5/7-Payment
-//				line.add(rs.getBigDecimal(8));		//  6/8-Multiplier
+				//
+				line.add(rs.getString(9));			//  6/8 Description
 				//
 				data.add(line);
 			}
@@ -268,6 +271,7 @@ public class AMFPayAllocationMultipleBP
 		columnNames.add(Msg.getMsg(Env.getCtx(), "ConvertedAmount"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "OpenAmt"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "AppliedAmt"));
+		columnNames.add(Msg.translate(Env.getCtx(), "Description"));
 //		columnNames.add(" ");	//	Multiplier
 		
 		return columnNames;
@@ -287,7 +291,7 @@ public class AMFPayAllocationMultipleBP
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  5-ConvAmt
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  6-ConvOpen
 		paymentTable.setColumnClass(i++, BigDecimal.class, false);      //  7-Allocated
-//		paymentTable.setColumnClass(i++, BigDecimal.class, true);      	//  8-Multiplier
+		paymentTable.setColumnClass(i++, String.class, true);      		//  8-Description
 
 		//
 		i_payment = isMultiCurrency ? 7 : 5;
@@ -335,16 +339,22 @@ public class AMFPayAllocationMultipleBP
 		StringBuilder sql = new StringBuilder("SELECT i.DateAcct,i.DocumentNo,i.C_Invoice_ID," //  1..3
 				+ "c.ISO_Code,i.GrandTotal*i.MultiplierAP, "                            //  4..5    Orig Currency
 				+ "currencyConvertInvoice(i.C_Invoice_ID,?,i.GrandTotal*i.MultiplierAP,?), " //  6   #1  Converted, #2 Date
-				+ "currencyConvert(invoiceOpen(C_Invoice_ID,C_InvoicePaySchedule_ID),i.C_Currency_ID,?,?,i.C_ConversionType_ID,i.AD_Client_ID,i.AD_Org_ID)*i.MultiplierAP, "  //  7   #3, #4  Converted Open
+				+ "currencyConvert(invoiceOpen(i.C_Invoice_ID,C_InvoicePaySchedule_ID),i.C_Currency_ID,?,?,i.C_ConversionType_ID,i.AD_Client_ID,i.AD_Org_ID)*i.MultiplierAP, "  //  7   #3, #4  Converted Open
 				+ "currencyConvert(invoiceDiscount"                               //  8       AllowedDiscount
 				+ "(i.C_Invoice_ID,?,C_InvoicePaySchedule_ID),i.C_Currency_ID,?,i.DateInvoiced,i.C_ConversionType_ID,i.AD_Client_ID,i.AD_Org_ID)*i.Multiplier*i.MultiplierAP,"               //  #5, #6
-				+ "i.MultiplierAP "
-				+ "FROM AMF_BPStatement_C_Invoice_V i"		//  corrected for CM/Split
+				+ "i.MultiplierAP, "
+				+ "e.name "
+				+ "FROM C_Invoice_V i"		//  corrected for CM/Split
 				+ " INNER JOIN C_Currency c ON (i.C_Currency_ID=c.C_Currency_ID) "
+				+ " LEFT JOIN AMN_Payroll p ON (p.C_invoice_ID = i.C_invoice_ID) "
+				+ " LEFT JOIN AMN_Employee e ON (e.amn_employee_id = p.amn_employee_id) "
 				+ "WHERE i.IsPaid='N' AND i.Processed='Y'"
-				+ " AND i.C_BPartner_ID=?");                                            //  #7
-//			if (!isMultiCurrency)
-//				sql.append(" AND i.C_Currency_ID=?");                                   //  #8
+				+ " AND i.C_BPartner_ID=?");	                                        //  #7
+			if (m_AMN_Employee_ID != 0) {
+				sql.append(" AND e.AMN_Employee_ID="+m_AMN_Employee_ID);
+			}
+			if (!isMultiCurrency)
+				sql.append(" AND i.C_Currency_ID=?");                                   //  #8
 			if (m_AD_Org_ID != 0 ) 
 				sql.append(" AND i.AD_Org_ID=" + m_AD_Org_ID);
 			sql.append(" ORDER BY i.DateInvoiced, i.DocumentNo");
@@ -365,8 +375,9 @@ public class AMFPayAllocationMultipleBP
 			pstmt.setTimestamp(5, (Timestamp)date);
 			pstmt.setInt(6, m_C_Currency_ID);
 			pstmt.setInt(7, m_C_BPartner2_ID);
-//			if (!isMultiCurrency)
-//				pstmt.setInt(8, m_C_Currency_ID);
+			pstmt.setInt(8, m_AMN_Employee_ID);
+			if (!isMultiCurrency)
+				pstmt.setInt(8, m_C_Currency_ID);
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
@@ -390,10 +401,9 @@ public class AMFPayAllocationMultipleBP
 					discount = Env.ZERO;
 				line.add(discount);					//  5/7-ConvAllowedDisc
 				line.add(Env.ZERO);      			//  6/8-WriteOff
-				line.add(Env.ZERO);					// 7/9-Applied
-				line.add(open);				    //  8/10-OverUnder
-
-//				line.add(rs.getBigDecimal(9));		//	8/10-Multiplier
+				line.add(Env.ZERO);					//  7/9-Applied
+				line.add(open);				    	//  8/10-OverUnder
+				line.add(rs.getString(10));			//  9/11-Employee
 				//	Add when open <> 0 (i.e. not if no conversion rate)
 				if (Env.ZERO.compareTo(open) != 0)
 					data.add(line);
@@ -429,7 +439,7 @@ public class AMFPayAllocationMultipleBP
 		columnNames.add(Msg.getMsg(Env.getCtx(), "WriteOff"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "AppliedAmt"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "OverUnderAmt"));
-//		columnNames.add(" ");	//	Multiplier
+		columnNames.add(Msg.translate(Env.getCtx(), "AMN_Employee_ID"));
 		
 		return columnNames;
 	}
@@ -451,7 +461,7 @@ public class AMFPayAllocationMultipleBP
 		invoiceTable.setColumnClass(i++, BigDecimal.class, false);      //  8-Conv WriteOff
 		invoiceTable.setColumnClass(i++, BigDecimal.class, false);      //  9-Conv OverUnder
 		invoiceTable.setColumnClass(i++, BigDecimal.class, true);		//	10-Conv Applied
-//		invoiceTable.setColumnClass(i++, BigDecimal.class, true);      	//  10-Multiplier
+		invoiceTable.setColumnClass(i++, String.class, true);      		//  11-Employee
 		//  Table UI
 		invoiceTable.autoSize();
 	}
