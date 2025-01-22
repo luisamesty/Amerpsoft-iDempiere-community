@@ -35,7 +35,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241231L;
+	private static final long serialVersionUID = 20250124L;
 
     /** Standard Constructor */
     public X_AMN_I_Employee (Properties ctx, int AMN_I_Employee_ID, String trxName)
@@ -47,7 +47,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
-			setAMN_CommissionGroup_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -55,15 +54,16 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Jobtitle_ID (0);
 			setAMN_Location_ID (0);
 			setAMN_Position_ID (0);
+			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
-			setC_Activity_ID (0);
-			setC_BPartner_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
+			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
+			setIDNumber (null);
 			setI_IsImported (false);
 // N
 			setincomedate (new Timestamp( System.currentTimeMillis() ));
@@ -101,7 +101,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
-			setAMN_CommissionGroup_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -109,15 +108,16 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Jobtitle_ID (0);
 			setAMN_Location_ID (0);
 			setAMN_Position_ID (0);
+			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
-			setC_Activity_ID (0);
-			setC_BPartner_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
+			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
+			setIDNumber (null);
 			setI_IsImported (false);
 // N
 			setincomedate (new Timestamp( System.currentTimeMillis() ));
@@ -155,7 +155,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
-			setAMN_CommissionGroup_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -163,15 +162,16 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Jobtitle_ID (0);
 			setAMN_Location_ID (0);
 			setAMN_Position_ID (0);
+			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
-			setC_Activity_ID (0);
-			setC_BPartner_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
+			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
+			setIDNumber (null);
 			setI_IsImported (false);
 // N
 			setincomedate (new Timestamp( System.currentTimeMillis() ));
@@ -209,7 +209,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
-			setAMN_CommissionGroup_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -217,15 +216,16 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Jobtitle_ID (0);
 			setAMN_Location_ID (0);
 			setAMN_Position_ID (0);
+			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
-			setC_Activity_ID (0);
-			setC_BPartner_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
+			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
+			setIDNumber (null);
 			setI_IsImported (false);
 // N
 			setincomedate (new Timestamp( System.currentTimeMillis() ));
@@ -657,6 +657,21 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return ii.intValue();
 	}
 
+	/** Set Invoice Partner Key.
+		@param Bill_BPValue Invoice Partner Key
+	*/
+	public void setBill_BPValue (String Bill_BPValue)
+	{
+		set_Value (COLUMNNAME_Bill_BPValue, Bill_BPValue);
+	}
+
+	/** Get Invoice Partner Key.
+		@return Invoice Partner Key	  */
+	public String getBill_BPValue()
+	{
+		return (String)get_Value(COLUMNNAME_Bill_BPValue);
+	}
+
 	/** Set BioCode.
 		@param BioCode Biometric Code from Attendance Control Scanners
 	*/
@@ -746,6 +761,22 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getbloodtype()
 	{
 		return (String)get_Value(COLUMNNAME_bloodtype);
+	}
+
+	/** Set BP Search Key.
+		@param BPValue Business Partner Key Value
+	*/
+	public void setBPValue (String BPValue)
+	{
+		set_Value (COLUMNNAME_BPValue, BPValue);
+	}
+
+	/** Get BP Search Key.
+		@return Business Partner Key Value
+	  */
+	public String getBPValue()
+	{
+		return (String)get_Value(COLUMNNAME_BPValue);
 	}
 
 	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
@@ -873,12 +904,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getC_City_Value()
 	{
 		return (String)get_Value(COLUMNNAME_C_City_Value);
-	}
-
-	public org.compiere.model.I_C_Country getC_Country() throws RuntimeException
-	{
-		return (org.compiere.model.I_C_Country)MTable.get(getCtx(), org.compiere.model.I_C_Country.Table_ID)
-			.getPO(getC_Country_ID(), get_TrxName());
 	}
 
 	/** Set Country.
@@ -1260,6 +1285,22 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Fax.
+		@param Fax Facsimile number
+	*/
+	public void setFax (String Fax)
+	{
+		set_Value (COLUMNNAME_Fax, Fax);
+	}
+
+	/** Get Fax.
+		@return Facsimile number
+	  */
+	public String getFax()
+	{
+		return (String)get_Value(COLUMNNAME_Fax);
 	}
 
 	/** Set First Name 1.
@@ -1718,6 +1759,38 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getpayrollmode()
 	{
 		return (String)get_Value(COLUMNNAME_payrollmode);
+	}
+
+	/** Set Phone.
+		@param Phone Identifies a telephone number
+	*/
+	public void setPhone (String Phone)
+	{
+		set_ValueNoCheck (COLUMNNAME_Phone, Phone);
+	}
+
+	/** Get Phone.
+		@return Identifies a telephone number
+	  */
+	public String getPhone()
+	{
+		return (String)get_Value(COLUMNNAME_Phone);
+	}
+
+	/** Set 2nd Phone.
+		@param Phone2 Identifies an alternate telephone number.
+	*/
+	public void setPhone2 (String Phone2)
+	{
+		set_Value (COLUMNNAME_Phone2, Phone2);
+	}
+
+	/** Get 2nd Phone.
+		@return Identifies an alternate telephone number.
+	  */
+	public String getPhone2()
+	{
+		return (String)get_Value(COLUMNNAME_Phone2);
 	}
 
 	/** Set PIN.

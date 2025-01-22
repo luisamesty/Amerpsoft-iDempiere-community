@@ -10,6 +10,9 @@ public class MAMN_I_Employee extends X_AMN_I_Employee{
 	private static final long serialVersionUID = 9207960560504176549L;
 	static CLogger log = CLogger.getCLogger(MAMN_I_Employee.class);
 
+	/** Default Bill BPartner Value */
+    public static String DEFAULT_Bill_BPValue 	= "E00000";
+    
 	public MAMN_I_Employee(Properties ctx, int AMN_I_Employee_ID, String trxName) {
 		super(ctx, AMN_I_Employee_ID, trxName);
 		// TODO Auto-generated constructor stub

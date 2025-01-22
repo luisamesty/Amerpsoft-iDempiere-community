@@ -32,7 +32,7 @@ public interface I_AMN_I_Employee
     /** TableName=AMN_I_Employee */
     public static final String Table_Name = "AMN_I_Employee";
 
-    /** AD_Table_ID=1000198 */
+    /** AD_Table_ID=1000118 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -265,6 +265,15 @@ public interface I_AMN_I_Employee
 
 	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException;
 
+    /** Column name Bill_BPValue */
+    public static final String COLUMNNAME_Bill_BPValue = "Bill_BPValue";
+
+	/** Set Invoice Partner Key	  */
+	public void setBill_BPValue (String Bill_BPValue);
+
+	/** Get Invoice Partner Key	  */
+	public String getBill_BPValue();
+
     /** Column name BioCode */
     public static final String COLUMNNAME_BioCode = "BioCode";
 
@@ -317,6 +326,19 @@ public interface I_AMN_I_Employee
 
 	/** Get bloodtype	  */
 	public String getbloodtype();
+
+    /** Column name BPValue */
+    public static final String COLUMNNAME_BPValue = "BPValue";
+
+	/** Set BP Search Key.
+	  * Business Partner Key Value
+	  */
+	public void setBPValue (String BPValue);
+
+	/** Get BP Search Key.
+	  * Business Partner Key Value
+	  */
+	public String getBPValue();
 
     /** Column name C_Activity_ID */
     public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
@@ -399,8 +421,6 @@ public interface I_AMN_I_Employee
 	  * Country 
 	  */
 	public int getC_Country_ID();
-
-	public org.compiere.model.I_C_Country getC_Country() throws RuntimeException;
 
     /** Column name C_Currency_ID */
     public static final String COLUMNNAME_C_Currency_ID = "C_Currency_ID";
@@ -605,6 +625,19 @@ public interface I_AMN_I_Employee
 	  * Employee Image 2
 	  */
 	public int getempimg2_ID();
+
+    /** Column name Fax */
+    public static final String COLUMNNAME_Fax = "Fax";
+
+	/** Set Fax.
+	  * Facsimile number
+	  */
+	public void setFax (String Fax);
+
+	/** Get Fax.
+	  * Facsimile number
+	  */
+	public String getFax();
 
     /** Column name FirstName1 */
     public static final String COLUMNNAME_FirstName1 = "FirstName1";
@@ -866,6 +899,32 @@ public interface I_AMN_I_Employee
 
 	/** Get payrollmode	  */
 	public String getpayrollmode();
+
+    /** Column name Phone */
+    public static final String COLUMNNAME_Phone = "Phone";
+
+	/** Set Phone.
+	  * Identifies a telephone number
+	  */
+	public void setPhone (String Phone);
+
+	/** Get Phone.
+	  * Identifies a telephone number
+	  */
+	public String getPhone();
+
+    /** Column name Phone2 */
+    public static final String COLUMNNAME_Phone2 = "Phone2";
+
+	/** Set 2nd Phone.
+	  * Identifies an alternate telephone number.
+	  */
+	public void setPhone2 (String Phone2);
+
+	/** Get 2nd Phone.
+	  * Identifies an alternate telephone number.
+	  */
+	public String getPhone2();
 
     /** Column name PIN */
     public static final String COLUMNNAME_PIN = "PIN";

@@ -23,6 +23,7 @@ SELECT * FROM (
 	END as emp_prefix,
 	-- RECEIPT
 	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.RefDateIni, pyr.RefDateEnd,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 

@@ -103,6 +103,7 @@ SELECT * FROM (
 	END as emp_prefix,
 	-- RECEIPT
 	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.RefDateIni, pyr.RefDateEnd,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
@@ -227,6 +228,16 @@ ORDER BY empleado ASC]]>
 	<field name="invdateend" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="invdateend"/>
 		<property name="com.jaspersoft.studio.field.label" value="invdateend"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="refdateini" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="refdateini"/>
+		<property name="com.jaspersoft.studio.field.label" value="refdateini"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="refdateend" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="refdateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="refdateend"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
 	</field>
 	<field name="tipo_contrato" class="java.lang.String">
@@ -378,7 +389,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+new SimpleDateFormat("yyyy").format($P{DateOrdered}) +".\r\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+new SimpleDateFormat("yyyy").format($F{refdateend}) +".\r\n"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="30" y="172" width="490" height="20" isRemoveLineWhenBlank="true" uuid="469350c4-5e4a-4f48-989c-bca0c76a6c79">
