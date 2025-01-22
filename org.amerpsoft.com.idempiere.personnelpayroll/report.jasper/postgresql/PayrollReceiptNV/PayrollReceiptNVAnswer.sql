@@ -1,5 +1,6 @@
 -- PAYROLL RECEIPT NV INTERNAL Request
 -- Employee Vacaction Reques
+-- NEW FIELDS InvDateRec, DateReEntry, DateApplication, YEAR, MONTH
 SELECT * FROM (
 -- Employee file 
 	SELECT DISTINCT
@@ -23,7 +24,16 @@ SELECT * FROM (
 	END as emp_prefix,
 	pyrq.qtyvalue,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd, pyr.DateReEntry, pyr.RefDateIni, pyr.RefDateEnd,
+	pyr.InvDateIni, 
+	pyr.InvDateEnd,
+	pyr.RefDateIni, 
+	pyr.RefDateEnd,
+	pyr.InvDateRec, 
+	pyr.DateAcct,
+	pyr.DateReEntry,
+	pyr.DateApplication,
+	pyr.YEAR,
+	pyr.MONTH,
 	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateIni), 'L','es') AS  diaInvDateIni,
 	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateEnd), 'L','es') AS  diaInvDateEnd,
 	adempiere.amf_dow2letter(extract(dow from  pyr.DateReEntry), 'L','es') AS  diaDateReEntry,

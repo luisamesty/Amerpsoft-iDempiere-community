@@ -22,7 +22,16 @@ SELECT * FROM (
 		          ELSE 'el señor'
 	END as emp_prefix,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.InvDateIni, 
+	pyr.InvDateEnd,
+	pyr.RefDateIni, 
+	pyr.RefDateEnd,
+	pyr.InvDateRec, 
+	pyr.DateAcct,
+	pyr.DateReEntry,
+	pyr.DateApplication,
+	pyr.YEAR,
+	pyr.MONTH,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 

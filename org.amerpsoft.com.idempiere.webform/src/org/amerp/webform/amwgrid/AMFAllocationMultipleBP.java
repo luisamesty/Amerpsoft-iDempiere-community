@@ -191,7 +191,8 @@ public class AMFAllocationMultipleBP
 				+ "c.ISO_Code,p.PayAmt,"                            //  4..5
 				+ "currencyConvertPayment(p.C_Payment_ID,?,null,?) as payamount,"//  6   #1, #2
 				+ "currencyConvertPayment(p.C_Payment_ID,?,paymentAvailable(p.C_Payment_ID),?) as payavailable,"  //  7   #3, #4
-				+ "p.MultiplierAP "
+				+ "p.MultiplierAP, "
+				+ "p.description "
 				+ "FROM C_Payment_v p"		//	Corrected for AP/AR
 				+ " INNER JOIN C_Currency c ON (p.C_Currency_ID=c.C_Currency_ID) "
 				+ "WHERE p.IsAllocated='N' AND p.Processed='Y'"
@@ -237,7 +238,8 @@ public class AMFAllocationMultipleBP
 					continue;
 				line.add(available);				//  4/6-ConvOpen/Available
 				line.add(Env.ZERO);					//  5/7-Payment
-//				line.add(rs.getBigDecimal(8));		//  6/8-Multiplier
+				//
+				line.add(rs.getString(9));			//  6/8 Description
 				//
 				data.add(line);
 			}
@@ -269,6 +271,7 @@ public class AMFAllocationMultipleBP
 		columnNames.add(Msg.getMsg(Env.getCtx(), "ConvertedAmount"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "OpenAmt"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "AppliedAmt"));
+		columnNames.add(Msg.translate(Env.getCtx(), "Description"));
 //		columnNames.add(" ");	//	Multiplier
 		
 		return columnNames;
@@ -288,7 +291,7 @@ public class AMFAllocationMultipleBP
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  5-ConvAmt
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  6-ConvOpen
 		paymentTable.setColumnClass(i++, BigDecimal.class, false);      //  7-Allocated
-//		paymentTable.setColumnClass(i++, BigDecimal.class, true);      	//  8-Multiplier
+		paymentTable.setColumnClass(i++, String.class, true);      		//  8-Description
 
 		//
 		i_payment = isMultiCurrency ? 7 : 5;

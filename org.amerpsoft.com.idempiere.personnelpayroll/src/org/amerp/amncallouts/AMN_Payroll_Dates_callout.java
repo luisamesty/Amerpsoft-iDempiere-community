@@ -49,7 +49,8 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 	Integer AMN_Shift_ID = 0;
 	String PayDocumentNO ="";
 	String AMN_Process_Value = "NN";
-	Integer DaysVacation=0;
+	Integer elapsedDaysVacation=0;
+	Integer elapsedDaysVacationCollective=0;
 	Timestamp InvDateIni;
 	Timestamp InvDateEnd;
 	Timestamp DateReEntry;
@@ -63,6 +64,8 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 	// AMN Dates
 	Date AMNDateIni;		// AMNDateIni
 	Date AMNDateEnd;		// AMNDateEnd
+	Timestamp receiptDateReEntry;
+	Timestamp receiptDateReEntryReal;
 	boolean isModified = false;
 	boolean updateRec = true;
 	boolean overrideCalc = false;
@@ -132,13 +135,45 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 				if (p_mTab.getValue(MAMN_Payroll.COLUMNNAME_InvDateIni) != null &&
 						!overrideCalc) {
 					InvDateIni = (Timestamp) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_InvDateIni);
-					DaysVacation = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation);
+					elapsedDaysVacation = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation);
+					if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
+						elapsedDaysVacation = elapsedDaysVacation -1;
+					}
+					elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
+					if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+						elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
 					// Get Next Business Day
 					if (InvDateIni != null) {	
-						AMNDateEnd = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(DaysVacation), AD_Client_ID, AD_Org_ID);
-						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_InvDateEnd,AMNDateEnd);
+						InvDateEnd = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation), AD_Client_ID, AD_Org_ID);
+						receiptDateReEntry = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateEnd,  BigDecimal.ONE, AD_Client_ID, AD_Org_ID);
+						receiptDateReEntryReal = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation).subtract(BigDecimal.valueOf(elapsedDaysVacationCollective)), AD_Client_ID, AD_Org_ID);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_InvDateEnd,InvDateEnd);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntry,receiptDateReEntry);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntryReal,receiptDateReEntryReal);
 					}
 				}
+			} else if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_DaysVacationCollective)) {
+				if (p_mTab.getValue(MAMN_Payroll.COLUMNNAME_InvDateIni) != null &&
+						!overrideCalc) {
+					InvDateIni = (Timestamp) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_InvDateIni);
+					elapsedDaysVacation = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation);
+					if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
+						elapsedDaysVacation = elapsedDaysVacation -1;
+					}
+					elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
+					if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+						elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
+					// Get Next Business Day
+					if (InvDateIni != null) {	
+						InvDateEnd = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation), AD_Client_ID, AD_Org_ID);
+						receiptDateReEntry = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateEnd,  BigDecimal.ONE, AD_Client_ID, AD_Org_ID);
+						receiptDateReEntryReal = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation).subtract(BigDecimal.valueOf(elapsedDaysVacationCollective)), AD_Client_ID, AD_Org_ID);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_InvDateEnd,InvDateEnd);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntry,receiptDateReEntry);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntryReal,receiptDateReEntryReal);
+					}
+				}
+				
 			} else if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_month) ||
 					columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_year)) {
 			// month
@@ -171,11 +206,27 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 						p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation) != null &&
 						!overrideCalc) {
 					InvDateIni = (Timestamp) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_InvDateIni);
-					DaysVacation = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation);
+					// Verify if Businessday
+					if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, InvDateIni, amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID() )) {
+				            // Lanza un mensaje de error y detiene el proceso
+				            throw new IllegalArgumentException(Msg.translate(p_ctx, "InvDateIni") + 
+				            		 " - "+ InvDateIni+ " - "+ Msg.getMsg(p_ctx, "NonBusinessDay"));
+				    }
+					elapsedDaysVacation = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation);
+					if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
+						elapsedDaysVacation = elapsedDaysVacation -1;
+					}
+					elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
+					if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+						elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
 					// Get Next Business Day
 					if (InvDateIni != null) {	
-						AMNDateEnd = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(DaysVacation), AD_Client_ID, AD_Org_ID);
-						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_InvDateEnd,AMNDateEnd);
+						InvDateEnd = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation), AD_Client_ID, AD_Org_ID);
+						receiptDateReEntry = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateEnd,  BigDecimal.ONE, AD_Client_ID, AD_Org_ID);
+						receiptDateReEntryReal = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation).subtract(BigDecimal.valueOf(elapsedDaysVacationCollective)), AD_Client_ID, AD_Org_ID);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_InvDateEnd,InvDateEnd);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntry,receiptDateReEntry);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntryReal,receiptDateReEntryReal);
 					}
 				}
 			} else if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_InvDateEnd)) {
@@ -184,10 +235,18 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 						p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacation) != null &&
 						!overrideCalc) {
 					InvDateEnd = (Timestamp) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_InvDateEnd);
+					// Verify if Businessday
+					if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, InvDateEnd, amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID() )) {
+				            // Lanza un mensaje de error y detiene el proceso
+				            throw new IllegalArgumentException(Msg.translate(p_ctx, "InvDateEnd") + 
+				            		 " - "+ InvDateEnd+ " - "+ Msg.getMsg(p_ctx, "NonBusinessDay"));
+				    }
 					// Get Next Business Day
 					if (InvDateEnd != null) {	
-						DateReEntry = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateEnd,  BigDecimal.ONE, AD_Client_ID, AD_Org_ID);
-						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntry,DateReEntry);
+						receiptDateReEntry = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateEnd,  BigDecimal.ONE, AD_Client_ID, AD_Org_ID);
+						receiptDateReEntryReal = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, InvDateIni,  BigDecimal.valueOf(elapsedDaysVacation).subtract(BigDecimal.valueOf(elapsedDaysVacationCollective)), AD_Client_ID, AD_Org_ID);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntry,receiptDateReEntry);
+						p_mTab.setValue(MAMN_Payroll.COLUMNNAME_DateReEntryReal,receiptDateReEntryReal);
 					}
 				}
 			} else if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_RefDateIni) ||
