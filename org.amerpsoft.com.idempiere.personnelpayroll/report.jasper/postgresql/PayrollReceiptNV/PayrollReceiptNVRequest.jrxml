@@ -70,10 +70,6 @@
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="DateOrdered" class="java.sql.Timestamp"/>
-	<parameter name="InvDateIni" class="java.sql.Timestamp">
-		<defaultValueExpression><![CDATA[new SimpleDateFormat("yy-MM-dd").format($P{InvDateIni})]]></defaultValueExpression>
-	</parameter>
 	<parameter name="AMN_Payroll_ID" class="java.lang.Integer">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -102,7 +98,16 @@ SELECT * FROM (
 		          ELSE 'el señor'
 	END as emp_prefix,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd,
+	pyr.InvDateIni, 
+	pyr.InvDateEnd,
+	pyr.RefDateIni, 
+	pyr.RefDateEnd,
+	pyr.InvDateRec, 
+	pyr.DateAcct,
+	pyr.DateReEntry,
+	pyr.DateApplication,
+	pyr.YEAR,
+	pyr.MONTH,
 	-- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
@@ -229,6 +234,46 @@ ORDER BY empleado ASC]]>
 		<property name="com.jaspersoft.studio.field.label" value="invdateend"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
 	</field>
+	<field name="refdateini" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="refdateini"/>
+		<property name="com.jaspersoft.studio.field.label" value="refdateini"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="refdateend" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="refdateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="refdateend"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="invdaterec" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="invdaterec"/>
+		<property name="com.jaspersoft.studio.field.label" value="invdaterec"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="dateacct" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateacct"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateacct"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="datereentry" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="datereentry"/>
+		<property name="com.jaspersoft.studio.field.label" value="datereentry"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="dateapplication" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateapplication"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateapplication"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="year" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="year"/>
+		<property name="com.jaspersoft.studio.field.label" value="year"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="month" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="month"/>
+		<property name="com.jaspersoft.studio.field.label" value="month"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
 	<field name="tipo_contrato" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="tipo_contrato"/>
 		<property name="com.jaspersoft.studio.field.label" value="tipo_contrato"/>
@@ -304,12 +349,6 @@ ORDER BY empleado ASC]]>
 		<property name="com.jaspersoft.studio.field.label" value="email"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
 	</field>
-	<variable name="monthDateRequest" class="java.lang.String">
-		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{DateOrdered})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
-	</variable>
-	<variable name="monthDateIni" class="java.lang.String">
-		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{invdateini})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
-	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -378,7 +417,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+new SimpleDateFormat("yyyy").format($P{DateOrdered}) +".\r\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+$F{year} +".\r\n"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="30" y="172" width="490" height="20" isRemoveLineWhenBlank="true" uuid="469350c4-5e4a-4f48-989c-bca0c76a6c79">
@@ -409,7 +448,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ciudad_dir}.trim() +", "+ new SimpleDateFormat("dd").format($P{DateOrdered}) + " de "+$V{monthDateRequest}+ " de "+ new SimpleDateFormat("yyyy").format($P{DateOrdered})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ciudad_dir}.trim() +", "+ new SimpleDateFormat("dd").format($F{dateapplication}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{dateapplication})+ " de "+ new SimpleDateFormat("yyyy").format($F{dateapplication})]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="30" y="49" width="490" height="15" isRemoveLineWhenBlank="true" uuid="a6acbc1e-c6aa-4f58-8d6a-4960290b9e02">
@@ -434,7 +473,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Las mismas iniciará desde el día  " + new SimpleDateFormat("dd").format($F{invdateini}) + " de "+$V{monthDateIni}+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateini}) +".\r\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Las mismas iniciará desde el día  " + new SimpleDateFormat("dd").format($F{invdateini}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{invdateini})+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateini}) +".\r\n"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="50" y="310" width="248" height="14" isRemoveLineWhenBlank="true" uuid="88f81130-08cc-467f-8342-ef87c39bdb74">

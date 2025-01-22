@@ -453,6 +453,8 @@ public class AMNPayrollCreateDocs {
 			amnpayroll = MAMN_Payroll.findByAMNPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
 			p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
 			p_AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
+		} else {
+			amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, null);
 		}
 		Msg_Value=Msg_Value+(Msg.getElement(ctx, "AMN_Payroll_ID")+":"+p_AMN_Employee_ID+" \r\n").trim();
 		//log.warning(" BEGIN CalculateOnePayrollDocument...p_AMN_Payroll_ID="+p_AMN_Payroll_ID+"\r\n"+Msg_Value);

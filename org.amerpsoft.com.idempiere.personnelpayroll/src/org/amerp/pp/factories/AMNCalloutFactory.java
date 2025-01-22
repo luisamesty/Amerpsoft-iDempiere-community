@@ -115,6 +115,9 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			// FieldRef: DaysVacation 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_DaysVacation))
 				list.add(new AMN_Payroll_Dates_callout());
+			// FieldRef: DaysVacationCollective 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_DaysVacationCollective))
+				list.add(new AMN_Payroll_Dates_callout());
 			// DateReEntry
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_month) ||
 				columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_year)) {

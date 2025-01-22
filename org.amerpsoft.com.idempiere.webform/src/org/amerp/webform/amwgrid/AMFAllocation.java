@@ -281,7 +281,7 @@ public class AMFAllocation
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  5-ConvAmt
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  6-ConvOpen
 		paymentTable.setColumnClass(i++, BigDecimal.class, false);      //  7-Allocated
-		paymentTable.setColumnClass(i++, String.class, true);      		//  8-Employee
+		paymentTable.setColumnClass(i++, String.class, true);      		//  8-Description
 		//
 		i_payment = isMultiCurrency ? 7 : 5;
 		

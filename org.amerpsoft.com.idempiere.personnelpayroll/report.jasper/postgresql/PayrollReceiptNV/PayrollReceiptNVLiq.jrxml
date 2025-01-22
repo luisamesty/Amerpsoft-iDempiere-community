@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollReceiptNVLiq" pageWidth="612" pageHeight="317" columnWidth="592" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" resourceBundle="PayrollReceiptNV" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollReceiptNVLiq" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollReceiptNV" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="333"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="660"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="mm"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
@@ -17,7 +17,9 @@
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
 	<parameter name="C_Currency_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
 	</parameter>
@@ -45,6 +47,7 @@
 		<![CDATA[-- PAYROLL RECEIPT NV INTERNAL
 -- FROM AD_Tree 1000008  FROM A GIVEN AD_Client_ID
 -- FOR NEW Payroll REPORTS
+-- UPDATED FOR New Fields InvDateRec, 
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -173,18 +176,20 @@ SELECT
 	value2,
 	name2,
 	calcorder2,
-	amndateend,
 	isshow,
 	c_value,
 	departamento,
 	value_emp,
 	empleado, 
-	fecha_ingreso, paymenttype,
+	fecha_ingreso, 
+	paymenttype,
 	cargo,
 	nro_id,
 	copia, 
 	copiaforma,
 	documentno,
+	invdaterec, 
+	dateacct,
 	amountallocated_t,
 	amountdeducted_t,
 	amountallocated_t2,
@@ -233,6 +238,7 @@ FROM
 	   	'Original ' as copia,
 	   	'01' as copiaforma,
 	   	COALESCE(pyr.documentno,'') as documentno,
+	   	pyr.InvDateRec, pyr.dateacct,
 	   	pyr.description as recibo,
 		pyr.amountallocated as amountallocated_t, 
 		pyr.amountdeducted as amountdeducted_t, 
@@ -287,7 +293,7 @@ FROM
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno, invdaterec, dateacct,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 
@@ -313,11 +319,6 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 		<property name="com.jaspersoft.studio.field.name" value="calcorder2"/>
 		<property name="com.jaspersoft.studio.field.label" value="calcorder2"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
-	</field>
-	<field name="amndateend" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="amndateend"/>
-		<property name="com.jaspersoft.studio.field.label" value="amndateend"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
 	</field>
 	<field name="isshow" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="isshow"/>
@@ -372,6 +373,16 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 	<field name="documentno" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="documentno"/>
 		<property name="com.jaspersoft.studio.field.label" value="documentno"/>
+	</field>
+	<field name="invdaterec" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="invdaterec"/>
+		<property name="com.jaspersoft.studio.field.label" value="invdaterec"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="dateacct" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="dateacct"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateacct"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
 	</field>
 	<field name="amountallocated_t" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amountallocated_t"/>
@@ -538,13 +549,13 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 			</band>
 		</groupFooter>
 	</group>
-	<group name="Group_porCopia">
+	<group name="Group_porCopia" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{copia}]]></groupExpression>
 		<groupHeader>
 			<band height="187">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="11" width="575" height="14" isRemoveLineWhenBlank="true" uuid="e296e979-a200-4013-a370-ca1b5f4df3cd">
+					<reportElement x="0" y="11" width="554" height="14" isRemoveLineWhenBlank="true" uuid="e296e979-a200-4013-a370-ca1b5f4df3cd">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -557,7 +568,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$F{org_name}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="">
-					<reportElement x="290" y="25" width="285" height="14" uuid="6357906f-af82-4dc5-b1ac-4beda26be54c">
+					<reportElement x="290" y="25" width="265" height="14" uuid="6357906f-af82-4dc5-b1ac-4beda26be54c">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -565,12 +576,13 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.date}+": " + new SimpleDateFormat("dd/MM/yy").format($F{amndateend})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.date}+": " + new SimpleDateFormat("dd/MM/yy").format($F{invdaterec})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="">
-					<reportElement x="290" y="39" width="285" height="14" uuid="6a156d54-491b-4bdf-9656-07b15db03c45">
+					<reportElement x="290" y="39" width="264" height="14" uuid="6a156d54-491b-4bdf-9656-07b15db03c45">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
@@ -578,7 +590,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA["No."+$F{documentno}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo">
-					<reportElement mode="Transparent" x="80" y="53" width="250" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f86af457-fc86-4e00-b8e8-a1d6e791e5d4">
+					<reportElement mode="Transparent" x="80" y="53" width="210" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f86af457-fc86-4e00-b8e8-a1d6e791e5d4">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -683,7 +695,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{dias_vacacion}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="53" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="de969518-7fcb-457d-b25c-3cd5ed8a2c9a">
+					<reportElement mode="Transparent" x="300" y="53" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="de969518-7fcb-457d-b25c-3cd5ed8a2c9a">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -697,7 +709,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.salary}+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="65" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4f673fd3-2e64-4fc7-98bc-5418c96a4c52">
+					<reportElement mode="Transparent" x="300" y="65" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4f673fd3-2e64-4fc7-98bc-5418c96a4c52">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -711,11 +723,11 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.currency}+": "]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="53" width="128" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6a671aa5-cb21-466e-b3df-1f1274a31629">
+					<reportElement mode="Transparent" x="420" y="53" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6a671aa5-cb21-466e-b3df-1f1274a31629">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
@@ -725,10 +737,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{salario_vacacion}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo">
-					<reportElement mode="Transparent" x="446" y="65" width="128" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c8bdc20f-0e66-41c9-85fc-0de630d00550">
+					<reportElement mode="Transparent" x="420" y="65" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c8bdc20f-0e66-41c9-85fc-0de630d00550">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -739,10 +750,11 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$F{iso_code2}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="330" y="89" width="245" height="14" uuid="956e7603-8f44-49c1-8a61-a008181f7d37">
+					<reportElement x="300" y="89" width="254" height="14" uuid="956e7603-8f44-49c1-8a61-a008181f7d37">
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Bottom">
 						<font fontName="Arial" isBold="true"/>
@@ -833,11 +845,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.totalallocation}+": "]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="103" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="589184fd-4445-496a-866e-70c0d5703724">
+					<reportElement mode="Transparent" x="420" y="103" width="135" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="589184fd-4445-496a-866e-70c0d5703724">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -917,10 +928,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{v_asignaciones}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="139" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="b3038cd8-397a-4f88-9a04-3c58f028dba2">
+					<reportElement mode="Transparent" x="300" y="139" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="b3038cd8-397a-4f88-9a04-3c58f028dba2">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -931,10 +941,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.judicialdiscounts}.trim()+":"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="127" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7acf9e83-ee09-4763-a8f6-14e7850e73d9">
+					<reportElement mode="Transparent" x="300" y="127" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7acf9e83-ee09-4763-a8f6-14e7850e73d9">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -945,10 +954,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.othersdiscounts}.trim()+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="151" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ac1967ac-62fb-4e62-94dc-e4b656f9d573">
+					<reportElement mode="Transparent" x="300" y="151" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ac1967ac-62fb-4e62-94dc-e4b656f9d573">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -959,10 +967,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.ips}+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="103" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7b2d18c2-5997-4342-a08a-033eaffa3804">
+					<reportElement mode="Transparent" x="300" y="103" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7b2d18c2-5997-4342-a08a-033eaffa3804">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
@@ -972,10 +979,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.loans}.trim()+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="115" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="571049ba-a861-4dca-a04b-3e51e11d1e3b">
+					<reportElement mode="Transparent" x="300" y="115" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="571049ba-a861-4dca-a04b-3e51e11d1e3b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -986,10 +992,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.vale}.trim()+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="163" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6885517d-0f5f-4eea-a250-a000c0407661">
+					<reportElement mode="Transparent" x="300" y="163" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6885517d-0f5f-4eea-a250-a000c0407661">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -1000,11 +1005,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.deductions}+": "]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="163" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="eb48ab66-a46a-4f4a-99dd-019694d6ec88">
+					<reportElement mode="Transparent" x="420" y="163" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="eb48ab66-a46a-4f4a-99dd-019694d6ec88">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -1014,11 +1018,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{v_deducciones}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="115" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="af17dba8-9e05-4a68-bca7-4458617e46db">
+					<reportElement mode="Transparent" x="420" y="115" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="af17dba8-9e05-4a68-bca7-4458617e46db">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -1028,11 +1031,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{vales}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="127" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="78f1e3cf-0e4f-4159-b13f-b2d9a78197f8">
+					<reportElement mode="Transparent" x="420" y="127" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="78f1e3cf-0e4f-4159-b13f-b2d9a78197f8">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -1042,11 +1044,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{otros_descuentos}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="139" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ace58cf7-0572-484a-8997-4a2a69acd1ee">
+					<reportElement mode="Transparent" x="420" y="139" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ace58cf7-0572-484a-8997-4a2a69acd1ee">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -1056,11 +1057,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{descuentos_judiciales}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="151" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2391b531-43e0-4549-913b-7cdcec3bcacc">
+					<reportElement mode="Transparent" x="420" y="151" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2391b531-43e0-4549-913b-7cdcec3bcacc">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -1070,10 +1070,9 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{ips}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="175" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="57f537a4-f1ef-4917-85c9-d5a70b63bd8a">
+					<reportElement mode="Transparent" x="300" y="175" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="57f537a4-f1ef-4917-85c9-d5a70b63bd8a">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
@@ -1084,11 +1083,10 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.netreceivable}+": "]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="446" y="175" width="129" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a9b60046-fe02-4436-a690-00ee13605634">
+					<reportElement mode="Transparent" x="420" y="175" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a9b60046-fe02-4436-a690-00ee13605634">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
@@ -1109,25 +1107,15 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{salario_vacacion}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="100">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<line>
-					<reportElement x="0" y="54" width="5" height="1" uuid="07f40918-9bb3-4213-a969-10c8a38f3d83">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dotted"/>
-					</graphicElement>
-				</line>
 				<textField>
-					<reportElement x="0" y="40" width="230" height="12" uuid="4338160e-34bc-40fc-b2cb-f4850bda5901">
+					<reportElement x="0" y="60" width="230" height="12" uuid="4338160e-34bc-40fc-b2cb-f4850bda5901">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Bottom">
@@ -1136,7 +1124,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="0" y="10" width="150" height="12" forecolor="#968C8C" uuid="3475dc68-7099-44fd-bce4-d37bf18042bf">
+					<reportElement x="0" y="40" width="120" height="12" forecolor="#968C8C" uuid="3475dc68-7099-44fd-bce4-d37bf18042bf">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1145,7 +1133,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.signatureworker}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="150" y="10" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f3b9ca7e-861f-4d1f-9432-e59e5357cde5">
+					<reportElement mode="Transparent" x="0" y="10" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f3b9ca7e-861f-4d1f-9432-e59e5357cde5">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1160,7 +1148,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.cash}+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="360" y="10" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="93a8e756-c9d5-4fdf-aec1-cdb83eca3d33">
+					<reportElement mode="Transparent" x="300" y="10" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="93a8e756-c9d5-4fdf-aec1-cdb83eca3d33">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1175,7 +1163,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$R{report.bank}+": "]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="460" y="10" width="115" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5df0a514-159c-4ae3-9f95-34c20bbdd202">
+					<reportElement mode="Transparent" x="420" y="10" width="134" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5df0a514-159c-4ae3-9f95-34c20bbdd202">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1190,7 +1178,7 @@ ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 					<textFieldExpression><![CDATA[$V{v_asignaciones}.subtract($V{v_deducciones})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement mode="Transparent" x="250" y="10" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6f9d7dcf-e524-4aa0-aeb9-f248d3229ee1">
+					<reportElement mode="Transparent" x="120" y="10" width="180" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6f9d7dcf-e524-4aa0-aeb9-f248d3229ee1">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>

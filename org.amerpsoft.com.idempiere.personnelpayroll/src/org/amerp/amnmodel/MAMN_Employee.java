@@ -17,6 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
 import org.compiere.model.MRefList;
@@ -266,4 +269,43 @@ public class MAMN_Employee extends X_AMN_Employee {
 		//log.warning(" FINAL Employee_Count:"+Employee_Count);
 		return retValue;
 	}
+	
+	/**
+	 * getLastWorkAnniversary
+	 * Returns Last Work Anniversary of an employee since receiptDate
+	 * @param receiptDate
+	 * @return
+	 */
+	public  Timestamp getLastWorkAnniversary( Timestamp receiptDate) {
+		
+		Timestamp incomeDate = getincomedate();
+		// Validación de entrada
+        if (incomeDate == null || receiptDate == null) {
+            throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
+        }
+
+        // Convertir las fechas Timestamp a LocalDate
+        LocalDate incomeLocalDate = incomeDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate receiptLocalDate = receiptDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Si la fecha de ingreso es posterior a la fecha del recibo, no hay aniversario
+        if (incomeLocalDate.isAfter(receiptLocalDate)) {
+            return null;
+        }
+
+        // Calcular los años de diferencia
+        long yearsBetween = ChronoUnit.YEARS.between(incomeLocalDate, receiptLocalDate);
+
+        // Determinar la última fecha de aniversario
+        LocalDate lastAnniversary = incomeLocalDate.plusYears(yearsBetween);
+
+        // Verificar si el último aniversario es posterior a la fecha del recibo
+        if (lastAnniversary.isAfter(receiptLocalDate)) {
+            lastAnniversary = lastAnniversary.minusYears(1);
+        }
+
+        // Convertir LocalDate de vuelta a Timestamp
+        return Timestamp.valueOf(lastAnniversary.atStartOfDay());
+    }
+
 }
