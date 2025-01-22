@@ -1,6 +1,7 @@
 -- PAYROLL RECEIPT NV INTERNAL
 -- FROM AD_Tree 1000008  FROM A GIVEN AD_Client_ID
 -- FOR NEW Payroll REPORTS
+-- UPDATED FOR New Fields InvDateRec, 
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -129,18 +130,20 @@ SELECT
 	value2,
 	name2,
 	calcorder2,
-	amndateend,
 	isshow,
 	c_value,
 	departamento,
 	value_emp,
 	empleado, 
-	fecha_ingreso, paymenttype,
+	fecha_ingreso, 
+	paymenttype,
 	cargo,
 	nro_id,
 	copia, 
 	copiaforma,
 	documentno,
+	invdaterec, 
+	dateacct,
 	amountallocated_t,
 	amountdeducted_t,
 	amountallocated_t2,
@@ -189,6 +192,7 @@ FROM
 	   	'Original ' as copia,
 	   	'01' as copiaforma,
 	   	COALESCE(pyr.documentno,'') as documentno,
+	   	pyr.InvDateRec, pyr.dateacct,
 	   	pyr.description as recibo,
 		pyr.amountallocated as amountallocated_t, 
 		pyr.amountdeducted as amountdeducted_t, 
@@ -243,7 +247,7 @@ FROM
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 departamento, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
+documentno, invdaterec, dateacct,amountallocated_t, amountdeducted_t, amountallocated_t2, amountdeducted_t2,
 iso_code1, iso_code2
 ORDER BY  amndateend, value_emp, documentno, copiaforma, calcorder2
 
