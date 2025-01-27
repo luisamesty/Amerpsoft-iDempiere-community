@@ -197,6 +197,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 				DaysVacation = BigDecimal.valueOf(amnpayroll.getDaysVacation());
 				elapsedDaysVacation = elapsedDaysVacation -1;
 			}
+			BigDecimal DaysVacationCollective = BigDecimal.valueOf(amnpayroll.getDaysVacationCollective());
 			// Get receipt DaysVacactionCollective and Set Elapsed time (-1)
 			Integer elapsedDaysVacationCollective = (Integer) amnpayroll.getDaysVacationCollective();
 			if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
@@ -235,6 +236,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			// Update AMN_Payroll (HEADER VALUES)
             String sql = "UPDATE AMN_Payroll "
             		+ " set DaysVacation="+DaysVacation+","
+            		+ " DaysVacationCollective='"+DaysVacationCollective+"',"
             		+ " description='"+PayrollDescription+"',"
             		+ " InvDateEnd='"+receiptDateEnd+"',"
             		+ " DateReEntry='"+receiptDateReEntry+"',"

@@ -141,8 +141,10 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 					if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
 						elapsedDaysVacation = elapsedDaysVacation -1;
 					}
-					elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
-					if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+					elapsedDaysVacationCollective = 0;
+					if ( p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective) != null) 
+						elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
+					if(elapsedDaysVacationCollective >0 )
 						elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
 					// SET New Dates
 					if (InvDateIni != null) {	
@@ -163,8 +165,10 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 					if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
 						elapsedDaysVacation = elapsedDaysVacation -1;
 					}
-					elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
-					if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+					elapsedDaysVacationCollective = 0;
+					if ( p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective) != null) 
+						elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
+					if(elapsedDaysVacationCollective >0 )
 						elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
 					// SET New Dates
 					if (InvDateIni != null) {	
@@ -219,8 +223,10 @@ public class AMN_Payroll_Dates_callout implements IColumnCallout {
 					if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
 						elapsedDaysVacation = elapsedDaysVacation -1;
 					}
-					elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
-					if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+					elapsedDaysVacationCollective = 0;
+					if ( p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective) != null) 
+						elapsedDaysVacationCollective = (Integer) p_mTab.getValue(MAMN_Payroll.COLUMNNAME_DaysVacationCollective);
+					if(elapsedDaysVacationCollective >0 )
 						elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
 					// SET New Dates
 					if (InvDateIni != null) {	
