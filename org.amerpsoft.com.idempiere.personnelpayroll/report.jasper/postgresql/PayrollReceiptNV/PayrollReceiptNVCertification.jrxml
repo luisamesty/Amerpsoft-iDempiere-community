@@ -454,7 +454,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Por la presente nota, me dirijo a Uds. a fin de comunicarles que he gozado mis vacaciones correspondientes al año "+$F{year}+" , percibiendo todo lo que me corresponde por Ley.-" +".\r\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Por la presente nota, me dirijo a Uds. a fin de comunicarles que he gozado mis vacaciones correspondientes al año "+$F{refdateend}.toLocalDateTime().getYear()+" , percibiendo todo lo que me corresponde por Ley.-" +".\r\n"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="50" y="227" width="250" height="1" uuid="493d859e-2f6c-4a78-8489-8ae05ef3e8fa">
