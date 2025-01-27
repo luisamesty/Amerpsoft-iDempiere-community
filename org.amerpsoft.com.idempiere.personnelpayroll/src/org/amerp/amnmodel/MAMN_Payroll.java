@@ -178,19 +178,49 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			// ************************
 			// Process NV VACATION	
 			// ************************
-			BigDecimal DaysVacation = AmerpPayrollCalcUtilDVFormulas.DV_VACACION(ctx, p_AMN_Payroll_ID, trxName);
+			// Data from AMN_Employee - AMN_Shift (isSaturdayBusinessDay )
 			MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
 			MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 			Timestamp employeeIncomeDate=amnemployee.getincomedate();
+			MAMN_Shift shift = null;
+			if (amnemployee.getAMN_Shift_ID() != 0)
+				shift = new MAMN_Shift(ctx, amnemployee.getAMN_Shift_ID(), trxName);
+			else 
+			  shift = new MAMN_Shift();
+			boolean isSaturdayBusinessDay = shift.isSaturdayBusinessDay(shift.getAMN_Shift_ID());
+			// Calculations from Dates
 			Timestamp receiptDateIni = amnpayroll.getInvDateIni();
+			// Get receipt DaysVacaction and Set Elapsed time (-1)
+			BigDecimal DaysVacation = AmerpPayrollCalcUtilDVFormulas.DV_VACACION(ctx, p_AMN_Payroll_ID, trxName);
+			Integer elapsedDaysVacation = (Integer) amnpayroll.getDaysVacation();
+			if (elapsedDaysVacation != null && elapsedDaysVacation > 0) {
+				DaysVacation = BigDecimal.valueOf(amnpayroll.getDaysVacation());
+				elapsedDaysVacation = elapsedDaysVacation -1;
+			}
+			// Get receipt DaysVacactionCollective and Set Elapsed time (-1)
+			Integer elapsedDaysVacationCollective = (Integer) amnpayroll.getDaysVacationCollective();
+			if(elapsedDaysVacationCollective != null && elapsedDaysVacationCollective >0 )
+				elapsedDaysVacationCollective = elapsedDaysVacationCollective -1;
+			// Receipt App Calc
+			// Application Day 15 Days 
+			Timestamp receiptDateApplication = MAMN_NonBusinessDay.getPreviusCalendarDay(receiptDateIni,  BigDecimal.valueOf(15), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID());
+			if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, receiptDateApplication, amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID() )) {
+				MAMN_NonBusinessDay.getPreviusBusinessDay(isSaturdayBusinessDay, receiptDateApplication,  BigDecimal.ONE, amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID());
+			}
+			// Receipt Date
+			Timestamp receiptDateReceipt = MAMN_NonBusinessDay.getPreviusBusinessDay(isSaturdayBusinessDay, receiptDateIni,  BigDecimal.ONE, amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID());
 			// Dates
 			LocalDateTime localDTEmployee = employeeIncomeDate.toLocalDateTime();
-			LocalDateTime localDTReceiptDateIni = receiptDateIni.toLocalDateTime();
-			Timestamp receiptDateEnd = Timestamp.valueOf(localDTReceiptDateIni.plusDays(DaysVacation.longValue()));
-			Timestamp receiptDateReEntry = Timestamp.valueOf(localDTReceiptDateIni.plusDays(DaysVacation.longValue()+1));
+			// Last work aniversary since Receipt Ini
+			LocalDateTime lastWorkAniversary = amnemployee.getLastWorkAnniversary(receiptDateIni).toLocalDateTime();
+			// REEntry Dates (legal and Real)
+			Timestamp receiptDateEnd = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, receiptDateIni,  BigDecimal.valueOf(elapsedDaysVacation), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID());
+			Timestamp receiptDateReEntry = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, receiptDateEnd,  BigDecimal.ONE, amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID());
+			Timestamp receiptDateReEntryReal = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, receiptDateIni,  BigDecimal.valueOf(elapsedDaysVacation).subtract(BigDecimal.valueOf(elapsedDaysVacationCollective)), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID());
 			int dia = localDTEmployee.getDayOfMonth();
 			int mes = localDTEmployee.getMonthValue();
-			int anio = localDTReceiptDateIni.getYear()-1;
+			// Subtract -1 to lastWorkAniversary to gete begining year
+			int anio = lastWorkAniversary.getYear()-1;
 			// Crear fecha1 usando LocalDate
 	        LocalDate fecha1 = LocalDate.of(anio, mes, dia);
 	        Timestamp vacationPeriodIni = Timestamp.valueOf(fecha1.atStartOfDay());
@@ -208,8 +238,11 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
             		+ " description='"+PayrollDescription+"',"
             		+ " InvDateEnd='"+receiptDateEnd+"',"
             		+ " DateReEntry='"+receiptDateReEntry+"',"
+            		+ " DateReEntryReal='"+receiptDateReEntryReal+"',"
             		+ " RefDateIni='"+vacationPeriodIni+"',"
             		+ " RefDateEnd='"+vacationPeriodEnd+"',"
+            		+ " DateApplication='"+receiptDateApplication+"',"
+            		+ " InvDateRec='"+receiptDateReceipt+"',"
 					+ " month="+mes+","
 					+ " year="+anio
 					+ " where amn_payroll_id ="+p_AMN_Payroll_ID;
