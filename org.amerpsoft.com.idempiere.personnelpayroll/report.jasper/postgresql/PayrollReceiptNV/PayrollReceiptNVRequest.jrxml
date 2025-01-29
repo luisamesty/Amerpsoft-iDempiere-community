@@ -417,7 +417,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+$F{year} +".\r\n"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Me dirijo a Ustedes a fin de saludarles muy respetuosamente y al mismo tiempo solicitarles mis vacaciones correspondientes al año  "+$F{refdateend}.toLocalDateTime().getYear() +".\r\n"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="30" y="172" width="490" height="20" isRemoveLineWhenBlank="true" uuid="469350c4-5e4a-4f48-989c-bca0c76a6c79">
