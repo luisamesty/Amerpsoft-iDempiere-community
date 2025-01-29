@@ -503,7 +503,8 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["USTED COMPLETÓ SUS VACACIONES CORRESPONDIENTES AL AÑO "+$F{year}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["USTED COMPLETÓ SUS VACACIONES CORRESPONDIENTES AL AÑO "+$F{refdateend}.toLocalDateTime().getYear()
+]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="30" y="270" width="248" height="14" isRemoveLineWhenBlank="true" uuid="88f81130-08cc-467f-8342-ef87c39bdb74">

@@ -227,4 +227,43 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 		return true;
 		
 	}	//	AMN_Payroll_Assist
+	
+	/**
+	 * findMAMN_Payroll_AssistByID
+	 * @param ctx
+	 * @param p_MAMN_Payroll_Assist_ID
+	 * @return
+	 */
+	public static MAMN_Payroll_Assist findMAMN_Payroll_AssistByRowID(Properties ctx, int p_MAMN_Payroll_Assist_Row_ID) {
+			
+	MAMN_Payroll_Assist retValue = null;
+	
+	String sql = "SELECT amn_payroll_assist_id "
+		+ "FROM amn_payroll_assist "
+		+ "WHERE AMN_Payroll_Assist_Row_ID=?"
+		;        
+	
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	try
+	{
+		pstmt = DB.prepareStatement(sql, null);
+        pstmt.setInt (1, p_MAMN_Payroll_Assist_Row_ID);
+		rs = pstmt.executeQuery();
+		if (rs.next())
+		{
+			retValue = new MAMN_Payroll_Assist(ctx, rs.getInt(1), null);
+		}
+	}
+    catch (SQLException e)
+    {
+    	retValue = null;
+    }
+	finally
+	{
+		DB.close(rs, pstmt);
+		rs = null; pstmt = null;
+	}
+	return retValue;
+}
 }
