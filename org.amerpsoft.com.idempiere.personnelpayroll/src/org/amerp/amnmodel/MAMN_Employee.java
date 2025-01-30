@@ -204,6 +204,48 @@ public class MAMN_Employee extends X_AMN_Employee {
 	}
 	
 	/**
+	 * findAMN_EmployeebyPin 
+	 * Description: Find AMN_Employee_ID from Pin
+	 * @param ctx
+	 * @param Pin
+	 * @return AMN_Employee or null not found()
+	 */
+	public static MAMN_Employee findAMN_EmployeebyPin(String p_Pin) {
+		
+		int AMN_Employee_ID=0;
+		MAMN_Employee retvalue= null;
+		String sql = "SELECT AMN_Employee_ID "
+			+ "FROM amn_employee "
+			+ "WHERE pin=? "
+			;        		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try
+		{
+			pstmt = DB.prepareStatement(sql, null);
+            pstmt.setString (1, p_Pin);
+			rs = pstmt.executeQuery();
+			while (rs.next())
+			{
+				AMN_Employee_ID = rs.getInt(1);
+			}
+		}
+	    catch (SQLException e)
+	    {
+	    	AMN_Employee_ID = 0;
+	    }
+		finally
+		{
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+		if (AMN_Employee_ID != 0)
+			retvalue = new MAMN_Employee(Env.getCtx(),AMN_Employee_ID, null);
+		return retvalue; 
+	}
+	
+	/**
 	 * findAMN_Employee_Status
 	 * Description: Find Status fro AMN_Employee_ID 
 	 * @param p_AMN_Employee_ID
