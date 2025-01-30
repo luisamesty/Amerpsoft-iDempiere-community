@@ -32,7 +32,7 @@ public class X_AMN_Payroll_Assist_Row extends PO implements I_AMN_Payroll_Assist
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241210L;
+	private static final long serialVersionUID = 20250130L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Row (Properties ctx, int AMN_Payroll_Assist_Row_ID, String trxName)
@@ -110,6 +110,21 @@ public class X_AMN_Payroll_Assist_Row extends PO implements I_AMN_Payroll_Assist
       return sb.toString();
     }
 
+	/** Set DateTime.
+		@param AMN_DateTime DateTime
+	*/
+	public void setAMN_DateTime (Timestamp AMN_DateTime)
+	{
+		set_Value (COLUMNNAME_AMN_DateTime, AMN_DateTime);
+	}
+
+	/** Get DateTime.
+		@return DateTime	  */
+	public Timestamp getAMN_DateTime()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_AMN_DateTime);
+	}
+
 	/** Set Payroll Assist Row.
 		@param AMN_Payroll_Assist_Row_ID Payroll Attendance Row data
 	*/
@@ -147,21 +162,32 @@ public class X_AMN_Payroll_Assist_Row extends PO implements I_AMN_Payroll_Assist
 		return (String)get_Value(COLUMNNAME_AMN_Payroll_Assist_Row_UU);
 	}
 
+	public I_AMN_Payroll_Assist_Unit getAMN_Payroll_Assist_Unit() throws RuntimeException
+	{
+		return (I_AMN_Payroll_Assist_Unit)MTable.get(getCtx(), I_AMN_Payroll_Assist_Unit.Table_ID)
+			.getPO(getAMN_Payroll_Assist_Unit_ID(), get_TrxName());
+	}
+
 	/** Set Payroll Assist Unit.
 		@param AMN_Payroll_Assist_Unit_ID Payroll Attendance Unit data
 	*/
-	public void setAMN_Payroll_Assist_Unit_ID (String AMN_Payroll_Assist_Unit_ID)
+	public void setAMN_Payroll_Assist_Unit_ID (int AMN_Payroll_Assist_Unit_ID)
 	{
-
-		set_ValueNoCheck (COLUMNNAME_AMN_Payroll_Assist_Unit_ID, AMN_Payroll_Assist_Unit_ID);
+		if (AMN_Payroll_Assist_Unit_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_Assist_Unit_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_Assist_Unit_ID, Integer.valueOf(AMN_Payroll_Assist_Unit_ID));
 	}
 
 	/** Get Payroll Assist Unit.
 		@return Payroll Attendance Unit data
 	  */
-	public String getAMN_Payroll_Assist_Unit_ID()
+	public int getAMN_Payroll_Assist_Unit_ID()
 	{
-		return (String)get_Value(COLUMNNAME_AMN_Payroll_Assist_Unit_ID);
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_Assist_Unit_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Transaction Date.

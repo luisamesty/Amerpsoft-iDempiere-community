@@ -32,7 +32,7 @@ public class X_AMN_Payroll_Assist extends PO implements I_AMN_Payroll_Assist, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241228L;
+	private static final long serialVersionUID = 20250129L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist (Properties ctx, int AMN_Payroll_Assist_ID, String trxName)
@@ -195,6 +195,34 @@ public class X_AMN_Payroll_Assist extends PO implements I_AMN_Payroll_Assist, I_
 	public int getAMN_Payroll_Assist_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_Assist_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_AMN_Payroll_Assist_Row getAMN_Payroll_Assist_Row() throws RuntimeException
+	{
+		return (I_AMN_Payroll_Assist_Row)MTable.get(getCtx(), I_AMN_Payroll_Assist_Row.Table_ID)
+			.getPO(getAMN_Payroll_Assist_Row_ID(), get_TrxName());
+	}
+
+	/** Set Payroll Assist Row.
+		@param AMN_Payroll_Assist_Row_ID Payroll Attendance Row data
+	*/
+	public void setAMN_Payroll_Assist_Row_ID (int AMN_Payroll_Assist_Row_ID)
+	{
+		if (AMN_Payroll_Assist_Row_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_Assist_Row_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_Assist_Row_ID, Integer.valueOf(AMN_Payroll_Assist_Row_ID));
+	}
+
+	/** Get Payroll Assist Row.
+		@return Payroll Attendance Row data
+	  */
+	public int getAMN_Payroll_Assist_Row_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_Assist_Row_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
