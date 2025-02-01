@@ -2,34 +2,31 @@ package org.amerp.process.imp;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.compiere.util.Language;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
-import org.compiere.model.MProcessPara;
 import org.adempiere.util.IProcessUI;
 import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Payroll_Assist;
 import org.amerp.amnmodel.MAMN_Payroll_Assist_Row;
 import org.amerp.amnmodel.MAMN_Payroll_Assist_Unit;
-import org.amerp.amnutilities.AmerpMsg;
 import org.amerp.amnutilities.PayrollAssistRowImport;
-import org.compiere.model.MClient;
-import org.compiere.model.MProcess;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-
+import org.compiere.model.MMessage;
+import org.compiere.model.MNote;
 
 public class AMNImportPayrollAssistRow extends SvrProcess {
 
@@ -41,7 +38,9 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 	IProcessUI processMonitor = null;
 	 	// Crear una lista para almacenar los PIN rechazados
     List<PayrollAssistRowImport> payrollassistrowRejected = new ArrayList<>();
-   
+    int recMAMN_Payroll_Assist_Row_ID = 0;
+    Map<String, Integer> pinToEmployeeMap = new HashMap<>();
+    
 	@Override
     protected void prepare() {
 	    // TODO Auto-generated method stub
@@ -74,103 +73,195 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     protected String doIt() throws Exception {
     	
     	MAMN_Employee amnemployee = null;
-    	MAMN_Payroll_Assist_Unit assistunit = null;
-        // Verificar si el proceso se ejecuta desde un Scheduler
-        boolean isScheduler = false;
-        Trx trx = Trx.get(get_TrxName(), true);
-        String MessagetoShow = "";
-        int rowCount = 0;
+        String messagetoShow = "";
+        String messagetoNotify= "";
         int rowsUpdated = 0;
+        Properties ctx = getCtx();
+        String trxName = get_TrxName();  // Mantener una única transacción g
+        List<Integer> processedRows = new ArrayList<>();
+        List<MAMN_Payroll_Assist> batchList = new ArrayList<>();
         
-        String sql = "SELECT * "
-        		+ "FROM AMN_Payroll_Assist_Row "
-        		+ " WHERE amn_datetime >= '" + p_RefDateIni +"'"
-        		+ " AND amn_datetime <= '"+p_RefDateEnd+"'"
-        		+ " AND AD_Client_ID =" + p_AD_Client_ID
-        		+ " AND AD_Org_ID =" + p_AD_Org_ID
-        		+ " "        		;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        // Ajustar `p_RefDateIni a las 00:00:00 y_RefDateEnd` a las 23:59:59
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(p_RefDateIni);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        p_RefDateIni = new Timestamp(cal.getTimeInMillis());
+        
+        cal.setTime(p_RefDateEnd);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        p_RefDateEnd = new Timestamp(cal.getTimeInMillis());
+               
+        // Determina el Numero de Registros
+        int rowCount = 0;
+        String countSql = "SELECT COUNT(*) FROM AMN_Payroll_Assist_Row "
+                        + "WHERE amn_datetime >= ? AND amn_datetime <= ? "
+                        + "AND AD_Client_ID = ? AND AD_Org_ID = ?";
 
+        PreparedStatement countStmt = DB.prepareStatement(countSql, get_TrxName());
+        countStmt.setTimestamp(1, p_RefDateIni);
+        countStmt.setTimestamp(2, p_RefDateEnd);
+        countStmt.setInt(3, p_AD_Client_ID);
+        countStmt.setInt(4, p_AD_Org_ID);
+
+        ResultSet countRs = countStmt.executeQuery();
+        if (countRs.next()) {
+        	rowCount = countRs.getInt(1);  // Obtiene el total de filas
+        }
+        DB.close(countRs, countStmt); // Cierra el ResultSet y el PreparedStatement
+
+        // Crea Array de PINs
+        String pinQuery = "SELECT PIN, AMN_Employee_ID FROM amn_employee WHERE PIN IN (SELECT DISTINCT PIN FROM AMN_Payroll_Assist_Row)";
+
+        try (PreparedStatement pinStmt = DB.prepareStatement(pinQuery, trxName);
+                ResultSet pinRs = pinStmt.executeQuery()) {
+
+               while (pinRs.next()) {
+                   pinToEmployeeMap.put(pinRs.getString("PIN"), pinRs.getInt("AMN_Employee_ID"));
+               }
+        }  // **Se cierran automáticamente el PreparedStatement y ResultSet**
+ 
         try {
-            pstmt = DB.prepareStatement( sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY , get_TrxName());
-            rs = pstmt.executeQuery();
-            processMonitor = Env.getProcessUI(getCtx());
-            
-            int percent = 0;
-            int rowNumber = 0;
-            
-            if (rs != null) {
-                rs.last(); // Mueve el cursor al último registro
-                rowCount = rs.getRow(); // Obtiene el número de la fila actual (que es el total de filas)
-                rs.beforeFirst(); // Vuelve al inicio del ResultSet para seguir usándolo
-            }
+
+          int batchSize = 1000;  // Número de registros por lote
+          int offset = 0;
+          boolean hasMoreRows = true;
+          processMonitor = Env.getProcessUI(ctx);
+          int percent = 0;
+          int rowNumber = 0;
           
-            while (rs.next()) {
-                MAMN_Payroll_Assist_Row row = new MAMN_Payroll_Assist_Row(getCtx(), rs, get_TrxName());
-                if (!p_IsScheduled) {
-	                rowNumber++; // Incrementamos en cada iteración
-					// Percentage Monitor
-	                percent = 100 * (rowNumber / rowCount);
-					MessagetoShow = String.format("%-10s",rowNumber)+"/"+String.format("%-10s",rowCount)+
-							" ( "+String.format("%-5s",percent)+"% )  AMN_Payroll_Assist_Row:"+
-							String.format("%-10s",row.getAMN_Payroll_Assist_Row_ID())+" - "+
-							String.format("%-10s",row.getPIN())+
-							String.format("%-20s",row.getAMN_DateTime());
-                }  
-                // Creates Assist from ROW
-                if (createAmnPayrollAssistFrowRow(getCtx(), p_AD_Client_ID, p_AD_Org_ID, row, get_TrxName())) {
-                	//  Updates AMN_Payroll_Assist_Row IsVerified with 'Y'
-                	int rowUpdt = row.updateAMNPayrollAssistRow(getCtx(), row.getAMN_Payroll_Assist_Row_ID(), sql);
-                	if (rowUpdt > 0) {
-                       trx.commit(); // Confirmar la transacción  
-                       rowsUpdated++;
-                    } else {
-                       trx.rollback(); // Revertir la transacción si no se actualizó ninguna fila
-                    }
-                } else {
-                	PayrollAssistRowImport foundUnit = PayrollAssistRowImport.searchByPin(payrollassistrowRejected, row.getPIN());
-                    if (foundUnit == null) {
-                    	MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(getCtx(), row.getAMN_Payroll_Assist_Unit_ID(),get_TrxName() );
-                    	PayrollAssistRowImport newPRR = new PayrollAssistRowImport(row.getPIN(), amnunit.getName(), 1 );
-                    	payrollassistrowRejected.add(newPRR);
-                    } else {
-                    	PayrollAssistRowImport.incrementQtyByPin(payrollassistrowRejected, row.getPIN());
-                    }
+          while (hasMoreRows) {
+        	    // Nueva transacción por lote
+        	    Trx trx = Trx.get(Trx.createTrxName("AMN_Import"), true);
+        	    // Query Lote
+                String sql = "SELECT * FROM AMN_Payroll_Assist_Row WHERE amn_datetime >= ? AND amn_datetime <= ? "
+                           + "AND AD_Client_ID = ? AND AD_Org_ID = ? LIMIT ? OFFSET ?";
+                try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	              
+	                pstmt.setTimestamp(1, p_RefDateIni);
+	                pstmt.setTimestamp(2, p_RefDateEnd);
+	                pstmt.setInt(3, p_AD_Client_ID);
+	                pstmt.setInt(4, p_AD_Org_ID);
+	                pstmt.setInt(5, batchSize);
+	                pstmt.setInt(6, offset);
+	
+	                try (ResultSet rs = pstmt.executeQuery()) {
+		                batchList = new ArrayList<>();
+		
+		                while (rs.next()) {
+		                    MAMN_Payroll_Assist_Row row = new MAMN_Payroll_Assist_Row(ctx, rs, get_TrxName());
+			                if (!p_IsScheduled) {
+				                rowNumber++; // Incrementamos en cada iteración
+								// Percentage Monitor
+				                percent = (int) (100.0 * rowNumber / rowCount);
+								messagetoShow = String.format("%-10s",rowNumber)+"/"+String.format("%-10s",rowCount)+
+										" ( "+String.format("%-6s",percent)+"% )  AMN_Payroll_Assist_Row:"+
+										String.format("%-10s",row.getAMN_Payroll_Assist_Row_ID())+" - "+
+										String.format("%-10s",row.getPIN())+
+										String.format("%-20s",row.getAMN_DateTime());
+								log.warning(messagetoShow);
+			                }
+			                
+			                // Validación del PIN (sin consultas repetidas)
+			                Integer employeeId = pinToEmployeeMap.get(row.getPIN());
+			                amnemployee = (employeeId != null) ? new MAMN_Employee(ctx, employeeId, trxName) : null;
+		
+			                if (amnemployee != null) {
+			                    MAMN_Payroll_Assist assist = createAmnPayrollAssistFromRow(ctx, p_AD_Client_ID, p_AD_Org_ID, amnemployee, row, trxName);
+			                    if (assist != null) {
+			                        assist.set_TrxName(trxName); // Asegura que use la misma transacción
+			                        batchList.add(assist);
+			                        processedRows.add(row.getAMN_Payroll_Assist_Row_ID());
+			                    }
+			                } else {
+		                    	// If return false Add to array to show at end of process
+		                    	PayrollAssistRowImport foundUnit = PayrollAssistRowImport.searchByPin(payrollassistrowRejected, row.getPIN());
+		                        if (foundUnit == null) {
+		                        	MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),get_TrxName() );
+		                        	PayrollAssistRowImport newPRR = new PayrollAssistRowImport(row.getPIN(), amnunit.getName(), 1 );
+		                        	payrollassistrowRejected.add(newPRR);
+		                        } else {
+		                        	PayrollAssistRowImport.incrementQtyByPin(payrollassistrowRejected, row.getPIN());
+		                        }
+			                }
+		                }
+	                }
                 }
-                MessagetoShow = MessagetoShow+" Rows-Imported="+String.format("%-10s",rowsUpdated);
-    			if (processMonitor != null) {
-    				processMonitor.statusUpdate(MessagetoShow);
+                // Show Screen Monitor
+    			if (!p_IsScheduled && processMonitor != null && Env.getProcessUI(getCtx()) != null) {
+    				processMonitor.statusUpdate(messagetoShow);
     			}
-            }
+	            // Guardar en batch
+                for (MAMN_Payroll_Assist assist : batchList) {
+                        assist.saveEx();
+                }
+                
+                // UPDate Processed Rows.
+                rowsUpdated = rowsUpdated + processedRows.size();
+                if (processedRows.size() > 0) {
+	                String updateSql = "UPDATE AMN_Payroll_Assist_Row SET IsVerified = 'Y' WHERE AMN_Payroll_Assist_Row_ID IN (" +
+	                                   processedRows.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
+	                DB.executeUpdate(updateSql, get_TrxName());
+	                processedRows.clear();
+                }
+                
+                // Verifica si hay mas registros
+                hasMoreRows = (rowNumber < rowCount);	
+                offset += batchSize;
+                
+                // **Agregar retardo para liberar recursos**
+                try {
+                    Thread.sleep(1000); // Espera 1000 ms antes de continuar con el siguiente lote
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
+                }
+          }
+	       	// Confirmar la transacción global al final del proceso
+          	Trx trx = Trx.get(trxName, false);
+          	if (trx != null) {
+	              trx.commit();
+          	}
+          	
         } catch (Exception e) {
             log.log(Level.SEVERE, "Error en el proceso de importación", e);
-            return Msg.getMsg(getCtx(), "ProcessFailed");
+            return Msg.getMsg(ctx, "ProcessFailed");
         } finally {
-            DB.close(rs, pstmt);
-            rs = null;
-            pstmt = null;
+
         }
         if (!p_IsScheduled) {
         	// Final Message PINs Rejected
         	// HEADER
-        	addLog(Msg.getElement(getCtx(), "PIN")+"(s) "+Msg.translate(getCtx(), "NotFound"));
+        	messagetoShow="";
+        	messagetoNotify = Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
+        	addLog(messagetoNotify);
         	// rowsUpdated rowsUpdated
-        	addLog(Msg.translate(getCtx(), "Row")+"(s) "+Msg.translate(getCtx(), "Updated")+"(s) = "+
+        	messagetoShow=Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Updated")+"(s) = "+
         			String.format("%10s",rowsUpdated)+ "   "+
-        			Msg.translate(getCtx(), "Row")+"(s) "+Msg.translate(getCtx(), "Total")+"(s) = "+
-        			String.format("%10s",rowCount)
-        			);
-        	addLog(String.format("%15s",Msg.getElement(getCtx(), MAMN_Payroll_Assist_Row.COLUMNNAME_PIN))+ "  " + 
-        			String.format("%30s",Msg.getElement(getCtx(),MAMN_Payroll_Assist_Unit.COLUMNNAME_Name))+ " " +
-        			String.format("%15s",Msg.getElement(getCtx(),"Qty")));
+        			Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Total")+"(s) = "+
+        			String.format("%10s",rowCount);
+        	addLog(messagetoShow);
+        	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
+        	messagetoShow = String.format("%15s",Msg.getElement(ctx, MAMN_Payroll_Assist_Row.COLUMNNAME_PIN))+ "  " + 
+        			String.format("%30s",Msg.getElement(ctx,MAMN_Payroll_Assist_Unit.COLUMNNAME_Name))+ " " +
+        			String.format("%15s",Msg.getElement(ctx,"Qty"));
+        	addLog(messagetoShow);
+        	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
             for (PayrollAssistRowImport unit : payrollassistrowRejected) {
-            	addLog(String.format("%15s",unit.getPin())+ "  " +
+            	messagetoShow = String.format("%15s",unit.getPin())+ "  " +
             			String.format("%30s",unit.getAMN_Payroll_Assist_Unit())+" "+
-            			String.format("%15s",unit.getQty()));
+            			String.format("%15s",unit.getQty());
+            	addLog(messagetoShow);
+            	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
             }
         }
-        return Msg.getMsg(getCtx(), "ProcessOK");
+        // Send Notification
+        sendNotification(ctx, "N", messagetoNotify);
+        return Msg.getMsg(ctx, "ProcessOK");
     }
     
     
@@ -184,33 +275,28 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
      * @param trxName
      * @return
      */
-    public boolean createAmnPayrollAssistFrowRow(Properties ctx,  
-			int p_AD_Client_ID, int p_AD_Org_ID,
+    public MAMN_Payroll_Assist createAmnPayrollAssistFromRow(Properties ctx,  
+			int p_AD_Client_ID, int p_AD_Org_ID, MAMN_Employee amnemployee, 
 			MAMN_Payroll_Assist_Row row , String trxName )
 	{
     	
-    	boolean retValue= false;
+    	MAMN_Payroll_Assist retValue= null;
     	String description = "";
     	String amn_assistrecord = "";
-    	Trx trx = Trx.get(trxName, true); // Obtener la transacción
-    	 // Obtener la tabla correspondiente
-        MTable table = MTable.get(Env.getCtx(), MAMN_Payroll_Assist.Table_Name);
-        // Verificar si el registro existe
-        MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findMAMN_Payroll_AssistByRowID(Env.getCtx(), row.getAMN_Payroll_Assist_Row_ID());
-        // Verifica Trabajador
-        MAMN_Employee amnemployee = findAMN_EmployeebyPin(row.getPIN().trim());
         // Verifica Unidad de Marcaje
         int UnitID = row.getAMN_Payroll_Assist_Unit_ID();
         // If Null Creates New
-        if (amnemployee != null ) {
-         	description = amnemployee.getValue()+"-"+amnemployee.getName().trim();
+        if (amnemployee != null && row != null) {
+           description = amnemployee.getValue()+"-"+amnemployee.getName().trim();
         	if (UnitID != 0) {
         		MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),trxName );
 	        	description = "U"+amnunit.getName().trim()+" "+description;            
         	}
-	        if (amnpayrollassist == null  ) {
+        	// Verificar si el registro existe
+            MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findMAMN_Payroll_AssistByRowID(ctx, row.getAMN_Payroll_Assist_Row_ID(), trxName);
+        	if (amnpayrollassist == null  ) {
 	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, 0 , trxName);
-	           	amnpayrollassist.setAMN_Payroll_Assist_ID(row.getAMN_Payroll_Assist_Row_ID());
+//	           	amnpayrollassist.setAMN_Payroll_Assist_ID(row.getAMN_Payroll_Assist_Row_ID());
 	        	amnpayrollassist.setAMN_Payroll_Assist_Row_ID(row.getAMN_Payroll_Assist_Row_ID());
 	        	//amnpayrollassist.setAD_Client_ID(p_AD_Client_ID);
 				amnpayrollassist.setAD_Org_ID(p_AD_Org_ID);
@@ -231,59 +317,54 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 			amnpayrollassist.setEvent_Type("I"); // Tipo de evento (I = Entrada)
 			amnpayrollassist.setBioCode(amnemployee.getBioCode()); // Código biométrico
 			amnpayrollassist.setAMN_AssistRecord(amn_assistrecord);
-			// SAVE RECORD
-			if (amnpayrollassist.save()) {
-				retValue= true;
-				 // Confirmar la transacción (commit)
-	            trx.commit();
-            }
-            
+			retValue= amnpayrollassist;
         }
 		
 		return retValue;
 	}	//	createAmnPayrollAssistFrowRow
     
-    
 	/**
-	 * findAMN_EmployeebyPin 
-	 * Description: Find AMN_Employee_ID from Pin
-	 * @param ctx
-	 * @param Pin
-	 * @return AMN_Employee or null not found()
+	 * sendNotification
+	 * N Notice : E Email : B Both - E Email and Notice : X None
+	 * @param leave
+	 * @param notificationType
+	 * @return
 	 */
-	public static MAMN_Employee findAMN_EmployeebyPin(String p_Pin) {
+	private boolean sendNotification(Properties ctx, String notificationType , String notifactionMessage) {
 		
-		int AMN_Employee_ID=0;
-		MAMN_Employee retvalue= null;
-		String sql = "SELECT AMN_Employee_ID "
-			+ "FROM amn_employee "
-			+ "WHERE pin=? "
-			;        		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
+		boolean retValue = true;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    	// MOre Option (FUTURE
+		// N Notice
+    	if (notificationType.compareToIgnoreCase("N") == 0) {
+        	MNote note = new MNote(ctx, "Import",getAD_User_ID(), null);
+        	note.setTextMsg(notifactionMessage);
+        	note.setDescription(MMessage.get(ctx, "Import") +
+        	        Msg.translate(ctx, "From") + " " +
+        	        Msg.getElement(ctx, "RefDateIni") + ":" + dateFormat.format(p_RefDateIni) + " " +
+        	        Msg.translate(ctx, "To") + " " +
+        	        Msg.getElement(ctx, "RefDateEnd") + ":" + dateFormat.format(p_RefDateEnd));
+        	note.setAD_Table_ID(MAMN_Payroll_Assist_Row.Table_ID);
+    		note.setRecord_ID(recMAMN_Payroll_Assist_Row_ID);
+    		note.setAD_Org_ID(0);
+    		note.setAD_User_ID(getAD_User_ID());
+    		note.saveEx();	
+    	} 
+    	// E Email
+    	else if (notificationType.compareToIgnoreCase("E") == 0) {
+    		
+    	}
+    	// B Both - E Email and Notice
+    	else if(notificationType.compareToIgnoreCase("B") == 0) {
+    		
+    	}
+    	// X None
+    	else if (notificationType.compareToIgnoreCase("X") == 0) {
+    		
+    	}
+	
+		return retValue;
 		
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
-            pstmt.setString (1, p_Pin);
-			rs = pstmt.executeQuery();
-			if (rs.next())
-			{
-				AMN_Employee_ID = rs.getInt(1);
-			}
-		}
-	    catch (SQLException e)
-	    {
-	    	AMN_Employee_ID = 0;
-	    }
-		finally
-		{
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-		if (AMN_Employee_ID != 0)
-			retvalue = new MAMN_Employee(Env.getCtx(),AMN_Employee_ID, null);
-		return retvalue; 
 	}
-    
 }

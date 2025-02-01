@@ -35,6 +35,7 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Personnel and Payroll R11 Timing,5030,M,,Personnel and Payroll Attendance Unit,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,5040,M,,Leaves and Licences,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,5050,M,,Payroll Personnel Payroll Assist Import,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 Timing,5060,M,,Personnel and Payroll Payroll Assist Row,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,8000,MSG,,,,,,,,,ALL,,,,,,,,,,,,Leaves,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,8010,MSG,,,,,,,,,ALL,,,,,,,,,,,,LeavesWorkFlow,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,9000,D,,,,,,,,ToolBar Button,ALL,SELECT 	* FROM 	AD_ToolBarButton WHERE 	AD_ToolBarButton_ID IN  (1000070),,,,,,,,,,,,,,,,,,
