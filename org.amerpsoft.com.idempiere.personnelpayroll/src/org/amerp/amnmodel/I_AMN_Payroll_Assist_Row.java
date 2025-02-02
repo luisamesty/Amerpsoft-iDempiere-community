@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Assist_Row
     /** TableName=AMN_Payroll_Assist_Row */
     public static final String Table_Name = "AMN_Payroll_Assist_Row";
 
-    /** AD_Table_ID=1000101 */
+    /** AD_Table_ID=1000109 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,6 +64,15 @@ public interface I_AMN_Payroll_Assist_Row
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name AMN_DateTime */
+    public static final String COLUMNNAME_AMN_DateTime = "AMN_DateTime";
+
+	/** Set DateTime	  */
+	public void setAMN_DateTime (Timestamp AMN_DateTime);
+
+	/** Get DateTime	  */
+	public Timestamp getAMN_DateTime();
+
     /** Column name AMN_Payroll_Assist_Row_ID */
     public static final String COLUMNNAME_AMN_Payroll_Assist_Row_ID = "AMN_Payroll_Assist_Row_ID";
 
@@ -92,12 +101,14 @@ public interface I_AMN_Payroll_Assist_Row
 	/** Set Payroll Assist Unit.
 	  * Payroll Attendance Unit data
 	  */
-	public void setAMN_Payroll_Assist_Unit_ID (String AMN_Payroll_Assist_Unit_ID);
+	public void setAMN_Payroll_Assist_Unit_ID (int AMN_Payroll_Assist_Unit_ID);
 
 	/** Get Payroll Assist Unit.
 	  * Payroll Attendance Unit data
 	  */
-	public String getAMN_Payroll_Assist_Unit_ID();
+	public int getAMN_Payroll_Assist_Unit_ID();
+
+	public I_AMN_Payroll_Assist_Unit getAMN_Payroll_Assist_Unit() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";

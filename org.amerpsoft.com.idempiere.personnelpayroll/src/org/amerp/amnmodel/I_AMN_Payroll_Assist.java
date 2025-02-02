@@ -95,6 +95,21 @@ public interface I_AMN_Payroll_Assist
 	  */
 	public int getAMN_Payroll_Assist_ID();
 
+    /** Column name AMN_Payroll_Assist_Row_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Assist_Row_ID = "AMN_Payroll_Assist_Row_ID";
+
+	/** Set Payroll Assist Row.
+	  * Payroll Attendance Row data
+	  */
+	public void setAMN_Payroll_Assist_Row_ID (int AMN_Payroll_Assist_Row_ID);
+
+	/** Get Payroll Assist Row.
+	  * Payroll Attendance Row data
+	  */
+	public int getAMN_Payroll_Assist_Row_ID();
+
+	public I_AMN_Payroll_Assist_Row getAMN_Payroll_Assist_Row() throws RuntimeException;
+
     /** Column name AMN_Payroll_Assist_UU */
     public static final String COLUMNNAME_AMN_Payroll_Assist_UU = "AMN_Payroll_Assist_UU";
 

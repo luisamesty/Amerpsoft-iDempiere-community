@@ -8,21 +8,15 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.exceptions.DBException;
-import org.adempiere.model.ImportValidator;
 import org.amerp.amnmodel.I_AMN_I_Employee;
-import org.amerp.amnmodel.I_AMN_I_Employee_Salary;
 import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_I_Employee;
-import org.amerp.amnmodel.X_AMN_I_Employee;
 import org.compiere.model.MBPBankAccount;
 import org.compiere.model.MBPGroup;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerLocation;
-import org.compiere.model.MContactInterest;
 import org.compiere.model.MLocation;
 import org.compiere.model.MUser;
-import org.compiere.model.ModelValidationEngine;
-import org.compiere.model.X_I_BPartner;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
@@ -71,7 +65,7 @@ public class AMNImportEmployee extends SvrProcess{
 		//	Delete Old Imported
 		if (m_deleteOldImported)
 		{
-			sql = new StringBuilder ("DELETE AMN_I_Employee_Salary ")
+			sql = new StringBuilder ("DELETE FROM AMN_I_Employee ")
 					.append("WHERE I_IsImported='Y'").append(clientCheck);
 			no = DB.executeUpdateEx(sql.toString(), get_TrxName());
 			if (log.isLoggable(Level.FINE)) log.fine("Delete Old Impored =" + no);
@@ -122,30 +116,32 @@ public class AMNImportEmployee extends SvrProcess{
 			// Remember Previous Employee Value BP is only first one, others are contacts.
 			String Old_EmployeeValue = "" ; 
 			MAMN_Employee emp = null;
-			MBPartnerLocation bpl = null;
 			int C_BPartner_ID = 0;
 			int Bill_BPartner_ID = 0;
 			MBPartner impBP1 = null;
 			MBPartner impBP2 = null;
-			int AMN_I_Employee_ID = 0;
-
+			
 			while (rs.next())
 			{	
 				
 				//C_BPartner
 				C_BPartner_ID = rs.getInt("C_BPartner_ID") ;
-				Bill_BPartner_ID = rs.getInt("C_BPartner_ID") ;
+				Bill_BPartner_ID = rs.getInt("Bill_BPartner_ID") ;
 				impBP1 = new MBPartner (getCtx(), C_BPartner_ID, get_TrxName());
 				impBP2 = new MBPartner (getCtx(), Bill_BPartner_ID, get_TrxName());
-				// 
-				String userError="";
+				// Variables de Validaciones 
+				boolean okBP1 = false;
+				boolean okBP2 = false;
+				boolean okEMP = false;
+				boolean okUSR = false;
+				boolean okADD = false;
+				boolean okBKA = false;
 	
 				// Remember Value - only first occurance of the value is Employee
 				String New_EmployeeValue = rs.getString("Value") ;
 
 //				X_AMN_I_Employee impEmployee = new X_AMN_I_Employee (getCtx(), rs, get_TrxName());
 				MAMN_I_Employee impEmployee = new MAMN_I_Employee (getCtx(), rs, get_TrxName());
-				AMN_I_Employee_ID = impEmployee.getAMN_I_Employee_ID();
 				StringBuilder msglog = new StringBuilder("AMN_I_Employee_ID=") .append(impEmployee.getAMN_I_Employee_ID())
 						.append(", AMN_Employee_ID=").append(impEmployee.getAMN_I_Employee_ID());
 				if (log.isLoggable(Level.FINE)) log.fine(msglog.toString());
@@ -158,19 +154,17 @@ public class AMNImportEmployee extends SvrProcess{
 					//	****	Create/Update C_BPartner	****
 					if (impBP1.getC_BPartner_ID() == 0)	{
 					//	Insert new BPartner
+						C_BPartner_ID = getBPartnerIDByValue(getCtx(), impEmployee.getBPValue(), m_AD_Client_ID, get_TrxName());
+						if (C_BPartner_ID != 0)
+							impBP1 = new MBPartner (getCtx(), C_BPartner_ID, get_TrxName());
 						setBPartnerFromImpEmployee(getCtx(), impBP1, impEmployee, get_TrxName());
 						try {
 							if (impBP1.save()) {
 								impEmployee.setC_BPartner_ID(impBP1.getC_BPartner_ID());
 								msglog = new StringBuilder("Insert BPartner - ").append(impBP1.getC_BPartner_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
-								noInsertBP++;
+								okBP1=true;
 							} else	{
-//								sql = new StringBuilder ("UPDATE AMN_I_Employee i ")
-//										.append("SET I_IsImported='N', I_ErrorMsg=I_ErrorMsg||")
-//								.append("'Cannot Insert BPartner, ' ")
-//								.append("WHERE AMN_I_Employee_ID=").append(impEmployee.getAMN_I_Employee_ID());
-//								DB.executeUpdateEx(sql.toString(), get_TrxName());
 								updateErrorMessage(false, "Cannot Insert Bill BPartner, ", impEmployee);
 								continue;
 							}
@@ -179,7 +173,21 @@ public class AMNImportEmployee extends SvrProcess{
 						}
 					} else {				
 					//	Update existing BPartner
-					
+						impBP1 = new MBPartner (getCtx(), C_BPartner_ID, get_TrxName());
+						setBPartnerFromImpEmployee(getCtx(), impBP1, impEmployee, get_TrxName());
+						try {
+							if (impBP1.save()) {
+								impEmployee.setC_BPartner_ID(impBP1.getC_BPartner_ID());
+								msglog = new StringBuilder("Update BPartner - ").append(impBP1.getC_BPartner_ID());
+								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+								okBP1=true;
+							} else	{
+								updateErrorMessage(false, "Cannot Update Bill BPartner, ", impEmployee);
+								continue;
+							}
+						} finally {
+								
+						}
 					}
 				}
 				// -------------------------------------------------------------------
@@ -190,6 +198,8 @@ public class AMNImportEmployee extends SvrProcess{
 					if (impBP2.getC_BPartner_ID() == 0)	{
 						// Verify Bill_BPValue
 						Bill_BPartner_ID = getBPartnerIDByValue(getCtx(), impEmployee.getBill_BPValue(), m_AD_Client_ID, get_TrxName());
+						if (Bill_BPartner_ID != 0)
+							impBP2 = new MBPartner (getCtx(), Bill_BPartner_ID, get_TrxName());
 						if (Bill_BPartner_ID  ==  0 ) {
 							setBillBPartnerFromImpEmployee(getCtx(), impBP2, impEmployee, get_TrxName());
 							try {
@@ -197,12 +207,8 @@ public class AMNImportEmployee extends SvrProcess{
 									impEmployee.setBill_BPartner_ID(impBP2.getC_BPartner_ID());
 									msglog = new StringBuilder("Insert Bill BPartner - ").append(impBP2.getC_BPartner_ID());
 									if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+									okBP2=true;
 								} else	{
-//									sql = new StringBuilder ("AMN_I_Employee i ")
-//											.append("SET I_IsImported='N', I_ErrorMsg=I_ErrorMsg||")
-//									.append("'Cannot Insert BPartner, ' ")
-//									.append("WHERE AMN_I_Employee_ID=").append(impEmployee.getAMN_I_Employee_ID());
-//									DB.executeUpdateEx(sql.toString(), get_TrxName());
 									updateErrorMessage(false, "Cannot Insert Bill BPartner, ", impEmployee);
 									continue;
 								}
@@ -213,9 +219,9 @@ public class AMNImportEmployee extends SvrProcess{
 						} else {
 							impEmployee.setBill_BPartner_ID(Bill_BPartner_ID);
 						}
-					} else {				
-					//	Update existing BPartner
-					
+					} else {
+						// Bill_BP 
+						okBP2=true;
 					}
 					
 				}
@@ -236,12 +242,9 @@ public class AMNImportEmployee extends SvrProcess{
 								impEmployee.setAMN_Employee_ID(emp.getAMN_Employee_ID());
 								msglog = new StringBuilder("Insert Employee - ").append(emp.getAMN_Employee_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+								noInsert++;
+								okEMP=true;
 							} else	{
-//								sql = new StringBuilder ("UPDATE AMN_I_Employee i ")
-//										.append("SET I_IsImported='N', I_ErrorMsg=I_ErrorMsg||")
-//								.append("'Cannot Insert Employee, ' ")
-//								.append("WHERE AMN_I_Employee_ID=").append(impEmployee.getAMN_I_Employee_ID());
-//								DB.executeUpdateEx(sql.toString(), get_TrxName());
 								updateErrorMessage(false, "Cannot Insert Employee, ", impEmployee);
 								continue;
 							}
@@ -249,20 +252,16 @@ public class AMNImportEmployee extends SvrProcess{
 						finally {
 							
 						}
-					}
-					else				//	Update existing BPartner
-					{
+					} else {
+						//	Update existing Employee
 						emp = new MAMN_Employee(getCtx(), impEmployee.getAMN_Employee_ID(), get_TrxName());
 						try {
 							if (emp.save()) {
 								msglog = new StringBuilder("Update Employee - ").append(emp.getAMN_Employee_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+								okEMP=true;
+								noUpdate++;
 							} else	{
-//								sql = new StringBuilder ("UPDATE AMN_I_Employee i ")
-//										.append("SET I_IsImported='N', I_ErrorMsg=I_ErrorMsg||")
-//								.append("'Cannot Insert Employee, ' ")
-//								.append("WHERE AMN_I_Employee_ID=").append(impEmployee.getAMN_I_Employee_ID());
-//								DB.executeUpdateEx(sql.toString(), get_TrxName());
 								// Updates Error
 								updateErrorMessage(false, "Cannot Update Employee, ", impEmployee);
 								continue;
@@ -289,6 +288,7 @@ public class AMNImportEmployee extends SvrProcess{
 							if (defaultUser.save()) {
 								msglog = new StringBuilder("Insert User - ").append(emp.getAMN_Employee_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+								okUSR=true;
 							} else	{
 								// Updates Error
 								updateErrorMessage(false, "Cannot Insert default User, ", impEmployee);
@@ -299,7 +299,9 @@ public class AMNImportEmployee extends SvrProcess{
 							
 						}
 
-					}				
+					} else {
+						okUSR=true;
+					}
 				}
 				
 				// -------------------------------------------------------------------
@@ -333,6 +335,7 @@ public class AMNImportEmployee extends SvrProcess{
 							if (location.save()) {
 								msglog = new StringBuilder("Insert BPartnerLocation - ").append(emp.getAMN_Employee_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+								okADD=true;
 							} else	{
 								// Updates Error
 								updateErrorMessage(false, "Cannot Insert default BPartnerLocation, ", impEmployee);
@@ -343,6 +346,8 @@ public class AMNImportEmployee extends SvrProcess{
 							
 						}
 				
+					} else {
+						okADD=true;
 					}
 				}
 				
@@ -353,18 +358,19 @@ public class AMNImportEmployee extends SvrProcess{
 				// Get Default C_BP_BankAccount for Employee.
 				if ( ! New_EmployeeValue.equals(Old_EmployeeValue)) {
 					
-					MBPBankAccount[] mbpbank = impBP1.getBankAccounts(false);
+					MBPBankAccount[] mbpbankacct = impBP1.getBankAccounts(false);
 					
-					if ( mbpbank.length == 0) {
-						MBPBankAccount bank1 = new MBPBankAccount(getCtx(), 0, get_TrxName());
-						MBPBankAccount bank2 = new MBPBankAccount(getCtx(), 0, get_TrxName());
+					if ( mbpbankacct.length == 0) {
+						MBPBankAccount bankacctB = new MBPBankAccount(getCtx(), 0, get_TrxName());
+						MBPBankAccount bankacctN = new MBPBankAccount(getCtx(), 0, get_TrxName());
 						// Set Default Bank Accounts for Employee.
-						setBPBankAccountsFromImpEmployee(getCtx(), bank1, bank2, impEmployee, get_TrxName());
+						setBPBankAccountsFromImpEmployee(getCtx(), bankacctB, bankacctN, impEmployee, get_TrxName());
 						// Bank Account CR ("B");
 						try {
-							if (bank1.save()) {
+							if (bankacctB.save()) {
 								msglog = new StringBuilder("Insert Bank Account - ").append(emp.getAMN_Employee_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+								okBKA=true;
 							} else	{
 								// Updates Error
 								updateErrorMessage(false, "Cannot Insert Bank Account, ", impEmployee);
@@ -376,7 +382,7 @@ public class AMNImportEmployee extends SvrProcess{
 						}
 						// Bank Account DB ("N");
 						try {
-							if (bank2.save()) {
+							if (bankacctN.save()) {
 								msglog = new StringBuilder("Insert Bank Account - ").append(emp.getAMN_Employee_ID());
 								if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
 							} else	{
@@ -388,7 +394,9 @@ public class AMNImportEmployee extends SvrProcess{
 						finally {
 							
 						}
-					}	
+					} else {
+						okBKA=true;
+					}
 				}
 				
 				// 
@@ -398,8 +406,11 @@ public class AMNImportEmployee extends SvrProcess{
 				
 				
 				Old_EmployeeValue = New_EmployeeValue ;
-//				impEmployee.setI_IsImported(true);
-//				impEmployee.setProcessed(true);
+				if (okBP1 && okBP2 && okEMP && okUSR && okADD && okBKA) {
+					impEmployee.setI_IsImported(true);
+					impEmployee.setProcessed(true);
+					impEmployee.setProcessing(false);
+				}
 //				impEmployee.setProcessing(false);
 				impEmployee.saveEx();
 				commitEx();
@@ -417,13 +428,13 @@ public class AMNImportEmployee extends SvrProcess{
 			DB.close(rs, pstmt);
 			rs = null; pstmt = null;
 			//	Set Error to indicator to not imported
-			sql = new StringBuilder ("UPDATE I_BPartner ")
+			sql = new StringBuilder ("UPDATE AMN_I_Employee ")
 					.append("SET I_IsImported='N', Updated=getDate() ")
 					.append("WHERE I_IsImported<>'Y'").append(clientCheck);
 			no = DB.executeUpdateEx(sql.toString(), get_TrxName());
 			addLog (0, null, new BigDecimal (no), "@Errors@");
-			addLog (0, null, new BigDecimal (noInsert), "@C_BPartner_ID@: @Inserted@");
-			addLog (0, null, new BigDecimal (noUpdate), "@C_BPartner_ID@: @Updated@");
+			addLog (0, null, new BigDecimal (noInsert), "@AMN_Employee_ID@: @Inserted@");
+			addLog (0, null, new BigDecimal (noUpdate), "@AMN_Employee_ID@: @Updated@");
 		}
 		return "";
 	}
@@ -474,9 +485,15 @@ public class AMNImportEmployee extends SvrProcess{
 		
 	}
 	
+	/**
+	 * setBillBPartnerFromImpEmployee
+	 * @param ctx
+	 * @param bp
+	 * @param impEmployee
+	 * @param trxName
+	 */
 	private void setBillBPartnerFromImpEmployee(Properties ctx, MBPartner bp, MAMN_I_Employee impEmployee, String trxName) {
 		
-		MBPartner bbp = new MBPartner(ctx);
 		MBPGroup bpg = MBPGroup.getDefault(ctx);
 		//
 		String value = impEmployee.getValue();
@@ -523,6 +540,29 @@ public class AMNImportEmployee extends SvrProcess{
 
         // Si no se encuentra, DB.getSQLValue devuelve -1
         return cBPartnerID > 0 ? cBPartnerID : 0;
+    }
+    
+    /**
+     * getBankIDByName
+     * @param ctx
+     * @param bankName
+     * @param AD_Client_ID
+     * @param trxName
+     * @return
+     */
+    private static int getBankIDByName(Properties ctx, String bankName, int AD_Client_ID, String trxName) {
+        if (bankName == null || bankName.trim().isEmpty()) {
+            return 0; // Devuelve 0 si el nombre del banco es nulo o vacío
+        }
+
+        // Consulta SQL para obtener el ID del banco basado en el nombre
+        String sql = "SELECT C_Bank_ID FROM C_Bank WHERE Name = ? AND AD_Client_ID = ?";
+
+        // Ejecuta la consulta y obtiene el ID del banco
+        int cBankID = DB.getSQLValue(trxName, sql, bankName, AD_Client_ID);
+
+        // Si no se encuentra, DB.getSQLValue devuelve -1
+        return cBankID > 0 ? cBankID : 0;
     }
     
     /**
@@ -578,16 +618,59 @@ public class AMNImportEmployee extends SvrProcess{
      * @param impEmployee
      * @param trxName
      */
-    private void setBPBankAccountsFromImpEmployee(Properties ctx, MBPBankAccount bank1,  MBPBankAccount bank2, MAMN_I_Employee impEmployee, String trxName) {
+    private void setBPBankAccountsFromImpEmployee(Properties ctx, MBPBankAccount bankacctB,  MBPBankAccount bankacctN, MAMN_I_Employee impEmployee, String trxName) {
+    	
     	
     	// Bank Account CR Use (B)
-    	bank1.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
-    	bank1.setAccountNo(impEmployee.getAccountNo_B());
-    	bank1.setBPBankAcctUse("B");
+    	String bankname;
+    	int C_Bank_ID =getBankIDByName(ctx, impEmployee.getBankName_B(), m_AD_Client_ID, get_TrxName());
+    	bankacctB.setC_Bank_ID(C_Bank_ID);
+    	bankacctB.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
+    	bankacctB.setAccountNo(impEmployee.getAccountNo_B());
+    	bankacctB.setBPBankAcctUse("B");
+    	bankname = getTranslatedBPBankAcctUse(ctx, m_AD_Client_ID, "B");
+    	bankacctB.setA_Name(bankname);
+    	
     	// Bank Account DB Use (N)
-    	bank2.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
-    	bank2.setAccountNo(impEmployee.getAccountNo_N());
-    	bank1.setBPBankAcctUse("N");
+    	C_Bank_ID =getBankIDByName(ctx, impEmployee.getBankName_N(), m_AD_Client_ID, get_TrxName());
+    	bankacctN.setC_Bank_ID(C_Bank_ID);
+    	bankacctN.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
+    	bankacctN.setAccountNo(impEmployee.getAccountNo_N());
+    	bankacctN.setBPBankAcctUse("N");
+    	bankname = getTranslatedBPBankAcctUse(ctx, m_AD_Client_ID, "N");
+    	bankacctN.setA_Name(bankname);
+    }
+    
+    /**
+     * Obtiene la traducción de un valor de la referencia BPBankAcctUse.
+     *
+     * @param ctx   El contexto de la aplicación.
+     * @param value El valor del elemento de la lista (por ejemplo, "B" para Débito, "C" para Crédito).
+     * @return La traducción del valor según el idioma del contexto, o el valor original si no se encuentra traducción.
+     */
+    public static String getTranslatedBPBankAcctUse(Properties ctx,  int AD_Client_ID, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return value; // Devuelve el valor original si es nulo o vacío
+        }
+
+        String translatedValue = value;
+        String sql = "SELECT rlt.Name "
+                   + "FROM AD_Ref_List rl "
+                   + "INNER JOIN AD_Ref_List_trl rlt ON rlt.AD_Ref_List_id = rl.AD_Ref_List_ID "
+                   + "JOIN AD_Reference r ON rl.AD_Reference_ID = r.AD_Reference_ID "
+                   + "WHERE r.Name = 'AMN_BPBankAcctUse' AND rl.Value = '"+value+"'"
+                   + "AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID= "+AD_Client_ID+") ";
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null);
+            ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                translatedValue = rs.getString("Name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return translatedValue;
     }
     
     
