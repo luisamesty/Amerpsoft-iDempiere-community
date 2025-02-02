@@ -31,7 +31,7 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241210L;
+	private static final long serialVersionUID = 20250129L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Unit (Properties ctx, int AMN_Payroll_Assist_Unit_ID, String trxName)
@@ -105,6 +105,66 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
       return sb.toString();
     }
 
+	/** Set ComKey.
+		@param AMN_ComKey ComKey
+	*/
+	public void setAMN_ComKey (String AMN_ComKey)
+	{
+		set_Value (COLUMNNAME_AMN_ComKey, AMN_ComKey);
+	}
+
+	/** Get ComKey.
+		@return ComKey	  */
+	public String getAMN_ComKey()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_ComKey);
+	}
+
+	/** Set Host.
+		@param AMN_Host Host
+	*/
+	public void setAMN_Host (String AMN_Host)
+	{
+		set_Value (COLUMNNAME_AMN_Host, AMN_Host);
+	}
+
+	/** Get Host.
+		@return Host	  */
+	public String getAMN_Host()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_Host);
+	}
+
+	/** Set LoginPassword.
+		@param AMN_LoginPassword LoginPassword
+	*/
+	public void setAMN_LoginPassword (String AMN_LoginPassword)
+	{
+		set_Value (COLUMNNAME_AMN_LoginPassword, AMN_LoginPassword);
+	}
+
+	/** Get LoginPassword.
+		@return LoginPassword	  */
+	public String getAMN_LoginPassword()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_LoginPassword);
+	}
+
+	/** Set LoginUser.
+		@param AMN_LoginUser LoginUser
+	*/
+	public void setAMN_LoginUser (String AMN_LoginUser)
+	{
+		set_Value (COLUMNNAME_AMN_LoginUser, AMN_LoginUser);
+	}
+
+	/** Get LoginUser.
+		@return LoginUser	  */
+	public String getAMN_LoginUser()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_LoginUser);
+	}
+
 	/** Set Payroll Assist Unit.
 		@param AMN_Payroll_Assist_Unit_ID Payroll Attendance Unit data
 	*/
@@ -140,6 +200,24 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	public String getAMN_Payroll_Assist_Unit_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Payroll_Assist_Unit_UU);
+	}
+
+	/** Set Port.
+		@param AMN_Port Port
+	*/
+	public void setAMN_Port (int AMN_Port)
+	{
+		set_Value (COLUMNNAME_AMN_Port, Integer.valueOf(AMN_Port));
+	}
+
+	/** Get Port.
+		@return Port	  */
+	public int getAMN_Port()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Port);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Name.

@@ -35,7 +35,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250124L;
+	private static final long serialVersionUID = 20250202L;
 
     /** Standard Constructor */
     public X_AMN_I_Employee (Properties ctx, int AMN_I_Employee_ID, String trxName)
@@ -47,6 +47,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
+			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -59,6 +60,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
+			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
 			setcivilstatus (null);
@@ -101,6 +103,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
+			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -113,6 +116,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
+			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
 			setcivilstatus (null);
@@ -155,6 +159,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
+			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -167,6 +172,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
+			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
 			setcivilstatus (null);
@@ -209,6 +215,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAccountNo_N (null);
 			setAddress1 (null);
 			setAddress2 (null);
+			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
 			setAMN_I_Employee_ID (0);
@@ -221,6 +228,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
+			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
 			setcivilstatus (null);
@@ -627,6 +635,36 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Bank Name Credit Account.
+		@param BankName_B Bank Name Credit Account
+	*/
+	public void setBankName_B (String BankName_B)
+	{
+		set_Value (COLUMNNAME_BankName_B, BankName_B);
+	}
+
+	/** Get Bank Name Credit Account.
+		@return Bank Name Credit Account	  */
+	public String getBankName_B()
+	{
+		return (String)get_Value(COLUMNNAME_BankName_B);
+	}
+
+	/** Set Bank Name  Pay Account.
+		@param BankName_N Bank Name  Pay Account
+	*/
+	public void setBankName_N (String BankName_N)
+	{
+		set_Value (COLUMNNAME_BankName_N, BankName_N);
+	}
+
+	/** Get Bank Name  Pay Account.
+		@return Bank Name  Pay Account	  */
+	public String getBankName_N()
+	{
+		return (String)get_Value(COLUMNNAME_BankName_N);
 	}
 
 	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException
@@ -1766,7 +1804,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	*/
 	public void setPhone (String Phone)
 	{
-		set_ValueNoCheck (COLUMNNAME_Phone, Phone);
+		set_Value (COLUMNNAME_Phone, Phone);
 	}
 
 	/** Get Phone.

@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Payroll_Assist_Row
+/** Generated Interface for AMN_Payroll_Docs
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Payroll_Assist_Row 
+public interface I_AMN_Payroll_Docs 
 {
 
-    /** TableName=AMN_Payroll_Assist_Row */
-    public static final String Table_Name = "AMN_Payroll_Assist_Row";
+    /** TableName=AMN_Payroll_Docs */
+    public static final String Table_Name = "AMN_Payroll_Docs";
 
-    /** AD_Table_ID=1000109 */
+    /** AD_Table_ID=1000120 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -46,8 +46,8 @@ public interface I_AMN_Payroll_Assist_Row
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,60 +55,88 @@ public interface I_AMN_Payroll_Assist_Row
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_DateTime */
-    public static final String COLUMNNAME_AMN_DateTime = "AMN_DateTime";
+    /** Column name AMN_Concept_Types_ID */
+    public static final String COLUMNNAME_AMN_Concept_Types_ID = "AMN_Concept_Types_ID";
 
-	/** Set DateTime	  */
-	public void setAMN_DateTime (Timestamp AMN_DateTime);
+	/** Set Payroll Concepts Types	  */
+	public void setAMN_Concept_Types_ID (int AMN_Concept_Types_ID);
 
-	/** Get DateTime	  */
-	public Timestamp getAMN_DateTime();
+	/** Get Payroll Concepts Types	  */
+	public int getAMN_Concept_Types_ID();
 
-    /** Column name AMN_Payroll_Assist_Row_ID */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Row_ID = "AMN_Payroll_Assist_Row_ID";
+	public I_AMN_Concept_Types getAMN_Concept_Types() throws RuntimeException;
 
-	/** Set Payroll Assist Row.
-	  * Payroll Attendance Row data
+    /** Column name AMN_Payroll_Docs_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Docs_ID = "AMN_Payroll_Docs_ID";
+
+	/** Set Payroll Documents Associated.
+	  * Payroll Documents Associated with a Payroll Receipt
 	  */
-	public void setAMN_Payroll_Assist_Row_ID (int AMN_Payroll_Assist_Row_ID);
+	public void setAMN_Payroll_Docs_ID (int AMN_Payroll_Docs_ID);
 
-	/** Get Payroll Assist Row.
-	  * Payroll Attendance Row data
+	/** Get Payroll Documents Associated.
+	  * Payroll Documents Associated with a Payroll Receipt
 	  */
-	public int getAMN_Payroll_Assist_Row_ID();
+	public int getAMN_Payroll_Docs_ID();
 
-    /** Column name AMN_Payroll_Assist_Row_UU */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Row_UU = "AMN_Payroll_Assist_Row_UU";
+    /** Column name AMN_Payroll_Docs_UU */
+    public static final String COLUMNNAME_AMN_Payroll_Docs_UU = "AMN_Payroll_Docs_UU";
 
-	/** Set AMN_Payroll_Assist_Row_UU	  */
-	public void setAMN_Payroll_Assist_Row_UU (String AMN_Payroll_Assist_Row_UU);
+	/** Set AMN_Payroll_Docs_UU	  */
+	public void setAMN_Payroll_Docs_UU (String AMN_Payroll_Docs_UU);
 
-	/** Get AMN_Payroll_Assist_Row_UU	  */
-	public String getAMN_Payroll_Assist_Row_UU();
+	/** Get AMN_Payroll_Docs_UU	  */
+	public String getAMN_Payroll_Docs_UU();
 
-    /** Column name AMN_Payroll_Assist_Unit_ID */
-    public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_ID = "AMN_Payroll_Assist_Unit_ID";
+    /** Column name AMN_Payroll_ID */
+    public static final String COLUMNNAME_AMN_Payroll_ID = "AMN_Payroll_ID";
 
-	/** Set Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Set Payroll Invoice	  */
+	public void setAMN_Payroll_ID (int AMN_Payroll_ID);
+
+	/** Get Payroll Invoice	  */
+	public int getAMN_Payroll_ID();
+
+	public I_AMN_Payroll getAMN_Payroll() throws RuntimeException;
+
+    /** Column name C_DocType_ID */
+    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
+
+	/** Set Document Type.
+	  * Document type or rules
 	  */
-	public void setAMN_Payroll_Assist_Unit_ID (int AMN_Payroll_Assist_Unit_ID);
+	public void setC_DocType_ID (int C_DocType_ID);
 
-	/** Get Payroll Assist Unit.
-	  * Payroll Attendance Unit data
+	/** Get Document Type.
+	  * Document type or rules
 	  */
-	public int getAMN_Payroll_Assist_Unit_ID();
+	public int getC_DocType_ID();
 
-	public I_AMN_Payroll_Assist_Unit getAMN_Payroll_Assist_Unit() throws RuntimeException;
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
+
+    /** Column name C_Invoice_ID */
+    public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
+
+	/** Set Invoice.
+	  * Invoice Identifier
+	  */
+	public void setC_Invoice_ID (int C_Invoice_ID);
+
+	/** Get Invoice.
+	  * Invoice Identifier
+	  */
+	public int getC_Invoice_ID();
+
+	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -126,19 +154,6 @@ public interface I_AMN_Payroll_Assist_Row
 	  */
 	public int getCreatedBy();
 
-    /** Column name DateTrx */
-    public static final String COLUMNNAME_DateTrx = "DateTrx";
-
-	/** Set Transaction Date.
-	  * Transaction Date
-	  */
-	public void setDateTrx (Timestamp DateTrx);
-
-	/** Get Transaction Date.
-	  * Transaction Date
-	  */
-	public Timestamp getDateTrx();
-
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -152,44 +167,18 @@ public interface I_AMN_Payroll_Assist_Row
 	  */
 	public boolean isActive();
 
-    /** Column name IsVerified */
-    public static final String COLUMNNAME_IsVerified = "IsVerified";
+    /** Column name Name */
+    public static final String COLUMNNAME_Name = "Name";
 
-	/** Set Verified.
-	  * The BOM configuration has been verified
+	/** Set Name.
+	  * Alphanumeric identifier of the entity
 	  */
-	public void setIsVerified (boolean IsVerified);
+	public void setName (String Name);
 
-	/** Get Verified.
-	  * The BOM configuration has been verified
+	/** Get Name.
+	  * Alphanumeric identifier of the entity
 	  */
-	public boolean isVerified();
-
-    /** Column name PIN */
-    public static final String COLUMNNAME_PIN = "PIN";
-
-	/** Set PIN.
-	  * Personal Identification Number
-	  */
-	public void setPIN (String PIN);
-
-	/** Get PIN.
-	  * Personal Identification Number
-	  */
-	public String getPIN();
-
-    /** Column name Status */
-    public static final String COLUMNNAME_Status = "Status";
-
-	/** Set Status.
-	  * Status of the currently running check
-	  */
-	public void setStatus (int Status);
-
-	/** Get Status.
-	  * Status of the currently running check
-	  */
-	public int getStatus();
+	public String getName();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -207,16 +196,16 @@ public interface I_AMN_Payroll_Assist_Row
 	  */
 	public int getUpdatedBy();
 
-    /** Column name WorkCode */
-    public static final String COLUMNNAME_WorkCode = "WorkCode";
+    /** Column name Value */
+    public static final String COLUMNNAME_Value = "Value";
 
-	/** Set WorkCode.
-	  * Work Code
+	/** Set Search Key.
+	  * Search key for the record in the format required - must be unique
 	  */
-	public void setWorkCode (String WorkCode);
+	public void setValue (String Value);
 
-	/** Get WorkCode.
-	  * Work Code
+	/** Get Search Key.
+	  * Search key for the record in the format required - must be unique
 	  */
-	public String getWorkCode();
+	public String getValue();
 }

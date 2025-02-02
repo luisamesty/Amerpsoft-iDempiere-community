@@ -51,6 +51,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 		AD_Client_ID = (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AD_Client_ID);
 		AD_Org_ID = (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AD_Org_ID);
 		AMN_Employeee_ID=0;
+		MAMN_Employee amnemployee = null;
 		MAMN_Shift shift = new MAMN_Shift();
 		AMN_Shift_ID = shift.sqlGetDefaultAMN_Shift_ID(AD_Client_ID);
 		// OJO Buscar dealle 
@@ -66,9 +67,9 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 		// Employee - Shift
 		if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Employee_ID)  != null ) {
 			AMN_Employeee_ID =  (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Employee_ID) ;
-			MAMN_Employee emp = new MAMN_Employee(ctx, AMN_Employeee_ID, null);
-			if (emp != null) {
-				AMN_Shift_ID = emp.getAMN_Shift_ID();
+			amnemployee = new MAMN_Employee(ctx, AMN_Employeee_ID, null);
+			if (amnemployee != null) {
+				AMN_Shift_ID = amnemployee.getAMN_Shift_ID();
 				isSaturdayBusinessDay = shift.isSaturdayBusinessDay(AMN_Shift_ID);
 			}
 		}
@@ -85,6 +86,8 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 					mTab.setValue(MAMN_Leaves.COLUMNNAME_DaysTo, DaysTo);
 					AMNLeavesStartDate = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom);
 					if (AMNLeavesStartDate != null) {
+						if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+							DaysTo = DaysTo.subtract(BigDecimal.ONE);
 						if (DaysMode.compareToIgnoreCase("B")==0) {
 							AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 						} else {
@@ -132,7 +135,15 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				DaysTo = (BigDecimal) mTab.getValue(MAMN_Leaves.COLUMNNAME_DaysTo);
 				// Get Next Business Day
 				if (AMNLeavesStartDate != null) {
+					if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+						DaysTo = DaysTo.subtract(BigDecimal.ONE);
 					if (DaysMode.compareToIgnoreCase("B")==0) {
+						// Verify if Businessday
+						if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID() )) {
+					            // Lanza un mensaje de error y detiene el proceso
+					            throw new IllegalArgumentException(Msg.translate(ctx, "DateFrom") + 
+					            		 " - "+ AMNLeavesStartDate+ " - "+ Msg.getMsg(ctx, "NonBusinessDay"));
+					    }
 						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 					} else {
 						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
@@ -149,7 +160,15 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				AMNLeavesStartDate = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom);
 				AMNLeavesEndDate   = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateTo);
 				BigDecimal DTLeave = BigDecimal.ZERO;
+				if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+					DaysTo = DaysTo.subtract(BigDecimal.ONE);
 				if (DaysMode.compareToIgnoreCase("B")==0) {
+					// Verify if Businessday
+					if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, AMNLeavesEndDate, amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID() )) {
+				            // Lanza un mensaje de error y detiene el proceso
+				            throw new IllegalArgumentException(Msg.translate(ctx, "DateTo") + 
+				                " - "+ AMNLeavesEndDate+ " - "+ Msg.getMsg(ctx, "NonBusinessDay"));
+				    }
 					DTLeave =MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(isSaturdayBusinessDay, AMNLeavesStartDate, AMNLeavesEndDate, AD_Client_ID, AD_Org_ID);
 				} else  {
 					DTLeave =MAMN_NonBusinessDay.getDaysBetween(AMNLeavesStartDate, AMNLeavesEndDate);
@@ -166,6 +185,8 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				DaysTo = (BigDecimal) mTab.getValue(MAMN_Leaves.COLUMNNAME_DaysTo);
 				// Get Next Business Day
 				if (AMNLeavesStartDate != null) {
+					if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+						DaysTo = DaysTo.subtract(BigDecimal.ONE);
 					if (DaysMode.compareToIgnoreCase("B")==0) {
 						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
 					} else {
@@ -175,8 +196,8 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				}
 			}
 		}
-	    return null;
-    
+	    
+		return null;
 	    
 	}
 

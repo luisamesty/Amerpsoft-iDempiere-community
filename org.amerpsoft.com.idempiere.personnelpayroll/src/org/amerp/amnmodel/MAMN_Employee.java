@@ -17,6 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
 import org.compiere.model.MRefList;
@@ -271,6 +274,48 @@ public class MAMN_Employee extends X_AMN_Employee {
 	}
 	
 	/**
+	 * findAMN_EmployeebyPin 
+	 * Description: Find AMN_Employee_ID from Pin
+	 * @param ctx
+	 * @param Pin
+	 * @return AMN_Employee or null not found()
+	 */
+	public static MAMN_Employee findAMN_EmployeebyPin(String p_Pin) {
+		
+		int AMN_Employee_ID=0;
+		MAMN_Employee retvalue= null;
+		String sql = "SELECT AMN_Employee_ID "
+			+ "FROM amn_employee "
+			+ "WHERE pin=? "
+			;        		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try
+		{
+			pstmt = DB.prepareStatement(sql, null);
+            pstmt.setString (1, p_Pin);
+			rs = pstmt.executeQuery();
+			while (rs.next())
+			{
+				AMN_Employee_ID = rs.getInt(1);
+			}
+		}
+	    catch (SQLException e)
+	    {
+	    	AMN_Employee_ID = 0;
+	    }
+		finally
+		{
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+		if (AMN_Employee_ID != 0)
+			retvalue = new MAMN_Employee(Env.getCtx(),AMN_Employee_ID, null);
+		return retvalue; 
+	}
+	
+	/**
 	 * findAMN_Employee_Status
 	 * Description: Find Status fro AMN_Employee_ID 
 	 * @param p_AMN_Employee_ID
@@ -336,4 +381,43 @@ public class MAMN_Employee extends X_AMN_Employee {
 		//log.warning(" FINAL Employee_Count:"+Employee_Count);
 		return retValue;
 	}
+	
+	/**
+	 * getLastWorkAnniversary
+	 * Returns Last Work Anniversary of an employee since receiptDate
+	 * @param receiptDate
+	 * @return
+	 */
+	public  Timestamp getLastWorkAnniversary( Timestamp receiptDate) {
+		
+		Timestamp incomeDate = getincomedate();
+		// Validación de entrada
+        if (incomeDate == null || receiptDate == null) {
+            throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
+        }
+
+        // Convertir las fechas Timestamp a LocalDate
+        LocalDate incomeLocalDate = incomeDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate receiptLocalDate = receiptDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Si la fecha de ingreso es posterior a la fecha del recibo, no hay aniversario
+        if (incomeLocalDate.isAfter(receiptLocalDate)) {
+            return null;
+        }
+
+        // Calcular los años de diferencia
+        long yearsBetween = ChronoUnit.YEARS.between(incomeLocalDate, receiptLocalDate);
+
+        // Determinar la última fecha de aniversario
+        LocalDate lastAnniversary = incomeLocalDate.plusYears(yearsBetween);
+
+        // Verificar si el último aniversario es posterior a la fecha del recibo
+        if (lastAnniversary.isAfter(receiptLocalDate)) {
+            lastAnniversary = lastAnniversary.minusYears(1);
+        }
+
+        // Convertir LocalDate de vuelta a Timestamp
+        return Timestamp.valueOf(lastAnniversary.atStartOfDay());
+    }
+
 }

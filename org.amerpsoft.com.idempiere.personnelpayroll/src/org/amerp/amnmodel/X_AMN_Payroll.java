@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250117L;
+	private static final long serialVersionUID = 20250205L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)
@@ -900,8 +900,24 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return (Timestamp)get_Value(COLUMNNAME_DateAcct);
 	}
 
+	/** Set Application Date.
+		@param DateApplication Application Date for period
+	*/
+	public void setDateApplication (Timestamp DateApplication)
+	{
+		set_Value (COLUMNNAME_DateApplication, DateApplication);
+	}
+
+	/** Get Application Date.
+		@return Application Date for period
+	  */
+	public Timestamp getDateApplication()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateApplication);
+	}
+
 	/** Set ReEntry Date.
-		@param DateReEntry ReEntry Date
+		@param DateReEntry Entry Date for Vacation period
 	*/
 	public void setDateReEntry (Timestamp DateReEntry)
 	{
@@ -909,10 +925,27 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	}
 
 	/** Get ReEntry Date.
-		@return ReEntry Date	  */
+		@return Entry Date for Vacation period
+	  */
 	public Timestamp getDateReEntry()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_DateReEntry);
+	}
+
+	/** Set ReEntry Date Real.
+		@param DateReEntryReal Real ReEntry Date for Employee
+	*/
+	public void setDateReEntryReal (Timestamp DateReEntryReal)
+	{
+		set_Value (COLUMNNAME_DateReEntryReal, DateReEntryReal);
+	}
+
+	/** Get ReEntry Date Real.
+		@return Real ReEntry Date for Employee
+	  */
+	public Timestamp getDateReEntryReal()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateReEntryReal);
 	}
 
 	/** Set DaysVacation.
@@ -929,6 +962,25 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public int getDaysVacation()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_DaysVacation);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Days Vacation Collective.
+		@param DaysVacationCollective Number of days for Collective Vacations
+	*/
+	public void setDaysVacationCollective (int DaysVacationCollective)
+	{
+		set_Value (COLUMNNAME_DaysVacationCollective, Integer.valueOf(DaysVacationCollective));
+	}
+
+	/** Get Days Vacation Collective.
+		@return Number of days for Collective Vacations
+	  */
+	public int getDaysVacationCollective()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_DaysVacationCollective);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -1084,6 +1136,22 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public Timestamp getInvDateIni()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_InvDateIni);
+	}
+
+	/** Set Invoice Date Receipt.
+		@param InvDateRec Invoice Date of  Receipt
+	*/
+	public void setInvDateRec (Timestamp InvDateRec)
+	{
+		set_Value (COLUMNNAME_InvDateRec, InvDateRec);
+	}
+
+	/** Get Invoice Date Receipt.
+		@return Invoice Date of  Receipt
+	  */
+	public Timestamp getInvDateRec()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_InvDateRec);
 	}
 
 	/** Set Approved.
