@@ -145,7 +145,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 		    // Get Descanso from AMN_Shift_Detail
 			Descanso= amnshiftdetail.isDescanso();	    
 			//
-		    String sql = "SELECT " + 
+		    String sql = "SELECT DISTINCT ON (event_time)" + 
 					"amn_shift_id, " + 
 					"dayofweek, " + 
 					"event_time, " + 
