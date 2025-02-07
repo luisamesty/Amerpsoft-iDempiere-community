@@ -21,25 +21,25 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for AMN_Process
+/** Generated Interface for AMN_Payroll_Docs
  *  @author iDempiere (generated) 
  *  @version Release 11
  */
 @SuppressWarnings("all")
-public interface I_AMN_Process 
+public interface I_AMN_Payroll_Docs 
 {
 
-    /** TableName=AMN_Process */
-    public static final String Table_Name = "AMN_Process";
+    /** TableName=AMN_Payroll_Docs */
+    public static final String Table_Name = "AMN_Payroll_Docs";
 
-    /** AD_Table_ID=1000005 */
+    /** AD_Table_ID=1000120 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 6 - System - Client 
+    /** AccessLevel = 3 - Client - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(6);
+    BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
 
@@ -64,62 +64,79 @@ public interface I_AMN_Process
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name AMN_Process_ID */
-    public static final String COLUMNNAME_AMN_Process_ID = "AMN_Process_ID";
+    /** Column name AMN_Concept_Types_ID */
+    public static final String COLUMNNAME_AMN_Concept_Types_ID = "AMN_Concept_Types_ID";
 
-	/** Set Payroll Process	  */
-	public void setAMN_Process_ID (int AMN_Process_ID);
+	/** Set Payroll Concepts Types	  */
+	public void setAMN_Concept_Types_ID (int AMN_Concept_Types_ID);
 
-	/** Get Payroll Process	  */
-	public int getAMN_Process_ID();
+	/** Get Payroll Concepts Types	  */
+	public int getAMN_Concept_Types_ID();
 
-    /** Column name AMN_Process_UU */
-    public static final String COLUMNNAME_AMN_Process_UU = "AMN_Process_UU";
+	public I_AMN_Concept_Types getAMN_Concept_Types() throws RuntimeException;
 
-	/** Set AMN_Process_UU	  */
-	public void setAMN_Process_UU (String AMN_Process_UU);
+    /** Column name AMN_Payroll_Docs_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Docs_ID = "AMN_Payroll_Docs_ID";
 
-	/** Get AMN_Process_UU	  */
-	public String getAMN_Process_UU();
-
-    /** Column name AMN_Process_Value */
-    public static final String COLUMNNAME_AMN_Process_Value = "AMN_Process_Value";
-
-	/** Set Process Value	  */
-	public void setAMN_Process_Value (String AMN_Process_Value);
-
-	/** Get Process Value	  */
-	public String getAMN_Process_Value();
-
-    /** Column name C_DocTypeCreditMemo_ID */
-    public static final String COLUMNNAME_C_DocTypeCreditMemo_ID = "C_DocTypeCreditMemo_ID";
-
-	/** Set Document Type for Credit Memo.
-	  * Document type used for credit memo generated from this document
+	/** Set Payroll Documents Associated.
+	  * Payroll Documents Associated with a Payroll Receipt
 	  */
-	public void setC_DocTypeCreditMemo_ID (int C_DocTypeCreditMemo_ID);
+	public void setAMN_Payroll_Docs_ID (int AMN_Payroll_Docs_ID);
 
-	/** Get Document Type for Credit Memo.
-	  * Document type used for credit memo generated from this document
+	/** Get Payroll Documents Associated.
+	  * Payroll Documents Associated with a Payroll Receipt
 	  */
-	public int getC_DocTypeCreditMemo_ID();
+	public int getAMN_Payroll_Docs_ID();
 
-	public org.compiere.model.I_C_DocType getC_DocTypeCreditMemo() throws RuntimeException;
+    /** Column name AMN_Payroll_Docs_UU */
+    public static final String COLUMNNAME_AMN_Payroll_Docs_UU = "AMN_Payroll_Docs_UU";
 
-    /** Column name C_DocTypeTarget_ID */
-    public static final String COLUMNNAME_C_DocTypeTarget_ID = "C_DocTypeTarget_ID";
+	/** Set AMN_Payroll_Docs_UU	  */
+	public void setAMN_Payroll_Docs_UU (String AMN_Payroll_Docs_UU);
 
-	/** Set Target Document Type.
-	  * Target document type for conversing documents
+	/** Get AMN_Payroll_Docs_UU	  */
+	public String getAMN_Payroll_Docs_UU();
+
+    /** Column name AMN_Payroll_ID */
+    public static final String COLUMNNAME_AMN_Payroll_ID = "AMN_Payroll_ID";
+
+	/** Set Payroll Invoice	  */
+	public void setAMN_Payroll_ID (int AMN_Payroll_ID);
+
+	/** Get Payroll Invoice	  */
+	public int getAMN_Payroll_ID();
+
+	public I_AMN_Payroll getAMN_Payroll() throws RuntimeException;
+
+    /** Column name C_DocType_ID */
+    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
+
+	/** Set Document Type.
+	  * Document type or rules
 	  */
-	public void setC_DocTypeTarget_ID (int C_DocTypeTarget_ID);
+	public void setC_DocType_ID (int C_DocType_ID);
 
-	/** Get Target Document Type.
-	  * Target document type for conversing documents
+	/** Get Document Type.
+	  * Document type or rules
 	  */
-	public int getC_DocTypeTarget_ID();
+	public int getC_DocType_ID();
 
-	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException;
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
+
+    /** Column name C_Invoice_ID */
+    public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
+
+	/** Set Invoice.
+	  * Invoice Identifier
+	  */
+	public void setC_Invoice_ID (int C_Invoice_ID);
+
+	/** Get Invoice.
+	  * Invoice Identifier
+	  */
+	public int getC_Invoice_ID();
+
+	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -137,19 +154,6 @@ public interface I_AMN_Process
 	  */
 	public int getCreatedBy();
 
-    /** Column name Description */
-    public static final String COLUMNNAME_Description = "Description";
-
-	/** Set Description.
-	  * Optional short description of the record
-	  */
-	public void setDescription (String Description);
-
-	/** Get Description.
-	  * Optional short description of the record
-	  */
-	public String getDescription();
-
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -162,28 +166,6 @@ public interface I_AMN_Process
 	  * The record is active in the system
 	  */
 	public boolean isActive();
-
-    /** Column name isAllowLotInvoices */
-    public static final String COLUMNNAME_isAllowLotInvoices = "isAllowLotInvoices";
-
-	/** Set Allow Lot Invoices	  */
-	public void setisAllowLotInvoices (boolean isAllowLotInvoices);
-
-	/** Get Allow Lot Invoices	  */
-	public boolean isAllowLotInvoices();
-
-    /** Column name IsDocControlled */
-    public static final String COLUMNNAME_IsDocControlled = "IsDocControlled";
-
-	/** Set Document Controlled.
-	  * Control account - If an account is controlled by a document, you cannot post manually to it
-	  */
-	public void setIsDocControlled (boolean IsDocControlled);
-
-	/** Get Document Controlled.
-	  * Control account - If an account is controlled by a document, you cannot post manually to it
-	  */
-	public boolean isDocControlled();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";

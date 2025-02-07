@@ -15,6 +15,8 @@ package org.amerp.amnmodel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -282,4 +284,39 @@ public class MAMN_Concept_Types extends X_AMN_Concept_Types {
     	AMN_Concept_Type_ID = DB.getSQLValue(null, sql, p_AD_Client_ID);	
 		return AMN_Concept_Type_ID;	
 	}
+	
+	/**
+	 * getFilteredConcepts
+	 * @return  List<MAMN_Concept_Types>
+	 * @param mode
+	 * @param sign
+	 * @param AMN_Process_ID
+	 * @param AMN_Contract_ID
+	 * @return
+	 */
+	public static List<MAMN_Concept_Types> getFilteredConcepts(String mode, String sign , int AMN_Process_ID) {
+        List<MAMN_Concept_Types> concepts = new ArrayList<>();
+
+        String sql= "SELECT ct.* " +
+        			"FROM AMN_Concept_Types ct " +
+        			"JOIN AMN_Concept_Types_Proc ctp ON ct.AMN_Concept_Types_ID = ctp.AMN_Concept_Types_ID " +
+        			"WHERE ct.optmode = ? AND ct.sign = ? " +
+        			"AND ctp.AMN_Process_ID = ? ";
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setString(1, mode);  // Mode = 'B' 'A' 'D' 'R' 'P' 'W'
+            pstmt.setString(2, sign); // Sign = 'C' 'D'
+            pstmt.setInt(3, AMN_Process_ID); // Process = 'NN'
+            	
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    MAMN_Concept_Types concept = new MAMN_Concept_Types(null, rs, null);
+                    concepts.add(concept);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return concepts;
+    }
 }

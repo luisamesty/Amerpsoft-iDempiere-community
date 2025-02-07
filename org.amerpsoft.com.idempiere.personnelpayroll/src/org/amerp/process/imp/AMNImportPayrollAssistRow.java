@@ -139,8 +139,20 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         	    // Nueva transacción por lote
         	    Trx trx = Trx.get(Trx.createTrxName("AMN_Import"), true);
         	    // Query Lote
-                String sql = "SELECT * FROM AMN_Payroll_Assist_Row WHERE amn_datetime >= ? AND amn_datetime <= ? "
-                           + "AND AD_Client_ID = ? AND AD_Org_ID = ? LIMIT ? OFFSET ?";
+//                String sql = "SELECT * FROM AMN_Payroll_Assist_Row WHERE amn_datetime >= ? AND amn_datetime <= ? "
+//                           + "AND AD_Client_ID = ? AND AD_Org_ID = ? LIMIT ? OFFSET ?";
+                String sql = "SELECT * FROM ( "
+                		+ "SELECT DISTINCT ON (pin, amn_datetime) "
+                		+" * "
+                		+ "FROM AMN_Payroll_Assist_Row "
+                		+ "WHERE amn_datetime >= ? "
+                		+ "  AND amn_datetime <= ? "
+                		+ "  AND AD_Client_ID = ? "
+                		+ "  AND AD_Org_ID = ? "
+                		+ "ORDER BY pin, amn_datetime "
+                		+ "LIMIT ? OFFSET ?" 
+                	+" ) AS aprar ORDER BY aprar.amn_payroll_assist_row_id ";
+                
                 try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 	              
 	                pstmt.setTimestamp(1, p_RefDateIni);

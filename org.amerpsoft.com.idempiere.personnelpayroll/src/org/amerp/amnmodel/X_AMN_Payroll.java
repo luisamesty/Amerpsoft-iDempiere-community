@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250125L;
+	private static final long serialVersionUID = 20250205L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)

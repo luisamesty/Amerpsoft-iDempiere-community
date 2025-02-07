@@ -189,6 +189,55 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		return retValue;
 	}
 
+	 /**	
+     * findPayrollDetailsByConcepts
+     * @param ctx
+     * @param amnPayrollID
+     * @param concepts List of MAMN_Concept_Types
+     * @return Map<Integer, MAMN_Payroll_Detail> (key: Concept_Type_Proc_ID, value: Payroll Detail)
+     */
+    public static Map<Integer, MAMN_Payroll_Detail> findPayrollDetailsByConcepts(
+            Properties ctx, int amnPayrollID, List<MAMN_Concept_Types> concepts) {
+
+        Map<Integer, MAMN_Payroll_Detail> resultMap = new HashMap<>();
+        if (concepts == null || concepts.isEmpty()) {
+            return resultMap; // No hay conceptos, retornamos lista vacía.
+        }
+
+        // Construimos la cláusula WHERE con placeholders "?"
+        StringBuilder sql = new StringBuilder(
+            "SELECT pad.* FROM amn_payroll_detail pad " +
+            "JOIN amn_concept_types_proc ctp ON pad.amn_concept_types_proc_id = ctp.amn_concept_types_proc_id " +
+            "WHERE pad.amn_payroll_id = ? AND ctp.amn_concept_types_id IN ("
+        );
+
+        for (int i = 0; i < concepts.size(); i++) {
+            sql.append("?");
+            if (i < concepts.size() - 1) {
+                sql.append(", ");
+            }
+        }
+        sql.append(")");
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql.toString(), null)) {
+            pstmt.setInt(1, amnPayrollID);
+            for (int i = 0; i < concepts.size(); i++) {
+                pstmt.setInt(i + 2, concepts.get(i).getAMN_Concept_Types_ID());
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    MAMN_Payroll_Detail payrollDetail = new MAMN_Payroll_Detail(ctx, rs, null);
+                    resultMap.put(payrollDetail.getAMN_Concept_Types_Proc_ID(), payrollDetail);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resultMap;
+    }
+	
 	/**
 	 * createAmnPayrollDetail
 	 * @param ctx
