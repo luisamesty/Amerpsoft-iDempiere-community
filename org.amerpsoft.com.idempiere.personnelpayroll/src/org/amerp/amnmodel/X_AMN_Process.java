@@ -32,7 +32,7 @@ public class X_AMN_Process extends PO implements I_AMN_Process, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240718L;
+	private static final long serialVersionUID = 20250205L;
 
     /** Standard Constructor */
     public X_AMN_Process (Properties ctx, int AMN_Process_ID, String trxName)
@@ -181,6 +181,34 @@ public class X_AMN_Process extends PO implements I_AMN_Process, I_Persistent
 		return (String)get_Value(COLUMNNAME_AMN_Process_Value);
 	}
 
+	public org.compiere.model.I_C_DocType getC_DocTypeCreditMemo() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
+			.getPO(getC_DocTypeCreditMemo_ID(), get_TrxName());
+	}
+
+	/** Set Document Type for Credit Memo.
+		@param C_DocTypeCreditMemo_ID Document type used for credit memo generated from this document
+	*/
+	public void setC_DocTypeCreditMemo_ID (int C_DocTypeCreditMemo_ID)
+	{
+		if (C_DocTypeCreditMemo_ID < 1)
+			set_Value (COLUMNNAME_C_DocTypeCreditMemo_ID, null);
+		else
+			set_Value (COLUMNNAME_C_DocTypeCreditMemo_ID, Integer.valueOf(C_DocTypeCreditMemo_ID));
+	}
+
+	/** Get Document Type for Credit Memo.
+		@return Document type used for credit memo generated from this document
+	  */
+	public int getC_DocTypeCreditMemo_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_DocTypeCreditMemo_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
@@ -193,9 +221,9 @@ public class X_AMN_Process extends PO implements I_AMN_Process, I_Persistent
 	public void setC_DocTypeTarget_ID (int C_DocTypeTarget_ID)
 	{
 		if (C_DocTypeTarget_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_C_DocTypeTarget_ID, null);
+			set_Value (COLUMNNAME_C_DocTypeTarget_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_C_DocTypeTarget_ID, Integer.valueOf(C_DocTypeTarget_ID));
+			set_Value (COLUMNNAME_C_DocTypeTarget_ID, Integer.valueOf(C_DocTypeTarget_ID));
 	}
 
 	/** Get Target Document Type.
