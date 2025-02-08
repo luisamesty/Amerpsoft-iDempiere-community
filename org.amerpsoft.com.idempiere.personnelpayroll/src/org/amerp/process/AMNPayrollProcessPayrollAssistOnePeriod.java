@@ -131,8 +131,14 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 		// Determines AMN_Period - AMN_DateIni and AMNDateEnd
 		MAMN_Period amnperiod = new MAMN_Period(Env.getCtx(), p_AMN_Period_ID, null);
 		// Take Ref's Dates instead of Period's Dates
-		p_AMNDateIni = p_RefDateIni;  // Parameter Value intead of amnperiod.getAMNDateIni();
-		p_AMNDateEnd = p_RefDateEnd;  // Parameter Value intead ofamnperiod.getAMNDateEnd();
+		if (p_RefDateIni != null && p_RefDateIni != null) {
+			p_AMNDateIni = p_RefDateIni;  // Parameter Value intead of amnperiod.getAMNDateIni();
+			p_AMNDateEnd = p_RefDateEnd;  // Parameter Value intead ofamnperiod.getAMNDateEnd();
+		} else {
+			p_AMNDateIni = amnperiod.getAMNDateIni();
+			p_AMNDateEnd = amnperiod.getAMNDateEnd();
+		}
+			
 		Period_Name = amnperiod.getName().trim();
 		//
 		IProcessUI processMonitor = Env.getProcessUI(Env.getCtx());
