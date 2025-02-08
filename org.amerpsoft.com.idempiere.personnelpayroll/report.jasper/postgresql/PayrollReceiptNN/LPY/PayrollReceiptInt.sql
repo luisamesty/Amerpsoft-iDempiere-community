@@ -134,6 +134,7 @@ SELECT
 	c_value,
 	reportorder,
 	departamento,
+	sector,
 	value_emp,
 	empleado, 
 	fecha_ingreso, paymenttype,
@@ -176,8 +177,9 @@ FROM
 		-- CONTRACT
 	   	amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
 		-- DEPARTAMENT
-	   	COALESCE(dep.name,dep.description) as departamento,
-	   	CASE WHEN $P{AMN_Receipt_Copy} = 'E' THEN COALESCE(dep.name,dep.description)
+	   	COALESCE(dep.name,dep.description,'') as departamento,
+	   	COALESCE(sec.name,sec.description,'') as sector,
+	   	CASE WHEN $P{AMN_Receipt_Copy} = 'E' THEN COALESCE(sec.name,sec.description,'')
 	   		 WHEN $P{AMN_Receipt_Copy} = 'F' THEN emp.value
 	   		 ELSE emp.value END AS reportorder,
 		-- EMPLOYEE
@@ -219,6 +221,7 @@ FROM
 	LEFT JOIN adempiere.amn_period   					    as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
 	LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
 	LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 
+	LEFT JOIN adempiere.amn_sector						AS sec   ON (sec.amn_sector_id = emp.amn_sector_id)
 	INNER JOIN adempiere.ad_org   as org ON (org.ad_org_id = pyr.ad_org_id)
 	LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 	LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
@@ -236,7 +239,7 @@ FROM
 	    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
-departamento, reportorder, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
+sector, departamento, reportorder, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
 documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t,
 iso_code1, iso_code2
 ORDER BY  amndateend, reportorder, documentno, calcorder2
