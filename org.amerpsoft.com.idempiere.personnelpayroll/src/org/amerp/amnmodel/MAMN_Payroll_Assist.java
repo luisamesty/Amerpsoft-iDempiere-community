@@ -243,4 +243,67 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	    return payrollAssistId > 0 ? new MAMN_Payroll_Assist(ctx, payrollAssistId, trxName) : null;
 	}
 	
+	/**
+	 * Busca un registro en AMN_Payroll_Assist por AMN_Employee_ID y AMN_DateTime.
+	 *
+	 * @param ctx          Contexto de la aplicación.
+	 * @param employeeID   ID del empleado (AMN_Employee_ID).
+	 * @param amnDateTime  Fecha y hora del evento (Event_Date).
+	 * @param trxName      Nombre de la transacción.
+	 * @return Registro encontrado de MAMN_Payroll_Assist o null si no existe.
+	 */
+	public static MAMN_Payroll_Assist findByEmployeeAndDateTime(Properties ctx, int employeeID, Timestamp amnDateTime, String trxName) {
+	    MAMN_Payroll_Assist retValue = null;
+	    
+	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Employee_ID = ? AND Event_Date = ?";
+	    
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	        pstmt.setInt(1, employeeID);
+	        pstmt.setTimestamp(2, amnDateTime);
+	        
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                retValue = new MAMN_Payroll_Assist(ctx, rs, trxName);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return retValue;
+	}
+
+	/**
+	 * Busca un registro en AMN_Payroll_Assist por AMN_Payroll_Assist_Row_ID, AMN_Employee_ID y AMN_DateTime.
+	 *
+	 * @param ctx                  Contexto de la aplicación.
+	 * @param payrollAssistRowID   ID de la fila de asistencia (AMN_Payroll_Assist_Row_ID).
+	 * @param employeeID           ID del empleado (AMN_Employee_ID).
+	 * @param amnDateTime          Fecha y hora del evento (Event_Date).
+	 * @param trxName              Nombre de la transacción.
+	 * @return Registro encontrado de MAMN_Payroll_Assist o null si no existe.
+	 */
+	public static MAMN_Payroll_Assist findByAssistRowEmployeeAndDateTime(Properties ctx, int payrollAssistRowID, int employeeID, Timestamp amnDateTime, String trxName) {
+	    MAMN_Payroll_Assist retValue = null;
+	    
+	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Payroll_Assist_Row_ID = ? AND AMN_Employee_ID = ? AND Event_Date = ?";
+	    
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	        pstmt.setInt(1, payrollAssistRowID);
+	        pstmt.setInt(2, employeeID);
+	        pstmt.setTimestamp(3, amnDateTime);
+	        
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                retValue = new MAMN_Payroll_Assist(ctx, rs, trxName);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return retValue;
+	}
+
+	
 }

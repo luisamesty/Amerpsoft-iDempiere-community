@@ -99,10 +99,18 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
                
         // Determina el Numero de Registros
         int rowCount = 0;
-        String countSql = "SELECT COUNT(*) FROM AMN_Payroll_Assist_Row "
-                        + "WHERE amn_datetime >= ? AND amn_datetime <= ? "
-                        + "AND AD_Client_ID = ? AND AD_Org_ID = ?";
-
+//        String countSql = "SELECT COUNT(*) FROM AMN_Payroll_Assist_Row "
+//                        + "WHERE amn_datetime >= ? AND amn_datetime <= ? "
+//                        + "AND AD_Client_ID = ? AND AD_Org_ID = ?";
+        String countSql = "SELECT COUNT(*) FROM ( "
+        		+"SELECT DISTINCT ON (pin, amn_datetime) "
+        		+"amn_payroll_assist_row_id , pin, amn_datetime "
+        		+"FROM AMN_Payroll_Assist_Row "
+        		+"WHERE amn_datetime >= ?  AND amn_datetime <= ? "
+        		+"AND AD_Client_ID = ? 	  AND AD_Org_ID = ? "
+        		+"ORDER BY pin, amn_datetime, amn_payroll_assist_row_id "
+        	+") AS aprar ";
+        
         PreparedStatement countStmt = DB.prepareStatement(countSql, get_TrxName());
         countStmt.setTimestamp(1, p_RefDateIni);
         countStmt.setTimestamp(2, p_RefDateEnd);
@@ -143,15 +151,15 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 //                           + "AND AD_Client_ID = ? AND AD_Org_ID = ? LIMIT ? OFFSET ?";
                 String sql = "SELECT * FROM ( "
                 		+ "SELECT DISTINCT ON (pin, amn_datetime) "
-                		+" * "
+                		+ " * "
                 		+ "FROM AMN_Payroll_Assist_Row "
                 		+ "WHERE amn_datetime >= ? "
                 		+ "  AND amn_datetime <= ? "
                 		+ "  AND AD_Client_ID = ? "
                 		+ "  AND AD_Org_ID = ? "
-                		+ "ORDER BY pin, amn_datetime "
-                		+ "LIMIT ? OFFSET ?" 
-                	+" ) AS aprar ORDER BY aprar.amn_payroll_assist_row_id ";
+                		+ "ORDER BY pin, amn_datetime, amn_payroll_assist_row_id "
+                	+" ) AS aprar ORDER BY pin, amn_datetime, aprar.amn_payroll_assist_row_id "
+                	+ " LIMIT ? OFFSET ? ";
                 
                 try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 	              
@@ -304,16 +312,14 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         		MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),trxName );
 	        	description = "U"+amnunit.getName().trim()+" "+description;            
         	}
-        	// Verificar si el registro existe
-            MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findMAMN_Payroll_AssistByRowID(ctx, row.getAMN_Payroll_Assist_Row_ID(), trxName);
+        	// Verificar si el registro existe para ese trabajador y fecha
+            MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findByAssistRowEmployeeAndDateTime(ctx, row.getAMN_Payroll_Assist_Row_ID(), amnemployee.getAMN_Employee_ID(), row.getAMN_DateTime(), trxName);
         	if (amnpayrollassist == null  ) {
 	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, 0 , trxName);
-//	           	amnpayrollassist.setAMN_Payroll_Assist_ID(row.getAMN_Payroll_Assist_Row_ID());
-	        	amnpayrollassist.setAMN_Payroll_Assist_Row_ID(row.getAMN_Payroll_Assist_Row_ID());
-	        	//amnpayrollassist.setAD_Client_ID(p_AD_Client_ID);
 				amnpayrollassist.setAD_Org_ID(p_AD_Org_ID);
 				amnpayrollassist.setIsActive(true);
 	        } 
+        	amnpayrollassist.setAMN_Payroll_Assist_Row_ID(row.getAMN_Payroll_Assist_Row_ID());
         	amn_assistrecord = MAMN_Payroll_Assist.getPayrollAssist_DayofWeek(row.getAMN_DateTime()) + "-"+
             		MAMN_Payroll_Assist.getPayrollAssist_DayofWeekName(row.getAMN_DateTime())+ "-"+
             		row.getAMN_DateTime().toString();
