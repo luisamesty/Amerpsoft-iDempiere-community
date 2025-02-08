@@ -72,20 +72,20 @@ public class AMNPayrollProcessPayrollAssistProc {
 		BigDecimal Shift_Attendance,Shift_AttendanceBonus;
 		String locMsg_Value="";	
 		String locMsg_Value_Events="";
-		int AMN_Shift_ID=0;
+		int assitAMN_Shift_ID=0;
 	    Boolean Descanso= false;
 	    Boolean	Excused = false;
 	    Timestamp Event_Time; 
 	    int p_AD_Client_ID=0;
 	    int p_AD_Org_ID=0;
-	    int defAMN_Shift_ID=0;
+	    int empAMN_Shift_ID=0;
 	    int AssistCounter =0;
 	    // Get p_AD_Client_ID,p_AD_Org_ID from Employee
 	    MAMN_Employee amnemployee = new MAMN_Employee(Env.getCtx(), p_AMN_Employee_ID, null);
 	    p_AD_Org_ID=amnemployee.getAD_Org_ID();
 	    p_AD_Client_ID=amnemployee.getAD_Client_ID();
 	    // Get Employee AMN_Shift_ID by default
-	    defAMN_Shift_ID = amnemployee.getAMN_Shift_ID();
+	    empAMN_Shift_ID = amnemployee.getAMN_Shift_ID();
 	    Shift_HED = BDZero;
 		Shift_HEN = BDZero;
 		Shift_HND = BDZero;
@@ -94,15 +94,15 @@ public class AMNPayrollProcessPayrollAssistProc {
 		Shift_AttendanceBonus = BDZero;
 	    // LOOK FOR Default Shift if exists
 		MAMN_Shift shift = new MAMN_Shift(); 
-	    if (defAMN_Shift_ID == 0) defAMN_Shift_ID =  shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
+	    if (empAMN_Shift_ID == 0) empAMN_Shift_ID =  shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
 	    // Verify if defAMN_Shift_ID == 0 
-	    if (defAMN_Shift_ID == 0) {
+	    if (empAMN_Shift_ID == 0) {
 		    // Get Default Asisst Input - Output Times referenced to p_Event_date
 			locMsg_Value="***** "+Msg.getMsg(Env.getCtx(), "found.none")+" "+
 			Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+" "+
 		    Msg.getMsg(Env.getCtx(), "default")+ " *******";
 	    } else {
-		    MAMN_Shift_Detail amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), defAMN_Shift_ID, p_Event_Date);
+		    MAMN_Shift_Detail amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), empAMN_Shift_ID, p_Event_Date);
 		    //	log.warning("Shift_In1:"+amnshiftdetail.getShift_In1().toString());
 		    // Verify p_Event_Date - amnshiftdetail - amnshiftdetail.isActive() == false
 		    if (p_Event_Date==null ) {
@@ -166,7 +166,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 				rs = pstmt1.executeQuery();
 				while (rs.next())
 				{
-					AMN_Shift_ID = rs.getInt(1);
+					assitAMN_Shift_ID = rs.getInt(1);
 					Event_Time 	 = rs.getTimestamp(3);
 		            if (Event_Time != null) {
 		            	locMsg_Value_Events = locMsg_Value_Events + Event_Time.toString().substring(11,16)+"  ";
@@ -195,9 +195,9 @@ public class AMNPayrollProcessPayrollAssistProc {
 				}	
 				// Verify for AssistCounter AND AMN_Shift_ID
 				if (AssistCounter == 0 ) {
-					AMN_Shift_ID = shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
+					assitAMN_Shift_ID = empAMN_Shift_ID;
 				}
-				if (AMN_Shift_ID ==0) {
+				if (assitAMN_Shift_ID ==0) {
 					locMsg_Value="***** "+Msg.getMsg(Env.getCtx(), "found.none")+" "+
 					Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+" "+
 					Msg.getMsg(Env.getCtx(), "default")+ " *******";
@@ -211,12 +211,12 @@ public class AMNPayrollProcessPayrollAssistProc {
 						//  "0": Clean Records on AMN_Payroll_Assist_Proc 
 						case "0":
 							//  "0": Clean Records on AMN_Payroll_Assist_Proc 
-							locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+AMN_Shift_ID+" "+
+							locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+assitAMN_Shift_ID+" "+
 									Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10);
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AD_Client_ID, p_AD_Org_ID,
-									p_AMN_Employee_ID, p_Event_Date, AMN_Shift_ID,
+									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
 									null, null, 
 									null, null,
@@ -228,12 +228,12 @@ public class AMNPayrollProcessPayrollAssistProc {
 						//   "1": Create or Update Records Only from  AMN_Payroll_Assist
 						case "1":
 							//   "1": Create or Update Records Only from  AMN_Payroll_Assist
-							locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+AMN_Shift_ID+" "+
+							locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+assitAMN_Shift_ID+" "+
 									Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
 									Msg.getMsg(Env.getCtx(),"Event")+":"+locMsg_Value_Events;
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, AMN_Shift_ID, 
+									p_Event_Date, assitAMN_Shift_ID, 
 									Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
 							Shift_HED = atthours.getHR_HED();
 							Shift_HEN = atthours.getHR_HEN();
@@ -246,7 +246,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AD_Client_ID, p_AD_Org_ID,
-									p_AMN_Employee_ID, p_Event_Date, AMN_Shift_ID,
+									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
 									Shift_In1, Shift_Out1, 
 									Shift_In2, Shift_Out2,
@@ -262,12 +262,12 @@ public class AMNPayrollProcessPayrollAssistProc {
 							if (Shift_In2==null) Shift_In2=defShift_In2;
 							if (Shift_Out1==null) Shift_Out1=defShift_Out1;
 							if (Shift_Out2==null) Shift_Out2=defShift_Out2;
-							locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+AMN_Shift_ID+" "+
+							locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+assitAMN_Shift_ID+" "+
 									Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
 									Msg.getMsg(Env.getCtx(),"Event")+":"+locMsg_Value_Events;
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, AMN_Shift_ID, 
+									p_Event_Date, assitAMN_Shift_ID, 
 									Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
 							Shift_HED = atthours.getHR_HED();
 							Shift_HEN = atthours.getHR_HEN();
@@ -280,7 +280,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AD_Client_ID, p_AD_Org_ID,
-									p_AMN_Employee_ID, p_Event_Date, AMN_Shift_ID ,
+									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID ,
 									Descanso, Excused ,
 									Shift_In1, Shift_Out1, 
 									Shift_In2, Shift_Out2,
@@ -293,20 +293,20 @@ public class AMNPayrollProcessPayrollAssistProc {
 						case "3":
 							//  "3: Create or Update Records from Only from  AMN_Shift_Detail
 							if ( defShift_In1 != null && defShift_Out1 != null && defShift_In2 != null && defShift_Out2 != null) { 
-								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+defAMN_Shift_ID+" "+
+								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+empAMN_Shift_ID+" "+
 									Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
 									Msg.getMsg(Env.getCtx(),"Event")+":"+
 									defShift_In1.toString().substring(11,16)+"  "+defShift_Out1.toString().substring(11,16)+"  "+
 									defShift_In2.toString().substring(11,16)+"  "+defShift_Out2.toString().substring(11,16); 
 							} else {
-								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+defAMN_Shift_ID+" "+
+								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+empAMN_Shift_ID+" "+
 										Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
 										Msg.getMsg(Env.getCtx(),"Event")+":"+
 										defShift_In1+"  "+defShift_Out1+"  "+defShift_In2+"  "+defShift_Out2; 		
 							}
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, defAMN_Shift_ID, 
+									p_Event_Date, empAMN_Shift_ID, 
 									defShift_In1, defShift_Out1, defShift_In2, defShift_Out2);
 							Shift_HED = atthours.getHR_HED();
 							Shift_HEN = atthours.getHR_HEN();
@@ -320,7 +320,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AD_Client_ID, p_AD_Org_ID,
-									p_AMN_Employee_ID, p_Event_Date, defAMN_Shift_ID ,
+									p_AMN_Employee_ID, p_Event_Date, empAMN_Shift_ID ,
 									Descanso, Excused ,
 									defShift_In1, defShift_Out1, 
 									defShift_In2, defShift_Out2,
@@ -339,13 +339,13 @@ public class AMNPayrollProcessPayrollAssistProc {
 							// "4: Update Records (Only HND,HNN,HED,HEN,Attendance,AttendanceBonus
 							//        from  AMN_Shift_Detail_Proc
 							if ( defShift_In1 != null && defShift_Out1 != null && defShift_In2 != null && defShift_Out2 != null) { 
-								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+defAMN_Shift_ID+" "+
+								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+empAMN_Shift_ID+" "+
 									Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
 									Msg.getMsg(Env.getCtx(),"Event")+":"+
 									defShift_In1.toString().substring(11,16)+"  "+defShift_Out1.toString().substring(11,16)+"  "+
 									defShift_In2.toString().substring(11,16)+"  "+defShift_Out2.toString().substring(11,16); 
 							} else {
-								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+defAMN_Shift_ID+" "+
+								locMsg_Value=locMsg_Value+Msg.getElement(Env.getCtx(), "AMN_Shift_ID")+":"+empAMN_Shift_ID+" "+
 										Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
 										Msg.getMsg(Env.getCtx(),"Event")+":"+
 										defShift_In1+"  "+defShift_Out1+"  "+defShift_In2+"  "+defShift_Out2; 		
@@ -353,7 +353,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 							// Look for 
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, defAMN_Shift_ID, 
+									p_Event_Date, empAMN_Shift_ID, 
 									defShift_In1, defShift_Out1, defShift_In2, defShift_Out2);
 							Shift_HED = atthours.getHR_HED();
 							Shift_HEN = atthours.getHR_HEN();
@@ -367,7 +367,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AD_Client_ID, p_AD_Org_ID,
-									p_AMN_Employee_ID, p_Event_Date, defAMN_Shift_ID ,
+									p_AMN_Employee_ID, p_Event_Date, empAMN_Shift_ID ,
 									Descanso, Excused ,
 									defShift_In1, defShift_Out1, 
 									defShift_In2, defShift_Out2,
@@ -494,8 +494,18 @@ public class AMNPayrollProcessPayrollAssistProc {
 		AttendanceHours defattendancehours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
 		// Determines Default Shift Times Values
 	    MAMN_Shift_Detail amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), p_AMN_Shift_ID, p_Event_Date);
-	    // Determines Default Attendance Values HND,HNN,HED,HEN,Attendance,AttendanceBonus from AMN_Shift_Detail
-		defattendancehours = calcDefaultAttendanceValuesofPayrollVars(p_Event_Date, p_AMN_Shift_ID, amnshiftdetail);
+	    // Verify if null 
+	    if (amnshiftdetail == null) {
+	    	sParamEmpty2=sParamEmpty2+Msg.getMsg(Env.getCtx(), "Error")+" "+
+					Msg.getElement(Env.getCtx(),"AMN_Shift_Detail_ID")+" "+p_AMN_Shift_ID+" "+
+					Msg.getMsg(Env.getCtx(), "found.none")+"\n";
+	    	defattendancehours.setHR_Message(sParamEmpty2);
+	    	return attendancehours;
+
+	    } else {
+		    // Determines Default Attendance Values HND,HNN,HED,HEN,Attendance,AttendanceBonus from AMN_Shift_Detail
+	    	defattendancehours = calcDefaultAttendanceValuesofPayrollVars(p_Event_Date, p_AMN_Shift_ID, amnshiftdetail);
+	    }
 	    //log.warning("Shift_In1:"+amnshiftdetail.getShift_In1().toString());
 	    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
 	    if (amnshiftdetail.getShift_In1()==null)
