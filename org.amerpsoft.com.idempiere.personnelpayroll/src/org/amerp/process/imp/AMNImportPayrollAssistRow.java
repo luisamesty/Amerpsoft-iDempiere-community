@@ -145,7 +145,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
           
           while (hasMoreRows) {
         	    // Nueva transacción por lote
-        	    Trx trx = Trx.get(Trx.createTrxName("AMN_Import"), true);
+        	    // Trx trx = Trx.get(Trx.createTrxName("AMN_Import"), true);
         	    // Query Lote
 //                String sql = "SELECT * FROM AMN_Payroll_Assist_Row WHERE amn_datetime >= ? AND amn_datetime <= ? "
 //                           + "AND AD_Client_ID = ? AND AD_Org_ID = ? LIMIT ? OFFSET ?";
@@ -240,7 +240,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
                 }
-          }
+            }
 	       	// Confirmar la transacción global al final del proceso
           	Trx trx = Trx.get(trxName, false);
           	if (trx != null) {
