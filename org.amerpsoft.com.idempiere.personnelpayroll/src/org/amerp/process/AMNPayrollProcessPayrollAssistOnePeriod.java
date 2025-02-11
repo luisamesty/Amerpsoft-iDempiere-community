@@ -102,26 +102,16 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 	    String sql="";
 	    String AMN_Process_Value="NN";
 	    String AMN_Process_Name="";
-	    String Payroll_Name="";
 	    String Msg_Value="";
+	    String messagetoShow="";
 	    int AMN_Employee_ID=0;
 	    int AMN_Payroll_ID=0;
-	    int p_AD_Client_ID=0;
-	    int p_AD_Org_ID=0;
 	    Timestamp p_AMNDateIni,p_AMNDateEnd;
 	    Timestamp p_currDate;
 	    String Period_Name="";
 	    String Contract_Name="";
 	    String Employee_Name="";
-		// Determines AD_Client_ID
-		sql = "SELECT ad_client_id FROM amn_contract WHERE amn_contract_id=?" ;
-		p_AD_Client_ID=DB.getSQLValue(null, sql, p_AMN_Contract_ID);
-		// Determines AD_Org_ID
-		sql = "SELECT ad_org_id FROM amn_contract WHERE amn_contract_id=?" ;
-		p_AD_Org_ID=DB.getSQLValue(null, sql, p_AMN_Contract_ID);
 		// Determines Process Value to see if NN & Name
-		//sql = "SELECT amn_process_value FROM amn_process WHERE amn_process_id=?" ;
-		//AMN_Process_Value = DB.getSQLValueString(null, sql, p_AMN_Process_ID).trim();
 		MAMN_Process amprocess = new MAMN_Process(Env.getCtx(), p_AMN_Process_ID, null);
 		AMN_Process_Name = amprocess.getName().trim();
 		AMN_Process_Value = amprocess.getValue().trim();
@@ -153,9 +143,28 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 		addLog(Msg_Value);
 		if (processMonitor != null)
 		{
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Day")+": "+p_PeriodDate.toString());
 			processMonitor.statusUpdate(Msg_Value);
 		}
+		
+        // Determina el Numero de Registros
+        int rowCount = 0;
+        String countSql = "SELECT COUNT(*) FROM ( "
+        		+ "	SELECT DISTINCT "
+        		+ "	amnpr.amn_payroll_id, "
+        		+ "	amnpr.amn_employee_id "
+        		+ "	FROM  amn_payroll as amnpr "
+        		+ "	WHERE amnpr.amn_period_id=? "
+        		+ "	GROUP BY amnpr.amn_payroll_id, amnpr.amn_employee_id "
+        		+ ") AS recs";
+        
+        PreparedStatement countStmt = DB.prepareStatement(countSql, get_TrxName());
+        countStmt.setInt (1, p_AMN_Period_ID);
+        ResultSet countRs = countStmt.executeQuery();
+        if (countRs.next()) {
+        	rowCount = countRs.getInt(1);  // Obtiene el total de filas
+        }
+        DB.close(countRs, countStmt); // Cierra el ResultSet y el PreparedStatement
+		
 		// ARRAY 
 		sql = "SELECT \n" + 
 				"amnpr.amn_payroll_id, \n" + 
@@ -167,6 +176,8 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 				;        		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+        int percent = 0;
+        int rowNumber = 0;
 		try
 		{
 			pstmt = DB.prepareStatement(sql, null);
@@ -174,21 +185,19 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
+				rowNumber++; // Incrementamos en cada iteración
 				AMN_Payroll_ID= rs.getInt(1);
 				AMN_Employee_ID = rs.getInt(2);
-				Payroll_Name = rs.getString(3).trim();
 				// AMN_Employee_ID
 				MAMN_Employee amnemployee = new MAMN_Employee(Env.getCtx(), AMN_Employee_ID, null);
-				Employee_Name = amnemployee.getName();
+				Employee_Name = String.format("%-30.30s", amnemployee.getName()); // Se asegura que tenga 30 caracteres
 				p_AMN_Employee_ID=AMN_Employee_ID;
 				Msg_Value=Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+
 						Employee_Name+" \r\n";				
 				addLog(Msg_Value);
-				if (processMonitor != null)
-				{
-					//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Day")+": "+p_PeriodDate.toString());
-					processMonitor.statusUpdate(Msg_Value);
-				}
+				// Percentage Monitor
+                percent = (int) (100.0 * rowNumber / rowCount);
+                int totalLength = 100; // Longitud deseada
 				// AMN_Payroll Must Be DRAFT DR (Not Processed)
 				MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, null);
 				if (!amnpayroll.getDocStatus().equalsIgnoreCase("DR")) {
@@ -196,6 +205,18 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 					Msg_Value=Msg_Value+Msg.getElement(Env.getCtx(),"DocStatus")+":"+amnpayroll.getDocStatus()+
 							"  "+" ***** ALREADY PROCESSED ****";
 					addLog(Msg_Value);
+					if (processMonitor != null)
+					{
+						messagetoShow = String.format("%-10s", rowNumber) + "/" + 
+				                String.format("%-10s", rowCount) + " ( " + 
+				                String.format("%6s", percent) + "% ) : " + 
+				                String.format("%-10s", amnemployee.getValue()) + " - " + 
+				                String.format("%-30s", amnemployee.getName().trim()) + " - " + 
+								String.format("%-40s",Msg.getElement(Env.getCtx(),"DocStatus")+":"+amnpayroll.getDocStatus()+
+								"  "+" ***** ALREADY PROCESSED ****");
+		                messagetoShow = String.format("%-" + totalLength + "s", messagetoShow);
+						processMonitor.statusUpdate(Msg_Value);
+					}
 				} else {
 					//log.warning("Process_ID:"+p_AMN_Process_ID+"  AMN_Contract_ID:"+p_AMN_Contract_ID+"  AMN_Period_ID:"+p_AMN_Period_ID);
 					//log.warning("----- Payroll:"+Payroll_Name+"  AMN_Employee_ID:"+AMN_Employee_ID+"  p_AMN_Assist_Process_Mode:"+p_AMN_Assist_Process_Mode);
@@ -233,13 +254,18 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 				    			p_AMN_Contract_ID, p_currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode);
 				    	addLog(Msg_Value);
 						{
-							//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Day")+": "+p_PeriodDate.toString());
-							processMonitor.statusUpdate(Msg_Value);
+							messagetoShow = String.format("%-10s", rowNumber) + "/" + 
+					                String.format("%-10s", rowCount) + " ( " + 
+					                String.format("%6s", percent) + "% ) : " + 
+					                String.format("%-10s", amnemployee.getValue()) + " - " + 
+					                String.format("%-30s", amnemployee.getName().trim()) + " - " + 
+					                String.format("%-20s", p_currDate) + 
+					                String.format("%-20s", " Processed ");
+			                messagetoShow = String.format("%-" + totalLength + "s", messagetoShow);
+							processMonitor.statusUpdate(messagetoShow);
 						}
 				    	cal.add(Calendar.DAY_OF_MONTH, 1);
 					}
-					//Msg_Value="----- Payroll:"+Payroll_Name+"  AMN_Employee_ID:"+AMN_Employee_ID+"  p_AMN_Assist_Process_Mode:"+p_AMN_Assist_Process_Mode;
-					//addLog(Msg_Value);
 				}
 			}
 		}

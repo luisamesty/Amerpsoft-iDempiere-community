@@ -42,6 +42,8 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	/**	Cache							*/
 	private static CCache<Integer,MAMN_Payroll_Assist> s_cache = new CCache<Integer,MAMN_Payroll_Assist>(Table_Name, 10);
 
+	static CLogger log = CLogger.getCLogger(MAMN_Payroll_Assist.class);
+	
 	/**
 	 * @param p_ctx
 	 * @param AMN_Payroll_Assist_ID
@@ -255,8 +257,7 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	public static MAMN_Payroll_Assist findByEmployeeAndDateTime(Properties ctx, int employeeID, Timestamp amnDateTime, String trxName) {
 	    MAMN_Payroll_Assist retValue = null;
 	    
-	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Employee_ID = ? AND Event_Date = ?";
-	    
+	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Employee_ID = ? AND Event_Time = ?";
 	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 	        pstmt.setInt(1, employeeID);
 	        pstmt.setTimestamp(2, amnDateTime);
@@ -286,7 +287,7 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	public static MAMN_Payroll_Assist findByAssistRowEmployeeAndDateTime(Properties ctx, int payrollAssistRowID, int employeeID, Timestamp amnDateTime, String trxName) {
 	    MAMN_Payroll_Assist retValue = null;
 	    
-	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Payroll_Assist_Row_ID = ? AND AMN_Employee_ID = ? AND Event_Date = ?";
+	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Payroll_Assist_Row_ID = ? AND AMN_Employee_ID = ? AND Event_Time = ?";
 	    
 	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 	        pstmt.setInt(1, payrollAssistRowID);

@@ -145,10 +145,8 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
           
           while (hasMoreRows) {
         	    // Nueva transacción por lote
-        	    Trx trx = Trx.get(Trx.createTrxName("AMN_Import"), true);
+        	    Trx trx = Trx.get(Trx.createTrxName("AMN_Payroll_Assist_Row_Import"), true);
         	    // Query Lote
-//                String sql = "SELECT * FROM AMN_Payroll_Assist_Row WHERE amn_datetime >= ? AND amn_datetime <= ? "
-//                           + "AND AD_Client_ID = ? AND AD_Org_ID = ? LIMIT ? OFFSET ?";
                 String sql = "SELECT * FROM ( "
                 		+ "SELECT DISTINCT ON (pin, amn_datetime) "
                 		+ " * "
@@ -175,8 +173,8 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 		
 		                while (rs.next()) {
 		                    MAMN_Payroll_Assist_Row row = new MAMN_Payroll_Assist_Row(ctx, rs, get_TrxName());
+		                    rowNumber++; // Incrementamos en cada iteración
 			                if (!p_IsScheduled) {
-				                rowNumber++; // Incrementamos en cada iteración
 								// Percentage Monitor
 				                percent = (int) (100.0 * rowNumber / rowCount);
 								messagetoShow = String.format("%-10s",rowNumber)+"/"+String.format("%-10s",rowCount)+
@@ -216,31 +214,41 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     			if (!p_IsScheduled && processMonitor != null && Env.getProcessUI(getCtx()) != null) {
     				processMonitor.statusUpdate(messagetoShow);
     			}
-	            // Guardar en batch
-                for (MAMN_Payroll_Assist assist : batchList) {
-                        assist.saveEx();
-                }
-                
-                // UPDate Processed Rows.
-                rowsUpdated = rowsUpdated + processedRows.size();
-                if (processedRows.size() > 0) {
-	                String updateSql = "UPDATE AMN_Payroll_Assist_Row SET IsVerified = 'Y' WHERE AMN_Payroll_Assist_Row_ID IN (" +
-	                                   processedRows.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
-	                DB.executeUpdate(updateSql, get_TrxName());
-	                processedRows.clear();
-                }
+	            // Guardar en batch y UPDATE
+    			try {
+		            // Guardar en batch
+	                for (MAMN_Payroll_Assist assist : batchList) {
+	                        assist.saveEx();
+	                }
+	                
+	                // UPDate Processed Rows.
+	                rowsUpdated = rowsUpdated + processedRows.size();
+	                if (processedRows.size() > 0) {
+		                String updateSql = "UPDATE AMN_Payroll_Assist_Row SET IsVerified = 'Y' WHERE AMN_Payroll_Assist_Row_ID IN (" +
+		                                   processedRows.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
+		                //log.warning("updateSql="+updateSql);
+		                DB.executeUpdate(updateSql, get_TrxName());
+		                processedRows.clear();
+	                }
+	                trx.commit(); // Guarda los cambios
+    			} catch (Exception e) {
+    			    trx.rollback(); // Revertir si hay error
+    			    e.printStackTrace();
+    			} finally {
+    			    trx.close(); // Cierra la transacción
+    			}
                 
                 // Verifica si hay mas registros
                 hasMoreRows = (rowNumber < rowCount);	
                 offset += batchSize;
-                
+                // log.warning("hasMoreRows="+hasMoreRows+"  rowNumber="+rowNumber+"  rowCount="+rowCount);
                 // **Agregar retardo para liberar recursos**
                 try {
                     Thread.sleep(1000); // Espera 1000 ms antes de continuar con el siguiente lote
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
                 }
-          }
+            }
 	       	// Confirmar la transacción global al final del proceso
           	Trx trx = Trx.get(trxName, false);
           	if (trx != null) {
@@ -313,7 +321,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 	        	description = "U"+amnunit.getName().trim()+" "+description;            
         	}
         	// Verificar si el registro existe para ese trabajador y fecha
-            MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findByAssistRowEmployeeAndDateTime(ctx, row.getAMN_Payroll_Assist_Row_ID(), amnemployee.getAMN_Employee_ID(), row.getAMN_DateTime(), trxName);
+            MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findByEmployeeAndDateTime(ctx, amnemployee.getAMN_Employee_ID(), row.getAMN_DateTime(), trxName);
         	if (amnpayrollassist == null  ) {
 	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, 0 , trxName);
 				amnpayrollassist.setAD_Org_ID(p_AD_Org_ID);
