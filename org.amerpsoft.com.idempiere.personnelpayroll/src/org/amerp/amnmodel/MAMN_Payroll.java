@@ -937,12 +937,12 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		    }
 	    	
 			// Verify Payroll Status
-			if (amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
-			{
+//			if (amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
+//			{
 				// Reactivate AMN_Payroll
 				okprocess = amnpayroll.reActivateIt();
 				amnpayroll.saveEx();
-			}
+//			}
 			// Final Message update
 			msgBuilder.insert(0, okprocess ? " ** "+Msg.translate(ctx, "Success").trim()+" **\r\n" : " ** "+Msg.translate(ctx, "Failed").trim() +"**\r\n");
 			msgBuilder.insert(0, returnMsg);
