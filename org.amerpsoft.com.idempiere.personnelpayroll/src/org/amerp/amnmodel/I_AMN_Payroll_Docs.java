@@ -154,6 +154,19 @@ public interface I_AMN_Payroll_Docs
 	  */
 	public int getCreatedBy();
 
+    /** Column name GrandTotal */
+    public static final String COLUMNNAME_GrandTotal = "GrandTotal";
+
+	/** Set Grand Total.
+	  * Total amount of document
+	  */
+	public void setGrandTotal (BigDecimal GrandTotal);
+
+	/** Get Grand Total.
+	  * Total amount of document
+	  */
+	public BigDecimal getGrandTotal();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 

@@ -199,6 +199,7 @@ public class MAMN_Payroll_Docs extends X_AMN_Payroll_Docs{
         doc.setAMN_Concept_Types_ID(conceptTypesID);
         doc.setAMN_Payroll_ID(payrollID);
         doc.setC_DocType_ID(minvoice.getC_DocType_ID());
+        doc.setGrandTotal(minvoice.getGrandTotal());
         // Guardar el registro
         doc.saveEx(); // Guarda el registro en la base de datos
 

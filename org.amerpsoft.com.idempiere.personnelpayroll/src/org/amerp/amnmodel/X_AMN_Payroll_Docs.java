@@ -17,9 +17,11 @@
 /** Generated Model - DO NOT CHANGE */
 package org.amerp.amnmodel;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.compiere.util.Env;
 
 /** Generated Model for AMN_Payroll_Docs
  *  @author iDempiere (generated)
@@ -31,7 +33,7 @@ public class X_AMN_Payroll_Docs extends PO implements I_AMN_Payroll_Docs, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250206L;
+	private static final long serialVersionUID = 20250213L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Docs (Properties ctx, int AMN_Payroll_Docs_ID, String trxName)
@@ -250,6 +252,25 @@ public class X_AMN_Payroll_Docs extends PO implements I_AMN_Payroll_Docs, I_Pers
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Grand Total.
+		@param GrandTotal Total amount of document
+	*/
+	public void setGrandTotal (BigDecimal GrandTotal)
+	{
+		set_ValueNoCheck (COLUMNNAME_GrandTotal, GrandTotal);
+	}
+
+	/** Get Grand Total.
+		@return Total amount of document
+	  */
+	public BigDecimal getGrandTotal()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_GrandTotal);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Name.
