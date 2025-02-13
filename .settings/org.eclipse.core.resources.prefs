@@ -17,6 +17,7 @@ encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollList/PayrollListGrid.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollListByConcept/PayrollListByConcept.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollListByConcept/PayrollListByConceptTwoDates.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollLoan/PayrollLoanAll.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptNN/LPY/PayrollReceiptCT.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptNN/LPY/PayrollReceiptInt.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptNV/PayrollReceiptNV.jrxml=UTF-8
@@ -24,6 +25,8 @@ encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptNV/PayrollReceiptNVCertification.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptNV/PayrollReceiptNVLiq.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptNV/PayrollReceiptNVRequest.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptPJ/PayrollReceiptPJ.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptPO/PayrollReceiptPO.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollSocialSecurity/PayrollSocialSecurity.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PersonnelPayrollAttendance/PersonnelPayrollAttendance.jrxml=UTF-8
 encoding/<project>=UTF-8

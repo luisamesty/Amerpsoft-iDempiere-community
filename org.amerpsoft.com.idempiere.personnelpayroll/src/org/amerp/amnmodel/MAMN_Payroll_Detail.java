@@ -39,15 +39,14 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	
 	static CLogger log = CLogger.getCLogger(MAMN_Payroll_Detail.class);
 	
-	public MAMN_Payroll_Detail(Properties ctx, int AMN_Payroll_Detail_ID,
-			String trxName) {
+	public MAMN_Payroll_Detail(Properties ctx, int AMN_Payroll_Detail_ID, String trxName) {
 		super(ctx, AMN_Payroll_Detail_ID, trxName);
-		// TODO Auto-generated constructor stub
+		//
 	}
 
 	public MAMN_Payroll_Detail(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	/**************************************************************************
@@ -143,12 +142,12 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	 * @param locale
 	 * @param p_AMN_Payroll_ID
 	 * @param p_AMN_Concept_Types_Proc_ID
-	 * @param p_DeferredAMN_Payroll_ID
+	 * @param p_AMN_Payroll_Deferred_ID
 	 * @return MAMN_PayrollDetail
 	 */
 	public static MAMN_Payroll_Detail findAMNPayrollDetailbyAMNPayrollforDeferred(Properties ctx, Locale locale, 
 				int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID,
-				int p_DeferredAMN_Payroll_ID) {
+				int p_AMN_Payroll_Deferred_ID) {
 				
 		MAMN_Payroll_Detail retValue = null;
 		String sql = "SELECT * " + 
@@ -156,7 +155,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 				"LEFT JOIN amn_payroll_detail as pad on (pay.amn_payroll_id = pad.amn_payroll_id) " + 
 				"WHERE pad.amn_payroll_id=? " + 
 				"AND pad.amn_concept_types_proc_id=? " +
-				"AND pad.amn_payroll_detail_parent_id=? "
+				"AND pad.amn_payroll_deferred_id=? "
 			;        
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -165,7 +164,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			pstmt = DB.prepareStatement(sql, null);
             pstmt.setInt (1, p_AMN_Payroll_ID);
             pstmt.setInt (2, p_AMN_Concept_Types_Proc_ID);
-            pstmt.setInt (3, p_DeferredAMN_Payroll_ID);
+            pstmt.setInt (3, p_AMN_Payroll_Deferred_ID);
 
 			rs = pstmt.executeQuery();
 			while (rs.next())
@@ -491,7 +490,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	public boolean createAmnPayrollDetailDeferred(Properties ctx, Locale locale, 
 			int p_AD_Client_ID, int p_AD_Org_ID,  int p_AMN_Process_ID, int p_AMN_Contract_ID,
 			int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID, 
-			BigDecimal p_AmountCalculated, int p_DeferredAMN_Payroll_ID, String trxName) {
+			BigDecimal p_AmountCalculated, int AMN_Payroll_Deferred_ID, String trxName) {
 		
 		int Concept_CalcOrder=0;
 		String Concept_Value = "" ;
@@ -537,49 +536,12 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
         Concept_Description = amncty.getDescription();
         Concept_CalcOrder =amncty.getCalcOrder();
         AMN_Concept_Uom_ID = amncty.getAMN_Concept_Uom_ID();		
-//		String sql = "" +
-//	    		 "SELECT " + 
-//	    			"cty.value, " + 
-//	    			"coalesce(cty.name,'') as name, " + 
-//	    			"coalesce(cty.description,cty.name,'') as description,  " + 
-//	    			"cty.calcorder,  " + 
-//	    			"cty.defaultvalue, " +
-//	    			"cty.AMN_Concept_Uom_ID " +
-//	    		"FROM amn_concept_types as cty " + 
-//	    			"LEFT JOIN amn_concept_types_proc as ctp ON (ctp.amn_concept_types_id = cty.amn_concept_types_id) " + 
-//	    			"WHERE ctp.amn_concept_types_proc_id = ?";
-//	    PreparedStatement pstmt = null;
-//	    ResultSet rs = null;
-//	    try
-//	    {
-//	            pstmt = DB.prepareStatement(sql, null);
-//	            pstmt.setInt(1, p_AMN_Concept_Types_Proc_ID);
-//	            rs = pstmt.executeQuery();
-//	            if (rs.next())
-//	            {
-//	                Concept_Value= rs.getString(1).trim();
-//	                Concept_Name = rs.getString(2).trim();
-//	                if (Concept_Description.isEmpty())
-//	                	Concept_Description = rs.getString(3).trim();
-//	                Concept_CalcOrder =rs.getInt(4);
-//	                AMN_Concept_Uom_ID = rs.getInt(6);
-//	            }
-//	    }
-//	    catch (SQLException e)
-//	    {
-//	        Concept_Name = "Error: Nombre del Concepto" ;
-//	    }
-//	    finally
-//	    {
-//	            DB.close(rs, pstmt);
-//	            rs = null; pstmt = null;
-//	    }
 	    //
 		if (Concept_Description==null)
 			Concept_Description="*** Description Empty ***";
 		// MAMN_Payroll_Detail
 		MAMN_Payroll_Detail amnpayrolldetail = MAMN_Payroll_Detail.findAMNPayrollDetailbyAMNPayrollforDeferred(ctx, locale, 
-				p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_ID, p_DeferredAMN_Payroll_ID);
+				p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_ID, AMN_Payroll_Deferred_ID);
 		if (amnpayrolldetail == null) {
 			//log.warning("................Values in MAMN_Payroll_Detail (NUEVO)...................");
 			//log.warning("p_AMN_Payroll_ID"+p_AMN_Payroll_ID+"  Concept_Value:"+Concept_Value + "-"+ Concept_Name);
@@ -596,7 +558,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			amnpayrolldetail.setName(Concept_Name);
 			amnpayrolldetail.setDescription(Concept_Description);
 			amnpayrolldetail.setQtyValue(p_AmountCalculated);
-			amnpayrolldetail.setAMN_Payroll_Detail_Parent_ID(p_DeferredAMN_Payroll_ID);
+			amnpayrolldetail.setAMN_Payroll_Deferred_ID(AMN_Payroll_Deferred_ID);
 			amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
 			// p_mTab.setValue("Script",Concept_Script );			
 			// SAVES NEW
@@ -609,7 +571,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			amnpayrolldetail.setName(Concept_Name);
 			amnpayrolldetail.setDescription(Concept_Description);
 			amnpayrolldetail.setQtyValue(p_AmountCalculated);
-			amnpayrolldetail.setAMN_Payroll_Detail_Parent_ID(p_DeferredAMN_Payroll_ID);
+			amnpayrolldetail.setAMN_Payroll_Deferred_ID(AMN_Payroll_Deferred_ID);
 			amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
 			amnpayrolldetail.save(get_TrxName());
 		}

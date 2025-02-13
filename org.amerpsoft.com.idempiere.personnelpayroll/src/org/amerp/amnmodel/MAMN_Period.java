@@ -19,6 +19,7 @@ import java.util.*;
 import org.adempiere.util.IProcessUI;
 import org.compiere.model.MClient;
 import org.compiere.model.MPeriod;
+import org.compiere.model.Query;
 import org.compiere.util.*;
 
 public class MAMN_Period extends X_AMN_Period {
@@ -494,4 +495,36 @@ public class MAMN_Period extends X_AMN_Period {
 		//log.warning("getEndAttendanceDate retValue:"+retValue);					
 		return retValue;
 	}
+	   
+    /**
+     * Busca el ID de un período basado en los parámetros dados.
+     *
+     * @param p_AMN_Process_ID ID del proceso
+     * @param p_AMN_Contract_ID ID del contrato
+     * @param p_startDate Fecha de inicio
+     * @param p_endDate Fecha de fin
+     * @param trxName Nombre de la transacción
+     * @return ID del período encontrado o 0 si no hay coincidencias
+     */
+    public static int findPeriodIDByDates(int p_AMN_Process_ID, int p_AMN_Contract_ID,
+                                   Timestamp p_startDate, Timestamp p_endDate, String trxName) {
+        String whereClause = "AMN_Process_ID=? AND AMN_Contract_ID=? AND AMNDateIni <= ? AND AMNDateEnd >= ?";
+
+        Integer periodID = new Query(Env.getCtx(), X_AMN_Period.Table_Name, whereClause, trxName)
+                .setParameters(p_AMN_Process_ID, p_AMN_Contract_ID, p_startDate, p_endDate)
+                .setOrderBy("AMNDateIni DESC")
+                .setOnlyActiveRecords(true)
+                .firstId(); // Retorna solo el ID
+
+        return periodID != null ? periodID : 0; // Si no encuentra nada, retorna 0
+    }
+
+    /**
+     * Retorna un objeto MAMN_Period si el ID encontrado es válido.
+     */
+    public static MAMN_Period findPeriodByDates(int p_AMN_Process_ID, int p_AMN_Contract_ID,
+                                         Timestamp p_startDate, Timestamp p_endDate, String trxName) {
+        int periodID = findPeriodIDByDates(p_AMN_Process_ID, p_AMN_Contract_ID, p_startDate, p_endDate, trxName);
+        return periodID > 0 ? new MAMN_Period(Env.getCtx(), periodID, trxName) : null;
+    }
 }

@@ -1,5 +1,5 @@
--- Payroll Receipt PO Prestamos
--- PO UPDATED FROM Org *
+-- Payroll Receipt PJ Pagos Judiciales
+-- PJ UPDATED FROM Org *
 SELECT * FROM
 (SELECT DISTINCT
 -- ORGANIZATION
@@ -90,7 +90,7 @@ LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE prc.value= 'PO' AND org.ad_client_id=  $P{AD_Client_ID}  
+WHERE prc.value= 'PJ' AND org.ad_client_id=  $P{AD_Client_ID}  
 	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )     
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -109,9 +109,10 @@ LEFT JOIN
 	       currencyConvert(pyr_def.amountcalculated,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, NULL, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as calculated_def2, 
 	       currencyConvert(pyr_def.amountallocated,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, NULL, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as allocated_def2, 
 		   currencyConvert(pyr_def.amountdeducted,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, NULL, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as deducted_def2, 
-		   pyr_def.value as value_def, pyr_def.description as deferred, 
+		   pyr_def.value as value_def, pyr_def.name AS name_def, pyr_def.description as description_def, 
 		   pyr_def.qtyvalue as cantidad_def,
 		   pyr_def.line as linea_def, pyr_def.ispaid, 
+		   pyr_def.duedate,
 		   -- PERIOD DEF.
   	       prd_def.amn_period_id as period_def_id, prd_def.name as periodo_def, 
   	       prd_def.amndateini as period_inidef, prd_def.amndateend as period_enddef, 
@@ -122,4 +123,4 @@ LEFT JOIN
   ) as diferido ON (nomina.amn_payroll_id = diferido.payroll_id) 
 WHERE (imp_org= 1) OR (((ad_client_id=  $P{AD_Client_ID}  AND ad_org_id= $P{AD_Org_ID} ) OR (nomina.amn_payroll_id= $P{Record_ID} )) 
    )
-ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_type ASC, nomina.isshow DESC, nomina.calcorder, diferido.value_def, diferido.linea_def
+ORDER BY nomina.loc_value, nomina.value_emp, diferido.duedate, nomina.concept_type ASC, nomina.isshow DESC, nomina.calcorder, diferido.value_def, diferido.linea_def
