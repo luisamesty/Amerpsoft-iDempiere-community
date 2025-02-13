@@ -219,6 +219,9 @@ public class AMNPayrollProcessPayrollDeferred {
 	    String sql="";
 		// MAMN_Contract
 		MAMN_Contract amncontract = new MAMN_Contract(Env.getCtx(),p_AMN_Contract_ID,null);		
+		// Precision from Contract Variable
+		int roundingMode = 2;
+		roundingMode = amncontract.getStdPrecision();
 		// MAMN_Period
 		MAMN_Period amnperiod = new MAMN_Period(Env.getCtx(), p_AMN_FirstPeriod_ID, null);
 		Timestamp PeriodFirtsDate = amnperiod.getAMNDateEnd();
@@ -241,7 +244,7 @@ public class AMNPayrollProcessPayrollDeferred {
 		BigDecimal BDLastCuotaAmountDiff = BigDecimal.valueOf(0);
 		if (p_LoanQuotaNo > 0) {
 			DCuotaAmount = DLoanAmount / p_LoanQuotaNo;
-			BDCuotaAmount = BigDecimal.valueOf(DCuotaAmount).setScale(2, RoundingMode.HALF_DOWN);
+			BDCuotaAmount = BigDecimal.valueOf(DCuotaAmount).setScale(roundingMode, RoundingMode.HALF_DOWN);
 			//BDCuotaAmount = p_LoanAmount.divide(BigDecimal.valueOf(p_LoanQuotaNo)).setScale(2, RoundingMode.HALF_DOWN);
 			// LAST QUOTE ROUNDED
 			BDLoanAmount =  BDCuotaAmount.multiply(BigDecimal.valueOf(p_LoanQuotaNo)) ;
