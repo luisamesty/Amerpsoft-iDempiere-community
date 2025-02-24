@@ -25,10 +25,12 @@ import org.compiere.util.Env;
 public class AMNCalloutFactory implements IColumnCalloutFactory {
 	
 	static CLogger log = CLogger.getCLogger(AMNCalloutFactory.class);
+	
 	@Override
 	public IColumnCallout[] getColumnCallouts(String tableName,
 			String columnName) {
-		// TODO Auto-generated method stub	
+		// log.warning("tableName="+tableName+"  columnName="+columnName);
+		
 		List<IColumnCallout> list = new ArrayList<IColumnCallout>();
 		// *********************************
 		// TableRef: amn_role_access
@@ -177,6 +179,12 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			}	
 			// FieldRef: COLUMNNAME_AMN_Concept_Types_Proc_ID
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Deferred.COLUMNNAME_AMN_Concept_Types_Proc_ID))
+				list.add(new AMN_Payroll_Deferred_callout());
+			// DueDate
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Deferred.COLUMNNAME_DueDate))
+				list.add(new AMN_Payroll_Deferred_callout());
+			// QtyValue
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Deferred.COLUMNNAME_QtyValue))
 				list.add(new AMN_Payroll_Deferred_callout());
 		}		
 		// *********************************

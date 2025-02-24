@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Payroll_Deferred
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Payroll_Deferred 
@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Deferred
     /** TableName=AMN_Payroll_Deferred */
     public static final String Table_Name = "AMN_Payroll_Deferred";
 
-    /** AD_Table_ID=1000070 */
+    /** AD_Table_ID=1000033 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -46,8 +46,8 @@ public interface I_AMN_Payroll_Deferred
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Payroll_Deferred
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -72,8 +72,6 @@ public interface I_AMN_Payroll_Deferred
 
 	/** Get Payroll Concept Types Process	  */
 	public int getAMN_Concept_Types_Proc_ID();
-
-	public I_AMN_Concept_Types_Proc getAMN_Concept_Types_Proc() throws RuntimeException;
 
     /** Column name AMN_Employee_ID */
     public static final String COLUMNNAME_AMN_Employee_ID = "AMN_Employee_ID";
@@ -302,6 +300,19 @@ public interface I_AMN_Payroll_Deferred
 	  */
 	public String getDescription();
 
+    /** Column name DueDate */
+    public static final String COLUMNNAME_DueDate = "DueDate";
+
+	/** Set Due Date.
+	  * Date when the payment is due
+	  */
+	public void setDueDate (Timestamp DueDate);
+
+	/** Get Due Date.
+	  * Date when the payment is due
+	  */
+	public Timestamp getDueDate();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -319,12 +330,12 @@ public interface I_AMN_Payroll_Deferred
     public static final String COLUMNNAME_IsPaid = "IsPaid";
 
 	/** Set Paid.
-	  * The document is paid
+	  * The document is fully paid
 	  */
 	public void setIsPaid (boolean IsPaid);
 
 	/** Get Paid.
-	  * The document is paid
+	  * The document is fully paid
 	  */
 	public boolean isPaid();
 

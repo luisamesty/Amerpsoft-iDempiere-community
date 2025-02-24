@@ -91,12 +91,12 @@ public class MAMN_Concept_Types_Limit  extends X_AMN_Concept_Types_Limit {
 			pstmt = null;
 		}
 		// Traza
-		s_log.warning(sql);
-		s_log.warning("AMN_Concept_Types_Limit_ID="+AMN_Concept_Types_Limit_ID);
-		s_log.warning("CurFrom=" + CurFrom_ID + ", CurTo=" + CurTo_ID + ", " + PeriodDate
-				+ ", Type=" + ConversionType_ID
-				+ (ConversionType_ID == C_ConversionType_ID ? "" : "->" + C_ConversionType_ID) + ", Client="
-				+ AD_Client_ID + ", Org=" + AD_Org_ID);
+//		s_log.warning(sql);
+//		s_log.warning("AMN_Concept_Types_Limit_ID="+AMN_Concept_Types_Limit_ID);
+//		s_log.warning("CurFrom=" + CurFrom_ID + ", CurTo=" + CurTo_ID + ", " + PeriodDate
+//				+ ", Type=" + ConversionType_ID
+//				+ (ConversionType_ID == C_ConversionType_ID ? "" : "->" + C_ConversionType_ID) + ", Client="
+//				+ AD_Client_ID + ", Org=" + AD_Org_ID);
 		if (retValue == null)
 			if (s_log.isLoggable(Level.INFO))
 				s_log.info("getRate - not found - CurFrom=" + CurFrom_ID + ", CurTo=" + CurTo_ID + ", " + PeriodDate

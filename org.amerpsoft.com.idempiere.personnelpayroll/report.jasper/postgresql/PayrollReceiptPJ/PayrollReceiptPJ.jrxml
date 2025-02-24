@@ -7,10 +7,12 @@
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
 	<parameter name="C_Currency_ID" class="java.lang.Integer">
 		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
@@ -27,8 +29,8 @@
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- Payroll Receipt PO Prestamos
--- PO UPDATED FROM Org *
+		<![CDATA[-- Payroll Receipt PJ Pagos Judiciales
+-- PJ UPDATED FROM Org *
 SELECT * FROM
 (SELECT DISTINCT
 -- ORGANIZATION
@@ -119,7 +121,7 @@ LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
 LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
 LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE prc.value= 'PO' AND org.ad_client_id=  $P{AD_Client_ID}  
+WHERE prc.value= 'PJ' AND org.ad_client_id=  $P{AD_Client_ID}  
 	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )     
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -138,9 +140,10 @@ LEFT JOIN
 	       currencyConvert(pyr_def.amountcalculated,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, NULL, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as calculated_def2, 
 	       currencyConvert(pyr_def.amountallocated,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, NULL, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as allocated_def2, 
 		   currencyConvert(pyr_def.amountdeducted,pyr2.c_currency_id, $P{C_Currency_ID}, pyr2.dateacct, NULL, pyr2.AD_Client_ID, pyr2.AD_Org_ID ) as deducted_def2, 
-		   pyr_def.value as value_def, pyr_def.description as deferred, 
+		   pyr_def.value as value_def, pyr_def.name AS name_def, pyr_def.description as description_def, 
 		   pyr_def.qtyvalue as cantidad_def,
 		   pyr_def.line as linea_def, pyr_def.ispaid, 
+		   pyr_def.duedate,
 		   -- PERIOD DEF.
   	       prd_def.amn_period_id as period_def_id, prd_def.name as periodo_def, 
   	       prd_def.amndateini as period_inidef, prd_def.amndateend as period_enddef, 
@@ -151,7 +154,7 @@ LEFT JOIN
   ) as diferido ON (nomina.amn_payroll_id = diferido.payroll_id) 
 WHERE (imp_org= 1) OR (((ad_client_id=  $P{AD_Client_ID}  AND ad_org_id= $P{AD_Org_ID} ) OR (nomina.amn_payroll_id= $P{Record_ID} )) 
    )
-ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_type ASC, nomina.isshow DESC, nomina.calcorder, diferido.value_def, diferido.linea_def]]>
+ORDER BY nomina.loc_value, nomina.value_emp, diferido.duedate, nomina.concept_type ASC, nomina.isshow DESC, nomina.calcorder, diferido.value_def, diferido.linea_def]]>
 	</queryString>
 	<field name="ad_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
@@ -532,9 +535,14 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 		<property name="com.jaspersoft.studio.field.label" value="value_def"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_deferred"/>
 	</field>
-	<field name="deferred" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="deferred"/>
-		<property name="com.jaspersoft.studio.field.label" value="deferred"/>
+	<field name="name_def" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name_def"/>
+		<property name="com.jaspersoft.studio.field.label" value="name_def"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_deferred"/>
+	</field>
+	<field name="description_def" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="description_def"/>
+		<property name="com.jaspersoft.studio.field.label" value="description_def"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_deferred"/>
 	</field>
 	<field name="cantidad_def" class="java.math.BigDecimal">
@@ -550,6 +558,11 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 	<field name="ispaid" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="ispaid"/>
 		<property name="com.jaspersoft.studio.field.label" value="ispaid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_deferred"/>
+	</field>
+	<field name="duedate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="duedate"/>
+		<property name="com.jaspersoft.studio.field.label" value="duedate"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_deferred"/>
 	</field>
 	<field name="period_def_id" class="java.math.BigDecimal">
@@ -572,7 +585,7 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 		<property name="com.jaspersoft.studio.field.label" value="period_enddef"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
 	</field>
-	<field name="COLUMN_91" class="java.lang.String">
+	<field name="COLUMN_93" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="amn_period_status"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_period_status"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
@@ -805,7 +818,7 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 					<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 				</image>
 				<textField evaluationTime="Report" isBlankWhenNull="false">
-					<reportElement x="440" y="50" width="132" height="18" isRemoveLineWhenBlank="true" uuid="223ae3b6-d7ad-4fcc-87e5-1b63aecb0f9f">
+					<reportElement x="464" y="50" width="108" height="18" isRemoveLineWhenBlank="true" uuid="223ae3b6-d7ad-4fcc-87e5-1b63aecb0f9f">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="local_mesure_unitx" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -829,7 +842,7 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 					<textFieldExpression><![CDATA[$F{rep_name}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" isBlankWhenNull="false">
-					<reportElement x="130" y="35" width="310" height="15" isRemoveLineWhenBlank="true" uuid="3c2172ff-f8dc-47d1-badd-a0baee43cf24">
+					<reportElement x="130" y="35" width="350" height="15" isRemoveLineWhenBlank="true" uuid="3c2172ff-f8dc-47d1-badd-a0baee43cf24">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -901,15 +914,15 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 					<text><![CDATA[Trabajador]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="" x="130" y="50" width="310" height="18" uuid="966bf36b-84ba-4b27-a07d-bcd73b2a7e9f">
+					<reportElement key="" x="130" y="50" width="350" height="18" uuid="966bf36b-84ba-4b27-a07d-bcd73b2a7e9f">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 					</reportElement>
-					<box leftPadding="10"/>
+					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font fontName="Arial" size="14" isBold="true"/>
 					</textElement>
-					<text><![CDATA[RECIBO DE PRESTAMOS TRABAJADORES]]></text>
+					<text><![CDATA[REGISTRO DE PAGOS JUDICALES TRABAJADOR]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="320" y="88" width="252" height="14" uuid="962b6bb3-0d59-4903-899e-836c3ed6dd86">
@@ -1031,7 +1044,7 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 					<textFieldExpression><![CDATA[( $F{documentno}.isEmpty() ? "" : "Recibo No: "+$F{documentno} )]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report" isBlankWhenNull="false">
-					<reportElement x="440" y="35" width="132" height="15" isRemoveLineWhenBlank="true" uuid="8f76c9a2-39d6-402e-ba91-84a627ee2cde">
+					<reportElement x="464" y="35" width="108" height="15" isRemoveLineWhenBlank="true" uuid="8f76c9a2-39d6-402e-ba91-84a627ee2cde">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="local_mesure_unitx" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1158,9 +1171,9 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
  &&	($F{cantidad}.compareTo(BigDecimal.ZERO)== 0 == true 
  && $F{amountallocated}.compareTo(BigDecimal.ZERO)== 0 == true
  && $F{amountdeducted}.compareTo(BigDecimal.ZERO)== 0 == true)
- ? ""
+ ? null
  : ($F{isshow}.compareToIgnoreCase("N")== 0
-    ? ($P{isShow}.compareToIgnoreCase("Y")== 0 ? $F{concept_type}.toUpperCase()+"-"+$F{paydet_description} : "")
+    ? ($P{isShow}.compareToIgnoreCase("Y")== 0 ? $F{concept_type}.toUpperCase()+"-"+$F{paydet_description} : null)
      : $F{concept_type}.toUpperCase()+"-"+$F{paydet_description}
    )
  ) +" "+$F{cursymbol1}]]></textFieldExpression>
@@ -1312,7 +1325,7 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="Arial" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{periodo_def}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{duedate})+" "+$F{value_def}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="322" height="12" isRemoveLineWhenBlank="true" uuid="156e53b5-c4d0-407b-958e-606461bff764">
@@ -1323,7 +1336,7 @@ ORDER BY nomina.loc_value, nomina.value_emp, nomina.amndateini, nomina.concept_t
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="Arial" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{periodo_def}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{duedate})+" "+$F{value_def}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="322" y="0" width="66" height="12" isRemoveLineWhenBlank="true" uuid="1064645c-881a-4423-9d7e-f6e312b83f10">

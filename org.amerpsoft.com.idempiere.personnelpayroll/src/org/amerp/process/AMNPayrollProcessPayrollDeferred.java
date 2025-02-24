@@ -12,6 +12,7 @@ import java.util.Properties;
 import org.amerp.amnmodel.MAMN_Concept_Types;
 import org.amerp.amnmodel.MAMN_Concept_Types_Proc;
 import org.amerp.amnmodel.MAMN_Contract;
+import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Payroll_Deferred;
 import org.amerp.amnmodel.MAMN_Payroll_Detail;
@@ -191,51 +192,44 @@ public class AMNPayrollProcessPayrollDeferred {
 		//log.warning("reccount:"+reccount);
 		return retValue;
 	}
-	
+
 	/**
 	 * CreatePayrollDeferredDetailLines 
-	 * @param p_AMN_Process_ID
-	 * @param p_AMN_Contract_ID
-	 * @param p_AMN_Payroll_ID
-	 * @param p_AMN_Employee_ID
-	 * @param p_AMN_Concept_Types_Proc_DB_ID
-	 * @param p_AMN_Concept_Types_Proc_CR_ID
+	 * @param ctx
+	 * @param amnpayroll
+	 * @param amnprocessde
+	 * @param amnemployee
+	 * @param amnconcepttypesDB
+	 * @param amnconcepttypesCR
 	 * @param p_LoanAmount
 	 * @param p_LoanQuotaNo
 	 * @param p_AMN_FirstPeriod_ID
 	 * @param p_LoanDescription
+	 * @param trxName
 	 * @return
 	 */
 
-
 	@SuppressWarnings("null")
-	public static LoanPeriods[] CreatePayrollDeferredDetailLines 
-		(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID,int p_AMN_Payroll_ID, int p_AMN_Employee_ID,
-				int p_AMN_Concept_Types_Proc_DB_ID, int p_AMN_Concept_Types_Proc_CR_ID,
+	public static ArrayList<LoanPeriods> CreatePayrollDeferredDetailLines 
+		(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocessde, MAMN_Employee amnemployee,
+				MAMN_Concept_Types_Proc amnconcepttypesDB ,	MAMN_Concept_Types_Proc amnconcepttypesCR, 
 				BigDecimal p_LoanAmount, int p_LoanQuotaNo, int p_AMN_FirstPeriod_ID,
 				String p_LoanDescription, String trxName) {
 		
-	    int AMN_Period_ID=0;
-	    String sql="";
 		// MAMN_Contract
-		MAMN_Contract amncontract = new MAMN_Contract(Env.getCtx(),p_AMN_Contract_ID,null);		
+		MAMN_Contract amncontract = new MAMN_Contract(ctx, amnpayroll.getAMN_Contract_ID(),trxName);	
+		int PayrollDaysInt =amncontract.getPayRollDays().intValue();
+		// 
+	    MAMN_Payroll_Deferred amnpayrolldeferred = new MAMN_Payroll_Deferred(ctx, 0, trxName);
 		// Precision from Contract Variable
 		int roundingMode = 2;
 		roundingMode = amncontract.getStdPrecision();
 		// MAMN_Period
-		MAMN_Period amnperiod = new MAMN_Period(Env.getCtx(), p_AMN_FirstPeriod_ID, null);
-		Timestamp PeriodFirtsDate = amnperiod.getAMNDateEnd();
-		//log.warning("PeriodFirtsDate:"+PeriodFirtsDate);
-	    //LoanPeriods[] periodList = new LoanPeriods[100];
-	    ArrayList<LoanPeriods> periodList = new ArrayList<LoanPeriods>();
-	    LoanPeriods loanPeriodData =  new LoanPeriods (AMN_Period_ID, null, PeriodFirtsDate, p_LoanAmount);
-	    // 
-	    //int AMN_Concept_Types_ID = MAMN_Concept_Types.sqlGetAMNConceptTypesPRESTAMOCR(amncontract.getAD_Client_ID());
-	    //int AMN_Concept_Types_Proc_ID = MAMN_Concept_Types_Proc.sqlGetAMNConceptTypesProcPRESTAMOCR(AMN_Concept_Types_ID, p_AMN_Process_ID);
-	    MAMN_Concept_Types_Proc amnconcepttypesprocCR = new MAMN_Concept_Types_Proc(Env.getCtx(), p_AMN_Concept_Types_Proc_CR_ID, null);
-//log.warning("....p_AMN_Concept_Types_Proc_DB_ID="+p_AMN_Concept_Types_Proc_DB_ID+" ....p_AMN_Concept_Types_Proc_DB_ID="+p_AMN_Concept_Types_Proc_DB_ID);
-	    MAMN_Payroll_Deferred amnpayrolldeferred = new MAMN_Payroll_Deferred(Env.getCtx(), 0, null);
-		// Cuota Calculation
+		MAMN_Period amnperiod = new MAMN_Period(Env.getCtx(), p_AMN_FirstPeriod_ID, trxName);
+		// Creates Period List
+		LoanPeriods loanPeriodData =  new LoanPeriods();
+	    ArrayList<LoanPeriods> periodList = (ArrayList<LoanPeriods>) loanPeriodData.generateLoanPeriods(amnperiod.getAMNDateEnd(), p_LoanQuotaNo, PayrollDaysInt); //new ArrayList<LoanPeriods>();
+	    // Cuota Calculation
 		double DLoanAmount = p_LoanAmount.doubleValue();
 		double DCuotaAmount = 0.00;
 		BigDecimal BDCuotaAmount = BigDecimal.valueOf(0);
@@ -254,75 +248,36 @@ public class AMNPayrollProcessPayrollDeferred {
 			} else {
 				BDLastCuotaAmount = BDCuotaAmount.subtract(BDLastCuotaAmountDiff);
 			}
-		}
-		//log.warning("p_LoanAmount:"+p_LoanAmount+"  BDCuotaAmount"+BDCuotaAmount+"  BDLastCuotaAmount"+BDLastCuotaAmount+"  BDLastCuotaAmountDiff"+BDLastCuotaAmountDiff);
-		//
-		sql ="SELECT  amn_period_id " +
-				"from adempiere.amn_period " +
-				"where amn_process_id = ? " +
-				"and amn_contract_id = ? " +
-				"and amndateend >= '" + PeriodFirtsDate +"' " +
-				"ORDER BY amndateini ASC"
-				;
-		//log.warning("p_AMN_Process_ID:"+p_AMN_Process_ID+"  p_AMN_Contract_ID:"+p_AMN_Contract_ID);
-		//log.warning("sql:"+sql+ "  DLoanAmount:"+DLoanAmount+"  DCuotaAmount"+DCuotaAmount);
-		PreparedStatement pstmt1 = null;
-		ResultSet rsod1 = null;
-		try
-		{
-			pstmt1 = DB.prepareStatement(sql, null);
-            pstmt1.setInt (1, p_AMN_Process_ID);
-            pstmt1.setInt (2, p_AMN_Contract_ID);
-            //pstmt1.setTimestamp(3, PeriodFirtsDate);
-            int nPeriods = 0;
-            rsod1 = pstmt1.executeQuery();
-			while (rsod1.next())
-			{
-				AMN_Period_ID = rsod1.getInt(1);
-				amnperiod = new MAMN_Period(Env.getCtx(), AMN_Period_ID, sql);
-				// SET LAS QUOTE
-				if (nPeriods == p_LoanQuotaNo - 1)
-					BDCuotaAmount = BDLastCuotaAmount;
-				//  CREATE MAMN_Payroll Detail
-				amnpayrolldeferred.createAmnPayrollDeferred(
-						ctx, Env.getLanguage(Env.getCtx()).getLocale(),
-						amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(),  p_AMN_Process_ID, p_AMN_Contract_ID,
-						p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_CR_ID, AMN_Period_ID, BDCuotaAmount,
-						amnconcepttypesprocCR.getValue(), amnconcepttypesprocCR.getName(), amnconcepttypesprocCR.getDescription(), trxName );
-				// Verify nPeriods
-				nPeriods = nPeriods +1;
-				loanPeriodData = new  LoanPeriods ();
-				loanPeriodData.setLoanCuotaNo(nPeriods);
+			log.warning("Prestamo:"+p_LoanDescription);
+			for (int i = 0; i < periodList.size(); i++) {
+				loanPeriodData = periodList.get(i);
+			    String cuota = (i + 1) + " / " + periodList.size();
+			    if (i == periodList.size() - 1) {
+			    	BDCuotaAmount = BDLastCuotaAmount;
+			    } 
+		        // Acción normal para los demás registros
+				loanPeriodData.setLoanCuotaNo(i+1);
 				loanPeriodData.setCuotaAmount(BDCuotaAmount);
-				loanPeriodData.setPeriodDate(amnperiod.getAMNDateEnd());
-				loanPeriodData.setPeriodValue(amnperiod.getValue());
-				periodList.add(loanPeriodData);
-				// log.warning("....nPeriods:"+nPeriods+" Date:"+amnperiod.getAMNDateEnd()+"  Period:"+amnperiod.getValue());
-				if (nPeriods >= p_LoanQuotaNo)
-					break;
+				loanPeriodData.setPeriodValue(cuota);
+				// Dummy amnperiod if not found()
+			    amnperiod = MAMN_Period.findPeriodByDates(amnprocessde.getAMN_Process_ID(), amnpayroll.getAMN_Contract_ID(), loanPeriodData.getPeriodDateIni(), loanPeriodData.getPeriodDateEnd(), trxName);
+				if (amnperiod == null) {
+					amnperiod = new MAMN_Period(ctx, 0 , trxName);
+					amnperiod.setAMNDateIni(loanPeriodData.getPeriodDateIni());
+					amnperiod.setAMNDateEnd(loanPeriodData.getPeriodDateEnd());
+					amnperiod.setAMN_Period_ID(0);
+				}
+				// CREATE MAMN_Payroll Deferred
+			    amnpayrolldeferred.createAmnPayrollDeferred(ctx, amnpayroll, amnprocessde, amnconcepttypesCR, amnperiod, loanPeriodData, p_LoanAmount, trxName );
+				// Verify nPeriods
+		        log.warning("Cuota No: " + loanPeriodData.getLoanCuotaNo() +
+		                ", Periodo: " + loanPeriodData.getPeriodValue() +
+		                ", Inicio de Período: " + loanPeriodData.getPeriodDateIni() +
+		                ", Fin de Período: " + loanPeriodData.getPeriodDateEnd() +
+		                ", Monto: " + loanPeriodData.getCuotaAmount());
 			}
 		}
-	    catch (SQLException e)
-	    {
-	    }
-		finally
-		{
-			DB.close(rsod1, pstmt1);
-			rsod1 = null; pstmt1 = null;
-		}
-		// COPY TO NEWW ARRAY AND RETURN
-		int sizeres = periodList.size();
-		// log.warning("  sizeres:"+sizeres);
-		LoanPeriods[] new_periodList = new LoanPeriods[sizeres];
-		// Create dls		
-		periodList.toArray(new_periodList);
-//// TRAZA2
-//    	for (int i=0 ; i < sizeres; i++) {
-//    		loanPeriodData = new_periodList[i];
-//log.warning("Traza2:..LoanQuotaNo:"+loanPeriodData.getLoanCuotaNo()+" Periodo:"+loanPeriodData.getPeriodValue()+"  Date:"+loanPeriodData.getPeriodDate().toString().substring(0,10));
-// // TRAZA2
-//    	}
-   		return new_periodList;
+		return periodList;
 		
 	}
 	

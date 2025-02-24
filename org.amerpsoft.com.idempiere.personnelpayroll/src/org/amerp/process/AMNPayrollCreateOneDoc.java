@@ -131,6 +131,8 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 		    // Verify if any AMN_Payroll_ID is created
 			amnpayroll = MAMN_Payroll.findByAMNPayroll(getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 					p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
+			if (amnpayroll != null ) 
+				p_AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
 	    } else {
 	    	amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, null);
 	    }
@@ -249,28 +251,37 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     	String Message_Loc="";
     	// Verify if Employee Status 'ACTIVE'
     	if ( amnemployee.isActive() && amnemployee.getStatus().equalsIgnoreCase("A") ) {
+    		// Nueva transacción por lote
+    	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
+    	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
 	    	// Create Docs Headers and Lines
     		// Document Header
 	     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, 
 	     			p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,
 	     			p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,
-	     			trxName)+"\r\n"; 
+	     			trxNameLocal)+"\r\n"; 
+	     	trx.commit(); // Guarda los cambios
 	     	//log.warning("After CreatePayrollOneDocument ="+Msg_Value1);
 	     	// Document Lines
 		    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, 
 		    		p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,
 		    		p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, 
-		    		trxName)+"\r\n";
-		    //log.warning("After CreatePayrollOneDocumentLines ="+Msg_Value2);
+		    		trxNameLocal)+"\r\n";
+		    trx.commit(); // Guarda los cambios
+			    //log.warning("After CreatePayrollOneDocumentLines ="+Msg_Value2);
 		    // Calculate Document
 		    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,
-		    		p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n";
+		    		p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal)+"\r\n";
+	     	trx.commit(); // Guarda los cambios
 		    //log.warning("After CalculateOnePayrollDocument ="+Msg_Value3);
 			// SALARY HISTORIC
 		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, 
-		    		amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName)+"\r\n";
+		    		amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal)+"\r\n";
+	     	trx.commit(); // Guarda los cambios
 		    //log.warning("After createAmnPayrollHistoric ="+Msg_Value3);
 			// SALARY HISTORIC END
+	     	// Cerrar transacción
+	     	trx.close();  
 		    return true;
     	} else {
     		Message_Loc = Msg.getElement(ctx, "AMN_Employee_ID")+":"+
