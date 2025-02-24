@@ -305,7 +305,6 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
     	String Msg_Lines="";
 	    String Msg_Updates="";
 	    String MessagetoShow ="";
-		String trxNameLine = "";
 	    int AMN_Employee_ID=0;
 		int AMN_Payroll_ID = 0;
 		Timestamp NextPPDateIni = null;
@@ -317,6 +316,7 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 	    IProcessUI processMonitor = Env.getProcessUI(getCtx());
 	    int Percent = 0;
 	    int NoRecs = 0;
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
 	    // ARRAY EMPLOYEE - CONTRACT
 		sql = "SELECT " + 
 				"amnemp.amn_employee_id as amn_employee_id,   " + 
@@ -362,6 +362,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 		// **********************
 		try
 		{
+			String trxNameHdr = trxName+"_"+AMN_Employee_ID;
+			trx = Trx.get(Trx.createTrxName(trxNameHdr), true);
 			pstmt = DB.prepareStatement(sql, null);
             pstmt.setInt (1, p_AMN_Contract_ID);
 			rspc = pstmt.executeQuery();
@@ -370,7 +372,7 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 				AMN_Employee_ID = rspc.getInt(1);
 				Employee_Name = rspc.getString(2).trim();
 				Employee_Value= rspc.getString(3).trim();
-				String trxNameHdr = trxName+"_"+AMN_Employee_ID;
+				
 		    	// Document Header
 			    // Verify if AMN_Payroll_ID is created and POSTED
 				Receipt = new AMNReceipts();
@@ -395,7 +397,7 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 						Receipt.setError(Msg_Header);
 					}
 				}	else {
-					AMN_Payroll_ID=  AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, 0, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, get_TrxName());
+					AMN_Payroll_ID=  AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, 0, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameHdr);
 					amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, get_TrxName());
 					amnpayroll = MAMN_Payroll.findByAMNPayroll(Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 							p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, AMN_Employee_ID);
@@ -410,6 +412,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 				}
 				ReceiptsGenList.add(Receipt);
 			}				
+			// Guarda los cambios
+			trx.commit(); 
 		}
 	    catch (SQLException e)
 	    {
@@ -418,6 +422,7 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 		{
 			DB.close(rspc, pstmt);
 			rspc = null; pstmt = null;
+	     	trx.close();  
 		}
 		DB.close(rspc, pstmt);
 		rspc = null; pstmt = null;
@@ -429,14 +434,15 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 		// **********************
 		// Create Array for Receipt Concepts
 		// ReceiptConcepts  array of ReceiptLines
+		String trxNameLine = "";
 		AMNPayrollCreateReceiptLinesArray(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,  trxNameLine);
 		//for (int j=0 ; j < ReceiptConcepts.size() ; j++) {
-		//	log.warning("Concepts j=("+j+") "+ReceiptConcepts.get(j).getConceptValue()+" "+ReceiptConcepts.get(j).getConceptName()+" "+ReceiptConcepts.get(j).getCalcOrder());}		
 		for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
 			Percent = 100 * (i / NoRecs);
 			AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
 			//log.warning("Document Lines i=("+i+") Percent="+Percent+" "+ReceiptsGenList.get(i).getAMN_Payroll_ID()+" "+ReceiptsGenList.get(i).getDescription()+" "+ReceiptsGenList.get(i).getError());
-			trxNameLine = trxName+"_"+AMN_Employee_ID;
+			trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
+			trx = Trx.get(Trx.createTrxName(trxNameLine), true);
 			// Percentage Monitor
 			MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
 					" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
@@ -450,12 +456,16 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 			if (!ReceiptsGenList.get(i).getRecIsPosted()) {
 				//Msg_Lines=  AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
 				Msg_Lines=  AMNPayrollCreateDocs.CreatePayrollOneDocumentLinesFromArray(ctx, ReceiptConcepts, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
+				//trx.commit(); // Guarda los cambios
 				try {
 					AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, ReceiptsGenList.get(i).getAMN_Payroll_ID());
+					//trx.commit(); // Guarda los cambios
 				} catch (ScriptException e) {
 					// TODO Auto-generated catch block
 					Msg_Lines = Msg_Lines + "** ERROR ** PayrollEvaluationArrayCalculate ";
 					//e.printStackTrace();
+				} finally {
+					//trx.close(); 
 				}
 			}
 		}
@@ -467,8 +477,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 		for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
 			Percent = 100 * (i / NoRecs);
 			AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-log.warning("Payroll Historic i=("+i+") NoLines="+ReceiptsGenList.get(i).getNoLines()+" "+ReceiptsGenList.get(i).getAMN_Payroll_ID()+" "+ReceiptsGenList.get(i).getDescription()+" "+ReceiptsGenList.get(i).getError());
-			trxNameLine = trxName+"_"+AMN_Employee_ID;
+			trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
+			trx = Trx.get(Trx.createTrxName(trxNameLine), true);
 			Percent = 100 * (i / ReceiptsGenList.size());
 			// Percentage Monitor
 			MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
@@ -481,11 +491,11 @@ log.warning("Payroll Historic i=("+i+") NoLines="+ReceiptsGenList.get(i).getNoLi
 				processMonitor.statusUpdate(MessagetoShow);
 			}
 			if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-log.warning("Employee="+ReceiptsGenList.get(i).getAMN_Employee_ID()+" period="+amnperiod.getAMNDateIni()+"  "+amnperiod.getAMNDateEnd());
 				amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, ReceiptsGenList.get(i).getAMN_Employee_ID(), amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLine);
+				trx.commit(); // Guarda los cambios
 			}
 		}
-log.warning("...Payroll Historic Completed....");
+		trx.close(); 
 		// ********************************************
 		// Nominal Salary UPDATE ONLY ON NN Process
 		// ********************************************
@@ -495,9 +505,8 @@ log.warning("...Payroll Historic Completed....");
 				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
 				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
 				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-				trxNameLine = trxName+"_"+AMN_Employee_ID;
-log.warning("Nominal Salary UPDATE ONLY ON NN Process i=("+i+") NoLines="+ReceiptsGenList.get(i).getNoLines()+" "+
-		ReceiptsGenList.get(i).getAMN_Payroll_ID()+" "+ReceiptsGenList.get(i).getDescription()+" "+ReceiptsGenList.get(i).getError());
+				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
+				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
 				Percent = 100 * (i / ReceiptsGenList.size());
 				// Percentage Monitor
 				MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
@@ -511,16 +520,17 @@ log.warning("Nominal Salary UPDATE ONLY ON NN Process i=("+i+") NoLines="+Receip
 				}
 				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
 					Msg_Updates=  AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
+					trx.commit(); // Guarda los cambios
 				}
 				// SALARY NOMINAL HISTORIC
 		    	if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-//log.warning("Nominal Salary UPDATE 	"+	amnpayroll.getDescription()    );		
 						Msg_Updates= Msg_Updates+ amnpayrollhistoric.updateSalaryAmnPayrollHistoric(ctx, null, AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
+						trx.commit(); // Guarda los cambios
 				}
 				// END OF SALARY HISTORIC
 			}
+			trx.close(); 
 		}
-//log.warning("...FIN updateSalaryAmnPayrollHistoric....");
 
 		// *******************************************************
 		// RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NP Process
@@ -528,10 +538,10 @@ log.warning("Nominal Salary UPDATE ONLY ON NN Process i=("+i+") NoLines="+Receip
 		if (AMN_Process_Value.equalsIgnoreCase("NP") ) {
 			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
 				Percent = 100 * (i / NoRecs);
-//log.warning("RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NP Process i=("+i+") NoLines="+ReceiptsGenList.get(i).getNoLines()+" "+ReceiptsGenList.get(i).getAMN_Payroll_ID()+" "+ReceiptsGenList.get(i).getDescription()+" "+ReceiptsGenList.get(i).getError());
 				NextPPDateIni = null;
 				NextPPDateEnd = null;
-				trxNameLine = trxName+"_"+AMN_Employee_ID;
+				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
+				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
 				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
 				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
 				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
@@ -578,7 +588,9 @@ log.warning("Nominal Salary UPDATE ONLY ON NN Process i=("+i+") NoLines="+Receip
 						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
 					}
 				}
+				trx.commit(); // Guarda los cambios
 			}
+			trx.close(); 
 		}
 
 		// *******************************************************
@@ -588,10 +600,10 @@ log.warning("Nominal Salary UPDATE ONLY ON NN Process i=("+i+") NoLines="+Receip
 			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
 				Percent = 100 * (i / NoRecs);
 				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-//log.warning("RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NU Process i=("+i+") NoLines="+ReceiptsGenList.get(i).getNoLines()+" "+ReceiptsGenList.get(i).getAMN_Payroll_ID()+" "+ReceiptsGenList.get(i).getDescription()+" "+ReceiptsGenList.get(i).getError());
 				NextPPDateIni = null;
 				NextPPDateEnd = null;
-				trxNameLine = trxName+"_"+AMN_Employee_ID;
+				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
+				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
 				Percent = 100 * (i / ReceiptsGenList.size());
 				// Percentage Monitor
 				MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
@@ -685,8 +697,9 @@ log.warning("Nominal Salary UPDATE ONLY ON NN Process i=("+i+") NoLines="+Receip
 					}
 				}
 			}
+			trx.commit(); // Guarda los cambios
 		}
-		
+		trx.close(); 
 		//AMNPayrollCreateInvoicesAllProcess
 		return true;
 	} 

@@ -449,79 +449,80 @@ public class AMNPayrollCreateDocs {
 		(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID,
 			 int p_AMN_Payroll_ID, String trxName) {
 		
-	    String sql="";
-	    int AMN_Concept_Types_Proc_ID =0;
-	    int AMN_Period_ID = 0;
-	    int AMN_Employee_ID = 0;
-	    int DeferredAMN_Payroll_ID =0;
-	    BigDecimal AmountCalculated = BigDecimal.valueOf(0);
-	    
-		MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, null);
-		// MAMN_Contract
-		MAMN_Contract amncontract = new MAMN_Contract(ctx,p_AMN_Contract_ID,null);		
-		new MAMN_Process(ctx, p_AMN_Process_ID, null);
-		// MAMN_Payroll
-		MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, null);
-		// MAMN_Period
-		AMN_Period_ID = amnpayroll.getAMN_Period_ID();
-		// MAMN_Employee
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), null);
-		AMN_Employee_ID = amnemployee.getAMN_Employee_ID();
-		sql ="SELECT   " +
-				"def.amn_concept_types_proc_id,  " +
-				"def.amountcalculated,  " +
-				"def.amountallocated,  " +
-				"def.amountdeducted,  " +
-				"def.qtyvalue, " +
-				"def.value, def.name,  " +
-				"def.description,  " +
-				"def.amn_payroll_id , " +
-				"det.amn_payroll_detail_id " +
-				"FROM adempiere.AMN_Payroll_Deferred as def " +
-				"LEFT JOIN adempiere.AMN_Payroll_Detail as det ON ( def.AMN_Payroll_ID = det.AMN_Payroll_ID) " +
-				"WHERE def.AMN_Process_ID = ? "+
-				"AND def.AMN_Period_ID = ? " +
-				"AND def.AMN_Employee_ID = ? "
-				;
-		//log.warning("Loan for Employee:"+AMN_Employee_ID+" "+amnemployee.getName());
-		//log.warning("sql:"+sql);
-		//log.warning("Deferred...p_AMN_Payroll_ID:"+p_AMN_Payroll_ID+"  p_AMN_Process_ID"+p_AMN_Process_ID);
-		//log.warning("Deferred.. AMN_Period_ID:"+AMN_Period_ID+"  sql:"+sql);
-		PreparedStatement pstmt1 = null;
-		ResultSet rsod1 = null;
-		try
-		{
-			pstmt1 = DB.prepareStatement(sql, null);
-            pstmt1.setInt (1, p_AMN_Process_ID);
-            pstmt1.setInt (2, AMN_Period_ID);
-            pstmt1.setInt (3, AMN_Employee_ID);
+	    int AMN_Concept_Types_Proc_ID = 0;
+        int AMN_Period_ID = 0;
+        int AMN_Employee_ID = 0;
+        int AMN_Payroll_Detail_ID = 0;
+        int AMN_Payroll_Deferred_ID = 0;
+        BigDecimal AmountCalculated = Env.ZERO;
+        String Msg_Value = "Proceso completado con éxito";
+
+        MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, trxName);
+
+        // Obtener información de la nómina y el empleado
+        MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+        AMN_Period_ID = amnpayroll.getAMN_Period_ID(); // Se usa en la búsqueda
+        MAMN_Period amnperiod = new MAMN_Period(ctx, AMN_Period_ID, trxName);
+        MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+        AMN_Employee_ID = amnemployee.getAMN_Employee_ID();
+
+        // Construcción de la consulta SQL
+        // Devuelve todos los Pagos Diferidos
+        String sql = "SELECT " +
+                "def.amn_concept_types_proc_id, " +
+                "def.amountcalculated, " +
+                "def.amountallocated, " +
+                "def.amountdeducted, " +
+                "def.qtyvalue, " +
+                "def.value, def.name, " +
+                "def.description, " +
+                "def.amn_payroll_id, " +
+                "def.duedate, def.amn_period_id, " +
+                "det.amn_payroll_detail_id, " +
+                "def.amn_payroll_deferred_id " +
+                "FROM AMN_Payroll_Deferred AS def " +
+                "LEFT JOIN AMN_Payroll_Detail AS det ON def.AMN_Payroll_ID = det.AMN_Payroll_ID " +
+                "WHERE def.AMN_Process_ID = ? " +
+                "AND def.AMN_Employee_ID = ?";
+
+        PreparedStatement pstmt1 = null;
+        ResultSet rsod1 = null;
+
+        try {
+            pstmt1 = DB.prepareStatement(sql, trxName);
+            pstmt1.setInt(1, p_AMN_Process_ID);
+            pstmt1.setInt(2, AMN_Employee_ID);
             rsod1 = pstmt1.executeQuery();
-			while (rsod1.next())
-			{
-				AMN_Concept_Types_Proc_ID = rsod1.getInt(1);
-				AmountCalculated = rsod1.getBigDecimal(2);
-				DeferredAMN_Payroll_ID = rsod1.getInt(10);
-				//log.warning("Deferred...amn_payroll_id:"+DeferredAMN_Payroll_ID+" AmountCalculated:"+AmountCalculated);
-				//log.warning("prestamo:"+AmountCalculated);
-				//  CREATE MAMN_Payroll Detail
-				amnpayrolldetail.createAmnPayrollDetailDeferred(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
-						amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(),  p_AMN_Process_ID, p_AMN_Contract_ID,
-						p_AMN_Payroll_ID, AMN_Concept_Types_Proc_ID, AmountCalculated ,DeferredAMN_Payroll_ID, trxName);
-//				//  UPDATE MAMN_Payroll Detail
-//				amnpayrolldetail.updateAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
-//						amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(),  p_AMN_Process_ID, p_AMN_Contract_ID,
-//						p_AMN_Payroll_ID,  AMN_Concept_Types_Proc_ID,  AmountCalculated);
-			}
-		}
-	    catch (SQLException e)
-	    {
-	    }
-		finally
-		{
-			DB.close(rsod1, pstmt1);
-			rsod1 = null; pstmt1 = null;
-		}
-		return Msg_Value;
+
+            while (rsod1.next()) {
+                AMN_Concept_Types_Proc_ID = rsod1.getInt(1);
+                AmountCalculated = rsod1.getBigDecimal(2) != null ? rsod1.getBigDecimal(2) : Env.ZERO;
+                AMN_Payroll_Detail_ID = rsod1.getInt(12);
+                AMN_Payroll_Deferred_ID = rsod1.getInt(13);
+                // Filtra los Pagos Diferidos Que sean del PEríod o DueDate dentro del Período del Recibo de Nómina
+                if (AMN_Period_ID == rsod1.getInt(11) || 
+                	    (rsod1.getTimestamp(10) != null && 
+                	     amnperiod.getAMNDateIni() != null && 
+                	     amnperiod.getAMNDateEnd() != null && 
+                	     rsod1.getTimestamp(10).compareTo(amnperiod.getAMNDateIni()) >= 0 && 
+                	     rsod1.getTimestamp(10).compareTo(amnperiod.getAMNDateEnd()) <= 0)) {
+                	// Crear detalle de nómina SOlo los del periodo
+                    amnpayrolldetail.createAmnPayrollDetailDeferred(
+                            ctx, Env.getLanguage(ctx).getLocale(),
+                            amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),
+                            p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Payroll_ID,
+                            AMN_Concept_Types_Proc_ID, AmountCalculated, AMN_Payroll_Deferred_ID, trxName);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Msg_Value = "Error en el proceso: " + e.getMessage();
+        } finally {
+            DB.close(rsod1, pstmt1);
+        }
+        
+        return Msg_Value;
+
 	}
 
 	/**
@@ -608,24 +609,25 @@ public class AMNPayrollCreateDocs {
 		// 	CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
 		// ---------------------------------------------
 		for (int j=0 ; j < ReceiptConcepts.size() ; j++) {
-			//log.warning("Concepts j=("+j+") "+ReceiptConcepts.get(j).getConceptValue()+" "+ReceiptConcepts.get(j).getConceptName()+" "+ReceiptConcepts.get(j).getCalcOrder());
 			// RECEIPT LINES
-//			amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
-//					amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),  ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(),
-//					p_AMN_Payroll_ID, ReceiptConcepts.get(j).getAMN_Concept_Types_Proc_ID(), trxName);
-			// RECEIPT LINES
+			Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
+			String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
 			amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
 					amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),  ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(),
 					p_AMN_Payroll_ID, ReceiptConcepts.get(j).getAMN_Concept_Types_Proc_ID(), 
 					ReceiptConcepts.get(j).getConceptValue(), ReceiptConcepts.get(j).getCalcOrder(), 
 					ReceiptConcepts.get(j).getConceptName(), ReceiptConcepts.get(j).getConceptName(), 
 					ReceiptConcepts.get(j).getAMN_Concept_Uom_ID(),ReceiptConcepts.get(j).getQtyValue(), 
-					trxName);
+					trxNameLocal);
+			 trx.commit(); // Guarda los cambios
 			// RECEIPT LINES FOR LOANS PAYMENTS
 			// VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-			CreatePayrollOneDocDetailDeferredLines(ctx, ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxName);
+			CreatePayrollOneDocDetailDeferredLines(ctx, ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxNameLocal);
 			// LOANS 		
+			trx.commit(); // Guarda los cambios
+			trx.close();
 		}	
+		
 		//CreatePayrollOneDocDetailLines(ctx, ReceiptLine.getAMN_Process_ID(), ReceiptLine.getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxName);
 		//
 		if (AMN_Process_Value.equalsIgnoreCase("NN") ||
