@@ -72,18 +72,27 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	 */
 	@Override
 	protected boolean afterSave(boolean p_newRecord, boolean p_success) {
-	    // TODO Auto-generated method stub
-		
-//log.warning("..............AMNPayrollevent.AMN_PAyroll_Detail.......................");
-//log.warning("After Save (AMN_Payroll_Detail) AMN_Payroll_ID:"+this.getAMN_Payroll_ID()+"AMN_Payroll_Detail_ID:"+this.getAMN_Payroll_Detail_ID()+"  p_newRecord:"+p_newRecord);
-//		try {
-//			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), this.getAMN_Payroll_ID());
-//		}
-//		catch (ScriptException ex) {
-//			// TODO Auto-generated catch block
-//			ex.printStackTrace();
-//		}
-//		//return p_success;
+
+		if (!p_success) {
+	        return false;
+	    }
+	    // Asegurar que el registro actual se haya guardado completamente
+       	// Confirmar la transacción global al final del proceso
+      	Trx trx = Trx.get(get_TrxName(), false);
+      	if (trx != null) {
+              trx.commit();
+      	}
+      	// Recalc
+		try {
+			// Recalc 
+			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), this.getAMN_Payroll_ID());
+			trx.commit();
+		}
+		catch (ScriptException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+      	
 		return super.afterSave(p_newRecord, p_success);
 
 	}

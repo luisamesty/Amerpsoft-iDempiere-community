@@ -31,6 +31,20 @@ public class MAMN_Process extends X_AMN_Process {
 
 	CLogger log = CLogger.getCLogger(MAMN_Process.class);
 
+	 /** VALID PROCESSES */
+    public static final String Process_NN 	= "NN";		// Main Payroll
+    public static final String Process_NO 	= "NO";		// Complement Payroll Others
+    public static final String Process_NP 	= "NP";		// Social Benefits
+    public static final String Process_NU 	= "NU";		// Utilities 
+    public static final String Process_NV 	= "NV";		// Vacation
+    public static final String Process_PI 	= "PI";		// Social Benefits Interest
+    public static final String Process_PJ 	= "PJ";		// Process Deferred for Judicial discount
+    public static final String Process_PL 	= "PL";		// Final Employee Paymenet (Liquidación)
+    public static final String Process_PO 	= "PO";		// Loans
+    public static final String Process_PR 	= "PR";		// Social Benefits pre-payments
+    public static final String Process_TI 	= "TI";		// Food Ticket Payroll
+    public static final String Process_TO 	= "TO";		//	Other Benefits
+    
 	public MAMN_Process(Properties ctx, int AMN_Process_ID, String trxName) {
 		super(ctx, AMN_Process_ID, trxName);
 		// TODO Auto-generated constructor stub
@@ -42,35 +56,7 @@ public class MAMN_Process extends X_AMN_Process {
 		// TODO Auto-generated constructor stub
 		//log.warning("---------------");
 	}
-//
-//	@Override
-//	protected boolean beforeSave(boolean newRecord) {
-//		// TODO Auto-generated method stub
-//		//log.warning("---------------");
-//		return super.beforeSave(newRecord);
-//	}
-//	
-//	@Override
-//	protected boolean afterSave(boolean newRecord, boolean success) {
-//		// TODO Auto-generated method stub
-//		//log.warning("---------------");
-//		return super.afterSave(newRecord, success);
-//	}
-//	
-//	@Override
-//	protected boolean beforeDelete() {
-//		// TODO Auto-generated method stub
-//		//log.warning("---------------");
-//		return super.beforeDelete();
-//	}
-//	
-//	@Override
-//	protected boolean afterDelete(boolean success) {
-//		// TODO Auto-generated method stub
-//		//log.warning("---------------");
-//		return super.afterDelete(success);
-//	}
-//	
+
 	/**
 	 * Get Process from Cache
 	 * @param ctx context

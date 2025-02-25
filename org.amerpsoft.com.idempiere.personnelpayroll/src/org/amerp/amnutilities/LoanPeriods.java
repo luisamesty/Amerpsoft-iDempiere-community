@@ -20,6 +20,7 @@ public class LoanPeriods {
 	public Timestamp PeriodDateIni;
 	public Timestamp PeriodDateEnd;
 	public BigDecimal CuotaAmount ;
+	public BigDecimal BalanceAmount ;
 	
 	public LoanPeriods() {
 		this.LoanCuotaNo = 0;
@@ -27,24 +28,30 @@ public class LoanPeriods {
 		this.PeriodDateIni  = null;
 		this.PeriodDateEnd  = null;
 		this.CuotaAmount = BigDecimal.valueOf(0);
+		this.BalanceAmount = BigDecimal.valueOf(0);
 	}
-	public LoanPeriods(int LoanCuotaNo, String PeriodValue, Timestamp PeriodDateIni, Timestamp PeriodDateEnd, BigDecimal CuotaAmount) {
+	
+	public LoanPeriods(int LoanCuotaNo, String PeriodValue, Timestamp PeriodDateIni, Timestamp PeriodDateEnd, BigDecimal CuotaAmount, BigDecimal BalanceAmount) {
 		this.LoanCuotaNo = LoanCuotaNo;
 		this.PeriodValue = PeriodValue;
 		this.PeriodDateIni  = PeriodDateIni;
 		this.PeriodDateEnd  = PeriodDateEnd;
 		this.CuotaAmount = CuotaAmount;
-		// TODO Auto-generated constructor stub
+		this.BalanceAmount = BalanceAmount;
 	}
+	
 	public int getLoanCuotaNo() {
 		return LoanCuotaNo;
 	}
+	
 	public void setLoanCuotaNo(int loanCuotaNo) {
 		LoanCuotaNo = loanCuotaNo;
 	}
+	
 	public String getPeriodValue() {
 		return PeriodValue;
 	}
+	
 	public void setPeriodValue(String periodValue) {
 		PeriodValue = periodValue;
 	}
@@ -52,13 +59,23 @@ public class LoanPeriods {
 	public BigDecimal getCuotaAmount() {
 		return CuotaAmount;
 	}
+	
 	public void setCuotaAmount(BigDecimal cuotaAmount) {
 		CuotaAmount = cuotaAmount;
 	}
-
+	
+	public BigDecimal getBalanceAmount() {
+		return BalanceAmount;
+	}
+	
+	public void setBalanceAmount(BigDecimal balanceAmount) {
+		BalanceAmount = balanceAmount;
+	}
+	
 	public Timestamp getPeriodDateIni() {
 		return PeriodDateIni;
 	}
+	
 	public void setPeriodDateIni(Timestamp periodDateIni) {
 		PeriodDateIni = periodDateIni;
 	}
@@ -130,7 +147,8 @@ public class LoanPeriods {
                     "Period " + (i + 1), // Valor del período
                     periodDateIni, // Fecha de inicio del período
                     periodDateEnd, // Fecha de fin del período
-                    BigDecimal.ZERO // Monto de la cuota (puedes ajustar este valor)
+                    BigDecimal.ZERO, // Monto de la cuota (puedes ajustar este valor)
+                    BigDecimal.ZERO // Monto del Saldo (puedes ajustar este valor)
             );
             loanPeriodsList.add(loanPeriod);
         }
@@ -153,7 +171,8 @@ public class LoanPeriods {
                     ", Periodo: " + period.getPeriodValue() +
                     ", Inicio de Período: " + period.getPeriodDateIni() +
                     ", Fin de Período: " + period.getPeriodDateEnd() +
-                    ", Monto: " + period.getCuotaAmount());
+                    ", Monto: " + period.getCuotaAmount()+
+                    ", Saldo: " + period.getBalanceAmount());
         }
         
         // QUINCENAL
@@ -164,7 +183,8 @@ public class LoanPeriods {
                     ", Periodo: " + period.getPeriodValue() +
                     ", Inicio de Período: " + period.getPeriodDateIni() +
                     ", Fin de Período: " + period.getPeriodDateEnd() +
-                    ", Monto: " + period.getCuotaAmount());
+                    ", Monto: " + period.getCuotaAmount()+
+                    ", Saldo: " + period.getBalanceAmount());
         }
 
         // MENSUAL
@@ -175,9 +195,11 @@ public class LoanPeriods {
                     ", Periodo: " + period.getPeriodValue() +
                     ", Inicio de Período: " + period.getPeriodDateIni() +
                     ", Fin de Período: " + period.getPeriodDateEnd() +
-                    ", Monto: " + period.getCuotaAmount());
+                    ", Monto: " + period.getCuotaAmount()+
+                    ", Saldo: " + period.getBalanceAmount());
         }
 
     }
+
     
 }

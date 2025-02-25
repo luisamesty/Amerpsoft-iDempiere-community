@@ -677,6 +677,7 @@ public class AmerpPayrollCalc  {
             calcAmntNet = calcAmntNet.subtract(calcAmntCR);
             sql3 = "UPDATE AMN_Payroll "
             		+ " set amountnetpaid="+calcAmntNet+","
+            		+ " amountcalculated="+calcAmntNet+","
 					+ " amountallocated="+calcAmntDR+","
 					+ " amountdeducted="+calcAmntCR
 					+ " where amn_payroll_id ="+p_AMN_Payroll_ID;

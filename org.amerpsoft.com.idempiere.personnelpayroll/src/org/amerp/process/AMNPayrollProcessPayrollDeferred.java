@@ -236,6 +236,7 @@ public class AMNPayrollProcessPayrollDeferred {
 		BigDecimal BDLoanAmount = BigDecimal.valueOf(0);
 		BigDecimal BDLastCuotaAmount = BigDecimal.valueOf(0);
 		BigDecimal BDLastCuotaAmountDiff = BigDecimal.valueOf(0);
+		BigDecimal BDBalanceAmount = p_LoanAmount;
 		if (p_LoanQuotaNo > 0) {
 			DCuotaAmount = DLoanAmount / p_LoanQuotaNo;
 			BDCuotaAmount = BigDecimal.valueOf(DCuotaAmount).setScale(roundingMode, RoundingMode.HALF_DOWN);
@@ -243,6 +244,7 @@ public class AMNPayrollProcessPayrollDeferred {
 			// LAST QUOTE ROUNDED
 			BDLoanAmount =  BDCuotaAmount.multiply(BigDecimal.valueOf(p_LoanQuotaNo)) ;
 			BDLastCuotaAmountDiff = BDLoanAmount.subtract(p_LoanAmount);
+			
 			if ( BDLastCuotaAmountDiff.compareTo(BigDecimal.valueOf(0)) == -1 ) {
 				BDLastCuotaAmount = BDCuotaAmount.subtract(BDLastCuotaAmountDiff);
 			} else {
@@ -251,7 +253,8 @@ public class AMNPayrollProcessPayrollDeferred {
 			log.warning("Prestamo:"+p_LoanDescription);
 			for (int i = 0; i < periodList.size(); i++) {
 				loanPeriodData = periodList.get(i);
-			    String cuota = (i + 1) + " / " + periodList.size();
+			    //String cuota = (i + 1) + " / " + periodList.size();
+			    String cuota = String.format("%03d / %03d", (i + 1), periodList.size());
 			    if (i == periodList.size() - 1) {
 			    	BDCuotaAmount = BDLastCuotaAmount;
 			    } 
@@ -259,6 +262,9 @@ public class AMNPayrollProcessPayrollDeferred {
 				loanPeriodData.setLoanCuotaNo(i+1);
 				loanPeriodData.setCuotaAmount(BDCuotaAmount);
 				loanPeriodData.setPeriodValue(cuota);
+				// BDBalanceAmount
+				BDBalanceAmount = BDBalanceAmount.subtract(BDCuotaAmount);
+				loanPeriodData.setBalanceAmount(BDBalanceAmount);
 				// Dummy amnperiod if not found()
 			    amnperiod = MAMN_Period.findPeriodByDates(amnprocessde.getAMN_Process_ID(), amnpayroll.getAMN_Contract_ID(), loanPeriodData.getPeriodDateIni(), loanPeriodData.getPeriodDateEnd(), trxName);
 				if (amnperiod == null) {

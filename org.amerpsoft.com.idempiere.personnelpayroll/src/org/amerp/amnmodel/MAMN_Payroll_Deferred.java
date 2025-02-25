@@ -1,25 +1,18 @@
 package org.amerp.amnmodel;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
-import javax.script.ScriptException;
-
 import org.adempiere.util.IProcessUI;
-import org.amerp.amnutilities.AmerpPayrollCalc;
 import org.amerp.amnutilities.LoanPeriods;
-import org.compiere.model.GridTab;
-import org.compiere.model.MClient;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.compiere.util.Language;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
 
@@ -67,7 +60,8 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
 		MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 		// Crear un formateador con el patrón deseado
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Formato YYYY-MM-DD
+        
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
 		MAMN_Payroll_Deferred amnpayrolldeferred = new MAMN_Payroll_Deferred(getCtx(), getAMN_Payroll_Deferred_ID(), get_TrxName());
 		amnpayrolldeferred.setAD_Client_ID(amnpayroll.getAD_Client_ID());
@@ -78,13 +72,14 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
 		amnpayrolldeferred.setDueDate(amnperiod.getAMNDateEnd());
 		amnpayrolldeferred.setAMN_Process_ID(amnprocessde.getAMN_Process_ID());
 		amnpayrolldeferred.setAMN_Employee_ID(amnpayroll.getAMN_Employee_ID());
-		amnpayrolldeferred.setValue(loanPeriodData.getPeriodValue());
-		amnpayrolldeferred.setName(amnemployee.getValue().trim()+" ("+decimalFormat.format(p_LoanAmount)+") "+loanPeriodData.getPeriodValue().trim()+" "+amnconcepttypesCR.getName());
+		amnpayrolldeferred.setValue(loanPeriodData.getPeriodValue()+" "+sdf.format(amnperiod.getAMNDateEnd()));
+		amnpayrolldeferred.setName(amnemployee.getValue().trim()+" "+sdf.format(amnperiod.getAMNDateEnd())+" ("+decimalFormat.format(p_LoanAmount)+") "+loanPeriodData.getPeriodValue().trim()+" "+amnconcepttypesCR.getName());
 		amnpayrolldeferred.setDescription(amnconcepttypesCR.getDescription());
 		amnpayrolldeferred.setQtyValue(loanPeriodData.getCuotaAmount());
 		amnpayrolldeferred.setAmountCalculated(loanPeriodData.getCuotaAmount());
 		amnpayrolldeferred.setAmountCalculated(loanPeriodData.getCuotaAmount());
 		amnpayrolldeferred.setAmountDeducted(loanPeriodData.getCuotaAmount());
+		amnpayrolldeferred.setAmountBalance(loanPeriodData.getBalanceAmount());
 		// SAVES NEW
 		amnpayrolldeferred.save(get_TrxName());
 		if (processMonitor != null)
@@ -141,8 +136,13 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
 			// Get AMN_Payroll_Detail_ID
 			AMN_Payroll_Detail_ID = MAMN_Payroll_Deferred.getFirstPayrollDetailID(AMN_Payroll_ID,  null);
 			if (AMN_Payroll_Detail_ID != 0) {
+				// Updates Header Amounts
 				MAMN_Payroll_Deferred.updatePayrollDeferredSums(ctx, AMN_Payroll_ID, trxName);
-				
+				trx.commit();
+				// Recalc Lines Balances
+				recalculateCumulativeAmountBalance( ctx, AMN_Payroll_ID,  trxName);
+				trx.commit();
+
 			}
 		}
 		return super.afterSave(p_newRecord, p_success);
@@ -177,93 +177,64 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
      * @param trxName Nombre de la transacción
      */
     public static void updatePayrollDeferredSums(Properties ctx, int AMN_Payroll_ID, String trxName) {
-    	
-    	BigDecimal totalQtyValue = Env.ZERO;
+        if (AMN_Payroll_ID <= 0) {
+            log.warning("ID de AMN_Payroll no válido: " + AMN_Payroll_ID);
+            return;
+        }
+
+        BigDecimal totalQtyValue = Env.ZERO;
         BigDecimal totalAmountAllocated = Env.ZERO;
         BigDecimal totalAmountDeducted = Env.ZERO;
         BigDecimal totalAmountCalculated = Env.ZERO;
-        
-        String sql = "SELECT " +
-                     "COALESCE(SUM(QtyValue), 0), " +
+
+        String sql = "SELECT COALESCE(SUM(QtyValue), 0), " +
                      "COALESCE(SUM(AmountAllocated), 0), " +
                      "COALESCE(SUM(AmountDeducted), 0), " +
                      "COALESCE(SUM(AmountCalculated), 0) " +
                      "FROM AMN_Payroll_Deferred WHERE AMN_Payroll_ID = ?";
 
-        PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName);
+             ResultSet rs = pstmt.executeQuery()) {
             pstmt.setInt(1, AMN_Payroll_ID);
-            rs = pstmt.executeQuery();
-
             if (rs.next()) {
-            	totalQtyValue = rs.getBigDecimal(1) != null ? rs.getBigDecimal(1) : Env.ZERO;
-                totalAmountAllocated = rs.getBigDecimal(2) != null ? rs.getBigDecimal(2) : Env.ZERO;
-                totalAmountDeducted = rs.getBigDecimal(3) != null ? rs.getBigDecimal(3) : Env.ZERO;
-                totalAmountCalculated = rs.getBigDecimal(4) != null ? rs.getBigDecimal(4) : Env.ZERO;
+                totalQtyValue = rs.getBigDecimal(1);
+                totalAmountAllocated = rs.getBigDecimal(2);
+                totalAmountDeducted = rs.getBigDecimal(3);
+                totalAmountCalculated = rs.getBigDecimal(4);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        	DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-        }
-		
-	    // Obtener el primer registro de AMN_Payroll_Detail asociado
-        int AMN_Payroll_Detail_ID = getFirstPayrollDetailID(AMN_Payroll_ID, trxName);
-        if (AMN_Payroll_Detail_ID <= 0) {
-            log.warning("No se encontró un AMN_Payroll_Detail para actualizar.");
+            log.severe("Error al calcular los totales de AMN_Payroll_Deferred: " + e.getMessage());
             return;
         }
 
-        // Crear el objeto MAMN_Payroll_Detail y actualizar sus valores
-        MAMN_Payroll_Detail amnpd = new MAMN_Payroll_Detail(ctx, AMN_Payroll_Detail_ID, trxName);
-        amnpd.setQtyValue(totalQtyValue);
-        amnpd.setAmountAllocated(totalAmountAllocated);
-        amnpd.setAmountDeducted(totalAmountDeducted);
-        amnpd.setAmountCalculated(totalAmountCalculated);
-
-        // Guardar los cambios en la base de datos
-        if (amnpd.save()) {
-            log.warning("AMN_Payroll_Detail actualizado correctamente: " + AMN_Payroll_Detail_ID);
+        // Obtener el primer registro de AMN_Payroll_Detail asociado
+        int AMN_Payroll_Detail_ID = getFirstPayrollDetailID(AMN_Payroll_ID, trxName);
+        if (AMN_Payroll_Detail_ID > 0) {
+            MAMN_Payroll_Detail amnpd = new MAMN_Payroll_Detail(ctx, AMN_Payroll_Detail_ID, trxName);
+            amnpd.setQtyValue(totalQtyValue);
+            amnpd.setAmountAllocated(totalAmountAllocated);
+            amnpd.setAmountDeducted(totalAmountDeducted);
+            amnpd.setAmountCalculated(totalAmountCalculated);
+            amnpd.saveEx(trxName); // Guardar con la transacción actual
+            log.info("AMN_Payroll_Detail actualizado correctamente: " + AMN_Payroll_Detail_ID);
         } else {
-            log.warning("Error al actualizar AMN_Payroll_Detail.");
+            log.warning("No se encontró un AMN_Payroll_Detail para actualizar.");
         }
-//		
-//		// RECALC ALL DOCUMENT
-//        // Update AMN_Payroll (HEADER VALUES)
-//
-//        String sql3 = "UPDATE AMN_Payroll "
-//        		+ " set amountnetpaid="+totalAmountDeducted+","
-//				+ " amountallocated="+totalAmountAllocated+","
-//				+ " amountdeducted="+totalAmountDeducted
-//				+ " where amn_payroll_id ="+amnpd.getAMN_Payroll_ID();
-//        DB.executeUpdateEx(sql3, null);
-//        
 
-        // Cargar la instancia de MAMN_Payroll
+        // Actualizar la cabecera de AMN_Payroll
         MAMN_Payroll amnPayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, trxName);
-
-        if (amnPayroll != null && amnPayroll.get_ID() > 0) {
-            // Actualizar los valores
+        if (amnPayroll.get_ID() > 0) {
             amnPayroll.setAmountNetpaid(totalAmountCalculated);
             amnPayroll.setAmountAllocated(totalAmountAllocated);
             amnPayroll.setAmountDeducted(totalAmountDeducted);
             amnPayroll.setAmountCalculated(totalAmountCalculated);
-            // Guardar los cambios en la base de datos
-            if (amnPayroll.save()) {
-            	 log.warning("AMN_Payroll actualizado correctamente: " + AMN_Payroll_ID);
-            } else {
-            	 log.warning("Error al actualizar AMN_Payroll.");
-            }
+            amnPayroll.saveEx(trxName); // Guardar con la transacción actual
+            log.info("AMN_Payroll actualizado correctamente: " + AMN_Payroll_ID);
         } else {
-        	 log.warning("No se encontró un AMN_Payroll con ID: " + AMN_Payroll_ID);
+            log.warning("No se encontró un AMN_Payroll con ID: " + AMN_Payroll_ID);
         }
-
-
     }
+
 
 
     /**
@@ -298,5 +269,58 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
 
         return payrollDetailID > 0 ? payrollDetailID : 0;
     }
+
+    /**
+     * recalculateCumulativeAmountBalance
+     * @param AMN_Payroll_ID
+     * @param trxName
+     */
+    public static void recalculateCumulativeAmountBalance(Properties ctx, int AMN_Payroll_ID, String trxName) {
+        String sql = "SELECT AMN_Payroll_Deferred_ID, AmountAllocated, AmountDeducted, duedate " +
+                     "FROM AMN_Payroll_Deferred " +
+                     "WHERE AMN_Payroll_ID = ? " +
+                     "ORDER BY duedate ASC";  // Ordenar por fecha de vencimiento
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        BigDecimal cumulativeBalance = BigDecimal.ZERO;  // Inicia el saldo acumulado
+
+        // UBICA EL SALDO INICIAL
+        MAMN_Payroll amnpayroll = new MAMN_Payroll( ctx, AMN_Payroll_ID,  trxName);
+        if (amnpayroll != null && amnpayroll.getAmountNetpaid().compareTo(BigDecimal.ZERO) > 0) {
+        	// Initial Balance
+        	cumulativeBalance =  amnpayroll.getAmountNetpaid();
+	        try {
+	            pstmt = DB.prepareStatement(sql, trxName);
+	            pstmt.setInt(1, AMN_Payroll_ID);
+	            rs = pstmt.executeQuery();
+	
+	            while (rs.next()) {
+	                int deferredID = rs.getInt("AMN_Payroll_Deferred_ID");
+	                BigDecimal amountAllocated = rs.getBigDecimal("AmountAllocated");
+	                if (amountAllocated== null) 
+	                	amountAllocated = BigDecimal.ZERO;
+	                BigDecimal amountDeducted = rs.getBigDecimal("AmountDeducted");
+	                if (amountDeducted== null) 
+	                	amountDeducted = BigDecimal.ZERO;
+	
+	                // Calcular el nuevo balance acumulativo
+	                BigDecimal newBalance = cumulativeBalance.add(amountAllocated).subtract(amountDeducted);
+	
+	                // Actualizar el saldo en la BD
+	                String updateSQL = "UPDATE AMN_Payroll_Deferred SET AmountBalance = ? WHERE AMN_Payroll_Deferred_ID = ?";
+	                DB.executeUpdate(updateSQL, new Object[]{newBalance, deferredID}, false, trxName);
+	
+	                // Actualizar el saldo acumulado para la siguiente línea
+	                cumulativeBalance = newBalance;
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            DB.close(rs, pstmt);
+	        }
+        }
+    }
+
 
 }
