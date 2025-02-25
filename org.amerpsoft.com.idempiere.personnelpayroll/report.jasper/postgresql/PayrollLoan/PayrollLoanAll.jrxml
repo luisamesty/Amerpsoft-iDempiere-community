@@ -298,9 +298,7 @@ SELECT * FROM
 WHERE (imp_header = 1) OR 
 	(nomina.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR nomina.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  Contract_Value, Employee_Value, Process_Value, Pay_ID, Pago_cruzado
-
-]]>
+ORDER BY  Contract_Value, Employee_Value, Process_Value, Pay_ID, Pago_cruzado]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -1224,7 +1222,7 @@ ORDER BY  Contract_Value, Employee_Value, Process_Value, Pay_ID, Pago_cruzado
 	</columnHeader>
 	<detail>
 		<band height="15" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{pay_id}!= null && $F{contyp_sign}.compareToIgnoreCase( "S" ) != 0 ]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{pay_id}!= null && $F{contyp_sign}.compareToIgnoreCase( "S" ) != 0]]></printWhenExpression>
 			<textField>
 				<reportElement x="0" y="0" width="70" height="15" uuid="68f024cf-c75f-4067-921e-66ef89a4d226">
 					<property name="local_mesure_unitheight" value="pixel"/>
