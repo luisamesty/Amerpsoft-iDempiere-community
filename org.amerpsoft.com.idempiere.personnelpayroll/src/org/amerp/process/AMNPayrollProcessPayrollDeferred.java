@@ -251,7 +251,8 @@ public class AMNPayrollProcessPayrollDeferred {
 			log.warning("Prestamo:"+p_LoanDescription);
 			for (int i = 0; i < periodList.size(); i++) {
 				loanPeriodData = periodList.get(i);
-			    String cuota = (i + 1) + " / " + periodList.size();
+			    //String cuota = (i + 1) + " / " + periodList.size();
+			    String cuota = String.format("%03d / %03d", (i + 1), periodList.size());
 			    if (i == periodList.size() - 1) {
 			    	BDCuotaAmount = BDLastCuotaAmount;
 			    } 

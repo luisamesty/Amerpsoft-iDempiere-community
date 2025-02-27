@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -67,7 +68,8 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
 		MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 		// Crear un formateador con el patrón deseado
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Formato YYYY-MM-DD
+        
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
 		MAMN_Payroll_Deferred amnpayrolldeferred = new MAMN_Payroll_Deferred(getCtx(), getAMN_Payroll_Deferred_ID(), get_TrxName());
 		amnpayrolldeferred.setAD_Client_ID(amnpayroll.getAD_Client_ID());
@@ -78,8 +80,8 @@ public class MAMN_Payroll_Deferred extends X_AMN_Payroll_Deferred {
 		amnpayrolldeferred.setDueDate(amnperiod.getAMNDateEnd());
 		amnpayrolldeferred.setAMN_Process_ID(amnprocessde.getAMN_Process_ID());
 		amnpayrolldeferred.setAMN_Employee_ID(amnpayroll.getAMN_Employee_ID());
-		amnpayrolldeferred.setValue(loanPeriodData.getPeriodValue());
-		amnpayrolldeferred.setName(amnemployee.getValue().trim()+" ("+decimalFormat.format(p_LoanAmount)+") "+loanPeriodData.getPeriodValue().trim()+" "+amnconcepttypesCR.getName());
+		amnpayrolldeferred.setValue(loanPeriodData.getPeriodValue()+" "+sdf.format(amnperiod.getAMNDateEnd()));
+		amnpayrolldeferred.setName(amnemployee.getValue().trim()+" "+sdf.format(amnperiod.getAMNDateEnd())+" ("+decimalFormat.format(p_LoanAmount)+") "+loanPeriodData.getPeriodValue().trim()+" "+amnconcepttypesCR.getName());
 		amnpayrolldeferred.setDescription(amnconcepttypesCR.getDescription());
 		amnpayrolldeferred.setQtyValue(loanPeriodData.getCuotaAmount());
 		amnpayrolldeferred.setAmountCalculated(loanPeriodData.getCuotaAmount());
