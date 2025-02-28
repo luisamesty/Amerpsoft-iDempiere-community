@@ -168,7 +168,6 @@ public class AMNPayrollProcessPayrollDeferredOneEmployee extends SvrProcess {
 		}
 	    if (rRecPayrollDeferred == 0  &&  bRecPayrollDetail  ) {
 	 
-	    	
 	    	// Nueva transacción por lote
     	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
     	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
@@ -194,9 +193,6 @@ public class AMNPayrollProcessPayrollDeferredOneEmployee extends SvrProcess {
 					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanDescription,p_LoanAmount, trxNameLocal);
 			trx.commit(); // Guarda los cambios
 			// UPDATES HEADER - LINE Similar to AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, p_AMN_Payroll_ID);
-//			AMNPayrollProcessPayrollDeferred.updatePayrollHeader(ctx, p_AMN_Payroll_ID, p_LoanAmount, p_LoanAmount, trxNameLocal);
-//			trx.commit(); // Guarda los cambios
-			//AMNPayrollProcessPayrollDeferred.updatePayrollDetail(ctx, amnpayrolldetail.getAMN_Payroll_Detail_ID(), p_LoanAmount, p_LoanAmount, trxName);
 			AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,
 					amnpayroll.getAMN_Period_ID(),p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
 			trx.commit(); // Guarda los cambios
