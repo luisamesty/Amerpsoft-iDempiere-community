@@ -263,5 +263,5 @@ SELECT * FROM
 WHERE (imp_header = 1) OR 
 	(nomina.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR nomina.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  Contract_Value, Employee_Value, Process_Value, Pay_ID, Pago_cruzado
+ORDER BY  Contract_Value, Employee_Value, Process_Value, Pay_ID, duedate, Pago_cruzado
 
