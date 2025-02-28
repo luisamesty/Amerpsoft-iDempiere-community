@@ -21,13 +21,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 
-import javax.script.ScriptException;
-
 import org.adempiere.exceptions.TaxNoExemptFoundException;
 import org.adempiere.util.IProcessUI;
 import org.amerp.amndocument.Doc_AMNPayroll;
 import org.amerp.amnutilities.AmerpDateUtils;
-import org.amerp.amnutilities.AmerpPayrollCalc;
 import org.amerp.amnutilities.AmerpPayrollCalcUtilDVFormulas;
 import org.amerp.amnutilities.AmerpUtilities;
 import org.compiere.model.*;
@@ -1068,34 +1065,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
 	protected boolean afterSave (boolean newRecord, boolean success)
 	{
-		
-		if (!success) {
-	        return false;
-	    }
-	    // Asegurar que el registro actual se haya guardado completamente
-       	// Confirmar la transacción global al final del proceso
-      	Trx trx = Trx.get(get_TrxName(), false);
-      	if (trx != null) {
-              trx.commit();
-      	}
-      	if (getAMN_Payroll_ID() != 0 && getAMN_Process_ID()!=0) {
-      		MAMN_Process amnprocess = new MAMN_Process(getCtx(), getAMN_Process_ID(), get_TrxName());
-      		if (amnprocess.getAMN_Process_Value().compareToIgnoreCase(MAMN_Process.Process_PJ) == 0
-      				|| amnprocess.getAMN_Process_Value().compareToIgnoreCase(MAMN_Process.Process_PO) == 0) {
-	      		// Recalc
-				try {
-					// Recalc Lines Balances
-					MAMN_Payroll_Deferred.recalculateCumulativeAmountBalance( getCtx(), getAMN_Payroll_ID(),  get_TrxName());
-					trx.commit();
-				}
-				catch (Exception ex) {
-					// 
-					ex.printStackTrace();
-				}
-      		}
-      	}      	
-		return super.afterSave(newRecord, success);
-
+		return true;
 	}
 
 	/**

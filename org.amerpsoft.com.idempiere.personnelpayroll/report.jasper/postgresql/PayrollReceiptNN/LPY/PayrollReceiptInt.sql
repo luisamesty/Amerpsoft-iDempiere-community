@@ -147,6 +147,7 @@ SELECT
 	amountdeducted_t,
 	iso_code1,
 	iso_code2,
+	loan_balance,
 	SUM(cantidad) AS cantidad,
 	SUM(amountallocated) AS amountallocated,
 	SUM(amountdeducted) AS amountdeducted, 
@@ -203,6 +204,7 @@ FROM
 		COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
+		CASE WHEN bal.loan_balance IS NOT NULL THEN CAST(bal.loan_balance AS NUMERIC) ELSE CAST(0 AS numeric) END AS loan_balance,
 	   -- MONTOS Y CIFRAS cty.concept_value	   
 	    pyr_d.amn_payroll_detail_id, 
 	    pyr_d.qtyvalue as cantidad, 
@@ -211,6 +213,11 @@ FROM
 		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+	LEFT JOIN (
+		SELECT ampd.amn_payroll_id, ampd.amn_payroll_detail_id, ampde.amountbalance AS loan_balance
+		FROM adempiere.AMN_Payroll_Detail ampd 
+		INNER JOIN adempiere.AMN_Payroll_Deferred ampde ON ampde.amn_payroll_deferred_id = ampd.amn_payroll_Deferred_id
+	) AS bal ON bal.amn_payroll_detail_id = pyr_d.amn_payroll_detail_id
 	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
 	LEFT JOIN Conceptos 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
 	LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
@@ -240,6 +247,6 @@ FROM
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 sector, departamento, reportorder, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t,
+documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t, loan_balance,
 iso_code1, iso_code2
 ORDER BY  amndateend, reportorder, documentno, calcorder2

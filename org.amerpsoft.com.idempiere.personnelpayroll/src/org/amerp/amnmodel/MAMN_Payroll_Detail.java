@@ -73,26 +73,6 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	@Override
 	protected boolean afterSave(boolean p_newRecord, boolean p_success) {
 
-		if (!p_success) {
-	        return false;
-	    }
-	    // Asegurar que el registro actual se haya guardado completamente
-       	// Confirmar la transacción global al final del proceso
-      	Trx trx = Trx.get(get_TrxName(), false);
-      	if (trx != null) {
-              trx.commit();
-      	}
-      	// Recalc
-		try {
-			// Recalc 
-			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), this.getAMN_Payroll_ID());
-			trx.commit();
-		}
-		catch (ScriptException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-      	
 		return super.afterSave(p_newRecord, p_success);
 
 	}
@@ -547,7 +527,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
         AMN_Concept_Uom_ID = amncty.getAMN_Concept_Uom_ID();		
 	    //
 		if (Concept_Description==null)
-			Concept_Description="*** Description Empty ***";
+			Concept_Description="*** Description Empty ***";	        
 		// MAMN_Payroll_Detail
 		MAMN_Payroll_Detail amnpayrolldetail = MAMN_Payroll_Detail.findAMNPayrollDetailbyAMNPayrollforDeferred(ctx, locale, 
 				p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_ID, AMN_Payroll_Deferred_ID);
@@ -557,7 +537,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			//log.warning("ANTES DE EVALUAR Concept_DefaultValueST:"+Concept_DefaultValueST+"  Concept_DefaultValue:"+Concept_DefaultValue);
 			// ***
 			//log.warning("DESPUES DE EVALUAR Concept_DefaultValueST:"+Concept_DefaultValueST+"  Concept_DefaultValue:"+Concept_DefaultValue);
-			amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), getAMN_Payroll_ID(), get_TrxName());
+			amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), 0, get_TrxName());
 			amnpayrolldetail.setAD_Client_ID(p_AD_Client_ID);
 			amnpayrolldetail.setAD_Org_ID(p_AD_Org_ID);
 			amnpayrolldetail.setAMN_Payroll_ID(p_AMN_Payroll_ID);
@@ -590,10 +570,9 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			processMonitor.statusUpdate(Msg.getElement(Env.getCtx(), "AMN_Payroll_Detail_ID")+": "+
 					amnpayrolldetail.getValue()+"-"+amnpayrolldetail.getName());
 		}
-		//amnpayroll.saveEx(get_TrxName());	//	Creates AMNPayroll Control
 
 		return true;
-		
+
 	}	//	createAmnPayrollDetailDeferred
 
 	/**
