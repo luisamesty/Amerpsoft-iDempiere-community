@@ -35,6 +35,7 @@ import org.compiere.process.SvrProcess;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 
 public class AMNPayrollProcessPayrollDeferredOneEmployee extends SvrProcess {
 	
@@ -166,26 +167,40 @@ public class AMNPayrollProcessPayrollDeferredOneEmployee extends SvrProcess {
 			okProcess = false;
 		}
 	    if (rRecPayrollDeferred == 0  &&  bRecPayrollDetail  ) {
-	    	// Create AMN_Payroll_Deferred  LInes
+	 
+	    	
+	    	// Nueva transacción por lote
+    	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
+    	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
+    	   	// Create AMN_Payroll_Deferred  LInes
 	    	periodList = (ArrayList<LoanPeriods>) AMNPayrollProcessPayrollDeferred.CreatePayrollDeferredDetailLines 
 	    			(ctx, amnpayroll,  amnprocessde, amnemployee, amnconcepttypesDB, amnconcepttypesCR,
-	    					 p_LoanAmount, p_LoanQuotaNo, p_AMN_FirstPeriod_ID, p_LoanDescription,trxName) ;
+	    					 p_LoanAmount, p_LoanQuotaNo, p_AMN_FirstPeriod_ID, p_LoanDescription,trxNameLocal) ;
+	    	trx.commit(); // Guarda los cambios
 			//  CREATE OR VERIFY MAMN_Payroll Detail
 	    	MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, null);
 		    // CREATE MAMN_Payroll Detail
 		    amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(ctx).getLocale(),
 					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(),  AMN_Process_ID_PO, p_AMN_Contract_ID,
-					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID,trxName);
+					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID,trxNameLocal);
+		    trx.commit(); // Guarda los cambios
 			//  UPDATE MAMN_Payroll Detail
 			amnpayrolldetail.updateAmnPayrollDetail(ctx, Env.getLanguage(ctx).getLocale(),
 					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(), AMN_Process_ID_PO, p_AMN_Contract_ID,
-					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanAmount,trxName);
+					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanAmount,trxNameLocal);
+			trx.commit(); // Guarda los cambios
 			//  UPDATE MAMN_Payroll Detail Description with p_LoanDescription			
 			amnpayrolldetail.updateAmnPayrollDetailDescription(ctx, Env.getLanguage(ctx).getLocale(),
-					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(), AMN_Process_ID_PO, p_AMN_Contract_ID,
-					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanDescription,trxName);
-			// RECALC
-			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, p_AMN_Payroll_ID);
+					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanDescription,p_LoanAmount, trxNameLocal);
+			trx.commit(); // Guarda los cambios
+			// UPDATES HEADER - LINE Similar to AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, p_AMN_Payroll_ID);
+//			AMNPayrollProcessPayrollDeferred.updatePayrollHeader(ctx, p_AMN_Payroll_ID, p_LoanAmount, p_LoanAmount, trxNameLocal);
+//			trx.commit(); // Guarda los cambios
+			//AMNPayrollProcessPayrollDeferred.updatePayrollDetail(ctx, amnpayrolldetail.getAMN_Payroll_Detail_ID(), p_LoanAmount, p_LoanAmount, trxName);
+			AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,
+					amnpayroll.getAMN_Period_ID(),p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+			trx.commit(); // Guarda los cambios
+			trx.close();  
 			//  Title
 	    	Msg_Header ="Lin  "+Msg.getElement(ctx, "AMN_Period_ID")+":     "+Msg.getElement(ctx, "AmountQuota")+":  "+Msg.getMsg(ctx, "Date")+":";
 	    			addLog(Msg_Header);

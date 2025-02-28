@@ -633,42 +633,6 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
         Concept_Description = amncty.getDescription();
         Concept_CalcOrder =amncty.getCalcOrder();
         AMN_Concept_Uom_ID = amncty.getAMN_Concept_Uom_ID();		
-//		String sql = "" +
-//	    		 "SELECT " + 
-//	    			"cty.value, " + 
-//	    			"coalesce(cty.name,'') as name, " + 
-//	    			"coalesce(cty.description,cty.name,'') as description,  " + 
-//	    			"cty.calcorder,  " + 
-//	    			"cty.defaultvalue, " +
-//	    			"cty.AMN_Concept_Uom_ID " +
-//	    		"FROM amn_concept_types as cty " + 
-//	    			"LEFT JOIN amn_concept_types_proc as ctp ON (ctp.amn_concept_types_id = cty.amn_concept_types_id) " + 
-//	    			"WHERE ctp.amn_concept_types_proc_id = ?";
-//	    PreparedStatement pstmt = null;
-//	    ResultSet rs = null;
-//	    try
-//	    {
-//	            pstmt = DB.prepareStatement(sql, null);
-//	            pstmt.setInt(1, p_AMN_Concept_Types_Proc_ID);
-//	            rs = pstmt.executeQuery();
-//	            if (rs.next())
-//	            {
-//	                Concept_Value= rs.getString(1).trim();
-//	                Concept_Name = rs.getString(2).trim();
-//	                Concept_Description = rs.getString(3).trim();
-//	                Concept_CalcOrder =rs.getInt(4);
-//	                AMN_Concept_Uom_ID = rs.getInt(6);
-//	            }
-//	    }
-//	    catch (SQLException e)
-//	    {
-//	        Concept_Name = "Error: Nombre del Concepto" ;
-//	    }
-//	    finally
-//	    {
-//	            DB.close(rs, pstmt);
-//	            rs = null; pstmt = null;
-//	    }
 	    //
 		if (Concept_Description==null)
 			Concept_Description="*** Description Empty ***";
@@ -714,23 +678,21 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		
 	}	//	updateAmnPayrollDetail
 
+
 	/**
-	 * updateAmnPayrollDetailDescription
-	 * Used by Update Attendance
+	 * * updateAmnPayrollDetailDescription
+	 *
 	 * @param ctx
 	 * @param locale
-	 * @param p_AD_Client_ID
-	 * @param p_AD_Org_ID
-	 * @param p_AMN_Process_ID	Payroll Process
-	 * @param p_AMN_Contract_ID	Payroll Contract
 	 * @param p_AMN_Payroll_ID
 	 * @param p_AMN_Concept_Types_Proc_ID
-	 * @param Strin p_Description
-	 * @return boolean
+	 * @param p_Description
+	 * @param calcAmnt
+	 * @param trxName
+	 * @return
 	 */
 	public boolean updateAmnPayrollDetailDescription(Properties ctx, Locale locale, 
-			int p_AD_Client_ID, int p_AD_Org_ID,  int p_AMN_Process_ID, int p_AMN_Contract_ID,
-			int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID, String p_Description, String trxName) {
+			int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID, String p_Description, BigDecimal calcAmnt, String trxName) {
 		
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
 		if (p_Description==null)
@@ -741,6 +703,10 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			//log.warning("................Values in MAMN_Payroll (UPDATE)...................");
 
 			amnpayrolldetail.setDescription(p_Description);
+			// Actualizar los valores del objeto actual
+	        setAmountCalculated(calcAmnt);
+	        setAmountAllocated(calcAmnt);
+	        setAmountDeducted(BigDecimal.ZERO);
 			amnpayrolldetail.saveEx(get_TrxName());
 		}
 		if (processMonitor != null)
@@ -753,8 +719,24 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 
 		return true;
 		
-	}	//	createAmnPayrollDetail
+	}	//	updateAmnPayrollDetailDescription
 
+	/**
+     * Actualiza los valores del detalle de la nómina
+     * @param calcAmntDR Monto asignado
+     * @param calcAmntCR Monto deducido
+     */
+    public void updatePayrollDetailAmounts(BigDecimal calcAmnt) {
+
+        // Actualizar los valores del objeto actual
+        setAmountCalculated(calcAmnt);
+        setAmountAllocated(calcAmnt);
+        setAmountDeducted(BigDecimal.ZERO);
+
+        // Guardar los cambios en la base de datos
+        saveEx();
+    }
+	
 	/**
 	 * getAMN_Deb_Acct
 	 * @param p_AMN_Payroll_Detail	Payroll_Detail
@@ -764,23 +746,10 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	public static int getAMN_Deb_Acct (MAMN_Payroll_Detail p_AMN_Payroll_Detail, MAcctSchema as)
 	
 	{
-//		String sql;
 		int C_ValidCombination_ID = 0;
 		int AMN_ConceptTypes_Proc_ID=0;
 		AMN_ConceptTypes_Proc_ID=p_AMN_Payroll_Detail.getAMN_Concept_Types_Proc_ID();
 		// AMN_Payroll_Detail_ID VALID COMBINATION DEB
-//		sql = "SELECT " + 
-//				"cvc.c_validcombination_id " + 
-//				"FROM " + 
-//				"amn_concept_types_proc as ctp " + 
-//				"LEFT JOIN " + 
-//				"amn_concept_types as cty ON (ctp.amn_concept_types_id = cty.amn_concept_types_id ) " + 
-//				"LEFT JOIN " + 
-//				"c_validcombination as cvc ON (cty.amn_deb_acct = cvc.c_validcombination_id) " + 
-//				"WHERE " + 
-//				"amn_concept_types_proc_id = ?"
-//				;
-//		C_ValidCombination_ID = DB.getSQLValue(null, sql, AMN_ConceptTypes_Proc_ID);	
 		// NEW  Values Depending on WorkForce
 		MAMN_Payroll amnpd = new MAMN_Payroll(Env.getCtx(), p_AMN_Payroll_Detail.getAMN_Payroll_ID(),  null) ;
 		MAMN_Employee amnemp = new MAMN_Employee(Env.getCtx(), amnpd.getAMN_Employee_ID(),  null);

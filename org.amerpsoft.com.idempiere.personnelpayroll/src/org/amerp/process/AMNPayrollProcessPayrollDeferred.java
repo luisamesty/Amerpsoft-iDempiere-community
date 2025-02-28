@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.amerp.amnmodel.MAMN_Concept_Types;
 import org.amerp.amnmodel.MAMN_Concept_Types_Proc;
@@ -287,6 +288,64 @@ public class AMNPayrollProcessPayrollDeferred {
 		
 	}
 	
-	
+	/**
+	 * updatePayrollHeader
+	 * @param ctx
+	 * @param p_AMN_Payroll_ID
+	 * @param calcAmntDR
+	 * @param calcAmntCR
+	 * @param trxName
+	 */
+	public static void updatePayrollHeader(Properties ctx, int p_AMN_Payroll_ID, BigDecimal calcAmntDR, BigDecimal calcAmntCR, String trxName) {
+	    // Calcular el monto neto
+	    BigDecimal calcAmntNet = calcAmntDR.subtract(calcAmntCR);
+
+	    String sql = "UPDATE AMN_Payroll " +
+	                 "SET amountnetpaid = ?, " +
+	                 "amountcalculated = ?, " +
+	                 "amountallocated = ?, " +
+	                 "amountdeducted = ? " +
+	                 "WHERE amn_payroll_id = ?";
+
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	        pstmt.setBigDecimal(1, calcAmntNet);
+	        pstmt.setBigDecimal(2, calcAmntNet);
+	        pstmt.setBigDecimal(3, calcAmntDR);
+	        pstmt.setBigDecimal(4, calcAmntCR);
+	        pstmt.setInt(5, p_AMN_Payroll_ID);
+
+	        pstmt.executeUpdate();
+	    } catch (Exception e) {
+	        log.log(Level.SEVERE, "Error al actualizar AMN_Payroll", e);
+	    }
+	}
+
+	/**
+	 * updatePayrollDetail
+	 * @param ctx
+	 * @param p_AMN_Payroll_Detail_ID
+	 * @param calcAmntDR
+	 * @param calcAmntCR
+	 * @param trxName
+	 */
+	public static void updatePayrollDetail(Properties ctx, int p_AMN_Payroll_Detail_ID, BigDecimal calcAmntDR, BigDecimal calcAmntCR, String trxName) {
+	    String sql = "UPDATE AMN_Payroll_Detail " +
+	                 "SET amountcalculated = ?, " +
+	                 "amountallocated = ?, " +
+	                 "amountdeducted = ? " +
+	                 "WHERE amn_payroll_detail_id = ?";
+
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	        pstmt.setBigDecimal(1, calcAmntDR.subtract(calcAmntCR)); // Calcula el monto neto si es necesario
+	        pstmt.setBigDecimal(2, calcAmntDR);
+	        pstmt.setBigDecimal(3, calcAmntCR);
+	        pstmt.setInt(4, p_AMN_Payroll_Detail_ID);
+
+	        pstmt.executeUpdate();
+	    } catch (Exception e) {
+	        log.log(Level.SEVERE, "Error al actualizar AMN_Payroll_Detail", e);
+	    }
+	}
+
 
 }
