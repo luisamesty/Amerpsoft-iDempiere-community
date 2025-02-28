@@ -185,6 +185,7 @@ SELECT
 	amountdeducted_t,
 	iso_code1,
 	iso_code2,
+	loan_balance,
 	SUM(cantidad) AS cantidad,
 	SUM(amountallocated) AS amountallocated,
 	SUM(amountdeducted) AS amountdeducted, 
@@ -241,6 +242,7 @@ FROM
 		COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
+		CASE WHEN bal.loan_balance IS NOT NULL THEN CAST(bal.loan_balance AS NUMERIC) ELSE CAST(0 AS numeric) END AS loan_balance,
 	   -- MONTOS Y CIFRAS cty.concept_value	   
 	    pyr_d.amn_payroll_detail_id, 
 	    pyr_d.qtyvalue as cantidad, 
@@ -249,6 +251,11 @@ FROM
 		currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+	LEFT JOIN (
+		SELECT ampd.amn_payroll_id, ampd.amn_payroll_detail_id, ampde.amountbalance AS loan_balance
+		FROM adempiere.AMN_Payroll_Detail ampd 
+		INNER JOIN adempiere.AMN_Payroll_Deferred ampde ON ampde.amn_payroll_deferred_id = ampd.amn_payroll_Deferred_id
+	) AS bal ON bal.amn_payroll_detail_id = pyr_d.amn_payroll_detail_id
 	LEFT JOIN adempiere.amn_concept_types_proc  as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
 	LEFT JOIN Conceptos 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
 	LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= pyr.amn_process_id)
@@ -278,7 +285,7 @@ FROM
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 sector, departamento, reportorder, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t,
+documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t, loan_balance,
 iso_code1, iso_code2
 ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 	</queryString>
@@ -390,6 +397,11 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 		<property name="com.jaspersoft.studio.field.label" value="iso_code2"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_currency"/>
 	</field>
+	<field name="loan_balance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="loan_balance"/>
+		<property name="com.jaspersoft.studio.field.label" value="loan_balance"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_deferred"/>
+	</field>
 	<field name="cantidad" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
 		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
@@ -475,6 +487,10 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="vales_saldo" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porRecibo" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{loan_balance} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
 	<variable name="otros_descuentos" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porRecibo" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSDESCUENTOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -532,7 +548,9 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.date} + ": " + new SimpleDateFormat("MMMM/yyyy", new Locale("es", "ES")).format($F{amndateend})
+					<textFieldExpression><![CDATA[$R{report.date} + ": " + 
+(new SimpleDateFormat("MMMM/yyyy", new Locale("es", "ES")).format($F{amndateend})).substring(0,1).toUpperCase() + 
+(new SimpleDateFormat("MMMM/yyyy", new Locale("es", "ES")).format($F{amndateend})).substring(1)
 ]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="">
@@ -651,7 +669,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$V{dias_trabajados}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="53" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4557e638-d166-4d65-9ab0-11e79797df8c">
+					<reportElement mode="Transparent" x="310" y="53" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4557e638-d166-4d65-9ab0-11e79797df8c">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -665,7 +683,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$R{report.salary}+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="65" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0c433ee7-de4e-4acf-992a-ef4eb0ad06ec">
+					<reportElement mode="Transparent" x="310" y="65" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0c433ee7-de4e-4acf-992a-ef4eb0ad06ec">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -737,7 +755,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$V{horas_extras}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="330" y="100" width="245" height="14" uuid="377c65e8-d669-4a04-a09e-30cbae480726">
+					<reportElement x="310" y="100" width="265" height="14" uuid="377c65e8-d669-4a04-a09e-30cbae480726">
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -917,7 +935,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$V{v_asignaciones}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="150" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2c0e8f20-8720-4df7-9d49-a1b6e47012c3">
+					<reportElement mode="Transparent" x="310" y="150" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2c0e8f20-8720-4df7-9d49-a1b6e47012c3">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -931,7 +949,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$R{report.judicialdiscounts}.trim()+":"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="138" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="05356ce4-b01e-409b-92a5-7f93a5bc6d41">
+					<reportElement mode="Transparent" x="310" y="138" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="05356ce4-b01e-409b-92a5-7f93a5bc6d41">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -945,7 +963,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$R{report.othersdiscounts}.trim()+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="162" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ce25ccbb-83e3-4a1d-bdbe-bcb98d4496ee">
+					<reportElement mode="Transparent" x="310" y="162" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ce25ccbb-83e3-4a1d-bdbe-bcb98d4496ee">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -959,7 +977,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$R{report.ips}+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="114" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e1a3c249-33a4-4d8d-847f-55ad5513be14">
+					<reportElement mode="Transparent" x="310" y="114" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e1a3c249-33a4-4d8d-847f-55ad5513be14">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -971,8 +989,8 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.loans}.trim()+": "]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement mode="Transparent" x="330" y="126" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cd60c10e-93bc-41c4-b918-0c6827af5d55">
+				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo">
+					<reportElement mode="Transparent" x="310" y="126" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cd60c10e-93bc-41c4-b918-0c6827af5d55">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -983,10 +1001,10 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.vale}.trim()+": "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.vale}.trim()+($V{vales_saldo}.compareTo( BigDecimal.ZERO) > 0 ? " (Saldo "+ $V{vales_saldo}+")" : "" )+": "]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="186" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="81ac9b99-e769-4347-a6bd-0159567f5b01">
+					<reportElement mode="Transparent" x="310" y="186" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="81ac9b99-e769-4347-a6bd-0159567f5b01">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1072,7 +1090,7 @@ ORDER BY  amndateend, reportorder, documentno, calcorder2]]>
 					<textFieldExpression><![CDATA[$V{ips}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement mode="Transparent" x="330" y="198" width="116" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1b81e73e-5f78-4a51-9218-ddb9b144ac0b">
+					<reportElement mode="Transparent" x="310" y="198" width="136" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1b81e73e-5f78-4a51-9218-ddb9b144ac0b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>

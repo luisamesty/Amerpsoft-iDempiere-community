@@ -51,6 +51,8 @@ public class AMN_Payroll_Deferred_callout implements IColumnCallout {
 				p_mTab.setValue(MAMN_Payroll_Deferred.COLUMNNAME_AmountCalculated, p_mTab.getValue(MAMN_Payroll_Deferred.COLUMNNAME_QtyValue) );
 				p_mTab.setValue(MAMN_Payroll_Deferred.COLUMNNAME_AmountAllocated, BigDecimal.ZERO );
 				p_mTab.setValue(MAMN_Payroll_Deferred.COLUMNNAME_AmountDeducted, p_mTab.getValue(MAMN_Payroll_Deferred.COLUMNNAME_QtyValue) );			
+//				if (AMN_Payroll_ID >0)
+//					MAMN_Payroll_Deferred.updatePayrollDeferredSums(p_ctx, AMN_Payroll_ID, null);
 			}
 		}
 		return null;
