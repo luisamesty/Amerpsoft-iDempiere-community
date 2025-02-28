@@ -147,7 +147,7 @@ SELECT
 	amountdeducted_t,
 	iso_code1,
 	iso_code2,
-	loan_balance,
+	loan_balance,loan_value,
 	SUM(cantidad) AS cantidad,
 	SUM(amountallocated) AS amountallocated,
 	SUM(amountdeducted) AS amountdeducted, 
@@ -205,6 +205,7 @@ FROM
 		COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 		-- PAYROLL DETAIL
 		CASE WHEN bal.loan_balance IS NOT NULL THEN CAST(bal.loan_balance AS NUMERIC) ELSE CAST(0 AS numeric) END AS loan_balance,
+		CASE WHEN bal.loan_value IS NOT NULL THEN bal.loan_value  ELSE '' END AS loan_value,
 	   -- MONTOS Y CIFRAS cty.concept_value	   
 	    pyr_d.amn_payroll_detail_id, 
 	    pyr_d.qtyvalue as cantidad, 
@@ -214,7 +215,7 @@ FROM
 	FROM adempiere.amn_payroll as pyr
 	LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
 	LEFT JOIN (
-		SELECT ampd.amn_payroll_id, ampd.amn_payroll_detail_id, ampde.amountbalance AS loan_balance
+		SELECT ampd.amn_payroll_id, ampd.amn_payroll_detail_id, ampde.amountbalance AS loan_balance, ampde.value AS loan_value
 		FROM adempiere.AMN_Payroll_Detail ampd 
 		INNER JOIN adempiere.AMN_Payroll_Deferred ampde ON ampde.amn_payroll_deferred_id = ampd.amn_payroll_Deferred_id
 	) AS bal ON bal.amn_payroll_detail_id = pyr_d.amn_payroll_detail_id
@@ -247,6 +248,6 @@ FROM
 ) AS recibo
 GROUP BY org_value, org_name,value2,name2, calcorder2, amndateend, isshow, c_value,
 sector, departamento, reportorder, value_emp, empleado, fecha_ingreso, paymenttype, cargo, nro_id, copia, copiaforma,
-documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t, loan_balance,
+documentno,	amn_payroll_detail_id, amountallocated_t, amountdeducted_t, loan_balance, loan_value,
 iso_code1, iso_code2
 ORDER BY  amndateend, reportorder, documentno, calcorder2
