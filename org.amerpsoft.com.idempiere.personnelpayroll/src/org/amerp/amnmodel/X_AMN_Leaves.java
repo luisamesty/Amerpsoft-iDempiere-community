@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250108L;
+	private static final long serialVersionUID = 20250302L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -309,6 +309,33 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public String getAMN_Leaves_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_UU);
+	}
+
+	public I_AMN_Payroll getAMN_Payroll() throws RuntimeException
+	{
+		return (I_AMN_Payroll)MTable.get(getCtx(), I_AMN_Payroll.Table_ID)
+			.getPO(getAMN_Payroll_ID(), get_TrxName());
+	}
+
+	/** Set Payroll Invoice.
+		@param AMN_Payroll_ID Payroll Invoice
+	*/
+	public void setAMN_Payroll_ID (int AMN_Payroll_ID)
+	{
+		if (AMN_Payroll_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_ID, Integer.valueOf(AMN_Payroll_ID));
+	}
+
+	/** Get Payroll Invoice.
+		@return Payroll Invoice	  */
+	public int getAMN_Payroll_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set AMW Work Flows.

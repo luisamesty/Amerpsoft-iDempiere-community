@@ -197,6 +197,11 @@ public class AMNProcessFactory implements IProcessFactory {
     		try {
 				process =   AMNPayrolLeavesProcess.class.newInstance();
 			} catch (Exception e) {}
+        // AMNPayrolLeavesCreatesFromPayroll
+        if (p_className.equals("org.amerp.process.AMNPayrolLeavesCreatesFromPayroll"))
+    		try {
+				process =   AMNPayrolLeavesCreatesFromPayroll.class.newInstance();
+			} catch (Exception e) {}
         
        	// **************************
         // Import Processes 

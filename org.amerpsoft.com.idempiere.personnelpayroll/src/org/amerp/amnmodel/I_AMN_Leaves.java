@@ -46,8 +46,8 @@ public interface I_AMN_Leaves
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Leaves
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -127,6 +127,17 @@ public interface I_AMN_Leaves
 
 	/** Get AMN_Leaves_UU	  */
 	public String getAMN_Leaves_UU();
+
+    /** Column name AMN_Payroll_ID */
+    public static final String COLUMNNAME_AMN_Payroll_ID = "AMN_Payroll_ID";
+
+	/** Set Payroll Invoice	  */
+	public void setAMN_Payroll_ID (int AMN_Payroll_ID);
+
+	/** Get Payroll Invoice	  */
+	public int getAMN_Payroll_ID();
+
+	public I_AMN_Payroll getAMN_Payroll() throws RuntimeException;
 
     /** Column name AMW_WorkFlow_ID */
     public static final String COLUMNNAME_AMW_WorkFlow_ID = "AMW_WorkFlow_ID";
