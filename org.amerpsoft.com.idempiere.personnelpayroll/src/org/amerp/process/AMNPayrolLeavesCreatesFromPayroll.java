@@ -95,18 +95,18 @@ public class AMNPayrolLeavesCreatesFromPayroll extends SvrProcess {
 					retMsg = "Leave record created successfully";
 					addLog(retMsg);
 				} else {
-					retMsg = "@Error@ " + Msg.parseTranslation(ctx, "Leave creation failed");
+					retMsg = "@Error@ " + Msg.parseTranslation(ctx, "LeaveCreationFailed");
 					addLog(retMsg);
 					retMsg = "ProcessFailed";
 				}
 			} else {
 				// Invalid Process
-				retMsg = "@Error@ " + Msg.parseTranslation(ctx, "Invalid Process: " + amnprocess.getAMN_Process_Value());
+				retMsg = "@Error@ " + Msg.translate(ctx, "Process") + " "+ Msg.parseTranslation(ctx, "invalid")+" "+ amnprocess.getAMN_Process_Value();
 				addLog(retMsg);
 			}
 		} else {
 			// Existent Registers
-			retMsg = "@Error@ " + Msg.parseTranslation(ctx, "Payroll ID " + amnpayroll.getAMN_Payroll_ID() + " already has leaves assigned.");
+			retMsg = "@Error@ " + Msg.parseTranslation(ctx, "Payroll ID " + amnpayroll.getAMN_Payroll_ID() + Msg.translate(ctx, "LeaveAlreadyAssigned"));
             addLog(retMsg);
             addLog("Si desea crear varias Justificaciones / Ausencias para ese recibo, debe hacerlo por la Opción de Justificaciones / Ausencias.");
 		}

@@ -46,5 +46,8 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Personnel and Payroll R11 Timing,5070,M,,Amper Payroll Process Payroll Attendance One Period Menu,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,8000,MSG,,,,,,,,,ALL,,,,,,,,,,,,Leaves,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,8010,MSG,,,,,,,,,ALL,,,,,,,,,,,,LeavesWorkFlow,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 Timing,8020,MSG,,,,,,,,,ALL,,,,,,,,,,,,LeaveCreationFailed,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 Timing,8030,MSG,,,,,,,,,ALL,,,,,,,,,,,,LeaveAlreadyAssigned,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 Timing,8040,MSG,,,,,,,,,ALL,,,,,,,,,,,,LeaveRecordCreated,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,9000,D,,,,,,,,ToolBar Button,ALL,SELECT 	* FROM 	AD_ToolBarButton WHERE 	AD_ToolBarButton_ID IN  (1000070),,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Personnel and Payroll R11 Timing,10000,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='2a4da781-ed69-4a65-a69c-51c6d86a8fc3';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
