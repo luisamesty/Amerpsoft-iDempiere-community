@@ -1,6 +1,6 @@
--- PayrollEmployeeLeaves
--- Payroll Employee Leaves V2
--- Parameter isSummary
+-- PayrollEmployeeLeavesAttendance
+-- Payroll Employee Leaves and Attendance (BOTH)
+-- 
 WITH date_series AS (
     -- Generamos todas las fechas dentro del período dado
     SELECT generate_series(
@@ -79,6 +79,49 @@ SELECT * FROM
 		emp2.amn_location_id, lct.value AS location_value, lct.name AS location_name,
 		-- SHIFT
 		amnsh.name AS shift_name,
+		-- ATTENDANCE
+		CASE WHEN nbd.date1 IS NOT NULL THEN 'Y' ELSE 'N' END as feriado,
+		CONCAT(
+		   CASE WHEN CAST(extract(hour from pyr_asp.shift_in1) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_asp.shift_in1) as text))
+		        ELSE CAST(extract(hour from pyr_asp.shift_in1) as text)
+		   END, ':', 
+		   CASE WHEN CAST(extract(minute from pyr_asp.shift_in1) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from pyr_asp.shift_in1) as text))
+		        ELSE CAST(extract(minute from pyr_asp.shift_in1) as text)
+		   END
+		) as e1, 
+		CONCAT(
+		   CASE WHEN CAST(extract(hour from pyr_asp.shift_out1) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_asp.shift_out1) as text))
+			ELSE CAST(extract(hour from pyr_asp.shift_out1) as text)
+		   END, ':', 
+		   CASE WHEN CAST(extract(minute from pyr_asp.shift_out1) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from pyr_asp.shift_out1) as text))
+			ELSE CAST(extract(minute from pyr_asp.shift_out1) as text)
+		   END
+		) as s1,
+		CONCAT(
+		   CASE WHEN CAST(extract(hour from pyr_asp.shift_in2) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_asp.shift_in2) as text))
+		        ELSE CAST(extract(hour from pyr_asp.shift_in2) as text)
+		   END, ':', 
+		   CASE WHEN CAST(extract(minute from pyr_asp.shift_in2) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from pyr_asp.shift_in2) as text))
+			ELSE CAST(extract(minute from pyr_asp.shift_in2) as text)
+		   END
+		) as e2,  
+		CONCAT(
+		   CASE WHEN CAST(extract(hour from pyr_asp.shift_out2) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_asp.shift_out2) as text))
+			ELSE CAST(extract(hour from pyr_asp.shift_out2) as text)
+		   END, ':', 
+		   CASE WHEN CAST(extract(minute from pyr_asp.shift_out2) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from pyr_asp.shift_out2) as text))
+			ELSE CAST(extract(minute from pyr_asp.shift_out2) as text)
+		   END
+		) as s2,
+	  COALESCE(pyr_asp.descanso,'N') AS descanso, 
+	  COALESCE(pyr_asp.excused,'N') AS excused,
+	  COALESCE(pyr_asp.shift_hed, CAST(0 AS int)) AS  hed, 
+	  COALESCE(pyr_asp.shift_hen, CAST(0 AS int)) as hen, 
+	  COALESCE(pyr_asp.shift_hnd, CAST(0 AS int)) as hnd, 
+	  COALESCE(pyr_asp.shift_hnn, CAST(0 AS int)) as hnn,
+	  COALESCE(pyr_asp.shift_attendance, CAST(0 AS int)) as bono_asist, 
+	  COALESCE(pyr_asp.shift_attendancebonus, CAST(0 AS int)) as bono_assistpuntual,
+	  COALESCE(pyr_asp.description,'') as observaciones, 
 		-- Leaves Types
 	    AJ::NUMERIC(15, 2) AS AJ,  -- Convertir a NUMERIC
 	    CO::NUMERIC(15, 2) AS CO,  -- Convertir a NUMERIC
@@ -137,6 +180,8 @@ SELECT * FROM
 	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp2.amn_jobtitle_id= jtt.amn_jobtitle_id)
 	INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp2.amn_location_id)
 	INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp2.amn_contract_id)	 
+	LEFT JOIN adempiere.amn_payroll_assist_proc as pyr_asp ON (pyr_asp.amn_employee_id = emp2.amn_employee_id AND pyr_asp.event_date = LTALL.report_date)
+	LEFT JOIN adempiere.c_nonbusinessday as nbd ON (nbd.date1= pyr_asp.event_date)
 	LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp2.ad_orgto_id)
 	LEFT JOIN adempiere.amn_shift AS amnsh ON amnsh.amn_shift_id = emp2.amn_shift_id
 	LEFT JOIN (
