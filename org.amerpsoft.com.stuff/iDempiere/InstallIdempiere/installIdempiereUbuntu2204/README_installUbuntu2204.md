@@ -187,7 +187,11 @@ Restore from Seed or Production Backup, execute ON LINUX:
 
 ```
 # Adempiere_pg.dmp for Seed, for production use your backup dmp
-$ psql -p 5432 -d idempiereSeed11 -f Adempiere_pg.dmp ;
+# Adempiere_pg.jar on directory idempiere/org.adempiere.server-feature/data/seed/
+# Unzip to dmp
+$ jar -xvf Adempiere_pg.jar 
+# PostgreSQL on Linux Ubuntu located on /usr/lib/postgresql/15/bin
+$ /usr/lib/postgresql/15/bin/psql -p 5432 -d idempiereSeed12 -f Adempiere_pg.dmp
 ```
 
 #### EXIT Postgres

@@ -1,7 +1,6 @@
 -- PayrollEmployeeLeavesAttendance
 -- Payroll Employee Leaves and Attendance (BOTH)
 -- 
--- ORDERED BY and Filtered  WorkForce
 WITH date_series AS (
     -- Generamos todas las fechas dentro del período dado
     SELECT generate_series(
@@ -74,33 +73,12 @@ SELECT * FROM
 		LTALL.amn_employee_id, 
 		emp2.value as emp_value, 
 	  	emp2.name as emp_name, 
-	  	-- WORKFORCE
-	  	jtt.workforce AS workforce_value, COALESCE(reflistr.name,reflis.name) AS workforce_name,
-	  	-- SECTOR
-	  	emp2.amn_sector_id, sct.name AS sector_name,
 		-- CONTRACT
 		amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
 		-- LOCATION
 		emp2.amn_location_id, lct.value AS location_value, lct.name AS location_name,
-		-- SHIFT (SELECT Attendance or Employee if null)
-		COALESCE(attsh.name,amnsh.name) AS shift_name,
-		COALESCE(attshd.breakminutes,amnshd.breakminutes,60) AS TA,
-		CONCAT(
-		   CASE WHEN CAST(extract(hour from COALESCE(attshd.entrytime,amnshd.entrytime)) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from COALESCE(attshd.entrytime,amnshd.entrytime)) as text))
-		        ELSE CAST(extract(hour from COALESCE(attshd.entrytime,amnshd.entrytime)) as text)
-		   END, ':', 
-		   CASE WHEN CAST(extract(minute from COALESCE(attshd.entrytime,amnshd.entrytime)) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from COALESCE(attshd.entrytime,amnshd.entrytime)) as text))
-		        ELSE CAST(extract(minute from COALESCE(attshd.entrytime,amnshd.entrytime)) as text)
-		   END
-		) as EntryTime, 
-		CONCAT(
-		   CASE WHEN CAST(extract(hour from COALESCE(attshd.TimeOut,amnshd.TimeOut)) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from COALESCE(attshd.TimeOut,amnshd.TimeOut)) as text))
-		        ELSE CAST(extract(hour from COALESCE(attshd.TimeOut,amnshd.TimeOut)) as text)
-		   END, ':', 
-		   CASE WHEN CAST(extract(minute from COALESCE(attshd.TimeOut,amnshd.TimeOut)) as integer) < 10 THEN CONCAT('0', CAST(extract(minute from COALESCE(attshd.TimeOut,amnshd.TimeOut)) as text))
-		        ELSE CAST(extract(minute from COALESCE(attshd.TimeOut,amnshd.TimeOut)) as text)
-		   END
-		) as TimeOut, 
+		-- SHIFT
+		amnsh.name AS shift_name,
 		-- ATTENDANCE
 		CASE WHEN nbd.date1 IS NOT NULL THEN 'Y' ELSE 'N' END as feriado,
 		CONCAT(
@@ -200,19 +178,12 @@ SELECT * FROM
 	) AS LTALL
 	INNER JOIN adempiere.amn_employee as emp2 ON emp2.amn_employee_id = LTALL.amn_employee_id
 	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp2.amn_jobtitle_id= jtt.amn_jobtitle_id)
-	LEFT JOIN adempiere.ad_reference as ref ON(ref.name='AMN_Workforce')
-	LEFT JOIN adempiere.ad_ref_list as reflis ON (ref.ad_reference_id = reflis.ad_reference_id AND reflis.value =jtt.workforce)
-	LEFT JOIN adempiere.ad_ref_list_trl as reflistr ON (reflis.ad_ref_list_id = reflistr.ad_ref_list_id AND reflistr.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=emp2.ad_client_id) )
 	INNER JOIN adempiere.amn_location as lct 	 ON (lct.amn_location_id= emp2.amn_location_id)
-	INNER JOIN adempiere.amn_sector as sct 	 ON (sct.amn_sector_id= emp2.amn_sector_id)
 	INNER JOIN adempiere.amn_contract as amc 	 ON (amc.amn_contract_id= emp2.amn_contract_id)	 
 	LEFT JOIN adempiere.amn_payroll_assist_proc as pyr_asp ON (pyr_asp.amn_employee_id = emp2.amn_employee_id AND pyr_asp.event_date = LTALL.report_date)
 	LEFT JOIN adempiere.c_nonbusinessday as nbd ON (nbd.date1= pyr_asp.event_date)
 	LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp2.ad_orgto_id)
 	LEFT JOIN adempiere.amn_shift AS amnsh ON amnsh.amn_shift_id = emp2.amn_shift_id
-	LEFT JOIN adempiere.amn_shift_detail AS amnshd ON amnshd.amn_shift_id = emp2.amn_shift_id AND amnshd.dayofweek = pyr_asp.dayofweek
-	LEFT JOIN adempiere.amn_shift AS attsh ON attsh.amn_shift_id = pyr_asp.amn_shift_id
-	LEFT JOIN adempiere.amn_shift_detail AS attshd ON attshd.amn_shift_id = emp2.amn_shift_id AND attshd.dayofweek = pyr_asp.dayofweek
 	LEFT JOIN (
 		SELECT ad_client_id, STRING_AGG(lt_reference, ', ') AS leaves_all_txt
 		FROM (
@@ -226,12 +197,10 @@ SELECT * FROM
 	WHERE emp2.isActive = 'Y' AND emp2.AD_Client_ID= $P{AD_Client_ID} 
 		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp2.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
 		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Sector_ID} IS NULL OR sct.amn_sector_id= $P{AMN_Sector_ID} ) THEN 1=1 ELSE 1=0 END )
 		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{Workforce} IS NULL OR jtt.Workforce= $P{Workforce} ) THEN 1=1 ELSE 1=0 END )
 		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp2.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
 	) as leaves ON (1= 0)
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.location_value, leaves.sector_name, leaves.emp_value, leaves.report_date, header_info ASC
+ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.emp_value, leaves.report_date, header_info ASC

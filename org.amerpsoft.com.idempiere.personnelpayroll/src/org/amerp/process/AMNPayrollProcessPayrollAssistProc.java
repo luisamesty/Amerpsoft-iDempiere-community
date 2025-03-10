@@ -57,7 +57,8 @@ public class AMNPayrollProcessPayrollAssistProc {
 		
 		// LOCAL VARS
 		BigDecimal BDZero = BigDecimal.valueOf(0);
-		AttendanceHours atthours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
+//		AttendanceHours atthours = new AttendanceHours();
+		MAMN_Payroll_Assist_Proc atthours = new MAMN_Payroll_Assist_Proc(Env.getCtx(),null);
 		Timestamp Shift_In1=null;
 		Timestamp Shift_In2=null;
 		Timestamp Shift_Out1=null;
@@ -68,8 +69,6 @@ public class AMNPayrollProcessPayrollAssistProc {
 		Timestamp defShift_Out2 = null;
 		Boolean amnpayrollassistproc = false;
 		Boolean isError=false;
-		BigDecimal Shift_HED, Shift_HEN, Shift_HND, Shift_HNN;
-		BigDecimal Shift_Attendance,Shift_AttendanceBonus;
 		String locMsg_Value="";	
 		String locMsg_Value_Events="";
 		int assitAMN_Shift_ID=0;
@@ -86,13 +85,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 	    p_AD_Client_ID=amnemployee.getAD_Client_ID();
 	    // Get Employee AMN_Shift_ID by default
 	    empAMN_Shift_ID = amnemployee.getAMN_Shift_ID();
-	    Shift_HED = BDZero;
-		Shift_HEN = BDZero;
-		Shift_HND = BDZero;
-		Shift_HNN = BDZero;
-		Shift_Attendance = BDZero;
-		Shift_AttendanceBonus = BDZero;
-	    // LOOK FOR Default Shift if exists
+		// LOOK FOR Default Shift if exists
 		MAMN_Shift shift = new MAMN_Shift(); 
 	    if (empAMN_Shift_ID == 0) empAMN_Shift_ID =  shift.sqlGetDefaultAMN_Shift_ID(p_AD_Client_ID);
 	    // Verify if defAMN_Shift_ID == 0 
@@ -215,15 +208,9 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Msg.getMsg(Env.getCtx(),"Date")+":"+p_Event_Date.toString().substring(0,10);
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-									p_AD_Client_ID, p_AD_Org_ID,
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
-									null, null, 
-									null, null,
-									BDZero, BDZero, 
-									BDZero, BDZero,
-									BDZero, BDZero,
-									"Clean") ;
+									atthours) ;
 							break;
 						//   "1": Create or Update Records Only from  AMN_Payroll_Assist
 						case "1":
@@ -233,27 +220,14 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Msg.getMsg(Env.getCtx(),"Event")+":"+locMsg_Value_Events;
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, assitAMN_Shift_ID, 
+									amnemployee.getC_Country_ID(), p_Event_Date, assitAMN_Shift_ID, 
 									Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
-							Shift_HED = atthours.getHR_HED();
-							Shift_HEN = atthours.getHR_HEN();
-							Shift_HND = atthours.getHR_HND();
-							Shift_HNN = atthours.getHR_HNN();
-							Shift_Attendance = atthours.getDAY_ATT();  
-							Shift_AttendanceBonus = atthours.getDAY_ATTB(); 
-							locMsg_Value=locMsg_Value+" "+atthours.getHR_Message().trim();
 							// Create or Update MAMN_Payroll_Assist_Proc Record
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-									p_AD_Client_ID, p_AD_Org_ID,
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
-									Shift_In1, Shift_Out1, 
-									Shift_In2, Shift_Out2,
-									Shift_HED, Shift_HEN, 
-									Shift_HND, Shift_HNN,
-									Shift_Attendance, Shift_AttendanceBonus, 
-									atthours.getHR_Message()) ;
+									atthours) ;
 							break;
 						//  "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
 						case "2":
@@ -267,27 +241,14 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Msg.getMsg(Env.getCtx(),"Event")+":"+locMsg_Value_Events;
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, assitAMN_Shift_ID, 
+									amnemployee.getC_Country_ID(), p_Event_Date, assitAMN_Shift_ID, 
 									Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
-							Shift_HED = atthours.getHR_HED();
-							Shift_HEN = atthours.getHR_HEN();
-							Shift_HND = atthours.getHR_HND();
-							Shift_HNN = atthours.getHR_HNN();
-							Shift_Attendance = atthours.getDAY_ATT();  
-							Shift_AttendanceBonus = atthours.getDAY_ATTB(); 
-							locMsg_Value=locMsg_Value+" "+atthours.getHR_Message().trim();
 							// Create or Update MAMN_Payroll_Assist_Proc Record
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-									p_AD_Client_ID, p_AD_Org_ID,
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID ,
 									Descanso, Excused ,
-									Shift_In1, Shift_Out1, 
-									Shift_In2, Shift_Out2,
-									Shift_HED, Shift_HEN, 
-									Shift_HND, Shift_HNN,
-									Shift_Attendance, Shift_AttendanceBonus, 
-									atthours.getHR_Message()) ;
+									atthours) ;
 							break;
 						//  "3: Create or Update Records from Only from  AMN_Shift_Detail
 						case "3":
@@ -306,31 +267,14 @@ public class AMNPayrollProcessPayrollAssistProc {
 							}
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, empAMN_Shift_ID, 
+									amnemployee.getC_Country_ID(), p_Event_Date, empAMN_Shift_ID, 
 									defShift_In1, defShift_Out1, defShift_In2, defShift_Out2);
-							Shift_HED = atthours.getHR_HED();
-							Shift_HEN = atthours.getHR_HEN();
-							Shift_HND = atthours.getHR_HND();
-							Shift_HNN = atthours.getHR_HNN();
-							Shift_Attendance = atthours.getDAY_ATT();  
-							Shift_AttendanceBonus = atthours.getDAY_ATTB(); 
-							locMsg_Value=locMsg_Value+" "+atthours.getHR_Message().trim();
-							// log.warning("Horas HND:"+Shift_HND+"  HED:"+Shift_HED+"Horas HNN:"+Shift_HNN+"  HED:"+Shift_HEN);
 							// Create or Update MAMN_Payroll_Assist_Proc Record
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-									p_AD_Client_ID, p_AD_Org_ID,
 									p_AMN_Employee_ID, p_Event_Date, empAMN_Shift_ID ,
 									Descanso, Excused ,
-									defShift_In1, defShift_Out1, 
-									defShift_In2, defShift_Out2,
-									Shift_HED, Shift_HEN, 
-									Shift_HND, Shift_HNN,
-									Shift_Attendance, Shift_AttendanceBonus, 
-//									"test") ;					
-//									atthours.getHR_HED(), atthours.getHR_HEN(), 
-//									atthours.getHR_HND(), atthours.getHR_HNN(),
-									atthours.getHR_Message()) ;	
+									atthours) ;	
 							break;	
 						//  "4: Update Records (Only HND,HNN,HED,HEN,Attendance,AttendanceBonus
 						//        from  AMN_Shift_Detail_Proc
@@ -353,31 +297,14 @@ public class AMNPayrollProcessPayrollAssistProc {
 							// Look for 
 							// Calculate Hours
 							atthours= calcAttendanceValuesofPayrollVars(
-									p_Event_Date, empAMN_Shift_ID, 
+									amnemployee.getC_Country_ID(), p_Event_Date, empAMN_Shift_ID, 
 									defShift_In1, defShift_Out1, defShift_In2, defShift_Out2);
-							Shift_HED = atthours.getHR_HED();
-							Shift_HEN = atthours.getHR_HEN();
-							Shift_HND = atthours.getHR_HND();
-							Shift_HNN = atthours.getHR_HNN();
-							Shift_Attendance = atthours.getDAY_ATT();  
-							Shift_AttendanceBonus = atthours.getDAY_ATTB(); 
-							locMsg_Value=locMsg_Value+" "+atthours.getHR_Message().trim();
-							// log.warning("Horas HND:"+Shift_HND+"  HED:"+Shift_HED+"Horas HNN:"+Shift_HNN+"  HED:"+Shift_HEN);
 							// Create or Update MAMN_Payroll_Assist_Proc Record
 							amnpayrollassistproc = MAMN_Payroll_Assist_Proc.createAmnPayrollAssistProc(
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-									p_AD_Client_ID, p_AD_Org_ID,
 									p_AMN_Employee_ID, p_Event_Date, empAMN_Shift_ID ,
 									Descanso, Excused ,
-									defShift_In1, defShift_Out1, 
-									defShift_In2, defShift_Out2,
-									Shift_HED, Shift_HEN, 
-									Shift_HND, Shift_HNN,
-									Shift_Attendance, Shift_AttendanceBonus, 
-//									"test") ;					
-//									atthours.getHR_HED(), atthours.getHR_HEN(), 
-//									atthours.getHR_HND(), atthours.getHR_HNN(),
-									atthours.getHR_Message()) ;	
+									atthours) ;	
 							break;	
 					}				
 					if (amnpayrollassistproc) {
@@ -455,7 +382,8 @@ public class AMNPayrollProcessPayrollAssistProc {
 	 * @return AttendanceHours Array
 	 * All event Times are Normalized to Event_Date
 	 */
-	public static AttendanceHours calcAttendanceValuesofPayrollVars(
+	public static MAMN_Payroll_Assist_Proc calcAttendanceValuesofPayrollVars(
+			int p_C_Country_ID,
 			Timestamp p_Event_Date, Integer p_AMN_Shift_ID, 
 			Timestamp p_Shift_In1, Timestamp p_Shift_Out1, 
 			Timestamp p_Shift_In2, Timestamp p_Shift_Out2)
@@ -489,9 +417,16 @@ public class AMNPayrollProcessPayrollAssistProc {
 		Calendar calShift_In2 = Calendar.getInstance();
 		Calendar calShift_Out2 = Calendar.getInstance();
 		// Attendance Values Structure 
-		AttendanceHours attendancehours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
+		MAMN_Payroll_Assist_Proc attendancehours = new MAMN_Payroll_Assist_Proc(Env.getCtx(), null);
+		attendancehours.setShift_In1(p_Shift_In1);
+		attendancehours.setShift_In2(p_Shift_In2);
+		attendancehours.setShift_Out1(p_Shift_Out1);
+		attendancehours.setShift_Out2(p_Shift_Out2);
+		attendancehours.setEvent_Date(p_Event_Date);
+		attendancehours.setAMN_Shift_ID(p_AMN_Shift_ID);
+		
 		// defaul Attendance Values Structure 
-		AttendanceHours defattendancehours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
+		MAMN_Payroll_Assist_Proc defattendancehours = new  MAMN_Payroll_Assist_Proc(Env.getCtx(), null);
 		// Determines Default Shift Times Values
 	    MAMN_Shift_Detail amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), p_AMN_Shift_ID, p_Event_Date);
 	    // Verify if null 
@@ -499,12 +434,12 @@ public class AMNPayrollProcessPayrollAssistProc {
 	    	sParamEmpty2=sParamEmpty2+Msg.getMsg(Env.getCtx(), "Error")+" "+
 					Msg.getElement(Env.getCtx(),"AMN_Shift_Detail_ID")+" "+p_AMN_Shift_ID+" "+
 					Msg.getMsg(Env.getCtx(), "found.none")+"\n";
-	    	defattendancehours.setHR_Message(sParamEmpty2);
+	    	defattendancehours.setDescription(sParamEmpty2);
 	    	return attendancehours;
 
 	    } else {
 		    // Determines Default Attendance Values HND,HNN,HED,HEN,Attendance,AttendanceBonus from AMN_Shift_Detail
-	    	defattendancehours = calcDefaultAttendanceValuesofPayrollVars(p_Event_Date, p_AMN_Shift_ID, amnshiftdetail);
+	    	defattendancehours = calcDefaultAttendanceValuesofPayrollVars(p_C_Country_ID, p_Event_Date, p_AMN_Shift_ID, amnshiftdetail);
 	    }
 	    //log.warning("Shift_In1:"+amnshiftdetail.getShift_In1().toString());
 	    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
@@ -574,16 +509,15 @@ public class AMNPayrollProcessPayrollAssistProc {
 			}
 		}
 		if (bParamEmpty) {
-			attendancehours.setHR_Message(sParamEmpty.trim());
-			attendancehours.setHR_HND(BDZero);
-			attendancehours.setHR_HED(BDZero);
-			attendancehours.setHR_HNN(BDZero);
-			attendancehours.setHR_HEN(BDZero);	
-			attendancehours.setDAY_ATT(BDZero);
-			attendancehours.setDAY_ATTB(BDZero);
+			attendancehours.setDescription(sParamEmpty2);
+			attendancehours.setShift_HND(BDZero);
+			attendancehours.setShift_HED(BDZero);
+			attendancehours.setShift_HNN(BDZero);
+			attendancehours.setShift_HEN(BDZero);	
 			return attendancehours;
 		}
 		// Local Variables Constants
+		// Depends on Countries C_Cuontry_ID
 		GregorianCalendar dCal = new GregorianCalendar();
 		dCal.setTime(p_Event_Date);
 		// Zero 00:00
@@ -593,29 +527,29 @@ public class AMNPayrollProcessPayrollAssistProc {
 		zeroCal.set(Calendar.MINUTE, 0);
 		zeroCal.set(Calendar.SECOND, 0);
 		zeroCal.set(Calendar.MILLISECOND, 0);
-		// Day Start al 05:00 
-		Calendar dayCal = Calendar.getInstance();
-		dayCal.setTime(p_Event_Date);
-		dayCal.set(Calendar.HOUR_OF_DAY, 5);
-		dayCal.set(Calendar.MINUTE, 0);
-		dayCal.set(Calendar.SECOND, 0);
-		dayCal.set(Calendar.MILLISECOND, 0);
+		// Day Start Different Countries
+		Calendar dayCal = getDayCalendar(p_C_Country_ID,p_Event_Date );
 		long ldayHr = secondsOfTime(dayCal, zeroCal);
 		// Night Start at 19:00
-		Calendar nightCal = Calendar.getInstance();
-		nightCal.setTime(p_Event_Date);
-		nightCal.set(Calendar.HOUR_OF_DAY, 19);
-		nightCal.set(Calendar.MINUTE, 0);
-		nightCal.set(Calendar.SECOND, 0);
-		nightCal.set(Calendar.MILLISECOND, 0);
+		Calendar nightCal = getNightCalendar(p_C_Country_ID,p_Event_Date);
 		long lnightHr = secondsOfTime(nightCal, zeroCal);
-		//
 		BigDecimal Shift_HED = BigDecimal.valueOf(0.00);
 		BigDecimal Shift_HEN = BigDecimal.valueOf(0.00);
 		BigDecimal Shift_HND = BigDecimal.valueOf(0.00);
 		BigDecimal Shift_HNN = BigDecimal.valueOf(0.00); 
 		BigDecimal Shift_Attendance = BDZero;
 		BigDecimal Shift_AttendanceBonus = BDZero;
+		// Additional VARs
+		BigDecimal HR_HT = BigDecimal.ZERO;        // Total Work Hours (Shift_HT)
+		BigDecimal HR_HC = BigDecimal.ZERO;        // Complete Hours (Shift_HC)
+		BigDecimal HR_HLGT15 = BigDecimal.ZERO;    // Free Hours Greater than 15 (Shift_HLGT15)
+		BigDecimal HR_HLLT15 = BigDecimal.ZERO;    // Free Hours Less than 15 (Shift_HLLT15)
+		BigDecimal HR_THL = BigDecimal.ZERO;       // Free Hours (Shift_THL)
+		BigDecimal HR_LTA = BigDecimal.ZERO;       // Late Arrivals (Shift_LTA)
+		BigDecimal HR_EDE = BigDecimal.ZERO;       // Early Departure (Shift_EDE)
+		BigDecimal HR_HER = BigDecimal.ZERO;       // Extra Clock Hours (Shift_HER)
+		BigDecimal HR_HEF = BigDecimal.ZERO;       // Extra Holiday Hours (Shift_HEF)
+		
 		if ( !bParamEmpty1 ) {
 			// Shift_In1
 			calShift_In1.setTime(p_Shift_In1);
@@ -780,8 +714,8 @@ public class AMNPayrollProcessPayrollAssistProc {
 		// *********************************************************
 		// Maximum Values
 
-		BigDecimal maxShift_HND = defattendancehours.getHR_HND();
-		BigDecimal maxShift_HNN = defattendancehours.getHR_HNN(); 
+		BigDecimal maxShift_HND = defattendancehours.getShift_HND();
+		BigDecimal maxShift_HNN = defattendancehours.getShift_HNN(); 
 		//log.warning("maxShift_HND:"+maxShift_HND+"  maxShift_HNN:"+maxShift_HNN+"  Shift_HND:"+Shift_HND+"  Shift_HNN:"+Shift_HNN);
 		// HND
 		if ((maxShift_HND.compareTo(BDZero) > 0) && Shift_HND.compareTo(maxShift_HND) > 0) {
@@ -797,20 +731,30 @@ public class AMNPayrollProcessPayrollAssistProc {
 		Shift_HEN = BDZero;
 		
 		// Return Structure with Values
-		attendancehours.setHR_HND(Shift_HND);
-		attendancehours.setHR_HED(Shift_HED);
-		attendancehours.setHR_HNN(Shift_HNN);
-		attendancehours.setHR_HEN(Shift_HEN);	
-		attendancehours.setDAY_ATT(Shift_Attendance);	
-		attendancehours.setDAY_ATTB(Shift_AttendanceBonus);
+		attendancehours.setShift_HND(Shift_HND);
+		attendancehours.setShift_HED(Shift_HED);
+		attendancehours.setShift_HNN(Shift_HNN);
+		attendancehours.setShift_HEN(Shift_HEN);	
 		if (sParamEmpty.isEmpty()) {
 			//attendancehours.setHR_Message(sParamEmpty1+" "+sParamEmpty2+" HND:"+Shift_HND+" HED:"+Shift_HED+" HNN:"+Shift_HNN+" HED:"+Shift_HEN);
-			attendancehours.setHR_Message((sParamEmpty1+" "+sParamEmpty2).trim());
+			attendancehours.setDescription(sParamEmpty2);
 		} else {
 			//attendancehours.setHR_Message(sParamEmpty+" HND:"+Shift_HND+" HED:"+Shift_HED+" HNN:"+Shift_HNN+" HED:"+Shift_HEN);
-			attendancehours.setHR_Message(sParamEmpty.trim());
+			attendancehours.setDescription(sParamEmpty.trim());
 		}
 		
+		// Total Work Hours				(Shift_HT)
+		
+		// Set Additional VARs
+		attendancehours.setShift_HT(HR_HT) ;		// Total Work Hours				(Shift_HT)
+		attendancehours.setShift_HC(HR_HC);        // Complete Hours (Shift_HC)
+		attendancehours.setShift_HLGT15(HR_HLGT15); // Free Hours Greater than 15 (Shift_HLGT15)
+		attendancehours.setShift_HLLT15(HR_HLLT15); // Free Hours Less than 15 (Shift_HLLT15)
+		attendancehours.setShift_THL(HR_THL);      // Free Hours (Shift_THL)
+		attendancehours.setShift_LTA(HR_LTA);      // Late Arrivals (Shift_LTA)
+		attendancehours.setShift_EDE(HR_EDE);      // Early Departure (Shift_EDE)
+		attendancehours.setShift_HER(HR_HER);      // Extra Clock Hours (Shift_HER)
+		attendancehours.setShift_HEF(HR_HEF);      // Extra Holiday Hours (Shift_HEF)
 		//log.warning("Hours Calculated BigDecimal HND:"+attendancehours.getHR_HND() +"  HED:"+attendancehours.getHR_HED()+
 		//"  HNN:"+attendancehours.getHR_HNN()+"  HEN:"+attendancehours.getHR_HEN());
 		return attendancehours;
@@ -829,14 +773,14 @@ public class AMNPayrollProcessPayrollAssistProc {
 	 * @return AttendanceHours Array
 	 * All event Times are Normalized to Event_Date
 	 */
-	public static AttendanceHours calcDefaultAttendanceValuesofPayrollVars(
-			Timestamp p_Event_Date, Integer p_AMN_Shift_ID, MAMN_Shift_Detail amnshiftdetail)
+	public static MAMN_Payroll_Assist_Proc calcDefaultAttendanceValuesofPayrollVars(
+			int p_C_Country_ID, Timestamp p_Event_Date, Integer p_AMN_Shift_ID, MAMN_Shift_Detail amnshiftdetail)
 	{
 		Boolean bParamEmpty=false;
 		Boolean bDescanso=false;
 		String sParamEmpty="";
 		BigDecimal BDZero = BigDecimal.valueOf(0);
-		AttendanceHours defattendancehours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
+		MAMN_Payroll_Assist_Proc defattendancehours = new  MAMN_Payroll_Assist_Proc(Env.getCtx(), null);
 		// Determines Default Shift Times Values
 	    //log.warning("Shift_In1:"+amnshiftdetail.getShift_In1().toString());
 	    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
@@ -873,13 +817,11 @@ public class AMNPayrollProcessPayrollAssistProc {
 			}
 		}
 		if (bParamEmpty) {
-			defattendancehours.setHR_Message(sParamEmpty.trim());
-			defattendancehours.setHR_HND(BDZero);
-			defattendancehours.setHR_HED(BDZero);
-			defattendancehours.setHR_HNN(BDZero);
-			defattendancehours.setHR_HEN(BDZero);	
-			defattendancehours.setDAY_ATT(BDZero);
-			defattendancehours.setDAY_ATTB(BDZero);
+			defattendancehours.setDescription(sParamEmpty);
+			defattendancehours.setShift_HND(BDZero);
+			defattendancehours.setShift_HED(BDZero);
+			defattendancehours.setShift_HNN(BDZero);
+			defattendancehours.setShift_HEN(BDZero);	
 			return defattendancehours;
 		}
 		// Local Variables Constants
@@ -893,20 +835,10 @@ public class AMNPayrollProcessPayrollAssistProc {
 		zeroCal.set(Calendar.SECOND, 0);
 		zeroCal.set(Calendar.MILLISECOND, 0);
 		// Day Start al 05:00 
-		Calendar dayCal = Calendar.getInstance();
-		dayCal.setTime(p_Event_Date);
-		dayCal.set(Calendar.HOUR_OF_DAY, 5);
-		dayCal.set(Calendar.MINUTE, 0);
-		dayCal.set(Calendar.SECOND, 0);
-		dayCal.set(Calendar.MILLISECOND, 0);
+		Calendar dayCal = getDayCalendar(p_C_Country_ID,p_Event_Date );
 		long ldayHr = secondsOfTime(dayCal, zeroCal);
 		// Night Start at 19:00
-		Calendar nightCal = Calendar.getInstance();
-		nightCal.setTime(p_Event_Date);
-		nightCal.set(Calendar.HOUR_OF_DAY, 19);
-		nightCal.set(Calendar.MINUTE, 0);
-		nightCal.set(Calendar.SECOND, 0);
-		nightCal.set(Calendar.MILLISECOND, 0);
+		Calendar nightCal = getNightCalendar(p_C_Country_ID,p_Event_Date);
 		long lnightHr = secondsOfTime(nightCal, zeroCal);
 		//
 		BigDecimal defShift_HED = BigDecimal.valueOf(0.00);
@@ -996,13 +928,13 @@ public class AMNPayrollProcessPayrollAssistProc {
 		// Normalize Values According to Organization Policies
 		
 		// Return Structure with Maximum Values
-		defattendancehours.setHR_HND(defShift_HND);
-		defattendancehours.setHR_HED(defShift_HED);
-		defattendancehours.setHR_HNN(defShift_HNN);
-		defattendancehours.setHR_HEN(defShift_HEN);	
-		defattendancehours.setDAY_ATT(defShift_Attendance);	
-		defattendancehours.setDAY_ATTB(defShift_AttendanceBonus);
-		defattendancehours.setHR_Message("HND:"+defShift_HND+" HED:"+defShift_HED+" HNN:"+defShift_HNN+" HED:"+defShift_HEN);
+		defattendancehours.setShift_HND(defShift_HND);
+		defattendancehours.setShift_HED(defShift_HED);
+		defattendancehours.setShift_HNN(defShift_HNN);
+		defattendancehours.setShift_HEN(defShift_HEN);	
+		defattendancehours.setShift_Attendance(defShift_Attendance);	
+		defattendancehours.setShift_AttendanceBonus(defShift_AttendanceBonus);
+		defattendancehours.setDescription("HND:"+defShift_HND+" HED:"+defShift_HED+" HNN:"+defShift_HNN+" HED:"+defShift_HEN);
 		//log.warning("Default Hours Calculated By SHIFT BigDecimal HND:"+defattendancehours.getHR_HND() +"  HED:"+defattendancehours.getHR_HED()+
 		//"  HNN:"+defattendancehours.getHR_HNN()+"  HEN:"+defattendancehours.getHR_HEN());
 		return defattendancehours;
@@ -1023,5 +955,59 @@ public class AMNPayrollProcessPayrollAssistProc {
 		return lretValue;
 		
 	}
+	
+	/**
+ 		100 USA Default 	Day 06:00 to 19:59
+		276 Paraguay		Day 06:00 to 19:59
+		339 Venezuela 		Day 05:00 to 18:59
+	 * @param p_C_Country_ID
+	 * @param p_Event_Date
+	 * @return
+	 */
+	public static Calendar getDayCalendar(int p_C_Country_ID, Timestamp p_Event_Date) {
+		
+		// Day Start Different Countries
+		Calendar dayCal = Calendar.getInstance();
+		dayCal.setTime(p_Event_Date);
+		if (p_C_Country_ID == 100) 		// USA
+			dayCal.set(Calendar.HOUR_OF_DAY, 6);
+		else if (p_C_Country_ID == 276) // Paraguay
+			dayCal.set(Calendar.HOUR_OF_DAY, 6);
+		else if (p_C_Country_ID == 339)	// Venezuela
+			dayCal.set(Calendar.HOUR_OF_DAY, 5);
+		else 
+			dayCal.set(Calendar.HOUR_OF_DAY, 6);
+		dayCal.set(Calendar.MINUTE, 0);
+		dayCal.set(Calendar.SECOND, 0);
+		dayCal.set(Calendar.MILLISECOND, 0);
+		return dayCal;
+	}
+	
+	/**
+	 * getNightCalendar
+		100 USA Default 	Day 06:00 to 19:59
+		276 Paraguay		Day 06:00 to 19:59
+		339 Venezuela 		Day 05:00 to 18:59
+	 * @param p_C_Country_ID
+	 * @param p_Event_Date
+	 * @return
+	 */
+	public static Calendar getNightCalendar(int p_C_Country_ID, Timestamp p_Event_Date) {
+		// Night Start at 19:00
+		Calendar nightCal = Calendar.getInstance();
+		nightCal.setTime(p_Event_Date);
+		if (p_C_Country_ID == 100) 		// USA
+			nightCal.set(Calendar.HOUR_OF_DAY, 19);
+		else if (p_C_Country_ID == 276) // Paraguay
+			nightCal.set(Calendar.HOUR_OF_DAY, 20);
+		else if (p_C_Country_ID == 339)	// Venezuela
+			nightCal.set(Calendar.HOUR_OF_DAY, 19);
+		else 
+			nightCal.set(Calendar.HOUR_OF_DAY, 19);
+		nightCal.set(Calendar.MINUTE, 0);
+		nightCal.set(Calendar.SECOND, 0);
+		nightCal.set(Calendar.MILLISECOND, 0);
+		return nightCal;
 
+	}
 }

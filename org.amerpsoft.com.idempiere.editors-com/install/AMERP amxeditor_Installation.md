@@ -92,6 +92,16 @@ Next, do the following actions:
 - AMERPSOFT Editor - Community Fill.zip
 ```
 
+
+Remember to do the following actions:
+
+```text
+- Role Access Update
+- Syncronize Terminology
+- Sequence Check
+- <b>Restart idempiere Server</b>
+```
+
 <b>Restart idempiere Server</b>
 
 

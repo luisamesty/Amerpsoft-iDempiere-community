@@ -1,6 +1,6 @@
--- PayrollEmployeeLeavesAttendance
+-- PayrollEmployeeAttendanceSummary
 -- Payroll Employee Leaves and Attendance (BOTH)
--- 
+-- Summary Late Entries, Early Leaves, Late Leaves
 -- ORDERED BY and Filtered  WorkForce
 WITH date_series AS (
     -- Generamos todas las fechas dentro del período dado

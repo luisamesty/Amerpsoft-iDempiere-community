@@ -94,7 +94,6 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 	    Timestamp p_AMNDateIni;
 	    Timestamp p_AMNDateEnd;
 	    Timestamp p_currDate;
-	    String Period_Name="";
 		GregorianCalendar cal = new GregorianCalendar();
 		GregorianCalendar cal2 = new GregorianCalendar();		
 	    // Determines AD_Org_ID Employee Name
@@ -107,7 +106,7 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 		// Take Ref's Dates instead of Period's Dates
 		p_AMNDateIni = p_RefDateIni;  // Parameter Value intead of amnperiod.getAMNDateIni();
 		p_AMNDateEnd = p_RefDateEnd;  // Parameter Value intead ofamnperiod.getAMNDateEnd();
-		Period_Name = amnperiod.getName().trim();
+		//Period_Name = amnperiod.getName().trim();
 		// Shift
 		MAMN_Shift amnshift = new MAMN_Shift(Env.getCtx(), defAMN_Shift_ID, null);
 		// AMN_Payroll Must Be DRAFT DR (Not Processed)
