@@ -84,28 +84,30 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 	/* (non-Javadoc)
 	 * @see org.compiere.process.SvrProcess#doIt()
 	 */
-    @Override
+    //@SuppressWarnings("unused")
+	@Override
     protected String doIt() throws Exception {
-	    // TODO Auto-generated method stub
+	    //
     	String Msg_Value="";
     	String eol = System.getProperty("line.separator");
 		String Employee_Name="";
-	    Msg_Value="";
-	    Timestamp p_AMNDateIni;
-	    Timestamp p_AMNDateEnd;
-	    Timestamp p_currDate;
 		GregorianCalendar cal = new GregorianCalendar();
 		GregorianCalendar cal2 = new GregorianCalendar();		
 	    // Determines AD_Org_ID Employee Name
-		MAMN_Employee amnemployee = new MAMN_Employee(Env.getCtx(), p_AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(getCtx(), p_AMN_Employee_ID, get_TrxName());
 		Employee_Name=amnemployee.getName();
 	    // Get Employeee AMN_Shift_ID by default
 	    int defAMN_Shift_ID = amnemployee.getAMN_Shift_ID();
-		// Determines AMN_Period - AMN_DateIni and AMNDateEnd
-		MAMN_Period amnperiod = new MAMN_Period(Env.getCtx(), p_AMN_Period_ID, null);
-		// Take Ref's Dates instead of Period's Dates
-		p_AMNDateIni = p_RefDateIni;  // Parameter Value intead of amnperiod.getAMNDateIni();
-		p_AMNDateEnd = p_RefDateEnd;  // Parameter Value intead ofamnperiod.getAMNDateEnd();
+		// Verify Period
+	    if (p_AMN_Period_ID == 0) {
+	        StringBuilder msgBuilder = new StringBuilder();
+	        msgBuilder.append(Msg.getElement(getCtx(), "AMN_Period_ID"))
+	                  .append(":")
+	                  .append(Msg.translate(getCtx(), "found.none"));
+	        return "@Error@ " + msgBuilder.toString();
+	    }
+	    // Determines AMN_Period - AMN_DateIni and AMNDateEnd
+	 	MAMN_Period amnperiod = new MAMN_Period(getCtx(), p_AMN_Period_ID,  get_TrxName());
 		//Period_Name = amnperiod.getName().trim();
 		// Shift
 		MAMN_Shift amnshift = new MAMN_Shift(Env.getCtx(), defAMN_Shift_ID, null);
@@ -116,7 +118,19 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 			Msg_Value=Msg_Value+Msg.getElement(Env.getCtx(),"DocStatus")+":"+amnpayroll.getDocStatus()+
 					"  "+" ***** ALREADY PROCESSED ****";
 			addLog(Msg_Value);
-			return null;
+			return "@Error@ " + Msg_Value;
+		}
+		// Verify Dates on Period
+		if (p_RefDateIni.compareTo(p_RefDateEnd) > 0 
+				|| p_RefDateIni.compareTo(amnperiod.getAMNDateIni()) < 0 
+				|| p_RefDateIni.compareTo(amnperiod.getAMNDateEnd()) > 0 
+				|| p_RefDateEnd.compareTo(amnperiod.getAMNDateEnd()) > 0
+				|| p_RefDateEnd.compareTo(amnperiod.getAMNDateIni()) < 0) {
+			Msg_Value=Msg_Value+Msg.getElement(Env.getCtx(),"RefDateIni")+":"+amnpayroll.getName()+"\r\n";
+			Msg_Value=Msg_Value+Msg.getElement(Env.getCtx(),"RefDateEnd")+":"+amnpayroll.getDocStatus()+"\r\n"+
+					" ***** DATE REFERENCE ERROR ****";
+			addLog(Msg_Value);
+			return "@Error@ " + Msg_Value;
 		}
 		// AMNPayrollCreatePayrollAssistProc
 		Msg_Value=Msg_Value+"  "+(Msg.getElement(Env.getCtx(), "AMN_Employee_ID"))+":"+p_AMN_Employee_ID+" "+Employee_Name.trim()+eol;
@@ -128,16 +142,16 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 			Msg_Value=Msg.getElement(Env.getCtx(),"AMN_Shift_ID")+": "+defAMN_Shift_ID+"  "+amnshift.getValue()+"-"+amnshift.getName();
 			addLog(Msg_Value);
 		}
-		Msg_Value=(Msg.getElement(Env.getCtx(), "AMNDateIni"))+": "+(p_AMNDateIni.toString().substring(0,10)+
-				"  "+(Msg.getElement(Env.getCtx(), "AMNDateEnd"))+": "+p_AMNDateEnd.toString().substring(0,10)+"  Mode:"+p_AMN_Assist_Process_Mode);
+		Msg_Value=(Msg.getElement(Env.getCtx(), "AMNDateIni"))+": "+(p_RefDateIni.toString().substring(0,10)+
+				"  "+(Msg.getElement(Env.getCtx(), "AMNDateEnd"))+": "+p_RefDateEnd.toString().substring(0,10)+"  Mode:"+p_AMN_Assist_Process_Mode);
 		Msg_Value=Msg_Value+eol;
 		addLog(Msg_Value);
-		cal.setTime(p_AMNDateIni);
+		cal.setTime(p_RefDateIni);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
-		cal2.setTime(p_AMNDateEnd);
+		cal2.setTime(p_RefDateEnd);
 		cal2.set(Calendar.HOUR_OF_DAY, 0);
 		cal2.set(Calendar.MINUTE, 0);
 		cal2.set(Calendar.SECOND, 0);
@@ -146,15 +160,15 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 		// *   "0": Clean Records on AMN_Payroll_Assist_Proc 
 		// *   "1": Create or Update Records Only from  AMN_Payroll_Assist
 		// *   "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
-		// *   "32: Create or Update Records from Only from  AMN_Shift_Detail
+		// *   "3": Create or Update Records from Only from  AMN_Shift_Detail
     	// Payroll Assist  (One Employee One Date)
 		while (cal.getTimeInMillis() <= cal2.getTimeInMillis())   {
 			// ARRAY EMPLOYEE - CONTRACT
-			p_currDate=new Timestamp(cal.getTimeInMillis());
+			Timestamp currDate=new Timestamp(cal.getTimeInMillis());
 			Msg_Value = "";
 			//Msg_Value = Msg.getMsg(Env.getCtx(), "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
 	    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-	    			p_AMN_Contract_ID, p_currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode);
+	    			p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode);
 	    	addLog(Msg_Value);
 	    	cal.add(Calendar.DAY_OF_MONTH, 1);
 		}   	

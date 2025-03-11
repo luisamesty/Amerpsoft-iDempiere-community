@@ -35,7 +35,7 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250310L;
+	private static final long serialVersionUID = 20250311L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Proc (Properties ctx, int AMN_Payroll_Assist_Proc_ID, String trxName)
@@ -50,7 +50,11 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 // N
 			setExcused (false);
 // N
+			setIsNonBusinessDay (false);
+// N
 			setName (null);
+			setProtected (false);
+// N
         } */
     }
 
@@ -67,7 +71,11 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 // N
 			setExcused (false);
 // N
+			setIsNonBusinessDay (false);
+// N
 			setName (null);
+			setProtected (false);
+// N
         } */
     }
 
@@ -84,7 +92,11 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 // N
 			setExcused (false);
 // N
+			setIsNonBusinessDay (false);
+// N
 			setName (null);
+			setProtected (false);
+// N
         } */
     }
 
@@ -101,7 +113,11 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 // N
 			setExcused (false);
 // N
+			setIsNonBusinessDay (false);
+// N
 			setName (null);
+			setProtected (false);
+// N
         } */
     }
 
@@ -333,6 +349,28 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 		return false;
 	}
 
+	/** Set Non Business Day.
+		@param IsNonBusinessDay Non Business Day
+	*/
+	public void setIsNonBusinessDay (boolean IsNonBusinessDay)
+	{
+		set_Value (COLUMNNAME_IsNonBusinessDay, Boolean.valueOf(IsNonBusinessDay));
+	}
+
+	/** Get Non Business Day.
+		@return Non Business Day	  */
+	public boolean isNonBusinessDay()
+	{
+		Object oo = get_Value(COLUMNNAME_IsNonBusinessDay);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -356,6 +394,29 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
     {
         return new KeyNamePair(get_ID(), getName());
     }
+
+	/** Set Protected.
+		@param Protected Protected to write
+	*/
+	public void setProtected (boolean Protected)
+	{
+		set_Value (COLUMNNAME_Protected, Boolean.valueOf(Protected));
+	}
+
+	/** Get Protected.
+		@return Protected to write
+	  */
+	public boolean isProtected()
+	{
+		Object oo = get_Value(COLUMNNAME_Protected);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
 
 	/** Set Shift_Attendance.
 		@param Shift_Attendance Indicates Employee&#039;s Atthendance during one day

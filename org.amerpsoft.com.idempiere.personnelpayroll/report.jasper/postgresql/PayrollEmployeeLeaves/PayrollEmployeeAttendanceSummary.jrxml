@@ -277,8 +277,7 @@ SELECT * FROM
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.location_value, leaves.sector_name, leaves.emp_value, leaves.report_date, header_info ASC
-]]>
+ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.location_value, leaves.sector_name, leaves.emp_value, leaves.report_date, header_info ASC]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>

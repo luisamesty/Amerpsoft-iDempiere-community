@@ -215,6 +215,8 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID))
+				list.add(new AMN_Payroll_Assist_Proc_callout());
 		}
 		
 		// *********************************
