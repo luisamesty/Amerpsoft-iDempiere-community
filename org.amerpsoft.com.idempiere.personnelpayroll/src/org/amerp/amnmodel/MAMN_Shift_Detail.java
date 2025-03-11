@@ -53,7 +53,6 @@ public class MAMN_Shift_Detail extends X_AMN_Shift_Detail {
 				
 		MAMN_Shift_Detail retValue = null;
 		String Event_Dow = MAMN_Payroll_Assist.getPayrollAssist_DayofWeek(p_Event_Date);
-		//log.warning("p_AMN_Shift_ID:"+p_AMN_Shift_ID+"  p_Event_Date:"+p_Event_Date+" Event_Dow:"+Event_Dow);
 		String sql = "SELECT * "
 			+ "FROM amn_shift_detail "
 			+ "WHERE  AMN_Shift_ID=?"

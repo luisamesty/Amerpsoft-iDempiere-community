@@ -195,6 +195,15 @@ public interface I_AMN_Payroll_Assist_Proc
 	  */
 	public boolean isActive();
 
+    /** Column name IsNonBusinessDay */
+    public static final String COLUMNNAME_IsNonBusinessDay = "IsNonBusinessDay";
+
+	/** Set Non Business Day	  */
+	public void setIsNonBusinessDay (boolean IsNonBusinessDay);
+
+	/** Get Non Business Day	  */
+	public boolean isNonBusinessDay();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -207,6 +216,19 @@ public interface I_AMN_Payroll_Assist_Proc
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name Protected */
+    public static final String COLUMNNAME_Protected = "Protected";
+
+	/** Set Protected.
+	  * Protected to write
+	  */
+	public void setProtected (boolean Protected);
+
+	/** Get Protected.
+	  * Protected to write
+	  */
+	public boolean isProtected();
 
     /** Column name Shift_Attendance */
     public static final String COLUMNNAME_Shift_Attendance = "Shift_Attendance";

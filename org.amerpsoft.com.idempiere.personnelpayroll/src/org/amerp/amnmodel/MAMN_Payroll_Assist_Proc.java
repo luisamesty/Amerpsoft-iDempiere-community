@@ -34,6 +34,8 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 	 */
     private static final long serialVersionUID = -3721855390921872221L;
     
+    static CLogger log = CLogger.getCLogger(MAMN_Payroll_Assist_Proc.class);
+    
 	/**	Cache							*/
 	private static CCache<Integer,MAMN_Payroll_Assist_Proc> s_cache = new CCache<Integer,MAMN_Payroll_Assist_Proc>(Table_Name, 10);
 
@@ -51,9 +53,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
             setAMN_Employee_ID(0);
             setAMN_Payroll_Assist_Proc_ID(0);
             setAMN_Payroll_Assist_Proc_UU("");
-            setAMN_Shift_ID(0);
             setBioCode("");
-            setdayofweek("");
             setDescanso(false);
             setDescription("");
             setEvent_Date(new Timestamp(System.currentTimeMillis()));
@@ -72,7 +72,8 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
             setShift_HND(BigDecimal.ZERO);
             setShift_HNN(BigDecimal.ZERO);
             setShift_HT(BigDecimal.ZERO);
-
+            setIsNonBusinessDay(false);
+            setProtected(false);
             // Inicializar las horas null
 	          setShift_In1(null);
 	          setShift_In2(null);
@@ -224,7 +225,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 			Shift_Value = "*****  "+Msg.getElement(ctx, "AMN_Shift_ID")+" = 0   *****";
 		}
 	    locMessage= locMessage+Shift_Value+ Msg.getMsg(ctx, "Date")+": "+p_Event_Date.toString().substring(0,10)+" \n";
-		MAMN_Payroll_Assist_Proc amnpayrollassistproc = MAMN_Payroll_Assist_Proc.findbyEmployeeandDate(ctx, locale,  p_AMN_Employee_ID, p_Event_Date);
+	    MAMN_Payroll_Assist_Proc amnpayrollassistproc = MAMN_Payroll_Assist_Proc.findbyEmployeeandDate(ctx, locale,  p_AMN_Employee_ID, p_Event_Date);
 		if (amnpayrollassistproc == null)
 		{
 			amnpayrollassistproc = new MAMN_Payroll_Assist_Proc(ctx, 0, null);
@@ -255,7 +256,8 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 			amnpayrollassistproc.setShift_In2(payassistrow.getShift_In2());
 			amnpayrollassistproc.setShift_Out2(payassistrow.getShift_Out2());
 			amnpayrollassistproc.setShift_LTA(payassistrow.getShift_LTA());
-			amnpayrollassistproc.setShift_THL(payassistrow.getShift_THL());		
+			amnpayrollassistproc.setShift_THL(payassistrow.getShift_THL());	
+			amnpayrollassistproc.setIsNonBusinessDay(payassistrow.isNonBusinessDay());
 			amnpayrollassistproc.setExcused(p_isExcused);
 			amnpayrollassistproc.setIsActive(true);	
 		}
@@ -263,6 +265,8 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 		{
 			//amnpayrollassist.setAMN_AssistRecord(Msg.getMsg(ctx, "Day")+"_"+p_PeriodDate.toString().substring(0, 10)+"_"+p_PeriodDay);
 			amnpayrollassistproc.setDescription(payassistrow.getDescription().trim());
+			amnpayrollassistproc.setdayofweek(p_DayOfWeek);
+			amnpayrollassistproc.setAMN_Shift_ID(p_AMN_Shift_ID);
 			amnpayrollassistproc.setName(Employee_Value.trim()+"-"+Shift_Value+"-"+p_Event_Date);
 			amnpayrollassistproc.setDescanso(p_isDescanso);
 			amnpayrollassistproc.setShift_Attendance(payassistrow.getShift_Attendance());
@@ -278,12 +282,16 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 			amnpayrollassistproc.setShift_HND(payassistrow.getShift_HND());
 			amnpayrollassistproc.setShift_HNN(payassistrow.getShift_HNN());
 			amnpayrollassistproc.setShift_HT(payassistrow.getShift_HT());
-			amnpayrollassistproc.setShift_In1(payassistrow.getShift_In1());
-			amnpayrollassistproc.setShift_Out1(payassistrow.getShift_Out1());
-			amnpayrollassistproc.setShift_In2(payassistrow.getShift_In2());
-			amnpayrollassistproc.setShift_Out2(payassistrow.getShift_Out2());
+			// If Protected Do not Updated
+			if (!amnpayrollassistproc.isProtected()) {
+				amnpayrollassistproc.setShift_In1(payassistrow.getShift_In1());
+				amnpayrollassistproc.setShift_Out1(payassistrow.getShift_Out1());
+				amnpayrollassistproc.setShift_In2(payassistrow.getShift_In2());
+				amnpayrollassistproc.setShift_Out2(payassistrow.getShift_Out2());
+			}
 			amnpayrollassistproc.setShift_LTA(payassistrow.getShift_LTA());
-			amnpayrollassistproc.setShift_THL(payassistrow.getShift_THL());		
+			amnpayrollassistproc.setShift_THL(payassistrow.getShift_THL());	
+			amnpayrollassistproc.setIsNonBusinessDay(payassistrow.isNonBusinessDay());
 			amnpayrollassistproc.setExcused(p_isExcused);
 			amnpayrollassistproc.setIsActive(true);		
 		}
