@@ -35,7 +35,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250202L;
+	private static final long serialVersionUID = 20250313L;
 
     /** Standard Constructor */
     public X_AMN_I_Employee (Properties ctx, int AMN_I_Employee_ID, String trxName)
@@ -389,6 +389,12 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return (String)get_Value(COLUMNNAME_Alergic);
 	}
 
+	public I_AMN_CommissionGroup getAMN_CommissionGroup() throws RuntimeException
+	{
+		return (I_AMN_CommissionGroup)MTable.get(getCtx(), I_AMN_CommissionGroup.Table_ID)
+			.getPO(getAMN_CommissionGroup_ID(), get_TrxName());
+	}
+
 	/** Set Commission Group.
 		@param AMN_CommissionGroup_ID Payroll Employee commission Group OrgSector
 	*/
@@ -453,6 +459,12 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return ii.intValue();
 	}
 
+	public I_AMN_Employee getAMN_Employee() throws RuntimeException
+	{
+		return (I_AMN_Employee)MTable.get(getCtx(), I_AMN_Employee.Table_ID)
+			.getPO(getAMN_Employee_ID(), get_TrxName());
+	}
+
 	/** Set Payroll employee.
 		@param AMN_Employee_ID Payroll employee
 	*/
@@ -510,6 +522,12 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return (String)get_Value(COLUMNNAME_AMN_I_Employee_UU);
 	}
 
+	public I_AMN_Jobstation getAMN_Jobstation() throws RuntimeException
+	{
+		return (I_AMN_Jobstation)MTable.get(getCtx(), I_AMN_Jobstation.Table_ID)
+			.getPO(getAMN_Jobstation_ID(), get_TrxName());
+	}
+
 	/** Set Payroll Job Station.
 		@param AMN_Jobstation_ID Payroll Job Station
 	*/
@@ -529,6 +547,12 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	public I_AMN_Jobtitle getAMN_Jobtitle() throws RuntimeException
+	{
+		return (I_AMN_Jobtitle)MTable.get(getCtx(), I_AMN_Jobtitle.Table_ID)
+			.getPO(getAMN_Jobtitle_ID(), get_TrxName());
 	}
 
 	/** Set Payroll Job Title.
@@ -592,6 +616,12 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	public I_AMN_Sector getAMN_Sector() throws RuntimeException
+	{
+		return (I_AMN_Sector)MTable.get(getCtx(), I_AMN_Sector.Table_ID)
+			.getPO(getAMN_Sector_ID(), get_TrxName());
 	}
 
 	/** Set Work Sector .
@@ -1279,6 +1309,22 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getEMail()
 	{
 		return (String)get_Value(COLUMNNAME_EMail);
+	}
+
+	/** Set EMail Address 2.
+		@param EMail2 Electronic Mail Address Corporative
+	*/
+	public void setEMail2 (String EMail2)
+	{
+		set_Value (COLUMNNAME_EMail2, EMail2);
+	}
+
+	/** Get EMail Address 2.
+		@return Electronic Mail Address Corporative
+	  */
+	public String getEMail2()
+	{
+		return (String)get_Value(COLUMNNAME_EMail2);
 	}
 
 	/** Set Employee Image 1.

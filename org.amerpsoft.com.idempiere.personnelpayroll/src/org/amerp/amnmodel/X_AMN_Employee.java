@@ -35,7 +35,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241104L;
+	private static final long serialVersionUID = 20250313L;
 
     /** Standard Constructor */
     public X_AMN_Employee (Properties ctx, int AMN_Employee_ID, String trxName)
@@ -1277,6 +1277,22 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	public String getEMail()
 	{
 		return (String)get_Value(COLUMNNAME_EMail);
+	}
+
+	/** Set EMail Address 2.
+		@param EMail2 Electronic Mail Address Corporative
+	*/
+	public void setEMail2 (String EMail2)
+	{
+		set_Value (COLUMNNAME_EMail2, EMail2);
+	}
+
+	/** Get EMail Address 2.
+		@return Electronic Mail Address Corporative
+	  */
+	public String getEMail2()
+	{
+		return (String)get_Value(COLUMNNAME_EMail2);
 	}
 
 	/** Set Employee Image 1.

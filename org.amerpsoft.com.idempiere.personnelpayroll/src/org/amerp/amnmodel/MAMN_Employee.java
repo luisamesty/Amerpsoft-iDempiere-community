@@ -103,6 +103,7 @@ public class MAMN_Employee extends X_AMN_Employee {
 		setegresscondition(impEmployee.getegresscondition());
 		setegressdate(impEmployee.getegressdate());
 		setEMail(impEmployee.getEMail());
+		setEMail2(impEmployee.getEMail2());
 		setempimg1_ID(impEmployee.getempimg1_ID());
 		setempimg2_ID(impEmployee.getempimg2_ID());
 		setFirstName1(impEmployee.getFirstName1());
