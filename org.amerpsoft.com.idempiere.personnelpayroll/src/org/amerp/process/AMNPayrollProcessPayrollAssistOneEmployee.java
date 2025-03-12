@@ -13,6 +13,7 @@
 package org.amerp.process;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
@@ -93,6 +94,7 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 		String Employee_Name="";
 		GregorianCalendar cal = new GregorianCalendar();
 		GregorianCalendar cal2 = new GregorianCalendar();		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	    // Determines AD_Org_ID Employee Name
 		MAMN_Employee amnemployee = new MAMN_Employee(getCtx(), p_AMN_Employee_ID, get_TrxName());
 		Employee_Name=amnemployee.getName();
@@ -126,11 +128,12 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 				|| p_RefDateIni.compareTo(amnperiod.getAMNDateEnd()) > 0 
 				|| p_RefDateEnd.compareTo(amnperiod.getAMNDateEnd()) > 0
 				|| p_RefDateEnd.compareTo(amnperiod.getAMNDateIni()) < 0) {
-			Msg_Value=Msg_Value+Msg.getElement(Env.getCtx(),"RefDateIni")+":"+amnpayroll.getName()+"\r\n";
-			Msg_Value=Msg_Value+Msg.getElement(Env.getCtx(),"RefDateEnd")+":"+amnpayroll.getDocStatus()+"\r\n"+
-					" ***** DATE REFERENCE ERROR ****";
+			Msg_Value=Msg.getElement(Env.getCtx(),"RefDateIni")+":"+dateFormat.format(p_RefDateIni)+"\r\n";
 			addLog(Msg_Value);
-			return "@Error@ " + Msg_Value;
+			Msg_Value=Msg.getElement(Env.getCtx(),"RefDateEnd")+":"+dateFormat.format(p_RefDateEnd)+"\r\n";
+			addLog(Msg_Value);
+			addLog(" ***** DATE REFERENCE ERROR ****");
+			return "@Error@ ";
 		}
 		// AMNPayrollCreatePayrollAssistProc
 		Msg_Value=Msg_Value+"  "+(Msg.getElement(Env.getCtx(), "AMN_Employee_ID"))+":"+p_AMN_Employee_ID+" "+Employee_Name.trim()+eol;

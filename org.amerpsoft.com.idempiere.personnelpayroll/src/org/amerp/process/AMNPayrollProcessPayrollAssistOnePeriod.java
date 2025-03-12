@@ -26,6 +26,7 @@ package org.amerp.process;
  *
  */
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
@@ -98,7 +99,8 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 	 */
     @Override
     protected String doIt() throws Exception {
-	    // TODO Auto-generated method stub
+	    // 
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	    String sql="";
 	    String AMN_Process_Value="NN";
 	    String AMN_Process_Name="";
@@ -106,7 +108,6 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 	    String messagetoShow="";
 	    int AMN_Employee_ID=0;
 	    int AMN_Payroll_ID=0;
-	    Timestamp p_AMNDateIni,p_AMNDateEnd;
 	    Timestamp p_currDate;
 	    String Period_Name="";
 	    String Contract_Name="";
@@ -121,14 +122,23 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 		// Determines AMN_Period - AMN_DateIni and AMNDateEnd
 		MAMN_Period amnperiod = new MAMN_Period(Env.getCtx(), p_AMN_Period_ID, null);
 		// Take Ref's Dates instead of Period's Dates
-		if (p_RefDateIni != null && p_RefDateIni != null) {
-			p_AMNDateIni = p_RefDateIni;  // Parameter Value intead of amnperiod.getAMNDateIni();
-			p_AMNDateEnd = p_RefDateEnd;  // Parameter Value intead ofamnperiod.getAMNDateEnd();
-		} else {
-			p_AMNDateIni = amnperiod.getAMNDateIni();
-			p_AMNDateEnd = amnperiod.getAMNDateEnd();
+		if (p_RefDateIni == null && p_RefDateIni == null) {
+			p_RefDateIni = amnperiod.getAMNDateIni();
+			p_RefDateEnd = amnperiod.getAMNDateEnd();
 		}
-			
+		// Verify Dates on Period
+		if (p_RefDateIni.compareTo(p_RefDateEnd) > 0 
+				|| p_RefDateIni.compareTo(amnperiod.getAMNDateIni()) < 0 
+				|| p_RefDateIni.compareTo(amnperiod.getAMNDateEnd()) > 0 
+				|| p_RefDateEnd.compareTo(amnperiod.getAMNDateEnd()) > 0
+				|| p_RefDateEnd.compareTo(amnperiod.getAMNDateIni()) < 0) {
+			Msg_Value=Msg.getElement(Env.getCtx(),"RefDateIni")+":"+dateFormat.format(p_RefDateIni)+"\r\n";
+			addLog(Msg_Value);
+			Msg_Value=Msg.getElement(Env.getCtx(),"RefDateEnd")+":"+dateFormat.format(p_RefDateEnd)+"\r\n";
+			addLog(Msg_Value);
+			addLog(" ***** DATE REFERENCE ERROR ****");
+			return "@Error@ ";
+		}		
 		Period_Name = amnperiod.getName().trim();
 		//
 		IProcessUI processMonitor = Env.getProcessUI(Env.getCtx());
@@ -138,8 +148,8 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 		Msg_Value=Msg.getElement(Env.getCtx(), "AMN_Contract_ID")+": "+Contract_Name+" \r\n";
 		addLog(Msg_Value);
 		Msg_Value=Msg.getElement(Env.getCtx(), "AMN_Period_ID")+": "+Period_Name+"  "+
-				Msg.getElement(Env.getCtx(), "AMNDateIni")+": "+p_AMNDateIni.toString().substring(0,10)+"  "+
-				Msg.getElement(Env.getCtx(), "AMNDateEnd")+": "+p_AMNDateEnd.toString().substring(0,10)+" \r\n";
+				Msg.getElement(Env.getCtx(), "AMNDateIni")+": "+dateFormat.format(p_RefDateIni)+"  "+
+				Msg.getElement(Env.getCtx(), "AMNDateEnd")+": "+dateFormat.format(p_RefDateEnd)+" \r\n";
 		addLog(Msg_Value);
 		if (processMonitor != null)
 		{
@@ -229,12 +239,12 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 			    	// Payroll Assist  (One Employee One Date)
 					GregorianCalendar cal = new GregorianCalendar();
 					GregorianCalendar cal2 = new GregorianCalendar();	
-					cal.setTime(p_AMNDateIni);
+					cal.setTime(p_RefDateIni);
 					cal.set(Calendar.HOUR_OF_DAY, 0);
 					cal.set(Calendar.MINUTE, 0);
 					cal.set(Calendar.SECOND, 0);
 					cal.set(Calendar.MILLISECOND, 0);
-					cal2.setTime(p_AMNDateEnd);
+					cal2.setTime(p_RefDateEnd);
 					cal2.set(Calendar.HOUR_OF_DAY, 0);
 					cal2.set(Calendar.MINUTE, 0);
 					cal2.set(Calendar.SECOND, 0);
