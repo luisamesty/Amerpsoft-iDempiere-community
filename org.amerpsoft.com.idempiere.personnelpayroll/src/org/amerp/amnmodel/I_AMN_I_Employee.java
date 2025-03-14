@@ -147,6 +147,8 @@ public interface I_AMN_I_Employee
 	  */
 	public int getAMN_CommissionGroup_ID();
 
+	public I_AMN_CommissionGroup getAMN_CommissionGroup() throws RuntimeException;
+
     /** Column name AMN_Contract_ID */
     public static final String COLUMNNAME_AMN_Contract_ID = "AMN_Contract_ID";
 
@@ -173,6 +175,8 @@ public interface I_AMN_I_Employee
 
 	/** Get Payroll employee	  */
 	public int getAMN_Employee_ID();
+
+	public I_AMN_Employee getAMN_Employee() throws RuntimeException;
 
     /** Column name AMN_I_Employee_ID */
     public static final String COLUMNNAME_AMN_I_Employee_ID = "AMN_I_Employee_ID";
@@ -201,6 +205,8 @@ public interface I_AMN_I_Employee
 	/** Get Payroll Job Station	  */
 	public int getAMN_Jobstation_ID();
 
+	public I_AMN_Jobstation getAMN_Jobstation() throws RuntimeException;
+
     /** Column name AMN_Jobtitle_ID */
     public static final String COLUMNNAME_AMN_Jobtitle_ID = "AMN_Jobtitle_ID";
 
@@ -209,6 +215,8 @@ public interface I_AMN_I_Employee
 
 	/** Get Payroll Job Title	  */
 	public int getAMN_Jobtitle_ID();
+
+	public I_AMN_Jobtitle getAMN_Jobtitle() throws RuntimeException;
 
     /** Column name AMN_Location_ID */
     public static final String COLUMNNAME_AMN_Location_ID = "AMN_Location_ID";
@@ -240,6 +248,8 @@ public interface I_AMN_I_Employee
 	  * Work Sector in Location
 	  */
 	public int getAMN_Sector_ID();
+
+	public I_AMN_Sector getAMN_Sector() throws RuntimeException;
 
     /** Column name AMN_Shift_ID */
     public static final String COLUMNNAME_AMN_Shift_ID = "AMN_Shift_ID";
@@ -617,6 +627,19 @@ public interface I_AMN_I_Employee
 	  * Electronic Mail Address
 	  */
 	public String getEMail();
+
+    /** Column name EMail2 */
+    public static final String COLUMNNAME_EMail2 = "EMail2";
+
+	/** Set EMail Address 2.
+	  * Electronic Mail Address Corporative
+	  */
+	public void setEMail2 (String EMail2);
+
+	/** Get EMail Address 2.
+	  * Electronic Mail Address Corporative
+	  */
+	public String getEMail2();
 
     /** Column name empimg1_ID */
     public static final String COLUMNNAME_empimg1_ID = "empimg1_ID";

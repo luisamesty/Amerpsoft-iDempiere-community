@@ -60,11 +60,14 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 		// TableRef: amn_concept_types_
 		// *********************************
 		if (tableName.equalsIgnoreCase(MAMN_Concept_Types.Table_Name)) {
-			// FieldRef: amn_concept_types_ID
-			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_AMN_Concept_Types_ID))
-				list.add(new AMN_Concept_Types_callout());
-			// FieldRef: aValue
+			// FieldRef: Value
 			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_Value))
+				list.add(new AMN_Concept_Types_callout());
+			// FieldRef: Name
+			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_Name))
+				list.add(new AMN_Concept_Types_callout());
+			// FieldRef CalcOrder
+			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_CalcOrder))
 				list.add(new AMN_Concept_Types_callout());
 		}		
 		
