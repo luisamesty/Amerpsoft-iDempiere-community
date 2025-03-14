@@ -487,14 +487,15 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		String Concept_Description = "" ;
 		int AMN_Concept_Uom_ID = 0;
 		// GET Payrolldays from AMN_Contract (Valid Round Value if NOT Zero)
-		MAMN_Contract amncontract = new MAMN_Contract(ctx,p_AMN_Contract_ID,null);
+		MAMN_Contract amncontract = new MAMN_Contract(ctx,p_AMN_Contract_ID,trxName);
 		//BigDecimal PayrolldaysC from AMN_Contract
 		BigDecimal PayrolldaysC = amncontract.getPayRollDays();
-		MAMN_Payroll amnpayroll = new MAMN_Payroll(p_ctx, p_AMN_Payroll_ID, null);
-		Concept_Description = amnpayroll.getDescription();
+		MAMN_Payroll amnpayroll = new MAMN_Payroll(p_ctx, p_AMN_Payroll_ID, trxName);
+		MAMN_Payroll_Deferred amnpayrolldef = new MAMN_Payroll_Deferred(p_ctx, AMN_Payroll_Deferred_ID, trxName);
+		Concept_Description = amnpayrolldef.getName();
 		// GET Employee_ID
     	int AMN_Employee_ID = amnpayroll.getAMN_Employee_ID();
-		MAMN_Employee amnemployee = new MAMN_Employee(p_ctx, AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(p_ctx, AMN_Employee_ID, trxName);
 		// GET Salary from AMN_Employee
 		//BigDecimal Salary= MAMN_Employee.sqlGetAMNSalary(AMN_Employee_ID);
 		BigDecimal Salary=amnemployee.getSalary();
@@ -522,12 +523,11 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		MAMN_Concept_Types amncty  = new MAMN_Concept_Types(ctx, amnctp.getAMN_Concept_Types_ID(),null);
         Concept_Value= amncty.getValue();
         Concept_Name = amncty.getName();
-        Concept_Description = amncty.getDescription();
         Concept_CalcOrder =amncty.getCalcOrder();
         AMN_Concept_Uom_ID = amncty.getAMN_Concept_Uom_ID();		
 	    //
 		if (Concept_Description==null)
-			Concept_Description="*** Description Empty ***";	        
+			Concept_Description = amncty.getDescription();
 		// MAMN_Payroll_Detail
 		MAMN_Payroll_Detail amnpayrolldetail = MAMN_Payroll_Detail.findAMNPayrollDetailbyAMNPayrollforDeferred(ctx, locale, 
 				p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_ID, AMN_Payroll_Deferred_ID);

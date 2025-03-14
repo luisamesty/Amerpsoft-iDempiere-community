@@ -331,4 +331,47 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 		return AMN_Concept_Type_Proc_ID;	
 	}
 
+	/**
+	 * Obtiene el AMN_Concept_Types_Proc_ID basado en el valor del proceso, el modo de opción y el signo.
+	 * @param p_ctx Contexto de propiedades.
+	 * @param p_Process_Value Valor del proceso (por ejemplo, 'PL').
+	 * @param p_OptMode Modo de opción (por ejemplo, 'B').
+	 * @param p_Sign Signo (por ejemplo, 'C').
+	 * @param p_trxName Nombre de la transacción.
+	 * @return El AMN_Concept_Types_Proc_ID que cumple con las condiciones, o 0 si no se encuentra.
+	 */
+	public static int getConceptTypesProcIDByConditions(Properties p_ctx, String p_Process_Value, String p_OptMode, String p_Sign, String p_trxName) {
+	    String sql = "SELECT actp.AMN_Concept_Types_Proc_ID " +
+	                 "FROM AMN_Concept_types AS acty " +
+	                 "INNER JOIN AMN_Concept_Types_Proc AS actp ON actp.AMN_Concept_types_ID = acty.AMN_Concept_types_ID " +
+	                 "INNER JOIN AMN_Process AS proc ON proc.amn_process_id = actp.amn_process_id " +
+	                 "WHERE proc.amn_process_value = ? " +
+	                 "AND acty.optmode = ? " +
+	                 "AND acty.sign = ?";
+
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    int amnConceptTypesProcID = 0;
+
+	    try {
+	        pstmt = DB.prepareStatement(sql, p_trxName);
+	        pstmt.setString(1, p_Process_Value); // Valor del proceso
+	        pstmt.setString(2, p_OptMode);      // Modo de opción
+	        pstmt.setString(3, p_Sign);         // Signo
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            // Si se encuentra un registro, obtener el AMN_Concept_Types_Proc_ID
+	            amnConceptTypesProcID = rs.getInt("AMN_Concept_Types_Proc_ID");
+	        }
+	    } catch (SQLException e) {
+	        log.severe("Error al ejecutar la consulta: " + e.getMessage());
+	    } finally {
+	        DB.close(rs, pstmt);
+	        rs = null;
+	        pstmt = null;
+	    }
+
+	    return amnConceptTypesProcID;
+	}
 }

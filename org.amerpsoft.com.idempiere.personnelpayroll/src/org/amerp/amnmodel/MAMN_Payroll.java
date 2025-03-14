@@ -15,6 +15,7 @@ package org.amerp.amnmodel;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -158,7 +159,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	
 	/**
 	 * updateAMNPayroll
-	 * Updates Header Variables
+	 * Special Updates Header Variables
+	 * Depending on Process Value 
 	 * @param ctx
 	 * @param p_AMN_Payroll_ID
 	 * @param trxName
@@ -259,6 +261,75 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			// ************************
 			// Process NU
 			// ************************
+			SimpleDateFormat nuformat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+			MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+			MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+			MAMN_Period amnperiod = new MAMN_Period(ctx, amnpayroll.getAMN_Period_ID(), trxName);
+			Timestamp refDateIni = amnperiod.getRefDateIni();
+			Timestamp refDateEnd = amnperiod.getRefDateEnd();
+			String PayrollDescription = AmerpUtilities.truncate(
+				    amnemployee.getValue() + "- " +
+				    Msg.translate(ctx, "from") + " " + nuformat.format(amnperiod.getRefDateIni()) + " " +
+				    Msg.translate(ctx, "to") + " " + nuformat.format(amnperiod.getRefDateEnd()), 255);
+			// Updates Header
+			String sql = "UPDATE AMN_Payroll "
+			           + "SET description = ?, "
+			           + "RefDateIni = ?, "
+			           + "RefDateEnd = ? "
+			           + "WHERE amn_payroll_id = ?";
+
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+			    pstmt = DB.prepareStatement(sql, null);
+			    pstmt.setString(1, PayrollDescription);
+			    pstmt.setTimestamp(2, refDateIni);
+			    pstmt.setTimestamp(3, refDateEnd);
+			    pstmt.setInt(4, p_AMN_Payroll_ID);
+			    pstmt.executeUpdate();
+			} catch (Exception e) {
+			   log.warning("Error en la actualización: " + e.getMessage());
+			} finally {
+			    DB.close(pstmt);
+			}
+	 
+		} else if (AMN_Process_Value.equalsIgnoreCase("PL")) { 
+			// ************************
+			// Process PL
+			// ************************
+			// Update AMN_Payroll (HEADER VALUES)
+			SimpleDateFormat plformat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+			MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
+			MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+			MAMN_Period amnperiod = new MAMN_Period(ctx, amnpayroll.getAMN_Period_ID(), trxName);
+			MAMN_Process amnprocess = new MAMN_Process(ctx, amnpayroll.getAMN_Process_ID(), trxName);
+			Timestamp refDateIni = amnperiod.getRefDateIni();
+			Timestamp refDateEnd = amnperiod.getRefDateEnd();
+			String PayrollDescription = AmerpUtilities.truncate(
+				    amnemployee.getValue() + " - " +
+				    amnprocess.getName().trim()+ " " + 
+				    Msg.getElement(ctx, "DateTo") + " " + plformat.format(amnpayroll.getInvDateEnd()), 255);
+			// Updates Header
+			String sql = "UPDATE AMN_Payroll "
+			           + "SET description = ?, "
+			           + "RefDateIni = ?, "
+			           + "RefDateEnd = ? "
+			           + "WHERE amn_payroll_id = ?";
+
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+			    pstmt = DB.prepareStatement(sql, null);
+			    pstmt.setString(1, PayrollDescription);
+			    pstmt.setTimestamp(2, refDateIni);
+			    pstmt.setTimestamp(3, refDateEnd);
+			    pstmt.setInt(4, p_AMN_Payroll_ID);
+			    pstmt.executeUpdate();
+			} catch (Exception e) {
+			   log.warning("Error en la actualización: " + e.getMessage());
+			} finally {
+			    DB.close(pstmt);
+			}
 		} else {
 			
 		}
