@@ -62,4 +62,5 @@ WHERE emp.isactive= 'Y'
 	AND EXTRACT(MONTH FROM emp.Birthday) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
+	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 ORDER BY EXTRACT(DAY FROM emp.Birthday)
