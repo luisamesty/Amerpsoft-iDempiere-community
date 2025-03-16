@@ -1,5 +1,5 @@
--- Employees Birthday
--- EmployeesBirthday.jrxml
+-- Employees Aniversary
+-- EmployeesAniversary.jrxml
 SELECT 
 	-- REPORT HEADER
 	CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
@@ -27,23 +27,23 @@ SELECT
          THEN (DATE_PART('year', $P{DateTo}::date) - DATE_PART('year', emp.birthday::date) - 1)
          ELSE (DATE_PART('year', $P{DateTo}::date) - DATE_PART('year', emp.birthday::date))
     END as edad, 
- -- PERIODO de servicio comparado con el dia de su cumpleaños en el MES/AÑO de TateTo
+	-- PERIODO de servicio comparado con el dia de su aniversario en el MES/AÑO de TateTo
 	date_part('year', age( DATE(
-            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||  
-            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' || 
-            EXTRACT(DAY FROM emp.birthday)               
-        ), emp.incomedate )) AS a_servicio,
+	            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' || 
+	            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(DAY FROM emp.incomedate)              
+	        ), emp.incomedate )) AS a_servicio,
 	date_part('month', age(
-        DATE(
-            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(DAY FROM emp.birthday)
-        ), emp.incomedate )) AS m_servicio,
+	        DATE(
+	            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(DAY FROM emp.incomedate)
+	        ), emp.incomedate )) AS m_servicio,
 	date_part('day', age( DATE(
-            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(DAY FROM emp.birthday)
-        ), emp.incomedate  )) AS d_servicio,
+	            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(DAY FROM emp.incomedate)
+	        ), emp.incomedate  )) AS d_servicio,
     emp.status, 
     CASE WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN 1
          WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN 1
@@ -75,9 +75,8 @@ INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
 WHERE emp.isactive= 'Y' 
-	AND EXTRACT(MONTH FROM emp.Birthday) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
+	AND EXTRACT(MONTH FROM emp.incomedate) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY EXTRACT(DAY FROM emp.Birthday)
-
+ORDER BY EXTRACT(DAY FROM emp.incomedate)

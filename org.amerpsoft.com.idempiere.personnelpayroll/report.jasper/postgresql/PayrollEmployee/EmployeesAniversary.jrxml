@@ -34,8 +34,8 @@
 	</parameter>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[-- Employees Birthday
--- EmployeesBirthday.jrxml
+		<![CDATA[-- Employees Aniversary
+-- EmployeesAniversary.jrxml
 SELECT 
 	-- REPORT HEADER
 	CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
@@ -63,23 +63,23 @@ SELECT
          THEN (DATE_PART('year', $P{DateTo}::date) - DATE_PART('year', emp.birthday::date) - 1)
          ELSE (DATE_PART('year', $P{DateTo}::date) - DATE_PART('year', emp.birthday::date))
     END as edad, 
- -- PERIODO de servicio comparado con el dia de su cumpleaños en el MES/AÑO de TateTo
+	-- PERIODO de servicio comparado con el dia de su aniversario en el MES/AÑO de TateTo
 	date_part('year', age( DATE(
-            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||  
-            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' || 
-            EXTRACT(DAY FROM emp.birthday)              
-        ), emp.incomedate )) AS a_servicio,
+	            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' || 
+	            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(DAY FROM emp.incomedate)              
+	        ), emp.incomedate )) AS a_servicio,
 	date_part('month', age(
-        DATE(
-            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(DAY FROM emp.birthday)
-        ), emp.incomedate )) AS m_servicio,
+	        DATE(
+	            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(DAY FROM emp.incomedate)
+	        ), emp.incomedate )) AS m_servicio,
 	date_part('day', age( DATE(
-            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
-            EXTRACT(DAY FROM emp.birthday)
-        ), emp.incomedate  )) AS d_servicio,
+	            EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(MONTH FROM $P{DateTo}::date) || '-' ||
+	            EXTRACT(DAY FROM emp.incomedate)
+	        ), emp.incomedate  )) AS d_servicio,
     emp.status, 
     CASE WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN 1
          WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN 1
@@ -111,12 +111,11 @@ INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
 WHERE emp.isactive= 'Y' 
-	AND EXTRACT(MONTH FROM emp.Birthday) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
+	AND EXTRACT(MONTH FROM emp.incomedate) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY EXTRACT(DAY FROM emp.Birthday)
-
+ORDER BY EXTRACT(DAY FROM emp.incomedate)
 ]]>
 	</queryString>
 	<field name="rep_taxid" class="java.lang.String">
@@ -248,8 +247,8 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 			<textField>
 				<reportElement key="" x="465" y="14" width="90" height="14" uuid="871a683b-bb7c-419e-9847-f5b91ec19880">
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="9"/>
@@ -306,7 +305,8 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Reporte de Cumpleaños del Mes de "+ new SimpleDateFormat("MMMM yyyy", new java.util.Locale("es", "ES")).format($P{DateTo})]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Reporte de Aniversarios del Mes de " 
++ new SimpleDateFormat("MMMM yyyy", new java.util.Locale("es", "ES")).format($P{DateTo})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -346,7 +346,7 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 				<textElement>
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Fecha]]></text>
+				<text><![CDATA[Fec.Ing.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="250" y="0" width="150" height="14" uuid="a2dc3a55-7cbe-4c05-96a9-8bba9fe98390">
@@ -364,6 +364,8 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 				<reportElement x="465" y="0" width="90" height="14" uuid="f419475c-16f5-4bed-8775-99b97792315c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
@@ -405,7 +407,7 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 				<textElement>
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{fecha_nacimiento})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{fecha_ingreso})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="250" y="0" width="150" height="14" uuid="e9158206-4578-4c6d-8fb3-38f8891faa4f">
@@ -422,6 +424,8 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 				<reportElement x="465" y="0" width="90" height="14" uuid="1f145d33-0d56-46ed-89ed-f530feae8072">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>

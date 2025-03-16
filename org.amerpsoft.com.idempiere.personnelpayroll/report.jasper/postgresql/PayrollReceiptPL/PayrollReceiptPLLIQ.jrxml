@@ -679,7 +679,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[ new SimpleDateFormat("dd").format($F{invdateend}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{invdateend})+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateend})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[new SimpleDateFormat("dd").format($F{invdateend}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{invdateend})+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateend})]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
 					<reportElement stretchType="RelativeToTallestObject" x="110" y="96" width="190" height="14" uuid="17e119f1-5372-4cd5-8c90-6077b604c9d9">
@@ -867,7 +867,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{hedliq_qty}.intValue() 
-+ " Hs Ex " ]]></textFieldExpression>
++ " Hs Ex "]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
 					<reportElement x="435" y="138" width="130" height="14" isRemoveLineWhenBlank="true" uuid="2bfcadfc-beab-4a1c-a609-8cd3008b3a48"/>
@@ -1117,7 +1117,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<textFieldExpression><![CDATA["Para lo que hubiere lugar en derecho se firma ante los testigos, Gustavo Villar, C.I. Nro. 2.236.323 y la Sra. Romina Tania Andrea Gamarra, con C.I. Nro. 2.964.438."]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement x="1" y="258" width="199" height="38" uuid="202b07d6-00ba-4ff6-976a-0a9a32f6e9b6">
+					<reportElement x="0" y="260" width="199" height="12" uuid="202b07d6-00ba-4ff6-976a-0a9a32f6e9b6">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1125,10 +1125,10 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<textElement markup="html">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{empleado}.trim()+"\r\n"+ "Cédula Nro."+$F{nro_id}.trim()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{empleado}.trim()]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement x="211" y="258" width="171" height="30" uuid="cfd20021-93b2-484f-bff7-b446226c2531">
+					<reportElement x="211" y="260" width="171" height="12" uuid="cfd20021-93b2-484f-bff7-b446226c2531">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1136,10 +1136,10 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<textElement markup="html">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Gustavo Villar."+"\r\n"+"Cédula Nro. 2.236.323"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Gustavo Villar."]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement x="393" y="258" width="171" height="30" uuid="e0a4ee1d-409f-46a6-bb07-28592045c6bb">
+					<reportElement x="391" y="260" width="171" height="12" uuid="e0a4ee1d-409f-46a6-bb07-28592045c6bb">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1147,10 +1147,10 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<textElement markup="html">
 						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Romina Tania A. Gamarra."+"\r\n"+"Cédula Nro. 2.964.438"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Romina Tania A. Gamarra."]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="253" width="171" height="1" uuid="2c2afd59-1a61-473c-a79f-ade71c6f38c3">
+					<reportElement x="0" y="253" width="199" height="1" uuid="2c2afd59-1a61-473c-a79f-ade71c6f38c3">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 				</line>
@@ -1160,10 +1160,43 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 				</line>
 				<line>
-					<reportElement x="393" y="253" width="171" height="1" uuid="2b4918f2-269d-4286-8e57-7f57381d319a">
+					<reportElement x="391" y="253" width="171" height="1" uuid="2b4918f2-269d-4286-8e57-7f57381d319a">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 				</line>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement x="0" y="272" width="199" height="12" uuid="b007f497-0f0a-4493-a882-d10b58463ea4">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Cédula Nro."+$F{nro_id}.trim()]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement x="211" y="272" width="171" height="12" uuid="71931335-71bf-45af-9db9-ef5120c4d576">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Cédula Nro. 2.236.323"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement x="391" y="272" width="171" height="12" uuid="bcc7ffcf-515e-4d72-bb4c-309f0b50ac9c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement markup="html">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Cédula Nro. 2.964.438"]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
