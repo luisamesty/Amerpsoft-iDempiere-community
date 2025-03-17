@@ -1,5 +1,6 @@
 -- PayrollHistoricReport
 -- Payroll Historic Report by Employees
+-- FILTER BY AllocationsOnly if Yes
 SELECT * FROM
 (
 	-- REPORT HEADER
@@ -161,6 +162,7 @@ FULL JOIN
 	AND ( CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
     AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{isShowRetired} = 'Y'  OR ($P{isShowRetired} = 'N' AND emp.status IN ('A','S','V')  ) ) THEN 1=1 ELSE 1=0 END)
+	AND ( CASE WHEN ( $P{AllocationsOnly} IS NULL OR $P{AllocationsOnly} = 'N' OR ($P{AllocationsOnly} = 'Y' AND cty.sign ='D') ) THEN 1=1 ELSE 1=0 END )
   ) as phis ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
   AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 

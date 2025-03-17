@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListByConcept" pageWidth="1008" pageHeight="612" orientation="Landscape" columnWidth="968" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollListByConcept" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListByConcept" pageWidth="1130" pageHeight="612" orientation="Landscape" columnWidth="1090" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollListByConcept" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="477"/>
@@ -31,6 +22,9 @@
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<parameter name="IsSummary" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[-- PayrollListByContractsConcepts
 -- Payroll List By Concept in a Period
@@ -134,8 +128,7 @@ WHERE pyr.AD_Client_ID =$P{AD_Client_ID}
 	) as nomina ON (1= 0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value ASC, nomina.calcorder ASC, nomina.value_emp ASC
-]]>
+ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value ASC, nomina.calcorder ASC, nomina.value_emp ASC]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -363,7 +356,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="v_calculado_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountcalculated}!= null && $F{isshow}.compareToIgnoreCase("N")== 0
+		<variableExpression><![CDATA[($F{amountcalculated}!= null
  ? $F{amountcalculated}
  : BigDecimal.ZERO
 )]]></variableExpression>
@@ -397,10 +390,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 )]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="v_no_trabajadores_contract" class="java.lang.Integer" resetType="Group" resetGroup="Group_porContrato" calculation="Sum">
-		<variableExpression><![CDATA[($F{amn_employee_id}!= null && $F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 ? 1:0)]]></variableExpression>
-	</variable>
-	<variable name="v_no_trabajadores_report" class="java.lang.Integer" calculation="Sum">
+	<variable name="v_no_trabajadores_concepto" class="java.lang.Integer" resetType="Group" resetGroup="Group_porConcepto" calculation="Sum">
 		<variableExpression><![CDATA[($F{amn_employee_id}!= null && $F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 ? 1:0)]]></variableExpression>
 	</variable>
 	<variable name="v_periodo" class="java.lang.String">
@@ -413,7 +403,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 			<band height="18">
 				<printWhenExpression><![CDATA[$F{c_value}!=null && $F{amndateini}!=null &&$F{loc_value}!=null && $F{cty_value}!=null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porContrato">
-					<reportElement x="0" y="0" width="968" height="18" uuid="217d1109-a841-4903-87e3-b360826d3c1a">
+					<reportElement x="0" y="0" width="1090" height="18" uuid="217d1109-a841-4903-87e3-b360826d3c1a">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -424,74 +414,61 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="24">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{c_value}!=null && $F{amndateini}!=null &&$F{loc_value}!=null && $F{cty_value}!=null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porContrato">
-					<reportElement x="0" y="0" width="728" height="12" uuid="25926b47-5636-4fe7-a31c-62222c73dc11">
+					<reportElement x="0" y="0" width="620" height="14" uuid="25926b47-5636-4fe7-a31c-62222c73dc11">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{c_value}.trim()+"-"+$F{c_tipo}.trim()+" --->"]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8bf4470d-e21c-4a67-bad4-a5d3701d1b40">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="8bf4470d-e21c-4a67-bad4-a5d3701d1b40">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_contract}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="84a40510-10c2-4210-beae-0c118636e70e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="84a40510-10c2-4210-beae-0c118636e70e"/>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_contract}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c5b01920-ac91-485c-b053-ee423dd6dff6">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
+					<reportElement mode="Transparent" x="970" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c5b01920-ac91-485c-b053-ee423dd6dff6"/>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_contract}.subtract($V{v_deducciones_contract})]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="0" y="12" width="538" height="12" uuid="4ba1e006-839c-40f5-839d-55fe05fa0dc5">
+				<line>
+					<reportElement x="540" y="0" width="550" height="1" uuid="320d4499-dc6c-4b1c-8e32-3fa86cff4b4f">
 						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.employees}.trim()+" "+" --->"]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
-					<reportElement mode="Transparent" x="540" y="12" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="14d4e74b-8bd9-4ee3-a992-90a5198aa2a7">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{v_no_trabajadores_report}]]></textFieldExpression>
-				</textField>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupFooter>
 	</group>
@@ -499,9 +476,9 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 		<groupExpression><![CDATA[$F{amndateini}]]></groupExpression>
 		<groupHeader>
 			<band height="16">
-				<printWhenExpression><![CDATA[ $F{amndateini}!=null &&$F{loc_value}!=null]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{amndateini}!=null &&$F{loc_value}!=null]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porPeriodo">
-					<reportElement x="0" y="0" width="968" height="16" uuid="428e3bcf-8d4c-4d57-a7f8-b14e02ac4455">
+					<reportElement x="0" y="0" width="1090" height="16" uuid="428e3bcf-8d4c-4d57-a7f8-b14e02ac4455">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<printWhenExpression><![CDATA[$F{periodo}!=null]]></printWhenExpression>
 					</reportElement>
@@ -515,11 +492,11 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="24">
+			<band height="12">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo">
-					<reportElement x="0" y="0" width="728" height="12" uuid="48baee6b-0128-4faa-8868-2433d2f8bdc0">
+					<reportElement x="0" y="0" width="620" height="12" uuid="48baee6b-0128-4faa-8868-2433d2f8bdc0">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
@@ -529,41 +506,41 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{periodo}.trim()+" --->"]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8ef55e0b-0b96-43d5-8d07-0be7c74d5c39">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8ef55e0b-0b96-43d5-8d07-0be7c74d5c39">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_period}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="538" y="0" width="430" height="1" uuid="25170ab5-8bd7-4d80-965c-7ee2ca1d2d84">
+					<reportElement x="540" y="0" width="550" height="1" uuid="25170ab5-8bd7-4d80-965c-7ee2ca1d2d84">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="fad4e177-60fa-437b-8d2a-3bae95846f99">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="fad4e177-60fa-437b-8d2a-3bae95846f99">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_period}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porPeriodo" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ab5a7dab-5237-4c06-b8ea-1d77f0ccb4ca">
+					<reportElement mode="Transparent" x="970" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ab5a7dab-5237-4c06-b8ea-1d77f0ccb4ca">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
@@ -582,7 +559,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 			<band height="18">
 				<printWhenExpression><![CDATA[$F{amn_location_id}!= null && $P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad">
-					<reportElement x="0" y="0" width="968" height="18" uuid="323f8cae-3688-4444-9077-f3581ce5d701">
+					<reportElement x="0" y="0" width="1090" height="18" uuid="323f8cae-3688-4444-9077-f3581ce5d701">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<box leftPadding="15"/>
@@ -594,21 +571,21 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="24">
+			<band height="12">
 				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $P{ShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e66e3f61-db26-4321-8e85-405fb6243ca4">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e66e3f61-db26-4321-8e85-405fb6243ca4">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_loc}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0ec8f9db-c8d9-4ac0-b1ff-a697cf288b48">
+					<reportElement mode="Transparent" x="970" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0ec8f9db-c8d9-4ac0-b1ff-a697cf288b48">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
@@ -624,25 +601,25 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_loc}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="538" y="0" width="430" height="1" uuid="4dc8c82e-d50d-4642-a503-3448ad682217">
+					<reportElement x="540" y="0" width="550" height="1" uuid="4dc8c82e-d50d-4642-a503-3448ad682217">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad">
-					<reportElement x="0" y="0" width="728" height="12" uuid="ae8a7da6-3592-4d5f-9c90-0f3b804158cf">
+					<reportElement x="0" y="0" width="620" height="12" uuid="ae8a7da6-3592-4d5f-9c90-0f3b804158cf">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
@@ -662,7 +639,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{amn_concept_types_id}!= null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="0" y="0" width="178" height="15" uuid="37744d7b-9cff-4786-a340-39502da46a0d">
+					<reportElement x="0" y="0" width="180" height="15" uuid="37744d7b-9cff-4786-a340-39502da46a0d">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -674,7 +651,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					<textFieldExpression><![CDATA[$F{cty_value}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="178" y="0" width="80" height="15" uuid="12ad7609-5351-4adb-adc2-d33d4a905b16">
+					<reportElement x="180" y="0" width="80" height="15" uuid="12ad7609-5351-4adb-adc2-d33d4a905b16">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -687,7 +664,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					<textFieldExpression><![CDATA[$F{calcorder}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="258" y="0" width="710" height="15" uuid="ae8030de-0232-4b0c-b19b-522052b480db">
+					<reportElement x="260" y="0" width="280" height="15" uuid="ae8030de-0232-4b0c-b19b-522052b480db">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -697,44 +674,113 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					</textElement>
 					<textFieldExpression><![CDATA[$F{concept_type}]]></textFieldExpression>
 				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
+					<reportElement mode="Transparent" x="540" y="0" width="80" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="a592cf6b-f4e0-45b6-8531-0d4dd77fefda">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<box padding="2" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(new java.text.DecimalFormat("0000")).format($V{v_no_trabajadores_concepto}.intValue()) + " Trabaj."]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="620" y="0" width="110" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="9ddacefb-a3af-461b-b2e9-0e45ba541e44">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_calculado_concepto}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="5d768a12-806a-43a8-afcd-5f8f410a8936">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_concepto}.compareTo( java.math.BigDecimal.ZERO )!=0 ? $V{v_asignaciones_concepto} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="aeb2da52-ad8d-4d72-8d82-b1afb752a85e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_deducciones_concepto}.compareTo( java.math.BigDecimal.ZERO )!=0 ? $V{v_deducciones_concepto} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="970" y="0" width="120" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="b099610e-ccfb-41a1-a799-8375cf9f549c">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{v_asignaciones_concepto}!= BigDecimal.ZERO || $V{v_deducciones_concepto}!= BigDecimal.ZERO
+ ? $V{v_asignaciones_concepto}.add($V{v_deducciones_concepto})
+ :""
+)]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="24">
-				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null]]></printWhenExpression>
+			<band height="12">
+				<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $P{IsSummary}.compareToIgnoreCase( "N" )== 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f7afb09a-2372-4a9f-8e61-048b64ff9ac3">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f7afb09a-2372-4a9f-8e61-048b64ff9ac3">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$V{v_asignaciones_concepto}!= BigDecimal.ZERO]]></printWhenExpression>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_concepto}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="848" y="0" width="120" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="361f585a-afda-4ac3-8387-40fcdf8bf82f">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="12" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_porPeriodo" forecolor="#000000" backcolor="#FFFFFF" uuid="361f585a-afda-4ac3-8387-40fcdf8bf82f">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$V{v_deducciones_concepto}!= BigDecimal.ZERO]]></printWhenExpression>
 					</reportElement>
 					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_concepto}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="538" y="0" width="430" height="1" uuid="a4e3a7d1-5773-456c-adf8-a6681f935109">
+					<reportElement x="540" y="0" width="550" height="1" uuid="a4e3a7d1-5773-456c-adf8-a6681f935109">
 						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="848" y="12" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1773bdd9-6507-4179-b56c-4c3e08806b70">
+					<reportElement mode="Transparent" x="970" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1773bdd9-6507-4179-b56c-4c3e08806b70">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -745,40 +791,42 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					</textElement>
 					<textFieldExpression><![CDATA[($V{v_asignaciones_concepto}!= BigDecimal.ZERO || $V{v_deducciones_concepto}!= BigDecimal.ZERO
  ? $V{v_asignaciones_concepto}.add($V{v_deducciones_concepto})
- : $V{v_calculado_concepto}
+ :""
 )]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="0" y="0" width="728" height="12" uuid="5a988787-f0d6-4f55-8380-6f247d487ba0">
+					<reportElement x="0" y="0" width="540" height="12" uuid="5a988787-f0d6-4f55-8380-6f247d487ba0">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{cty_value}.trim()+"("+$F{calcorder}+")"+$F{concept_type}+" --->"]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="0" y="12" width="538" height="12" uuid="19de003f-7944-405f-8a29-f4faff1dbcd6">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.employees}.trim()+" ("+$F{c_value}.trim()+"-"+$F{periodo}.trim()+" "+$F{cty_value}+") --->"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+$F{cty_value}.trim()+"("+$F{calcorder}+")  "+$F{concept_type}+" --->"]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.##">
-					<reportElement mode="Transparent" x="540" y="12" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="94642729-5fb5-48ab-9c7b-ae56f21847a7">
+					<reportElement mode="Transparent" x="540" y="0" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="94642729-5fb5-48ab-9c7b-ae56f21847a7">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<box padding="2" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{v_no_trabajadores_contract}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(new java.text.DecimalFormat("0000")).format($V{v_no_trabajadores_concepto}.intValue()) + " Trabaj."]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="620" y="0" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="350f441b-d3c4-4a76-a6df-2eb13fb15659">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_calculado_concepto}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -807,11 +855,12 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="100" y="15" width="158" height="15" isRemoveLineWhenBlank="true" uuid="c907aa55-9bb4-453f-821c-56948b297c6c">
+				<reportElement x="100" y="15" width="160" height="15" isRemoveLineWhenBlank="true" uuid="c907aa55-9bb4-453f-821c-56948b297c6c">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -820,7 +869,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement key="" x="908" y="15" width="60" height="15" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
+				<reportElement key="" x="1030" y="15" width="60" height="15" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -830,7 +879,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.of}+" "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="848" y="0" width="120" height="15" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
+				<reportElement key="" x="970" y="0" width="120" height="15" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -841,7 +890,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" x="848" y="15" width="60" height="15" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
+				<reportElement key="" x="970" y="15" width="60" height="15" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -852,9 +901,10 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="100" y="0" width="158" height="15" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
+				<reportElement x="100" y="0" width="160" height="15" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -863,7 +913,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="728" y="30" width="240" height="14" uuid="2fbbb53c-e66b-4403-a559-964a37cb6cff">
+				<reportElement x="850" y="30" width="240" height="14" uuid="2fbbb53c-e66b-4403-a559-964a37cb6cff">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -875,7 +925,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.currency}+": " +$F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="">
-				<reportElement x="258" y="0" width="470" height="30" uuid="dedc9914-8e69-4571-b54f-e5c7f90002ab">
+				<reportElement x="260" y="0" width="470" height="30" uuid="dedc9914-8e69-4571-b54f-e5c7f90002ab">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -885,7 +935,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="">
-				<reportElement x="258" y="30" width="470" height="14" uuid="9a069d31-c6f9-4b3a-830c-60566896d59a">
+				<reportElement x="260" y="30" width="470" height="14" uuid="9a069d31-c6f9-4b3a-830c-60566896d59a">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -903,7 +953,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 		<band height="22" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<line>
-				<reportElement x="0" y="0" width="968" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
+				<reportElement x="0" y="0" width="1090" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -912,16 +962,16 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="2" width="968" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
+				<reportElement x="0" y="2" width="1090" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="19" width="968" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
+				<reportElement x="0" y="19" width="1090" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -929,7 +979,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="21" width="968" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
+				<reportElement x="0" y="21" width="1090" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -947,9 +997,9 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.contract}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="4" width="78" height="14" uuid="a6281265-3188-4404-9f44-5bf1338e6601">
+				<reportElement x="100" y="4" width="80" height="14" uuid="a6281265-3188-4404-9f44-5bf1338e6601">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" isBold="true"/>
@@ -957,7 +1007,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.concept}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="178" y="4" width="80" height="14" uuid="cccc32ea-7679-48ba-b9bd-19b0814b9243">
+				<reportElement x="180" y="4" width="80" height="14" uuid="cccc32ea-7679-48ba-b9bd-19b0814b9243">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -968,7 +1018,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.code}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="258" y="4" width="280" height="18" uuid="adcd0ac5-3253-425d-9398-f39ef0234655">
+				<reportElement x="260" y="4" width="280" height="14" uuid="adcd0ac5-3253-425d-9398-f39ef0234655">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -978,7 +1028,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.employee}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="538" y="4" width="80" height="14" uuid="3739ce4b-0fb0-4d07-b5f8-9f02dc660e65">
+				<reportElement x="540" y="4" width="80" height="14" uuid="3739ce4b-0fb0-4d07-b5f8-9f02dc660e65">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -988,17 +1038,17 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.qty}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="618" y="4" width="110" height="14" uuid="b89e2613-8ec0-4bdb-a313-e2308963aeb0">
+				<reportElement x="620" y="4" width="110" height="14" uuid="b89e2613-8ec0-4bdb-a313-e2308963aeb0">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.value}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.calculated}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="728" y="4" width="120" height="14" uuid="8c6e20dd-c43b-404a-996a-dc0e01bda797">
+				<reportElement x="730" y="4" width="120" height="14" uuid="8c6e20dd-c43b-404a-996a-dc0e01bda797">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -1008,7 +1058,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$R{report.earning}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="848" y="4" width="120" height="14" uuid="60853840-ae6b-4704-a5be-1e4d660d96cf">
+				<reportElement x="850" y="4" width="120" height="14" uuid="60853840-ae6b-4704-a5be-1e4d660d96cf">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -1017,30 +1067,36 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.deduction}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="970" y="4" width="120" height="14" uuid="5eab06a4-810b-4c2c-952f-6f394e6e2977">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.cummulated}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 && $F{amountallocated}!=null]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{amn_period_id}!= null && $F{amn_location_id}!= null && $F{amn_concept_types_id}!= null && $F{cantidad}.compareTo(BigDecimal.ZERO)!= 0 && $F{amountallocated}!=null && $P{IsSummary}.compareToIgnoreCase( "N" )== 0]]></printWhenExpression>
 			<textField pattern="#,##0.00">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="618" y="0" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e4ed1fde-1e17-49a0-ba9d-ea1361feabb9">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="620" y="0" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e4ed1fde-1e17-49a0-ba9d-ea1361feabb9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{isshow}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
 				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{amountcalculated}!= null
- ? $F{amountcalculated}
- : BigDecimal.ZERO
-)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amountcalculated}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="178" y="0" width="78" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="de07e6cd-c9c4-4e8f-b59a-e89e6ba0a0bd">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="180" y="0" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="de07e6cd-c9c4-4e8f-b59a-e89e6ba0a0bd">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -1052,7 +1108,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$F{value_emp}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="258" y="0" width="280" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1ec16f65-fd5f-48f5-8a38-d36cac4c3fa3">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="260" y="0" width="280" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1ec16f65-fd5f-48f5-8a38-d36cac4c3fa3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
@@ -1063,7 +1119,7 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 				<textFieldExpression><![CDATA[$F{empleado}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="728" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e450d6e0-9d97-47ca-a1d0-759f1793fbe4">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="730" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e450d6e0-9d97-47ca-a1d0-759f1793fbe4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{isshow}.compareToIgnoreCase("Y")== 0 && $F{amountallocated}!= BigDecimal.ZERO]]></printWhenExpression>
 				</reportElement>
@@ -1072,13 +1128,13 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{amountallocated}!= null
+				<textFieldExpression><![CDATA[($F{amountallocated}.compareTo( java.math.BigDecimal.ZERO)!= 0
  ? $F{amountallocated}
- : BigDecimal.ZERO
+ : ""
 )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="848" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="efdbd6af-a1e4-4869-8e33-f72c2e64c156">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="850" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="efdbd6af-a1e4-4869-8e33-f72c2e64c156">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{isshow}.compareToIgnoreCase("Y")== 0 && $F{amountdeducted}!= BigDecimal.ZERO]]></printWhenExpression>
 				</reportElement>
@@ -1087,13 +1143,13 @@ ORDER BY  nomina.proceso, nomina.c_value, nomina.amndateini, nomina.loc_value AS
 					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{amountdeducted}!= null
+				<textFieldExpression><![CDATA[($F{amountdeducted}.compareTo( java.math.BigDecimal.ZERO)!= 0
  ? $F{amountdeducted}
- : BigDecimal.ZERO
+ : ""
 )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="538" y="0" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4f46f2a6-c368-4606-b622-90961266b2ba">
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="540" y="0" width="80" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4f46f2a6-c368-4606-b622-90961266b2ba">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
