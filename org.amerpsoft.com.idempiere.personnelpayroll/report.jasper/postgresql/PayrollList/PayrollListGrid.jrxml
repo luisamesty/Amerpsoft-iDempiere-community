@@ -47,6 +47,7 @@
 		<![CDATA[-- Payroll List CrossTab (Column View)
 -- Used for  reports and individual print
 -- Currency Rate Added and Conversion reviewed
+-- ONE PERIOD
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -1944,7 +1945,7 @@ SELECT
 				<textFieldExpression><![CDATA[$F{currencyrate}.compareTo( java.math.BigDecimal .ZERO)>=0 ? "Tasa: "+$F{currencyrate}.setScale(8, java.math.RoundingMode.HALF_UP): ""]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="50" y="28" width="200" height="14" isRemoveLineWhenBlank="true" uuid="2d9ba5ae-c77a-415e-b85d-441d9db29f6d">
+				<reportElement x="50" y="28" width="440" height="14" isRemoveLineWhenBlank="true" uuid="2d9ba5ae-c77a-415e-b85d-441d9db29f6d">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
