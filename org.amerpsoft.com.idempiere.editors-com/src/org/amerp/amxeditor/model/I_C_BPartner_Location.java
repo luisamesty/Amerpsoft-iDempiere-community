@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.moli.moli.I_MOLI_GeoRefCode;
 
 /** Generated Interface for C_BPartner_Location
  *  @author iDempiere (generated) 

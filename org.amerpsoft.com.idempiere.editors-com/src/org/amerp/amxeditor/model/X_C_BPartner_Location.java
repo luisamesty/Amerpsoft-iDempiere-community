@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.moli.moli.I_MOLI_GeoRefCode;
 
 /** Generated Model for C_BPartner_Location
  *  @author iDempiere (generated)
