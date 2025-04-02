@@ -27,6 +27,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
 
+import java.lang.System.Logger.Level;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
@@ -169,6 +170,8 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			listDV_Variables.add("DV_SALUTIL");
 			listDV_Variables.add("DV_UTILIDADES");
 			listDV_Variables.add("DV_UTILIDDEV");
+			listDV_Variables.add("DV_UTILIDDEV6M");
+			listDV_Variables.add("DV_UTILIDDEV12M");
 			listDV_Variables.add("DV_UTILANT");
 			listDV_Variables.add("DV_UTILDEF");
 			listDV_Variables.add("DV_UTILADIC");
@@ -289,6 +292,12 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		}
 		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV")) {
 			retValue = DV_UTILIDDEV(p_ctx, p_AMN_Payroll_ID, trxName);
+		}
+		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV6M")) {
+			retValue = DV_UTILIDDEV6M(p_ctx, p_AMN_Payroll_ID, trxName);
+		}
+		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV12M")) {
+			retValue = DV_UTILIDDEV12M(p_ctx, p_AMN_Payroll_ID, trxName);
 		}
 		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILANT")) {
 			retValue = DV_UTILANT(p_ctx, p_AMN_Payroll_ID, trxName);
@@ -1952,7 +1961,133 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		return retValue;
 	}
 
+	/**
+	 *  processDefaultValue: DV_UTILIDDEV6M
+	 * 	Description: Return Accrued Payments during last 6 period in term of Monthly Salary
+	 *  All Paymentens during the period
+	 *  Summarizing all Concepts Types where IS_UTILIDAD ='Y'
+	 *  Parameters:
+	 * 	Properties Ctx, int AMN_Payroll_ID, String trxName
+	 */
+	public static BigDecimal DV_UTILIDDEV6M(Properties Ctx, int AMN_Payroll_ID, String trxName) {
+	    BigDecimal retValue = BigDecimal.ZERO;
+	    BigDecimal Historic_Salary = BigDecimal.ZERO;
+	    
+	    MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+	    MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 
+	    // Configuración de fechas: Final = getRefDateEnd(), Inicial = 6 meses antes
+	    GregorianCalendar cal = new GregorianCalendar();
+	    cal.setTime(amnpayroll.getRefDateEnd());  // Usamos getRefDateEnd() en lugar de getInvDateEnd()
+	    
+	    // Normalizar hora a 00:00:00
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+	    
+	    Timestamp EndDate = new Timestamp(cal.getTimeInMillis());
+	    
+	    // Calcular fecha inicial (6 meses antes)
+	    cal.add(Calendar.MONTH, -6);  // Restamos 6 meses exactos
+	    cal.set(Calendar.DAY_OF_MONTH, 1);    // Forzar primer día del mes
+	    Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
+
+	    // Consulta SQL (igual que el original)
+	    String sql = "select amp_salary_hist_calc('salary_utilities', ?, ?, ?, ?, ?)";
+	    PreparedStatement pstmt = null;
+	    ResultSet rspc = null;
+	    
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        pstmt.setInt(1, amnemployee.getAMN_Employee_ID());
+	        pstmt.setTimestamp(2, StartDate);
+	        pstmt.setTimestamp(3, EndDate);
+	        pstmt.setInt(4, amnpayroll.getC_Currency_ID());
+	        pstmt.setInt(5, amnpayroll.getC_ConversionType_ID());
+	        
+	        rspc = pstmt.executeQuery();
+	        if (rspc.next()) {
+	            Historic_Salary = rspc.getBigDecimal(1);
+	        }
+	    } catch (SQLException e) {
+	    	log.warning("Error en DV_UTILIDDEV_6Months_FirstDay "+e.getMessage());
+	        Historic_Salary = BigDecimal.ZERO;
+	    } finally {
+	        DB.close(rspc, pstmt);
+	    }
+
+	    // Validar resultado
+	    retValue = Historic_Salary != null ? Historic_Salary : BigDecimal.ZERO;
+	    return retValue;
+	}
+
+	/**
+	 *  processDefaultValue: DV_UTILIDDEV12M
+	 * 	Description: Return Accrued Payments during last 12 period in term of Monthly Salary
+	 *  All Paymentens during the period
+	 *  Summarizing all Concepts Types where IS_UTILIDAD ='Y'
+	 *  Parameters:
+	 * 	Properties Ctx, int AMN_Payroll_ID, String trxName
+	 */
+	public static BigDecimal DV_UTILIDDEV12M(Properties Ctx, int AMN_Payroll_ID, String trxName) {
+	    BigDecimal retValue = BigDecimal.ZERO;
+	    BigDecimal Historic_Salary = BigDecimal.ZERO;
+	    
+	    MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+	    MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+
+	    // Configuración de fechas: Final = getRefDateEnd(), Inicial = 6 meses antes
+	    GregorianCalendar cal = new GregorianCalendar();
+	    cal.setTime(amnpayroll.getRefDateEnd());  // Usamos getRefDateEnd() en lugar de getInvDateEnd()
+	    
+	    // Normalizar hora a 00:00:00
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+	    
+	    Timestamp EndDate = new Timestamp(cal.getTimeInMillis());
+	    
+	    // Calcular fecha inicial (12 meses antes)
+	    cal.setTime(amnpayroll.getRefDateIni());  // Usamos getRefDateIni() en lugar de getInvDateIni()
+
+	    // Normalizar hora a 00:00:00
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+
+	    Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
+
+	    // Consulta SQL (igual que el original)
+	    String sql = "select amp_salary_hist_calc('salary_utilities', ?, ?, ?, ?, ?)";
+	    PreparedStatement pstmt = null;
+	    ResultSet rspc = null;
+	    
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        pstmt.setInt(1, amnemployee.getAMN_Employee_ID());
+	        pstmt.setTimestamp(2, StartDate);
+	        pstmt.setTimestamp(3, EndDate);
+	        pstmt.setInt(4, amnpayroll.getC_Currency_ID());
+	        pstmt.setInt(5, amnpayroll.getC_ConversionType_ID());
+	        
+	        rspc = pstmt.executeQuery();
+	        if (rspc.next()) {
+	            Historic_Salary = rspc.getBigDecimal(1);
+	        }
+	    } catch (SQLException e) {
+	    	log.warning("Error en DV_UTILIDDEV_6Months_FirstDay "+e.getMessage());
+	        Historic_Salary = BigDecimal.ZERO;
+	    } finally {
+	        DB.close(rspc, pstmt);
+	    }
+
+	    // Validar resultado
+	    retValue = Historic_Salary != null ? Historic_Salary : BigDecimal.ZERO;
+	    return retValue;
+	}
 	/**
 	 *  processDefaultValue: DV_UTILIDADES
 	 * 	Description: Return 120 days according to Labor Law Art. 131 y 132 LOTT
