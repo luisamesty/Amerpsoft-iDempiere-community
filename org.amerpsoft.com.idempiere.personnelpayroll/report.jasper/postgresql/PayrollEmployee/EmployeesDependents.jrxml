@@ -104,8 +104,7 @@ WHERE emp.isactive= 'Y'
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Dependent_Type_ID} IS NULL OR adp.amn_dependent_type_id = $P{AMN_Dependent_Type_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY localidad_nombre, codigo
-]]>
+ORDER BY localidad_nombre, codigo]]>
 	</queryString>
 	<field name="rep_taxid" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="rep_taxid"/>
