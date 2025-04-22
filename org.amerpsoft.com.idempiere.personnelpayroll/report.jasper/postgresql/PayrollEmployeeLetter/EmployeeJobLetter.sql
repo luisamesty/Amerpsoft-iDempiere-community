@@ -29,7 +29,30 @@ SELECT * FROM (
 	CASE WHEN emp.salary IS NULL OR emp.salary = 0 THEN adempiere.amf_num2letterLPY(0,'U','es')
 		 ELSE adempiere.amf_num2letterLPY(emp.salary,'U','es')
 	END as salario_letras_ficha,
-	-- CONTRACT
+    -- Cálculo del salario base mensual
+    amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
+        344, 
+        114
+    ) / 6 AS salary_base_mensual,
+    -- Salario base mensual en letras
+    CASE WHEN amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
+                 344, 114
+             ) / 6 IS NULL 
+             OR amp_salary_hist_calc(
+                 'salary_base', 
+                 emp.amn_employee_id, 
+                 ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
+                 $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6 = 0
+	        THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
+        ELSE adempiere.amf_num2letterLPY(
+                 amp_salary_hist_calc(
+                     'salary_base', 
+                     emp.amn_employee_id, 
+                     ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
+                     $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6,
+                 'U', 'es')
+    END AS salary_base_letras,
+    -- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
 	COALESCE(adp.name, adp.description, '-') as departamento,

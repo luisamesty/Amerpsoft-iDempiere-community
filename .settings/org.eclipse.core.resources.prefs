@@ -1,9 +1,9 @@
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
+>>>>>>>=branch 'release-11_LPY' of git@github.com\:luisamesty/Amerpsoft-iDempiere-community.git
 eclipse.preferences.version=1
-<<<<<<< HEAD
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/AccountElements_Tree/AccountElements_Tree.jrxml=UTF-8
-=======
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceOnePeriodTreeOrg/TrialBalanceOnePeriod_Tree.jrxml=UTF-8
->>>>>>> branch 'release-11_LPY' of git@github.com:luisamesty/Amerpsoft-iDempiere-community.git
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceTwoDates_TreeOrg/TrialBalanceTwoDates_Tree.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyBiometricPersonnelAttendance/DailyBiometricPersonnelAttendance.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyPersonnelPayrollAttendance/DailyPersonnelPayrollAttendance.jrxml=UTF-8
@@ -19,6 +19,7 @@ encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeLeaves/PayrollEmployeeLeavesAttendance.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeLeaves/PayrollEmployeeLeavesTypes.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeLeaves/PayrollLeavesRequest.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeLetter/EmployeeJobLetter.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollHistoricByConcept/PayrollHistoricByConcept.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollHistoricReport/PayrollHistoricGrid.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollHistoricReport/PayrollHistoricReport.jrxml=UTF-8

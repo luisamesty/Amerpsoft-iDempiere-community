@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeeJobLetter" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35da765c-c0a1-42c7-94f3-f38331872c36">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="362"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="631"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -125,7 +125,30 @@ SELECT * FROM (
 	CASE WHEN emp.salary IS NULL OR emp.salary = 0 THEN adempiere.amf_num2letterLPY(0,'U','es')
 		 ELSE adempiere.amf_num2letterLPY(emp.salary,'U','es')
 	END as salario_letras_ficha,
-	-- CONTRACT
+    -- Cálculo del salario base mensual
+    amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
+        344, 
+        114
+    ) / 6 AS salary_base_mensual,
+    -- Salario base mensual en letras
+    CASE WHEN amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
+                 344, 114
+             ) / 6 IS NULL 
+             OR amp_salary_hist_calc(
+                 'salary_base', 
+                 emp.amn_employee_id, 
+                 ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
+                 $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6 = 0
+	        THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
+        ELSE adempiere.amf_num2letterLPY(
+                 amp_salary_hist_calc(
+                     'salary_base', 
+                     emp.amn_employee_id, 
+                     ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
+                     $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6,
+                 'U', 'es')
+    END AS salary_base_letras,
+    -- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
 	COALESCE(adp.name, adp.description, '-') as departamento,
@@ -254,6 +277,14 @@ ORDER BY empleado ASC]]>
 	<field name="salario_letras_ficha" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="salario_letras_ficha"/>
 		<property name="com.jaspersoft.studio.field.label" value="salario_letras_ficha"/>
+	</field>
+	<field name="salary_base_mensual" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salary_base_mensual"/>
+		<property name="com.jaspersoft.studio.field.label" value="salary_base_mensual"/>
+	</field>
+	<field name="salary_base_letras" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salary_base_letras"/>
+		<property name="com.jaspersoft.studio.field.label" value="salary_base_letras"/>
 	</field>
 	<field name="tipo_contrato" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="tipo_contrato"/>
@@ -507,7 +538,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Justified" verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" ( "+$F{salario_letras}.toLowerCase()+" )"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" ( "+$F{salary_base_letras}.toLowerCase()+" )"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="300" y="167" width="100" height="16" uuid="8cda2d32-9a9a-4113-94cc-bfa4a412daad">
@@ -517,7 +548,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="Arial" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{Salary}!= null  && $P{Salary}.compareTo(BigDecimal.ZERO ) > 0 ?   $P{Salary} : $F{salario_ficha} ]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{Salary}!= null  && $P{Salary}.compareTo(BigDecimal.ZERO ) > 0 ?   $P{Salary} : $F{salary_base_mensual}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Table_TD" x="400" y="167" width="130" height="16" uuid="9b87aa4e-2075-4256-879f-225aa83c9f31">
