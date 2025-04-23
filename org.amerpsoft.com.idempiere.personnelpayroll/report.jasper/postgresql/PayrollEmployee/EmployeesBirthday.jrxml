@@ -67,7 +67,7 @@ SELECT
 	date_part('year', age( DATE(
             EXTRACT(YEAR FROM $P{DateTo}::date) || '-' ||  
             EXTRACT(MONTH FROM $P{DateTo}::date) || '-' || 
-            EXTRACT(DAY FROM emp.birthday)              
+            EXTRACT(DAY FROM emp.birthday)               
         ), emp.incomedate )) AS a_servicio,
 	date_part('month', age(
         DATE(
@@ -98,12 +98,15 @@ SELECT
 	COALESCE(j.name,j.value) as jobtitle,
 	-- LOCATION
 	COALESCE(l.description, l.name, l.value ) localidad_nombre,
+	-- Sector
+	COALESCE(s.name, s.value,'' ) sector_nombre,
 	-- Mes y nombre del mes en el idioma del cliente
 	TO_CHAR(emp.Birthday, 'MM') AS mes_valor,
 	TO_CHAR(emp.Birthday, 'FMMonth') AS mes_nombre
 FROM AMN_Employee emp
 LEFT OUTER JOIN AMN_Location l ON(l.AMN_Location_ID = emp.AMN_Location_ID)
 LEFT OUTER JOIN AMN_Jobtitle j ON(j.AMN_Jobtitle_ID = emp.AMN_Jobtitle_ID)
+LEFT OUTER JOIN AMN_Sector s ON(s.AMN_Sector_ID = emp.AMN_Sector_ID)
 INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
 LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
@@ -115,7 +118,7 @@ WHERE emp.isactive= 'Y'
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY EXTRACT(DAY FROM emp.Birthday)
+ORDER BY localidad_nombre, EXTRACT(DAY FROM emp.Birthday)
 
 ]]>
 	</queryString>
@@ -224,6 +227,10 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 		<property name="com.jaspersoft.studio.field.name" value="localidad_nombre"/>
 		<property name="com.jaspersoft.studio.field.label" value="localidad_nombre"/>
 	</field>
+	<field name="sector_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sector_nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="sector_nombre"/>
+	</field>
 	<field name="mes_valor" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="mes_valor"/>
 		<property name="com.jaspersoft.studio.field.label" value="mes_valor"/>
@@ -235,40 +242,41 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 	<pageHeader>
 		<band height="28">
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="400" y="0" width="155" height="14" uuid="924a6157-3657-4ded-8689-0798acfb43ea">
+				<reportElement key="" x="380" y="0" width="175" height="14" uuid="924a6157-3657-4ded-8689-0798acfb43ea">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" x="465" y="14" width="90" height="14" uuid="871a683b-bb7c-419e-9847-f5b91ec19880">
+				<reportElement key="" x="490" y="14" width="64" height="14" uuid="871a683b-bb7c-419e-9847-f5b91ec19880">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="50" y="0" width="350" height="14" isRemoveLineWhenBlank="true" uuid="2279f3e0-0a4a-4095-a841-c7b8130704d9">
+				<reportElement x="45" y="0" width="335" height="14" isRemoveLineWhenBlank="true" uuid="2279f3e0-0a4a-4095-a841-c7b8130704d9">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="50" height="28" isPrintInFirstWholeBand="true" uuid="6391a717-1781-406d-ab00-5dcd319e4864">
+				<reportElement key="" x="0" y="0" width="45" height="28" isPrintInFirstWholeBand="true" uuid="6391a717-1781-406d-ab00-5dcd319e4864">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -276,6 +284,7 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -286,25 +295,26 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement key="" x="400" y="14" width="65" height="14" uuid="67b3f4f1-51ed-4f25-b1ff-5846930aaabf">
+				<reportElement key="" x="380" y="14" width="110" height="14" uuid="67b3f4f1-51ed-4f25-b1ff-5846930aaabf">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="50" y="14" width="350" height="14" isRemoveLineWhenBlank="true" uuid="c1282753-4624-4108-b6f2-62ed0ac1272e">
+				<reportElement x="45" y="14" width="335" height="14" isRemoveLineWhenBlank="true" uuid="c1282753-4624-4108-b6f2-62ed0ac1272e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Reporte de Cumpleaños del Mes de "+ new SimpleDateFormat("MMMM yyyy", new java.util.Locale("es", "ES")).format($P{DateTo})]]></textFieldExpression>
 			</textField>
@@ -313,122 +323,122 @@ ORDER BY EXTRACT(DAY FROM emp.Birthday)
 	<columnHeader>
 		<band height="14">
 			<staticText>
-				<reportElement x="0" y="0" width="50" height="14" uuid="546aad32-f6f0-448d-abe2-6f71beb9fb87">
+				<reportElement x="0" y="0" width="45" height="14" uuid="546aad32-f6f0-448d-abe2-6f71beb9fb87">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="0" width="200" height="14" uuid="9de9b328-21d7-46e1-acc4-6ce4db9fe2e4">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<reportElement x="45" y="0" width="205" height="14" uuid="9de9b328-21d7-46e1-acc4-6ce4db9fe2e4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="400" y="0" width="65" height="14" uuid="3fb1b457-3094-43b1-85a9-45974acf027c">
+				<reportElement x="490" y="0" width="65" height="14" uuid="3fb1b457-3094-43b1-85a9-45974acf027c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="250" y="0" width="150" height="14" uuid="a2dc3a55-7cbe-4c05-96a9-8bba9fe98390">
+				<reportElement x="250" y="0" width="130" height="14" uuid="a2dc3a55-7cbe-4c05-96a9-8bba9fe98390">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Localidad]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="465" y="0" width="90" height="14" uuid="f419475c-16f5-4bed-8775-99b97792315c">
+				<reportElement x="380" y="0" width="110" height="14" uuid="f419475c-16f5-4bed-8775-99b97792315c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Antigüedad]]></text>
+				<text><![CDATA[Sector]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="14">
 			<textField>
-				<reportElement x="0" y="0" width="50" height="14" uuid="8dfa9d26-c989-4873-813f-28675b9856cc">
+				<reportElement x="0" y="0" width="45" height="14" uuid="8dfa9d26-c989-4873-813f-28675b9856cc">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="50" y="0" width="200" height="14" uuid="1ff51bb4-3e0d-4309-a9b6-894c05706b04">
+				<reportElement x="45" y="0" width="205" height="14" uuid="1ff51bb4-3e0d-4309-a9b6-894c05706b04">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_emp}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="400" y="0" width="65" height="14" uuid="9c6bb95f-1063-48ea-8ac7-2e7bd69351cd">
+				<reportElement x="490" y="0" width="65" height="14" uuid="9c6bb95f-1063-48ea-8ac7-2e7bd69351cd">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{fecha_nacimiento})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="250" y="0" width="150" height="14" uuid="e9158206-4578-4c6d-8fb3-38f8891faa4f">
+				<reportElement x="250" y="0" width="130" height="14" uuid="e9158206-4578-4c6d-8fb3-38f8891faa4f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{localidad_nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="465" y="0" width="90" height="14" uuid="1f145d33-0d56-46ed-89ed-f530feae8072">
+				<reportElement x="380" y="0" width="110" height="14" uuid="1ee96d92-6fc8-40af-97e9-86770bf8f5f3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{a_servicio} != 0 ? (new java.text.DecimalFormat("0")).format($F{a_servicio}) + " Años " : "") + 
-        ($F{m_servicio} != 0 ? (new java.text.DecimalFormat("0")).format($F{m_servicio}) + " Meses" : "")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sector_nombre}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

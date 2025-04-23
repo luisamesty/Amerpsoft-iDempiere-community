@@ -62,12 +62,15 @@ SELECT
 	COALESCE(j.name,j.value) as jobtitle,
 	-- LOCATION
 	COALESCE(l.description, l.name, l.value ) localidad_nombre,
+	-- Sector
+	COALESCE(s.name, s.value,'' ) sector_nombre,
 	-- Mes y nombre del mes en el idioma del cliente
 	TO_CHAR(emp.Birthday, 'MM') AS mes_valor,
 	TO_CHAR(emp.Birthday, 'FMMonth') AS mes_nombre
 FROM AMN_Employee emp
 LEFT OUTER JOIN AMN_Location l ON(l.AMN_Location_ID = emp.AMN_Location_ID)
 LEFT OUTER JOIN AMN_Jobtitle j ON(j.AMN_Jobtitle_ID = emp.AMN_Jobtitle_ID)
+LEFT OUTER JOIN AMN_Sector s ON(s.AMN_Sector_ID = emp.AMN_Sector_ID)
 INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
 LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
@@ -79,5 +82,5 @@ WHERE emp.isactive= 'Y'
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY EXTRACT(DAY FROM emp.Birthday)
+ORDER BY localidad_nombre, EXTRACT(DAY FROM emp.Birthday)
 

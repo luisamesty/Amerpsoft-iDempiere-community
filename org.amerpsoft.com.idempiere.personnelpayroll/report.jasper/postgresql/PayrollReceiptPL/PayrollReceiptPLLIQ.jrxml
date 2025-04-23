@@ -659,7 +659,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="5"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true" isItalic="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{org_name}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -669,7 +669,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Nro. Ficha: "]]></textFieldExpression>
 				</textField>
@@ -677,7 +677,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					<reportElement x="110" y="68" width="190" height="14" isRemoveLineWhenBlank="true" uuid="af5d53a9-742c-4c50-95ed-5ec67aedf39e"/>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new SimpleDateFormat("dd").format($F{invdateend}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{invdateend})+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateend})]]></textFieldExpression>
 				</textField>
@@ -687,7 +687,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Cargo:" + $F{cargo}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -695,7 +695,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					<reportElement x="300" y="110" width="264" height="14" uuid="54f8e006-b751-4300-a404-9b3175fbd6e6"/>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Cédula: "+$F{nro_id}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -705,7 +705,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Tiempo de servicio: "+ ( $F{a_servicio}== 0 ? "" : ( $F{a_servicio} == 1 ?   $F{a_servicio}.intValue()+ " año " :  $F{a_servicio}.intValue()+ " años " ) )+ ( $F{m_servicio}== 0 ? "" : ( $F{m_servicio} == 1 ?   $F{m_servicio}.intValue()+ " mes " :  $F{m_servicio}.intValue()+ " meses " ) ) + ( $F{d_servicio}== 0 ? "" : ( $F{d_servicio} == 1 ?   $F{d_servicio}.intValue()+ " dia " :  $F{d_servicio}.intValue()+ " dias " ) )]]></textFieldExpression>
 				</textField>
@@ -716,7 +716,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="0"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["LIQUIDACION DE HABERES RESULTANTE DEL CONTRATO INDIVIDUAL DE TRABAJO CELEBRADO ENTRE " + 
 ($F{sex}.equals("M") ? "EL SR." : "LA SRA.") + " " + $F{empleado} + " Y LA EMPRESA " + $F{org_name}]]></textFieldExpression>
@@ -724,7 +724,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 				<textField>
 					<reportElement x="300" y="0" width="265" height="15" uuid="55c137f0-bfe1-40db-b53b-f3b21093e7ff"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial"/>
+						<font fontName="DejaVu Sans"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ciudad_dir}.trim() +", "+ new SimpleDateFormat("dd").format($F{invdateend}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{invdateend})+ " de "+ new SimpleDateFormat("yyyy").format($F{invdateend})]]></textFieldExpression>
 				</textField>
@@ -734,7 +734,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Fecha de Ingreso: "]]></textFieldExpression>
 				</textField>
@@ -742,7 +742,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					<reportElement x="0" y="68" width="110" height="14" isRemoveLineWhenBlank="true" uuid="35c7c7d2-9320-47c3-838b-b66026eacb5a"/>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Fecha de Salida: "]]></textFieldExpression>
 				</textField>
@@ -750,7 +750,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					<reportElement x="110" y="54" width="190" height="14" isRemoveLineWhenBlank="true" uuid="ac296874-3d00-4e8f-baac-a4b09f37d07b"/>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new SimpleDateFormat("dd").format($F{fecha_ingreso}) + " de "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es")).format($F{fecha_ingreso})+ " de "+ new SimpleDateFormat("yyyy").format($F{fecha_ingreso})]]></textFieldExpression>
 				</textField>
@@ -760,7 +760,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Ocupación:"]]></textFieldExpression>
 				</textField>
@@ -770,7 +770,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Salario:"]]></textFieldExpression>
 				</textField>
@@ -780,7 +780,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{value_emp}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -791,7 +791,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" isBold="true" isUnderline="true"/>
+						<font fontName="DejaVu Sans" isBold="true" isUnderline="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["ASIGNACIONES"]]></textFieldExpression>
 				</textField>
@@ -802,7 +802,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" isBold="true" isUnderline="true"/>
+						<font fontName="DejaVu Sans" isBold="true" isUnderline="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["RETENCIONES"]]></textFieldExpression>
 				</textField>
@@ -812,7 +812,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salariofrac_qty}.intValue() 
 + " días mes de " 
@@ -822,7 +822,7 @@ ORDER BY  amndateend, documentno, calcorder2]]>
 					<reportElement x="110" y="82" width="190" height="14" isRemoveLineWhenBlank="true" uuid="0a41d3da-e5e7-4e4c-8630-75a8a6478e6e"/>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -834,7 +834,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["(Promedio 06 ultimos meses)"]]></textFieldExpression>
 				</textField>
@@ -842,7 +842,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="138" width="130" height="14" isRemoveLineWhenBlank="true" uuid="240d7c23-ef2b-4927-aae3-181fabd4c25e"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -852,7 +852,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="152" width="130" height="14" isRemoveLineWhenBlank="true" uuid="178f7be8-5119-4249-a0a7-a8cbc4721370"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -864,7 +864,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{hedliq_qty}.intValue() 
 + " Hs Ex "]]></textFieldExpression>
@@ -873,7 +873,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="435" y="138" width="130" height="14" isRemoveLineWhenBlank="true" uuid="2bfcadfc-beab-4a1c-a609-8cd3008b3a48"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -883,7 +883,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="180" width="130" height="14" isRemoveLineWhenBlank="true" uuid="c105d483-1610-416b-92e3-463a098e9d6b"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -893,7 +893,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="194" width="130" height="14" isRemoveLineWhenBlank="true" uuid="d3a5e689-4ac8-465d-b605-69e44b320994"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -903,7 +903,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="208" width="130" height="14" isRemoveLineWhenBlank="true" uuid="7a89766f-eebc-48d1-9849-404629b0e05c"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -915,7 +915,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["IPS"]]></textFieldExpression>
 				</textField>
@@ -925,7 +925,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Vacaciones Causadas "+$V{vacpropdias}.intValue() +" dias"]]></textFieldExpression>
 				</textField>
@@ -933,7 +933,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="222" width="130" height="14" isRemoveLineWhenBlank="true" uuid="0af38e77-51b3-4dd7-9c7e-52865006af42"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -945,7 +945,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Preaviso "+$V{preavisodias}.intValue() +" dias"]]></textFieldExpression>
 				</textField>
@@ -955,7 +955,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Indemnización "+$V{indemdias}.intValue() +" dias"]]></textFieldExpression>
 				</textField>
@@ -965,7 +965,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Total Asignaciones"]]></textFieldExpression>
 				</textField>
@@ -974,7 +974,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["NETO A COBRAR "]]></textFieldExpression>
 				</textField>
@@ -982,7 +982,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="170" y="236" width="130" height="12" uuid="ab8206d6-0dce-4aa4-81c7-54a22aa887e0"/>
 					<box rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -994,7 +994,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["SON: "+ $F{prestacion_text}]]></textFieldExpression>
 				</textField>
@@ -1004,7 +1004,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Total Retenciones "]]></textFieldExpression>
 				</textField>
@@ -1012,7 +1012,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="435" y="222" width="130" height="14" isRemoveLineWhenBlank="true" uuid="284beb1b-3d4c-4c6d-a3f6-0507e05dc951"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -1024,7 +1024,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Saldo Vales y Préstamos"]]></textFieldExpression>
 				</textField>
@@ -1032,7 +1032,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					<reportElement x="435" y="152" width="130" height="14" isRemoveLineWhenBlank="true" uuid="289c2e65-234d-4a66-85c8-ccff90d16b9e"/>
 					<box leftPadding="0" rightPadding="4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{iso_code1} + " " + 
 new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.getDefault()))
@@ -1057,7 +1057,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 					</reportElement>
 					<box topPadding="3" bottomPadding="0"/>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["<b>Conste: </b>de haber percibido de la empresa <b>" + $F{org_name}.trim() + "</b>, la cantidad de la suma detallada arriba, en concepto de pago único, definitivo, total y cancelatorio de todos los haberes que me corresponden por la terminación del Contrato de Trabajo, de conformidad a lo que establece el Código Laboral."]]></textFieldExpression>
 				</textField>
@@ -1068,7 +1068,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["En consecuencia, dejo expresa constancia de mi conformidad y conocimiento de la circunstancia de que el día 15 de febrero de 2.024, quedó definitivamente terminado y  concluido el contrato de trabajo referido y/o la relación laboral que me vinculó con la empresa <b>" + $F{org_name}.trim() + "</b> -"]]></textFieldExpression>
 				</textField>
@@ -1079,7 +1079,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Manifestando que los datos de antigüedad y salario expresados en la liquidación son correctos y verídicos."]]></textFieldExpression>
 				</textField>
@@ -1090,7 +1090,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Adicionalmente, declaro de que no tengo nada mas que percibir ni reclamar en concepto alguno a la mencionada persona y/o a cualquiera otras personas relacionadas a el."]]></textFieldExpression>
 				</textField>
@@ -1101,7 +1101,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Las partes resaltan, que de común acuerdo, libre y voluntariamente, deciden someterse a la jurisdicción de los Tribunales de la VI Circunscripción Judicial con Sede en Ciudad del Este, para dirimir cualquier eventualidad emergente o relacionadas con la referida renuncia laboral, con exclusión de cualquier otro fuero por mas atracción legal que tuviere."]]></textFieldExpression>
 				</textField>
@@ -1112,7 +1112,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Para lo que hubiere lugar en derecho se firma ante los testigos, Gustavo Villar, C.I. Nro. 2.236.323 y la Sra. Romina Tania Andrea Gamarra, con C.I. Nro. 2.964.438."]]></textFieldExpression>
 				</textField>
@@ -1123,7 +1123,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{empleado}.trim()]]></textFieldExpression>
 				</textField>
@@ -1134,7 +1134,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Gustavo Villar."]]></textFieldExpression>
 				</textField>
@@ -1145,7 +1145,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Romina Tania A. Gamarra."]]></textFieldExpression>
 				</textField>
@@ -1171,7 +1171,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Cédula Nro."+$F{nro_id}.trim()]]></textFieldExpression>
 				</textField>
@@ -1182,7 +1182,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Cédula Nro. 2.236.323"]]></textFieldExpression>
 				</textField>
@@ -1193,7 +1193,7 @@ new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement markup="html">
-						<font fontName="Arial" size="10"/>
+						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Cédula Nro. 2.964.438"]]></textFieldExpression>
 				</textField>
