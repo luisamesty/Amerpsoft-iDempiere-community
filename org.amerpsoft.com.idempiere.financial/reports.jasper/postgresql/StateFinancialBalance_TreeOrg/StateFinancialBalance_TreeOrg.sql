@@ -164,7 +164,11 @@ SELECT
 	COALESCE(amtacctcr,0) as amtacctcr,
 	COALESCE(amtacctdr - amtacctcr,0) as amtacctsa,
 	COALESCE(closebalance,0) as closebalance,
-	-- ELVN1-6
+	-- ELVN(0-8)
+	COALESCE(ELVN0.value,'Z') as codigo0,
+	COALESCE(ELVN0.name,CONCAT('Tree error value=',PAR.AccountValue)) as name0,
+	ELVN0.description as description0,
+	ELVN0.issummary as issummary0,
 	COALESCE(ELVN1.value,'Z') as codigo1,
 	COALESCE(ELVN1.name,CONCAT('Tree error value=',PAR.AccountValue)) as name1,
 	ELVN1.description as description1,
@@ -218,6 +222,7 @@ SELECT
 	PAR.issummary,
 	PAR.AccountValue AS codigo_cuenta,
 	COALESCE(ELVPT.value,'') as value_parent,
+	COALESCE(PAR.acctparent[1],'') as Value0,
 	COALESCE(PAR.acctparent[2],'') as Value1,
 	COALESCE(PAR.acctparent[3],'') as Value2,
 	COALESCE(PAR.acctparent[4],'') as Value3,
@@ -265,6 +270,7 @@ INNER JOIN (
 	    ) AS all_orgs
 	FROM OrgTree AS ORG12
 ) AS ORG ON (ORG.ad_client_id = PAR.ad_client_id) 
+LEFT JOIN c_elementvalue as ELVN0 ON (ELVN0.Value = PAR.acctparent[1] AND ELVN0.AD_Client_ID= PAR.AD_Client_ID)
 LEFT JOIN c_elementvalue as ELVN1 ON (ELVN1.Value = PAR.acctparent[2] AND ELVN1.AD_Client_ID= PAR.AD_Client_ID)
 LEFT JOIN c_elementvalue as ELVN2 ON (ELVN2.Value = PAR.acctparent[3] AND ELVN2.AD_Client_ID= PAR.AD_Client_ID)
 LEFT JOIN c_elementvalue as ELVN3 ON (ELVN3.Value = PAR.acctparent[4] AND ELVN3.AD_Client_ID= PAR.AD_Client_ID)
@@ -407,4 +413,5 @@ LEFT JOIN (
 WHERE PAR.ad_client_id = $P{AD_Client_ID}  AND PAR.issummary='N' 
 AND posttype.value = 'A'
 AND CASE WHEN  $P{isShowZERO} = 'Y' OR PAR.isSummary='Y' OR ( $P{isShowZERO} = 'N' AND ( PAR.isSummary = 'N' AND bal.openbalance<> 0 or bal.amtacctcr<> 0 or bal.amtacctdr <>0 or bal.closebalance <> 0  ) ) THEN 1=1  ELSE 1=0 END
-ORDER BY codigo ASC, org_value ASC
+ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo6 ASC, codigo7 ASC, codigo8 ASC,  codigo9 ASC, codigo ASC, org_value ASC
+

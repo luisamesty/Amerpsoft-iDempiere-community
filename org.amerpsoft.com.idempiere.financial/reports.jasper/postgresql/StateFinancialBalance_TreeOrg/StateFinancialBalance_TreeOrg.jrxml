@@ -446,7 +446,8 @@ LEFT JOIN (
 WHERE PAR.ad_client_id = $P{AD_Client_ID}  AND PAR.issummary='N' 
 AND posttype.value = 'A'
 AND CASE WHEN  $P{isShowZERO} = 'Y' OR PAR.isSummary='Y' OR ( $P{isShowZERO} = 'N' AND ( PAR.isSummary = 'N' AND bal.openbalance<> 0 or bal.amtacctcr<> 0 or bal.amtacctdr <>0 or bal.closebalance <> 0  ) ) THEN 1=1  ELSE 1=0 END
-ORDER BY codigo ASC, org_value ASC
+ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo6 ASC, codigo7 ASC, codigo8 ASC,  codigo9 ASC, codigo ASC, org_value ASC
+
 ]]>
 	</queryString>
 	<field name="cli_logo" class="byte[]">
@@ -814,6 +815,25 @@ ORDER BY codigo ASC, org_value ASC
 		<property name="com.jaspersoft.studio.field.name" value="postingtype_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="postingtype_name"/>
 	</field>
+	<variable name="openbalance0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
 	<variable name="openbalance1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -985,6 +1005,64 @@ ORDER BY codigo ASC, org_value ASC
 	<variable name="closebalance_tot" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
 	</variable>
+	<group name="Group_Lev0">
+		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
+					<reportElement x="0" y="0" width="80" height="18" uuid="be522a27-8e5b-431e-ad84-0053e8fdba76">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo0}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
+					<reportElement x="80" y="0" width="390" height="18" uuid="56b16e37-f6b8-4c5c-9cb5-a643901a577a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name0}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="470" y="0" width="170" height="18" uuid="a68c1298-fd23-44b0-809b-d48af6b50368">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance0}== 0.00  ? 0.00  : $V{closebalance0} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
+					<reportElement x="0" y="0" width="470" height="18" uuid="f7199a52-4116-4bb5-bada-19421e67fd29"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["        Total "+$F{codigo0}+" "+$F{name0}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="470" y="0" width="170" height="18" uuid="70aac54b-d3cf-490b-8179-b6e59f3d13b4">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance0}== 0.00  ? 0.00  : $V{closebalance0} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
 	<group name="Group_Lev1">
 		<groupExpression><![CDATA[$F{codigo1}]]></groupExpression>
 		<groupHeader>

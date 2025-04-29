@@ -4,6 +4,7 @@
 eclipse.preferences.version=1
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/AccountElements_Tree/AccountElements_Tree.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/StateFinancialBalance_TreeOrg/StateFinancialBalance_TreeOrg.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceOnePeriod_TreeOrg/TrialBalanceOnePeriod_TreeOrg.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceTwoDates_TreeOrg/TrialBalanceTwoDates_Tree.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyBiometricPersonnelAttendance/DailyBiometricPersonnelAttendance.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyPersonnelPayrollAttendance/DailyPersonnelPayrollAttendance.jrxml=UTF-8
