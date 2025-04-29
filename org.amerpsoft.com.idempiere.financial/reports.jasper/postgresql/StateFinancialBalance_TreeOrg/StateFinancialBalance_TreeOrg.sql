@@ -134,9 +134,21 @@ WITH OrgTree AS (
         parent.acctparent || ARRAY[child_ev.value::text] AS acctparent
     FROM AD_TreeNode child
     JOIN C_ElementValue child_ev ON child.Node_ID = child_ev.C_ElementValue_ID
+    JOIN AD_Tree t2 ON child.AD_Tree_ID = t2.AD_Tree_ID
     JOIN AccountTreeBase parent ON child.Parent_ID = parent.Node_ID
     WHERE child.IsActive = 'Y'
         AND child_ev.IsActive = 'Y'
+        AND t2.AD_tree_ID = (
+            SELECT tree.AD_Tree_ID
+            FROM AD_Client adcli
+            LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
+            LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
+            LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
+            LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID = accel.AD_Tree_ID
+            WHERE accee.ElementType = 'AC' 
+            AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID} 
+            AND adcli.AD_client_ID = $P{AD_Client_ID}
+        )
 	)
 	SELECT * FROM AccountTreeBase
 )
