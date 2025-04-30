@@ -9,9 +9,7 @@
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_OrgParent_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000001]]></defaultValueExpression>
-	</parameter>
+	<parameter name="AD_OrgParent_ID" class="java.lang.Integer"/>
 	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
 	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
@@ -1605,11 +1603,11 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="45">
+		<band height="53">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField>
-				<reportElement x="100" y="15" width="390" height="15" uuid="1386bd50-d5fc-4e66-b0b0-83b1726c6689">
+			<textField evaluationTime="Report">
+				<reportElement x="100" y="18" width="390" height="15" uuid="1386bd50-d5fc-4e66-b0b0-83b1726c6689">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -1618,43 +1616,45 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $F{all_orgs} : $F{orgtaxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{orgname}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="490" y="30" width="170" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="bff159ef-a854-4620-afdd-f5f8613ec6c8">
+				<reportElement mode="Transparent" x="490" y="0" width="170" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="bff159ef-a854-4620-afdd-f5f8613ec6c8">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="none">
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy ")).format(new Date())]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="30" width="390" height="15" uuid="4be5a388-ccb2-4a47-8599-710cd5803586">
+				<reportElement x="100" y="33" width="559" height="20" uuid="4be5a388-ccb2-4a47-8599-710cd5803586">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $F{all_orgs} : $F{orgtaxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$F{all_orgs}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="100" y="0" width="560" height="15" uuid="e2d7399c-e548-4b89-b901-2cfbd0daec8e">
+			<textField evaluationTime="Report">
+				<reportElement x="100" y="0" width="390" height="18" uuid="e2d7399c-e548-4b89-b901-2cfbd0daec8e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.title}+"   "+$R{report.at}+" "+$F{dateend}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="100" height="45" uuid="96130f37-8346-4bf1-9917-e947dca826ab">
+				<reportElement key="" x="0" y="0" width="100" height="52" uuid="96130f37-8346-4bf1-9917-e947dca826ab">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1672,8 +1672,8 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				</box>
 				<imageExpression><![CDATA[$F{cli_logo}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="490" y="15" width="170" height="15" uuid="833fc71c-fdda-4f5a-a5c0-9aaf8dfe11c4">
+			<textField evaluationTime="Report">
+				<reportElement x="490" y="18" width="170" height="15" uuid="833fc71c-fdda-4f5a-a5c0-9aaf8dfe11c4">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>

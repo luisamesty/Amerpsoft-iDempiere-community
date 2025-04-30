@@ -14,9 +14,7 @@
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_OrgParent_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000001]]></defaultValueExpression>
-	</parameter>
+	<parameter name="AD_OrgParent_ID" class="java.lang.Integer"/>
 	<parameter name="AD_Org_ID" class="java.lang.Integer">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -2638,7 +2636,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				</reportElement>
 				<box leftPadding="4"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $F{all_orgs} : $F{orgtaxid}]]></textFieldExpression>

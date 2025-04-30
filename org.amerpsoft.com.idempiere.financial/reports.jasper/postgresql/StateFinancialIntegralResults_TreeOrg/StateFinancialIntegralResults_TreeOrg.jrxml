@@ -9,17 +9,15 @@
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="618"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="593"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="393"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-prd MONALISA"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
-	<parameter name="AD_OrgParent_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000001]]></defaultValueExpression>
-	</parameter>
+	<parameter name="AD_OrgParent_ID" class="java.lang.Integer"/>
 	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
 	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
 		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA[1000001]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
 	<parameter name="PostingType" class="java.lang.String">
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
@@ -1630,11 +1628,11 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="48">
+		<band height="53">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="100" height="48" uuid="e9bbf6c3-803b-4a3d-868c-553d6c89306f">
+				<reportElement key="" x="0" y="0" width="100" height="53" uuid="e9bbf6c3-803b-4a3d-868c-553d6c89306f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1672,10 +1670,10 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $F{all_orgs} : $F{orgtaxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{orgname}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="33" width="460" height="15" uuid="704fb42a-6a60-4bdc-a7d9-7f7674fd1240">
+				<reportElement x="100" y="33" width="620" height="20" uuid="704fb42a-6a60-4bdc-a7d9-7f7674fd1240">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -1683,9 +1681,9 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="11" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $R{report.consolidated} : $F{orgtaxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$F{all_orgs}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="560" y="0" width="160" height="18" uuid="32691e21-5c85-43d1-94ac-bf9394973495"/>
@@ -1704,16 +1702,6 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<font fontName="Arial" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.currency}+": "+$F{moneda}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="560" y="33" width="160" height="14" uuid="50a24f92-d04a-4bf0-bcb3-ff538e65c12a">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
