@@ -53,6 +53,7 @@ SELECT * FROM (
 	COALESCE(job.name, job.description, '-') as puesto_trabajo,
 	-- LOCATION (NÓMINA)
 	COALESCE(loc_n.name, '-') as localidad_nomina,
+	curr2.iso_code,
 	CONCAT(curr2.iso_code,'-',currt2.description) as moneda_sol,
 	-- LOCATION
 	COALESCE(loc.postal, '-') as cod_postal, 
