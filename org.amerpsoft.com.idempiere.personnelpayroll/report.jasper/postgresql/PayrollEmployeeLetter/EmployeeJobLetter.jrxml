@@ -503,8 +503,7 @@ ORDER BY empleado ASC]]>
                 : BigDecimal.ZERO)
         ).setScale(0, java.math.RoundingMode.HALF_UP)
     )
-).replace(' ', '#') + "##</b>)"
-]]></textFieldExpression>
+).replace(' ', '#') + "##</b>)"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Table_TD" x="470" y="157" width="50" height="16" isRemoveLineWhenBlank="true" uuid="9b87aa4e-2075-4256-879f-225aa83c9f31">
@@ -635,7 +634,19 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="DejaVu Sans" size="8" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{adr1}+" "+$F{adr2}+"-"+$F{ciudad_dir}.trim()+"  "+$F{pais_dir}+"  *Tel- "+$F{phone}+" - Fax "+$F{fax}+"* " + $F{email}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{adr1} != null && !$F{adr1}.trim().isEmpty() ? $F{adr1} + " " : "") +
+($F{adr2} != null && !$F{adr2}.trim().isEmpty() ? $F{adr2} + " - " : "") +
+($F{ciudad_dir} != null && !$F{ciudad_dir}.trim().isEmpty() ? $F{ciudad_dir}.trim() + "  " : "") +
+($F{pais_dir} != null && !$F{pais_dir}.trim().isEmpty() ? $F{pais_dir} + "  " : "") +
+(
+    ($F{phone} != null && !$F{phone}.trim().isEmpty()) || ($F{fax} != null && !$F{fax}.trim().isEmpty())
+    ? "*Tel- " +
+      ($F{phone} != null && !$F{phone}.trim().isEmpty() ? $F{phone} : "") +
+      ($F{fax} != null && !$F{fax}.trim().isEmpty() ? " - Fax " + $F{fax} : "") + "* "
+    : ""
+) +
+($F{email} != null && !$F{email}.trim().isEmpty() ? $F{email} : "")
+]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
