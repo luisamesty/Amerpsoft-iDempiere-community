@@ -973,8 +973,10 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<group name="Group_Lev0">
+		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
+				<printWhenExpression><![CDATA[$F{codigo0}.isEmpty() == false]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="100" height="18" isRemoveLineWhenBlank="true" uuid="bc004a40-019b-48e3-8455-517c9aa23cd8">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -2573,7 +2575,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $F{all_orgs} : $F{orgtaxid}]]></textFieldExpression>
