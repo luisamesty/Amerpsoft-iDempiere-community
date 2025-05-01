@@ -1177,7 +1177,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="18" isRemoveLineWhenBlank="true" uuid="5449b3c4-cc10-4ed9-97a2-1d5f3e30c879">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="18" isRemoveLineWhenBlank="true" uuid="5449b3c4-cc10-4ed9-97a2-1d5f3e30c879">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -1363,7 +1363,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo2}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="065c4414-e803-46e1-affa-9302e3d133b5">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="065c4414-e803-46e1-affa-9302e3d133b5">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -1550,7 +1550,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo3}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="eea38ef8-f2eb-43b7-8f8a-b22d762efc95">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="eea38ef8-f2eb-43b7-8f8a-b22d762efc95">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -1737,7 +1737,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo4}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="7c21d8bd-a728-427e-9c49-c04c7aa276a1">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="7c21d8bd-a728-427e-9c49-c04c7aa276a1">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -1922,7 +1922,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo5}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="10516e49-1b06-45f6-94ea-7d061938d96a">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="10516e49-1b06-45f6-94ea-7d061938d96a">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -2102,7 +2102,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo6}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="c4b8b6e4-fb32-491f-89d5-455f2e2f2b39">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="c4b8b6e4-fb32-491f-89d5-455f2e2f2b39">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -2271,7 +2271,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo7}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="c068101e-3913-47d6-9727-8a1a10bdef9a">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="c068101e-3913-47d6-9727-8a1a10bdef9a">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -2440,7 +2440,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$F{codigo8}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
-					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="bb9c8fb7-1c0d-4d41-a765-32d98433a1c9">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="340" height="14" isRemoveLineWhenBlank="true" uuid="bb9c8fb7-1c0d-4d41-a765-32d98433a1c9">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -2936,7 +2936,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="260" height="14" uuid="f1b5e254-2572-473b-9b58-f16222ff88d3">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="240" height="14" uuid="f1b5e254-2572-473b-9b58-f16222ff88d3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
