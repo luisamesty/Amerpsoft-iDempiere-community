@@ -53,7 +53,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 	 * @return locMsg_Value
 	 */
 	public static String CreatePayrollDocumentsAssistProcforEmployeeOneDay (int p_AMN_Contract_ID, 
-		Timestamp p_Event_Date,  int p_AMN_Employee_ID, String p_AMN_Assist_Process_Mode) {
+		Timestamp p_Event_Date,  int p_AMN_Employee_ID, String p_AMN_Assist_Process_Mode, boolean p_IsScheduled) {
 		
 		// LOCAL VARS
 		BigDecimal BDZero = BigDecimal.valueOf(0);
@@ -209,7 +209,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
-									atthours) ;
+									atthours, p_IsScheduled) ;
 							break;
 						//   "1": Create or Update Records Only from  AMN_Payroll_Assist
 						case "1":
@@ -226,7 +226,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
-									atthours) ;
+									atthours, p_IsScheduled) ;
 							break;
 						//  "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
 						case "2":
@@ -247,7 +247,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID ,
 									Descanso, Excused ,
-									atthours) ;
+									atthours, p_IsScheduled) ;
 							break;
 						//  "3: Create or Update Records from Only from  AMN_Shift_Detail
 						case "3":
@@ -273,7 +273,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AMN_Employee_ID, p_Event_Date, empAMN_Shift_ID ,
 									Descanso, Excused ,
-									atthours) ;	
+									atthours, p_IsScheduled) ;	
 							break;	
 						//  "4: Update Records (Only HND,HNN,HED,HEN,Attendance,AttendanceBonus
 						//        from  AMN_Shift_Detail_Proc
@@ -303,7 +303,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 									Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 									p_AMN_Employee_ID, p_Event_Date, empAMN_Shift_ID ,
 									Descanso, Excused ,
-									atthours) ;	
+									atthours, p_IsScheduled) ;	
 							break;	
 					}				
 					if (amnpayrollassistproc) {

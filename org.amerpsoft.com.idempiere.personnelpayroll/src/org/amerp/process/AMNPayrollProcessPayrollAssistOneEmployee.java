@@ -44,7 +44,8 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 	private String p_AMN_Assist_Process_Mode="1";
 	private Timestamp p_RefDateIni = null;
 	private Timestamp p_RefDateEnd = null;
-
+	private boolean	p_IsScheduled = false;
+	
 	String Employee_Name,AMN_Process_Value="";
 	String sql="";
 	/* (non-Javadoc)
@@ -171,7 +172,7 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 			Msg_Value = "";
 			//Msg_Value = Msg.getMsg(Env.getCtx(), "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
 	    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-	    			p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode);
+	    			p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
 	    	addLog(Msg_Value);
 	    	cal.add(Calendar.DAY_OF_MONTH, 1);
 		}   	

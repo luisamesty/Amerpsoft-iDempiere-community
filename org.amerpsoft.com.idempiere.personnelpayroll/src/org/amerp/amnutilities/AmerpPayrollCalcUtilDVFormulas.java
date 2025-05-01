@@ -183,190 +183,192 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	static public BigDecimal processDefaultValue(Properties p_ctx, String p_CTVarDefValue, int p_AMN_Payroll_ID, String trxName) throws Exception {
 		
 		BigDecimal retValue = BigDecimal.ZERO; //BigDecimal.valueOf(1);
-		//log.warning("p_CTVarDefValue="+p_CTVarDefValue+"  p_AMN_Payroll_ID="+ p_AMN_Payroll_ID);		
-		// ***********************
-		// NN Default Values VAR
-		// ***********************
-		if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY")) || (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO"))) {
-			retValue = DV_SALARY(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_DAYS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_DIAS")))  {
-			retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOURS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_HORAS")))  {
-			retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_TRANSPORTBONUS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOTRANSPOR"))) {
-				retValue = DV_TRANSPORTBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if   ((p_CTVarDefValue.equalsIgnoreCase("DV_ATTENDANCEBONUS"))  || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOASIST"))) {
-			retValue = DV_ATTENDANCEBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_RESTDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_DESCANSO"))) {
-			retValue = DV_RESTDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOLLIDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_FERIADO"))) {
-			retValue = DV_HOLLIDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+		if (p_CTVarDefValue != null) {
+			//log.warning("p_CTVarDefValue="+p_CTVarDefValue+"  p_AMN_Payroll_ID="+ p_AMN_Payroll_ID);		
+			// ***********************
+			// NN Default Values VAR
+			// ***********************
+			if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY")) || (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO"))) {
+				retValue = DV_SALARY(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_DAYS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_DIAS")))  {
+				retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOURS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_HORAS")))  {
+				retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_TRANSPORTBONUS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOTRANSPOR"))) {
+					retValue = DV_TRANSPORTBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if   ((p_CTVarDefValue.equalsIgnoreCase("DV_ATTENDANCEBONUS"))  || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOASIST"))) {
+				retValue = DV_ATTENDANCEBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_RESTDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_DESCANSO"))) {
+				retValue = DV_RESTDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOLLIDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_FERIADO"))) {
+				retValue = DV_HOLLIDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+	
+			// ***********************
+			// NV default Values 
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALVACAC")) {
+				retValue = DV_SALVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACION")) {
+				retValue = DV_VACACION(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC190")) {
+				retValue = DV_VACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192")) {
+				retValue = DV_VACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192A")) {
+				retValue = DV_VACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACFER")) {
+				retValue = DV_VACACFER(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDES")) {
+				retValue = DV_VACACDES(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIADIC")) {
+				retValue = DV_VACACDIADIC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIA45")) {
+				retValue = DV_VACACDIA45(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			// **********************************
+			// NP default Values Social Benefits
+			// **********************************
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARYSB")) 
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIOP"))
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALPREST"))) {
+				retValue = DV_SALARYSB(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYLAST")) {
+				retValue = DV_SALARYLAST(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPS")) {
+				retValue = DV_ABONOPS(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY12SB")) 
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO12P"))
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SAL12PREST"))) {
+				retValue = DV_SALARY12SB(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPSA"))
+				|| (p_CTVarDefValue.equalsIgnoreCase("DV_ABONOMPSA"))) {
+				retValue = DV_ABONOPSA(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INCUTILID")) {
+				retValue = DV_INCUTILID(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_INCVACAC"))
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_INCVACACADIC"))) {
+				retValue = DV_INCVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			// *******************************************
+			// PI default Value Interest Social Benefits
+			// *******************************************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INTERPRESTAC")) {
+				retValue = DV_INTERPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			// ***********************************************************
+			// PR default Value Anticipate payment Social Benefits
+			// ***********************************************************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUMPRESTAC")) {
+				//log.warning("......DV_ACUMPRESTAC");
+				retValue = DV_ACUMPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUANTPRESTAC")) {
+				//log.warning("......DV_ACUANTPRESTAC");
+				retValue = DV_ACUANTPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+	
+			// ***********************
+			// NU default Values 
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALUTIL")) {
+				retValue = DV_SALUTIL(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDADES")) {
+				retValue = DV_UTILIDADES(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV")) {
+				retValue = DV_UTILIDDEV(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV6M")) {
+				retValue = DV_UTILIDDEV6M(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV12M")) {
+				retValue = DV_UTILIDDEV12M(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILANT")) {
+				retValue = DV_UTILANT(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILDEF")) {
+				retValue = DV_UTILDEF(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILADIC")) {
+				retValue = DV_UTILADIC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+	
+			// ***********************
+			// YTD Default Values VAR
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYYTD")) {
+				retValue = DV_SALARYYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYTAXYTD")) {
+				retValue = DV_SALARYTAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_TAXYTD")) {
+				retValue = DV_TAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SSOYTD")) {
+				retValue = DV_SSOYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			
+			// ***********************
+			// PL default Values 
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FSALARY6M")) {
+				retValue = DV_FSALARY6M(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190")) {
+				retValue = DV_FVACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190ADI")) {
+				retValue = DV_FVACAC190ADI(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192")) {
+				retValue = DV_FVACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192A")) {
+				retValue = DV_FVACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV11")) {
+				retValue = DV_FUTILIDDEV11(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV12")) {
+				retValue = DV_FUTILIDDEV12(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYSFRAC")) {
+				retValue = DV_FDAYSFRAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_THISYEAR")) {
+				retValue = DV_FDAYS_THISYEAR(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FYEAR_SERVICE")) {
+				retValue = DV_FYEAR_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
+			}	
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_SERVICE")) {
+				retValue = DV_FDAYS_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
+			}	
+			// ***********************
+			// END
+			// ***********************
+			
+			else
+				retValue = BigDecimal.valueOf(0);
 		}
-
-		// ***********************
-		// NV default Values 
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALVACAC")) {
-			retValue = DV_SALVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACION")) {
-			retValue = DV_VACACION(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC190")) {
-			retValue = DV_VACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192")) {
-			retValue = DV_VACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192A")) {
-			retValue = DV_VACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACFER")) {
-			retValue = DV_VACACFER(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDES")) {
-			retValue = DV_VACACDES(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIADIC")) {
-			retValue = DV_VACACDIADIC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIA45")) {
-			retValue = DV_VACACDIA45(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		// **********************************
-		// NP default Values Social Benefits
-		// **********************************
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARYSB")) 
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIOP"))
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALPREST"))) {
-			retValue = DV_SALARYSB(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYLAST")) {
-			retValue = DV_SALARYLAST(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPS")) {
-			retValue = DV_ABONOPS(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY12SB")) 
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO12P"))
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SAL12PREST"))) {
-			retValue = DV_SALARY12SB(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPSA"))
-			|| (p_CTVarDefValue.equalsIgnoreCase("DV_ABONOMPSA"))) {
-			retValue = DV_ABONOPSA(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INCUTILID")) {
-			retValue = DV_INCUTILID(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_INCVACAC"))
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_INCVACACADIC"))) {
-			retValue = DV_INCVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		// *******************************************
-		// PI default Value Interest Social Benefits
-		// *******************************************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INTERPRESTAC")) {
-			retValue = DV_INTERPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		// ***********************************************************
-		// PR default Value Anticipate payment Social Benefits
-		// ***********************************************************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUMPRESTAC")) {
-			//log.warning("......DV_ACUMPRESTAC");
-			retValue = DV_ACUMPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUANTPRESTAC")) {
-			//log.warning("......DV_ACUANTPRESTAC");
-			retValue = DV_ACUANTPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-
-		// ***********************
-		// NU default Values 
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALUTIL")) {
-			retValue = DV_SALUTIL(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDADES")) {
-			retValue = DV_UTILIDADES(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV")) {
-			retValue = DV_UTILIDDEV(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV6M")) {
-			retValue = DV_UTILIDDEV6M(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV12M")) {
-			retValue = DV_UTILIDDEV12M(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILANT")) {
-			retValue = DV_UTILANT(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILDEF")) {
-			retValue = DV_UTILDEF(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILADIC")) {
-			retValue = DV_UTILADIC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-
-		// ***********************
-		// YTD Default Values VAR
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYYTD")) {
-			retValue = DV_SALARYYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYTAXYTD")) {
-			retValue = DV_SALARYTAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_TAXYTD")) {
-			retValue = DV_TAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SSOYTD")) {
-			retValue = DV_SSOYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		
-		// ***********************
-		// PL default Values 
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FSALARY6M")) {
-			retValue = DV_FSALARY6M(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190")) {
-			retValue = DV_FVACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190ADI")) {
-			retValue = DV_FVACAC190ADI(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192")) {
-			retValue = DV_FVACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192A")) {
-			retValue = DV_FVACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV11")) {
-			retValue = DV_FUTILIDDEV11(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV12")) {
-			retValue = DV_FUTILIDDEV12(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYSFRAC")) {
-			retValue = DV_FDAYSFRAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_THISYEAR")) {
-			retValue = DV_FDAYS_THISYEAR(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FYEAR_SERVICE")) {
-			retValue = DV_FYEAR_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
-		}	
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_SERVICE")) {
-			retValue = DV_FDAYS_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
-		}	
-		// ***********************
-		// END
-		// ***********************
-		
-		else
-			retValue = BigDecimal.valueOf(0);
 		//log.warning("CTVarDefValue:"+p_CTVarDefValue+"  AMN_Payroll_ID:"+p_AMN_Payroll_ID+"   retValue:"+retValue);
 		if (retValue.equals(null))
 			return BigDecimal.ZERO;

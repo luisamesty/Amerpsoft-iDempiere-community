@@ -99,9 +99,6 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
                
         // Determina el Numero de Registros
         int rowCount = 0;
-//        String countSql = "SELECT COUNT(*) FROM AMN_Payroll_Assist_Row "
-//                        + "WHERE amn_datetime >= ? AND amn_datetime <= ? "
-//                        + "AND AD_Client_ID = ? AND AD_Org_ID = ?";
         String countSql = "SELECT COUNT(*) FROM ( "
         		+"SELECT DISTINCT ON (pin, amn_datetime) "
         		+"amn_payroll_assist_row_id , pin, amn_datetime "
@@ -182,7 +179,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 										String.format("%-10s",row.getAMN_Payroll_Assist_Row_ID())+" - "+
 										String.format("%-10s",row.getPIN())+
 										String.format("%-20s",row.getAMN_DateTime());
-								log.warning(messagetoShow);
+								// log.warning(messagetoShow);
 			                }
 			                
 			                // Validación del PIN (sin consultas repetidas)
@@ -223,12 +220,19 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 	                
 	                // UPDate Processed Rows.
 	                rowsUpdated = rowsUpdated + processedRows.size();
+	                
+	                // Confirmar y cerrar la transacción
+	                trx.commit();
+	                trx.close();
+	                
 	                if (processedRows.size() > 0) {
 		                String updateSql = "UPDATE AMN_Payroll_Assist_Row SET IsVerified = 'Y' WHERE AMN_Payroll_Assist_Row_ID IN (" +
 		                                   processedRows.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
 		                //log.warning("updateSql="+updateSql);
 		                DB.executeUpdate(updateSql, get_TrxName());
 		                processedRows.clear();
+	                } else {
+	                    hasMoreRows = false;   // Ya no hay más registros
 	                }
 	                trx.commit(); // Guarda los cambios
     			} catch (Exception e) {
@@ -261,35 +265,36 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         } finally {
 
         }
-        if (!p_IsScheduled) {
-        	// Final Message PINs Rejected
-        	// HEADER
-        	messagetoShow="";
-        	messagetoNotify = Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
-        	addLog(messagetoNotify);
-        	// rowsUpdated rowsUpdated
-        	messagetoShow=Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Updated")+"(s) = "+
-        			String.format("%10s",rowsUpdated)+ "   "+
-        			Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Total")+"(s) = "+
-        			String.format("%10s",rowCount);
-        	addLog(messagetoShow);
+    	// Final Message PINs Rejected
+    	// HEADER
+    	messagetoShow="";
+    	messagetoNotify = Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
+    	addLogIFNotScheduled(messagetoNotify);
+    	// rowsUpdated rowsUpdated
+    	messagetoShow=Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Updated")+"(s) = "+
+    			String.format("%10s",rowsUpdated)+ "   "+
+    			Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Total")+"(s) = "+
+    			String.format("%10s",rowCount);
+    	addLogIFNotScheduled(messagetoShow);
+    	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
+    	messagetoShow = String.format("%15s",Msg.getElement(ctx, MAMN_Payroll_Assist_Row.COLUMNNAME_PIN))+ "  " + 
+    			String.format("%30s",Msg.getElement(ctx,MAMN_Payroll_Assist_Unit.COLUMNNAME_Name))+ " " +
+    			String.format("%15s",Msg.getElement(ctx,"Qty"));
+    	addLogIFNotScheduled(messagetoShow);
+    	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
+        for (PayrollAssistRowImport unit : payrollassistrowRejected) {
+        	messagetoShow = String.format("%15s",unit.getPin())+ "  " +
+        			String.format("%30s",unit.getAMN_Payroll_Assist_Unit())+" "+
+        			String.format("%15s",unit.getQty());
+        	addLogIFNotScheduled(messagetoShow);
         	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
-        	messagetoShow = String.format("%15s",Msg.getElement(ctx, MAMN_Payroll_Assist_Row.COLUMNNAME_PIN))+ "  " + 
-        			String.format("%30s",Msg.getElement(ctx,MAMN_Payroll_Assist_Unit.COLUMNNAME_Name))+ " " +
-        			String.format("%15s",Msg.getElement(ctx,"Qty"));
-        	addLog(messagetoShow);
-        	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
-            for (PayrollAssistRowImport unit : payrollassistrowRejected) {
-            	messagetoShow = String.format("%15s",unit.getPin())+ "  " +
-            			String.format("%30s",unit.getAMN_Payroll_Assist_Unit())+" "+
-            			String.format("%15s",unit.getQty());
-            	addLog(messagetoShow);
-            	messagetoNotify = messagetoNotify +"\r\n"+ messagetoShow;
-            }
         }
         // Send Notification
         sendNotification(ctx, "N", messagetoNotify);
-        return Msg.getMsg(ctx, "ProcessOK");
+        log.warning("Notification:\r\n"+ messagetoNotify);
+        // return Msg.getMsg(ctx, "ProcessOK");
+        return "@Processed@ " + rowCount + " - @Updated@ " + rowsUpdated;
+
     }
     
     
@@ -364,9 +369,9 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     	// MOre Option (FUTURE
 		// N Notice
     	if (notificationType.compareToIgnoreCase("N") == 0) {
-        	MNote note = new MNote(ctx, "Import",getAD_User_ID(), null);
+        	MNote note = new MNote(ctx, "ImportAttendance",getAD_User_ID(), null);
         	note.setTextMsg(notifactionMessage);
-        	note.setDescription(MMessage.get(ctx, "Import") +
+        	note.setDescription(MMessage.get(ctx, "ImportAttendance") +
         	        Msg.translate(ctx, "From") + " " +
         	        Msg.getElement(ctx, "RefDateIni") + ":" + dateFormat.format(p_RefDateIni) + " " +
         	        Msg.translate(ctx, "To") + " " +
@@ -393,4 +398,18 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 		return retValue;
 		
 	}
+	
+	/**
+	 * addLogIFNotScheduled
+	 * @param message
+	 * @param isScheduled
+	 */
+	private void addLogIFNotScheduled(String message) {
+		
+		if (!p_IsScheduled) {
+			addLog(message);
+		}
+		
+	}
+	
 }
