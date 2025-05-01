@@ -2174,7 +2174,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="440" height="14" isRemoveLineWhenBlank="true" uuid="f4648da4-78a8-4f6c-a49a-a4dad5499876">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
