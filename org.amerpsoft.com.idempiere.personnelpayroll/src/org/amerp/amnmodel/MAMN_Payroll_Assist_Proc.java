@@ -193,7 +193,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 	public static boolean createAmnPayrollAssistProc(Properties ctx, Locale locale, 
 			int p_AMN_Employee_ID, Timestamp p_Event_Date , int p_AMN_Shift_ID,
 			Boolean p_isDescanso, Boolean p_isExcused ,
-			MAMN_Payroll_Assist_Proc payassistrow
+			MAMN_Payroll_Assist_Proc payassistrow, boolean p_IsScheduled
 			)
 	{
 		// Verify Locale
@@ -295,7 +295,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 			amnpayrollassistproc.setExcused(p_isExcused);
 			amnpayrollassistproc.setIsActive(true);		
 		}
-		if (processMonitor != null)
+		if (!p_IsScheduled &&processMonitor != null)
 		{
 			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Day")+": "+p_PeriodDate.toString());
 			processMonitor.statusUpdate(locMessage);
