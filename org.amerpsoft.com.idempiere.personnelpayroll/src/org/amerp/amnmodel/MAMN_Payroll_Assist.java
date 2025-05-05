@@ -284,7 +284,7 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	 * @param trxName              Nombre de la transacción.
 	 * @return Registro encontrado de MAMN_Payroll_Assist o null si no existe.
 	 */
-	public static MAMN_Payroll_Assist findByAssistRowEmployeeAndDateTime(Properties ctx, int payrollAssistRowID, int employeeID, Timestamp amnDateTime, String trxName) {
+	public MAMN_Payroll_Assist findByAssistRowEmployeeAndDateTime(Properties ctx, int payrollAssistRowID, int employeeID, Timestamp amnDateTime, String trxName) {
 	    MAMN_Payroll_Assist retValue = null;
 	    
 	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Payroll_Assist_Row_ID = ? AND AMN_Employee_ID = ? AND Event_Time = ?";
