@@ -13,6 +13,7 @@ encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/Employees.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesAniversary.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesBirthday.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesDependentsSelective.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesGraphics.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesReview.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployeeCard/LPY/EmployeeCardFront.jrxml=UTF-8

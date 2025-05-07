@@ -22,9 +22,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.exceptions.TaxNoExemptFoundException;
 import org.adempiere.util.IProcessUI;
-import org.amerp.amndocument.Doc_AMNPayroll;
 import org.amerp.amnutilities.AmerpDateUtils;
 import org.amerp.amnutilities.AmerpPayrollCalcUtilDVFormulas;
 import org.amerp.amnutilities.AmerpUtilities;
@@ -68,16 +68,11 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			setPosted(false);
 			setIsPaid(false);		
 		}
-		// TODO Auto-generated constructor stub
-		//log.warning("..............MAMN_payroll - MODEL STANDARD................");
 	}
 
 	/** Load Constructor */
 	public MAMN_Payroll(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
-		//log.warning("..............MAMN_payroll - MODEL LOAD................");
-
 	}
 
 	/**
@@ -626,9 +621,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	    msgBuilder.insert(0, okprocess ? " ** "+Msg.translate(ctx, "Success").trim()+" **\r\n" : " ** "+Msg.translate(ctx, "Failed").trim() +"**\r\n");
 	    msgBuilder.insert(0, returnMsg);
 	    return msgBuilder.toString();
-	}
-
-	
+	}	
 
 	private MInvoice processInvoice(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String returnMsg, String trxName) {
         MInvoice minvoice = null;
@@ -920,8 +913,6 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	private MInvoice createCInvoiceCreditMemoDoc()  {
 		
 		MInvoice mcreditmemo = null;
-		String chargeProcess = "PO";
-		
 		return mcreditmemo;
 		
 	}
