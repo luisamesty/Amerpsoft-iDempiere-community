@@ -18,4 +18,13 @@
             </plugin>
         </plugins>
     </build>  
+    <dependencies>
+    	<dependency>
+    		<groupId>org.idempiere</groupId>
+    		<artifactId>
+    			org.amerpsoft.com.idempiere.personnelpayroll
+    		</artifactId>
+    		<version>11.0.0-SNAPSHOT</version>
+    	</dependency>
+    </dependencies>
 </project>

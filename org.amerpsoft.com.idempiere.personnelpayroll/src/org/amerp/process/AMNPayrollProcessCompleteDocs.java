@@ -96,7 +96,7 @@ public class AMNPayrollProcessCompleteDocs extends SvrProcess{
 	    String Payroll_Name="";
 	    String Msg_Value="";
 	    String Msg_Value0="";
-	    String trxName ="";
+	    String trxName =get_TrxName();
 	    int AMN_Payroll_ID=0;
 	    MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, trxName);
 		MAMN_Employee amnemployee =  new MAMN_Employee(getCtx(), amnpayroll.getAMN_Employee_ID(), trxName);

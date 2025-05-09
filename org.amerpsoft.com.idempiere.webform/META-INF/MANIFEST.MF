@@ -22,7 +22,8 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  zcommon;bundle-version="0.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
-Import-Package: org.compiere.model,
+Import-Package: org.amerp.amnmodel,
+ org.compiere.model,
  com.lowagie.text.pdf,
  org.compiere.apps,
  org.compiere.grid,

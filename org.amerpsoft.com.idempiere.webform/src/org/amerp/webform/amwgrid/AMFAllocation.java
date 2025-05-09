@@ -164,9 +164,7 @@ public class AMFAllocation
 		
 		/********************************
 		 *  Load unallocated Payments
-		 *      1-TrxDate, 2-DocumentNo, (3-Currency, 4-PayAmt,)
-		 *      5-ConvAmt, 6-ConvOpen, 7-Allocated
-		 */
+		 ********************************/
 		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 		StringBuilder sql = new StringBuilder("SELECT p.DateTrx,p.DocumentNo,p.C_Payment_ID,"  //  1..3
 			+ "c.ISO_Code,p.PayAmt,"                            //  4..5
@@ -329,20 +327,8 @@ public class AMFAllocation
 	{
 		/********************************
 		 *  Load unpaid Invoices
-		 *      1-TrxDate, 2-Value, (3-Currency, 4-InvAmt,)
-		 *      5-ConvAmt, 6-ConvOpen, 7-ConvDisc, 8-WriteOff, 9-Applied
-		 * 
-		 SELECT i.DateInvoiced,i.DocumentNo,i.C_Invoice_ID,c.ISO_Code,
-		 i.GrandTotal*i.MultiplierAP "GrandTotal", 
-		 currencyConvert(i.GrandTotal*i.MultiplierAP,i.C_Currency_ID,i.C_Currency_ID,i.DateInvoiced,i.C_ConversionType_ID,i.AD_Client_ID,i.AD_Org_ID) "GrandTotal $", 
-		 invoiceOpen(C_Invoice_ID,C_InvoicePaySchedule_ID) "Open",
-		 currencyConvert(invoiceOpen(C_Invoice_ID,C_InvoicePaySchedule_ID),i.C_Currency_ID,i.C_Currency_ID,i.DateInvoiced,i.C_ConversionType_ID,i.AD_Client_ID,i.AD_Org_ID)*i.MultiplierAP "Open $", 
-		 invoiceDiscount(i.C_Invoice_ID,getDate(),C_InvoicePaySchedule_ID) "Discount",
-		 currencyConvert(invoiceDiscount(i.C_Invoice_ID,getDate(),C_InvoicePaySchedule_ID),i.C_Currency_ID,i.C_Currency_ID,i.DateInvoiced,i.C_ConversionType_ID,i.AD_Client_ID,i.AD_Org_ID)*i.Multiplier*i.MultiplierAP "Discount $",
-		 i.MultiplierAP, i.Multiplier 
-		 FROM C_Invoice_v i INNER JOIN C_Currency c ON (i.C_Currency_ID=c.C_Currency_ID) 
-		 WHERE -- i.IsPaid='N' AND i.Processed='Y' AND i.C_BPartner_ID=1000001
-		 */
+		 *     
+		 *********************************/
 		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 		StringBuilder sql = new StringBuilder("SELECT i.DateInvoiced,i.DocumentNo,i.C_Invoice_ID," //  1..3
 			+ "c.ISO_Code,i.GrandTotal*i.MultiplierAP, "                            //  4..5    Orig Currency
@@ -351,11 +337,14 @@ public class AMFAllocation
 			+ "currencyConvertInvoice(i.C_Invoice_ID"                               //  8       AllowedDiscount
 			+ ",?,invoiceDiscount(i.C_Invoice_ID,?,C_InvoicePaySchedule_ID),i.DateInvoiced)*i.Multiplier*i.MultiplierAP,"               //  #5, #6
 			+ "i.MultiplierAP, "
-			+ "e.name "
+			+ "e.Value || ' - ' || e.Name AS EmployeeFullName, "
+			+ "bp.Value || ' - ' || bp.Name AS Tercero "
 			+ "FROM C_Invoice_v i"		//  corrected for CM/Split
 			+ " INNER JOIN C_Currency c ON (i.C_Currency_ID=c.C_Currency_ID) "
-			+ " LEFT JOIN AMN_Payroll p ON (p.C_invoice_ID = i.C_invoice_ID) "
-			+ " LEFT JOIN AMN_Employee e ON (e.amn_employee_id = p.amn_employee_id) "			
+			+ " INNER JOIN AMN_Payroll_Docs pd ON (pd.c_invoice_id = i.c_invoice_id ) "
+			+ " INNER JOIN AMN_Payroll p ON (p.amn_payroll_id  = pd.amn_payroll_id) "
+			+ " INNER JOIN AMN_Employee e ON (e.amn_employee_id = p.amn_employee_id) "
+			+ " INNER JOIN C_BPartner bp ON (bp.C_BPartner_ID = i.C_BPartner_ID) "
 			+ "WHERE i.IsPaid='N' AND i.Processed='Y'"
 			+ " AND i.C_BPartner_ID=?" );                                      		//  #7
 		if (m_AMN_Employee_ID != 0) {
@@ -411,8 +400,9 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 				line.add(discount);					//  5/7-ConvAllowedDisc
 				line.add(Env.ZERO);      			//  6/8-WriteOff
 				line.add(Env.ZERO);					// 7/9-Applied
-				line.add(open);				    //  8/10-OverUnder
+				line.add(open);				        //  8/10-OverUnder
 				line.add(rs.getString(10));			//  9/11-Employee
+				line.add(rs.getString(11));			//  10/12-BillBPartner
 				//	Add when open <> 0 (i.e. not if no conversion rate)
 				if (Env.ZERO.compareTo(open) != 0)
 					data.add(line);

@@ -766,6 +766,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     	MAMN_Period amnperiod = new MAMN_Period(ctx, amnpayroll.getAMN_Period_ID(), trxName);
     	MAMN_Contract amncontract = new MAMN_Contract(ctx, amnpayroll.getAMN_Contract_ID(), trxName);
     	MBPartner billBp = null;
+    	MBPartner empBp = new MBPartner(ctx, amnemployee.getC_BPartner_ID(), trxName);
     	// Default Org Location Location
     	MOrgInfo oi = MOrgInfo.get( amnemployee.getAD_OrgTo_ID(), trxName);
     	int Default_C_BPartner_Location_ID = oi.getC_Location_ID();
@@ -814,15 +815,16 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		minvoice.setC_ConversionType_ID(amnpayroll.getC_ConversionType_ID());
 		if (amnemployee.getBill_BPartner_ID() != 0) {
 			minvoice.setC_BPartner_ID(amnemployee.getBill_BPartner_ID());
+			minvoice.setM_PriceList_ID(billBp.getPO_PriceList_ID());
 		} else {
 			minvoice.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
+			minvoice.setM_PriceList_ID(empBp.getPO_PriceList_ID());
 		}
 		if (billBp.getPrimaryC_BPartner_Location_ID() != 0)
 			minvoice.setC_BPartner_Location_ID(billBp.getPrimaryC_BPartner_Location_ID());
 		else
 		minvoice.setC_BPartner_Location_ID(Default_C_BPartner_Location_ID);
 		minvoice.setSalesRep_ID(billBp.getSalesRep_ID());
-		minvoice.setM_PriceList_ID(billBp.getPO_PriceList_ID());
 		minvoice.setIsSOTrx(false);
 		// Save C_Invoice header
 		minvoice.save(trxName);

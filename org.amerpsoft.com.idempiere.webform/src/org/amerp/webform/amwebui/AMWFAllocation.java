@@ -642,8 +642,10 @@ public class AMWFAllocation extends AMFAllocation
 		String name = e.getPropertyName();
 		Object value = e.getNewValue();
 		if (log.isLoggable(Level.CONFIG)) log.config(name + "=" + value);
-		if (value == null && (!name.equals("C_Charge_ID")||!name.equals("C_DocType_ID") ))
-			return;
+		if (value == null &&
+			   !(name.equals("C_Charge_ID") || name.equals("C_Activity_ID") || name.equals("C_Project_ID") ||
+			     name.equals("AMN_Employee_ID") || name.equals("C_BPartner_ID")))
+				return;
 		
 		// Organization
 		if (name.equals("AD_Org_ID"))
@@ -668,15 +670,26 @@ public class AMWFAllocation extends AMFAllocation
 		//  BPartner
 		if (name.equals("C_BPartner_ID"))
 		{
+			 // Verifica si el valor es nulo o vacío
+	        if (value == null || value.toString().trim().isEmpty()) {
+	        	m_C_BPartner_ID = 0;  // Establecer a 0 si el valor está vacío
+	        } else {
+	        	m_C_BPartner_ID = ((Integer)value).intValue();  // Establecer el valor si no está vacío
+	        }
 			bpartnerSearch.setValue(value);
-			setC_BPartner_ID((int) value);
+			setC_BPartner_ID(m_C_BPartner_ID);
 			loadBPartner();
 		}
 		//  Employee
 		if (e.getSource().equals(employeeSearch))
 		{
+			 // Verifica si el valor es nulo o vacío
+	        if (value == null || value.toString().trim().isEmpty()) {
+	            m_AMN_Employee_ID = 0;  // Establecer a 0 si el valor está vacío
+	        } else {
+	            m_AMN_Employee_ID = ((Integer)value).intValue();  // Establecer el valor si no está vacío
+	        }
 			employeeSearch.setValue(value);
-			m_AMN_Employee_ID = ((Integer)value).intValue();
 			loadBPartner();
 		}
 		//	Currency
