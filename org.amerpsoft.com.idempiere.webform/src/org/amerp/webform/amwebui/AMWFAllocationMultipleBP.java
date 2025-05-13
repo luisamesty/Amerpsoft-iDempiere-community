@@ -6,7 +6,6 @@ import static org.compiere.model.SystemIDs.COLUMN_C_INVOICE_C_CURRENCY_ID;
 import static org.compiere.model.SystemIDs.COLUMN_C_PERIOD_AD_ORG_ID;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -41,8 +40,6 @@ import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.amerp.webform.amwgrid.AMFAllocationMultipleBP;
-import org.amerp.webform.amwmodel.OrgInfo;
-import org.compiere.minigrid.IMiniTable;
 import org.compiere.model.MAllocationHdr;
 import org.compiere.model.MColumn;
 import org.compiere.model.MLookup;
@@ -107,8 +104,10 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		}
 	}	//	init
 	
-	//
+	//Main layout for {@link #form} */
 	private Borderlayout mainLayout = new Borderlayout();
+	//Parameter
+	/** Parameter panel. North of {@link #mainLayout} */
 	private Panel parameterPanel = new Panel();
 	private Panel allocationPanel = new Panel();
 	private Grid parameterLayout = GridFactory.newGridLayout();
@@ -290,13 +289,14 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		
 		row = rows.newRow();
 		row.appendCellChild(currencyLabel.rightAlign(),1);
-		//currencyPick.getComponent().setHflex("true");
+		//currencyPick
 		ZKUpdateUtil.setHflex(currencyPick.getComponent(), "true");
 		row.appendCellChild(currencyPick.getComponent(),1);		
 		row.appendCellChild(multiCurrency,1);		
 		row.appendCellChild(autoWriteOff,2);
 		row.appendCellChild(new Space(),1);	
 		
+		// PARAMETROS ADICIONALES Payroll
 		row = rows.newRow();
 		// Document Organization
 		row.appendCellChild(orgDocLabel.rightAlign());  
@@ -329,7 +329,7 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		southPanel.appendChild(allocationPanel);
 		allocationPanel.appendChild(allocationLayout);
 		
-		//allocationLayout.setHflex("min");
+		//
 		rows = allocationLayout.newRows();
 		row = rows.newRow();
 		row.appendCellChild(refreshButton);
@@ -387,18 +387,20 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		ZKUpdateUtil.setVflex(invoiceLayout, "1");
 		invoiceLayout.setStyle("border: none");
 		
+		// payment layout north 
 		north = new North();
 		north.setStyle("border: none");
 		paymentLayout.appendChild(north);
 		north.appendChild(paymentLabel);
 		ZKUpdateUtil.setVflex(paymentLabel, "min");
 		
+		//	South south
 		south = new South();
 		south.setStyle("border: none");
 		paymentLayout.appendChild(south);
 		south.appendChild(paymentInfo.rightAlign());
 		ZKUpdateUtil.setVflex(paymentInfo, "min");
-		
+		//payment layout cente
 		Center center = new Center();
 		paymentLayout.appendChild(center);
 		center.appendChild(paymentTable);
@@ -407,29 +409,29 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		ZKUpdateUtil.setVflex(paymentTable, "1");
 		center.setStyle("border: none");
 		
+		// invoice layout north
 		north = new North();
 		north.setStyle("border: none");
 		invoiceLayout.appendChild(north);
 		north.appendChild(invoiceLabel);
 		ZKUpdateUtil.setVflex(invoiceLabel, "min");		
-		
+		// invoice layout south
 		south = new South();
 		south.setStyle("border: none");
 		invoiceLayout.appendChild(south);
 		south.appendChild(invoiceInfo.rightAlign());
 		ZKUpdateUtil.setVflex(invoiceInfo, "min");
-		
+		// invoice layout center
 		center = new Center();
 		invoiceLayout.appendChild(center);
 		center.appendChild(invoiceTable);
 		ZKUpdateUtil.setWidth(invoiceTable, "100%");
 		ZKUpdateUtil.setVflex(invoiceTable, "1");
 		center.setStyle("border: none");
-		//
+		// mainlayout center
 		center = new Center();
 		mainLayout.appendChild(center);
-		center.appendChild(infoPanel);
-		
+		center.appendChild(infoPanel);	
 		ZKUpdateUtil.setHflex(infoPanel, "1");
 		ZKUpdateUtil.setVflex(infoPanel, "1");
 		
@@ -437,6 +439,7 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		ZKUpdateUtil.setWidth(infoPanel, "100%");
 		ZKUpdateUtil.setHeight(infoPanel, "100%");
 		
+		// north of mainlayout center - payment
 		north = new North();
 		north.setStyle("border: none");
 		//north.setHeight("49%");
@@ -444,6 +447,8 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		infoPanel.appendChild(north);
 		north.appendChild(paymentPanel);
 		north.setSplittable(true);
+		
+		// center of mainlayout center - invoice
 		center = new Center();
 		center.setStyle("border: none");
 		infoPanel.appendChild(center);
@@ -602,8 +607,11 @@ public class AMWFAllocationMultipleBP extends AMFAllocationMultipleBP
 		}
 
 		// Payroll Contract
-		Integer defaultContractID = getFirstActiveContractID(); // Si tienes uno por defecto
-		List<KeyNamePair> validContracts = getValidContracts();  // Lista de Contratos Valido
+		// Obtener el rol del usuario actual desde el contexto
+		int roleID = Env.getAD_Role_ID(Env.getCtx());
+		
+		Integer defaultContractID = getFirstActiveContractID(roleID); // Si tienes uno por defecto
+		List<KeyNamePair> validContracts = getValidContracts(roleID);  // Lista de Contratos Valido
 
 		if (!validContracts.isEmpty()) {
 		    contractListbox = new Listbox();
