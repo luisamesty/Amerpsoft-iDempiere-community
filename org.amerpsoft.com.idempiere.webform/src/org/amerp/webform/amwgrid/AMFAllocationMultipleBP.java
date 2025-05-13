@@ -1591,28 +1591,42 @@ public class AMFAllocationMultipleBP
 	}
 
 	// Método para obtener el valor predeterminado de AMN_Contract_ID
-    public int getFirstActiveContractID() {
-        List<KeyNamePair> validContracts = getValidContracts();
+    public int getFirstActiveContractID(int roleID) {
+        List<KeyNamePair> validContracts = getValidContracts(roleID);
         return !validContracts.isEmpty() ? validContracts.get(0).getKey() : 0;
     }
-	
-    protected List<KeyNamePair> getValidContracts() {
+
+    protected List<KeyNamePair> getValidContracts(int AD_Role_ID) {
         List<KeyNamePair> list = new ArrayList<>();
-        String sql = "SELECT AMN_Contract_ID, Name FROM AMN_Contract WHERE IsActive='Y' AND AD_Client_ID=?";
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            pstmt = DB.prepareStatement(sql, null);
+        String sql = """
+            SELECT c.AMN_Contract_ID, c.Name
+            FROM AMN_Contract c
+            WHERE c.IsActive='Y'
+              AND c.AD_Client_ID=?
+              AND c.AMN_Contract_ID IN (
+                SELECT DISTINCT ra.AMN_Contract_ID
+                FROM AMN_Role_Access ra
+                WHERE ra.AD_Role_ID=?
+                  AND ra.AMN_Process_ID IN (
+                    SELECT p.AMN_Process_ID
+                    FROM AMN_Process p
+                    WHERE p.AMN_Process_Value='NN'
+                  )
+              )
+            """;
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
             pstmt.setInt(1, Env.getAD_Client_ID(Env.getCtx()));
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                list.add(new KeyNamePair(rs.getInt(1), rs.getString(2)));
+            pstmt.setInt(2, AD_Role_ID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new KeyNamePair(rs.getInt(1), rs.getString(2)));
+                }
             }
         } catch (Exception e) {
             log.log(Level.SEVERE, "Error cargando contratos", e);
-        } finally {
-            DB.close(rs, pstmt);
         }
+
         return list;
     }
 

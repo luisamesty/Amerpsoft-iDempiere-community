@@ -20,10 +20,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.amerp.amnmodel.MAMN_Process;
 import org.compiere.minigrid.IMiniTable;
 import org.compiere.model.MAllocationHdr;
 import org.compiere.model.MAllocationLine;
@@ -32,6 +35,7 @@ import org.compiere.model.MInvoice;
 import org.compiere.model.MPayment;
 import org.compiere.model.MRole;
 import org.compiere.model.MSysConfig;
+import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -62,6 +66,11 @@ public class AMFAllocation
 	public int         	m_AMN_Employee_ID = 0;
 	private int         m_noInvoices = 0;
 	private int         m_noPayments = 0;
+	public int         	m_AMN_Process_ID = 0;
+	public int         	m_AMN_Contract_ID = 0;
+	public Timestamp 	m_Date = null;
+	public Timestamp 	m_DateDoc = null;
+	public boolean		m_SelectStatus = false;
 	protected BigDecimal	totalInv = Env.ZERO;
 	protected BigDecimal 	totalPay = Env.ZERO;
 	protected BigDecimal	totalDiff = Env.ZERO;
@@ -77,7 +86,8 @@ public class AMFAllocation
 	private int         i_applied = 9;
 	private int 		i_overUnder = 10;
 	
-	protected int         	m_AD_Org_ID = 0;
+	protected int       m_AD_Org_ID = 0;
+	public int         	m_docAD_Org_ID = 0;  // Org for Documents
 
 	private ArrayList<Integer>	m_bpartnerCheck = new ArrayList<Integer>(); 
 
@@ -171,9 +181,11 @@ public class AMFAllocation
 			+ "currencyConvertPayment(p.C_Payment_ID,?,null,?),"//  6   #1, #2
 			+ "currencyConvertPayment(p.C_Payment_ID,?,paymentAvailable(p.C_Payment_ID),?),"  //  7   #3, #4
 			+ "p.MultiplierAP, "
-			+ "p.description "
+			+ "p.description, "
+	        + "org.Name AS OrgName "                        // ← Organización
 			+ "FROM C_Payment_v p"		//	Corrected for AP/AR
 			+ " INNER JOIN C_Currency c ON (p.C_Currency_ID=c.C_Currency_ID) "
+			+ " INNER JOIN AD_Org org ON (p.AD_Org_ID = org.AD_Org_ID) "   
 			+ "WHERE p.IsAllocated='N' AND p.Processed='Y'"
 			+ " AND p.C_Charge_ID IS NULL"		//	Prepayments OK
 			+ " AND p.C_BPartner_ID=?");                   		//      #5
@@ -219,7 +231,8 @@ public class AMFAllocation
 				line.add(available);				//  4/6-ConvOpen/Available
 				line.add(Env.ZERO);					//  5/7-Applied
 				//
-				line.add(rs.getString(9));			//  6/8 Description
+				line.add(rs.getString(10));			//  6/8 Organizacion
+				line.add(rs.getString(9));			//  7/9 Description
 				//
 				data.add(line);
 			}
@@ -256,6 +269,7 @@ public class AMFAllocation
 		columnNames.add(Msg.getMsg(Env.getCtx(), "ConvertedAmount"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "OpenAmt"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "AppliedAmt"));
+		columnNames.add(Msg.translate(Env.getCtx(), "AD_Org_ID"));
 		columnNames.add(Msg.translate(Env.getCtx(), "Description"));
 		return columnNames;
 	}
@@ -279,7 +293,8 @@ public class AMFAllocation
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  5-ConvAmt
 		paymentTable.setColumnClass(i++, BigDecimal.class, true);       //  6-ConvOpen
 		paymentTable.setColumnClass(i++, BigDecimal.class, false);      //  7-Allocated
-		paymentTable.setColumnClass(i++, String.class, true);      		//  8-Description
+		paymentTable.setColumnClass(i++, String.class, true);      		//  8-Organization
+		paymentTable.setColumnClass(i++, String.class, true);      		//  9-Description
 		//
 		i_payment = isMultiCurrency ? 7 : 5;
 		
@@ -322,13 +337,20 @@ public class AMFAllocation
 	 * @param trxName optional trx name
 	 * @return list of unpaid invoice data
 	 */
-	public static Vector<Vector<Object>> getUnpaidInvoiceData(boolean isMultiCurrency, Timestamp date, int AD_Org_ID, int C_Currency_ID, 
+	public Vector<Vector<Object>> getUnpaidInvoiceData(boolean isMultiCurrency, Timestamp date, int AD_Org_ID, int C_Currency_ID, 
 			int C_BPartner_ID, int m_AMN_Employee_ID, String trxName)
 	{
 		/********************************
 		 *  Load unpaid Invoices
 		 *     
 		 *********************************/
+		String adLanguage = Env.getAD_Language(Env.getCtx()); // Obtén el idioma del entorno
+		// Verificar si la base de datos es PostgreSQL
+		boolean isPostgreSQL = DB.isPostgreSQL();
+		// Construir la parte de la consulta que varía según el tipo de base de datos
+		String docTypeCase = isPostgreSQL
+		        ? " COALESCE(dt_trl.PrintName, dt.PrintName, dt.Name) AS DocTypeName "  // Para PostgreSQL
+		        : " NVL(dt_trl.PrintName, dt.PrintName, dt.Name) AS DocTypeName ";      // Para Oracle
 		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 		StringBuilder sql = new StringBuilder("SELECT i.DateInvoiced,i.DocumentNo,i.C_Invoice_ID," //  1..3
 			+ "c.ISO_Code,i.GrandTotal*i.MultiplierAP, "                            //  4..5    Orig Currency
@@ -338,13 +360,16 @@ public class AMFAllocation
 			+ ",?,invoiceDiscount(i.C_Invoice_ID,?,C_InvoicePaySchedule_ID),i.DateInvoiced)*i.Multiplier*i.MultiplierAP,"               //  #5, #6
 			+ "i.MultiplierAP, "
 			+ "e.Value || ' - ' || e.Name AS EmployeeFullName, "
-			+ "bp.Value || ' - ' || bp.Name AS Tercero "
+			+ "bp.Value || ' - ' || bp.Name AS Tercero, "
+			+  docTypeCase
 			+ "FROM C_Invoice_v i"		//  corrected for CM/Split
 			+ " INNER JOIN C_Currency c ON (i.C_Currency_ID=c.C_Currency_ID) "
 			+ " INNER JOIN AMN_Payroll_Docs pd ON (pd.c_invoice_id = i.c_invoice_id ) "
 			+ " INNER JOIN AMN_Payroll p ON (p.amn_payroll_id  = pd.amn_payroll_id) "
 			+ " INNER JOIN AMN_Employee e ON (e.amn_employee_id = p.amn_employee_id) "
 			+ " INNER JOIN C_BPartner bp ON (bp.C_BPartner_ID = i.C_BPartner_ID) "
+			+ " INNER JOIN C_DocType dt ON (dt.C_DocType_ID = i.C_DocType_ID) "
+			+ " LEFT JOIN C_DocType_Trl dt_trl ON (dt_trl.C_DocType_ID = dt.C_DocType_ID AND dt_trl.AD_Language = '" + adLanguage + "') "
 			+ "WHERE i.IsPaid='N' AND i.Processed='Y'"
 			+ " AND i.C_BPartner_ID=?" );                                      		//  #7
 		if (m_AMN_Employee_ID != 0) {
@@ -352,8 +377,30 @@ public class AMFAllocation
 		}
 		if (!isMultiCurrency)
 			sql.append(" AND i.C_Currency_ID=?");                                   //  #8
-		if (AD_Org_ID != 0 ) 
-			sql.append(" AND i.AD_Org_ID=" + AD_Org_ID);
+		if (m_docAD_Org_ID != 0 ) 
+			sql.append(" AND i.AD_Org_ID=" + m_docAD_Org_ID);
+		if (m_C_DocType_ID != 0) {
+		    sql.append(" AND i.C_DocType_ID=").append(m_C_DocType_ID);
+		}
+		if (m_AMN_Process_ID != 0) {
+		    sql.append(" AND p.AMN_Process_ID=").append(m_AMN_Process_ID);
+		}
+		if (m_AMN_Contract_ID != 0) {
+		    sql.append(" AND e.AMN_Contract_ID=").append(m_AMN_Contract_ID);
+		}
+		if (m_DateDoc != null) {
+		    String dateCondition = "";
+		    // Determina el tipo de base de datos
+		    if (DB.isPostgreSQL()) {
+		        // Para PostgreSQL usamos DATE() para comparar solo las fechas
+		        dateCondition = " AND DATE(i.DateAcct) = '" + new java.sql.Date(m_DateDoc.getTime()) + "'";
+		    } else if (DB.isOracle()) {
+		        // Para Oracle usamos TRUNC() para comparar solo las fechas
+		        dateCondition = " AND TRUNC(i.DateAcct) = '" + new java.sql.Date(m_DateDoc.getTime()) + "'";
+		    }   
+		    // Añadir la condición de la fecha a la consulta
+		    sql.append(dateCondition);
+		}
 		sql.append(" ORDER BY i.DateInvoiced, i.DocumentNo");
 		if (log.isLoggable(Level.FINE)) log.fine("InvSQL=" + sql.toString());
 		
@@ -402,7 +449,8 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 				line.add(Env.ZERO);					// 7/9-Applied
 				line.add(open);				        //  8/10-OverUnder
 				line.add(rs.getString(10));			//  9/11-Employee
-				line.add(rs.getString(11));			//  10/12-BillBPartner
+				line.add(rs.getString(11));			//  10/12-Bill_BPartner
+				line.add(rs.getString(12));			//  11/13-DocType
 				//	Add when open <> 0 (i.e. not if no conversion rate)
 				if (Env.ZERO.compareTo(open) != 0)
 					data.add(line);
@@ -445,6 +493,8 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 		columnNames.add(Msg.getMsg(Env.getCtx(), "AppliedAmt"));
 		columnNames.add(Msg.getMsg(Env.getCtx(), "OverUnderAmt"));
 		columnNames.add(Msg.translate(Env.getCtx(), "AMN_Employee_ID"));
+		columnNames.add(Msg.translate(Env.getCtx(), "Bill_BPartner_ID"));
+		columnNames.add(Msg.translate(Env.getCtx(), "C_DocType_ID"));
 		return columnNames;
 	}
 	
@@ -471,6 +521,8 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 		invoiceTable.setColumnClass(i++, BigDecimal.class, false);      //  9-Conv OverUnder
 		invoiceTable.setColumnClass(i++, BigDecimal.class, true);		//	10-Conv Applied
 		invoiceTable.setColumnClass(i++, String.class, true);      		//  11-Employee
+		invoiceTable.setColumnClass(i++, String.class, true);      		//  12-BillBPartner
+		invoiceTable.setColumnClass(i++, String.class, true);      		//  13-C_DocType
 		//  Table UI
 		invoiceTable.autoSize();
 	}
@@ -740,6 +792,42 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 		return getInvoiceInfoText();
 	}
 
+	/**
+	 * invoiceSetResetSelection
+	 * @param invoice
+	 * @param isAutoWriteOff
+	 * @param isMultiCurrency
+	 * @param setSelected
+	 * @return
+	 */
+	public String invoiceSetResetSelection( IMiniTable invoice, boolean isAutoWriteOff, boolean isMultiCurrency, boolean setSelected)
+	{		
+		//  Invoices
+		int rows = invoice.getRowCount();
+		String msg ="";
+		for (int i = 0; i < rows; i++)
+		{
+			boolean selected = ((Boolean) invoice.getValueAt(i, 0)).booleanValue();
+			BigDecimal bd = (BigDecimal)invoice.getValueAt(i, i_applied);
+			
+			if (setSelected) {
+				if (!selected){
+					invoice.setValueAt(true, i, 0);
+					msg = writeOff(i, 0, true, null, invoice, isAutoWriteOff);
+				}
+			} else {
+				if (selected){
+					invoice.setValueAt(false, i, 0);
+					msg = writeOff(i, 0, true, null, invoice, isAutoWriteOff);
+				}
+			}
+			if (log.isLoggable(Level.FINE)) log.fine("Invoice_" + i + " = " + bd + " - Total=" + totalPay);
+		}
+		calculateInvoice(invoice, isMultiCurrency);
+		return String.valueOf(m_noInvoices) + " - "
+			+ Msg.getMsg(Env.getCtx(), "Sum") + "  " + format.format(totalInv) + " ";
+	}
+	
 	/**
 	 * 
 	 * @return summary info for invoice selected and total applied
@@ -1102,4 +1190,176 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 	public void calculateDifference() {
 		totalDiff = totalPay.subtract(totalInv);
 	}
+	
+	
+	// Método para obtener el valor predeterminado de AMN_Process_ID
+    public int getDefaultAMNProcessID() {
+        MAMN_Process process = new Query(Env.getCtx(), MAMN_Process.Table_Name, 
+                "IsActive='Y' AND AMN_Process_Value='NN' AND AD_Client_ID=?", null)
+                .setParameters(Env.getAD_Client_ID(Env.getCtx()))
+                .setOrderBy("AMN_Process_ID")
+                .first();
+
+            return process != null ? process.getAMN_Process_ID() : 0;
+    }
+
+    protected List<KeyNamePair> getValidProcesses() {
+	    List<KeyNamePair> processList = new ArrayList<>();
+	
+	    String sql = "SELECT DISTINCT p.AMN_Process_ID, p.Name " +
+	                 "FROM AMN_Process p " +
+	                 "INNER JOIN AMN_Period per ON per.AMN_Process_ID = p.AMN_Process_ID " +
+	                 "WHERE p.AD_Client_ID = ?";
+	
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+	        pstmt.setInt(1, Env.getAD_Client_ID(Env.getCtx()));
+	
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                int processID = rs.getInt("AMN_Process_ID");
+	                String name = rs.getString("Name");
+	                processList.add(new KeyNamePair(processID, name));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        log.log(Level.SEVERE, "Error fetching valid processes", e);
+	    }
+	
+	    return processList;
+	}
+
+	// Método para obtener el valor predeterminado de AMN_Contract_ID
+    public int getFirstActiveContractID(int roleID) {
+        List<KeyNamePair> validContracts = getValidContracts(roleID);
+        return !validContracts.isEmpty() ? validContracts.get(0).getKey() : 0;
+    }
+
+    protected List<KeyNamePair> getValidContracts(int AD_Role_ID) {
+        List<KeyNamePair> list = new ArrayList<>();
+        String sql = """
+            SELECT c.AMN_Contract_ID, c.Name
+            FROM AMN_Contract c
+            WHERE c.IsActive='Y'
+              AND c.AD_Client_ID=?
+              AND c.AMN_Contract_ID IN (
+                SELECT DISTINCT ra.AMN_Contract_ID
+                FROM AMN_Role_Access ra
+                WHERE ra.AD_Role_ID=?
+                  AND ra.AMN_Process_ID IN (
+                    SELECT p.AMN_Process_ID
+                    FROM AMN_Process p
+                    WHERE p.AMN_Process_Value='NN'
+                  )
+              )
+            """;
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setInt(1, Env.getAD_Client_ID(Env.getCtx()));
+            pstmt.setInt(2, AD_Role_ID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new KeyNamePair(rs.getInt(1), rs.getString(2)));
+                }
+            }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error cargando contratos", e);
+        }
+
+        return list;
+    }
+
+    /**
+     * getAD_Column_ID devuelve la columna
+     * @param tableName
+     * @param columnName
+     * @return
+     */
+    protected int getAD_Column_ID(String tableName, String columnName) {
+        String sql = "SELECT AD_Column_ID FROM AD_Column WHERE AD_Table_ID = " +
+                     "(SELECT AD_Table_ID FROM AD_Table WHERE TableName=?) " +
+                     "AND ColumnName=?";
+        try (PreparedStatement ps = DB.prepareStatement(sql, null)) {
+            ps.setString(1, tableName);
+            ps.setString(2, columnName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("AD_Column_ID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * getValidDocTypeIDs
+     * @return
+     */
+    protected List<Integer> getValidDocTypeIDs() {
+        List<Integer> docTypeIDs = new ArrayList<>();
+        String sql = """
+            SELECT DISTINCT C_DocTypeTarget_ID, C_DocTypeCreditMemo_ID
+            FROM AMN_Process
+            WHERE AD_Client_ID = ?
+            AND (C_DocTypeTarget_ID IS NOT NULL OR C_DocTypeCreditMemo_ID IS NOT NULL)
+        """;
+
+        try (PreparedStatement ps = DB.prepareStatement(sql, null)) {
+            ps.setInt(1, Env.getAD_Client_ID(Env.getCtx()));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int targetID = rs.getInt("C_DocTypeTarget_ID");
+                    if (targetID != 0) {
+                        docTypeIDs.add(targetID);
+                    }
+                    int creditMemoID = rs.getInt("C_DocTypeCreditMemo_ID");
+                    if (creditMemoID != 0) {
+                        docTypeIDs.add(creditMemoID);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return docTypeIDs;
+    }
+
+    protected Integer getFirstActiveDocTypeID() {
+        List<Integer> validIDs = getValidDocTypeIDs();
+        if (validIDs.isEmpty()) {
+            return null;
+        }
+
+        // Convierte la lista en una cadena de IDs separados por coma, para usar en la cláusula IN
+        String inClause = validIDs.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        String sql = "SELECT C_DocType_ID FROM C_DocType " +
+                     "WHERE IsActive='Y' AND AD_Client_ID=? AND C_DocType_ID IN (" + inClause + ") " +
+                     "ORDER BY Name";
+
+        return DB.getSQLValue(null, sql, Env.getAD_Client_ID(Env.getCtx()));
+    }
+
+    protected String getDocTypeName(Integer docTypeID) {
+        String docTypeName = null;
+        String sql = "SELECT Name FROM C_DocType WHERE C_DocType_ID = ?";
+
+        try (PreparedStatement ps = DB.prepareStatement(sql, null)) {
+            ps.setInt(1, docTypeID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    docTypeName = rs.getString("Name");  // Obtener el nombre del tipo de documento
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return docTypeName;
+    }
+    
 }

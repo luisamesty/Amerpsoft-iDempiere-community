@@ -1,19 +1,3 @@
-/******************************************************************************
- * Product: Adempiere ERP & CRM Smart Business Solution                       *
- * Copyright (C) 1999-2006 ComPiere, Inc. All Rights Reserved.                *
- * This program is free software; you can redistribute it and/or modify it    *
- * under the terms version 2 of the GNU General Public License as published   *
- * by the Free Software Foundation. This program is distributed in the hope   *
- * that it will be useful, but WITHOUT ANY WARRANTY; without even the implied *
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.           *
- * See the GNU General Public License for more details.                       *
- * You should have received a copy of the GNU General Public License along    *
- * with this program; if not, write to the Free Software Foundation, Inc.,    *
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.                     *
- * For the text or an alternative of this public license, you may reach us    *
- * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
- * or via info@compiere.org or http://www.compiere.org/license.html           *
- *****************************************************************************/
 package org.amerp.webform.amwebui;
 
 import static org.adempiere.webui.ClientInfo.MEDIUM_WIDTH;
@@ -25,6 +9,8 @@ import static org.compiere.model.SystemIDs.COLUMN_C_PERIOD_AD_ORG_ID;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 
@@ -55,6 +41,7 @@ import org.adempiere.webui.event.WTableModelListener;
 import org.adempiere.webui.panel.ADForm;
 import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
+import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.Dialog;
 import org.amerp.webform.amwgrid.AMFAllocation;
@@ -65,25 +52,33 @@ import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
+import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
 import org.compiere.util.TrxRunnable;
 import org.compiere.util.Util;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
+import org.zkoss.zul.Separator;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 
 /**
  * Form to create allocation (C_AllocationHdr and C_AllocationLine).
  *
- * Contributor : Fabian Aguilar - OFBConsulting - Multiallocation
+ * Contributor : Fabian Aguilar - OFBConsulting - Multiallocation 
+ * Luis Amesty: Refactor 
  */
 @org.idempiere.ui.zk.annotation.Form(name = "org.compiere.apps.form.VAllocation")
 public class AMWFAllocation extends AMFAllocation
@@ -102,22 +97,18 @@ public class AMWFAllocation extends AMFAllocation
 			super.dynInit();
 			dynInit();
 			zkInit();
-			calculate();			
+			calculate();	
+			southPanel.appendChild(new Separator());
+			southPanel.appendChild(statusBar);
 		}
 		catch(Exception e)
 		{
 			log.log(Level.SEVERE, "", e);
 		}
-		
-		if (ClientInfo.isMobile()) 
-		{
-			ClientInfo.onClientInfo(form, this::onClientInfo);
-		}
 	}	//	init
 	
 	/** Main layout for {@link #form} */
 	private Borderlayout mainLayout = new Borderlayout();
-	
 	//Parameter
 	/** Parameter panel. North of {@link #mainLayout} */
 	private Panel parameterPanel = new Panel();
@@ -145,14 +136,12 @@ public class AMWFAllocation extends AMFAllocation
 	private WTableDirEditor organizationPick;
 	/** Number of column for {@link #parameterLayout} */
 	private int noOfColumn;
-	
 	/** Center of {@link #mainLayout}. */
 	private Borderlayout infoPanel = new Borderlayout();
 	/** North of {@link #infoPanel} */
 	private Panel paymentPanel = new Panel();
 	/** Center of {@link #infoPanel} */ 
 	private Panel invoicePanel = new Panel();
-	
 	//Invoice 
 	/** Layout of {@link #invoicePanel} */
 	private Borderlayout invoiceLayout = new Borderlayout();
@@ -162,7 +151,6 @@ public class AMWFAllocation extends AMFAllocation
 	private WListbox invoiceTable = ListboxFactory.newDataTable();		
 	/** South of {@link #invoiceLayout} */
 	private Label invoiceInfo = new Label();
-	
 	//Payments	
 	/** Layout of {@link #paymentPanel} */
 	private Borderlayout paymentLayout = new Borderlayout();
@@ -182,9 +170,12 @@ public class AMWFAllocation extends AMFAllocation
 	/** Difference between payment and invoice. Part of {@link #allocationLayout}. */
 	private Textbox differenceField = new Textbox();
 	/** Button to apply allocation. Part of {@link #allocationLayout}. */
+	private Button refreshButton = new Button();
+	private Button cancelButton = new Button();
+	private Button resetButton = new Button();
+	private Button zoomButton = new Button();
+	private Button selectButton = new Button();
 	private Button allocateButton = new Button();
-	/** Button to refresh {@link #paymentTable} and {@link #invoiceTable}. Part of {@link #allocationLayout}. */
-	private Button refreshButton = new Button();	
 	/** Charges. Part of {@link #allocationLayout}. */
 	private WTableDirEditor chargePick = null;
 	private Label DocTypeLabel = new Label();
@@ -193,19 +184,27 @@ public class AMWFAllocation extends AMFAllocation
 	private Label allocCurrencyLabel = new Label();
 	/** Status bar, bottom of {@link #allocationPanel} */
 	private Hlayout statusBar = new Hlayout();	
-	
+	private Panel southPanel = new Panel();
+	private Label processLabel = new Label();
+	private Listbox processListbox = new Listbox();
+	private Label contractLabel = new Label();
+	private Listbox contractListbox = new Listbox();
+	private Label docTypeLabel = new Label();
+	private Listbox docTypeListbox = new Listbox();
+	private Label dateDocLabel = new Label();
+	private WDateEditor dateDocField = new WDateEditor();
+	private Label orgDocLabel = new Label();
+	private WTableDirEditor orgDocPick;
 	/**
 	 *  Layout {@link #form}
 	 *  @throws Exception
 	 */
 	private void zkInit() throws Exception
 	{
-		Div div = new Div();
-		div.setStyle("height: 100%; width: 100%; overflow: auto;");
-		div.appendChild(mainLayout);
-		form.appendChild(div);
+		//
+		form.appendChild(mainLayout);
 		ZKUpdateUtil.setWidth(mainLayout, "100%");
-		mainLayout.setStyle("min-height: 600px");
+		ZKUpdateUtil.setHeight(mainLayout, "100%");
 		
 		dateLabel.setText(Msg.getMsg(Env.getCtx(), "Date"));
 		autoWriteOff.setSelected(false);
@@ -228,40 +227,172 @@ public class AMWFAllocation extends AMFAllocation
 		differenceField.setText("0");
 		differenceField.setReadonly(true);
 		differenceField.setStyle("text-align: right");
+		
+		// Allocate Button
 		allocateButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "Process")));
 		allocateButton.addActionListener(this);
+		allocateButton.setImage(ThemeManager.getThemeResource("images/Process16.png"));
+		// Reset Button
+		resetButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "Reset")));
+		resetButton.setImage(ThemeManager.getThemeResource("images/Reset16.png"));
+		resetButton.addActionListener(this);
+		// Refresh Button
 		refreshButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "Refresh")));
+		refreshButton.setImage(ThemeManager.getThemeResource("images/Refresh16.png"));
 		refreshButton.addActionListener(this);
 		refreshButton.setAutodisable("self");
+		// Select Button
+		selectButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "SelectAll")));
+		selectButton.setImage(ThemeManager.getThemeResource("images/SelectAll16.png"));
+		selectButton.addActionListener(this);
+		selectButton.setAutodisable("self");
+		// ZOOM Button
+		zoomButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "Zoom")));
+		zoomButton.setImage(ThemeManager.getThemeResource("images/Zoom16.png"));
+		zoomButton.addActionListener(this);
+		zoomButton.setAutodisable("self");
+		// Cancel Button
+		cancelButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "Cancel")));
+		cancelButton.setImage(ThemeManager.getThemeResource("images/Cancel16.png"));
+		cancelButton.addActionListener(this);
+		
 		currencyLabel.setText(Msg.translate(Env.getCtx(), "C_Currency_ID"));
 		multiCurrency.setText(Msg.getMsg(Env.getCtx(), "MultiCurrency"));
 		multiCurrency.addActionListener(this);
 		allocCurrencyLabel.setText(".");		
 		organizationLabel.setText(Msg.translate(Env.getCtx(), "AD_Org_ID"));
-		
+		orgDocLabel.setText("Org "+ Msg.translate(Env.getCtx(), "PayrollDocuments"));
+
+		// Payroll Process
+		processLabel.setText(Msg.translate(Env.getCtx(), "AMN_Process_ID"));
+		// Payroll Contract
+		contractLabel.setText(Msg.translate(Env.getCtx(), "AMN_Contract_ID"));
+		// Document Type
+		docTypeLabel.setText(Msg.translate(Env.getCtx(), "C_DocType_ID"));
+		// Document date
+		dateDocLabel.setText(Msg.getElement(Env.getCtx(), "DateDoc")+"(s)");
 		// parameters layout
 		North north = new North();
 		north.setBorder("none");
-		north.setSplittable(true);
-		north.setCollapsible(true);
 		mainLayout.appendChild(north);
 		north.appendChild(parameterPanel);
 		
-		layoutParameterAndSummary();
+		Rows rows = null;
+		Row row = null;
+		ZKUpdateUtil.setWidth(parameterLayout,"80%");
+		rows = parameterLayout.newRows();
 		
+		row = rows.newRow();
+		row.appendChild(dateLabel.rightAlign());
+		row.appendChild(dateField.getComponent());
+		row.appendCellChild(organizationLabel.rightAlign());
+		ZKUpdateUtil.setHflex(organizationPick.getComponent(), "true");
+		row.appendCellChild(organizationPick.getComponent(),1);	
+		
+		row = rows.newRow();
+		row.appendCellChild(bpartnerLabel.rightAlign());
+		ZKUpdateUtil.setHflex(bpartnerSearch.getComponent(), "true");
+		row.appendCellChild(bpartnerSearch.getComponent(),1);
+		bpartnerSearch.showMenu();
+		row.appendCellChild(employeeLabel.rightAlign());
+		ZKUpdateUtil.setHflex(employeeSearch.getComponent(), "true");
+		row.appendCellChild(employeeSearch.getComponent(),1);
+		
+		row = rows.newRow();
+		row.appendCellChild(currencyLabel.rightAlign(),1);
+		ZKUpdateUtil.setHflex(currencyPick.getComponent(), "true");
+		row.appendCellChild(currencyPick.getComponent(),1);		
+		row.appendCellChild(multiCurrency,1);		
+		row.appendCellChild(autoWriteOff,2);
+		row.appendCellChild(new Space(),1);	
+		
+		// PARAMETROS ADICIONALES Payroll
+		row = rows.newRow();
+		// Document Organization
+		row.appendCellChild(orgDocLabel.rightAlign());  
+		ZKUpdateUtil.setHflex(orgDocPick.getComponent(), "true");
+		row.appendCellChild(orgDocPick.getComponent(),1);
+		// Agregar la etiqueta de "process" y el componente "processSearch"
+		row.appendCellChild(processLabel.rightAlign());
+		ZKUpdateUtil.setHflex(processListbox, "true");
+		row.appendCellChild(processListbox, 1);
+		// Agregar la etiqueta de "contract" y el componente "contractSearch"
+		row.appendCellChild(contractLabel.rightAlign());
+		ZKUpdateUtil.setHflex(contractListbox, "true");
+		row.appendCellChild(contractListbox, 1);
+
+		// Crear una nueva fila
+		row = rows.newRow();
+		// docType
+		row.appendCellChild(docTypeLabel.rightAlign());  
+		ZKUpdateUtil.setHflex(docTypeListbox, "true");
+		row.appendCellChild(docTypeListbox, 1);
+		// DateDoc" y el componente "dateDocField"
+		row.appendCellChild(dateDocLabel.rightAlign());
+		ZKUpdateUtil.setHflex(dateDocField.getComponent(), "true");
+		row.appendCellChild(dateDocField.getComponent(), 1);
+		
+		South south = new South();
+		south.setStyle("border: none");
+		mainLayout.appendChild(south);
+		south.appendChild(southPanel);
+		southPanel.appendChild(allocationPanel);
+		allocationPanel.appendChild(allocationLayout);
+		allocationPanel.appendChild(statusBar);
+		
+		rows = allocationLayout.newRows();
+		row = rows.newRow();
+		row.appendCellChild(refreshButton);
+		row.appendCellChild(resetButton);
+		row.appendCellChild(selectButton);
+		row.appendCellChild(zoomButton);
+		
+		row.appendCellChild(differenceLabel.rightAlign());
+		row.appendCellChild(allocCurrencyLabel.rightAlign());
+		//differenceField.setHflex("true");
+		ZKUpdateUtil.setHflex(differenceLabel, "min");
+		row.appendCellChild(differenceField);
+		
+		row = rows.newRow();
+		row.appendCellChild(chargeLabel.rightAlign());
+		//chargePick.getComponent().setHflex("true");
+		ZKUpdateUtil.setHflex(chargePick.getComponent(), "true");
+		row.appendCellChild(chargePick.getComponent(),2);
+		
+
+		row = rows.newRow();
+		row.appendCellChild(DocTypeLabel.rightAlign());
+		chargePick.showMenu();
+		ZKUpdateUtil.setHflex(DocTypePick.getComponent(), "true");
+		row.appendCellChild(DocTypePick.getComponent());
+
+
+		row = rows.newRow();
+		Hbox box = new Hbox();
+		//allocateButton.setHflex("true");
+		ZKUpdateUtil.setHflex(allocateButton, "true");
+		row.appendCellChild(allocateButton);
+		row.appendCellChild(cancelButton);
+
 		// payment layout
 		paymentPanel.appendChild(paymentLayout);
 		ZKUpdateUtil.setWidth(paymentPanel, "100%");
+		ZKUpdateUtil.setHeight(paymentPanel, "100%");
 		ZKUpdateUtil.setWidth(paymentLayout, "100%");
+		ZKUpdateUtil.setHeight(paymentLayout, "100%");
+		paymentLayout.setStyle("border: none");
 		ZKUpdateUtil.setVflex(paymentPanel, "1");
 		ZKUpdateUtil.setVflex(paymentLayout, "1");
 		
 		// invoice layout
 		invoicePanel.appendChild(invoiceLayout);
 		ZKUpdateUtil.setWidth(invoicePanel, "100%");
+		ZKUpdateUtil.setHeight(invoicePanel, "100%");;
 		ZKUpdateUtil.setWidth(invoiceLayout, "100%");
+		ZKUpdateUtil.setHeight(invoiceLayout, "100%");
 		ZKUpdateUtil.setVflex(invoicePanel, "1");
 		ZKUpdateUtil.setVflex(invoiceLayout, "1");
+		invoiceLayout.setStyle("border: none");
 		
 		// payment layout north - label
 		north = new North();
@@ -270,8 +401,9 @@ public class AMWFAllocation extends AMFAllocation
 		north.appendChild(paymentLabel);
 		ZKUpdateUtil.setVflex(paymentLabel, "min");
 		// payment layout south - sum
-		South south = new South();
-		south.setBorder("none");
+		//	South south = new South();
+		south = new South();
+		south.setStyle("border: none");
 		paymentLayout.appendChild(south);
 		south.appendChild(paymentInfo.rightAlign());
 		ZKUpdateUtil.setVflex(paymentInfo, "min");
@@ -280,8 +412,9 @@ public class AMWFAllocation extends AMFAllocation
 		paymentLayout.appendChild(center);
 		center.appendChild(paymentTable);
 		ZKUpdateUtil.setWidth(paymentTable, "100%");
+		//ZKUpdateUtil.setHeight(paymentTable, "100%");
 		ZKUpdateUtil.setVflex(paymentTable, "1");
-		center.setBorder("none");
+		center.setStyle("border: none");
 		
 		// invoice layout north - label
 		north = new North();
@@ -291,7 +424,7 @@ public class AMWFAllocation extends AMFAllocation
 		ZKUpdateUtil.setVflex(invoiceLabel, "min");
 		// invoice layout south - sum
 		south = new South();
-		south.setBorder("none");
+		south.setStyle("border: none");
 		invoiceLayout.appendChild(south);
 		south.appendChild(invoiceInfo.rightAlign());
 		ZKUpdateUtil.setVflex(invoiceInfo, "min");
@@ -312,6 +445,7 @@ public class AMWFAllocation extends AMFAllocation
 		
 		infoPanel.setStyle("border: none");
 		ZKUpdateUtil.setWidth(infoPanel, "100%");
+		ZKUpdateUtil.setHeight(infoPanel, "100%");
 		
 		// north of mainlayout center - payment
 		north = new North();
@@ -325,152 +459,14 @@ public class AMWFAllocation extends AMFAllocation
 
 		// center of mainlayout center - invoice
 		center = new Center();
-		center.setBorder("none");
+		center.setStyle("border: none");
 		infoPanel.appendChild(center);
 		center.appendChild(invoicePanel);
-		center.setAutoscroll(true);
-		infoPanel.setStyle("min-height: 300px;");
+		
+		ZKUpdateUtil.setHflex(invoicePanel, "1");
+		ZKUpdateUtil.setVflex(invoicePanel, "1");
 	}
 
-	/**
-	 * Layout {@link #parameterLayout} and {@link #allocationPanel}.
-	 */
-	protected void layoutParameterAndSummary() {
-		Rows rows = null;
-		Row row = null;
-		
-		setupParameterColumns();
-		
-		rows = parameterLayout.newRows();
-		
-		row = rows.newRow();
-		row.appendChild(dateLabel.rightAlign());
-		row.appendChild(dateField.getComponent());
-		row.appendCellChild(organizationLabel.rightAlign());
-		ZKUpdateUtil.setHflex(organizationPick.getComponent(), "true");
-		row.appendCellChild(organizationPick.getComponent(),1);
-		organizationPick.showMenu();		
-		
-		row = rows.newRow();
-		row.appendCellChild(bpartnerLabel.rightAlign());
-		ZKUpdateUtil.setHflex(bpartnerSearch.getComponent(), "true");
-		row.appendCellChild(bpartnerSearch.getComponent(),1);
-		bpartnerSearch.showMenu();
-		row.appendCellChild(employeeLabel.rightAlign());
-		ZKUpdateUtil.setHflex(employeeSearch.getComponent(), "true");
-		row.appendCellChild(employeeSearch.getComponent(),1);
-		
-		row = rows.newRow();
-		row.appendCellChild(currencyLabel.rightAlign(),1);
-		ZKUpdateUtil.setHflex(currencyPick.getComponent(), "true");
-		row.appendCellChild(currencyPick.getComponent(),1);		
-		currencyPick.showMenu();
-		
-		Hbox cbox = new Hbox();
-		cbox.setWidth("100%");
-		if (noOfColumn == 6)
-			cbox.setPack("center");
-		else
-			cbox.setPack("end");
-		cbox.appendChild(multiCurrency);
-		cbox.appendChild(autoWriteOff);
-		row.appendCellChild(cbox, 2);		
-		if (noOfColumn < 6)		
-			LayoutUtils.compactTo(parameterLayout, noOfColumn);
-		else
-			LayoutUtils.expandTo(parameterLayout, noOfColumn, true);
-		
-		// footer/allocations layout
-		South south = new South();
-		south.setBorder("none");
-		mainLayout.appendChild(south);
-		south.appendChild(allocationPanel);
-		allocationPanel.appendChild(allocationLayout);
-		allocationPanel.appendChild(statusBar);
-		ZKUpdateUtil.setWidth(allocationLayout, "100%");
-		ZKUpdateUtil.setHflex(allocationPanel, "1");
-		ZKUpdateUtil.setVflex(allocationPanel, "min");
-		ZKUpdateUtil.setVflex(allocationLayout, "min");
-		ZKUpdateUtil.setVflex(statusBar, "min");
-		ZKUpdateUtil.setVflex(south, "min");
-		rows = allocationLayout.newRows();
-		row = rows.newRow();
-		if (maxWidth(SMALL_WIDTH-1))
-		{
-			Hbox box = new Hbox();
-			box.setWidth("100%");
-			box.setPack("end");
-			box.appendChild(differenceLabel.rightAlign());
-			box.appendChild(allocCurrencyLabel.rightAlign());
-			row.appendCellChild(box);
-		}
-		else
-		{
-			Hlayout box = new Hlayout();
-			box.setStyle("float: right");
-			box.appendChild(differenceLabel.rightAlign());
-			box.appendChild(allocCurrencyLabel.rightAlign());
-			row.appendCellChild(box);
-		}
-		ZKUpdateUtil.setHflex(differenceField, "true");
-		row.appendCellChild(differenceField);
-		if (maxWidth(SMALL_WIDTH-1))
-			row = rows.newRow();
-		row.appendCellChild(chargeLabel.rightAlign());
-		ZKUpdateUtil.setHflex(chargePick.getComponent(), "true");
-		row.appendCellChild(chargePick.getComponent());
-		if (maxWidth(SMALL_WIDTH-1))
-			row = rows.newRow();
-		row.appendCellChild(DocTypeLabel.rightAlign());
-		chargePick.showMenu();
-		ZKUpdateUtil.setHflex(DocTypePick.getComponent(), "true");
-		row.appendCellChild(DocTypePick.getComponent());
-		DocTypePick.showMenu();
-		if (maxWidth(SMALL_WIDTH-1))
-		{
-			row = rows.newRow();
-			Hbox box = new Hbox();
-			box.setWidth("100%");
-			box.setPack("end");
-			box.appendChild(allocateButton);
-			box.appendChild(refreshButton);
-			row.appendCellChild(box, 2);
-		}
-		else
-		{
-			Hbox box = new Hbox();
-			box.setPack("end");
-			box.appendChild(allocateButton);
-			box.appendChild(refreshButton);
-			ZKUpdateUtil.setHflex(box, "1");
-			row.appendCellChild(box, 2);
-		}
-	}
-
-	/**
-	 * Setup columns for {@link #parameterLayout}.
-	 */
-	protected void setupParameterColumns() {
-		noOfColumn = 6;
-		if (maxWidth(MEDIUM_WIDTH-1))
-		{
-			if (maxWidth(SMALL_WIDTH-1))
-				noOfColumn = 2;
-			else
-				noOfColumn = 4;
-		}
-		if (noOfColumn == 2)
-		{
-			Columns columns = new Columns();
-			Column column = new Column();
-			column.setWidth("35%");
-			columns.appendChild(column);
-			column = new Column();
-			column.setWidth("65%");
-			columns.appendChild(column);
-			parameterLayout.appendChild(columns);
-		}
-	}
 
 	/**
 	 *  Dynamic Init (prepare dynamic fields)
@@ -530,7 +526,190 @@ public class AMWFAllocation extends AMFAllocation
 		MLookup lookupDocType = MLookupFactory.get (Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.TableDir);
 		DocTypePick = new WTableDirEditor("C_DocType_ID", false, false, true, lookupDocType);
 		DocTypePick.setValue(getC_DocType_ID());
-		DocTypePick.addValueChangeListener(this);			
+		DocTypePick.addValueChangeListener(this);		
+		
+		// Organization for Documents filter selection
+		AD_Column_ID = COLUMN_C_PERIOD_AD_ORG_ID; //C_Period.AD_Org_ID (needed to allow org 0)
+		MLookup lookupDocOrg = MLookupFactory.get(Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID, DisplayType.TableDir);
+		orgDocPick = new WTableDirEditor("AD_Org_ID_Doc", true, false, true, lookupOrg);
+		m_docAD_Org_ID = 0;
+		orgDocPick.setValue(m_docAD_Org_ID);
+		orgDocPick.addValueChangeListener(this);
+		
+		// DateDoc
+		Timestamp lastDayOfMonth = null;
+		cal = Calendar.getInstance();
+		Date ctxDate = Env.getContextAsDate(Env.getCtx(), "#Date");
+
+		if (ctxDate != null) {
+		    cal.setTime(ctxDate);
+		    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		} else {
+		    cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		}
+
+		lastDayOfMonth = new Timestamp(cal.getTimeInMillis());
+		dateDocField.setValue(lastDayOfMonth);
+		dateDocField.addValueChangeListener(this);
+		m_DateDoc = lastDayOfMonth;
+		
+		// Payroll Process
+		Integer defaultProcessID = getDefaultAMNProcessID(); // Tu método para obtener el valor inicial
+		List<KeyNamePair> validProcesses = getValidProcesses();
+
+		if (!validProcesses.isEmpty()) {
+		    processListbox = new Listbox();
+		    processListbox.setMold("select"); // Combo desplegable
+
+		    // Agregar elemento vacío
+		    Listitem blankItem = new Listitem();
+		    blankItem.setValue(null);
+		    blankItem.appendChild(new Listcell(""));
+		    processListbox.appendChild(blankItem);
+
+		    int indexToSelect = 0; // Por defecto, seleccionar el elemento en blanco
+
+		    for (int i = 0; i < validProcesses.size(); i++) {
+		        KeyNamePair pair = validProcesses.get(i);
+		        Listitem item = new Listitem();
+		        item.setValue(pair.getKey());  // AMN_Process_ID
+		        item.appendChild(new Listcell(pair.getName()));
+		        processListbox.appendChild(item);
+
+		        // Verifica si este es el proceso por defecto
+		        if (pair.getKey() == defaultProcessID) {
+		            indexToSelect = i + 1; // +1 porque el índice 0 es el item en blanco
+		        }
+		    }
+
+		    processListbox.setSelectedIndex(indexToSelect); // Seleccionar el proceso por defecto
+		    Events.postEvent("onSelect", processListbox, null);
+
+		    processListbox.addEventListener("onSelect", new EventListener<Event>() {
+		        @Override
+		        public void onEvent(Event event) throws Exception {
+		            Listitem selectedItem = processListbox.getSelectedItem();
+		            Integer selectedProcessID = selectedItem != null ? (Integer) selectedItem.getValue() : null;
+
+		            if (selectedProcessID != null) {
+		            	m_AMN_Process_ID = selectedProcessID;   
+		            } else {
+		            	m_AMN_Process_ID = 0;
+		            }
+		            refresh();
+		        }
+		    });
+		} else {
+		    log.warning("No se encontraron procesos válidos.");
+		}
+
+		// Payroll Contract
+		// Obtener el rol del usuario actual desde el contexto
+		int roleID = Env.getAD_Role_ID(Env.getCtx());
+		
+		Integer defaultContractID = getFirstActiveContractID(roleID); // Si tienes uno por defecto
+		List<KeyNamePair> validContracts = getValidContracts(roleID);  // Lista de Contratos Valido
+
+		if (!validContracts.isEmpty()) {
+		    contractListbox = new Listbox();
+		    contractListbox.setMold("select");  // Combo desplegable
+
+		    // Elemento vacío al inicio
+		    Listitem blankItem = new Listitem();
+		    blankItem.setValue(null);
+		    blankItem.appendChild(new Listcell(""));
+		    contractListbox.appendChild(blankItem);
+
+		    int indexToSelect = 0;  // Por defecto, ítem en blanco
+		    
+		    for (int i = 0; i < validContracts.size(); i++) {
+		        KeyNamePair pair = validContracts.get(i);
+		        Listitem item = new Listitem();
+		        item.setValue(pair.getKey());  // ID
+		        item.appendChild(new Listcell(pair.getName()));  // Nombre del contrato
+		        contractListbox.appendChild(item);
+
+		        // Selección automática si coincide con valor por defecto
+		        if (pair.getKey() == defaultContractID) {
+		            indexToSelect = i + 1; // +1 por el ítem en blanco
+		        }
+		    }
+
+		    contractListbox.setSelectedIndex(indexToSelect);
+		    Events.postEvent("onSelect", contractListbox, null);
+		    
+		    contractListbox.addEventListener("onSelect", new EventListener<Event>() {
+		        @Override
+		        public void onEvent(Event event) throws Exception {
+		            Listitem selectedItem = contractListbox.getSelectedItem();
+		            Integer selectedContractID = selectedItem != null ? (Integer) selectedItem.getValue() : null;
+
+		            if (selectedContractID != null) {
+		            	m_AMN_Contract_ID = selectedContractID;
+		            } else {
+		            	m_AMN_Contract_ID = 0;
+		            }
+		            refresh();
+		        }
+		    });
+		} else {
+		    log.warning("No se encontraron contratos válidos.");
+		}
+
+
+		// Payroll Document Type
+		// Obtener los tipos de documento válidos
+		List<Integer> validDocTypeIDs = getValidDocTypeIDs();
+
+		// Si hay tipos de documento válidos
+		if (!validDocTypeIDs.isEmpty()) {
+		    // Crear un Listbox y convertirlo en un combo desplegable
+		    docTypeListbox = new Listbox();
+		    docTypeListbox.setMold("select");  // Esto hace que el Listbox se comporte como un combo desplegable
+
+		    // Primer item en blanco para permitir que se pueda dejar en blanco
+		    Listitem blankItem = new Listitem();
+		    blankItem.setValue(null);  // Valor vacío
+		    blankItem.appendChild(new Listcell(""));  // Texto vacío para el primer item
+		    docTypeListbox.appendChild(blankItem);
+
+		    // Iterar sobre los tipos de documento válidos y agregar el nombre
+		    for (Integer docTypeID : validDocTypeIDs) {
+		        // Obtener el nombre del tipo de documento
+		        String docTypeName = getDocTypeName(docTypeID);  // Método que obtiene el nombre
+
+		        Listitem item = new Listitem();
+		        item.setValue(docTypeID);  // Valor de cada item (ID)
+		        item.appendChild(new Listcell(docTypeName));  // Mostrar el nombre en el Listcell
+		        docTypeListbox.appendChild(item);  // Agregar el item al Listbox
+		    }
+
+		    // Establecer el valor por defecto (puedes personalizar esto)
+		    docTypeListbox.setSelectedIndex(0);  // Asignar el primer valor como selección por defecto
+		    Events.postEvent("onSelect", docTypeListbox, null);
+
+		    // Agregar el listener para cambios de valor
+		    docTypeListbox.addEventListener("onSelect", new EventListener<Event>() {
+		        @Override
+		        public void onEvent(Event event) throws Exception {
+		            // Obtener el valor seleccionado
+		            Listitem selectedItem = docTypeListbox.getSelectedItem();
+		            Integer selectedDocTypeID = selectedItem != null ? (Integer) selectedItem.getValue() : null;
+
+		            // Realizar acciones con el valor seleccionado
+		            if (selectedDocTypeID != null) {
+		            	m_C_DocType_ID = selectedDocTypeID;
+		            } else {
+		            	m_C_DocType_ID = 0;
+		            }
+		            refresh();
+		        }
+		    });
+		} else {
+		    // Si no hay tipos válidos, puedes manejarlo como un error o mostrar un mensaje
+			log.warning("No se encontraron tipos de documento válidos.");
+		}
+
 	}   //  dynInit
 	
 	/**
@@ -559,7 +738,7 @@ public class AMWFAllocation extends AMFAllocation
 						mainLayout.getSouth().detach();
 					if (allocationLayout.getRows() != null)
 						allocationLayout.getRows().detach();
-					layoutParameterAndSummary();
+	
 					form.invalidate();
 				}
 			}
@@ -588,6 +767,33 @@ public class AMWFAllocation extends AMFAllocation
 				DocumentLink link = new DocumentLink(Msg.getElement(Env.getCtx(), MAllocationHdr.COLUMNNAME_C_AllocationHdr_ID) + ": " + allocation.getDocumentNo(), allocation.get_Table_ID(), allocation.get_ID());				
 				statusBar.appendChild(link);
 			}					
+		}
+		//	Reset Button
+		else if (e.getTarget().equals(resetButton))
+		{
+			statusBar.getChildren().clear();
+			invoiceTable.clear();
+			paymentTable.clear();
+			chargePick.setValue(null);
+			parameterPanel.setFocus(true);
+		}
+		//	Select/Deselect
+		else if (e.getTarget().equals(selectButton))
+		{
+			if (this.m_SelectStatus) {
+				m_SelectStatus = false;
+				invoiceSetResetSelection( invoiceTable,  autoWriteOff.isSelected(), false, m_SelectStatus);
+				selectButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "SelectAll")));
+				selectButton.setImage(ThemeManager.getThemeResource("images/SelectAll16.png"));
+				log.warning("Select/Deselect pressed -------"+m_SelectStatus);
+			} else {
+				m_SelectStatus = true;
+				selectButton.setLabel(Util.cleanAmp(Msg.getMsg(Env.getCtx(), "DeSelectAll")));
+				selectButton.setImage(ThemeManager.getThemeResource("images/DeSelectAll16.png"));
+				log.warning("Select/Deselect pressed -------"+m_SelectStatus);
+			}
+			// Execute St/Reset
+			invoiceSetResetSelection( invoiceTable,  autoWriteOff.isSelected(), multiCurrency.isSelected(), m_SelectStatus);
 		}
 		else if (e.getTarget().equals(refreshButton))
 		{
@@ -641,11 +847,13 @@ public class AMWFAllocation extends AMFAllocation
 	{
 		String name = e.getPropertyName();
 		Object value = e.getNewValue();
+		Object source = e.getSource();
 		if (log.isLoggable(Level.CONFIG)) log.config(name + "=" + value);
 		if (value == null &&
-			   !(name.equals("C_Charge_ID") || name.equals("C_Activity_ID") || name.equals("C_Project_ID") ||
-			     name.equals("AMN_Employee_ID") || name.equals("C_BPartner_ID")))
-				return;
+				   !(name.equals("C_Charge_ID") || name.equals("C_Activity_ID") || name.equals("C_Project_ID") ||
+				     name.equals("AMN_Employee_ID") || name.equals("C_BPartner_ID") || name.equals("Date") ||
+				     name.equals("AMN_Process_ID") || name.equals("AMN_Contract_ID") || name.equals("C_DocType_ID")))
+					return;
 		
 		// Organization
 		if (name.equals("AD_Org_ID"))
@@ -700,7 +908,39 @@ public class AMWFAllocation extends AMFAllocation
 		}
 		//	Date for Multi-Currency
 		else if (name.equals("Date") && multiCurrency.isSelected())
+		{
 			loadBPartner();
+		}
+		//  Payroll Process
+		else if (e.getSource().equals(processListbox))
+		{
+				log.warning("Cambio Proceso....");
+		}
+		//  Payroll Contract
+		else if (e.getSource().equals(contractListbox))
+		{
+			log.warning("Cambio Contrato....");
+		}
+		//  Document Type
+		else if (e.getSource().equals(docTypeListbox))
+		{
+			log.warning("Cambio Tipo de Documento....");
+		}
+		// DateDoc
+		else if (name.equals("Date"))
+		{
+			if (source == dateField) {
+		        // Acción para dateField
+				m_Date = dateDocField.getValue();
+				log.warning("Cambio Date Doc ...."+m_Date);
+		    } else if (source == dateDocField) {
+		        // Acción para dateDocField
+		    	m_DateDoc = dateDocField.getValue();
+				log.warning("Cambio Date Doc ...."+m_DateDoc);
+		    }
+			loadBPartner();
+			setAllocateButton();
+		}
 	}   //  vetoableChange
 	
 	/**
@@ -795,6 +1035,30 @@ public class AMWFAllocation extends AMFAllocation
 		setAllocateButton();
 	}
 
+	private void refresh ()
+	{
+		
+		// Mantener los valores actuales de las variables antes de refrescar
+	    m_C_BPartner_ID = (bpartnerSearch.getValue() != null) ? ((Integer)bpartnerSearch.getValue()).intValue() : 0;
+	    m_AMN_Employee_ID = (employeeSearch.getValue() != null) ? ((Integer)employeeSearch.getValue()).intValue() : 0;
+	    // Obtener IDs seleccionados en los listboxes
+	    Listitem selectedProcessItem = processListbox.getSelectedItem();
+	    Integer selectedProcessID = selectedProcessItem != null ? (Integer) selectedProcessItem.getValue() : null;
+	    m_AMN_Process_ID =  (selectedProcessID != null) ? (Integer) selectedProcessID : 0;
+	    // AMN_Contract
+	    Listitem selectedContractItem = contractListbox.getSelectedItem();
+	    Integer selectedContractID = selectedContractItem != null ? (Integer) selectedContractItem.getValue() : null;
+	    m_AMN_Contract_ID = (selectedContractID != null) ? (Integer) selectedContractID : 0;
+	    // C_DocType
+	    Listitem selectedDocTypeItem = docTypeListbox.getSelectedItem();
+	    Integer selectedDocTypeID = selectedDocTypeItem != null ? (Integer) selectedDocTypeItem.getValue() : null;
+	    m_C_DocType_ID = selectedDocTypeID != null ? selectedDocTypeID : 0;
+	    m_DateDoc = dateDocField.getValue();
+	    // Refrescar las tablas y demás elementos
+		loadBPartner();
+		
+	}
+	
 	/**
 	 * Save Data to C_AllocationHdr and C_AllocationLine.
 	 */

@@ -9,6 +9,8 @@ encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialB
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceTwoDates_TreeOrg/TrialBalanceTwoDates_TreeOrg.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyBiometricPersonnelAttendance/DailyBiometricPersonnelAttendance.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyPersonnelPayrollAttendance/DailyPersonnelPayrollAttendance.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollAccounting/PayrollAccounting.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollAccountingCheck/PayrollAccountingCheck.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollCommission/PayrollCommission.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/Employees.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollEmployee/EmployeesAniversary.jrxml=UTF-8
@@ -47,5 +49,6 @@ encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollReceiptPO/PayrollReceiptPO.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollSocialSecurity/PayrollSocialSecurity.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollVacation/PayrollVacation.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollWorkForce/PayrollWorkForce.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PersonnelPayrollAttendance/PersonnelPayrollAttendance.jrxml=UTF-8
 encoding/<project>=UTF-8
