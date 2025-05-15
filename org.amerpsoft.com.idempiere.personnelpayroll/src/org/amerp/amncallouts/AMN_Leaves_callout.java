@@ -9,9 +9,11 @@ import java.util.GregorianCalendar;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
+import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Leaves;
 import org.amerp.amnmodel.MAMN_Leaves_Types;
 import org.amerp.amnmodel.MAMN_NonBusinessDay;
+import org.amerp.amnmodel.MAMN_Shift;
 import org.amerp.workflow.amwmodel.MAMW_WF_Node;
 import org.amerp.workflow.amwmodel.MAMW_WorkFlow;
 import org.compiere.model.GridField;
@@ -23,10 +25,13 @@ import org.compiere.util.Msg;
 public class AMN_Leaves_callout  implements IColumnCallout {
 
 	int AMN_Leaves_ID=0;
+	int AMN_Employeee_ID=0;
+	int AMN_Shift_ID = 0;
 	int AMN_Leaves_Types_ID=0;
 	int AD_Client_ID =0;
 	int AD_Org_ID=0;
 	BigDecimal DaysTo = BigDecimal.ZERO;
+	BigDecimal HoursDay = BigDecimal.ZERO;
 	String DocStatus = "";
 	String lNote="";
 	int AMW_WorkFlow_ID=0;
@@ -34,6 +39,7 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 	MAMW_WF_Node amwf = null;
 	Timestamp AMNLeavesStartDate;
 	Timestamp AMNLeavesEndDate;
+	String DaysMode = "";
 	
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	@Override
@@ -44,22 +50,56 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 		String columnName = mField.getColumnName();
 		AD_Client_ID = (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AD_Client_ID);
 		AD_Org_ID = (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AD_Org_ID);
+		AMN_Employeee_ID=0;
+		MAMN_Employee amnemployee = null;
+		MAMN_Shift shift = new MAMN_Shift();
+		AMN_Shift_ID = shift.sqlGetDefaultAMN_Shift_ID(AD_Client_ID);
+		// OJO Buscar dealle 
+   		boolean isSaturdayBusinessDay = false;
 		boolean overrideCalc = (boolean) mTab.getValue(MAMN_Leaves.COLUMNNAME_IsOverrideCalc);
-		
+		// GLOBAL Leaves_types DaysMode VARS
+		if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID)  != null ) {
+			// Set Default Days 
+			AMN_Leaves_Types_ID =  (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID) ;
+			MAMN_Leaves_Types leavetype = new MAMN_Leaves_Types(Env.getCtx(), AMN_Leaves_Types_ID, null);
+			DaysMode = leavetype.getDaysMode();
+		}
+		// Employee - Shift
+		if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Employee_ID)  != null ) {
+			AMN_Employeee_ID =  (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Employee_ID) ;
+			amnemployee = new MAMN_Employee(ctx, AMN_Employeee_ID, null);
+			if (amnemployee != null) {
+				AMN_Shift_ID = amnemployee.getAMN_Shift_ID();
+				isSaturdayBusinessDay = shift.isSaturdayBusinessDay(AMN_Shift_ID);
+			}
+		}
 		// AMN_Leaves_Types_ID
 		if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID)) {
 			if (mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID)  != null ) {
 				// Set Default Days 
 				AMN_Leaves_Types_ID =  (int) mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID) ;
 				MAMN_Leaves_Types leavetype = new MAMN_Leaves_Types(Env.getCtx(), AMN_Leaves_Types_ID, null);
+				DaysMode = leavetype.getDaysMode();
+				// DateTo
 				if (leavetype.getDefaultDays()!=null && leavetype.getDefaultDays().compareTo(BigDecimal.ZERO) > 0 ) {
 					DaysTo = (BigDecimal) leavetype.getDefaultDays();
 					mTab.setValue(MAMN_Leaves.COLUMNNAME_DaysTo, DaysTo);
 					AMNLeavesStartDate = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom);
 					if (AMNLeavesStartDate != null) {
-						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+						if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+							DaysTo = DaysTo.subtract(BigDecimal.ONE);
+						if (DaysMode.compareToIgnoreCase("B")==0) {
+							AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+						} else {
+							AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+						}
 						mTab.setValue(MAMN_Leaves.COLUMNNAME_DateTo,AMNLeavesEndDate);
 					}
+				}
+				// HoursDay
+				if (leavetype.getHoursDay()!=null && leavetype.getHoursDay().compareTo(BigDecimal.ZERO) > 0 ) {
+					HoursDay = (BigDecimal) leavetype.getHoursDay();
+					mTab.setValue(MAMN_Leaves.COLUMNNAME_HoursDay, HoursDay);
 				}
 			}
 		}
@@ -95,7 +135,19 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 				DaysTo = (BigDecimal) mTab.getValue(MAMN_Leaves.COLUMNNAME_DaysTo);
 				// Get Next Business Day
 				if (AMNLeavesStartDate != null) {
-					AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+					if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+						DaysTo = DaysTo.subtract(BigDecimal.ONE);
+					if (DaysMode.compareToIgnoreCase("B")==0) {
+						// Verify if Businessday
+						if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID() )) {
+					            // Lanza un mensaje de error y detiene el proceso
+					            throw new IllegalArgumentException(Msg.translate(ctx, "DateFrom") + 
+					            		 " - "+ AMNLeavesStartDate+ " - "+ Msg.getMsg(ctx, "NonBusinessDay"));
+					    }
+						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+					} else {
+						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+					}
 					mTab.setValue(MAMN_Leaves.COLUMNNAME_DateTo,AMNLeavesEndDate);
 				}
 			}
@@ -107,26 +159,45 @@ public class AMN_Leaves_callout  implements IColumnCallout {
 					!overrideCalc) {
 				AMNLeavesStartDate = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom);
 				AMNLeavesEndDate   = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateTo);
-				BigDecimal DTLeave =MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(AMNLeavesStartDate, AMNLeavesEndDate, AD_Client_ID, AD_Org_ID);
+				BigDecimal DTLeave = BigDecimal.ZERO;
+				if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+					DaysTo = DaysTo.subtract(BigDecimal.ONE);
+				if (DaysMode.compareToIgnoreCase("B")==0) {
+					// Verify if Businessday
+					if (!MAMN_NonBusinessDay.isBusinessDay(isSaturdayBusinessDay, AMNLeavesEndDate, amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID() )) {
+				            // Lanza un mensaje de error y detiene el proceso
+				            throw new IllegalArgumentException(Msg.translate(ctx, "DateTo") + 
+				                " - "+ AMNLeavesEndDate+ " - "+ Msg.getMsg(ctx, "NonBusinessDay"));
+				    }
+					DTLeave =MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(isSaturdayBusinessDay, AMNLeavesStartDate, AMNLeavesEndDate, AD_Client_ID, AD_Org_ID);
+				} else  {
+					DTLeave =MAMN_NonBusinessDay.getDaysBetween(AMNLeavesStartDate, AMNLeavesEndDate);
+				}
 				mTab.setValue(MAMN_Leaves.COLUMNNAME_DaysTo,DTLeave);
 			}
 		}
 		// DaysTo
 		if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DaysTo) ) {
 			if (mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom) != null &&
-					mTab.getValue(MAMN_Leaves.COLUMNNAME_DaysTo) != null &&
+					mTab.getValue(MAMN_Leaves.COLUMNNAME_AMN_Leaves_Types_ID) != null &&
 					!overrideCalc) {
 				AMNLeavesStartDate = (Timestamp) mTab.getValue(MAMN_Leaves.COLUMNNAME_DateFrom);
 				DaysTo = (BigDecimal) mTab.getValue(MAMN_Leaves.COLUMNNAME_DaysTo);
 				// Get Next Business Day
 				if (AMNLeavesStartDate != null) {
-					AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+					if (DaysTo.compareTo(BigDecimal.ZERO)>0)
+						DaysTo = DaysTo.subtract(BigDecimal.ONE);
+					if (DaysMode.compareToIgnoreCase("B")==0) {
+						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextBusinessDay(isSaturdayBusinessDay, AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+					} else {
+						AMNLeavesEndDate = MAMN_NonBusinessDay.getNextCalendarDay(AMNLeavesStartDate, DaysTo, AD_Client_ID, AD_Org_ID);
+					}
 					mTab.setValue(MAMN_Leaves.COLUMNNAME_DateTo,AMNLeavesEndDate);
 				}
 			}
 		}
-	    return null;
-    
+	    
+		return null;
 	    
 	}
 

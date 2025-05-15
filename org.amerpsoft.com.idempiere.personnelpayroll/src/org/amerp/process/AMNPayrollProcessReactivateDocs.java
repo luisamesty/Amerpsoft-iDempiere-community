@@ -173,7 +173,7 @@ public class AMNPayrollProcessReactivateDocs extends SvrProcess {
 				trxName = get_TrxName();
 				MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), Receipt.getAMN_Payroll_ID(), trxName);
 				// 
-				Msg_Value = reactivateAMN_Payroll(getCtx(), amnpayroll, amnprocess, trxName);
+				Msg_Value = amnpayroll.reactivateAMN_Payroll(getCtx(), amnpayroll, amnprocess, trxName);
 				Receipt.setError(Msg_Value);
 			}
 	    }
@@ -198,68 +198,4 @@ public class AMNPayrollProcessReactivateDocs extends SvrProcess {
 	    }
     }
 
-
-	/**
-     * reactivateAMN_Payroll
-     * Tractivate AMN_Payroll and C_Invoice if apply
-     * @param ctx
-     * @param amnpayroll
-     * @param amnprocess
-     * @param trxName
-     * @return
-     */
-    private String reactivateAMN_Payroll(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String trxName) {
-    
-      	int C_Invoice_ID = 0;
-    	MInvoice invoice = null;
-    	String P_Msg_Value="";
-    	C_Invoice_ID = amnpayroll.getC_Invoice_ID();
-		addLog(amnpayroll.getSummary());
-		// Verify if it is Document Controlled
-		if (amnprocess.isDocControlled()) {
-			// Find Invoice and Reactivate it
-			if(C_Invoice_ID != 0) {
-				invoice = MInvoice.get(getCtx(),C_Invoice_ID);
-				if (invoice == null) {
-					C_Invoice_ID = 0;
-					invoice = new MInvoice(getCtx(), C_Invoice_ID, trxName);
-				}
-			} else {
-				invoice = new MInvoice(getCtx(), C_Invoice_ID, trxName);
-			}
-			// Reactivate Invoice
-			if (invoice.getDocStatus().equalsIgnoreCase(MInvoice.STATUS_Completed)) {
-				String AllocPay = amnpayroll.C_AllocationLine_C_Payment(C_Invoice_ID, trxName);
-				if (AllocPay.compareToIgnoreCase("OK")==0) {
-					okinvoice = amnpayroll.reActivateCInvoice(invoice,  trxName);
-				} else {
-					Msg_Value=" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  \r\n"+ AllocPay;
-					okinvoice=false;
-				}
-				if (!okinvoice)
-				{
-					Msg_Value=Msg_Value+" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
-							Msg.getElement(Env.getCtx(),"C_Invoice_ID")+":"+invoice.getDocumentNo()+" \r\n";
-				}
-			} else {
-				okinvoice= true;
-			}
-		}
-		// Verify Payroll Status
-		if (okinvoice && amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
-		{
-			// Reactivate AMN_Payroll
-			ok = amnpayroll.reActivateIt();
-			amnpayroll.saveEx();
-			if (!ok)
-			{
-				//Msg_Value=Msg_Value+" ** ERROR PROCESSING **  Payroll:"+AMN_Payroll_Name+" \r\n";
-				Msg_Value=Msg_Value+" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
-						Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+":"+AMN_Payroll_Name+" \r\n";
-			}
-		}
-    	
-    	return P_Msg_Value;
-    	
-    }
 }

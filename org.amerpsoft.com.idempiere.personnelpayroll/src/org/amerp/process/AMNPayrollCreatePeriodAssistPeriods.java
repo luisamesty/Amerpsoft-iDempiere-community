@@ -126,7 +126,7 @@ public class AMNPayrollCreatePeriodAssistPeriods extends SvrProcess
 			MPeriod mperiod = new MPeriod(getCtx(), p_C_Period_ID, null);
 			p_AD_Client_ID=mperiod.getAD_Client_ID();
 			// Verify if Not a Non Busineess Day
-			Boolean IsNonBusinessDay = false;
+			boolean IsNonBusinessDay = false;
 			String NonLaborText= "";
 			if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY  && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
 				IsNonBusinessDay =false;
@@ -135,7 +135,7 @@ public class AMNPayrollCreatePeriodAssistPeriods extends SvrProcess
 				NonLaborText="** No Labor **";
 			}
 			Double HOLLIDAYS = 0.00;
-			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(PeriodCurrentDate, PeriodCurrentDate, p_AD_Client_ID, p_AD_Org_ID).doubleValue();
+			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(IsNonBusinessDay, PeriodCurrentDate, PeriodCurrentDate, p_AD_Client_ID, p_AD_Org_ID).doubleValue();
 			if (!HOLLIDAYS.equals((Double) 0.00)){
 				IsNonBusinessDay = true;
 				NonLaborText="** Holliday - No Labor **";

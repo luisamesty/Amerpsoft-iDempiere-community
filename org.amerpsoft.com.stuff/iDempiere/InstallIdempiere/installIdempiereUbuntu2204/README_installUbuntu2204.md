@@ -179,8 +179,8 @@ On PostgreSQL Command lines:
 -- DROP IF NECESSARY ONLY
 # DROP DATABASE "idempiereSeed11";
 # CREATE DATABASE "idempiereSeed11"
-  WITH OWNER = adempiere  ENCODING = 'UTF8' TABLESPACE = pg\_default  CONNECTION LIMIT = -1;
-# ALTER DATABASE "idempiereSeed11"     SET search\_path TO adempiere;
+  WITH OWNER = adempiere  ENCODING = 'UTF8' TABLESPACE = pg_default  CONNECTION LIMIT = -1;
+# ALTER DATABASE "idempiereSeed11"     SET search_path TO adempiere;
 ```
 
 Restore from Seed or Production Backup, execute ON LINUX:

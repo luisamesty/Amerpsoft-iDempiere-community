@@ -1,0 +1,10 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT WebForms,10,ET,AMERP,,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WebForms,1000,MSG,,,,,,,,,ALL,,,,,,,,,,,,EmployeePayments,,,,,,,
+*,AMERPSOFT WebForms,1010,MSG,,,,,,,,,ALL,,,,,,,,,,,,PayrollDocument,,,,,,,
+*,AMERPSOFT WebForms,1020,MSG,,,,,,,,,ALL,,,,,,,,,,,,PayrollDocuments,,,,,,,
+*,AMERPSOFT WebForms,2000,X,,,,,,,,,ALL,,,,Payment Allocation Payroll 2BP,,,,,,,,,,,,,,,
+*,AMERPSOFT WebForms,2010,X,,,,,,,,,ALL,,,,Payment Allocation Payroll,,,,,,,,,,,,,,,
+*,AMERPSOFT WebForms,4000,M,,Payment Allocation Payroll,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WebForms,4010,M,,Payment Allocation Payroll 2BP,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT WebForms,4020,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='5830137c-b607-40ca-8f06-2a2e7ce65986';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,

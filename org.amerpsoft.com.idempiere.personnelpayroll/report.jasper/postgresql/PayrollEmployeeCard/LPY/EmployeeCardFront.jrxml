@@ -13,6 +13,8 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<parameter name="NAME_IDCARD" class="java.lang.String"/>
+	<parameter name="departament" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[-- EmployeeFile
 -- Employee file
@@ -151,7 +153,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" size="20" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nombre_tarjeta}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{NAME_IDCARD}!= null ? $P{NAME_IDCARD}.trim() : $F{nombre_tarjeta}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="67" width="132" height="28" forecolor="#000065" uuid="2890cdb6-5fcf-4e66-a36b-c6b5424f7764">
@@ -168,7 +170,7 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{departament} != null ? $P{departament}.trim() : $F{departamento}.trim()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

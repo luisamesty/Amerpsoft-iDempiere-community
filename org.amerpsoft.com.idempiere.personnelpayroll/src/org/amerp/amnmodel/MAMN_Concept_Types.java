@@ -15,6 +15,8 @@ package org.amerp.amnmodel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -30,12 +32,12 @@ public class MAMN_Concept_Types extends X_AMN_Concept_Types {
 
 	public MAMN_Concept_Types(Properties ctx, int AMN_Concept_Types_ID, String trxName) {
 		super(ctx, AMN_Concept_Types_ID, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	public MAMN_Concept_Types(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	/**
@@ -158,11 +160,12 @@ public class MAMN_Concept_Types extends X_AMN_Concept_Types {
 		}
 		// UPDATES RECORDS
 		if (!newRecord ){
-			//log.warning("AMN_Concept_Types_ID="+this.getAMN_Concept_Types_ID());
+			// log.warning("AMN_Concept_Types_ID="+getAMN_Concept_Types_ID());
+			MAMN_Concept_Types act = new MAMN_Concept_Types(getCtx(), getAMN_Concept_Types_ID(), get_TrxName());
 			// UPDATE ALL AMNConcept_Types_pro
-	    	this.updateALL_AMNConcept_Types_Proc(this.getAMN_Concept_Types_ID());
+	    	updateALL_AMNConcept_Types_Proc(act);
 	    	// UPDATE ALL AMN_Concept_Types_contract
-	    	this.updateALL_AMNConcept_Types_Contract(this.getAMN_Concept_Types_ID());
+	    	updateALL_AMNConcept_Types_Contract(act);
 		}
 		return success;
 	}	//	afterSave
@@ -172,97 +175,103 @@ public class MAMN_Concept_Types extends X_AMN_Concept_Types {
      * @param p_AMNConcept_Types_ID
      * @return
      */
-    public int updateALL_AMNConcept_Types_Proc(int p_AMNConcept_Types_ID) {
+    public int updateALL_AMNConcept_Types_Proc(MAMN_Concept_Types act) {
 		
-		MAMN_Concept_Types act = new MAMN_Concept_Types(Env.getCtx(), p_AMNConcept_Types_ID, null);
-		
-    	String sql;
-		int AMN_Concept_Type_Proc_ID = 0;
-		int AMN_Process_ID = 0;
-		int no=0;
-		// AMN_Location
-    	sql = "select amn_concept_types_proc_id, amn_process_id "+
-    			"from adempiere.amn_concept_types_proc "+
-    			"WHERE amn_concept_types_id = ? ";
-    	//log.warning("... amn_concept_types_proc_id sql="+sql);
-    	PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
-            pstmt.setInt(1, p_AMNConcept_Types_ID);
-			rs = pstmt.executeQuery();
-			while (rs.next())
+    	int retValue=0;
+    	// Verify IF null
+    	if (act != null && act.getAMN_Concept_Types_ID() != 0) {
+	    	String sql;
+	    	int AMN_Concept_Types_ID = act.getAMN_Concept_Types_ID();
+			int AMN_Concept_Type_Proc_ID = 0;
+			int AMN_Process_ID = 0;
+			// AMN_Location
+	    	sql = "select amn_concept_types_proc_id, amn_process_id "+
+	    			"from adempiere.amn_concept_types_proc "+
+	    			"WHERE amn_concept_types_id = ? ";
+	    	//log.warning("... amn_concept_types_proc_id sql="+sql);
+	    	PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try
 			{
-				AMN_Concept_Type_Proc_ID = rs.getInt(1);
-				AMN_Process_ID = rs.getInt(2);
-				//log.warning("AMN_Concept_Type_Proc_ID="+AMN_Concept_Type_Proc_ID+" AMN_Process_ID="+AMN_Process_ID);
-				MAMN_Concept_Types_Proc actp = new MAMN_Concept_Types_Proc(Env.getCtx(), AMN_Concept_Type_Proc_ID, null);
-				MAMN_Process amp = new MAMN_Process(Env.getCtx(), AMN_Process_ID, null);
-				// Update AMNConcept_Types_proc
-				actp.updateAMNConcept_Types_Proc(actp.getAMN_Concept_Types_Proc_ID(),amp.getAMN_Process_Value(), act.getValue(),act.getName(),act.getCalcOrder());
-				//actp.updateAMNConcept_Types_Proc(actp.getAMN_Concept_Types_Proc_ID(),amp.getAMN_Process_Value(), Value_Concept,Name_Concept,CalcOrder);
-				no=+1;
+				pstmt = DB.prepareStatement(sql, null);
+	            pstmt.setInt(1, AMN_Concept_Types_ID);
+				rs = pstmt.executeQuery();
+				while (rs.next())
+				{
+					AMN_Concept_Type_Proc_ID = rs.getInt(1);
+					AMN_Process_ID = rs.getInt(2);
+					//log.warning("AMN_Concept_Type_Proc_ID="+AMN_Concept_Type_Proc_ID+" AMN_Process_ID="+AMN_Process_ID);
+					MAMN_Concept_Types_Proc actp = new MAMN_Concept_Types_Proc(Env.getCtx(), AMN_Concept_Type_Proc_ID, null);
+					MAMN_Process amp = new MAMN_Process(Env.getCtx(), AMN_Process_ID, null);
+					// Update AMNConcept_Types_proc
+					actp.updateAMNConcept_Types_Proc(actp.getAMN_Concept_Types_Proc_ID(),amp.getAMN_Process_Value(), act.getValue(),act.getName(),act.getCalcOrder());
+					//actp.updateAMNConcept_Types_Proc(actp.getAMN_Concept_Types_Proc_ID(),amp.getAMN_Process_Value(), Value_Concept,Name_Concept,CalcOrder);
+					retValue++; // Incrementa por cada registro actualizado
+				}
 			}
-		}
-	    catch (SQLException e)
-	    {
-	    	AMN_Concept_Type_Proc_ID = 0;
-	    }
-		finally
-		{
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-    	return no;
+		    catch (SQLException e)
+		    {
+		    	AMN_Concept_Type_Proc_ID = 0;
+		    }
+			finally
+			{
+				DB.close(rs, pstmt);
+				rs = null; pstmt = null;
+			}
+    	}
+    	return retValue;
     }
     
     /**
      * updateALL_AMNConcept_Types_Contract
-     * @param p_AMNConcept_Types_ID
-     * @return
+     * @param MAMN_Concept_Types act)
+     * @return No records
      */
-    public int updateALL_AMNConcept_Types_Contract(int p_AMNConcept_Types_ID) {
+    public int updateALL_AMNConcept_Types_Contract(MAMN_Concept_Types act) {
 		
-		MAMN_Concept_Types act = new MAMN_Concept_Types(Env.getCtx(), p_AMNConcept_Types_ID, null);
-		
-    	String sql;
-		int AMN_Concept_Type_Contract_ID = 0;
-		int AMN_Contract_ID = 0;
-		// amn_concept_types_contract_id
-    	sql = "select amn_concept_types_contract_id, amn_contract_id "+
-    			"from adempiere.amn_concept_types_contract "+
-    			"WHERE amn_concept_types_id = ? ";
-    	//log.warning("sql="+sql);
-    	PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
-            pstmt.setInt(1, p_AMNConcept_Types_ID);
-			rs = pstmt.executeQuery();
-			while (rs.next())
+    	int retValue=0;
+    	// Verify IF null
+    	if (act != null && act.getAMN_Concept_Types_ID() != 0) {
+	    	String sql;
+	    	int AMN_Concept_Types_ID =  act.getAMN_Concept_Types_ID();
+			int AMN_Concept_Type_Contract_ID = 0;
+			int AMN_Contract_ID = 0;
+			// amn_concept_types_contract_id
+	    	sql = "select amn_concept_types_contract_id, amn_contract_id "+
+	    			"from adempiere.amn_concept_types_contract "+
+	    			"WHERE amn_concept_types_id = ? ";
+	    	//log.warning("sql="+sql);
+	    	PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try
 			{
-				AMN_Concept_Type_Contract_ID = rs.getInt(1);
-				AMN_Contract_ID = rs.getInt(2);
-				//log.warning("AMN_Concept_Type_Contract_ID="+AMN_Concept_Type_Contract_ID+" AMN_Contract_ID="+AMN_Contract_ID);
-				MAMN_Concept_Types_Contract actc = new MAMN_Concept_Types_Contract(Env.getCtx(), AMN_Concept_Type_Contract_ID, null);
-				MAMN_Contract amc = new MAMN_Contract(Env.getCtx(), AMN_Contract_ID, null);
-				// Update AMNConcept_Types_proc
-				actc.updateAMNConcept_Types_Contract(actc.getAMN_Concept_Types_Contract_ID(), amc.getValue(), act.getValue(),act.getName(),act.getCalcOrder());
-				//actc.updateAMNConcept_Types_Contract(actc.getAMN_Concept_Types_Contract_ID(), amc.getValue(),Value_Concept,Name_Concept,CalcOrder);	
+				pstmt = DB.prepareStatement(sql, null);
+	            pstmt.setInt(1, AMN_Concept_Types_ID);
+				rs = pstmt.executeQuery();
+				while (rs.next())
+				{
+					AMN_Concept_Type_Contract_ID = rs.getInt(1);
+					AMN_Contract_ID = rs.getInt(2);
+					//log.warning("AMN_Concept_Type_Contract_ID="+AMN_Concept_Type_Contract_ID+" AMN_Contract_ID="+AMN_Contract_ID);
+					MAMN_Concept_Types_Contract actc = new MAMN_Concept_Types_Contract(Env.getCtx(), AMN_Concept_Type_Contract_ID, null);
+					MAMN_Contract amc = new MAMN_Contract(Env.getCtx(), AMN_Contract_ID, null);
+					// Update AMNConcept_Types_proc
+					actc.updateAMNConcept_Types_Contract(actc.getAMN_Concept_Types_Contract_ID(), amc.getValue(), act.getValue(),act.getName(),act.getCalcOrder());
+					//actc.updateAMNConcept_Types_Contract(actc.getAMN_Concept_Types_Contract_ID(), amc.getValue(),Value_Concept,Name_Concept,CalcOrder);	
+					retValue++; // Incrementa por cada registro actualizado
+				}
 			}
-		}
-	    catch (SQLException e)
-	    {
-	    	AMN_Concept_Type_Contract_ID = 0;
-	    }
-		finally
-		{
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-    	return 0;
+		    catch (SQLException e)
+		    {
+		    	AMN_Concept_Type_Contract_ID = 0;
+		    }
+			finally
+			{
+				DB.close(rs, pstmt);
+				rs = null; pstmt = null;
+			}
+    	}
+    	return retValue;
     }
     
 	/**
@@ -282,4 +291,39 @@ public class MAMN_Concept_Types extends X_AMN_Concept_Types {
     	AMN_Concept_Type_ID = DB.getSQLValue(null, sql, p_AD_Client_ID);	
 		return AMN_Concept_Type_ID;	
 	}
+	
+	/**
+	 * getFilteredConcepts
+	 * @return  List<MAMN_Concept_Types>
+	 * @param mode
+	 * @param sign
+	 * @param AMN_Process_ID
+	 * @param AMN_Contract_ID
+	 * @return
+	 */
+	public static List<MAMN_Concept_Types> getFilteredConcepts(String mode, String sign , int AMN_Process_ID) {
+        List<MAMN_Concept_Types> concepts = new ArrayList<>();
+
+        String sql= "SELECT ct.* " +
+        			"FROM AMN_Concept_Types ct " +
+        			"JOIN AMN_Concept_Types_Proc ctp ON ct.AMN_Concept_Types_ID = ctp.AMN_Concept_Types_ID " +
+        			"WHERE ct.optmode = ? AND ct.sign = ? " +
+        			"AND ctp.AMN_Process_ID = ? ";
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setString(1, mode);  // Mode = 'B' 'A' 'D' 'R' 'P' 'W'
+            pstmt.setString(2, sign); // Sign = 'C' 'D'
+            pstmt.setInt(3, AMN_Process_ID); // Process = 'NN'
+            	
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    MAMN_Concept_Types concept = new MAMN_Concept_Types(null, rs, null);
+                    concepts.add(concept);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return concepts;
+    }
 }

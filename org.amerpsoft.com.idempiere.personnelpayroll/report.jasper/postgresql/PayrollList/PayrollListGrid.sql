@@ -1,6 +1,7 @@
 -- Payroll List CrossTab (Column View)
 -- Used for  reports and individual print
 -- Currency Rate Added and Conversion reviewed
+-- ONE PERIOD
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 

@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241221L;
+	private static final long serialVersionUID = 20250302L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -237,6 +237,44 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_Process);
 	}
 
+	/** Unknown = ?? */
+	public static final String AMN_LEAVES_STATUS_Unknown = "??";
+	/** Filed = AR */
+	public static final String AMN_LEAVES_STATUS_Filed = "AR";
+	/** Closed = CL */
+	public static final String AMN_LEAVES_STATUS_Closed = "CL";
+	/** Completed = CO */
+	public static final String AMN_LEAVES_STATUS_Completed = "CO";
+	/** Draft = DR */
+	public static final String AMN_LEAVES_STATUS_Draft = "DR";
+	/** HR Approved = RA */
+	public static final String AMN_LEAVES_STATUS_HRApproved = "RA";
+	/** HR Review = RH */
+	public static final String AMN_LEAVES_STATUS_HRReview = "RH";
+	/** HR Rejected = RR */
+	public static final String AMN_LEAVES_STATUS_HRRejected = "RR";
+	/** Supervisor Approved = SA */
+	public static final String AMN_LEAVES_STATUS_SupervisorApproved = "SA";
+	/** Supervisor Rejected = SR */
+	public static final String AMN_LEAVES_STATUS_SupervisorRejected = "SR";
+	/** Supervisor Review = SU */
+	public static final String AMN_LEAVES_STATUS_SupervisorReview = "SU";
+	/** Set Leaves Status.
+		@param AMN_Leaves_Status Leaves Status
+	*/
+	public void setAMN_Leaves_Status (String AMN_Leaves_Status)
+	{
+
+		set_Value (COLUMNNAME_AMN_Leaves_Status, AMN_Leaves_Status);
+	}
+
+	/** Get Leaves Status.
+		@return Leaves Status	  */
+	public String getAMN_Leaves_Status()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_Leaves_Status);
+	}
+
 	/** Set Leaves Types.
 		@param AMN_Leaves_Types_ID Leaves Types
 	*/
@@ -271,6 +309,33 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public String getAMN_Leaves_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_UU);
+	}
+
+	public I_AMN_Payroll getAMN_Payroll() throws RuntimeException
+	{
+		return (I_AMN_Payroll)MTable.get(getCtx(), I_AMN_Payroll.Table_ID)
+			.getPO(getAMN_Payroll_ID(), get_TrxName());
+	}
+
+	/** Set Payroll Invoice.
+		@param AMN_Payroll_ID Payroll Invoice
+	*/
+	public void setAMN_Payroll_ID (int AMN_Payroll_ID)
+	{
+		if (AMN_Payroll_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_ID, Integer.valueOf(AMN_Payroll_ID));
+	}
+
+	/** Get Payroll Invoice.
+		@return Payroll Invoice	  */
+	public int getAMN_Payroll_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set AMW Work Flows.

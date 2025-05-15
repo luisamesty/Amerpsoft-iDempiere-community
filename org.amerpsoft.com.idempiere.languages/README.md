@@ -1,4 +1,7 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+
+<a name="readme-top"></a>
+
 # <b>Languages</b>
 
 Idempiere is able to show web interfaces in different languages. You must configure Langages using appropiate installation packs.
@@ -90,3 +93,4 @@ Uncheck for Login Disabled
   </a>
 </div>
 
+<p align="left">(<a href="#readme-top">back to top</a>)</p>

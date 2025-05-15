@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Assist_Unit
     /** TableName=AMN_Payroll_Assist_Unit */
     public static final String Table_Name = "AMN_Payroll_Assist_Unit";
 
-    /** AD_Table_ID=1000100 */
+    /** AD_Table_ID=1000110 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,6 +64,42 @@ public interface I_AMN_Payroll_Assist_Unit
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name AMN_ComKey */
+    public static final String COLUMNNAME_AMN_ComKey = "AMN_ComKey";
+
+	/** Set ComKey	  */
+	public void setAMN_ComKey (String AMN_ComKey);
+
+	/** Get ComKey	  */
+	public String getAMN_ComKey();
+
+    /** Column name AMN_Host */
+    public static final String COLUMNNAME_AMN_Host = "AMN_Host";
+
+	/** Set Host	  */
+	public void setAMN_Host (String AMN_Host);
+
+	/** Get Host	  */
+	public String getAMN_Host();
+
+    /** Column name AMN_LoginPassword */
+    public static final String COLUMNNAME_AMN_LoginPassword = "AMN_LoginPassword";
+
+	/** Set LoginPassword	  */
+	public void setAMN_LoginPassword (String AMN_LoginPassword);
+
+	/** Get LoginPassword	  */
+	public String getAMN_LoginPassword();
+
+    /** Column name AMN_LoginUser */
+    public static final String COLUMNNAME_AMN_LoginUser = "AMN_LoginUser";
+
+	/** Set LoginUser	  */
+	public void setAMN_LoginUser (String AMN_LoginUser);
+
+	/** Get LoginUser	  */
+	public String getAMN_LoginUser();
+
     /** Column name AMN_Payroll_Assist_Unit_ID */
     public static final String COLUMNNAME_AMN_Payroll_Assist_Unit_ID = "AMN_Payroll_Assist_Unit_ID";
 
@@ -85,6 +121,15 @@ public interface I_AMN_Payroll_Assist_Unit
 
 	/** Get AMN_Payroll_Assist_Unit_UU	  */
 	public String getAMN_Payroll_Assist_Unit_UU();
+
+    /** Column name AMN_Port */
+    public static final String COLUMNNAME_AMN_Port = "AMN_Port";
+
+	/** Set Port	  */
+	public void setAMN_Port (int AMN_Port);
+
+	/** Get Port	  */
+	public int getAMN_Port();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";

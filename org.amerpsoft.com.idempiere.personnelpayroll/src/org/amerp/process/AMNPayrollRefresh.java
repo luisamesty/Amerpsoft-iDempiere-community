@@ -28,6 +28,7 @@ import javax.script.ScriptException;
 import org.amerp.amnmodel.MAMN_Contract;
 import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Payroll;
+import org.amerp.amnmodel.MAMN_Payroll_Deferred;
 import org.amerp.amnmodel.MAMN_Payroll_Historic;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
@@ -118,6 +119,12 @@ public class AMNPayrollRefresh extends SvrProcess {
 	    		PayrollUpdateSALUTILSB(getCtx(), p_AMN_Payroll_ID);
 	    		PayrollUpdateUTILIDDEV(getCtx(), p_AMN_Payroll_ID);
 	    	}
+			// Verify if Process is PO-PJ 
+			if (amnprocess.getAMN_Process_Value().equalsIgnoreCase("PO") ||
+					amnprocess.getAMN_Process_Value().equalsIgnoreCase("PJ")) {
+				// recalculateCumulativeAmountBalance
+				MAMN_Payroll_Deferred.recalculateCumulativeAmountBalance(getCtx(), p_AMN_Payroll_ID,  get_TrxName());
+			}
 			// Calculate receipt
 			//log.warning("---Antes PayrollEvaluationArrayCalculate AMN_Payroll_ID:"+p_AMN_Payroll_ID);
 			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), p_AMN_Payroll_ID);

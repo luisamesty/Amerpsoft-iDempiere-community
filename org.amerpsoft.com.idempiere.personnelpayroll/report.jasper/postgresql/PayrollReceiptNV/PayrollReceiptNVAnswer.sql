@@ -1,12 +1,13 @@
 -- PAYROLL RECEIPT NV INTERNAL Request
 -- Employee Vacaction Reques
+-- NEW FIELDS InvDateRec, DateReEntry, DateApplication, YEAR, MONTH
 SELECT * FROM (
 -- Employee file 
 	SELECT DISTINCT
 	-- LOGO
-	img1.binarydata as org_logo,
-	INITCAP(coalesce(org.name,org.value,''))  as org_name,
-    INITCAP(COALESCE(org.description,org.name,org.name,''))  org_description, 
+	CASE WHEN emp.ad_orgto_id IS NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+	INITCAP(coalesce(loc_n.orgname, org.name,org.value,''))  as org_name,
+    INITCAP(COALESCE(loc_n.name, org.description,org.name,org.name,''))  org_description, 
 	COALESCE(orginfo.taxid,'')  as org_taxid,    
    -- IMAGE
     COALESCE(img3.binarydata, img4.binarydata) as foto,
@@ -23,7 +24,16 @@ SELECT * FROM (
 	END as emp_prefix,
 	pyrq.qtyvalue,
 	-- RECEIPT
-	pyr.InvDateIni, pyr.InvDateEnd, pyr.DateReEntry,
+	pyr.InvDateIni, 
+	pyr.InvDateEnd,
+	pyr.RefDateIni, 
+	pyr.RefDateEnd,
+	pyr.InvDateRec, 
+	pyr.DateAcct,
+	pyr.DateReEntry,
+	pyr.DateApplication,
+	pyr.YEAR,
+	pyr.MONTH,
 	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateIni), 'L','es') AS  diaInvDateIni,
 	adempiere.amf_dow2letter(extract(dow from  pyr.InvDateEnd), 'L','es') AS  diaInvDateEnd,
 	adempiere.amf_dow2letter(extract(dow from  pyr.DateReEntry), 'L','es') AS  diaDateReEntry,

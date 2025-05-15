@@ -1,5 +1,34 @@
 -- PayrollEmployeeLeaves
--- Payroll Employee Leaves
+-- Payroll Employee Leaves V2
+-- Parameter isSummary
+WITH date_series AS (
+    -- Generamos todas las fechas dentro del período dado
+    SELECT generate_series(
+        COALESCE(DATE($P{DateIni}), DATE_TRUNC('month', CURRENT_DATE)::DATE), 
+        COALESCE(DATE($P{DateEnd}), (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day')::DATE), 
+        '1 day'::interval
+    )::DATE AS report_date
+),
+leaves_data AS (
+    -- Subquery de Leaves con integración de la serie de fechas
+    SELECT 
+        empl2.ad_client_id,
+        empl2.amn_employee_id,
+        amc2.amn_contract_id,
+        amc2.value AS c_value, 
+        COALESCE(amc2.name, amc2.description) AS c_tipo, 
+        amlt.value AS leaves_value, 
+        ds.report_date
+    FROM adempiere.amn_employee empl2
+    CROSS JOIN date_series ds  -- Generamos una fila por cada empleado y día en el periodo
+    INNER JOIN adempiere.amn_contract amc2 ON amc2.amn_contract_id = empl2.amn_contract_id	 
+    LEFT JOIN adempiere.amn_leaves amle ON amle.amn_employee_id = empl2.amn_employee_id AND ds.report_date BETWEEN amle.datefrom AND amle.dateto
+    LEFT JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = amle.amn_leaves_types_id
+    WHERE empl2.isActive = 'Y'
+        AND empl2.AD_Client_ID = $P{AD_Client_ID} 
+        AND ( $P{AMN_Contract_ID} IS NULL OR amc2.amn_contract_id = $P{AMN_Contract_ID} ) 
+        AND ( $P{AMN_Employee_ID} IS NULL OR empl2.amn_employee_id = $P{AMN_Employee_ID} )
+)
 SELECT * FROM
 	(
 		-- REPORT HEADER
@@ -38,6 +67,7 @@ SELECT * FROM
 	(
 	SELECT 
 		LTALL.ad_client_id, 
+		LTALL.report_date,
 		org.ad_org_id, org.value AS emp_org_value, org.name AS emp_org_name,
 		-- EMPLOYEE
 		LTALL.amn_employee_id, 
@@ -50,134 +80,58 @@ SELECT * FROM
 		-- SHIFT
 		amnsh.name AS shift_name,
 		-- Leaves Types
-		AJ,
-		CO,
-		DU,
-		DL,
-		MA,
-		MT,
-		LA,
-		RM,
-		PA,
-		PR,
-		SU,
-		VA,
-		PS,
-		PE,
-		RE,
-		LI
+	    AJ::NUMERIC(15, 2) AS AJ,  -- Convertir a NUMERIC
+	    CO::NUMERIC(15, 2) AS CO,  -- Convertir a NUMERIC
+	    DU::NUMERIC(15, 2) AS DU,  -- Convertir a NUMERIC
+	    DL::NUMERIC(15, 2) AS DL,  -- Convertir a NUMERIC
+	    MA::NUMERIC(15, 2) AS MA,  -- Convertir a NUMERIC
+	    MT::NUMERIC(15, 2) AS MT,  -- Convertir a NUMERIC
+	    LA::NUMERIC(15, 2) AS LA,  -- Convertir a NUMERIC
+	    RM::NUMERIC(15, 2) AS RM,  -- Convertir a NUMERIC
+	    PA::NUMERIC(15, 2) AS PA,  -- Convertir a NUMERIC
+	    PR::NUMERIC(15, 2) AS PR,  -- Convertir a NUMERIC
+	    SU::NUMERIC(15, 2) AS SU,  -- Convertir a NUMERIC
+	    VA::NUMERIC(15, 2) AS VA,  -- Convertir a NUMERIC
+	    PS::NUMERIC(15, 2) AS PS,  -- Convertir a NUMERIC
+	    PE::NUMERIC(15, 2) AS PE,  -- Convertir a NUMERIC
+	    RE::NUMERIC(15, 2) AS RE,  -- Convertir a NUMERIC
+	    LI::NUMERIC(15, 2) AS LI   -- Convertir a NUMERIC
 	FROM (
 		SELECT 
-			ad_client_id, ad_org_id,
-			amn_employee_id, 
-			MAX(AJ) AS AJ,
-			MAX(CO) AS CO,
-			MAX(DU) AS DU,
-			MAX(DL) AS DL,
-			MAX(MA) AS MA,
-			MAX(MT) AS MT,
-			MAX(LA) AS LA,
-			MAX(RM) AS RM,
-			MAX(PA) AS PA,
-			MAX(PR) AS PR,
-			MAX(SU) AS SU,
-			MAX(VA) AS VA,
-			MAX(PS) AS PS,
-			MAX(PE) AS PE,
-			MAX(RE) AS RE,
-			MAX(LI) AS LI
-		FROM (
-			SELECT 
-			ad_client_id, ad_org_id,
-			amn_employee_id, 
-			CASE WHEN leaves_value = 'AJ' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS AJ,
-			CASE WHEN leaves_value = 'CO' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS CO,
-			CASE WHEN leaves_value = 'DU' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS DU,
-			CASE WHEN leaves_value = 'DL' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS DL,
-			CASE WHEN leaves_value = 'MA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS MA,
-			CASE WHEN leaves_value = 'MT' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS MT,
-			CASE WHEN leaves_value = 'LA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS LA,
-			CASE WHEN leaves_value = 'RM' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS RM,
-			CASE WHEN leaves_value = 'PA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PA,
-			CASE WHEN leaves_value = 'PR' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PR,
-			CASE WHEN leaves_value = 'SU' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS SU,
-			CASE WHEN leaves_value = 'VA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS VA,
-			CASE WHEN leaves_value = 'PS' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PS,
-			CASE WHEN leaves_value = 'PE' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PE,
-			CASE WHEN leaves_value = 'RE' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS RE,
-			CASE WHEN leaves_value = 'LI' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS LI
-			FROM (
-			 	SELECT
-			 		-- EMPLOYEE
-				   	emp.amn_employee_id,
-					-- AMN_leaves_types	
-					amlt.amn_leaves_types_id,
-					amlt.value AS leaves_value,
-					amltt.name AS leaves_name,
-					-- AMN_Leaves
-					aml.amn_leaves_id, 
-					aml.ad_client_id, 
-					aml.ad_org_id, 
-					aml.description AS leaves_description, 
-					aml.docstatus, aml.processed, 
-					aml.processedon, aml.processing, 
-					aml.datefrom, dateto, 
-					aml.datedoc, 
-					aml.documentno,
-					-- Leaves Count
-					COALESCE(SUM(aml.qtydays),0) AS qtydays,
-					COALESCE(SUM(aml.hoursday),0) AS qtyhours
-				FROM adempiere.amn_employee as emp
-				LEFT JOIN ( 
-					-- Leaves and Qtys
-				 	SELECT
-				 		-- EMPLOYEE
-					   	emp.amn_employee_id,
-						-- AMN_Leaves
-						amle.amn_leaves_id, 
-						amle.amn_leaves_types_id,
-						amle.ad_client_id, 
-						amle.ad_org_id, 
-						amle.name, amle.description, 
-						amle.docstatus, amle.processed, 
-						amle.processedon, amle.processing, 
-						amle.datefrom, amle.dateto, 
-						amle.datedoc, 
-						amle.documentno,
-						amle.hoursday,
-						-- CASOS
-						CASE WHEN  amle.dateFrom <  $P{DateIni}  AND amle.dateTo <= $P{DateEnd} THEN adempiere.businessdays($P{DateIni}, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID}) 
-							 WHEN amle.dateFrom >= $P{DateIni} AND amle.dateTo <= $P{DateEnd} THEN  businessdays(amle.dateFrom, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
-							WHEN amle.dateFrom >= $P{DateIni} AND amle.dateTo > $P{DateEnd} THEN businessdays(amle.dateFrom, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
-							WHEN amle.dateFrom < $P{DateIni}  AND amle.dateTo > $P{DateEnd} THEN businessdays( $P{DateIni}, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
-							ELSE 0 END AS qtydays
-					FROM adempiere.amn_employee as emp
-					LEFT JOIN adempiere.amn_leaves amle ON (amle.amn_employee_id = emp.amn_employee_id)
-					WHERE emp.isActive = 'Y' 
-						-- DocStatusList: 'DR','CO','CL'
-						AND amle.docstatus IN ('DR','CO','CL' ) 
-						AND amle.AD_Client_ID= $P{AD_Client_ID} 
-						AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-						AND ( CASE WHEN (amle.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd}) OR amle.dateto BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
-					ORDER BY emp.amn_employee_id, amle.amn_leaves_id	
-				) AS aml ON (aml.amn_employee_id = emp.amn_employee_id)
-				INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
-				LEFT JOIN adempiere.amn_leaves_types_trl amltt on amltt.amn_leaves_types_id = amlt.amn_leaves_types_id  
-				 AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID}) 
-				LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
-				WHERE emp.isActive = 'Y' 
-					AND aml.AD_Client_ID= $P{AD_Client_ID} 
-					AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
-					AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-					AND ( CASE WHEN (aml.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
-				GROUP BY emp.amn_employee_id, aml.amn_leaves_types_id, amlt.amn_leaves_types_id, emp.value, emp.name,
-					aml.amn_leaves_id, aml.ad_client_id, aml.ad_org_id, 
-					amltt.name, aml.name, aml.description, aml.docstatus, aml.processed, aml.processedon, aml.processing, 
-					aml.datefrom, dateto, aml.amn_employee_id, aml.datedoc, aml.documentno
-				ORDER BY emp.amn_employee_id, aml.amn_leaves_types_id
-			) AS LT1
-		) AS LT2
-		GROUP BY ad_client_id, ad_org_id, amn_employee_id
+		    -- Si es resumen, colocamos la fecha de inicio del período
+		    ld.report_date,
+		    ld.ad_client_id,
+		    ld.amn_employee_id,
+		    emp.name AS employee_name,
+		    ld.amn_contract_id,
+		    ld.c_value AS contract_value,
+		    -- Tipos de ausencias en columnas separadas con sumas o valores individuales
+		    SUM(CASE WHEN ld.leaves_value = 'AJ' THEN 1 ELSE 0 END) AS AJ,
+		    SUM(CASE WHEN ld.leaves_value = 'CO' THEN 1 ELSE 0 END) AS CO,
+		    SUM(CASE WHEN ld.leaves_value = 'DU' THEN 1 ELSE 0 END) AS DU,
+		    SUM(CASE WHEN ld.leaves_value = 'DL' THEN 1 ELSE 0 END) AS DL,
+		    SUM(CASE WHEN ld.leaves_value = 'MA' THEN 1 ELSE 0 END) AS MA,
+		    SUM(CASE WHEN ld.leaves_value = 'MT' THEN 1 ELSE 0 END) AS MT,
+		    SUM(CASE WHEN ld.leaves_value = 'LA' THEN 1 ELSE 0 END) AS LA,
+		    SUM(CASE WHEN ld.leaves_value = 'RM' THEN 1 ELSE 0 END) AS RM,
+		    SUM(CASE WHEN ld.leaves_value = 'PA' THEN 1 ELSE 0 END) AS PA,
+		    SUM(CASE WHEN ld.leaves_value = 'PR' THEN 1 ELSE 0 END) AS PR,
+		    SUM(CASE WHEN ld.leaves_value = 'SU' THEN 1 ELSE 0 END) AS SU,
+		    SUM(CASE WHEN ld.leaves_value = 'VA' THEN 1 ELSE 0 END) AS VA,
+		    SUM(CASE WHEN ld.leaves_value = 'PS' THEN 1 ELSE 0 END) AS PS,
+		    SUM(CASE WHEN ld.leaves_value = 'PE' THEN 1 ELSE 0 END) AS PE,
+		    SUM(CASE WHEN ld.leaves_value = 'RE' THEN 1 ELSE 0 END) AS RE,
+		    SUM(CASE WHEN ld.leaves_value = 'LI' THEN 1 ELSE 0 END) AS LI
+		FROM leaves_data ld
+		LEFT JOIN adempiere.amn_employee emp ON emp.amn_employee_id = ld.amn_employee_id
+		GROUP BY 
+		    ld.ad_client_id,
+		    ld.amn_employee_id,
+		    emp.name,
+		    ld.amn_contract_id,
+		    ld.c_value,
+		    ld.report_date 
+		ORDER BY ld.amn_employee_id, report_date
 	) AS LTALL
 	INNER JOIN adempiere.amn_employee as emp2 ON emp2.amn_employee_id = LTALL.amn_employee_id
 	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp2.amn_jobtitle_id= jtt.amn_jobtitle_id)
@@ -204,4 +158,4 @@ SELECT * FROM
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.emp_value, header_info ASC
+ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.emp_value, leaves.report_date, header_info ASC

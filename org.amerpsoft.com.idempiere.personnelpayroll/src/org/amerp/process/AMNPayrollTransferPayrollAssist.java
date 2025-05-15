@@ -84,7 +84,7 @@ public class AMNPayrollTransferPayrollAssist {
 		MAMN_Payroll amnpayroll =  MAMN_Payroll.findByAMNPayroll(Env.getCtx(), null,
 				0, p_AMN_Contract_ID,  p_AMN_Period_ID, p_AMN_Employee_ID);
 		// Attendance Hours Array
-		AttendanceHours atthours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero, BDZero, BDZero, "");
+		AttendanceHours atthours =  new AttendanceHours();
 		// GET HOURS PROCESSED (HND,HNN,HED,HEN)
 		//atthours = getPayrollAsisstProcValues(p_AMN_Period_ID, p_AMN_Employee_ID);
 		atthours = getPayrollAsisstProcValuesBetweenDates( p_AMN_Employee_ID, p_RefDateIni, p_RefDateEnd );
@@ -243,7 +243,7 @@ public class AMNPayrollTransferPayrollAssist {
 		BigDecimal BDZero = BigDecimal.valueOf(0);
 	    Timestamp p_AMNDateIni;
 	    Timestamp p_AMNDateEnd;
-	    AttendanceHours pr_atthours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero,BDZero, BDZero, "");
+	    AttendanceHours pr_atthours =  new AttendanceHours();
 		pr_atthours.setHR_HED(BDZero);
 		pr_atthours.setHR_HEN(BDZero);
 		pr_atthours.setHR_HND(BDZero);
@@ -337,7 +337,7 @@ public class AMNPayrollTransferPayrollAssist {
 	{
 		
 		BigDecimal BDZero = BigDecimal.valueOf(0);
-	    AttendanceHours pr_atthours = new AttendanceHours(BDZero, BDZero, BDZero, BDZero,BDZero, BDZero, "");
+	    AttendanceHours pr_atthours = new AttendanceHours();
 		pr_atthours.setHR_HED(BDZero);
 		pr_atthours.setHR_HEN(BDZero);
 		pr_atthours.setHR_HND(BDZero);

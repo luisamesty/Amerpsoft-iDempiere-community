@@ -36,15 +36,47 @@
 	<parameter name="isShowZERO" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="isSummary" class="java.lang.String">
+	<parameter name="IsSummary" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="sign1" class="java.lang.String"/>
 	<parameter name="sign2" class="java.lang.String"/>
 	<parameter name="sign3" class="java.lang.String"/>
+	<parameter name="RESOURCE_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[-- PayrollEmployeeLeaves
--- Payroll Employee Leaves
+-- Payroll Employee Leaves V2
+-- Parameter isSummary
+WITH date_series AS (
+    -- Generamos todas las fechas dentro del período dado
+    SELECT generate_series(
+        COALESCE(DATE($P{DateIni}), DATE_TRUNC('month', CURRENT_DATE)::DATE), 
+        COALESCE(DATE($P{DateEnd}), (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day')::DATE), 
+        '1 day'::interval
+    )::DATE AS report_date
+),
+leaves_data AS (
+    -- Subquery de Leaves con integración de la serie de fechas
+    SELECT 
+        empl2.ad_client_id,
+        empl2.amn_employee_id,
+        amc2.amn_contract_id,
+        amc2.value AS c_value, 
+        COALESCE(amc2.name, amc2.description) AS c_tipo, 
+        amlt.value AS leaves_value, 
+        ds.report_date
+    FROM adempiere.amn_employee empl2
+    CROSS JOIN date_series ds  -- Generamos una fila por cada empleado y día en el periodo
+    INNER JOIN adempiere.amn_contract amc2 ON amc2.amn_contract_id = empl2.amn_contract_id	 
+    LEFT JOIN adempiere.amn_leaves amle ON amle.amn_employee_id = empl2.amn_employee_id AND ds.report_date BETWEEN amle.datefrom AND amle.dateto
+    LEFT JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = amle.amn_leaves_types_id
+    WHERE empl2.isActive = 'Y'
+        AND empl2.AD_Client_ID = $P{AD_Client_ID} 
+        AND ( $P{AMN_Contract_ID} IS NULL OR amc2.amn_contract_id = $P{AMN_Contract_ID} ) 
+        AND ( $P{AMN_Employee_ID} IS NULL OR empl2.amn_employee_id = $P{AMN_Employee_ID} )
+)
 SELECT * FROM
 	(
 		-- REPORT HEADER
@@ -83,6 +115,7 @@ SELECT * FROM
 	(
 	SELECT 
 		LTALL.ad_client_id, 
+		LTALL.report_date,
 		org.ad_org_id, org.value AS emp_org_value, org.name AS emp_org_name,
 		-- EMPLOYEE
 		LTALL.amn_employee_id, 
@@ -95,134 +128,58 @@ SELECT * FROM
 		-- SHIFT
 		amnsh.name AS shift_name,
 		-- Leaves Types
-		AJ,
-		CO,
-		DU,
-		DL,
-		MA,
-		MT,
-		LA,
-		RM,
-		PA,
-		PR,
-		SU,
-		VA,
-		PS,
-		PE,
-		RE,
-		LI
+	    AJ::NUMERIC(15, 2) AS AJ,  -- Convertir a NUMERIC
+	    CO::NUMERIC(15, 2) AS CO,  -- Convertir a NUMERIC
+	    DU::NUMERIC(15, 2) AS DU,  -- Convertir a NUMERIC
+	    DL::NUMERIC(15, 2) AS DL,  -- Convertir a NUMERIC
+	    MA::NUMERIC(15, 2) AS MA,  -- Convertir a NUMERIC
+	    MT::NUMERIC(15, 2) AS MT,  -- Convertir a NUMERIC
+	    LA::NUMERIC(15, 2) AS LA,  -- Convertir a NUMERIC
+	    RM::NUMERIC(15, 2) AS RM,  -- Convertir a NUMERIC
+	    PA::NUMERIC(15, 2) AS PA,  -- Convertir a NUMERIC
+	    PR::NUMERIC(15, 2) AS PR,  -- Convertir a NUMERIC
+	    SU::NUMERIC(15, 2) AS SU,  -- Convertir a NUMERIC
+	    VA::NUMERIC(15, 2) AS VA,  -- Convertir a NUMERIC
+	    PS::NUMERIC(15, 2) AS PS,  -- Convertir a NUMERIC
+	    PE::NUMERIC(15, 2) AS PE,  -- Convertir a NUMERIC
+	    RE::NUMERIC(15, 2) AS RE,  -- Convertir a NUMERIC
+	    LI::NUMERIC(15, 2) AS LI   -- Convertir a NUMERIC
 	FROM (
 		SELECT 
-			ad_client_id, ad_org_id,
-			amn_employee_id, 
-			MAX(AJ) AS AJ,
-			MAX(CO) AS CO,
-			MAX(DU) AS DU,
-			MAX(DL) AS DL,
-			MAX(MA) AS MA,
-			MAX(MT) AS MT,
-			MAX(LA) AS LA,
-			MAX(RM) AS RM,
-			MAX(PA) AS PA,
-			MAX(PR) AS PR,
-			MAX(SU) AS SU,
-			MAX(VA) AS VA,
-			MAX(PS) AS PS,
-			MAX(PE) AS PE,
-			MAX(RE) AS RE,
-			MAX(LI) AS LI
-		FROM (
-			SELECT 
-			ad_client_id, ad_org_id,
-			amn_employee_id, 
-			CASE WHEN leaves_value = 'AJ' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS AJ,
-			CASE WHEN leaves_value = 'CO' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS CO,
-			CASE WHEN leaves_value = 'DU' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS DU,
-			CASE WHEN leaves_value = 'DL' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS DL,
-			CASE WHEN leaves_value = 'MA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS MA,
-			CASE WHEN leaves_value = 'MT' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS MT,
-			CASE WHEN leaves_value = 'LA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS LA,
-			CASE WHEN leaves_value = 'RM' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS RM,
-			CASE WHEN leaves_value = 'PA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PA,
-			CASE WHEN leaves_value = 'PR' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PR,
-			CASE WHEN leaves_value = 'SU' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS SU,
-			CASE WHEN leaves_value = 'VA' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS VA,
-			CASE WHEN leaves_value = 'PS' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PS,
-			CASE WHEN leaves_value = 'PE' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS PE,
-			CASE WHEN leaves_value = 'RE' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS RE,
-			CASE WHEN leaves_value = 'LI' THEN CAST(qtydays as numeric) ELSE CAST(0 as numeric) END AS LI
-			FROM (
-			 	SELECT
-			 		-- EMPLOYEE
-				   	emp.amn_employee_id,
-					-- AMN_leaves_types	
-					amlt.amn_leaves_types_id,
-					amlt.value AS leaves_value,
-					amltt.name AS leaves_name,
-					-- AMN_Leaves
-					aml.amn_leaves_id, 
-					aml.ad_client_id, 
-					aml.ad_org_id, 
-					aml.description AS leaves_description, 
-					aml.docstatus, aml.processed, 
-					aml.processedon, aml.processing, 
-					aml.datefrom, dateto, 
-					aml.datedoc, 
-					aml.documentno,
-					-- Leaves Count
-					COALESCE(SUM(aml.qtydays),0) AS qtydays,
-					COALESCE(SUM(aml.hoursday),0) AS qtyhours
-				FROM adempiere.amn_employee as emp
-				LEFT JOIN ( 
-					-- Leaves and Qtys
-				 	SELECT
-				 		-- EMPLOYEE
-					   	emp.amn_employee_id,
-						-- AMN_Leaves
-						amle.amn_leaves_id, 
-						amle.amn_leaves_types_id,
-						amle.ad_client_id, 
-						amle.ad_org_id, 
-						amle.name, amle.description, 
-						amle.docstatus, amle.processed, 
-						amle.processedon, amle.processing, 
-						amle.datefrom, amle.dateto, 
-						amle.datedoc, 
-						amle.documentno,
-						amle.hoursday,
-						-- CASOS
-						CASE WHEN  amle.dateFrom <  $P{DateIni}  AND amle.dateTo <= $P{DateEnd} THEN adempiere.businessdays($P{DateIni}, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID}) 
-							 WHEN amle.dateFrom >= $P{DateIni} AND amle.dateTo <= $P{DateEnd} THEN  businessdays(amle.dateFrom, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
-							WHEN amle.dateFrom >= $P{DateIni} AND amle.dateTo > $P{DateEnd} THEN businessdays(amle.dateFrom, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
-							WHEN amle.dateFrom < $P{DateIni}  AND amle.dateTo > $P{DateEnd} THEN businessdays( $P{DateIni}, amle.dateTo, $P{AD_Client_ID}, $P{C_Country_ID})
-							ELSE 0 END AS qtydays
-					FROM adempiere.amn_employee as emp
-					LEFT JOIN adempiere.amn_leaves amle ON (amle.amn_employee_id = emp.amn_employee_id)
-					WHERE emp.isActive = 'Y' 
-						-- DocStatusList: 'DR','CO','CL'
-						AND amle.docstatus IN ('DR','CO','CL' ) 
-						AND amle.AD_Client_ID= $P{AD_Client_ID} 
-						AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-						AND ( CASE WHEN (amle.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd}) OR amle.dateto BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
-					ORDER BY emp.amn_employee_id, amle.amn_leaves_id	
-				) AS aml ON (aml.amn_employee_id = emp.amn_employee_id)
-				INNER JOIN adempiere.amn_leaves_types amlt ON amlt.amn_leaves_types_id = aml.amn_leaves_types_id
-				LEFT JOIN adempiere.amn_leaves_types_trl amltt on amltt.amn_leaves_types_id = amlt.amn_leaves_types_id  
-				 AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID}) 
-				LEFT JOIN adempiere.ad_org   as org ON (org.ad_org_id = emp.ad_orgto_id)
-				WHERE emp.isActive = 'Y' 
-					AND aml.AD_Client_ID= $P{AD_Client_ID} 
-					AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
-					AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-					AND ( CASE WHEN (aml.datefrom BETWEEN DATE( $P{DateIni} ) AND DATE( $P{DateEnd})) THEN 1=1 ELSE 1=0 END )
-				GROUP BY emp.amn_employee_id, aml.amn_leaves_types_id, amlt.amn_leaves_types_id, emp.value, emp.name,
-					aml.amn_leaves_id, aml.ad_client_id, aml.ad_org_id, 
-					amltt.name, aml.name, aml.description, aml.docstatus, aml.processed, aml.processedon, aml.processing, 
-					aml.datefrom, dateto, aml.amn_employee_id, aml.datedoc, aml.documentno
-				ORDER BY emp.amn_employee_id, aml.amn_leaves_types_id
-			) AS LT1
-		) AS LT2
-		GROUP BY ad_client_id, ad_org_id, amn_employee_id
+		    -- Si es resumen, colocamos la fecha de inicio del período
+		    ld.report_date,
+		    ld.ad_client_id,
+		    ld.amn_employee_id,
+		    emp.name AS employee_name,
+		    ld.amn_contract_id,
+		    ld.c_value AS contract_value,
+		    -- Tipos de ausencias en columnas separadas con sumas o valores individuales
+		    SUM(CASE WHEN ld.leaves_value = 'AJ' THEN 1 ELSE 0 END) AS AJ,
+		    SUM(CASE WHEN ld.leaves_value = 'CO' THEN 1 ELSE 0 END) AS CO,
+		    SUM(CASE WHEN ld.leaves_value = 'DU' THEN 1 ELSE 0 END) AS DU,
+		    SUM(CASE WHEN ld.leaves_value = 'DL' THEN 1 ELSE 0 END) AS DL,
+		    SUM(CASE WHEN ld.leaves_value = 'MA' THEN 1 ELSE 0 END) AS MA,
+		    SUM(CASE WHEN ld.leaves_value = 'MT' THEN 1 ELSE 0 END) AS MT,
+		    SUM(CASE WHEN ld.leaves_value = 'LA' THEN 1 ELSE 0 END) AS LA,
+		    SUM(CASE WHEN ld.leaves_value = 'RM' THEN 1 ELSE 0 END) AS RM,
+		    SUM(CASE WHEN ld.leaves_value = 'PA' THEN 1 ELSE 0 END) AS PA,
+		    SUM(CASE WHEN ld.leaves_value = 'PR' THEN 1 ELSE 0 END) AS PR,
+		    SUM(CASE WHEN ld.leaves_value = 'SU' THEN 1 ELSE 0 END) AS SU,
+		    SUM(CASE WHEN ld.leaves_value = 'VA' THEN 1 ELSE 0 END) AS VA,
+		    SUM(CASE WHEN ld.leaves_value = 'PS' THEN 1 ELSE 0 END) AS PS,
+		    SUM(CASE WHEN ld.leaves_value = 'PE' THEN 1 ELSE 0 END) AS PE,
+		    SUM(CASE WHEN ld.leaves_value = 'RE' THEN 1 ELSE 0 END) AS RE,
+		    SUM(CASE WHEN ld.leaves_value = 'LI' THEN 1 ELSE 0 END) AS LI
+		FROM leaves_data ld
+		LEFT JOIN adempiere.amn_employee emp ON emp.amn_employee_id = ld.amn_employee_id
+		GROUP BY 
+		    ld.ad_client_id,
+		    ld.amn_employee_id,
+		    emp.name,
+		    ld.amn_contract_id,
+		    ld.c_value,
+		    ld.report_date 
+		ORDER BY ld.amn_employee_id, report_date
 	) AS LTALL
 	INNER JOIN adempiere.amn_employee as emp2 ON emp2.amn_employee_id = LTALL.amn_employee_id
 	LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp2.amn_jobtitle_id= jtt.amn_jobtitle_id)
@@ -249,8 +206,7 @@ SELECT * FROM
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.emp_value, header_info ASC
-]]>
+ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.emp_value, leaves.report_date, header_info ASC]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -288,7 +244,11 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 	<field name="ad_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_leaves"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="report_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="report_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="report_date"/>
 	</field>
 	<field name="ad_org_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
@@ -608,15 +568,80 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 		<variableExpression><![CDATA[$F{li}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
+	<variable name="aj_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{aj}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="co_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{co}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="du_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{du}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="dl_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{dl}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ma_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{ma}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="mt_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{mt}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="la_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{la}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="rm_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{rm}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="pa_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{pa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="pr_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{pr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="su_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{su}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="va_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{va}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ps_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{ps}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="pe_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{pe}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="re_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{re}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="li_emp" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[$F{li}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="GroupbyOrg" isStartNewPage="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{emp_org_value}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{ad_org_id}!= null && $F{ad_client_id}!=null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="802" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="cbea058f-cc53-4c6f-93a4-157e34dbd8e9">
+				<printWhenExpression><![CDATA[$F{ad_org_id}!= null && $F{ad_client_id}!=null && $F{amn_employee_id}!= null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="1430" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="cbea058f-cc53-4c6f-93a4-157e34dbd8e9">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{ad_org_id}!= null && $F{ad_client_id}!=null && $F{amn_employee_id}!= null]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
@@ -628,15 +653,15 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 		<groupFooter>
 			<band height="12">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{ad_org_id}!= null && $F{ad_client_id}!=null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
+				<printWhenExpression><![CDATA[$F{ad_client_id}!=null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="0" y="0" width="570" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb6c51b1-14cf-45e0-8ec0-a012705f0481">
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Sub-Total Organización "]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Sub-Total  "+$R{report.org}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="570" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d4408c14-8b37-416c-8026-c096ca7cdc25">
@@ -645,7 +670,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{aj_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{aj_org} : ""]]></textFieldExpression>
@@ -657,7 +682,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{co_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{co_org} : ""]]></textFieldExpression>
@@ -669,7 +694,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{du_org}.compareTo( BigDecimal.ZERO ) != 0  ? $V{du_org}  : ""]]></textFieldExpression>
@@ -681,7 +706,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{dl_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{dl_org} : ""]]></textFieldExpression>
@@ -693,7 +718,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ma_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ma_org} : ""]]></textFieldExpression>
@@ -705,7 +730,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{mt_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{mt_org} : ""]]></textFieldExpression>
@@ -717,7 +742,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{la_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{la_org} : ""]]></textFieldExpression>
@@ -729,7 +754,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{rm_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{rm_org} : ""]]></textFieldExpression>
@@ -741,7 +766,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pa_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pa_org} : ""]]></textFieldExpression>
@@ -753,7 +778,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pr_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pr_org} : ""]]></textFieldExpression>
@@ -765,7 +790,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{su_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{su_org} : ""]]></textFieldExpression>
@@ -777,7 +802,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{va_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{va_org} : ""]]></textFieldExpression>
@@ -789,7 +814,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ps_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ps_org} : ""]]></textFieldExpression>
@@ -801,7 +826,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pe_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pe_org} : ""]]></textFieldExpression>
@@ -813,7 +838,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{re_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{re_org} : ""]]></textFieldExpression>
@@ -825,10 +850,43 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{li_org}.compareTo( BigDecimal.ZERO ) != 0 ? $V{li_org} : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_porContrato" isReprintHeaderOnEachPage="true">
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$F{c_value}!=null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="1430" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="6494b1d6-3c8c-4623-97f6-2a6c661bb7f2">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{c_value}!=null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="10"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.contract}+": "+$F{c_value}.trim()+"-"+$F{c_tipo}.trim()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="12">
+				<printWhenExpression><![CDATA[$F{c_tipo}!= null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="570" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bdc3898e-fc8a-4b9d-b63b-aabdb0ecb3b6">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Sub-Total  "+$R{report.contract}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -838,12 +896,13 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 		<groupHeader>
 			<band height="14" splitType="Stretch">
 				<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0 && $F{amn_location_id}!= null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="802" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6f1035bb-1950-4040-8309-7a8c4d6984e9">
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="1430" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="6f1035bb-1950-4040-8309-7a8c4d6984e9">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0 && $F{amn_location_id}!= null]]></printWhenExpression>
 					</reportElement>
-					<box leftPadding="10"/>
+					<box leftPadding="15"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
@@ -853,15 +912,15 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 		</groupHeader>
 		<groupFooter>
 			<band height="12">
-				<printWhenExpression><![CDATA[$F{amn_location_id}!= null && $F{amn_employee_id}!= null && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
+				<printWhenExpression><![CDATA[$F{amn_location_id}!= null  && $P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" isBlankWhenNull="true">
 					<reportElement mode="Transparent" x="0" y="0" width="570" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e88e8d4-823b-43d0-906c-77932963389b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Sub-Total Localidad "]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Sub-Total  "+$R{report.location}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="570" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="defb497d-6766-40f5-80e2-24f1327442d3">
@@ -870,7 +929,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{aj_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{aj_loc} : ""]]></textFieldExpression>
@@ -882,7 +941,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{co_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{co_loc} : ""]]></textFieldExpression>
@@ -894,7 +953,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{du_loc}.compareTo( BigDecimal.ZERO ) != 0  ? $V{du_loc}  : ""]]></textFieldExpression>
@@ -906,7 +965,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{dl_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{dl_loc} : ""]]></textFieldExpression>
@@ -918,7 +977,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ma_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ma_loc} : ""]]></textFieldExpression>
@@ -930,7 +989,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{mt_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{mt_loc} : ""]]></textFieldExpression>
@@ -942,7 +1001,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{la_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{la_loc} : ""]]></textFieldExpression>
@@ -954,7 +1013,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{rm_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{rm_loc} : ""]]></textFieldExpression>
@@ -966,7 +1025,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pa_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pa_loc} : ""]]></textFieldExpression>
@@ -978,7 +1037,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pr_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pr_loc} : ""]]></textFieldExpression>
@@ -990,7 +1049,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{su_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{su_loc} : ""]]></textFieldExpression>
@@ -1002,7 +1061,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{va_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{va_loc} : ""]]></textFieldExpression>
@@ -1014,7 +1073,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ps_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ps_loc} : ""]]></textFieldExpression>
@@ -1026,7 +1085,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{pe_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pe_loc} : ""]]></textFieldExpression>
@@ -1038,7 +1097,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{re_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{re_loc} : ""]]></textFieldExpression>
@@ -1050,7 +1109,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{li_loc}.compareTo( BigDecimal.ZERO ) != 0 ? $V{li_loc} : ""]]></textFieldExpression>
@@ -1058,31 +1117,32 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 			</band>
 		</groupFooter>
 	</group>
-	<group name="Group_porEmpleado" isReprintHeaderOnEachPage="true">
+	<group name="Group_porEmpleado">
 		<groupExpression><![CDATA[$F{emp_value}]]></groupExpression>
 		<groupHeader>
-			<band height="12" splitType="Stretch">
+			<band height="24" splitType="Stretch">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{amn_employee_id}!= null]]></printWhenExpression>
-				<textField textAdjust="StretchHeight">
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="70" height="12" uuid="543341a0-3d80-490a-967c-3760dcaa6537">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="90" height="12" uuid="543341a0-3d80-490a-967c-3760dcaa6537">
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
-					<box leftPadding="2"/>
+					<box leftPadding="4"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emp_value}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="300" height="12" uuid="7a43b167-7987-4654-bad4-3b695f942b5b">
+					<reportElement stretchType="RelativeToTallestObject" x="90" y="0" width="280" height="12" uuid="7a43b167-7987-4654-bad4-3b695f942b5b">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
+					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emp_name}.trim()]]></textFieldExpression>
 				</textField>
@@ -1094,7 +1154,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{shift_name}.trim()]]></textFieldExpression>
 				</textField>
@@ -1105,10 +1165,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{aj}.compareTo( BigDecimal.ZERO ) != 0 ? $F{aj} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{aj_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{aj_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="610" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e63a8a1c-9302-4f52-8791-38bcd6a7f774">
@@ -1117,10 +1177,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{co}.compareTo( BigDecimal.ZERO ) != 0 ? $F{co} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{co_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{co_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="650" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2b3c1aa0-1c1a-41c3-b02a-6c663a733bf5">
@@ -1129,10 +1189,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{du}.compareTo( BigDecimal.ZERO ) != 0 ? $F{du}  : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{du_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{du_emp}  : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="690" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="b8e72c87-1b7c-4fd9-b5c7-e7490e74a8f8">
@@ -1141,10 +1201,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{dl}.compareTo( BigDecimal.ZERO ) != 0 ? $F{dl} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{dl_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{dl_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="730" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d0f9b978-c186-4f49-bb0f-0f3341186ff6">
@@ -1153,10 +1213,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{ma}.compareTo( BigDecimal.ZERO ) != 0 ? $F{ma} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{ma_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ma_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="770" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7c8e3f54-d1a8-4a4f-8523-1e89be4f2e84">
@@ -1165,10 +1225,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{mt}.compareTo( BigDecimal.ZERO ) != 0 ? $F{mt} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{mt_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{mt_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="810" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6460320c-76cb-4e88-9062-7949b6e191e9">
@@ -1177,10 +1237,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{la}.compareTo( BigDecimal.ZERO ) != 0 ? $F{la} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{la_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{la_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="850" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2d7ec60b-07d3-4995-baa3-d3a01e02e227">
@@ -1189,10 +1249,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{rm}.compareTo( BigDecimal.ZERO ) != 0 ? $F{rm} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{rm_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{rm_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="890" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="35a21a71-fd78-45b6-97ad-2b5f98b5ab3d">
@@ -1201,10 +1261,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{pa}.compareTo( BigDecimal.ZERO ) != 0 ? $F{pa} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{pa_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pa_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="930" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6445ad69-0c8c-4cde-8a45-2c1cf17f5e25">
@@ -1213,10 +1273,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{pr}.compareTo( BigDecimal.ZERO ) != 0 ? $F{pr} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{pr_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pr_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="970" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="aa06378e-1be2-4ff8-b607-041c9757d6d6">
@@ -1225,10 +1285,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{su}.compareTo( BigDecimal.ZERO ) != 0 ? $F{su} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{su_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{su_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1010" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="55d67e60-38e5-47d8-86fc-550780d7fef4">
@@ -1237,10 +1297,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{va}.compareTo( BigDecimal.ZERO ) != 0 ? $F{va} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{va_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{va_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1050" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cd57366a-928b-48df-b13c-1a59719f42b7">
@@ -1249,10 +1309,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{ps}.compareTo( BigDecimal.ZERO ) != 0 ? $F{ps} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{ps_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ps_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1090" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="541d3e5d-52a5-45a5-bb25-312b319bc3b7">
@@ -1261,10 +1321,10 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{pe}.compareTo( BigDecimal.ZERO ) != 0 ? $F{pe} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{pe_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pe_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1130" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cdf35825-5184-49ea-b6f0-611c6c78c8cf">
@@ -1273,31 +1333,268 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{re}.compareTo( BigDecimal.ZERO ) != 0 ? $F{re} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{re_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{re_emp} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1172" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="37f6126e-1d0e-43df-b438-d993210ec9e6">
+					<reportElement mode="Transparent" x="1170" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="37f6126e-1d0e-43df-b438-d993210ec9e6">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{li}.compareTo( BigDecimal.ZERO ) != 0 ? $F{li} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{li_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{li_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement isPrintRepeatedValues="false" x="90" y="12" width="280" height="12" isRemoveLineWhenBlank="true" uuid="0f1db293-62a1-4877-aaaf-3d0e28e3e26d">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" )==0]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.dayofweek}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement isPrintRepeatedValues="false" x="370" y="12" width="200" height="12" isRemoveLineWhenBlank="true" uuid="1f30a0d9-613c-400a-ac3f-41bc65c6d964">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" )==0]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.date}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0 && $F{amn_employee_id}!= null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="570" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e37da657-bddf-4d61-b129-273552af096f">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{aj_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{aj_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="610" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6edab219-57e7-437b-8f3a-9ede2e15bbf9">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{co_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{co_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="650" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a999ad4d-6f26-4fd7-b7f7-8f631375fc7b">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{du_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{du_emp}  : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="690" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d6ba2623-0220-4035-ae2f-1ea11eaf7e3d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{dl_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{dl_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="730" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="660b221f-e05a-4e07-88ef-14a259b0a970">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ma_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ma_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="770" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d35aaa62-0e0c-4a1b-b365-502183fe9a37">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{mt_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{mt_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="810" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="56e79064-cf05-47d7-bf9c-a98f3fe640c7">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{la_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{la_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="850" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c4bef881-6ecf-4340-839f-329a50a86262">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{rm_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{rm_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="890" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2e187f1f-e4f0-4816-901e-ce128c06d501">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{pa_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pa_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="930" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="102b7ba8-4fb9-4534-9567-b950d4110d82">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{pr_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pr_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="970" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="85c7e416-bb5a-4c06-ab21-01b5fecf6f38">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{su_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{su_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1010" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="388fb09d-93d7-4838-8dd1-1624f95d50ec">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{va_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{va_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1050" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2e941f7b-3868-4917-9e52-61c714c20130">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ps_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ps_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1090" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="809baa76-32d0-4b4e-820e-d6656bdc6fa3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{pe_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pe_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1130" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="885bf5f1-5a57-4a57-b710-0325a1dd7cf0">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{re_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{re_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1170" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="96a6bd63-cd9f-49d2-a181-57daf7ffc9c1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{li_emp}.compareTo( BigDecimal.ZERO ) != 0 ? $V{li_emp} : ""]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="570" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5b4e4c4f-e1c0-4267-a71a-9e161b904591">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Sub-Total "+$R{report.employee}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement x="0" y="12" width="100" height="1" uuid="2cd7e634-4030-44ee-b5f5-9be29f4eac61">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" )==0 && $F{amn_employee_id}!=null]]></printWhenExpression>
+					</reportElement>
+				</break>
+			</band>
+		</groupFooter>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="58" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField pattern="dd/MM/yy">
 				<reportElement key="" x="1330" y="0" width="100" height="14" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
@@ -1321,7 +1618,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				<textFieldExpression><![CDATA[$R{report.of}+" "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="70" y="0" width="300" height="14" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
+				<reportElement x="90" y="0" width="280" height="14" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -1332,7 +1629,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="70" height="28" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
+				<reportElement key="" x="0" y="0" width="90" height="28" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1362,7 +1659,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="70" y="14" width="300" height="14" isRemoveLineWhenBlank="true" uuid="ce616051-bfd3-4587-b2c3-f94ebf46035f">
+				<reportElement x="90" y="14" width="280" height="14" isRemoveLineWhenBlank="true" uuid="ce616051-bfd3-4587-b2c3-f94ebf46035f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -1373,16 +1670,36 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				<textFieldExpression><![CDATA["Reporte de Ausencias de Trabajadores"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="0" y="28" width="1430" height="30" uuid="649ee3e3-1a2f-48a0-aabb-e36f7664aeb1">
+				<reportElement x="0" y="28" width="1430" height="12" uuid="649ee3e3-1a2f-48a0-aabb-e36f7664aeb1">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="0"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="Courier New" size="10" isBold="true"/>
+					<font fontName="Courier New" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{leaves_all_txt}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="370" y="14" width="960" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_porContrato" uuid="d71ae886-06b8-44ed-b62e-ff830fd7b727">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{DateIni} != null ? 
+    "Fecha desde " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateIni}) : 
+    "Fecha desde " + new SimpleDateFormat("dd/MM/yyyy").format(new Date(new Date().getYear(), 0, 1)) )
++ " hasta " + 
+($P{DateEnd} != null ? 
+    new SimpleDateFormat("dd/MM/yyyy").format($P{DateEnd}) : 
+    new SimpleDateFormat("dd/MM/yyyy").format(new Date(new Date().getYear(), 11, 31)))]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -1421,23 +1738,23 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 			</line>
 			<textField>
-				<reportElement x="0" y="3" width="70" height="12" uuid="6a6530f7-8a22-4dcc-8bd1-8f7aa984c422">
+				<reportElement x="0" y="3" width="90" height="12" uuid="6a6530f7-8a22-4dcc-8bd1-8f7aa984c422">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Ficha"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.code}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="70" y="3" width="300" height="12" uuid="5ef4f3bf-8cd2-4875-a5e8-04d7e1530602">
+				<reportElement x="90" y="3" width="280" height="12" uuid="5ef4f3bf-8cd2-4875-a5e8-04d7e1530602">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Nombre"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="570" y="3" width="40" height="12" uuid="4db72585-0755-4e6d-b4b8-bc92d3f48c9c">
@@ -1560,10 +1877,166 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Turno"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.shift}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
+	<detail>
+		<band height="12">
+			<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
+			<textField textAdjust="StretchHeight">
+				<reportElement stretchType="RelativeToTallestObject" x="90" y="0" width="280" height="12" uuid="a78ffdbd-d42b-4a83-b499-7d11134c95fd">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_date}).substring(0,1).toUpperCase() + 
+new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_date}).substring(1).toLowerCase()]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="1024" y="0" width="12" height="12" uuid="2ce23824-fbca-4713-893f-377a1cb08786">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{va}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="704" y="0" width="12" height="12" uuid="48135480-8ebe-46ce-9115-085d8f0ec534">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{dl}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="584" y="0" width="12" height="12" uuid="c78308c3-3894-45a5-ab8e-5002634b9392">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{aj}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="624" y="0" width="12" height="12" uuid="10616027-cbda-4033-b4d0-19e23ac84035">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{co}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="664" y="0" width="12" height="12" uuid="36d8ac2b-6cd2-45cb-9ee2-ce09e7cbe301">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{du}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="744" y="0" width="12" height="12" uuid="aa3e2bfa-4ca7-4153-a652-a2c3b675f0df">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{ma}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="784" y="0" width="12" height="12" uuid="2cffcd88-4f53-48c5-b340-1edeecff0a09">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{mt}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="824" y="0" width="12" height="12" uuid="f745c4f4-dd80-4a50-99c9-b6f0ee1e0b07">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{la}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="864" y="0" width="12" height="12" uuid="952b890d-33c9-47e2-8c53-4b516f2596dd">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{rm}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="904" y="0" width="12" height="12" uuid="eb98d23c-0f56-4284-8f37-755efb3e73e7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{pa}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="944" y="0" width="12" height="12" uuid="992b62d7-d832-4893-8925-1c5acabb7251">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{pr}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="984" y="0" width="12" height="12" uuid="12016b9d-bf45-4c71-864b-ce946cfc3905">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{su}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="1064" y="0" width="12" height="12" uuid="06f77532-f2f8-4879-ac94-0f806812e9ba">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{ps}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="1104" y="0" width="12" height="12" uuid="9e2046a0-34cf-4b9c-8ee7-64ec29ec336b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{pe}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="1144" y="0" width="12" height="12" uuid="920cb19e-cb40-41f9-826c-a870ce9ec530">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{re}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="1184" y="0" width="12" height="12" uuid="b9a5af0a-63d5-4bee-b9f0-e63c0f01c209">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{li}.compareTo( BigDecimal.ZERO ) != 0]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
+			</image>
+			<textField textAdjust="StretchHeight">
+				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="200" height="12" uuid="bb740f34-dbbb-4c4b-89e0-ed53051f7a60">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{report_date})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
 	<summary>
 		<band height="87" splitType="Immediate">
 			<line>
@@ -1616,7 +2089,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 			<textField>
 				<reportElement mode="Transparent" x="0" y="12" width="370" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fcfb056d-dfb6-45b2-8958-a62cf83b8e89"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.noemployee}+": "+$V{v_employee_count}]]></textFieldExpression>
 			</textField>
@@ -1626,7 +2099,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" Total  Reporte"+":  "]]></textFieldExpression>
 			</textField>
@@ -1637,7 +2110,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{aj_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{aj_tot} : ""]]></textFieldExpression>
@@ -1649,7 +2122,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{co_tot} .compareTo( BigDecimal.ZERO ) != 0  ? $V{co_tot} : ""]]></textFieldExpression>
@@ -1661,7 +2134,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{du_tot}.compareTo( BigDecimal.ZERO ) != 0  ? $V{du_tot}  : ""]]></textFieldExpression>
@@ -1673,7 +2146,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{dl_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{dl_tot} : ""]]></textFieldExpression>
@@ -1685,7 +2158,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ma_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ma_tot} : ""]]></textFieldExpression>
@@ -1697,7 +2170,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{mt_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{mt_tot} : ""]]></textFieldExpression>
@@ -1709,7 +2182,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{la_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{la_tot} : ""]]></textFieldExpression>
@@ -1721,7 +2194,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{rm_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{rm_tot} : ""]]></textFieldExpression>
@@ -1733,7 +2206,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pa_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pa_tot} : ""]]></textFieldExpression>
@@ -1745,7 +2218,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pr_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pr_tot} : ""]]></textFieldExpression>
@@ -1757,7 +2230,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{su_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{su_tot} : ""]]></textFieldExpression>
@@ -1769,7 +2242,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{va_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{va_tot} : ""]]></textFieldExpression>
@@ -1781,7 +2254,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ps_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{ps_tot} : ""]]></textFieldExpression>
@@ -1793,7 +2266,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{pe_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{pe_tot} : ""]]></textFieldExpression>
@@ -1805,7 +2278,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{re_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{re_tot} : ""]]></textFieldExpression>
@@ -1817,7 +2290,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.location_value, leaves.em
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{li_tot}.compareTo( BigDecimal.ZERO ) != 0 ? $V{li_tot} : ""]]></textFieldExpression>

@@ -25,10 +25,12 @@ import org.compiere.util.Env;
 public class AMNCalloutFactory implements IColumnCalloutFactory {
 	
 	static CLogger log = CLogger.getCLogger(AMNCalloutFactory.class);
+	
 	@Override
 	public IColumnCallout[] getColumnCallouts(String tableName,
 			String columnName) {
-		// TODO Auto-generated method stub	
+		// log.warning("tableName="+tableName+"  columnName="+columnName);
+		
 		List<IColumnCallout> list = new ArrayList<IColumnCallout>();
 		// *********************************
 		// TableRef: amn_role_access
@@ -58,11 +60,14 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 		// TableRef: amn_concept_types_
 		// *********************************
 		if (tableName.equalsIgnoreCase(MAMN_Concept_Types.Table_Name)) {
-			// FieldRef: amn_concept_types_ID
-			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_AMN_Concept_Types_ID))
-				list.add(new AMN_Concept_Types_callout());
-			// FieldRef: aValue
+			// FieldRef: Value
 			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_Value))
+				list.add(new AMN_Concept_Types_callout());
+			// FieldRef: Name
+			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_Name))
+				list.add(new AMN_Concept_Types_callout());
+			// FieldRef CalcOrder
+			if (columnName.equalsIgnoreCase(MAMN_Concept_Types.COLUMNNAME_CalcOrder))
 				list.add(new AMN_Concept_Types_callout());
 		}		
 		
@@ -106,13 +111,29 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			// FieldRef: AMN_Employee_ID 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_AMN_Employee_ID))
 				list.add(new AMN_Payroll_callout());
-			// FieldRef: AMN_Employee_ID 
+			// FieldRef: InvDateIni 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_InvDateIni))
 				list.add(new AMN_Payroll_Dates_callout());
-			// FieldRef: AMN_Employee_ID 
+			// FieldRef: InvDateEnd 
 			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_InvDateEnd))
 				list.add(new AMN_Payroll_Dates_callout());
-
+			// FieldRef: DaysVacation 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_DaysVacation))
+				list.add(new AMN_Payroll_Dates_callout());
+			// FieldRef: DaysVacationCollective 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_DaysVacationCollective))
+				list.add(new AMN_Payroll_Dates_callout());
+			// DateReEntry
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_month) ||
+				columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_year)) {
+				list.add(new AMN_Payroll_Dates_callout());
+			}
+			// FieldRef: RefDateIni 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_RefDateIni))
+				list.add(new AMN_Payroll_Dates_callout());
+			// FieldRef: RefDateEnd 
+			if (columnName.equalsIgnoreCase(MAMN_Payroll.COLUMNNAME_RefDateEnd))
+				list.add(new AMN_Payroll_Dates_callout());
 		}
 		
 		// *********************************
@@ -162,6 +183,12 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			// FieldRef: COLUMNNAME_AMN_Concept_Types_Proc_ID
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Deferred.COLUMNNAME_AMN_Concept_Types_Proc_ID))
 				list.add(new AMN_Payroll_Deferred_callout());
+			// DueDate
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Deferred.COLUMNNAME_DueDate))
+				list.add(new AMN_Payroll_Deferred_callout());
+			// QtyValue
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Deferred.COLUMNNAME_QtyValue))
+				list.add(new AMN_Payroll_Deferred_callout());
 		}		
 		// *********************************
 		// TableRef: amn_payroll_assist
@@ -191,6 +218,8 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID))
+				list.add(new AMN_Payroll_Assist_Proc_callout());
 		}
 		
 		// *********************************
@@ -215,8 +244,26 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 					columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_LastName1) || 
 					columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_LastName2))
 				list.add(new AMN_Employee_DetailedNames_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Employee.COLUMNNAME_Value)) {
+				list.add(new AMN_Employee_callout());
+			}
 		}
 		
+		// *********************************
+		// TableRef: amn_i_employee
+		// *********************************
+		if (tableName.equalsIgnoreCase(MAMN_I_Employee.Table_Name)) {
+			// Detailed Name
+			if ( columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_FirstName1) || 
+					columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_FirstName2) ||
+					columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_LastName1) || 
+					columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_LastName2))
+				list.add(new AMN_Employee_DetailedNames_callout());
+			if (columnName.equalsIgnoreCase(MAMN_I_Employee.COLUMNNAME_Value)) {
+				list.add(new AMN_I_Employee_callout());
+			}
+		}
+				
 		// *********************************
 		// TableRef: amn_payroll_lot
 		// *********************************

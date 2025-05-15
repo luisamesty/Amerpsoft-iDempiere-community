@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Payroll_Detail
  *  @author iDempiere (generated) 
- *  @version Release 5.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Payroll_Detail 
@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Detail
     /** TableName=AMN_Payroll_Detail */
     public static final String Table_Name = "AMN_Payroll_Detail";
 
-    /** AD_Table_ID=1000128 */
+    /** AD_Table_ID=1000029 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -46,8 +46,8 @@ public interface I_AMN_Payroll_Detail
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Payroll_Detail
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -84,6 +84,23 @@ public interface I_AMN_Payroll_Detail
 	/** Get Payroll Concepts UOM	  */
 	public int getAMN_Concept_Uom_ID();
 
+	public I_AMN_Concept_Uom getAMN_Concept_Uom() throws RuntimeException;
+
+    /** Column name AMN_Payroll_Deferred_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Deferred_ID = "AMN_Payroll_Deferred_ID";
+
+	/** Set Payroll Invoices Detail Deferred .
+	  * Payroll Invoices Detail Deferred 
+	  */
+	public void setAMN_Payroll_Deferred_ID (int AMN_Payroll_Deferred_ID);
+
+	/** Get Payroll Invoices Detail Deferred .
+	  * Payroll Invoices Detail Deferred 
+	  */
+	public int getAMN_Payroll_Deferred_ID();
+
+	public I_AMN_Payroll_Deferred getAMN_Payroll_Deferred() throws RuntimeException;
+
     /** Column name AMN_Payroll_Detail_ID */
     public static final String COLUMNNAME_AMN_Payroll_Detail_ID = "AMN_Payroll_Detail_ID";
 
@@ -92,19 +109,6 @@ public interface I_AMN_Payroll_Detail
 
 	/** Get Payroll Invoices Detail	  */
 	public int getAMN_Payroll_Detail_ID();
-
-    /** Column name AMN_Payroll_Detail_Parent_ID */
-    public static final String COLUMNNAME_AMN_Payroll_Detail_Parent_ID = "AMN_Payroll_Detail_Parent_ID";
-
-	/** Set AMN_Payroll_Detail_Parent_ID.
-	  * Link to Payroll Detail Transaction for Balances on LOAN type Concepts
-	  */
-	public void setAMN_Payroll_Detail_Parent_ID (int AMN_Payroll_Detail_Parent_ID);
-
-	/** Get AMN_Payroll_Detail_Parent_ID.
-	  * Link to Payroll Detail Transaction for Balances on LOAN type Concepts
-	  */
-	public int getAMN_Payroll_Detail_Parent_ID();
 
     /** Column name AMN_Payroll_Detail_UU */
     public static final String COLUMNNAME_AMN_Payroll_Detail_UU = "AMN_Payroll_Detail_UU";
@@ -187,6 +191,15 @@ public interface I_AMN_Payroll_Detail
 	  */
 	public BigDecimal getAmountQuota();
 
+    /** Column name CalcOrder */
+    public static final String COLUMNNAME_CalcOrder = "CalcOrder";
+
+	/** Set CalcOrder	  */
+	public void setCalcOrder (int CalcOrder);
+
+	/** Get CalcOrder	  */
+	public int getCalcOrder();
+
     /** Column name C_Invoice_ID */
     public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
 
@@ -216,15 +229,6 @@ public interface I_AMN_Payroll_Detail
 	public int getC_Payment_ID();
 
 	public org.compiere.model.I_C_Payment getC_Payment() throws RuntimeException;
-
-    /** Column name CalcOrder */
-    public static final String COLUMNNAME_CalcOrder = "CalcOrder";
-
-	/** Set CalcOrder	  */
-	public void setCalcOrder (int CalcOrder);
-
-	/** Get CalcOrder	  */
-	public int getCalcOrder();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
