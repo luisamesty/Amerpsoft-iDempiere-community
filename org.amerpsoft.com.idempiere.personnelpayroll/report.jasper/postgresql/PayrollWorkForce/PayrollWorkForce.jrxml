@@ -16,8 +16,8 @@
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
-	<parameter name="C_Currency_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
+	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
 	<parameter name="C_Year_ID" class="java.lang.Integer"/>
 	<parameter name="C_PeriodIni_ID" class="java.lang.Integer"/>
@@ -35,6 +35,104 @@
 		<![CDATA[-- Payroll Workforce
 -- PayrollWorkforce.jrxml
 -- optmone='A' reemplazado por pydma.accounttype ='E'
+WITH Concept_accounting AS (
+	SELECT * FROM (
+	    -- DEBIT ACCOUNTS
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'DB' AS account_sign, 'D' AS workforce,
+	        cedb.C_ElementValue_ID AS account_id, cedb.value AS account_value,
+	        cedb.name AS account_name, cedb.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacodb ON vacodb.C_ValidCombination_ID = ctysa.amn_deb_dw_acct
+	    LEFT JOIN C_ElementValue cedb ON cedb.C_ElementValue_ID = vacodb.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'DB', 'I',
+	        cedb.C_ElementValue_ID, cedb.value, cedb.name, cedb.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacodb ON vacodb.C_ValidCombination_ID = ctysa.amn_deb_iw_acct
+	    LEFT JOIN C_ElementValue cedb ON cedb.C_ElementValue_ID = vacodb.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'DB', 'M',
+	        cedb.C_ElementValue_ID, cedb.value, cedb.name, cedb.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacodb ON vacodb.C_ValidCombination_ID = ctysa.amn_deb_mw_acct
+	    LEFT JOIN C_ElementValue cedb ON cedb.C_ElementValue_ID = vacodb.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'DB', 'S',
+	        cedb.C_ElementValue_ID, cedb.value, cedb.name, cedb.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacodb ON vacodb.C_ValidCombination_ID = ctysa.amn_deb_sw_acct
+	    LEFT JOIN C_ElementValue cedb ON cedb.C_ElementValue_ID = vacodb.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'DB', 'A',
+	        cedb.C_ElementValue_ID, cedb.value, cedb.name, cedb.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacodb ON vacodb.C_ValidCombination_ID = ctysa.amn_deb_acct
+	    LEFT JOIN C_ElementValue cedb ON cedb.C_ElementValue_ID = vacodb.Account_ID
+	
+	    -- CREDIT ACCOUNTS
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'CR', 'D',
+	        cecr.C_ElementValue_ID, cecr.value, cecr.name, cecr.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacocr ON vacocr.C_ValidCombination_ID = ctysa.amn_cre_dw_acct
+	    LEFT JOIN C_ElementValue cecr ON cecr.C_ElementValue_ID = vacocr.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'CR', 'I',
+	        cecr.C_ElementValue_ID, cecr.value, cecr.name, cecr.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacocr ON vacocr.C_ValidCombination_ID = ctysa.amn_cre_iw_acct
+	    LEFT JOIN C_ElementValue cecr ON cecr.C_ElementValue_ID = vacocr.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'CR', 'M',
+	        cecr.C_ElementValue_ID, cecr.value, cecr.name, cecr.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacocr ON vacocr.C_ValidCombination_ID = ctysa.amn_cre_mw_acct
+	    LEFT JOIN C_ElementValue cecr ON cecr.C_ElementValue_ID = vacocr.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'CR', 'S',
+	        cecr.C_ElementValue_ID, cecr.value, cecr.name, cecr.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacocr ON vacocr.C_ValidCombination_ID = ctysa.amn_cre_sw_acct
+	    LEFT JOIN C_ElementValue cecr ON cecr.C_ElementValue_ID = vacocr.Account_ID
+	
+	    UNION
+	    SELECT ctys.amn_concept_types_id, ctys.calcorder, ctys.value, ctys.name, ctys.optmode, ctysa.c_acctschema_id,
+	        'CR', 'A',
+	        cecr.C_ElementValue_ID, cecr.value, cecr.name, cecr.accounttype
+	    FROM AMN_Concept_Types ctys
+	    LEFT JOIN AMN_Concept_Types_Acct ctysa ON ctysa.amn_concept_types_id = ctys.amn_concept_types_id
+	    LEFT JOIN C_ValidCombination vacocr ON vacocr.C_ValidCombination_ID = ctysa.amn_cre_acct
+	    LEFT JOIN C_ElementValue cecr ON cecr.C_ElementValue_ID = vacocr.Account_ID
+	  ) AS accountsall
+	  WHERE accountsall.accounttype='E'
+	  ORDER BY calcorder, workforce, account_sign DESC
+) 
+-- MAIN QUERY
 SELECT * FROM
 (
 	-- REPORT HEADER
@@ -54,22 +152,21 @@ SELECT * FROM
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
 	    CASE WHEN  org.ad_client_id = $P{AD_Client_ID}   AND ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 1
 	             WHEN  org.ad_client_id = $P{AD_Client_ID}  AND org.ad_org_id= $P{AD_Org_ID}  THEN 1
-	             ELSE 0 END as imp_header,
-	    -- CURRENCY
-		CONCAT(curr.iso_code,'-',currt.cursymbol,'-',COALESCE(currt.description,curr.iso_code,curr.cursymbol,'')) as moneda
+	             ELSE 0 END as imp_header
 	FROM adempiere.ad_client as cli
 		 INNER JOIN adempiere.ad_org as org ON (org.ad_client_id = cli.ad_client_id)
 		 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
 		  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
 		 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 		  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
-		  LEFT JOIN c_currency curr on curr.c_currency_id = $P{C_Currency_ID}
-          LEFT JOIN c_currency_trl currt on curr.c_currency_id = currt.c_currency_id and currt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 	WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
 ) as header_info
 FULL JOIN
 (
 SELECT 
+	-- C_AcctSchema
+	pydma.c_acctschema_id,
+	pydma.schema_name,
     -- CURRENCY
     curr1.iso_code as iso_code1,
     currt1.cursymbol as cursymbol1,
@@ -116,9 +213,9 @@ SELECT
    -- C_YEAR 
    year2.c_year_id,  year2.periodos
     FROM AMN_Period tiper
-    LEFT JOIN C_Period per ON (per.c_period_id = tiper.c_period_id )
-    LEFT JOIN C_Year year ON (year.C_Year_ID = per.C_Year_ID )
-    LEFT JOIN (
+    INNER JOIN C_Period per ON (per.c_period_id = tiper.c_period_id )
+    INNER JOIN C_Year year ON (year.C_Year_ID = per.C_Year_ID )
+    INNER JOIN (
 		SELECT DISTINCT ON (per2.C_Year_ID) 
 		per2.C_Year_ID,
 		CONCAT(MAX(per2.periodtxt01)::text, ' ', MAX(per2.periodtxt02)::text, ' ', MAX(per2.periodtxt03)::text, ' ', MAX(per2.periodtxt04)::text,
@@ -145,8 +242,8 @@ SELECT
 		FROM C_Period cper WHERE cper.c_period_id >=  $P{C_PeriodIni_ID} AND cper.c_period_id <=  $P{C_PeriodEnd_ID} AND cper.c_year_id = $P{C_Year_ID}
 		) as per2
 		GROUP BY per2.C_Year_ID
-	    ) year2 ON ( year2.c_year_id = year.c_year_id)
-    LEFT JOIN adempiere.amn_payroll as pyr ON (pyr.amn_period_id = tiper.amn_period_id)
+	) year2 ON ( year2.c_year_id = year.c_year_id)
+    INNER JOIN adempiere.amn_payroll as pyr ON (pyr.amn_period_id = tiper.amn_period_id)
     LEFT JOIN (
 		-- DEBITS
 		SELECT
@@ -175,6 +272,9 @@ SELECT
 		ctyacc.value as concept_value,
 		ctyacc.name as concept_name,
 		ctyacc.optmode,
+		-- C_AcctSchema
+		acsch.c_acctschema_id,
+		acsch.name AS schema_name,
 		-- Account 
 		ctyacc.account_sign,
 		ctyacc.account_value,
@@ -182,83 +282,50 @@ SELECT
 		ctyacc.accounttype,
 		CASE WHEN ctyacc.account_sign ='DB' AND prdet.amountallocated <> 0 THEN 
 				--prdet.amountallocated 
-				currencyConvert(pay.amountallocated,pay.c_currency_id, $P{C_Currency_ID}, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
+				currencyConvert(pay.amountallocated,pay.c_currency_id, acsch.c_currency_id, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
 		     WHEN ctyacc.account_sign ='DB' AND prdet.amountdeducted <> 0 THEN 
 		     	--prdet.amountdeducted 
-				currencyConvert(pay.amountdeducted,pay.c_currency_id, $P{C_Currency_ID}, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
+				currencyConvert(pay.amountdeducted,pay.c_currency_id, acsch.c_currency_id, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
 		     WHEN ctyacc.account_sign ='DB' AND (prdet.amountallocated = 0 AND prdet.amountdeducted = 0 ) THEN 
 		     	--prdet.amountcalculated
-		     	currencyConvert(pay.amountcalculated,pay.c_currency_id, $P{C_Currency_ID}, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
+		     	currencyConvert(pay.amountcalculated,pay.c_currency_id, acsch.c_currency_id, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
 		ELSE  0 END as db_acct,
 		CASE WHEN ctyacc.account_sign ='CR' AND prdet.amountallocated <> 0 THEN 
 				--prdet.amountallocated 
-		     	currencyConvert(pay.amountallocated,pay.c_currency_id, $P{C_Currency_ID}, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
+		     	currencyConvert(pay.amountallocated,pay.c_currency_id, acsch.c_currency_id, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
 		     WHEN ctyacc.account_sign ='CR' AND prdet.amountdeducted <> 0 THEN 
 		     	--prdet.amountdeducted 
-		     	currencyConvert(pay.amountdeducted,pay.c_currency_id, $P{C_Currency_ID}, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
+		     	currencyConvert(pay.amountdeducted,pay.c_currency_id, acsch.c_currency_id, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
 		     WHEN ctyacc.account_sign ='CR' AND (prdet.amountallocated = 0 AND prdet.amountdeducted = 0 ) THEN 
 		     	--prdet.amountcalculated
-		     	currencyConvert(pay.amountcalculated,pay.c_currency_id, $P{C_Currency_ID}, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
+		     	currencyConvert(pay.amountcalculated,pay.c_currency_id, acsch.c_currency_id, pay.dateacct, pay.C_ConversionType_ID, pay.AD_Client_ID, pay.AD_Org_ID ) 
 		ELSE  0 END  as cr_acct
 		-- Amount
-		--prdet.amountallocated,
-		--prdet.amountdeducted,
-		--prdet.amountcalculated
-		FROM AMN_Payroll_Detail prdet
-		LEFT JOIN AMN_Concept_Types_Proc ctyp ON (ctyp.AMN_Concept_Types_Proc_ID = prdet.AMN_Concept_Types_Proc_ID)
-		LEFT JOIN 
-		(--DEBIT ACCOUNT
-		 SELECT
-			ctys.amn_concept_types_id as amn_concept_types_id, 
-			ctys.calcorder as calcorder,
-			ctys.value,
-			ctys.name,
-			ctys.optmode,
-			'DB' as account_sign,
-			cedb.C_ElementValue_ID as Account_ID,
-			cedb.value as account_value,
-			cedb.name as account_name,
-			cedb.accounttype as accounttype
-			FROM AMN_Concept_Types ctys 
-			LEFT JOIN C_ValidCombination vacodb ON ( vacodb.C_ValidCombination_ID = ctys.AMN_Deb_Acct)
-			LEFT JOIN C_ElementValue cedb ON (cedb.C_ElementValue_ID = vacodb.Account_ID)
-			-- CREDIT ACCOUNT
-		  UNION
-		  SELECT
-			ctys.amn_concept_types_id as amn_concept_types_id, 
-			ctys.calcorder  as calcorder,
-			ctys.value,
-			ctys.name,
-			ctys.optmode,
-			'CR' as account_sign,
-			cecr.C_ElementValue_ID as Account_ID,
-			cecr.value as cr_value,
-			cecr.name as cr_name,
-			cecr.accounttype as accounttype
-			FROM AMN_Concept_Types ctys 
-			LEFT JOIN C_ValidCombination vacocr ON ( vacocr.C_ValidCombination_ID = ctys.AMN_Cre_Acct)
-			LEFT JOIN C_ElementValue cecr ON (cecr.C_ElementValue_ID = vacocr.Account_ID)
-			-- ORDER
-			ORDER BY Calcorder, account_sign DESC
-	           ) as ctyacc ON ( ctyacc.AMN_Concept_Types_ID = ctyp.AMN_Concept_Types_ID)
-	       LEFT JOIN AMN_Payroll pay ON ( pay.AMN_Payroll_ID = prdet.amn_payroll_id )
-		   LEFT JOIN AMN_Employee emp ON ( emp.amn_employee_id = pay.amn_employee_id)
-		   LEFT JOIN C_Activity act ON ( act.C_Activity_ID = emp.C_Activity_ID )
-		   LEFT JOIN AMN_JobTitle jobt ON (jobt.AMN_JobTitle_ID = emp.AMN_JobTitle_ID ) 
-		) as pydma ON ( pydma.amn_payroll_id = pyr.amn_payroll_id)
-       LEFT JOIN adempiere.ad_org as org ON (org.ad_org_id = pydma.ad_org_id)
-       INNER JOIN adempiere.ad_client as cli ON (org.ad_client_id = cli.ad_client_id)
-       INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
-       INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
-       LEFT JOIN adempiere.ad_image AS IMG ON (cliinfo.logoreport_id = IMG.ad_image_id)
-       LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
-       LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
-       LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
-       LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-WHERE  pydma.ad_client_id = $P{AD_Client_ID} 
+		FROM adempiere.AMN_Payroll_Detail prdet
+		INNER JOIN adempiere.AMN_Concept_Types_Proc ctyp ON (ctyp.AMN_Concept_Types_Proc_ID = prdet.AMN_Concept_Types_Proc_ID)
+		INNER JOIN adempiere.AMN_Payroll pay ON ( pay.AMN_Payroll_ID = prdet.amn_payroll_id )
+		INNER JOIN adempiere.AMN_Employee emp ON ( emp.amn_employee_id = pay.amn_employee_id)
+		INNER JOIN adempiere.AMN_JobTitle jobt ON (jobt.AMN_JobTitle_ID = emp.AMN_JobTitle_ID ) 
+		INNER JOIN adempiere.c_acctschema acsch ON (acsch.ad_client_id = pay.ad_client_id AND acsch.c_acctschema_id = $P{C_AcctSchema_ID}  )
+		LEFT JOIN Concept_accounting as ctyacc ON ( ctyacc.c_acctschema_id = acsch.c_acctschema_id AND  ctyacc.AMN_Concept_Types_ID = ctyp.AMN_Concept_Types_ID AND ctyacc.workforce = jobt.workforce )
+		LEFT JOIN C_Activity act ON ( act.C_Activity_ID = emp.C_Activity_ID )
+	   ) as pydma ON ( pydma.amn_payroll_id = pyr.amn_payroll_id)
+   INNER JOIN adempiere.ad_org as org ON (org.ad_org_id = pydma.ad_org_id)
+   INNER JOIN adempiere.ad_client as cli ON (org.ad_client_id = cli.ad_client_id)
+   INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+   INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+   LEFT JOIN adempiere.ad_image AS IMG ON (cliinfo.logoreport_id = IMG.ad_image_id)
+   INNER JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
+   LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
+   LEFT JOIN c_currency curr2 on curr2.c_currency_id = (SELECT DISTINCT C_Currency_ID FROM c_acctschema WHERE C_AcctSchema_ID = $P{C_AcctSchema_ID})
+   LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+   WHERE  pydma.ad_client_id = $P{AD_Client_ID} 
+   		AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} = pydma.ad_org_id ) THEN 1=1 ELSE 1=0 END 
+   		AND CASE WHEN pydma.db_acct != 0 OR pydma.cr_acct != 0 THEN 1=1 ELSE 1=0 END
+		AND pydma.c_acctschema_id = $P{C_AcctSchema_ID} 
 		AND per.c_period_id >= $P{C_PeriodIni_ID} 
         AND per.c_period_id <= $P{C_PeriodEnd_ID} AND per.c_year_id = $P{C_Year_ID}
-        AND pydma.optmode='A'  
+        AND pydma.optmode='A'   --	AND pydma.accounttype ='E'
 )
 as prwf ON (1= 0)
 order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_value, prwf.employee_value, prwf.amndateini
@@ -297,9 +364,15 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
 		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
 	</field>
-	<field name="moneda" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="moneda"/>
-		<property name="com.jaspersoft.studio.field.label" value="moneda"/>
+	<field name="c_acctschema_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_acctschema_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_acctschema_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_acctschema"/>
+	</field>
+	<field name="schema_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="schema_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="schema_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_acctschema"/>
 	</field>
 	<field name="iso_code1" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="iso_code1"/>
@@ -528,21 +601,26 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 		<groupFooter>
 			<band height="14">
 				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="726" y="0" width="122" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a3c6c4c6-0f5c-4d7c-a114-895e920dcc4c"/>
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a3c6c4c6-0f5c-4d7c-a114-895e920dcc4c">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdb_act}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="848" y="0" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0a9945e4-6786-4580-b653-2c31a37a018f"/>
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0a9945e4-6786-4580-b653-2c31a37a018f">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_act}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="246" y="0" width="480" height="14" isRemoveLineWhenBlank="true" uuid="5033f2ef-6a35-4439-b63b-1df067c8b4f1">
+					<reportElement x="0" y="0" width="730" height="14" isRemoveLineWhenBlank="true" uuid="5033f2ef-6a35-4439-b63b-1df067c8b4f1">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right">
@@ -576,7 +654,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 		<groupFooter>
 			<band height="14">
 				<textField>
-					<reportElement x="246" y="0" width="480" height="14" isRemoveLineWhenBlank="true" uuid="fc4562b2-1472-45d6-b26b-39d9bfaf5cb5">
+					<reportElement x="0" y="0" width="730" height="14" isRemoveLineWhenBlank="true" uuid="fc4562b2-1472-45d6-b26b-39d9bfaf5cb5">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right">
@@ -590,16 +668,21 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 )))]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="726" y="0" width="122" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="99d7ea6f-7f95-4724-a9d0-a218f39c0c4c"/>
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="99d7ea6f-7f95-4724-a9d0-a218f39c0c4c">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdb_wof}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="848" y="0" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3fdcdb2c-5b03-4d75-95f0-4de7f15b627b"/>
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3fdcdb2c-5b03-4d75-95f0-4de7f15b627b">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_wof}]]></textFieldExpression>
 				</textField>
@@ -620,7 +703,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 					<textFieldExpression><![CDATA[$F{account_value}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="80" y="0" width="250" height="12" isRemoveLineWhenBlank="true" uuid="92d7712c-239b-4ca0-8c74-ea593b642cf3">
+					<reportElement x="80" y="0" width="260" height="12" isRemoveLineWhenBlank="true" uuid="92d7712c-239b-4ca0-8c74-ea593b642cf3">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement>
@@ -629,20 +712,23 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 					<textFieldExpression><![CDATA[$F{account_name}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porCuenta" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="726" y="0" width="122" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e2ae2b11-89b5-4c58-b0d9-b9f896d7610a">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e2ae2b11-89b5-4c58-b0d9-b9f896d7610a">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdb_acc}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porCuenta" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="848" y="0" width="119" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3f69b5b9-c4be-4344-84ac-b8ad5db7d25a">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="3f69b5b9-c4be-4344-84ac-b8ad5db7d25a">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_acc}]]></textFieldExpression>
 				</textField>
@@ -652,7 +738,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 			<band height="14">
 				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porCuenta">
-					<reportElement x="246" y="0" width="480" height="14" isRemoveLineWhenBlank="true" uuid="1e146272-d7f3-465c-974a-f5ccf959d8e0">
+					<reportElement x="0" y="0" width="730" height="14" isRemoveLineWhenBlank="true" uuid="1e146272-d7f3-465c-974a-f5ccf959d8e0">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
@@ -662,20 +748,23 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 					<textFieldExpression><![CDATA["Total "+$F{account_value}.trim()+" - "+$F{account_name}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porCuenta" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="726" y="0" width="122" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="a52d5b0d-7ebf-4158-a402-7abfadb05d51">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="a52d5b0d-7ebf-4158-a402-7abfadb05d51">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdb_acc}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porCuenta" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="848" y="0" width="119" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="5fcb210d-7d81-45d0-9f08-a9ea098d85e2">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="5fcb210d-7d81-45d0-9f08-a9ea098d85e2">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_acc}]]></textFieldExpression>
 				</textField>
@@ -711,7 +800,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 			<band height="14">
 				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto">
-					<reportElement x="246" y="0" width="480" height="14" isRemoveLineWhenBlank="true" uuid="8512cb84-c783-4e56-921e-34270890e1a8">
+					<reportElement x="0" y="0" width="730" height="14" isRemoveLineWhenBlank="true" uuid="8512cb84-c783-4e56-921e-34270890e1a8">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
@@ -721,20 +810,23 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 					<textFieldExpression><![CDATA["Total "+$F{concept_value}.trim()+" - "+$F{concept_name}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="726" y="0" width="122" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="6be6b800-f76f-4968-b253-cb82f249cf67">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="6be6b800-f76f-4968-b253-cb82f249cf67">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdb_con}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porConcepto" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="848" y="0" width="119" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="270ae708-2eb9-4128-aa4a-97edf9f08985">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="270ae708-2eb9-4128-aa4a-97edf9f08985">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_con}]]></textFieldExpression>
 				</textField>
@@ -770,7 +862,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 			<band height="14">
 				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_porTabajador">
-					<reportElement x="246" y="0" width="480" height="14" isRemoveLineWhenBlank="true" uuid="39712fe4-902c-4b45-9351-98ee22614768">
+					<reportElement x="0" y="0" width="730" height="14" isRemoveLineWhenBlank="true" uuid="39712fe4-902c-4b45-9351-98ee22614768">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
@@ -780,20 +872,23 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 					<textFieldExpression><![CDATA["Total "+$F{employee_value}.trim()+" - "+$F{employee_name}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porTabajador" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="726" y="0" width="122" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c024dfcb-afdb-4bcc-a848-9f5cd043efa4">
+					<reportElement mode="Transparent" x="730" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c024dfcb-afdb-4bcc-a848-9f5cd043efa4">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdb_emp}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porTabajador" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="848" y="0" width="119" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="839f485c-0cc4-4023-91e4-bf7cea8ca8be">
+					<reportElement mode="Transparent" x="850" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="839f485c-0cc4-4023-91e4-bf7cea8ca8be">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_emp}]]></textFieldExpression>
 				</textField>
@@ -804,9 +899,9 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="41" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="883" y="0" width="85" height="13" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
+				<reportElement key="" x="850" y="0" width="120" height="13" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -816,7 +911,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement key="" x="926" y="13" width="42" height="13" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
+				<reportElement key="" x="926" y="13" width="44" height="13" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -825,8 +920,8 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				</textElement>
 				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="78" y="0" width="202" height="13" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="200" height="13" isRemoveLineWhenBlank="true" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -834,18 +929,18 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{v_org_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
-				<reportElement key="" x="0" y="1" width="78" height="40" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
+				<reportElement key="" x="0" y="0" width="80" height="40" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -856,19 +951,20 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement key="" x="280" y="1" width="603" height="25" uuid="0af9e390-5210-4122-95e5-66bf8fbd68fa">
+				<reportElement key="" x="280" y="0" width="570" height="26" uuid="0af9e390-5210-4122-95e5-66bf8fbd68fa">
 					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Reporte de Fuerza de Trabajo]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="78" y="13" width="202" height="13" isRemoveLineWhenBlank="true" uuid="c907aa55-9bb4-453f-821c-56948b297c6c">
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="80" y="13" width="200" height="13" isRemoveLineWhenBlank="true" uuid="c907aa55-9bb4-453f-821c-56948b297c6c">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -878,10 +974,10 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{v_org_taxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" x="883" y="13" width="43" height="13" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
+				<reportElement key="" x="850" y="13" width="76" height="13" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -891,9 +987,10 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement x="78" y="27" width="891" height="14" uuid="72f18343-35c1-4940-8625-9d71dd64f09e">
+				<reportElement x="80" y="26" width="890" height="14" uuid="72f18343-35c1-4940-8625-9d71dd64f09e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="12"/>
@@ -903,11 +1000,12 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="22" splitType="Stretch">
+		<band height="23" splitType="Stretch">
 			<staticText>
-				<reportElement x="849" y="5" width="120" height="12" uuid="6ee2ba4d-af70-4328-a91a-76e948844f8a">
+				<reportElement x="850" y="5" width="120" height="12" uuid="6ee2ba4d-af70-4328-a91a-76e948844f8a">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -915,9 +1013,10 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<text><![CDATA[CR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="729" y="5" width="120" height="12" uuid="67a2019a-7e5f-4d7d-b860-c53b4ffeba0a">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<reportElement x="730" y="5" width="120" height="12" uuid="67a2019a-7e5f-4d7d-b860-c53b4ffeba0a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -925,10 +1024,23 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<text><![CDATA[DB]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="6" width="280" height="16" uuid="60561210-39fa-44ef-8d5c-c4d82701b2f8">
+				<reportElement x="0" y="6" width="280" height="12" uuid="a16a5cf5-61b0-486d-8622-4119cf87ea05">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cuenta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="6" width="280" height="12" uuid="60561210-39fa-44ef-8d5c-c4d82701b2f8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -936,7 +1048,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<text><![CDATA[Recibo - Detalle - Cuenta]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="18" width="966" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
+				<reportElement x="0" y="18" width="970" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -944,7 +1056,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="21" width="966" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
+				<reportElement x="0" y="21" width="970" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -952,7 +1064,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="2" width="966" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
+				<reportElement x="0" y="2" width="970" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -960,7 +1072,7 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="5" width="966" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
+				<reportElement x="0" y="5" width="970" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -968,15 +1080,27 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="330" y="6" width="232" height="12" uuid="a6e3c089-b089-4264-8215-cc31ef7317ed">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<reportElement x="345" y="6" width="180" height="12" uuid="a6e3c089-b089-4264-8215-cc31ef7317ed">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="6" width="205" height="12" uuid="ada9a7f9-768a-4b4a-835a-40557071a191">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Trabajador]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -999,38 +1123,44 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<textFieldExpression><![CDATA[($F{account_name} == null ? "" : $F{account_name})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="346" y="0" width="180" height="12" isRemoveLineWhenBlank="true" uuid="1d7e7321-7d3c-4218-a53a-b9a09b2b9156">
+				<reportElement x="345" y="0" width="180" height="12" isRemoveLineWhenBlank="true" uuid="1d7e7321-7d3c-4218-a53a-b9a09b2b9156">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[( $F{concept_name} == null ? "" : $F{concept_name})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00#;(#,##0.00#)">
-				<reportElement x="727" y="0" width="122" height="12" isRemoveLineWhenBlank="true" uuid="9acc1ea8-9780-4549-824c-49edb2caf1b7">
+				<reportElement x="730" y="0" width="120" height="12" isRemoveLineWhenBlank="true" uuid="9acc1ea8-9780-4549-824c-49edb2caf1b7">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{db_acct} != BigDecimal.ZERO]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[( $F{db_acct} == null  ? "" : ( $F{db_acct} == BigDecimal.ZERO  ? "" : $F{db_acct} ) )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="849" y="0" width="120" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c572fc59-6ce2-46ca-b251-6cda8256cde1">
+				<reportElement mode="Transparent" x="850" y="0" width="120" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c572fc59-6ce2-46ca-b251-6cda8256cde1">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<printWhenExpression><![CDATA[$F{cr_acct} != BigDecimal.ZERO]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $F{cr_acct} == null  ? "" : ( $F{cr_acct} == BigDecimal.ZERO  ? "" : $F{cr_acct} ) )]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="526" y="0" width="200" height="12" isRemoveLineWhenBlank="true" uuid="5b314f0b-6b62-485e-bb11-58729dc2e3d1">
+				<reportElement x="525" y="0" width="205" height="12" isRemoveLineWhenBlank="true" uuid="5b314f0b-6b62-485e-bb11-58729dc2e3d1">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[( $F{employee_value}== null ? "" : $F{employee_value}.trim() )  + " - "+ ( $F{employee_name} == null ? "" : $F{employee_name}.trim() )]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="280" y="0" width="66" height="12" isRemoveLineWhenBlank="true" uuid="ee5d54d8-6c11-4895-a646-ed60218dc150">
+				<reportElement x="280" y="0" width="65" height="12" isRemoveLineWhenBlank="true" uuid="ee5d54d8-6c11-4895-a646-ed60218dc150">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yy").format( $F{amndateend})]]></textFieldExpression>
@@ -1051,9 +1181,10 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="401" y="2" width="162" height="14" isRemoveLineWhenBlank="true" uuid="03fc51b4-be69-425a-9ce3-ef47fe42a432">
+				<reportElement x="0" y="0" width="730" height="14" isRemoveLineWhenBlank="true" uuid="03fc51b4-be69-425a-9ce3-ef47fe42a432">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -1061,16 +1192,23 @@ order by prwf.c_activity_id, prwf.workforce,  prwf.account_value, prwf.concept_v
 				<text><![CDATA[Total Reporte:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="727" y="2" width="122" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="879c4d18-cd14-4fb0-9ef5-1beb174b8ef4"/>
+				<reportElement mode="Transparent" x="730" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="879c4d18-cd14-4fb0-9ef5-1beb174b8ef4">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totdb_rep}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="849" y="2" width="119" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="69cfe6d7-8f79-4409-b735-955b96b8a178"/>
+				<reportElement mode="Transparent" x="850" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="69cfe6d7-8f79-4409-b735-955b96b8a178">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totcr_rep}]]></textFieldExpression>
 			</textField>
