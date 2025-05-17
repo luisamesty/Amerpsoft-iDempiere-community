@@ -2,7 +2,7 @@
 <feature
       id="org.amerpsoft.com.idempiere.feature"
       label="Amerpsoft_community_features"
-      version="11.0.0.qualifier">
+      version="12.0.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -18,38 +18,57 @@
 
    <plugin
          id="org.amerpsoft.com.idempiere.editors-com"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.amerpsoft.com.idempiere.zk_themes"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.lco.withholding"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.financial"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
    <plugin
          id="org.idempiere.zk.iceblue_c.theme"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.personnelpayroll"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.tools"
-         version="0.0.0"/>
-
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
    <plugin
          id="org.amerpsoft.com.idempiere.workflow"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.webform"
-         version="0.0.0"/>
+	     download-size="0"
+	     install-size="0"
+	     version="12.0.0.qualifier"
+	     unpack="false"/>
 
 </feature>

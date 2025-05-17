@@ -16,16 +16,9 @@
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
-                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                    <excludeDefaultDirectories>false</excludeDefaultDirectories>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-<!--    <dependencies>-->
-<!--    	<dependency>-->
-<!--    		<groupId>org.idempiere</groupId>-->
-<!--    		<artifactId>org.monalisa.com.base</artifactId>-->
-<!--    		<version>11.0.0-SNAPSHOT</version>-->
-<!--    	</dependency>-->
-<!--    </dependencies>-->
 </project>

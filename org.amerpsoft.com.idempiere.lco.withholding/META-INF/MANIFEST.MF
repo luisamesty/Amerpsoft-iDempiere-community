@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.amerpsoft.com.idempiere.lco.withholding;singleton:=true
 Bundle-Version: 12.0.0.qualifier
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: AMERPSOFT Fork from GlobalQSS
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  org.adempiere.plugin.utils;bundle-version="0.0.0",
  org.adempiere.base.callout;bundle-version="0.0.0"

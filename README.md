@@ -13,7 +13,6 @@ Special considerations and notes for LVE, LPY and LES localization.
 
 - [Install Idempiere](./org.amerpsoft.com.stuff/iDempiere/InstallIdempiere/README.md)
 - [Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
-- [ZK_Themes](./org.amerpsoft.com.idempiere.zk_themes/README.md)
 - [Language Pack](./org.amerpsoft.com.idempiere.languages/README.md)
 - [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 - [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
@@ -45,6 +44,7 @@ For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempie
 - Updated for Idempiere release 10 - June 2023
   See release-10 branch.
 - Updated for Idempiere release 11 - January 2024
-- Under Test - See release-11_LPY branch.
+- Updated for Idempiere release 12 - May 2025
+- Under Test - See release-12 branch.
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
