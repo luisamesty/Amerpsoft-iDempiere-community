@@ -20,49 +20,36 @@ SELECT
 	fac.amtacctcr, 
 	fac.account_id,
 	--   amn_location
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN pyr.amn_location_id
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_location_id END as amn_location_id,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todas'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN lct.value
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y'THEN 'Todas'  
 		ELSE lct.value END as loc_value,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todas las Localidades'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN lct.name
-		ELSE lct.name END as location,
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 'Todas las Localidades'  
+		ELSE lct.name  END as location,
 	--  amn_department
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN pyr.amn_department_id
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_department_id END as amn_department_id,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todos'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN dpt.value
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 'Todos'  
 		ELSE dpt.value END as dpto_value,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todos los Departamentos'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN dpt.name
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 'Todos los Departamentos'  
 		ELSE dpt.name END as dpto_name,	
-	 -- DEPARTMENT
 	-- amn_payroll_id
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 0
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_payroll_id END as amn_payroll_id,
 	-- amn_employee_id
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 0
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_employee_id END as amn_employee_id,
 	--  description recibo
-	CASE WHEN $P{isSummaryAll}='Y'  THEN '' 
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN ''
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y'  THEN '' 
 		ELSE pyr.description END as recibo,
 	-- documentno
-	CASE WHEN $P{isSummaryAll}='Y'  THEN ''
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN ''
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN ''
 		ELSE pyr.documentno END as documentno,
 	-- amn_period_id
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 0
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0
 		ELSE pyr.amn_period_id END as amn_period_id,
 	-- fac.description,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Resumido por Proceso y Contrato'
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 'Resumido por Localidad y Departamento'
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y'  THEN 'Resumido por Proceso y Contrato'
 		ELSE fac.description END as description,
 	-- C_ELEMENTVALUE
 	COALESCE(ele.value,'NA') as account_value,
