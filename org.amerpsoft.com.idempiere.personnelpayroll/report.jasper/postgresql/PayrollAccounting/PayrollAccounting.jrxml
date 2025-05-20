@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollAccounting" pageWidth="1040" pageHeight="595" orientation="Landscape" columnWidth="1000" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollAccounting" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollAccounting" pageWidth="1080" pageHeight="595" orientation="Landscape" columnWidth="1040" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollAccounting" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -52,49 +59,37 @@ SELECT
 	fac.amtacctcr, 
 	fac.account_id,
 	--   amn_location
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN pyr.amn_location_id
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_location_id END as amn_location_id,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todas'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN lct.value
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y'THEN 'Todas'  
 		ELSE lct.value END as loc_value,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todas las Localidades'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN lct.name
-		ELSE lct.name END as location,
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 'Todas las Localidades'  
+		ELSE lct.name  END as location,
 	--  amn_department
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN pyr.amn_department_id
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_department_id END as amn_department_id,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todos'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN dpt.value
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 'Todos'  
 		ELSE dpt.value END as dpto_value,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Todos los Departamentos'  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN dpt.name
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 'Todos los Departamentos'  
 		ELSE dpt.name END as dpto_name,	
-	 -- DEPARTMENT
 	-- amn_payroll_id
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 0
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_payroll_id END as amn_payroll_id,
 	-- amn_employee_id
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0  
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 0
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0  
 		ELSE pyr.amn_employee_id END as amn_employee_id,
 	--  description recibo
-	CASE WHEN $P{isSummaryAll}='Y'  THEN '' 
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN ''
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y'  THEN '' 
 		ELSE pyr.description END as recibo,
 	-- documentno
-	CASE WHEN $P{isSummaryAll}='Y'  THEN ''
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN ''
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN ''
 		ELSE pyr.documentno END as documentno,
 	-- amn_period_id
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 0
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 0
+	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0
 		ELSE pyr.amn_period_id END as amn_period_id,
 	-- fac.description,
-	CASE WHEN $P{isSummaryAll}='Y'  THEN 'Resumido por Proceso y Contrato'
-		WHEN $P{isSummaryAll}='N' AND  $P{isSummary}='Y' THEN 'Resumido por Localidad y Departamento'
+	CASE WHEN $P{isSummaryAll}='Y' THEN 'Resumido por Proceso y Contrato'
+		WHEN $P{isSummaryAll}='N' AND $P{isSummary}='Y'  THEN 'Resumido por Localidad y Departamento'
 		ELSE fac.description END as description,
 	-- C_ELEMENTVALUE
 	COALESCE(ele.value,'NA') as account_value,
@@ -414,6 +409,14 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="totcr_org" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porOrganizacion" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="totdr_org" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porOrganizacion" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
 	<variable name="totdr_proc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porProceso" calculation="Sum">
 		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
@@ -441,35 +444,36 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 	<group name="Group_porProceso">
 		<groupExpression><![CDATA[$F{proceso}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="18">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{proceso} != null]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porProceso">
-					<reportElement x="0" y="1" width="1000" height="14" uuid="025f2cc0-883f-4155-aa5b-4700f03d731c">
+					<reportElement x="0" y="0" width="1040" height="18" uuid="025f2cc0-883f-4155-aa5b-4700f03d731c">
 						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacingSize="1.5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{proceso}+"-"+$F{proceso_nombre}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.process}+": "+$F{proceso}+"-"+$F{proceso_nombre}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="16">
+			<band height="14">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null)]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="2" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e60b427e-74df-45e9-9791-57bdf836822d">
+				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null && $F{amn_process_id} != null && $F{amn_contract_id} != null && $F{org_value}!= null)]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porProceso" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="760" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e60b427e-74df-45e9-9791-57bdf836822d">
 						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.process}+" "+$F{proceso}.trim()+" "+$F{proceso_nombre}.trim()+":"]]></textFieldExpression>
 				</textField>
@@ -479,42 +483,36 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 					</reportElement>
 				</break>
 				<line>
-					<reportElement x="760" y="0" width="240" height="1" uuid="0b546ce5-7c3d-41a8-96a7-6792eeef3c4a">
+					<reportElement x="760" y="0" width="280" height="1" uuid="0b546ce5-7c3d-41a8-96a7-6792eeef3c4a">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="Group_porProceso" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="21e24fc2-75b0-4500-8699-0731b667e823">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
-				<line>
-					<reportElement x="760" y="0" width="240" height="1" isRemoveLineWhenBlank="true" uuid="e91b5e46-013f-4f6d-a8ce-11d2041e7a0c">
-						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="760" y="3" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="21e24fc2-75b0-4500-8699-0731b667e823"/>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdr_proc}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="880" y="3" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="04587871-c9a1-4f26-90d2-18c485e9f13d"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porProceso" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="04587871-c9a1-4f26-90d2-18c485e9f13d">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_proc}]]></textFieldExpression>
 				</textField>
@@ -524,91 +522,182 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 	<group name="Group_porContrato" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{contrato}]]></groupExpression>
 		<groupHeader>
-			<band height="15" splitType="Stretch">
+			<band height="18" splitType="Stretch">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{contrato} != null]]></printWhenExpression>
 				<textField textAdjust="StretchHeight">
-					<reportElement x="0" y="1" width="1000" height="14" uuid="49470d17-b644-4773-90d3-ba608bc63347">
+					<reportElement x="0" y="0" width="1040" height="18" uuid="49470d17-b644-4773-90d3-ba608bc63347">
 						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box leftPadding="3"/>
+					<box leftPadding="10"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacingSize="1.5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{contrato}+"-"+$F{contrato_nombre}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.contract}+": "+$F{contrato}+"-"+$F{contrato_nombre}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="16" splitType="Stretch">
-				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" )== 0 && ($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null)]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="2" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e858eb71-ae2d-497b-8280-c1f042278074">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.contract}+" "+$F{contrato}.trim()+" "+$F{contrato_nombre}.trim()+":"]]></textFieldExpression>
-				</textField>
+			<band height="14">
+				<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null && $F{amn_process_id} != null && $F{amn_contract_id} != null && $F{org_value}!= null)]]></printWhenExpression>
 				<line>
-					<reportElement x="760" y="0" width="240" height="1" uuid="a4e3a7d1-5773-456c-adf8-a6681f935109">
+					<reportElement x="760" y="0" width="280" height="1" uuid="0ee5bd40-8a57-4b12-9aa7-89bad5d0d3bb">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
-				<line>
-					<reportElement x="760" y="0" width="240" height="1" isRemoveLineWhenBlank="true" uuid="0ee5bd40-8a57-4b12-9aa7-89bad5d0d3bb">
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="760" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e858eb71-ae2d-497b-8280-c1f042278074">
 						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="760" y="3" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cfc93535-22ec-42fd-ba67-e79a5e1908a4"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.contract}+" "+$F{contrato}.trim()+" "+$F{contrato_nombre}.trim()+":"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="cfc93535-22ec-42fd-ba67-e79a5e1908a4">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdr_cont}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="880" y="3" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5a63f71e-3bd7-40c0-be4d-abcbf28e1690"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="5a63f71e-3bd7-40c0-be4d-abcbf28e1690">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_cont}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
 	</group>
-	<group name="Group_porLocalidad" isReprintHeaderOnEachPage="true">
-		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
+	<group name="Group_porOrganizacion">
+		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
 		<groupHeader>
-			<band height="12" splitType="Stretch">
-				<printWhenExpression><![CDATA[$F{amn_location_id}  != null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="1000" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6f1035bb-1950-4040-8309-7a8c4d6984e9">
+			<band height="15">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porOrganizacion">
+					<reportElement x="0" y="0" width="760" height="15" uuid="0ae3c23c-2444-4bd4-ad70-be626ea73644">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{org_value}!=null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<paragraph lineSpacingSize="1.5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{org_value}+"-"+$F{org_name}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porOrganizacion" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="fd980bb0-74b3-43b1-9043-f4f66f72f04b">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{org_value}!=null && $P{isSummaryAll}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totdr_org}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porOrganizacion" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="78f64628-f6fb-4068-bd94-817973d283b0">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{org_value}!=null && $P{isSummaryAll}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totcr_org}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$P{isSummaryAll}.compareToIgnoreCase( "N" )==0 && $F{amn_process_id} != null && $F{amn_contract_id} != null && $F{org_value}!= null]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porOrganizacion" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="760" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e0ac471e-5e92-4531-bc13-1108de60821c">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box leftPadding="6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report.subtotal}+" "+$R{report.org}+" "+$F{org_value}.trim()+" "+$F{org_name}.trim()+":"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porOrganizacion" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="11b8b09b-0d99-4141-b0d1-4afb4c05a03a">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totdr_org}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porOrganizacion" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="e9dec12b-1651-4098-820d-f8141534e916">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totcr_org}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="760" y="0" width="280" height="1" uuid="a7e43c02-6cfc-48a7-8b17-d2ccc3142669">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_porLocalidad" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
+		<groupHeader>
+			<band height="14" splitType="Stretch">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{amn_location_id} != null   && $P{isSummary}.compareToIgnoreCase( "N" )==0 && $P{isSummaryAll}.compareToIgnoreCase( "N" )==0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="1040" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6f1035bb-1950-4040-8309-7a8c4d6984e9">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="20"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
@@ -617,10 +706,11 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="12">
-				<printWhenExpression><![CDATA[$F{amn_location_id} != null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="edaf0b18-520a-4682-83e5-3c5ec3b19c49">
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{amn_location_id} != null   && $P{isSummary}.compareToIgnoreCase( "N" )==0 && $P{isSummaryAll}.compareToIgnoreCase( "N" )==0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="760" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="edaf0b18-520a-4682-83e5-3c5ec3b19c49">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -629,41 +719,34 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.subtotal}+" "+$R{report.location}+" "+$F{loc_value}.trim()+" "+$F{localidad}.trim()+":"]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="760" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="47a3dfaa-e4a5-487e-9505-61a74b3e0f25"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="47a3dfaa-e4a5-487e-9505-61a74b3e0f25">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdr_loc}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="880" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ecb22659-c607-40a9-a969-d9585f1a76be"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ecb22659-c607-40a9-a969-d9585f1a76be">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_loc}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="760" y="0" width="240" height="1" uuid="a65656fc-84c6-4678-bc77-f1d1aa79c3b2">
+					<reportElement x="760" y="0" width="280" height="1" isRemoveLineWhenBlank="true" uuid="b1aff672-9ee5-42ad-a92e-0e833cf99b54">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
-				<line>
-					<reportElement x="760" y="0" width="240" height="1" isRemoveLineWhenBlank="true" uuid="b1aff672-9ee5-42ad-a92e-0e833cf99b54">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
@@ -675,14 +758,15 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 	<group name="Group_porDepartamento" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{dpto_value}]]></groupExpression>
 		<groupHeader>
-			<band height="12" splitType="Stretch">
-				<printWhenExpression><![CDATA[$F{amn_department_id}!=null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="1000" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9e06d200-0a83-4cdb-a79e-4bf25045c9c9">
+			<band height="14" splitType="Stretch">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{amn_department_id}!=null  && $P{isSummary}.compareToIgnoreCase( "N" )==0 && $P{isSummaryAll}.compareToIgnoreCase( "N" )==0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="1040" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="9e06d200-0a83-4cdb-a79e-4bf25045c9c9">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box leftPadding="10"/>
+					<box leftPadding="25"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
@@ -691,11 +775,11 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="12">
-				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{amn_department_id}!=null]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="0" y="0" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="290b5b55-277d-4010-ab0b-446629f8b9a5">
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{amn_department_id}!=null && $P{isSummary}.compareToIgnoreCase( "N" )==0 && $P{isSummaryAll}.compareToIgnoreCase( "N" )==0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_porContrato" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="0" width="760" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="290b5b55-277d-4010-ab0b-446629f8b9a5">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -705,41 +789,33 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.subtotal}+" "+$R{report.department}+" "+$F{dpto_value}.trim()+" "+$F{dpto_name}.trim()+":"]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="760" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="08ada5e0-66d7-46ad-9427-4f07f965d38e"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porDepartamento" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="08ada5e0-66d7-46ad-9427-4f07f965d38e">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdr_dpto}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="880" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a5caefbf-e90f-4bde-a35c-82678c9e2489"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porDepartamento" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a5caefbf-e90f-4bde-a35c-82678c9e2489">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_dpto}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="760" y="0" width="240" height="1" uuid="ec640e1f-a411-45f8-90a4-3a14e61afae7">
+					<reportElement x="760" y="0" width="280" height="1" uuid="ec640e1f-a411-45f8-90a4-3a14e61afae7">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
-				<line>
-					<reportElement x="760" y="0" width="240" height="1" isRemoveLineWhenBlank="true" uuid="3bd58028-a4bd-4980-afb3-1e4058f2e093">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
@@ -753,8 +829,8 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 		<groupHeader>
 			<band height="12">
 				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0 && $P{isSummaryAll}.compareToIgnoreCase("N")== 0 && $F{amn_payroll_id} != null]]></printWhenExpression>
-				<textField>
-					<reportElement x="0" y="0" width="660" height="12" isRemoveLineWhenBlank="true" uuid="3f315033-388e-4c2b-8c27-8e780acf7348">
+				<textField evaluationTime="Band">
+					<reportElement x="0" y="0" width="760" height="12" isRemoveLineWhenBlank="true" uuid="3f315033-388e-4c2b-8c27-8e780acf7348">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0 && $P{isSummaryAll}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
@@ -768,56 +844,46 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="13">
-				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" )== 0 && ($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null && $F{account_value} != null  )]]></printWhenExpression>
+			<band height="12">
+				<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0 && $P{isSummaryAll}.compareToIgnoreCase("N")== 0  && ($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null && $F{account_value} != null  )]]></printWhenExpression>
 				<line>
-					<reportElement x="760" y="0" width="240" height="1" uuid="70e4aee7-1e77-4569-a429-4c5fed6c5f12">
+					<reportElement x="760" y="0" width="280" height="1" uuid="70e4aee7-1e77-4569-a429-4c5fed6c5f12">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
 					</graphicElement>
 				</line>
-				<line>
-					<reportElement x="760" y="0" width="240" height="1" isRemoveLineWhenBlank="true" uuid="00ba6fa0-3c1e-43be-8944-d33ed2ce2b12">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("Y")== 0]]></printWhenExpression>
-					</reportElement>
-					<graphicElement>
-						<pen lineStyle="Dashed"/>
-					</graphicElement>
-				</line>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="760" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7b3105f7-6fdd-40ba-a958-9148812a5382">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="760" y="0" width="140" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7b3105f7-6fdd-40ba-a958-9148812a5382">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totdr_rec}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="880" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6a3a0c18-abb5-4593-b8c4-228405db54d4"/>
+				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="900" y="0" width="140" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6a3a0c18-abb5-4593-b8c4-228405db54d4">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totcr_rec}]]></textFieldExpression>
 				</textField>
-				<textField pattern="" isBlankWhenNull="false">
-					<reportElement mode="Transparent" x="0" y="1" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5df8dce3-5b42-4bb3-9da2-51ebd059641a">
+				<textField evaluationTime="Group" evaluationGroup="Group_porRecibo" pattern="" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="0" y="0" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5df8dce3-5b42-4bb3-9da2-51ebd059641a">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<font fontName="DejaVU Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{report.total}+" "+$R{report.receipt}]]></textFieldExpression>
 				</textField>
@@ -830,7 +896,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 	<pageHeader>
 		<band height="42" splitType="Stretch">
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="880" y="0" width="120" height="15" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
+				<reportElement key="" x="900" y="0" width="140" height="15" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -841,7 +907,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement key="" x="940" y="15" width="60" height="13" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
+				<reportElement key="" x="980" y="15" width="60" height="13" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -893,7 +959,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 				<textFieldExpression><![CDATA[$F{all_orgs}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" x="880" y="15" width="60" height="13" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
+				<reportElement key="" x="900" y="15" width="80" height="13" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -902,7 +968,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porProceso" pattern="">
-				<reportElement x="430" y="15" width="450" height="13" uuid="f98db51e-574d-4544-a5b2-f9a30ab75675">
+				<reportElement x="430" y="15" width="470" height="13" uuid="f98db51e-574d-4544-a5b2-f9a30ab75675">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null)]]></printWhenExpression>
@@ -916,7 +982,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
  : $F{contrato} + " - " + $F{contrato_nombre})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="880" y="28" width="120" height="14" isRemoveLineWhenBlank="true" uuid="86b903e9-0f9f-4478-9f2f-fcf4068cd461">
+				<reportElement x="900" y="28" width="140" height="14" isRemoveLineWhenBlank="true" uuid="86b903e9-0f9f-4478-9f2f-fcf4068cd461">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -929,7 +995,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 				<textFieldExpression><![CDATA[$F{moneda}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porProceso" pattern="">
-				<reportElement x="430" y="0" width="450" height="15" uuid="c1cfe646-25e6-4656-ba20-d67651bd1a68">
+				<reportElement x="430" y="0" width="470" height="15" uuid="c1cfe646-25e6-4656-ba20-d67651bd1a68">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null)]]></printWhenExpression>
 				</reportElement>
@@ -940,7 +1006,7 @@ ORDER BY pracct.proceso, pracct.contrato, pracct.loc_value , pracct.dpto_value, 
 				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porProceso" pattern="">
-				<reportElement x="430" y="28" width="450" height="14" uuid="3b2f9f40-223a-42b6-bab2-1c341b0254cc">
+				<reportElement x="430" y="28" width="470" height="14" uuid="3b2f9f40-223a-42b6-bab2-1c341b0254cc">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null)]]></printWhenExpression>
@@ -959,15 +1025,7 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 		<band height="23" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<line>
-				<reportElement x="0" y="18" width="1000" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
-					<property name="local_mesure_unitx" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="0" y="21" width="1000" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
+				<reportElement x="0" y="18" width="1040" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -975,19 +1033,24 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="2" width="1000" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
+				<reportElement x="0" y="21" width="1040" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="5" width="1000" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
+				<reportElement x="0" y="2" width="1040" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="5" width="1040" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 			</line>
 			<textField>
@@ -1018,14 +1081,17 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 				<textFieldExpression><![CDATA[$R{report.description}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="760" y="6" width="120" height="12" uuid="c77f1584-7f01-47c9-a7a2-0dc91cde7621"/>
+				<reportElement x="760" y="6" width="140" height="12" uuid="c77f1584-7f01-47c9-a7a2-0dc91cde7621"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.deb}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="880" y="6" width="120" height="12" uuid="2fdca404-4f78-423a-85f3-f255e60412cc"/>
+				<reportElement x="900" y="6" width="140" height="12" uuid="2fdca404-4f78-423a-85f3-f255e60412cc">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
@@ -1054,6 +1120,7 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 	</columnHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{isSummaryAll}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 			<textField>
 				<reportElement x="80" y="0" width="80" height="12" isRemoveLineWhenBlank="true" uuid="a941b69c-73dd-4f37-bf4a-fc256a043d2f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1061,6 +1128,9 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVU Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[( $F{account_value} == null ? "" : $F{account_value})]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -1069,29 +1139,39 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVU Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[($F{account_name} == null ? "" : $F{account_name})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="430" y="0" width="330" height="12" isRemoveLineWhenBlank="true" uuid="1d7e7321-7d3c-4218-a53a-b9a09b2b9156">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVU Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[( $F{description} == null ? "" : $F{description})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00#;(#,##0.00#)">
-				<reportElement x="760" y="0" width="120" height="12" isRemoveLineWhenBlank="true" uuid="9acc1ea8-9780-4549-824c-49edb2caf1b7">
+				<reportElement x="760" y="0" width="140" height="12" isRemoveLineWhenBlank="true" uuid="9acc1ea8-9780-4549-824c-49edb2caf1b7">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{amtacctdr} != BigDecimal.ZERO]]></printWhenExpression>
 				</reportElement>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVU Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[( $F{amtacctdr} == null  ? "" : ( $F{amtacctdr} == BigDecimal.ZERO  ? "" : $F{amtacctdr} ) )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="880" y="0" width="120" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c572fc59-6ce2-46ca-b251-6cda8256cde1">
+				<reportElement mode="Transparent" x="900" y="0" width="140" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="c572fc59-6ce2-46ca-b251-6cda8256cde1">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{amtacctcr} != BigDecimal.ZERO]]></printWhenExpression>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVU Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $F{amtacctcr} == null  ? "" : ( $F{amtacctcr} == BigDecimal.ZERO  ? "" : $F{amtacctcr} ) )]]></textFieldExpression>
 			</textField>
@@ -1104,6 +1184,9 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 					<printWhenExpression><![CDATA[$F{org_value}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVU Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{org_value}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -1111,11 +1194,11 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 	<summary>
 		<band height="87" splitType="Stretch">
 			<line>
-				<reportElement x="760" y="0" width="240" height="1" uuid="de3c2c06-6d33-4fa6-825a-76e78642bfb6">
+				<reportElement x="760" y="0" width="280" height="1" uuid="de3c2c06-6d33-4fa6-825a-76e78642bfb6">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<graphicElement>
@@ -1138,7 +1221,7 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 			</line>
-			<textField>
+			<textField evaluationTime="Report">
 				<reportElement x="80" y="74" width="200" height="13" uuid="088719ad-2279-4e6b-ae6a-624885bdef84"/>
 				<textElement textAlignment="Left">
 					<font fontName="DejaVu Sans" size="10"/>
@@ -1153,7 +1236,7 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
-			<textField>
+			<textField evaluationTime="Report">
 				<reportElement mode="Transparent" x="330" y="74" width="200" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e94dabc2-0936-4209-b4b0-7c8ab3447245">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -1163,7 +1246,7 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.signedreviewby}+": " +  ($P{sign2}!=null ? $P{sign2} : "")]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField evaluationTime="Report">
 				<reportElement mode="Transparent" x="660" y="74" width="240" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="446045c5-f16a-4448-a42f-2bbe8f30354d"/>
 				<textElement verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
@@ -1171,30 +1254,33 @@ new SimpleDateFormat("dd/MM/yyyy").format($F{enddate}) + ")"]]></textFieldExpres
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.signedautorizedby}+": " +  ($P{sign3}!=null ? $P{sign3} : "")]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="760" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="879c4d18-cd14-4fb0-9ef5-1beb174b8ef4"/>
+			<textField evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="760" y="0" width="140" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="879c4d18-cd14-4fb0-9ef5-1beb174b8ef4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totdr_gen}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00#;(#,##0.00#)" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="880" y="0" width="120" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="69cfe6d7-8f79-4409-b735-955b96b8a178">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			<textField evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="900" y="0" width="140" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="69cfe6d7-8f79-4409-b735-955b96b8a178">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="DejaVU Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totcr_gen}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Transparent" x="0" y="0" width="760" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9c85599b-2895-4ab1-b606-c20e53d6d01b">
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="0" width="760" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="9c85599b-2895-4ab1-b606-c20e53d6d01b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.total}+": "]]></textFieldExpression>
 			</textField>
