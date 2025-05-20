@@ -49,7 +49,8 @@ SELECT
 	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y' THEN 0
 		ELSE pyr.amn_period_id END as amn_period_id,
 	-- fac.description,
-	CASE WHEN $P{isSummaryAll}='Y' OR $P{isSummary}='Y'  THEN 'Resumido por Proceso y Contrato'
+	CASE WHEN $P{isSummaryAll}='Y' THEN 'Resumido por Proceso y Contrato'
+		WHEN $P{isSummaryAll}='N' AND $P{isSummary}='Y'  THEN 'Resumido por Localidad y Departamento'
 		ELSE fac.description END as description,
 	-- C_ELEMENTVALUE
 	COALESCE(ele.value,'NA') as account_value,
