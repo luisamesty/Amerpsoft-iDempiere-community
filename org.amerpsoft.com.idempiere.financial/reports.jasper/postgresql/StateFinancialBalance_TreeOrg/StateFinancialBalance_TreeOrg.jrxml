@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg" language="groovy" pageWidth="710" pageHeight="790" columnWidth="650" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -16,6 +16,9 @@
 	</parameter>
 	<parameter name="PostingType" class="java.lang.String">
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PositiveBalance" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="C_ElementValue_ID" class="java.lang.Integer"/>
 	<parameter name="C_Period_ID" class="java.lang.Integer"/>
@@ -34,6 +37,7 @@
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
 -- Removed Activity AND others
+-- Parámetro PositiveBalance
 WITH OrgTree AS (
     WITH RECURSIVE OrgTreeBase AS (
         -- Nodo raíz (organizaciones sin padre)
@@ -841,6 +845,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -860,6 +865,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -879,6 +885,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -898,6 +905,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -917,6 +925,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance5" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev5" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -936,6 +945,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance5" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev5" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -955,6 +965,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance7" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev7" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -974,6 +985,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance7" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev7" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance8" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev8" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -993,6 +1005,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance8" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev8" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="openbalance_tot" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -1012,6 +1025,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	</variable>
 	<variable name="closebalance_tot" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<group name="Group_Lev0">
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
@@ -1043,7 +1057,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance0}== 0.00  ? 0.00  : $V{closebalance0} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance0}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance0}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance0}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance0}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance0}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance0}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1065,7 +1097,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance0}== 0.00  ? 0.00  : $V{closebalance0} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance0}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance0}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance0}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance0}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance0}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance0}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1103,7 +1153,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance1}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance1}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance1}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance1}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance1}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance1}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1130,7 +1198,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance1}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance1}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance1}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance1}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance1}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance1}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1168,7 +1254,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance2}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance2}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance2}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance2}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance2}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance2}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1192,7 +1296,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance2}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance2}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance2}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance2}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance2}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance2}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1234,7 +1356,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance3}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance3}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance3}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance3}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance3}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance3}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1258,7 +1398,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance3}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance3}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance3}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance3}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance3}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance3}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1300,7 +1458,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance4}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance4}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance4}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance4}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance4}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance4}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1324,7 +1500,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance4}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance4}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance4}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance4}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance4}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance4}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1349,7 +1543,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance5}== 0.00  ? 0.00  : $V{closebalance5} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance5}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance5}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance5}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance5}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance5}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance5}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
@@ -1390,7 +1602,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance5}== 0.00  ? 0.00  : $V{closebalance5} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance5}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance5}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance5}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance5}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance5}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance5}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1432,7 +1662,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance6}== 0.00  ? 0.00  : $V{closebalance6} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance6}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance6}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance6}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance6}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance6}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance6}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1456,7 +1704,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance6}== 0.00  ? 0.00  : $V{closebalance6} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance6}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance6}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance6}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance6}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance6}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance6}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1498,7 +1764,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance7}== 0.00  ? 0.00  : $V{closebalance7} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance7}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance7}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance7}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance7}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance7}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance7}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1522,7 +1806,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance7}== 0.00  ? 0.00  : $V{closebalance7} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance7}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance7}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance7}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance7}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance7}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance7}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1564,7 +1866,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance8}== 0.00  ? 0.00  : $V{closebalance8} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance8}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance8}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance8}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance8}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance8}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance8}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
@@ -1588,7 +1908,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance8}== 0.00  ? 0.00  : $V{closebalance8} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalance8}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalance8}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalance8}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalance8}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalance8}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalance8}.doubleValue()
+      )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<line>
@@ -1641,7 +1979,8 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$F{all_orgs}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y") ? "Presentación Positiva - " : "")
++ ($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$F{all_orgs}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="100" y="0" width="390" height="18" uuid="e2d7399c-e548-4b89-b901-2cfbd0daec8e">
@@ -1801,7 +2140,25 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[( $F{closebalance}== 0.00  ? 0.00  : $F{closebalance} )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $F{closebalance}.doubleValue() == 0.00
+                    ? 0.00
+                    : $F{closebalance}.doubleValue()
+              )
+            : (
+                (-1 * $F{closebalance}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $F{closebalance}.doubleValue())
+              )
+      )
+    : (
+        $F{closebalance}.doubleValue() == 0.00
+            ? 0.00
+            : $F{closebalance}.doubleValue()
+      )]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField>
@@ -1871,7 +2228,8 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[( $V{closebalance_tot}== 0.00  ? 0.00  : $V{closebalance_tot} )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{closebalance_tot}.doubleValue() == 0.00 ? 0.00 : $V{closebalance_tot}.doubleValue())
+]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 		</band>
