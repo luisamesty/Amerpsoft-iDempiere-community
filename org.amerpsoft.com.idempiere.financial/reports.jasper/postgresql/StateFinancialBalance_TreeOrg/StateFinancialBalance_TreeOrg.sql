@@ -3,6 +3,7 @@
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
 -- Removed Activity AND others
+-- Parámetro PositiveBalance
 WITH OrgTree AS (
     WITH RECURSIVE OrgTreeBase AS (
         -- Nodo raíz (organizaciones sin padre)
