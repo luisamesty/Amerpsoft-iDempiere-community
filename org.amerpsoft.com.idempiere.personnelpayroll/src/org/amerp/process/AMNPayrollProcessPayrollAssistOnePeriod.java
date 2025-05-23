@@ -116,6 +116,7 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 	    Properties ctx = getCtx();
 	    int AMN_Employee_ID=0;
 	    int AMN_Payroll_ID=0;
+	    int noMarcaciones=0;
 	    Timestamp p_currDate;
 	    String Period_Name="";
 	    String Contract_Name="";
@@ -170,17 +171,31 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 		
         // Determina el Numero de Registros
         int rowCount = 0;
-        String countSql = "SELECT COUNT(*) FROM ( "
-        		+ "	SELECT DISTINCT "
-        		+ "	amnpr.amn_payroll_id, "
-        		+ "	amnpr.amn_employee_id "
-        		+ "	FROM  amn_payroll as amnpr "
-        		+ "	WHERE amnpr.amn_period_id=? "
-        		+ "	GROUP BY amnpr.amn_payroll_id, amnpr.amn_employee_id "
-        		+ ") AS recs";
         
+//        String countSql = "SELECT COUNT(*) FROM ( "
+//        	    + " SELECT DISTINCT emp.amn_employee_id "
+//        	    + " FROM amn_period prd "
+//        	    + " INNER JOIN amn_contract cnt ON cnt.amn_contract_id = prd.amn_contract_id "
+//        	    + " INNER JOIN amn_employee emp ON emp.amn_contract_id = cnt.amn_contract_id "
+//        	    + " WHERE prd.amn_process_id IN ( "
+//        	    + "     SELECT amn_process_id FROM amn_process "
+//        	    + "     WHERE ad_client_id = ? AND amn_process_value = 'NN' "
+//        	    + " ) "
+//        	    + " AND emp.isactive = 'Y' "
+//        	    + " AND prd.amn_period_id = ? "
+//        	    + ") AS recs";
+        String countSql = 
+        	    "SELECT COUNT(DISTINCT emp.amn_employee_id) AS recs \n" +
+        	    "FROM amn_period prd \n" +
+        	    "INNER JOIN amn_contract cnt ON cnt.amn_contract_id = prd.amn_contract_id \n" +
+        	    "INNER JOIN amn_employee emp ON emp.amn_contract_id = cnt.amn_contract_id \n" +
+        	    "WHERE prd.amn_process_id = ? \n" +   
+        	    "AND emp.isactive = 'Y' \n" +
+        	    "AND prd.amn_period_id = ?";
+
         PreparedStatement countStmt = DB.prepareStatement(countSql, get_TrxName());
-        countStmt.setInt (1, p_AMN_Period_ID);
+        countStmt.setInt (1, p_AMN_Process_ID);
+        countStmt.setInt (2, p_AMN_Period_ID);
         ResultSet countRs = countStmt.executeQuery();
         if (countRs.next()) {
         	rowCount = countRs.getInt(1);  // Obtiene el total de filas
@@ -188,14 +203,29 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
         DB.close(countRs, countStmt); // Cierra el ResultSet y el PreparedStatement
 		
 		// ARRAY 
-		sql = "SELECT \n" + 
-				"amnpr.amn_payroll_id, \n" + 
-				"amnpr.amn_employee_id, \n" + 
-				"amnpr.name as payroll_name  \n" + 
-				"FROM  amn_payroll as amnpr \n" + 
-				"WHERE amnpr.amn_period_id=? \n" + 
-				"ORDER BY amnpr.value "
-				;        		
+
+        sql =   "SELECT \n" +
+        	    "    emp.amn_employee_id, \n" +
+        	    "    emp.name AS employee_name, \n" +
+        	    "    COALESCE(prl.amn_payroll_id, 0) AS amn_payroll_id, \n" +
+        	    "    COUNT(pa.amn_payroll_assist_id) AS total_marcaciones \n" +
+        	    " FROM amn_period prd \n" +
+        	    " INNER JOIN amn_contract cnt \n" +
+        	    "    ON cnt.amn_contract_id = prd.amn_contract_id \n" +
+        	    " INNER JOIN amn_employee emp \n" +
+        	    "    ON emp.amn_contract_id = cnt.amn_contract_id \n" +
+        	    " LEFT JOIN amn_payroll_assist pa \n" +
+        	    "    ON pa.amn_employee_id = emp.amn_employee_id \n" +
+        	    "    AND pa.event_date BETWEEN prd.amndateini AND prd.amndateend \n" +
+        	    " LEFT JOIN amn_payroll prl \n" +
+        	    "    ON prl.amn_employee_id = emp.amn_employee_id \n" +
+        	    "    AND prl.amn_period_id = prd.amn_period_id \n" +
+        	    " WHERE prd.amn_process_id = ? \n" +
+        	    "  AND emp.isactive = 'Y' \n" +
+        	    "  AND prd.amn_period_id = ? \n" +
+        	    " GROUP BY emp.amn_employee_id, emp.name, prl.amn_payroll_id \n" +
+        	    " ORDER BY emp.name";
+
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
         int percent = 0;
@@ -203,13 +233,15 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 		try
 		{
 			pstmt = DB.prepareStatement(sql, null);
-            pstmt.setInt (1, p_AMN_Period_ID);
+			pstmt.setInt (1, p_AMN_Process_ID);
+            pstmt.setInt (2, p_AMN_Period_ID);
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
 				rowNumber++; // Incrementamos en cada iteración
-				AMN_Payroll_ID= rs.getInt(1);
-				AMN_Employee_ID = rs.getInt(2);
+				AMN_Payroll_ID= rs.getInt(3);
+				AMN_Employee_ID = rs.getInt(1);
+				noMarcaciones = rs.getInt(3);
 				// AMN_Employee_ID
 				MAMN_Employee amnemployee = new MAMN_Employee(ctx, AMN_Employee_ID, null);
 				Employee_Name = String.format("%-30.30s", amnemployee.getName()); // Se asegura que tenga 30 caracteres
@@ -222,7 +254,7 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
                 int totalLength = 100; // Longitud deseada
 				// AMN_Payroll Must Be DRAFT DR (Not Processed)
 				MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, null);
-				if (!amnpayroll.getDocStatus().equalsIgnoreCase("DR")) {
+				if (AMN_Payroll_ID != 0 && !amnpayroll.getDocStatus().equalsIgnoreCase("DR")) {
 					Msg_Value=Msg_Value+Msg.getElement(ctx,"AMN_Payroll_ID")+":"+amnpayroll.getName();
 					Msg_Value=Msg_Value+Msg.getElement(ctx,"DocStatus")+":"+amnpayroll.getDocStatus()+
 							"  "+" ***** ALREADY PROCESSED ****";
