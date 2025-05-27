@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Dependent
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Dependent 
@@ -32,7 +32,7 @@ public interface I_AMN_Dependent
     /** TableName=AMN_Dependent */
     public static final String Table_Name = "AMN_Dependent";
 
-    /** AD_Table_ID=1000046 */
+    /** AD_Table_ID=1000049 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -46,8 +46,8 @@ public interface I_AMN_Dependent
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Dependent
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -73,6 +73,17 @@ public interface I_AMN_Dependent
 	/** Get Employee Dependent	  */
 	public int getAMN_Dependent_ID();
 
+    /** Column name AMN_Dependent_Type_ID */
+    public static final String COLUMNNAME_AMN_Dependent_Type_ID = "AMN_Dependent_Type_ID";
+
+	/** Set Employee Dependent Type	  */
+	public void setAMN_Dependent_Type_ID (int AMN_Dependent_Type_ID);
+
+	/** Get Employee Dependent Type	  */
+	public int getAMN_Dependent_Type_ID();
+
+	public I_AMN_Dependent_Type getAMN_Dependent_Type() throws RuntimeException;
+
     /** Column name AMN_Dependent_UU */
     public static final String COLUMNNAME_AMN_Dependent_UU = "AMN_Dependent_UU";
 
@@ -81,17 +92,6 @@ public interface I_AMN_Dependent
 
 	/** Get AMN_Dependent_UU	  */
 	public String getAMN_Dependent_UU();
-
-    /** Column name AMN_Dependent_type_ID */
-    public static final String COLUMNNAME_AMN_Dependent_type_ID = "AMN_Dependent_type_ID";
-
-	/** Set Employee Dependent Type	  */
-	public void setAMN_Dependent_type_ID (int AMN_Dependent_type_ID);
-
-	/** Get Employee Dependent Type	  */
-	public int getAMN_Dependent_type_ID();
-
-	public I_AMN_Dependent_type getAMN_Dependent_type() throws RuntimeException;
 
     /** Column name AMN_Employee_ID */
     public static final String COLUMNNAME_AMN_Employee_ID = "AMN_Employee_ID";
@@ -103,6 +103,19 @@ public interface I_AMN_Dependent
 	public int getAMN_Employee_ID();
 
 	public I_AMN_Employee getAMN_Employee() throws RuntimeException;
+
+    /** Column name BirthCertificate */
+    public static final String COLUMNNAME_BirthCertificate = "BirthCertificate";
+
+	/** Set Birth Certificate.
+	  * Indicates that is attached a Birth Certificate issued by Local Authority
+	  */
+	public void setBirthCertificate (boolean BirthCertificate);
+
+	/** Get Birth Certificate.
+	  * Indicates that is attached a Birth Certificate issued by Local Authority
+	  */
+	public boolean isBirthCertificate();
 
     /** Column name Birthday */
     public static final String COLUMNNAME_Birthday = "Birthday";
@@ -120,12 +133,12 @@ public interface I_AMN_Dependent
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
 
-	/** Set Business Partner .
+	/** Set Business Partner.
 	  * Identifies a Business Partner
 	  */
 	public void setC_BPartner_ID (int C_BPartner_ID);
 
-	/** Get Business Partner .
+	/** Get Business Partner.
 	  * Identifies a Business Partner
 	  */
 	public int getC_BPartner_ID();
@@ -176,6 +189,15 @@ public interface I_AMN_Dependent
 	  */
 	public String getDescription();
 
+    /** Column name educationgrade */
+    public static final String COLUMNNAME_educationgrade = "educationgrade";
+
+	/** Set educationgrade	  */
+	public void seteducationgrade (String educationgrade);
+
+	/** Get educationgrade	  */
+	public String geteducationgrade();
+
     /** Column name EMail */
     public static final String COLUMNNAME_EMail = "EMail";
 
@@ -214,6 +236,45 @@ public interface I_AMN_Dependent
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name isStudying */
+    public static final String COLUMNNAME_isStudying = "isStudying";
+
+	/** Set isStudying.
+	  * Indicates if is studying
+	  */
+	public void setisStudying (boolean isStudying);
+
+	/** Get isStudying.
+	  * Indicates if is studying
+	  */
+	public boolean isStudying();
+
+    /** Column name isWorking */
+    public static final String COLUMNNAME_isWorking = "isWorking";
+
+	/** Set Is Working.
+	  * Indicates if Person Is Working
+	  */
+	public void setisWorking (boolean isWorking);
+
+	/** Get Is Working.
+	  * Indicates if Person Is Working
+	  */
+	public boolean isWorking();
+
+    /** Column name MedicalCertificate */
+    public static final String COLUMNNAME_MedicalCertificate = "MedicalCertificate";
+
+	/** Set Medical Certificate.
+	  * Indicates that MedicalCertificate is attached
+	  */
+	public void setMedicalCertificate (boolean MedicalCertificate);
+
+	/** Get Medical Certificate.
+	  * Indicates that MedicalCertificate is attached
+	  */
+	public boolean isMedicalCertificate();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
@@ -267,6 +328,28 @@ public interface I_AMN_Dependent
 	  */
 	public String getPhone2();
 
+    /** Column name ResidenceCertificate */
+    public static final String COLUMNNAME_ResidenceCertificate = "ResidenceCertificate";
+
+	/** Set Residence Certificate.
+	  * Life and residence certificate
+	  */
+	public void setResidenceCertificate (boolean ResidenceCertificate);
+
+	/** Get Residence Certificate.
+	  * Life and residence certificate
+	  */
+	public boolean isResidenceCertificate();
+
+    /** Column name sex */
+    public static final String COLUMNNAME_sex = "sex";
+
+	/** Set Sex at Birth	  */
+	public void setsex (String sex);
+
+	/** Get Sex at Birth	  */
+	public String getsex();
+
     /** Column name TaxID */
     public static final String COLUMNNAME_TaxID = "TaxID";
 
@@ -309,47 +392,16 @@ public interface I_AMN_Dependent
 	  */
 	public String getValue();
 
-    /** Column name educationgrade */
-    public static final String COLUMNNAME_educationgrade = "educationgrade";
+    /** Column name WrittenRequest */
+    public static final String COLUMNNAME_WrittenRequest = "WrittenRequest";
 
-	/** Set educationgrade	  */
-	public void seteducationgrade (String educationgrade);
-
-	/** Get educationgrade	  */
-	public String geteducationgrade();
-
-    /** Column name isStudying */
-    public static final String COLUMNNAME_isStudying = "isStudying";
-
-	/** Set isStudying.
-	  * Indicates if is studying
+	/** Set Written Request.
+	  * Indicates that a written request is submitted
 	  */
-	public void setisStudying (boolean isStudying);
+	public void setWrittenRequest (boolean WrittenRequest);
 
-	/** Get isStudying.
-	  * Indicates if is studying
+	/** Get Written Request.
+	  * Indicates that a written request is submitted
 	  */
-	public boolean isStudying();
-
-    /** Column name isWorking */
-    public static final String COLUMNNAME_isWorking = "isWorking";
-
-	/** Set Is Working.
-	  * Indicates if Person Is Working
-	  */
-	public void setisWorking (boolean isWorking);
-
-	/** Get Is Working.
-	  * Indicates if Person Is Working
-	  */
-	public boolean isWorking();
-
-    /** Column name sex */
-    public static final String COLUMNNAME_sex = "sex";
-
-	/** Set sex	  */
-	public void setsex (String sex);
-
-	/** Get sex	  */
-	public String getsex();
+	public boolean isWrittenRequest();
 }
