@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeeJobContract" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35da765c-c0a1-42c7-94f3-f38331872c36">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="362"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="631"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<leftPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<rightPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<leftPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<rightPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<leftPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<rightPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AddressedTo" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["A quien Pueda Interesar"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_Currency_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateEnd" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA[new SimpleDateFormat("yy-MM-dd").format($P{DateEnd})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Employee_ID" class="java.lang.Integer">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="UserName" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Usuario"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="JobTitle" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Gerente de RRHH"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Salary" class="java.math.BigDecimal"/>
+	<parameter name="IsShowSalary" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="OrgName" class="java.lang.String">
+		<defaultValueExpression><![CDATA["org"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[-- EmployeeLetter
+-- Employee Letter
+SELECT * FROM (
+-- Employee file 
+	SELECT DISTINCT
+	-- LOGO
+	CASE WHEN emp.ad_orgto_id IS NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+	INITCAP(coalesce(loc_n.orgname, org.name,org.value,''))  as org_name,
+    INITCAP(COALESCE(loc_n.name, org.description, org.name,org.name,''))  org_description, 
+	COALESCE(orginfo.taxid,'')  as org_taxid,    
+   -- IMAGE
+    COALESCE(img3.binarydata, img4.binarydata) as foto,
+   -- BUSINESS PARTNER
+    cbp.name as nombre, COALESCE(emp.idnumber, cbp.taxid,'') as cedula, 
+   -- EMPLOYEE 
+	emp.value as codigo,   
+	DATE(emp.birthday) as fecha_nacimiento,
+	emp.birthplace as lugar_nacimiento,
+	emp.incomedate,
+	COALESCE(emp.NAME_IDCARD,'') as nombre_tarjeta,
+	CASE WHEN emp.sex = 'F' THEN 'la señora' 
+		          ELSE 'el señor'
+	END as emp_prefix,
+	CASE WHEN $P{Salary} IS NULL OR $P{Salary} = 0 THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
+    	ELSE adempiere.amf_num2letterLPY($P{Salary}, 'U', 'es')
+	END AS salario_letras_param,
+	-- SALARIO
+	COALESCE(TRUNC(emp.salary), 0) AS salario_ficha,
+	CASE WHEN emp.salary IS NULL OR emp.salary = 0 THEN adempiere.amf_num2letterLPY(0,'U','es')
+		 ELSE adempiere.amf_num2letterLPY(TRUNC(emp.salary),'U','es')
+	END as salario_letras_ficha,
+    -- Cálculo del salario base mensual
+    TRUNC(amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
+        344, 
+        114
+    ) / 6 ) AS salary_base_mensual,
+    -- Salario base mensual en letras
+    CASE WHEN amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 344, 114 ) / 6 IS NULL 
+             OR amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6 = 0
+	        THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
+        ELSE adempiere.amf_num2letterLPY(TRUNC(
+                 amp_salary_hist_calc('salary_base', emp.amn_employee_id, 
+                     ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
+                     $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6), 'U', 'es')
+    END AS salary_base_letras,
+    -- CONTRACT
+	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
+	-- DEPARTMENT 
+	COALESCE(adp.name, adp.description, '-') as departamento,
+	-- STATION
+	COALESCE(job_s.name, job_s.description, '-') as estacion,
+	-- JOBTITLE
+	COALESCE(job.name, job.description, '-') as puesto_trabajo,
+	-- LOCATION (NÓMINA)
+	COALESCE(loc_n.name, '-') as localidad_nomina,
+	curr2.iso_code,
+	CONCAT(curr2.iso_code,'-',currt2.description) as moneda_sol,
+	-- LOCATION
+	COALESCE(loc.postal, '-') as cod_postal, 
+	COALESCE(loc.address1, '-') as adr1, 
+	COALESCE(loc.address2, '-') as adr2, 
+	COALESCE(loc.address3, '-') as adr3, 
+	COALESCE(loc.address4, '-') as adr4,
+	-- CITY
+	INITCAP(COALESCE(cit.name, '-')) as ciudad_dir,
+	-- MUNICIPALITY
+	INITCAP(COALESCE(mun.name, '-')) as municio_dir,
+	-- PARISH
+	INITCAP(COALESCE(par.name, '-')) as parroquia_dir,
+	-- REGION
+	INITCAP(COALESCE(reg.name, reg.description, '-')) as region_estado,
+	 -- COUNTRY DIR
+	INITCAP(COALESCE(ctr.name, ctr.description, '-')) as pais_dir,
+	-- PHONE
+	orginfo.phone,
+	orginfo.fax,
+	orginfo.email
+	FROM adempiere.amn_employee as emp
+	 INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+	INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
+	INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+	 LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+	INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
+	INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+	 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+	 LEFT JOIN adempiere.ad_image as img3 ON (img3.ad_image_id= emp.empimg1_id) 
+	 LEFT JOIN adempiere.ad_image as img4 ON (img4.ad_image_id= emp.empimg2_id) 
+	INNER JOIN adempiere.amn_contract as amn_c ON (amn_c.amn_contract_id= emp.amn_contract_id) 
+	INNER JOIN adempiere.amn_department as adp ON (adp.amn_department_id= emp.amn_department_id)
+	 LEFT JOIN adempiere.amn_jobtitle as job ON (job.amn_jobtitle_id= emp.amn_jobtitle_id)
+	 LEFT JOIN adempiere.amn_jobstation as job_s ON (job_s.amn_jobstation_id= job.amn_jobstation_id)
+	INNER JOIN adempiere.amn_location as loc_n ON (loc_n.amn_location_id= emp.amn_location_id)
+	LEFT JOIN adempiere.c_country as ctr_e ON (ctr_e.c_country_id= emp.c_country_id)
+	LEFT JOIN adempiere.c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+    LEFT JOIN adempiere.c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+    LEFT JOIN adempiere.c_location as loc ON (orginfo.c_location_id= loc.c_location_id)
+	LEFT JOIN adempiere.c_country as ctr ON (ctr.c_country_id= loc.c_country_id)
+	LEFT JOIN adempiere.c_region as reg ON (reg.c_region_id= loc.c_region_id)
+    LEFT JOIN adempiere.c_municipality as mun ON (mun.c_municipality_id= loc.c_municipality_id)
+	LEFT JOIN adempiere.c_parish as par ON (par.c_parish_id= loc.c_parish_id)
+	LEFT JOIN adempiere.c_city as cit ON (cit.c_city_id= loc.c_city_id)
+  WHERE emp.amn_employee_id=  $P{AMN_Employee_ID}
+) as empleado
+WHERE nombre IS NOT NULL
+ORDER BY empleado ASC]]>
+	</queryString>
+	<field name="org_logo" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="org_logo"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_logo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_image"/>
+	</field>
+	<field name="org_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
+	</field>
+	<field name="org_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_description"/>
+	</field>
+	<field name="org_taxid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_taxid"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_taxid"/>
+	</field>
+	<field name="foto" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="foto"/>
+		<property name="com.jaspersoft.studio.field.label" value="foto"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
+	</field>
+	<field name="cedula" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cedula"/>
+		<property name="com.jaspersoft.studio.field.label" value="cedula"/>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="fecha_nacimiento" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_nacimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_nacimiento"/>
+	</field>
+	<field name="lugar_nacimiento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lugar_nacimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="lugar_nacimiento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="incomedate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="incomedate"/>
+		<property name="com.jaspersoft.studio.field.label" value="incomedate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="nombre_tarjeta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_tarjeta"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_tarjeta"/>
+	</field>
+	<field name="emp_prefix" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_prefix"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_prefix"/>
+	</field>
+	<field name="salario_letras_param" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salario_letras_param"/>
+		<property name="com.jaspersoft.studio.field.label" value="salario_letras_param"/>
+	</field>
+	<field name="salario_ficha" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salario_ficha"/>
+		<property name="com.jaspersoft.studio.field.label" value="salario_ficha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="salario_letras_ficha" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salario_letras_ficha"/>
+		<property name="com.jaspersoft.studio.field.label" value="salario_letras_ficha"/>
+	</field>
+	<field name="salary_base_mensual" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="salary_base_mensual"/>
+		<property name="com.jaspersoft.studio.field.label" value="salary_base_mensual"/>
+	</field>
+	<field name="salary_base_letras" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="salary_base_letras"/>
+		<property name="com.jaspersoft.studio.field.label" value="salary_base_letras"/>
+	</field>
+	<field name="tipo_contrato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_contrato"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_contrato"/>
+	</field>
+	<field name="departamento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="departamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="departamento"/>
+	</field>
+	<field name="estacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="estacion"/>
+	</field>
+	<field name="puesto_trabajo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="puesto_trabajo"/>
+		<property name="com.jaspersoft.studio.field.label" value="puesto_trabajo"/>
+	</field>
+	<field name="localidad_nomina" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="localidad_nomina"/>
+		<property name="com.jaspersoft.studio.field.label" value="localidad_nomina"/>
+	</field>
+	<field name="iso_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_currency"/>
+	</field>
+	<field name="moneda_sol" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="moneda_sol"/>
+		<property name="com.jaspersoft.studio.field.label" value="moneda_sol"/>
+	</field>
+	<field name="cod_postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cod_postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="cod_postal"/>
+	</field>
+	<field name="adr1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="adr1"/>
+		<property name="com.jaspersoft.studio.field.label" value="adr1"/>
+	</field>
+	<field name="adr2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="adr2"/>
+		<property name="com.jaspersoft.studio.field.label" value="adr2"/>
+	</field>
+	<field name="adr3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="adr3"/>
+		<property name="com.jaspersoft.studio.field.label" value="adr3"/>
+	</field>
+	<field name="adr4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="adr4"/>
+		<property name="com.jaspersoft.studio.field.label" value="adr4"/>
+	</field>
+	<field name="ciudad_dir" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ciudad_dir"/>
+		<property name="com.jaspersoft.studio.field.label" value="ciudad_dir"/>
+	</field>
+	<field name="municio_dir" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="municio_dir"/>
+		<property name="com.jaspersoft.studio.field.label" value="municio_dir"/>
+	</field>
+	<field name="parroquia_dir" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parroquia_dir"/>
+		<property name="com.jaspersoft.studio.field.label" value="parroquia_dir"/>
+	</field>
+	<field name="region_estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="region_estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="region_estado"/>
+	</field>
+	<field name="pais_dir" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pais_dir"/>
+		<property name="com.jaspersoft.studio.field.label" value="pais_dir"/>
+	</field>
+	<field name="phone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<field name="fax" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fax"/>
+		<property name="com.jaspersoft.studio.field.label" value="fax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<field name="email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email"/>
+		<property name="com.jaspersoft.studio.field.label" value="email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<variable name="monthDateEnd" class="java.lang.String">
+		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($P{DateEnd})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
+	</variable>
+	<variable name="Moneda_Solicitada" class="java.lang.String" incrementType="Report">
+		<variableExpression><![CDATA[$F{moneda_sol}!= null ||$F{moneda_sol}.compareToIgnoreCase( "" )!= 0 ? $F{moneda_sol} : ""]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<variable name="monthDateIncome" class="java.lang.String">
+		<variableExpression><![CDATA[(new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "01" ) == 0 ? "Enero" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "02" ) == 0 ? "Febrero" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "03" ) == 0 ? "Marzo" :  ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "04" ) == 0 ? "Abril" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "05" ) == 0 ? "Mayo" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "06" ) == 0 ? "Junio" :  ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "07" ) == 0 ? "Julio" :  ((new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "08" ) == 0 ? "Agosto" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "09" ) == 0 ? "Septiembre" :  ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "10" ) == 0 ? "Octubre" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "11" ) == 0 ? "Noviembre" : ( (new SimpleDateFormat("MM").format($F{incomedate})).compareToIgnoreCase( "12" ) == 0 ? "Diciembre" : "" ))))) )) ) ) ))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50"/>
+	</title>
+	<pageHeader>
+		<band height="75" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
+				<reportElement key="" x="30" y="0" width="150" height="45" uuid="98895e6e-7d35-4c00-8a4f-491de608e4e6">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$F{org_logo}]]></imageExpression>
+			</image>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="30" y="45" width="490" height="15" isRemoveLineWhenBlank="true" uuid="86bd0330-1084-492e-9a4d-5885525c420b">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[1==2]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_name}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="30" y="60" width="160" height="15" isRemoveLineWhenBlank="true" uuid="c38621b0-fa4f-498d-8f9b-7168c6f5452e">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[1==2]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_taxid}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="400">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="30" y="0" width="490" height="390" isRemoveLineWhenBlank="true" uuid="8ceee239-579f-41d8-9a43-32b6425cfd4f">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
+					<font fontName="DejaVu Sans" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[<html>
+<b>CONTRATO INDIVIDUAL DE TRABAJO</b><br/><br/>
+
+En Ciudad del Este, República del Paraguay, a los 
+<b>4</b> días del mes de <b>marzo</b> del año <b>2021</b>, por una parte, la empresa 
+<b>MONALISA S.R.L.</b>, con Registro Patronal N.º 18.191, Registro IPS N.º 0505.61.0255, y domicilio en 
+<b>Monseñor Rodríguez y Carlos A. López 654</b>, representada por el abogado 
+<b>Ricardo Daniel Rojas Ruiz Díaz</b>, CI N.º <b>935.327</b> (en adelante, LA EMPRESA); y por otra parte,
+<b>
+    ${(($F{emp_prefix} == null || $F{emp_prefix}.trim().isEmpty()) ? "el señor" : $F{emp_prefix})}
+    ${(($F{nombre} == null || $F{nombre}.trim().isEmpty()) ? "_____________________________" : $F{nombre})}
+</b>, CI N.º <b>${(($F{cedula} == null || $F{cedula}.trim().isEmpty()) ? "______________" : $F{cedula})}</b>, 
+con domicilio en <b>${(($F{direccion} == null || $F{direccion}.trim().isEmpty()) ? "___________________________" : $F{direccion})}</b>, 
+acuerdan lo siguiente:<br/><br/>
+
+<b>PRIMERA: TAREAS CONTRATADAS – LUGAR DE TRABAJO</b><br/>
+La EMPRESA contrata al EMPLEADO para desempeñar el cargo de 
+<b>${(($F{puesto_trabajo} == null || $F{puesto_trabajo}.trim().isEmpty()) ? "___________________________" : $F{puesto_trabajo})}</b>, 
+y otras funciones afines, en su sede u otros lugares asignados.<br/><br/>
+
+<b>SEGUNDA: INICIO DE LA RELACIÓN LABORAL</b><br/>
+La relación laboral comienza el 
+<b>${($F{incomedate} == null ? "______________" : new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy").format($F{incomedate}))}</b>.<br/><br/>
+
+<b>TERCERA: DURACIÓN DEL CONTRATO – PERIODO DE PRUEBA</b><br/>
+Contrato por tiempo indefinido. Periodo de prueba: del 
+<b>4 de marzo de 2021</b> al <b>3 de mayo de 2021</b>.<br/><br/>
+
+<b>CUARTA: EXCLUSIVIDAD</b><br/>
+El EMPLEADO prestará servicios exclusivamente a favor de la EMPRESA.<br/><br/>
+
+<b>QUINTA: HORARIO – TURNOS – ROTACIÓN</b><br/>
+Horario: <b>07:30 a 16:30</b> de lunes a sábado, con descanso de <b>12:00 a 13:00</b>. Puede variar según necesidades.<br/><br/>
+
+<b>SEXTA: TRASLADO – CAMBIO DE TAREAS</b><br/>
+La EMPRESA podrá reasignar funciones o localización dentro de límites legales.<br/><br/>
+
+<b>SÉPTIMA: SALARIO – FECHA DE PAGO</b><br/>
+Remuneración mensual: <b>Gs. ${(($F{salario} == null) ? "_________" : new java.text.DecimalFormat("#,###").format($F{salario}))}</b>.<br/><br/>
+
+<b>OCTAVA: FORMA DE CUMPLIMIENTO DE LABORES</b><br/>
+El EMPLEADO se compromete a ejecutar su labor con esmero, honestidad y acatamiento a las directivas de la EMPRESA.<br/><br/>
+
+<b>NOVENA: OBLIGACIÓN DE CONFIDENCIALIDAD</b><br/>
+Toda información a la que acceda el EMPLEADO durante su relación laboral será confidencial, incluyendo:<br/>
+- Datos personales y empresariales<br/>
+- Información financiera, comercial o técnica<br/>
+- Contraseñas y datos de redes sociales<br/>
+Esta obligación subsiste aún después de la terminación del contrato.<br/><br/>
+
+<b>DÉCIMA: TERMINACIÓN DEL CONTRATO</b><br/>
+El EMPLEADO deberá preavisar su retiro conforme al Código Laboral y no podrá prestar servicios a otra empresa durante ese periodo.<br/><br/>
+
+<b>DÉCIMA PRIMERA: CONDICIONES NO PREVISTAS</b><br/>
+Todo lo no previsto se regirá por el Reglamento Interno de la EMPRESA y el Código Laboral vigente.<br/><br/>
+
+En fe de conformidad, se firma el presente en tres ejemplares de igual tenor.<br/><br/>
+
+<b>LA EMPRESA</b>: ____________________________ &nbsp;&nbsp;&nbsp; 
+<b>EL EMPLEADO</b>: ____________________________
+</html>]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+</jasperReport>
