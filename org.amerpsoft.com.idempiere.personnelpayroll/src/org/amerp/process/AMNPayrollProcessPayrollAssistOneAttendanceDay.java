@@ -64,6 +64,8 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 				p_AMNDateAssist =  para.getParameterAsTimestamp();
 			else if (paraName.equals("AMN_Assist_Process_Mode"))
 				p_AMN_Assist_Process_Mode = para.getParameterAsString();
+			else if (paraName.equals("IsScheduled"))
+				p_IsScheduled = para.getParameterAsBoolean();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
@@ -104,17 +106,21 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 				Employee_Name = amnemployee.getName();
 				Msg_Value=Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+
 						Employee_Name+" \r\n";				
-				addLog(Msg_Value);
+				if (!p_IsScheduled)
+					addLog(Msg_Value);
 				if (processMonitor != null)
 				{
-					//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Day")+": "+p_PeriodDate.toString());
-					processMonitor.statusUpdate(Msg_Value);
+					// processMonitor
+					if (!p_IsScheduled && processMonitor != null) {
+						processMonitor.statusUpdate(Msg_Value);
+					}
 				}
 				Msg_Value = "";
 				//Msg_Value = Msg.getMsg(Env.getCtx(), "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
 		    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
 		    			p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
-		    	addLog(Msg_Value);
+		    	if (!p_IsScheduled)
+		    		addLog(Msg_Value);
 			}
 		}
 	    catch (SQLException e)
