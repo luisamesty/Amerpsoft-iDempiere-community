@@ -359,7 +359,7 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
         	        Msg.getElement(ctx, "RefDateIni") + ":" + dateFormat.format(p_RefDateIni) + " " +
         	        Msg.translate(ctx, "To") + " " +
         	        Msg.getElement(ctx, "RefDateEnd") + ":" + dateFormat.format(p_RefDateEnd));
-        	note.setAD_Table_ID(MAMN_Payroll_Assist_Row.Table_ID);
+        	note.setAD_Table_ID(MAMN_Payroll_Assist_Proc.Table_ID);
     		note.setRecord_ID(0);
     		note.setAD_Org_ID(0);
     		note.setAD_User_ID(getAD_User_ID());

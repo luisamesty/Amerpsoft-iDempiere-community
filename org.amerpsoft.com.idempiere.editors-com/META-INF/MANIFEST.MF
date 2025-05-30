@@ -28,6 +28,7 @@ Require-Bundle: org.adempiere.base;bundle-version="12.0.0",
  org.idempiere.zk.billboard
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/ModelFactory.xml,OSGI-INF/EditorFactory.xml,OSGI-INF/DisplayTypeFactory.xml,OSGI-INF/EventFactory.xml
+Export-Package: org.amerp.amxeditor.model
 Import-Package: org.compiere.model,
  org.osgi.service.event,
  org.zkoss.bind,
