@@ -22,8 +22,6 @@ SELECT * FROM (
 	coalesce(c_bplocationfy.address3,'') as address3,
 	coalesce(c_bplocationfy.address4,'') as address4,
 	coalesce(c_bplocationfy.city,'') as city,
-	--coalesce(c_munfy.name,'') as municipality,
-	--coalesce(c_parfy.name,'') as parish,
 	coalesce(c_bplocationfy.regionname,'') as regionname,
 	coalesce(c_bplocationfy.postal,'') as postal,
    -- EMPLOYEE 
@@ -114,7 +112,7 @@ SELECT * FROM (
     LEFT JOIN adempiere.c_municipality as mun ON (mun.c_municipality_id= loc.c_municipality_id)
 	LEFT JOIN adempiere.c_parish as par ON (par.c_parish_id= loc.c_parish_id)
 	LEFT JOIN adempiere.c_city as cit ON (cit.c_city_id= loc.c_city_id)
-  WHERE emp.amn_employee_id=  $P{AMN_Employee_ID}
+  WHERE emp.amn_employee_id=  $P{AMN_Employee_ID} AND c_bplocfy.c_bpartner_location_id = $P{C_BPartner_Location_ID}
 ) as empleado
 WHERE nombre IS NOT NULL
 ORDER BY empleado ASC

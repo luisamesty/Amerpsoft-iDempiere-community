@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DailyBiometricPersonnelAttendance" pageWidth="1180" pageHeight="595" orientation="Landscape" columnWidth="1140" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c9cb5f9d-ef56-469b-8dec-a694cd1cfac5">
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DailyBiometricPersonnelAttendance" pageWidth="1325" pageHeight="595" orientation="Landscape" columnWidth="1285" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c9cb5f9d-ef56-469b-8dec-a694cd1cfac5">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
@@ -24,9 +15,11 @@
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[SELECT *
+		<![CDATA[--DailyPersonnelPayrollAttendance.
+SELECT *
 FROM
-(  SELECT * FROM
+(
+    SELECT * FROM
 	(
 		-- REPORT HEADER
 		SELECT DISTINCT ON (cli.ad_client_id)
@@ -50,25 +43,23 @@ FROM
 		WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
 	) as header_info
 	FULL JOIN
-	(SELECT DISTINCT
+	(
+	  SELECT DISTINCT
 	  -- ORGANIZACIÓN
 	  pyr_asp.ad_client_id as client_id, pyr_asp.ad_org_id as org_id,
 	  -- LOCATION
 	  lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
-	  CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad,
 	  -- SHIFT
-	  shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
-	  CASE WHEN ( $P{AMN_Shift_ID} IS NULL OR shf.amn_shift_id= $P{AMN_Shift_ID} ) THEN 1 ELSE 0 END AS imp_shift, 
+	  shf.amn_shift_id, shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
 	  -- CONTRACT
-	  amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-	  CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato, 
+	  amc.amn_contract_id, amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
 	  -- EMPLOYEE
-	  emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp,emp.biocode,
-	  CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1 ELSE 0 END AS imp_empleado,
+	  emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp,emp.biocode, 
 	  -- BPARTNER
 	  cbp.taxid as nro_id,
 	  -- PAYROLL_ASSIST_PROC
-	  pyr_asp.event_date as fecha, pyr_asp.description as observaciones,
+	  pyr_asp.event_date as fecha_evento, 
+	  pyr_asp.description as observaciones,
 	  pyr_asp.shift_hed as hed, pyr_asp.shift_hen as hen, pyr_asp.shift_hnd as hnd, pyr_asp.shift_hnn as hnn,
 	  pyr_asp.shift_attendance as bono_asist, pyr_asp.shift_attendancebonus as bono_assistpuntual,
 	  CONCAT(
@@ -110,8 +101,8 @@ FROM
 	 LEFT JOIN adempiere.amn_location as lct ON (emp.amn_location_id= lct.amn_location_id)
 	 LEFT JOIN adempiere.amn_shift as shf ON (shf.amn_shift_id= pyr_asp.amn_shift_id)
 	) as asistencia ON (1= 0)
-    ) as asistencia_ant_sig
-    LEFT JOIN
+ ) as asistencia_ant_sig
+ LEFT JOIN
     (
         SELECT 
          pyr_asp.amn_employee_id as emp_id, 
@@ -146,9 +137,8 @@ FROM
 	 ) as dia_anterior
         FROM adempiere.amn_payroll_assist_proc as pyr_asp  
         WHERE pyr_asp.event_date = DATE( $P{DateEnd} ) - CAST('1 days' AS INTERVAL)
-    ) as fecha_anterior 
-    ON (fecha_anterior.emp_id = asistencia_ant_sig.amn_employee_id)
-    LEFT JOIN
+    ) as fecha_anterior ON (fecha_anterior.emp_id = asistencia_ant_sig.amn_employee_id)
+LEFT JOIN
     (
         SELECT 
         pyr_asp.amn_employee_id as emp_id2, 
@@ -185,11 +175,16 @@ FROM
 	WHERE pyr_asp.event_date = DATE( $P{DateEnd} ) + CAST('1 days' AS INTERVAL)
     ) as fecha_siguiente
     ON (fecha_siguiente.emp_id2 = asistencia_ant_sig.amn_employee_id)
-WHERE (imp_header= 1) 
-   OR (client_id= $P{AD_Client_ID} AND org_id= $P{AD_Org_ID}
-  AND fecha= DATE( $P{DateEnd} )
-  AND imp_localidad= 1 AND imp_shift= 1 AND imp_contrato= 1 AND imp_empleado= 1)
-ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
+WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID} 
+  AND CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END      
+  AND fecha_evento= DATE( $P{DateEnd} ) 
+  AND CASE WHEN ( $P{AMN_Location_ID} IS NULL OR asistencia_ant_sig.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END 
+  AND CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR asistencia_ant_sig.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END 
+  AND CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR asistencia_ant_sig.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1=1 ELSE 1=0 END
+  AND CASE WHEN ( $P{AMN_Shift_ID} IS NULL OR asistencia_ant_sig.amn_shift_id= $P{AMN_Shift_ID} ) THEN 1=1 ELSE 1=0 END 
+  )
+ORDER BY loc_value, codigo_shift, value_emp, fecha_evento
+]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -244,9 +239,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 		<property name="com.jaspersoft.studio.field.name" value="localidad"/>
 		<property name="com.jaspersoft.studio.field.label" value="localidad"/>
 	</field>
-	<field name="imp_localidad" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_localidad"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_localidad"/>
+	<field name="amn_shift_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_shift_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_shift_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_shift"/>
 	</field>
 	<field name="codigo_shift" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo_shift"/>
@@ -257,9 +253,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 		<property name="com.jaspersoft.studio.field.name" value="nombre_shift"/>
 		<property name="com.jaspersoft.studio.field.label" value="nombre_shift"/>
 	</field>
-	<field name="imp_shift" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_shift"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_shift"/>
+	<field name="amn_contract_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_contract_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_contract_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
 	</field>
 	<field name="c_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
@@ -269,10 +266,6 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 	<field name="c_tipo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
 		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
-	</field>
-	<field name="imp_contrato" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_contrato"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_contrato"/>
 	</field>
 	<field name="amn_employee_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
@@ -294,18 +287,14 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 		<property name="com.jaspersoft.studio.field.label" value="biocode"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="imp_empleado" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_empleado"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_empleado"/>
-	</field>
 	<field name="nro_id" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="nro_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="nro_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
 	</field>
-	<field name="fecha" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
-		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	<field name="fecha_evento" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_evento"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_evento"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_assist_proc"/>
 	</field>
 	<field name="observaciones" class="java.lang.String">
@@ -392,14 +381,14 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 	<group name="Group_Localidad">
 		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
 		<groupHeader>
-			<band height="16">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1140" height="16" isRemoveLineWhenBlank="true" uuid="18161e8e-12ef-4eaa-9a01-75d99ce34b88">
+					<reportElement x="0" y="0" width="1285" height="14" isRemoveLineWhenBlank="true" uuid="18161e8e-12ef-4eaa-9a01-75d99ce34b88">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{localidad}]]></textFieldExpression>
@@ -412,7 +401,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 		<groupHeader>
 			<band height="14">
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1140" height="14" isRemoveLineWhenBlank="true" uuid="f925beed-26e0-4ac4-8b72-72b2f17eebb8">
+					<reportElement x="0" y="0" width="1285" height="14" isRemoveLineWhenBlank="true" uuid="f925beed-26e0-4ac4-8b72-72b2f17eebb8">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box leftPadding="5"/>
@@ -433,13 +422,14 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 	<pageHeader>
 		<band height="44" splitType="Stretch">
 			<textField evaluationTime="Report">
-				<reportElement x="70" y="15" width="294" height="15" uuid="fdae3da1-ecc5-4db0-a626-9b93fbf9f45c">
+				<reportElement x="70" y="15" width="310" height="15" uuid="fdae3da1-ecc5-4db0-a626-9b93fbf9f45c">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -467,10 +457,11 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField evaluationTime="Report">
-				<reportElement x="70" y="0" width="294" height="15" uuid="b6e1011e-8bde-405f-b8a1-a8e552e33959">
+				<reportElement x="70" y="0" width="310" height="15" uuid="b6e1011e-8bde-405f-b8a1-a8e552e33959">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -479,7 +470,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yy">
-				<reportElement x="980" y="0" width="160" height="15" uuid="c09d93a0-6c85-4799-aa47-616b9b123789">
+				<reportElement x="1085" y="0" width="200" height="15" uuid="c09d93a0-6c85-4799-aa47-616b9b123789">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -490,7 +481,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="1060" y="15" width="80" height="15" uuid="e62e0aaf-97f9-46a3-a3e9-33534e45f3f2">
+				<reportElement x="1205" y="15" width="80" height="15" uuid="e62e0aaf-97f9-46a3-a3e9-33534e45f3f2">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -502,7 +493,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="980" y="15" width="80" height="15" uuid="cc96e484-1146-4228-8ccb-4d8e2ee8270d">
+				<reportElement x="1085" y="15" width="120" height="15" uuid="cc96e484-1146-4228-8ccb-4d8e2ee8270d">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -514,7 +505,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="0" width="600" height="30" backcolor="#C24A48" uuid="6bbfe28b-8f92-4923-bf5d-672c22adaf06">
+				<reportElement x="380" y="0" width="705" height="30" backcolor="#C24A48" uuid="6bbfe28b-8f92-4923-bf5d-672c22adaf06">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -526,7 +517,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Reporte de Asistencia Diario Procesada]]></text>
 			</staticText>
 			<textField evaluationTime="Report" pattern="">
-				<reportElement x="70" y="30" width="1070" height="14" uuid="2eb3bc2d-2cc2-4855-aa2f-0c247bf94b52">
+				<reportElement x="70" y="30" width="1215" height="14" uuid="2eb3bc2d-2cc2-4855-aa2f-0c247bf94b52">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -538,11 +529,13 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="28" splitType="Stretch">
+		<band height="19" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="479" y="6" width="32" height="18" uuid="71d4371c-7a79-4d66-ba94-b5873f566ad1">
+				<reportElement x="565" y="0" width="35" height="18" uuid="71d4371c-7a79-4d66-ba94-b5873f566ad1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -553,23 +546,34 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[E1]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="27" width="1140" height="1" uuid="c6291138-6987-411e-be83-be626f62e147">
+				<reportElement x="0" y="0" width="1285" height="1" uuid="edfd64f3-5a9a-41c1-8e9d-502d052cc2e5">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="5" width="1140" height="1" uuid="090ebbb7-2a8d-49d9-83d1-f2bb80f9c32c">
+				<reportElement x="0" y="2" width="1285" height="1" uuid="090ebbb7-2a8d-49d9-83d1-f2bb80f9c32c">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="24" width="1140" height="1" uuid="93e67554-6c08-4b0f-a9b8-d9407d918023">
+				<reportElement x="0" y="18" width="1285" height="1" uuid="c6291138-6987-411e-be83-be626f62e147">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="16" width="1285" height="1" uuid="93e67554-6c08-4b0f-a9b8-d9407d918023">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -577,26 +581,21 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="6" width="70" height="18" uuid="f0c0f22f-0402-4a28-98af-385c6c675ee3">
+				<reportElement x="0" y="0" width="70" height="18" uuid="f0c0f22f-0402-4a28-98af-385c6c675ee3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Código]]></text>
 			</staticText>
-			<line>
-				<reportElement x="0" y="2" width="1140" height="1" uuid="edfd64f3-5a9a-41c1-8e9d-502d052cc2e5">
-					<property name="local_mesure_unitx" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-			</line>
 			<staticText>
-				<reportElement x="140" y="6" width="154" height="18" uuid="2394109b-f3fc-4342-b5b3-aa1570f54d0c">
+				<reportElement x="180" y="0" width="200" height="18" uuid="2394109b-f3fc-4342-b5b3-aa1570f54d0c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -604,8 +603,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="294" y="6" width="70" height="18" uuid="de6f6593-acf5-4b15-a550-f35b7cec6384">
+				<reportElement x="380" y="0" width="70" height="18" uuid="de6f6593-acf5-4b15-a550-f35b7cec6384">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -613,9 +613,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Nro. Id.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="364" y="6" width="115" height="18" uuid="77c28955-7ec4-46fa-9b60-e72e25a41806">
+				<reportElement x="450" y="0" width="115" height="18" uuid="77c28955-7ec4-46fa-9b60-e72e25a41806">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -623,9 +624,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Día Anterior]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="511" y="6" width="32" height="18" uuid="75bddc57-3a74-4066-bd1a-5cff0fea3d2a">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<reportElement x="600" y="0" width="35" height="18" uuid="75bddc57-3a74-4066-bd1a-5cff0fea3d2a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -636,9 +637,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[S1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="543" y="6" width="32" height="18" uuid="381dcf81-b961-41d8-bcb1-a6e8c4647293">
+				<reportElement x="635" y="0" width="35" height="18" uuid="381dcf81-b961-41d8-bcb1-a6e8c4647293">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -649,9 +651,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[E2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="575" y="6" width="32" height="18" uuid="343e69eb-9a7e-4308-b5af-2f50fca7755e">
+				<reportElement x="670" y="0" width="35" height="18" uuid="343e69eb-9a7e-4308-b5af-2f50fca7755e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -662,8 +665,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[S2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="735" y="6" width="115" height="18" uuid="d7822de2-0f65-4fb9-897c-3344cc54d166">
+				<reportElement x="845" y="0" width="120" height="18" uuid="d7822de2-0f65-4fb9-897c-3344cc54d166">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -671,8 +676,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Día Siguiente]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="980" y="6" width="160" height="18" uuid="84f5110f-dea3-4f49-aa29-57904ed08f3f">
+				<reportElement x="1085" y="0" width="200" height="18" uuid="84f5110f-dea3-4f49-aa29-57904ed08f3f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -680,8 +687,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Observaciones]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="607" y="6" width="32" height="18" uuid="562b965c-ee7f-4608-a63c-b4fe3e96defe">
+				<reportElement x="705" y="0" width="35" height="18" uuid="562b965c-ee7f-4608-a63c-b4fe3e96defe">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -692,9 +701,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[HND]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="639" y="6" width="32" height="18" uuid="c84dad55-87fd-4e0f-a869-926e96a89d31">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<reportElement x="740" y="0" width="35" height="18" uuid="c84dad55-87fd-4e0f-a869-926e96a89d31">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -705,9 +714,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[HNN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="671" y="6" width="32" height="18" uuid="529e30d1-cb77-412d-b12b-8944a0b55ac8">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<reportElement x="775" y="0" width="35" height="18" uuid="529e30d1-cb77-412d-b12b-8944a0b55ac8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -718,9 +727,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[HED]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="703" y="6" width="32" height="18" uuid="ce42886e-70bb-40be-a9b0-62abf71eee4e">
+				<reportElement x="810" y="0" width="35" height="18" uuid="ce42886e-70bb-40be-a9b0-62abf71eee4e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -731,8 +741,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[HEN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="850" y="6" width="65" height="18" uuid="e4c12052-d263-456a-8478-019ba536e949">
+				<reportElement x="965" y="0" width="60" height="18" uuid="e4c12052-d263-456a-8478-019ba536e949">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -740,9 +752,10 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Bono Asist.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="915" y="6" width="65" height="18" uuid="1d5250e1-8141-4da3-9434-fc6a94348e82">
+				<reportElement x="1025" y="0" width="60" height="18" uuid="1d5250e1-8141-4da3-9434-fc6a94348e82">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -750,22 +763,36 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<text><![CDATA[Bono Punt.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="70" y="6" width="70" height="18" uuid="1ca033d3-f8a5-4512-b730-c522fe5e97b7">
+				<reportElement x="70" y="0" width="70" height="18" uuid="1ca033d3-f8a5-4512-b730-c522fe5e97b7">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Código Bio.]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="140" y="0" width="40" height="18" uuid="dedd53c6-a90b-494d-9e1c-be285267644b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PIN]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="14">
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="511" y="0" width="32" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="f95bb864-a2e6-41fa-9071-7c25758f27d7">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="600" y="0" width="35" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="f95bb864-a2e6-41fa-9071-7c25758f27d7">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -776,8 +803,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{s1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="479" y="0" width="32" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="1e8b92bc-d54d-461b-9772-4604e117833f">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="565" y="0" width="35" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="1e8b92bc-d54d-461b-9772-4604e117833f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<leftPen lineWidth="0.5" lineStyle="Dashed"/>
@@ -789,7 +817,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{e1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="294" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="52aa60ce-c8cd-49c6-bd2f-7a28cbfb6c7d">
+				<reportElement stretchType="RelativeToTallestObject" x="380" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="52aa60ce-c8cd-49c6-bd2f-7a28cbfb6c7d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -798,8 +826,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{nro_id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="543" y="0" width="32" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="ab15a93e-6774-4f12-a9f6-896018a16981">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="635" y="0" width="35" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="ab15a93e-6774-4f12-a9f6-896018a16981">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
@@ -810,8 +839,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{e2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="575" y="0" width="32" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="1b4d9bb8-a7ce-4de3-a362-5a84d3d28498">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="670" y="0" width="35" height="14" isRemoveLineWhenBlank="true" backcolor="#D9D9D9" uuid="1b4d9bb8-a7ce-4de3-a362-5a84d3d28498">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.5" lineStyle="Dashed"/>
@@ -822,7 +852,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{s2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="154" height="14" isRemoveLineWhenBlank="true" uuid="fcb1c6c9-5faf-416a-b349-bacb6b14690d">
+				<reportElement stretchType="RelativeToTallestObject" x="180" y="0" width="199" height="14" isRemoveLineWhenBlank="true" uuid="fcb1c6c9-5faf-416a-b349-bacb6b14690d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -840,8 +870,8 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{value_emp}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="980" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="98124d18-0a9b-475c-ae23-bf8406e3e80d">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1085" y="0" width="200" height="14" isRemoveLineWhenBlank="true" uuid="98124d18-0a9b-475c-ae23-bf8406e3e80d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
@@ -852,8 +882,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{observaciones}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="607" y="0" width="32" height="14" isRemoveLineWhenBlank="true" uuid="4df680c8-5a81-4e61-b2ea-cc56eb0c1c90">
+				<reportElement x="705" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="4df680c8-5a81-4e61-b2ea-cc56eb0c1c90">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -867,8 +898,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[($F{hnd}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnd} : null)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="639" y="0" width="32" height="14" isRemoveLineWhenBlank="true" uuid="c30a7f5d-ec73-420a-b5c0-c334e8cb8d9c">
+				<reportElement x="740" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="c30a7f5d-ec73-420a-b5c0-c334e8cb8d9c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -882,8 +914,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[($F{hnn}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnn} : null )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="671" y="0" width="32" height="14" isRemoveLineWhenBlank="true" uuid="572915cd-08ce-41e6-aa2b-541ff8c55f52">
+				<reportElement x="775" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="572915cd-08ce-41e6-aa2b-541ff8c55f52">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -897,8 +930,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[($F{hed}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hed} : null)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="703" y="0" width="32" height="14" isRemoveLineWhenBlank="true" uuid="4597403b-48c7-4985-94ff-e8ce27d3bd4b">
+				<reportElement x="810" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="4597403b-48c7-4985-94ff-e8ce27d3bd4b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<leftPen lineWidth="0.0"/>
@@ -910,8 +944,8 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[($F{hen}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hen} : null)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="735" y="0" width="115" height="14" isRemoveLineWhenBlank="true" uuid="6640245b-a452-4a5c-b943-6607bb109247">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<reportElement x="845" y="0" width="120" height="14" isRemoveLineWhenBlank="true" uuid="6640245b-a452-4a5c-b943-6607bb109247">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -924,8 +958,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[$F{dia_siguiente}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="850" y="0" width="65" height="14" isRemoveLineWhenBlank="true" uuid="eac53f5e-363f-4162-a09c-988e9307a8c0">
+				<reportElement x="965" y="0" width="60" height="14" isRemoveLineWhenBlank="true" uuid="eac53f5e-363f-4162-a09c-988e9307a8c0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -933,8 +968,9 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[($F{bono_asist}.compareTo( BigDecimal.ZERO )!= 0 ? $F{bono_asist} : null)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="915" y="0" width="65" height="14" isRemoveLineWhenBlank="true" uuid="58317e70-38a4-46db-9286-5bc4625c73d0">
+				<reportElement x="1025" y="0" width="60" height="14" isRemoveLineWhenBlank="true" uuid="58317e70-38a4-46db-9286-5bc4625c73d0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="true"/>
@@ -942,7 +978,7 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 				<textFieldExpression><![CDATA[($F{bono_assistpuntual}.compareTo( BigDecimal.ZERO )!= 0 ? $F{bono_assistpuntual} : null)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="364" y="0" width="115" height="14" isRemoveLineWhenBlank="true" uuid="2db66a6e-9caa-47b7-a80b-4bd7ac30e458">
+				<reportElement x="450" y="0" width="115" height="14" isRemoveLineWhenBlank="true" uuid="2db66a6e-9caa-47b7-a80b-4bd7ac30e458">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -957,6 +993,15 @@ ORDER BY loc_value, codigo_shift, value_emp, fecha]]>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="8c044dfa-e8f7-42af-bee6-c30e8ab3f04d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{biocode}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="140" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="5f47514b-4a5b-4fac-91bc-a646f42af20a">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">

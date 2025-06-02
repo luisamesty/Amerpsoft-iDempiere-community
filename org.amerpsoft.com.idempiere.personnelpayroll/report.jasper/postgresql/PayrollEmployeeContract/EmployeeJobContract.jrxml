@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeeJobContract" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35da765c-c0a1-42c7-94f3-f38331872c36">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
@@ -80,6 +80,7 @@
 	<parameter name="DateEnd" class="java.sql.Timestamp">
 		<defaultValueExpression><![CDATA[new SimpleDateFormat("yy-MM-dd").format($P{DateEnd})]]></defaultValueExpression>
 	</parameter>
+	<parameter name="C_BPartner_Location_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -97,8 +98,8 @@
 		<defaultValueExpression><![CDATA["org"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- EmployeeLetter
--- Employee Letter
+		<![CDATA[-- EmployeeContract
+-- Employee Contract
 SELECT * FROM (
 -- Employee file 
 	SELECT DISTINCT
@@ -111,15 +112,25 @@ SELECT * FROM (
     COALESCE(img3.binarydata, img4.binarydata) as foto,
    -- BUSINESS PARTNER
     cbp.name as nombre, COALESCE(emp.idnumber, cbp.taxid,'') as cedula, 
+    -- BUSINESS PARTNER FISCAL ADDRESS
+	c_bplocfy.name as bplocname,
+	coalesce(c_bplocfy.phone,'') as phone,
+	coalesce(c_bplocfy.phone2,'') as phone2,
+	coalesce(c_bplocfy.fax,'') as fax,
+	coalesce(c_bplocationfy.address1,'') as address1,
+	coalesce(c_bplocationfy.address2,'') as address2,
+	coalesce(c_bplocationfy.address3,'') as address3,
+	coalesce(c_bplocationfy.address4,'') as address4,
+	coalesce(c_bplocationfy.city,'') as city,
+	coalesce(c_bplocationfy.regionname,'') as regionname,
+	coalesce(c_bplocationfy.postal,'') as postal,
    -- EMPLOYEE 
 	emp.value as codigo,   
 	DATE(emp.birthday) as fecha_nacimiento,
 	emp.birthplace as lugar_nacimiento,
 	emp.incomedate,
 	COALESCE(emp.NAME_IDCARD,'') as nombre_tarjeta,
-	CASE WHEN emp.sex = 'F' THEN 'la señora' 
-		          ELSE 'el señor'
-	END as emp_prefix,
+	CASE WHEN emp.sex = 'F' THEN 'la señora' ELSE 'el señor'END as emp_prefix,
 	CASE WHEN $P{Salary} IS NULL OR $P{Salary} = 0 THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
     	ELSE adempiere.amf_num2letterLPY($P{Salary}, 'U', 'es')
 	END AS salario_letras_param,
@@ -154,7 +165,7 @@ SELECT * FROM (
 	COALESCE(loc_n.name, '-') as localidad_nomina,
 	curr2.iso_code,
 	CONCAT(curr2.iso_code,'-',currt2.description) as moneda_sol,
-	-- LOCATION
+	-- LOCATION ADDRESS
 	COALESCE(loc.postal, '-') as cod_postal, 
 	COALESCE(loc.address1, '-') as adr1, 
 	COALESCE(loc.address2, '-') as adr2, 
@@ -175,19 +186,22 @@ SELECT * FROM (
 	orginfo.fax,
 	orginfo.email
 	FROM adempiere.amn_employee as emp
-	 INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+	INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+	LEFT JOIN adempiere.c_bpartner_location  as c_bplocfy ON c_bplocfy.c_bpartner_ID = cbp.c_bpartner_ID
+	LEFT JOIN adempiere.c_location as c_bplocationfy on c_bplocationfy.c_location_id = c_bplocfy.c_location_id
+--	LEFT JOIN adempiere.ad_user as ad_userfy on ad_userfy.ad_user_id = adempiere.c_invoice.ad_user_id
 	INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
 	INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
-	 LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+	LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
 	INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 	INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
-	 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
-	 LEFT JOIN adempiere.ad_image as img3 ON (img3.ad_image_id= emp.empimg1_id) 
-	 LEFT JOIN adempiere.ad_image as img4 ON (img4.ad_image_id= emp.empimg2_id) 
+	LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+	LEFT JOIN adempiere.ad_image as img3 ON (img3.ad_image_id= emp.empimg1_id) 
+	LEFT JOIN adempiere.ad_image as img4 ON (img4.ad_image_id= emp.empimg2_id) 
 	INNER JOIN adempiere.amn_contract as amn_c ON (amn_c.amn_contract_id= emp.amn_contract_id) 
 	INNER JOIN adempiere.amn_department as adp ON (adp.amn_department_id= emp.amn_department_id)
-	 LEFT JOIN adempiere.amn_jobtitle as job ON (job.amn_jobtitle_id= emp.amn_jobtitle_id)
-	 LEFT JOIN adempiere.amn_jobstation as job_s ON (job_s.amn_jobstation_id= job.amn_jobstation_id)
+	LEFT JOIN adempiere.amn_jobtitle as job ON (job.amn_jobtitle_id= emp.amn_jobtitle_id)
+	LEFT JOIN adempiere.amn_jobstation as job_s ON (job_s.amn_jobstation_id= job.amn_jobstation_id)
 	INNER JOIN adempiere.amn_location as loc_n ON (loc_n.amn_location_id= emp.amn_location_id)
 	LEFT JOIN adempiere.c_country as ctr_e ON (ctr_e.c_country_id= emp.c_country_id)
 	LEFT JOIN adempiere.c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
@@ -198,7 +212,7 @@ SELECT * FROM (
     LEFT JOIN adempiere.c_municipality as mun ON (mun.c_municipality_id= loc.c_municipality_id)
 	LEFT JOIN adempiere.c_parish as par ON (par.c_parish_id= loc.c_parish_id)
 	LEFT JOIN adempiere.c_city as cit ON (cit.c_city_id= loc.c_city_id)
-  WHERE emp.amn_employee_id=  $P{AMN_Employee_ID}
+  WHERE emp.amn_employee_id=  $P{AMN_Employee_ID} AND c_bplocfy.c_bpartner_location_id = $P{C_BPartner_Location_ID}
 ) as empleado
 WHERE nombre IS NOT NULL
 ORDER BY empleado ASC]]>
@@ -232,6 +246,53 @@ ORDER BY empleado ASC]]>
 	<field name="cedula" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="cedula"/>
 		<property name="com.jaspersoft.studio.field.label" value="cedula"/>
+	</field>
+	<field name="bplocname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="bplocname"/>
+		<property name="com.jaspersoft.studio.field.label" value="bplocname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner_location"/>
+	</field>
+	<field name="phone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<field name="phone2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone2"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone2"/>
+	</field>
+	<field name="fax" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fax"/>
+		<property name="com.jaspersoft.studio.field.label" value="fax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<field name="address1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address1"/>
+		<property name="com.jaspersoft.studio.field.label" value="address1"/>
+	</field>
+	<field name="address2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address2"/>
+		<property name="com.jaspersoft.studio.field.label" value="address2"/>
+	</field>
+	<field name="address3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address3"/>
+		<property name="com.jaspersoft.studio.field.label" value="address3"/>
+	</field>
+	<field name="address4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address4"/>
+		<property name="com.jaspersoft.studio.field.label" value="address4"/>
+	</field>
+	<field name="city" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="city"/>
+		<property name="com.jaspersoft.studio.field.label" value="city"/>
+	</field>
+	<field name="regionname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="regionname"/>
+		<property name="com.jaspersoft.studio.field.label" value="regionname"/>
+	</field>
+	<field name="postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="postal"/>
 	</field>
 	<field name="codigo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
@@ -350,12 +411,12 @@ ORDER BY empleado ASC]]>
 		<property name="com.jaspersoft.studio.field.name" value="pais_dir"/>
 		<property name="com.jaspersoft.studio.field.label" value="pais_dir"/>
 	</field>
-	<field name="phone" class="java.lang.String">
+	<field name="COLUMN_47" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="phone"/>
 		<property name="com.jaspersoft.studio.field.label" value="phone"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
 	</field>
-	<field name="fax" class="java.lang.String">
+	<field name="COLUMN_48" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="fax"/>
 		<property name="com.jaspersoft.studio.field.label" value="fax"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
@@ -445,67 +506,6 @@ ORDER BY empleado ASC]]>
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
 					<font fontName="DejaVu Sans" size="11" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[<html>
-<b>CONTRATO INDIVIDUAL DE TRABAJO</b><br/><br/>
-
-En Ciudad del Este, República del Paraguay, a los 
-<b>4</b> días del mes de <b>marzo</b> del año <b>2021</b>, por una parte, la empresa 
-<b>MONALISA S.R.L.</b>, con Registro Patronal N.º 18.191, Registro IPS N.º 0505.61.0255, y domicilio en 
-<b>Monseñor Rodríguez y Carlos A. López 654</b>, representada por el abogado 
-<b>Ricardo Daniel Rojas Ruiz Díaz</b>, CI N.º <b>935.327</b> (en adelante, LA EMPRESA); y por otra parte,
-<b>
-    ${(($F{emp_prefix} == null || $F{emp_prefix}.trim().isEmpty()) ? "el señor" : $F{emp_prefix})}
-    ${(($F{nombre} == null || $F{nombre}.trim().isEmpty()) ? "_____________________________" : $F{nombre})}
-</b>, CI N.º <b>${(($F{cedula} == null || $F{cedula}.trim().isEmpty()) ? "______________" : $F{cedula})}</b>, 
-con domicilio en <b>${(($F{direccion} == null || $F{direccion}.trim().isEmpty()) ? "___________________________" : $F{direccion})}</b>, 
-acuerdan lo siguiente:<br/><br/>
-
-<b>PRIMERA: TAREAS CONTRATADAS – LUGAR DE TRABAJO</b><br/>
-La EMPRESA contrata al EMPLEADO para desempeñar el cargo de 
-<b>${(($F{puesto_trabajo} == null || $F{puesto_trabajo}.trim().isEmpty()) ? "___________________________" : $F{puesto_trabajo})}</b>, 
-y otras funciones afines, en su sede u otros lugares asignados.<br/><br/>
-
-<b>SEGUNDA: INICIO DE LA RELACIÓN LABORAL</b><br/>
-La relación laboral comienza el 
-<b>${($F{incomedate} == null ? "______________" : new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy").format($F{incomedate}))}</b>.<br/><br/>
-
-<b>TERCERA: DURACIÓN DEL CONTRATO – PERIODO DE PRUEBA</b><br/>
-Contrato por tiempo indefinido. Periodo de prueba: del 
-<b>4 de marzo de 2021</b> al <b>3 de mayo de 2021</b>.<br/><br/>
-
-<b>CUARTA: EXCLUSIVIDAD</b><br/>
-El EMPLEADO prestará servicios exclusivamente a favor de la EMPRESA.<br/><br/>
-
-<b>QUINTA: HORARIO – TURNOS – ROTACIÓN</b><br/>
-Horario: <b>07:30 a 16:30</b> de lunes a sábado, con descanso de <b>12:00 a 13:00</b>. Puede variar según necesidades.<br/><br/>
-
-<b>SEXTA: TRASLADO – CAMBIO DE TAREAS</b><br/>
-La EMPRESA podrá reasignar funciones o localización dentro de límites legales.<br/><br/>
-
-<b>SÉPTIMA: SALARIO – FECHA DE PAGO</b><br/>
-Remuneración mensual: <b>Gs. ${(($F{salario} == null) ? "_________" : new java.text.DecimalFormat("#,###").format($F{salario}))}</b>.<br/><br/>
-
-<b>OCTAVA: FORMA DE CUMPLIMIENTO DE LABORES</b><br/>
-El EMPLEADO se compromete a ejecutar su labor con esmero, honestidad y acatamiento a las directivas de la EMPRESA.<br/><br/>
-
-<b>NOVENA: OBLIGACIÓN DE CONFIDENCIALIDAD</b><br/>
-Toda información a la que acceda el EMPLEADO durante su relación laboral será confidencial, incluyendo:<br/>
-- Datos personales y empresariales<br/>
-- Información financiera, comercial o técnica<br/>
-- Contraseñas y datos de redes sociales<br/>
-Esta obligación subsiste aún después de la terminación del contrato.<br/><br/>
-
-<b>DÉCIMA: TERMINACIÓN DEL CONTRATO</b><br/>
-El EMPLEADO deberá preavisar su retiro conforme al Código Laboral y no podrá prestar servicios a otra empresa durante ese periodo.<br/><br/>
-
-<b>DÉCIMA PRIMERA: CONDICIONES NO PREVISTAS</b><br/>
-Todo lo no previsto se regirá por el Reglamento Interno de la EMPRESA y el Código Laboral vigente.<br/><br/>
-
-En fe de conformidad, se firma el presente en tres ejemplares de igual tenor.<br/><br/>
-
-<b>LA EMPRESA</b>: ____________________________ &nbsp;&nbsp;&nbsp; 
-<b>EL EMPLEADO</b>: ____________________________
-</html>]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

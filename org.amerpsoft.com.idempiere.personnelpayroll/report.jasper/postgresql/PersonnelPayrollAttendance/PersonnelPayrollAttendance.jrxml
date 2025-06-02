@@ -3,8 +3,22 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PersonnelPayrollAttendance" pageWidth="950" pageHeight="595" orientation="Landscape" columnWidth="910" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c0bf1fc7-9c99-4e6b-8dbc-c47f9956d2f0">
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="397"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="598"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="colorDiaSemana">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{dia_semana}.equalsIgnoreCase("domingo")]]></conditionExpression>
+			<style forecolor="#FF0814" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{dia_semana}.equalsIgnoreCase("sábado") || $F{dia_semana}.equalsIgnoreCase("sabado")]]></conditionExpression>
+			<style forecolor="#390DFF" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{feriado}.equalsIgnoreCase("Y")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FF0814" backcolor="#FAD3D2" isBold="true"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -377,7 +391,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 		<variableExpression><![CDATA[($F{bono_assistpuntual}!= null ? $F{bono_assistpuntual} : BigDecimal.ZERO)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<group name="Group_Contrato" keepTogether="true">
+	<group name="Group_Contrato" isReprintHeaderOnEachPage="true" keepTogether="true">
 		<groupExpression><![CDATA[$F{c_value}]]></groupExpression>
 		<groupHeader>
 			<band height="15">
@@ -388,14 +402,14 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{c_value} + " - "+$F{c_tipo}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 	</group>
-	<group name="Group_Localidad" keepTogether="true">
+	<group name="Group_Localidad" isReprintHeaderOnEachPage="true" keepTogether="true">
 		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
@@ -407,7 +421,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{loc_value}+" - "+$F{localidad}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -425,7 +439,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 					</reportElement>
 					<box leftPadding="15"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{value_emp}]]></textFieldExpression>
 				</textField>
@@ -435,7 +449,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 					</reportElement>
 					<box leftPadding="15"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["C: " + $F{nro_id}]]></textFieldExpression>
 				</textField>
@@ -445,7 +459,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 					</reportElement>
 					<box leftPadding="15"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Cód. B.: " + $F{biocode}]]></textFieldExpression>
 				</textField>
@@ -455,7 +469,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 					</reportElement>
 					<box leftPadding="15"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nombre_emp}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -470,7 +484,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_hnd}]]></textFieldExpression>
 				</textField>
@@ -480,7 +494,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_hnn}]]></textFieldExpression>
 				</textField>
@@ -490,7 +504,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_hen}]]></textFieldExpression>
 				</textField>
@@ -500,14 +514,14 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_hed}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="0" width="440" height="15" isRemoveLineWhenBlank="true" uuid="96cccf3e-1bb6-46c8-a5e5-8756d56b3287"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="true"/>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total Trabajador:]]></text>
 				</staticText>
@@ -528,7 +542,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_bono_asist}]]></textFieldExpression>
 				</textField>
@@ -538,7 +552,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 						<rightPen lineWidth="0.0" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="10" isBold="false"/>
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_bono_asistpuntual}]]></textFieldExpression>
 				</textField>
@@ -551,26 +565,26 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 	<pageHeader>
 		<band height="30" splitType="Stretch">
 			<textField evaluationTime="Report">
-				<reportElement x="857" y="15" width="52" height="15" uuid="ad798932-7ad5-486f-b005-c293f370a45d">
+				<reportElement x="855" y="15" width="55" height="15" uuid="ad798932-7ad5-486f-b005-c293f370a45d">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yy">
-				<reportElement x="807" y="0" width="102" height="15" uuid="5ffeebee-370d-45cc-aa7c-5e0ecabed497">
+				<reportElement x="805" y="0" width="105" height="15" uuid="5ffeebee-370d-45cc-aa7c-5e0ecabed497">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -585,19 +599,19 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="11" isBold="true"/>
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="807" y="15" width="50" height="15" uuid="c4e5eafc-93e4-48d9-8801-5fec328ddbd8">
+				<reportElement x="805" y="15" width="50" height="15" uuid="c4e5eafc-93e4-48d9-8801-5fec328ddbd8">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
+					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
@@ -628,23 +642,24 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="11" isBold="true"/>
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="">
-				<reportElement x="270" y="15" width="536" height="15" uuid="68240492-1c7b-4674-8fec-4a84565eefe4">
+				<reportElement x="270" y="15" width="535" height="15" uuid="68240492-1c7b-4674-8fec-4a84565eefe4">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["( del " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateIni}) + " al " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateEnd}) + " )"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="270" y="0" width="536" height="15" backcolor="#C24A48" uuid="175d079e-d8b7-4e23-9272-ea3c7b2c360e">
+				<reportElement x="270" y="0" width="535" height="15" backcolor="#C24A48" uuid="175d079e-d8b7-4e23-9272-ea3c7b2c360e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -652,14 +667,14 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Reporte de Asistencia]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="24" splitType="Stretch">
+		<band height="17" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<line>
 				<reportElement x="0" y="0" width="910" height="1" uuid="3cb03201-479e-4054-9ab9-d2b6de0fb710">
@@ -680,7 +695,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="20" width="910" height="1" uuid="ceedda5c-394f-4868-ae34-72b4c0533dc3">
+				<reportElement x="0" y="14" width="910" height="1" uuid="ceedda5c-394f-4868-ae34-72b4c0533dc3">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -689,7 +704,7 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="22" width="910" height="1" uuid="ca6118c0-560d-41d9-a1f4-9430d52520fe">
+				<reportElement x="0" y="16" width="910" height="1" uuid="ca6118c0-560d-41d9-a1f4-9430d52520fe">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -698,232 +713,214 @@ ORDER BY asistencia.c_value, asistencia.loc_value, asistencia.value_emp, asisten
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="4" width="100" height="15" uuid="548fdacf-3c84-4a57-93a9-4cef31fba6d1">
+				<reportElement x="0" y="0" width="100" height="14" uuid="548fdacf-3c84-4a57-93a9-4cef31fba6d1">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Día Semana]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="4" width="30" height="15" uuid="8a4b8fa0-14c7-413d-af5b-6655a80c5245">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<reportElement x="100" y="0" width="30" height="14" uuid="8a4b8fa0-14c7-413d-af5b-6655a80c5245">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Día]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="270" y="4" width="35" height="15" uuid="850919a8-6c68-4353-a9eb-9dd475a6246d"/>
+				<reportElement x="270" y="0" width="35" height="14" uuid="850919a8-6c68-4353-a9eb-9dd475a6246d">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[E2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="200" y="4" width="35" height="15" uuid="a5bac70f-42c7-4ad6-8b50-ff653f8a5dbd">
+				<reportElement x="200" y="0" width="35" height="14" uuid="a5bac70f-42c7-4ad6-8b50-ff653f8a5dbd">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[E1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="690" y="4" width="220" height="15" uuid="f8c3bd21-14f3-4d65-b243-b7c757231b81">
+				<reportElement x="690" y="0" width="220" height="14" uuid="f8c3bd21-14f3-4d65-b243-b7c757231b81">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Observaciones]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="235" y="4" width="35" height="15" uuid="8b972f29-5436-4b01-95fe-ac07e7f95aa5">
+				<reportElement x="235" y="0" width="35" height="14" uuid="8b972f29-5436-4b01-95fe-ac07e7f95aa5">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[S1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="305" y="4" width="35" height="15" uuid="bdafd3ac-1a39-4668-ae08-cacb94c731a3">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
+				<reportElement x="305" y="0" width="35" height="14" uuid="bdafd3ac-1a39-4668-ae08-cacb94c731a3"/>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[S2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="130" y="4" width="30" height="15" uuid="49ece9fe-deac-48b7-b9ad-d9a973d1c508">
+				<reportElement x="130" y="0" width="30" height="14" uuid="49ece9fe-deac-48b7-b9ad-d9a973d1c508">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Mes]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="160" y="4" width="40" height="15" uuid="cf44ac86-bf80-492e-ad83-37b4e48c8100">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="160" y="0" width="40" height="14" uuid="cf44ac86-bf80-492e-ad83-37b4e48c8100">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Año]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="390" y="4" width="25" height="15" uuid="dda20996-e780-4774-8cf5-f5d38dd7411d">
+				<reportElement x="390" y="0" width="25" height="14" uuid="dda20996-e780-4774-8cf5-f5d38dd7411d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jus]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="365" y="4" width="25" height="15" uuid="0d8fded8-6265-43a4-a690-b3bd6dc8c9b0">
+				<reportElement x="365" y="0" width="25" height="14" uuid="0d8fded8-6265-43a4-a690-b3bd6dc8c9b0">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fer]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="415" y="4" width="25" height="15" uuid="8718aed7-595c-4ceb-9ead-c671b843d9f1">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="415" y="0" width="25" height="14" uuid="8718aed7-595c-4ceb-9ead-c671b843d9f1">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Des]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="440" y="4" width="35" height="15" uuid="3a67a160-29be-4508-9ad1-bdc048742ddb">
+				<reportElement x="440" y="0" width="35" height="14" uuid="3a67a160-29be-4508-9ad1-bdc048742ddb">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[HND]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="475" y="4" width="35" height="15" uuid="6aaad54a-5567-4bfe-8578-d724ae1e5d03">
+				<reportElement x="475" y="0" width="35" height="14" uuid="6aaad54a-5567-4bfe-8578-d724ae1e5d03">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[HNN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="510" y="4" width="35" height="15" uuid="5a2d3c3a-f83f-487b-89c0-0c3b1913ae9b">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
+				<reportElement x="510" y="0" width="35" height="14" uuid="5a2d3c3a-f83f-487b-89c0-0c3b1913ae9b"/>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[HED]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="545" y="4" width="35" height="15" uuid="18bfb3ef-0695-4fc9-b71a-aea529a71720">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
+				<reportElement x="545" y="0" width="35" height="14" uuid="18bfb3ef-0695-4fc9-b71a-aea529a71720"/>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[HEN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="580" y="4" width="35" height="15" uuid="86adc37e-3691-4451-b5c4-e942865ecea1">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="580" y="0" width="35" height="14" uuid="86adc37e-3691-4451-b5c4-e942865ecea1">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bono
 Asist.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="615" y="4" width="35" height="15" uuid="d9ab0b03-ce79-4734-9481-f760ee24dac9">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="615" y="0" width="35" height="14" uuid="d9ab0b03-ce79-4734-9481-f760ee24dac9">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bono
 Punt.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="340" y="4" width="25" height="15" uuid="a01c06c1-7264-4592-80f2-f4275824ff89">
+				<reportElement x="340" y="0" width="25" height="14" uuid="a01c06c1-7264-4592-80f2-f4275824ff89">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dom]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="650" y="4" width="40" height="15" uuid="91a06b9e-6847-4fc9-b699-546a96fc798e">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="650" y="0" width="40" height="14" uuid="91a06b9e-6847-4fc9-b699-546a96fc798e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[D.T.]]></text>
 			</staticText>
@@ -933,18 +930,28 @@ Punt.]]></text>
 		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<printWhenExpression><![CDATA[$F{fecha}!= null]]></printWhenExpression>
+			<rectangle>
+				<reportElement style="colorDiaSemana" mode="Opaque" x="0" y="0" width="910" height="14" uuid="9fa2ba04-754a-47fc-a97c-1f0473d83237">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="fda96575-c453-4572-80fc-bec4f5e884f8">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="fda96575-c453-4572-80fc-bec4f5e884f8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="15"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{dia_semana}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="545" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="c1ebf6e9-15b2-4b0d-b074-8132a08eb946">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="545" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="c1ebf6e9-15b2-4b0d-b074-8132a08eb946">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -952,12 +959,12 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{hen}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hen} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="305" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="19d305e8-d11e-4ebc-b243-c6cf0cf9b1d2">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="305" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="19d305e8-d11e-4ebc-b243-c6cf0cf9b1d2">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{s2}.length()> 1]]></printWhenExpression>
@@ -966,12 +973,12 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{s2}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="270" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="921517d4-8bb6-4e86-b671-ed88d6467629">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="270" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="921517d4-8bb6-4e86-b671-ed88d6467629">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{e2}.length()> 1]]></printWhenExpression>
@@ -980,12 +987,12 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{e2}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="510" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="a649aabe-ef70-4174-a52c-609f8657d3bb">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="510" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="a649aabe-ef70-4174-a52c-609f8657d3bb">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -993,42 +1000,42 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{hed}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hed} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="390" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="5a0d7f2b-e207-4b7a-9c02-61683a5b6d8a">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="390" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="5a0d7f2b-e207-4b7a-9c02-61683a5b6d8a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{excused}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="365" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="ce294d14-73b5-4aa7-bd8c-d6107cb03404">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="365" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="ce294d14-73b5-4aa7-bd8c-d6107cb03404">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{feriado}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="690" y="0" width="220" height="14" isRemoveLineWhenBlank="true" uuid="f15b4e5c-2483-40ba-95a0-9e355649d978">
+			<textField isBlankWhenNull="true">
+				<reportElement style="colorDiaSemana" x="690" y="0" width="220" height="14" isRemoveLineWhenBlank="true" uuid="f15b4e5c-2483-40ba-95a0-9e355649d978">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{observaciones}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="475" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="4705dc89-f9ad-4df2-ae57-e09002c41dcb">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="475" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="4705dc89-f9ad-4df2-ae57-e09002c41dcb">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1036,12 +1043,12 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{hnn}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnn} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="235" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="f45c3f6b-8752-4304-9919-8eb21ab358c3">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="235" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="f45c3f6b-8752-4304-9919-8eb21ab358c3">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{s1}.length()> 1]]></printWhenExpression>
@@ -1050,50 +1057,50 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{s1}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="160" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="b3614fcf-371f-40c7-914e-d3f591f5cde4">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="160" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="b3614fcf-371f-40c7-914e-d3f591f5cde4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aaaa}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="415" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="dac6ea03-bad8-4d97-a8f7-7dda4edf3fcb">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="415" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="dac6ea03-bad8-4d97-a8f7-7dda4edf3fcb">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descanso}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="130" y="0" width="30" height="14" isRemoveLineWhenBlank="true" uuid="ea3dfff5-3acb-4174-8bdf-a5c16d413d07">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="130" y="0" width="30" height="14" isRemoveLineWhenBlank="true" uuid="ea3dfff5-3acb-4174-8bdf-a5c16d413d07">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{mm}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="340" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="4ee6a781-92b3-41b9-a6c6-7a1ddd862dd4">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="340" y="0" width="25" height="14" isRemoveLineWhenBlank="true" uuid="4ee6a781-92b3-41b9-a6c6-7a1ddd862dd4">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{dia_semana}.compareToIgnoreCase("domingo")== 0 ? "Y" : "N")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="200" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="3b653f9f-a9be-4280-a6bd-d7c7b9ece7d5">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="200" y="0" width="35" height="14" backcolor="#D9D9D9" uuid="3b653f9f-a9be-4280-a6bd-d7c7b9ece7d5">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{e1}.length()> 1]]></printWhenExpression>
@@ -1102,23 +1109,23 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{e1}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="30" height="14" isRemoveLineWhenBlank="true" uuid="dda03708-5426-441f-8269-399c05481619">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="100" y="0" width="30" height="14" isRemoveLineWhenBlank="true" uuid="dda03708-5426-441f-8269-399c05481619">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{dd}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="440" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="a2bb0573-1138-4b2f-ad11-fa47ff32377b">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="440" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="a2bb0573-1138-4b2f-ad11-fa47ff32377b">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1126,12 +1133,12 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{hnd}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnd} : null)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{hnd}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnd} : "")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="580" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="88510cb7-0980-4cab-9892-91a7e48ef7a1">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="580" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="88510cb7-0980-4cab-9892-91a7e48ef7a1">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1139,12 +1146,12 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{bono_asist}.compareTo( BigDecimal.ZERO )!= 0 ? $F{bono_asist} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="615" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="90e47d76-96e5-4a50-9667-858b5aeb2583">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="615" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="90e47d76-96e5-4a50-9667-858b5aeb2583">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1152,7 +1159,7 @@ Punt.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{bono_assistpuntual}.compareTo( BigDecimal.ZERO )!= 0 ? $F{bono_assistpuntual} : null)]]></textFieldExpression>
 			</textField>

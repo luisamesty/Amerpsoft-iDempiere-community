@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DailyBiometricPersonnelAttendance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="13509fae-42bd-4fce-a356-4ed7a626e88d">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
@@ -15,7 +15,8 @@
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[SELECT * FROM
+		<![CDATA[--DailyBiometricPayrollAttendance.
+SELECT * FROM
 (
 		-- REPORT HEADER
 		SELECT DISTINCT ON (cli.ad_client_id)
@@ -43,21 +44,19 @@
      -- ORGANIZACIÓN
      pyr_as.ad_client_id as client_id, pyr_as.ad_org_id as org_id,
      -- LOCATION
-     lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
-     CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad, 
+     lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad, 
      -- SHIFT
+     shf.amn_shift_id,
      shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
-     CASE WHEN ( $P{AMN_Shift_ID}  IS NULL OR shf.amn_shift_id= $P{AMN_Shift_ID}  ) THEN 1 ELSE 0 END AS imp_shift, 
      -- CONTRACT
+     amc.amn_contract_id,
      amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-     CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato, 
      -- EMPLOYEE
      emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp, emp.biocode,
-     CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1 ELSE 0 END AS imp_empleado, 
      -- BPARTNER
      cbp.taxid as nro_id,
      -- PAYROLL_ASSIST
-     pyr_as.event_date as fecha,
+     pyr_as.event_date as fecha_evento,
      CONCAT(
 	CASE WHEN CAST(extract(hour from pyr_as.event_time) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_as.event_time) as text))
 	     ELSE CAST(extract(hour from pyr_as.event_time) as text)
@@ -85,13 +84,17 @@
 	 LEFT JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id = cbp.c_bpartner_id)
 	 LEFT JOIN adempiere.amn_location as lct ON (emp.amn_location_id= lct.amn_location_id)
 	 LEFT JOIN adempiere.amn_shift as shf ON (shf.amn_shift_id= pyr_as.amn_shift_id)
-	 WHERE pyr_as.isactive= 'Y'
+	 WHERE pyr_as.isactive= 'Y' AND pyr_as.event_date= DATE( $P{DateEnd} )
 	) as asistencia ON (1= 0)
-WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}  AND org_id= $P{AD_Org_ID}
-  AND imp_localidad= 1 AND imp_shift= 1 AND imp_contrato= 1 AND imp_empleado= 1
-  AND fecha = DATE($P{DateEnd} )
+WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID} 
+  AND CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END  
+  AND CASE WHEN ( $P{AMN_Location_ID} IS NULL OR asistencia.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END 
+  AND CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR asistencia.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END 
+  AND CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR asistencia.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1=1 ELSE 1=0 END
+  AND CASE WHEN ( $P{AMN_Shift_ID} IS NULL OR asistencia.amn_shift_id= $P{AMN_Shift_ID} ) THEN 1=1 ELSE 1=0 END 
   )
-ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, asistencia.fecha, asistencia.hora, header_info ASC]]>
+ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, asistencia.fecha_evento, asistencia.hora, header_info ASC
+]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -146,9 +149,10 @@ ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, as
 		<property name="com.jaspersoft.studio.field.name" value="localidad"/>
 		<property name="com.jaspersoft.studio.field.label" value="localidad"/>
 	</field>
-	<field name="imp_localidad" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_localidad"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_localidad"/>
+	<field name="amn_shift_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_shift_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_shift_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_shift"/>
 	</field>
 	<field name="codigo_shift" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo_shift"/>
@@ -159,9 +163,10 @@ ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, as
 		<property name="com.jaspersoft.studio.field.name" value="nombre_shift"/>
 		<property name="com.jaspersoft.studio.field.label" value="nombre_shift"/>
 	</field>
-	<field name="imp_shift" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_shift"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_shift"/>
+	<field name="amn_contract_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_contract_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_contract_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
 	</field>
 	<field name="c_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
@@ -171,10 +176,6 @@ ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, as
 	<field name="c_tipo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
 		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
-	</field>
-	<field name="imp_contrato" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_contrato"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_contrato"/>
 	</field>
 	<field name="amn_employee_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
@@ -196,18 +197,14 @@ ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, as
 		<property name="com.jaspersoft.studio.field.label" value="biocode"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="imp_empleado" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imp_empleado"/>
-		<property name="com.jaspersoft.studio.field.label" value="imp_empleado"/>
-	</field>
 	<field name="nro_id" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="nro_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="nro_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
 	</field>
-	<field name="fecha" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
-		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	<field name="fecha_evento" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_evento"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_evento"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_assist"/>
 	</field>
 	<field name="hora" class="java.lang.String">
