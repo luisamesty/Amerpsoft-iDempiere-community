@@ -11,6 +11,7 @@ import org.adempiere.exceptions.DBException;
 import org.amerp.amnmodel.I_AMN_I_Employee;
 import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_I_Employee;
+import org.amerp.amnmodel.MAMN_Location;
 import org.compiere.model.MBPBankAccount;
 import org.compiere.model.MBPGroup;
 import org.compiere.model.MBPartner;
@@ -328,7 +329,7 @@ public class AMNImportEmployee extends SvrProcess{
 							}
 						}
 						finally {
-							
+							log.warning("Default Location Inserted");
 						}
 						location.setC_Location_ID(loc.getC_Location_ID());
 						try {
@@ -343,9 +344,31 @@ public class AMNImportEmployee extends SvrProcess{
 							}
 						}
 						finally {
+							log.warning("Default BPartnerLocation Inserted");
+						}
+						
+						// Employee AMN_Location Address 2
+						MBPartnerLocation location2 = new MBPartnerLocation(getCtx(), 0, get_TrxName());
+						MAMN_Location emploc = new MAMN_Location(getCtx(), impEmployee.getAMN_Location_ID(), get_TrxName());
+						if (emploc != null ) {
+							MLocation loc2 = new MLocation(getCtx(), emploc.getC_Location_ID(), get_TrxName());
+							setBPLocationFromAMN_Location(getCtx(), location2, loc2, impEmployee, emploc,  get_TrxName());
+							try {
+								if (location2.save()) {
+									msglog = new StringBuilder("Insert BPartnerLocation 2 - ").append(emp.getAMN_Employee_ID());
+									if (log.isLoggable(Level.FINEST)) log.finest(msglog.toString());
+									okADD=true;
+								} else	{
+									// Updates Error
+									updateErrorMessage(false, "Cannot Insert default BPartnerLocation 2, ", impEmployee);
+									continue;
+								}
+							}
+							finally {
+								log.warning("Default BPartnerLocation 2 Inserted");
+							}
 							
 						}
-				
 					} else {
 						okADD=true;
 					}
@@ -600,6 +623,10 @@ public class AMNImportEmployee extends SvrProcess{
        	bploc.setPhone2(impEmployee.getPhone2());
        	bploc.setFax(impEmployee.getFax());
         bploc.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
+        bploc.setIsBillTo(true);
+        bploc.setIsPayFrom(false);
+        bploc.setIsRemitTo(true);
+        bploc.setIsShipTo(true);
         // C_Location table
         loc.setC_Country_ID(impEmployee.getC_Country_ID());
         loc.setC_Region_ID(impEmployee.getC_Region_ID());
@@ -609,6 +636,32 @@ public class AMNImportEmployee extends SvrProcess{
         
     }
 
+    /**
+     * setBPLocationFromAMN_Location
+     * Set BPartner Location from Employee AMN_Location
+     * @param ctx
+     * @param bploc2
+     * @param loc2
+     * @param impEmployee
+     * @param emploc
+     * @param trxName
+     */
+    private void setBPLocationFromAMN_Location(Properties ctx, MBPartnerLocation bploc2,  MLocation loc2, MAMN_I_Employee impEmployee, MAMN_Location emploc, String trxName) {
+		
+    	// C_BPartnerLocation table
+    	bploc2.setName(impEmployee.getValue());
+        bploc2.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
+        
+        bploc2.setC_Location_ID(loc2.getC_Location_ID());
+        bploc2.setName(impEmployee.getValue()+"-"+emploc.getValue());
+        bploc2.setC_BPartner_ID(impEmployee.getC_BPartner_ID());
+        // 
+        bploc2.setIsBillTo(false);
+        bploc2.setIsPayFrom(true);
+        bploc2.setIsRemitTo(false);
+        bploc2.setIsShipTo(false);
+    }
+    
     /**
      * setBPBankAccountsFromImpEmployee
      * Set bank accounts fields from Import Employee

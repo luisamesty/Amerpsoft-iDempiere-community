@@ -7,10 +7,12 @@ Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Export-Package: org.amerp.amndocument,
  org.amerp.amnevents,
  org.amerp.amnmodel,
- org.amerp.process
+ org.amerp.process,
+ org.amerp.pp.factories
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  org.amerpsoft.com.idempiere.tools;bundle-version="12.0.0",
  org.amerpsoft.com.idempiere.workflow;bundle-version="12.0.0",
+ org.amerpsoft.com.idempiere.editors-com;bundle-version="12.0.0",
  org.adempiere.plugin.utils;bundle-version="0.0.0",
  org.adempiere.report.jasper;bundle-version="0.0.0",
  org.adempiere.base.process;bundle-version="0.0.0",
@@ -26,7 +28,13 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  zweb;bundle-version="0.0.0",
  zcommon;bundle-version="0.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Service-Component: OSGI-INF/AMNCalloutFactory.xml, OSGI-INF/AMNDocumentFactory.xml,OSGI-INF/AMNEventFactory.xml, OSGI-INF/AMNFormFactory.xml, OSGI-INF/AMNModelFactory.xml, OSGI-INF/AMNProcessFactory.xml 
+Service-Component: OSGI-INF/AMNCalloutFactory.xml, 
+ OSGI-INF/AMNDocumentFactory.xml,
+ OSGI-INF/AMNEventFactory.xml,
+ OSGI-INF/AMNFormFactory.xml,
+ OSGI-INF/AMNModelFactory.xml,
+ OSGI-INF/AMNProcessFactory.xml,
+ OSGI-INF/AMNValidatorFactory.xml 
 Bundle-ActivationPolicy: lazy
 Import-Package: org.adempiere.base.event,
  org.compiere.model,
