@@ -1,0 +1,1228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-08-17T13:42:38 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinancialIntegralResults_Tree" language="groovy" pageWidth="712" pageHeight="792" columnWidth="652" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialIntegralResults_Tree" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="375"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="618"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="IdempiereTAM7.1pro"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="593"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="393"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[1000001]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PostingType" class="java.lang.String">
+		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_Period_ID" class="java.lang.Integer"/>
+	<parameter name="isShowZERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isForExport" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="M_Product_ID" class="java.lang.Integer"/>
+	<parameter name="C_BPartner_ID" class="java.lang.Integer"/>
+	<parameter name="C_Project_ID" class="java.lang.Integer"/>
+	<parameter name="C_Activity_ID" class="java.lang.Integer"/>
+	<parameter name="C_SalesRegion_ID" class="java.lang.Integer"/>
+	<parameter name="C_Campaign_ID" class="java.lang.Integer"/>
+	<parameter name="isShowProject" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowActivity" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false"/>
+	<queryString language="SQL">
+		<![CDATA[-- ACCOUNT ELEMENTS
+-- FROM DEfault AD_Tree FROM A GIVEN AD_Client_ID and C_AcctSchema_ID
+-- FOR NEW ACCOUNTING REPORTS
+WITH RECURSIVE Nodos AS (
+	SELECT 
+	ELV.ad_client_id,
+	ELV.ad_org_id,
+	ELV.c_element_id,
+	ELV.c_elementvalue_id,
+	ELV.isactive,
+	ELV."value",
+	COALESCE(ELV.name,'') as name,
+	LPAD('', char_length(TRIM(ELV.value)),' ') || COALESCE(ELV.description,ELV.name) as description,
+	char_length(TRIM(ELV.value)) as length,
+	ELV.accounttype,
+	ELV.accountsign,
+	ELV.isdoccontrolled,
+	ELV.issummary,
+	COALESCE(ELVP.value,'') as value_parent ,
+	TRN1.AD_Tree_ID,
+	TRN1.Node_ID, 
+	0 as level, 
+	TRN1.Parent_ID, 
+	ARRAY [TRN1.Node_ID::text]  AS ancestry, 
+	ARRAY [ELVP.value::text]  AS acctparent,
+	TRN1.Node_ID as Star_An
+	FROM ad_treenode TRN1 
+	LEFT JOIN C_elementValue ELV ON ELV.C_ElementValue_ID = TRN1.NODE_ID
+	LEFT JOIN C_elementValue ELVP ON ELVP.C_ElementValue_ID = TRN1.Parent_ID
+	WHERE TRN1.AD_tree_ID=(
+		SELECT tree.AD_Tree_ID
+			FROM AD_Client adcli
+			LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
+			LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
+			LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
+			LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= accel.AD_Tree_ID
+			WHERE accee.ElementType='AC' 
+			AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID} 
+			AND adcli.AD_client_ID=$P{AD_Client_ID}
+	) 
+	AND TRN1.isActive='Y' AND TRN1.Parent_ID = 0
+    UNION ALL
+	SELECT 
+	ELV.ad_client_id,
+	ELV.ad_org_id,
+	ELV.c_element_id,
+	ELV.c_elementvalue_id,
+	ELV.isactive,
+	ELV."value",
+	COALESCE(ELV.name,'') as name,
+	LPAD('', char_length(ELV.value),' ') || COALESCE(ELV.description,ELV.name) as description,
+	char_length(TRIM(ELV.value)) as length,
+	ELV.accounttype,
+	ELV.accountsign,
+	ELV.isdoccontrolled,
+	ELV.issummary,
+	COALESCE(ELVP.value,'') as value_parent ,
+	TRN1.AD_Tree_ID, 
+	TRN1.Node_ID, 
+	TRN2.level+1 as level,
+	TRN1.Parent_ID, 
+	TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
+	TRN2.acctparent || ARRAY [ELVP.value::text]  AS acctparent,
+	COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An
+	FROM ad_treenode TRN1 
+	INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
+	LEFT JOIN C_elementValue ELV ON ELV.C_ElementValue_ID = TRN1.NODE_ID
+	LEFT JOIN C_elementValue ELVP ON ELVP.C_ElementValue_ID = TRN1.Parent_ID
+	WHERE TRN1.AD_tree_ID=(
+		SELECT tree.AD_Tree_ID
+			FROM AD_Client adcli
+			LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
+			LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
+			LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
+			LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= accel.AD_Tree_ID
+			WHERE accee.ElementType='AC' 
+			AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID} 
+			AND adcli.AD_client_ID=$P{AD_Client_ID}
+	)  AND TRN1.isActive='Y' 
+) 
+-- VAriables FOR REPORT
+SELECT 
+	trial.clivalue,
+	trial.cliname,
+	trial.clidescription,
+	trial.cli_logo,
+	trial.org_logo,
+	trial.orgname,
+	trial.orgdescription,
+	trial.orgtaxid,
+	trial.moneda,
+	trial.Level,
+	trial.Node_ID, 
+	trial.value as codigo,
+	trial.name,
+	trial.description,
+	trial.isactive,
+	trial.length,
+	trial.accounttype,
+	trial.accountsign,
+	trial.isdoccontrolled,
+	trial.issummary,
+	trial.isactive,
+	trial.openbalance,
+	trial.amtacctdr,
+	trial.amtacctcr,
+	trial.amtacctsa,
+	trial.closebalance,
+	trial.dateini,
+	trial.dateend,	
+	COALESCE(ELVN1.value,'Z') as codigo1,
+	COALESCE(ELVN1.name,CONCAT('Tree error value=',trial.value)) as name1,
+	ELVN1.description as description1,
+	ELVN1.issummary as issummary1,
+	CASE WHEN ELVN1.value <> '' THEN ELVN2.value ELSE 'ZZ' END as codigo2,
+	ELVN2.name as name2,
+	ELVN2.description as description2,
+	ELVN2.issummary as issummary2,
+	CASE WHEN ELVN1.value <> '' THEN ELVN3.value ELSE 'ZZZ' END as codigo3,
+	ELVN3.name as name3,
+	ELVN3.description as description3,
+	ELVN3.issummary as issummary3,
+	CASE WHEN ELVN1.value <> '' THEN ELVN4.value ELSE 'ZZZZ' END as codigo4,
+	ELVN4.name as name4,
+	ELVN4.description as description4,
+	ELVN4.issummary as issummary4,
+	CASE WHEN ELVN1.value <> '' THEN ELVN5.value ELSE 'ZZZZZ' END as codigo5,
+	ELVN5.name as name5,
+	ELVN5.description as description5,
+	ELVN5.issummary as issummary5,
+	CASE WHEN ELVN1.value <> '' THEN ELVN6.value ELSE 'ZZZZZZ' END as codigo6,
+	ELVN6.name as name6,
+	ELVN6.description as description6,
+	ELVN6.issummary as issummary6,
+	CONCAT(trial.value, trial.proj_value) as codigo_project,
+	trial.proj_value,
+	trial.proj_name,
+	CONCAT(trial.value, trial.activity_value) as codigo_activity,
+	trial.activity_value,
+	trial.activity_name,
+	trial.prod_value_sel,
+	trial.prod_name_sel,
+	trial.bpartner_value_sel,
+	trial.bpartner_name_sel,
+	trial.proj_value_sel,
+	trial.proj_name_sel,
+	trial.activity_value_sel,
+	trial.activity_name_sel,
+	trial.salesregion_value_sel,
+	trial.salesregion_name_sel,
+	trial.campaign_value_sel,
+	trial.campaign_name_sel,
+	trial.postingtype_value,
+	trial.postingtype_name	
+FROM (
+	SELECT 
+	CLI.value as clivalue,
+	CLI.name as cliname,
+	coalesce(CLI.description,CLI.name,'') as clidescription,
+	IMG.binarydata as cli_logo,
+	-- ORG
+	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN 'Consolidado' ELSE ORG.name END as orgname,
+	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN 'Consolidado' ELSE COALESCE(ORG.description,ORG.name) END as orgdescription,
+	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN IMG.binarydata ELSE ORG.binarydata END as org_logo,
+	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN 'Consolidado' ELSE ORG.taxid END as orgtaxid,
+	-- ORG
+	CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as moneda,
+	PAR.Level,
+	PAR.Node_ID, 
+	PAR.Parent_ID ,
+	PAR.c_element_id,
+	PAR.c_elementvalue_id,
+	PAR.ad_client_id,
+	PAR.ad_org_id,
+	PAR.isactive,
+	PAR."value",
+	COALESCE(PAR.name,'') as name,
+	LPAD('', char_length(PAR.value),' ') || COALESCE(PAR.description,PAR.name) as description,
+	char_length(PAR.value) as length,
+	PAR.accounttype,
+	PAR.accountsign,
+	PAR.isdoccontrolled,
+	PAR.issummary,
+	COALESCE(PAR.value_parent,'') as value_parent ,
+	COALESCE(acctparent[2],'') as Value1,
+	COALESCE(acctparent[3],'') as Value2,
+	COALESCE(acctparent[4],'') as Value3,
+	COALESCE(acctparent[5],'') as Value4,
+	COALESCE(acctparent[6],'') as Value5,	
+	COALESCE(acctparent[7],'') as Value6,	
+	bal.openbalance,
+	bal.amtacctdr,
+	bal.amtacctcr,
+	bal.amtacctsa,
+	bal.closebalance,
+	to_char(per.startdate,'DD-MM-YYYY') AS dateini,
+	to_char(per.enddate,'DD-MM-YYYY') AS dateend,
+	COALESCE(prod.value,'') as prod_value_sel,
+	COALESCE(prod.name,'') as prod_name_sel,
+	COALESCE(cbpa.value,'') as bpartner_value_sel,
+	COALESCE(cbpa.name,'') as bpartner_name_sel,
+	COALESCE(proj.value,'') as proj_value_sel,
+	COALESCE(proj.name,'') as proj_name_sel,
+	COALESCE(acti.value,'') as activity_value_sel,
+	COALESCE(acti.name,'') as activity_name_sel,	
+	COALESCE(sare.value,'') as salesregion_value_sel,
+	COALESCE(sare.name,'') as salesregion_name_sel,
+	COALESCE(camp.value,'') as campaign_value_sel,
+	COALESCE(camp.name,'') as campaign_name_sel,
+	bal.c_project_id,
+	bal.proj_value, bal.proj_name, 
+	bal.c_activity_id,
+	bal.activity_value, bal.activity_name,
+	posttype.value as postingtype_value,
+	posttype.name as postingtype_name
+	FROM Nodos PAR
+	LEFT JOIN (
+		SELECT 
+		ad_client_id,
+		c_elementvalue_id, 
+		value, 
+		name, C_AcctSchema_ID, 
+		bal2.c_project_id,
+		bal2.c_activity_id,
+		bal2.proj_value, bal2.proj_name, bal2.activity_value, bal2.activity_name,
+		COALESCE(openbalance,0) as openbalance,
+		COALESCE(amtacctdr,0) as amtacctdr,
+		COALESCE(amtacctcr,0) as amtacctcr,
+		COALESCE(amtacctdr - amtacctcr,0) as amtacctsa,
+		COALESCE(closebalance,0) as closebalance
+		FROM (
+			SELECT
+			ele.ad_client_id,
+			ele.c_elementvalue_id, ele.value, ele.name, fas.C_AcctSchema_ID, 
+			fas.c_project_id, fas.c_activity_id,
+			fas.proj_value, fas.proj_name, fas.activity_value, fas.activity_name,
+			SUM(CASE WHEN (fas.DateAcct < per.StartDAte) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as openbalance,
+					SUM(CASE WHEN (fas.DateAcct >= per.StartDAte AND fas.DateAcct <= per.EndDate) THEN COALESCE(fas.amtacctdr,0) ELSE 0 END) as amtacctdr,
+					SUM(CASE WHEN (fas.DateAcct >= per.StartDAte AND fas.DateAcct <= per.EndDate) THEN COALESCE(fas.amtacctcr,0) ELSE 0 END) as amtacctcr,
+					SUM(CASE WHEN (fas.DateAcct <= per.EndDate ) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as closebalance
+			FROM c_elementvalue ele
+			LEFT JOIN (
+				SELECT fa2.ad_client_id, fa2.ad_org_id, fa2.fact_acct_id,fa2. c_acctschema_id, fa2.DateAcct, fa2.account_id, fa2.amtacctdr, fa2.amtacctcr, 
+				fa2.m_product_id, fa2.c_bpartner_id, fa2.c_salesregion_id, fa2.c_campaign_id,
+				CASE WHEN $P{isShowProject} = 'Y' AND pr2.c_project_id IS NOT NULL AND el2.AccountType IN ('E','M') THEN pr2.c_project_id ELSE 0 END AS c_project_id, 
+				CASE WHEN $P{isShowProject} = 'Y' AND pr2.c_project_id IS NOT NULL AND el2.AccountType IN ('E','M') THEN pr2.name ELSE 'NO Project' END AS proj_name, 
+				CASE WHEN $P{isShowProject} = 'Y' AND pr2.c_project_id IS NOT NULL AND el2.AccountType IN ('E','M') THEN pr2.value ELSE '0000' END AS proj_value, 
+				CASE WHEN $P{isShowActivity} = 'Y' AND ac2.c_activity_id IS NOT NULL AND el2.AccountType IN ('E','M') THEN ac2.c_activity_id ELSE 0 END AS c_activity_id,
+				CASE WHEN $P{isShowActivity} = 'Y' AND ac2.c_activity_id IS NOT NULL AND el2.AccountType IN ('E','M') THEN ac2.name ELSE 'NO Activity' END AS activity_name,
+				CASE WHEN $P{isShowActivity} = 'Y' AND ac2.c_activity_id IS NOT NULL AND el2.AccountType IN ('E','M') THEN ac2.value ELSE '0000' END AS activity_value
+				FROM fact_acct fa2
+				LEFT JOIN c_elementvalue el2 ON (el2.c_elementvalue_id = fa2.account_id)
+				LEFT JOIN (
+					SELECT AD_Client_ID,C_Activity_ID, Value, Name FROM C_Activity WHERE isSummary='N' AND isActive='Y' AND AD_Client_ID=$P{AD_Client_ID}
+				) as ac2 ON (ac2.AD_Client_ID = fa2.AD_Client_ID AND ac2.C_Activity_ID = fa2.C_Activity_ID)
+				LEFT JOIN (
+					SELECT AD_Client_ID,C_Project_ID, Value, Name FROM C_Project WHERE isSummary='N' AND isActive='Y' AND AD_Client_ID=$P{AD_Client_ID}
+				) as pr2 ON (pr2.AD_Client_ID = fa2.AD_Client_ID AND pr2.C_Project_ID = fa2.C_Project_ID)
+				WHERE fa2.c_acctschema_id = $P{C_AcctSchema_ID}  
+				AND fa2.ad_client_id=$P{AD_Client_ID}
+				AND CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} = fa2.ad_org_id OR $P{AD_Org_ID} IS NULL THEN 1=1 ELSE 1=0 END
+				AND ( CASE WHEN  fa2.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 
+				AND ( CASE WHEN ( $P{M_Product_ID} IS NULL OR fa2.M_Product_ID = $P{M_Product_ID}) THEN 1=1 ELSE 1=0 END ) 
+			 	AND ( CASE WHEN ( $P{C_BPartner_ID} IS NULL OR fa2.C_BPartner_ID = $P{C_BPartner_ID}) THEN 1=1 ELSE 1=0 END ) 
+			 	AND ( CASE WHEN ( $P{C_Project_ID} IS NULL OR fa2.C_Project_ID = $P{C_Project_ID}) THEN 1=1 ELSE 1=0 END ) 
+			 	AND ( CASE WHEN ( $P{C_Activity_ID} IS NULL OR fa2.C_Activity_ID = $P{C_Activity_ID}) THEN 1=1 ELSE 1=0 END ) 
+				AND ( CASE WHEN ( $P{C_SalesRegion_ID} IS NULL OR fa2.C_SalesRegion_ID = $P{C_SalesRegion_ID}) THEN 1=1 ELSE 1=0 END ) 
+			 	AND ( CASE WHEN ( $P{C_Campaign_ID} IS NULL OR fa2.C_Campaign_ID = $P{C_Campaign_ID}) THEN 1=1 ELSE 1=0 END ) 			
+			) fas ON (ele.c_elementvalue_id=fas.account_id )
+			LEFT JOIN c_period as per ON (per.c_period_id = $P{C_Period_ID})
+			WHERE ele.issummary='N' AND ele.AccountType IN ('R','E','M')
+			AND ele.ad_client_id=$P{AD_Client_ID}
+			GROUP BY ele.ad_client_id, ele.c_elementvalue_id, fas.C_AcctSchema_ID, fas.c_project_id, fas.c_activity_id,
+					fas.proj_value, fas.proj_name, fas.activity_value, fas.activity_name
+		) as bal2 
+	) as bal ON ( bal.c_elementvalue_id = PAR.c_elementvalue_id )
+	LEFT JOIN (
+		SELECT 
+		adcli.AD_Client_ID, 
+		accsh.C_AcctSchema_ID, 
+		accee.C_Element_ID, 
+		accel.name as element_name, 
+		tree.AD_Tree_ID, 
+		tree.name as tree_name
+		FROM AD_Client adcli
+		LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
+		LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
+		LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
+		LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= accel.AD_Tree_ID
+		WHERE accee.ElementType='AC' AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID}
+	) as ELE ON ELE.AD_Tree_ID = PAR.AD_Tree_ID
+	LEFT JOIN ad_client AS CLI ON (CLI.ad_client_id = ELE.ad_client_id)
+	LEFT JOIN ad_clientinfo AS CLF ON (CLI.ad_client_id = CLF.ad_client_id)
+	LEFT JOIN ad_image AS IMG ON (CLF.logoreport_id = IMG.ad_image_id)
+	-- ORG
+	LEFT JOIN (
+		SELECT DISTINCT ON  (ORG1.ad_client_id)
+		ORG1.ad_client_id, 
+		ORG1.name, 
+		COALESCE(ORG1.description, ORG1.name,'') as description, 
+		COALESCE(ORF1.taxid,'?') as taxid, 
+		IMB1.binarydata as binarydata
+		FROM adempiere.ad_org AS ORG1
+		LEFT JOIN ad_orginfo AS ORF1 ON (ORG1.ad_org_id = ORF1.ad_org_id)		
+		LEFT JOIN adempiere.ad_image AS IMB1 ON (ORF1.logo_id = IMB1.ad_image_id)
+		WHERE ORG1.ad_client_id = $P{AD_Client_ID}
+		AND CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID}=ORG1.ad_org_id OR $P{AD_Org_ID} IS NULL THEN 1=1 ELSE 1=0 END
+	) AS ORG ON (ORG.ad_client_id = CLI.ad_client_id) 
+	-- ORG
+	LEFT JOIN c_acctschema sch ON (sch.c_acctschema_id = $P{C_AcctSchema_ID})
+	LEFT JOIN c_currency curr1 on sch.c_currency_id = curr1.c_currency_id
+	LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+	LEFT JOIN M_product prod ON prod.M_Product_ID = $P{M_Product_ID}
+	LEFT JOIN C_BPartner cbpa ON cbpa.C_BPartner_ID = $P{C_BPartner_ID}
+	LEFT JOIN C_Project proj ON proj.C_Project_ID = $P{C_Project_ID}
+	LEFT JOIN C_Activity acti ON acti.C_Activity_ID = $P{C_Activity_ID}
+	LEFT JOIN C_SalesRegion sare ON sare.C_SalesRegion_ID = $P{C_SalesRegion_ID}
+	LEFT JOIN C_Campaign camp ON camp.C_Campaign_ID = $P{C_Campaign_ID}
+	LEFT JOIN c_period as per ON (per.c_period_id = $P{C_Period_ID})
+	LEFT JOIN (
+		SELECT DISTINCT ON (rfl.value) rfl.value, COALESCE(rflt.name,rfl.name,'') as name FROM AD_Reference as rfr
+		LEFT JOIN AD_Ref_List as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
+		LEFT JOIN AD_Ref_List_Trl as rflt ON (rflt.ad_ref_list_id = rfl.ad_ref_list_id AND rflt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}))
+		WHERE rfr.name like '%Posting Type%'
+	) as posttype ON (posttype.value= $P{PostingType} )
+	WHERE PAR.issummary='N' 
+	AND CASE WHEN  $P{isShowZERO} = 'Y' OR ( $P{isShowZERO} = 'N' AND (  bal.openbalance<> 0 or bal.amtacctcr<> 0 or bal.amtacctdr <>0 or bal.closebalance <> 0  ) ) THEN 1=1  ELSE 1=0 END
+	ORDER BY PAR.ANCESTRY
+) trial
+LEFT JOIN c_elementvalue as ELVN1 ON (ELVN1.Value = trial.Value1 AND ELVN1.AD_Client_ID= trial.AD_Client_ID)
+LEFT JOIN c_elementvalue as ELVN2 ON (ELVN2.Value = trial.Value2 AND ELVN2.AD_Client_ID= trial.AD_Client_ID)
+LEFT JOIN c_elementvalue as ELVN3 ON (ELVN3.Value = trial.Value3 AND ELVN3.AD_Client_ID= trial.AD_Client_ID)
+LEFT JOIN c_elementvalue as ELVN4 ON (ELVN4.Value = trial.Value4 AND ELVN4.AD_Client_ID= trial.AD_Client_ID)
+LEFT JOIN c_elementvalue as ELVN5 ON (ELVN5.Value = trial.Value5 AND ELVN5.AD_Client_ID= trial.AD_Client_ID)
+LEFT JOIN c_elementvalue as ELVN6 ON (ELVN6.Value = trial.Value6 AND ELVN6.AD_Client_ID= trial.AD_Client_ID)
+--ORDER BY codigo
+ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo6 ASC, codigo_activity ASC, codigo ASC]]>
+	</queryString>
+	<field name="clivalue" class="java.lang.String"/>
+	<field name="cliname" class="java.lang.String"/>
+	<field name="clidescription" class="java.lang.String"/>
+	<field name="cli_logo" class="java.io.InputStream"/>
+	<field name="org_logo" class="java.io.InputStream"/>
+	<field name="orgname" class="java.lang.String"/>
+	<field name="orgdescription" class="java.lang.String"/>
+	<field name="orgtaxid" class="java.lang.String"/>
+	<field name="moneda" class="java.lang.String"/>
+	<field name="level" class="java.lang.Integer"/>
+	<field name="node_id" class="java.math.BigDecimal"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="isactive" class="java.lang.String"/>
+	<field name="length" class="java.lang.Integer"/>
+	<field name="accounttype" class="java.lang.String"/>
+	<field name="accountsign" class="java.lang.String"/>
+	<field name="isdoccontrolled" class="java.lang.String"/>
+	<field name="issummary" class="java.lang.String"/>
+	<field name="COLUMN_21" class="java.lang.String"/>
+	<field name="openbalance" class="java.math.BigDecimal"/>
+	<field name="amtacctdr" class="java.math.BigDecimal"/>
+	<field name="amtacctcr" class="java.math.BigDecimal"/>
+	<field name="amtacctsa" class="java.math.BigDecimal"/>
+	<field name="closebalance" class="java.math.BigDecimal"/>
+	<field name="dateini" class="java.lang.String"/>
+	<field name="dateend" class="java.lang.String"/>
+	<field name="codigo1" class="java.lang.String"/>
+	<field name="name1" class="java.lang.String"/>
+	<field name="description1" class="java.lang.String"/>
+	<field name="issummary1" class="java.lang.String"/>
+	<field name="codigo2" class="java.lang.String"/>
+	<field name="name2" class="java.lang.String"/>
+	<field name="description2" class="java.lang.String"/>
+	<field name="issummary2" class="java.lang.String"/>
+	<field name="codigo3" class="java.lang.String"/>
+	<field name="name3" class="java.lang.String"/>
+	<field name="description3" class="java.lang.String"/>
+	<field name="issummary3" class="java.lang.String"/>
+	<field name="codigo4" class="java.lang.String"/>
+	<field name="name4" class="java.lang.String"/>
+	<field name="description4" class="java.lang.String"/>
+	<field name="issummary4" class="java.lang.String"/>
+	<field name="codigo5" class="java.lang.String"/>
+	<field name="name5" class="java.lang.String"/>
+	<field name="description5" class="java.lang.String"/>
+	<field name="issummary5" class="java.lang.String"/>
+	<field name="codigo6" class="java.lang.String"/>
+	<field name="name6" class="java.lang.String"/>
+	<field name="description6" class="java.lang.String"/>
+	<field name="issummary6" class="java.lang.String"/>
+	<field name="codigo_project" class="java.lang.String"/>
+	<field name="proj_value" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="codigo_activity" class="java.lang.String"/>
+	<field name="activity_value" class="java.lang.String"/>
+	<field name="activity_name" class="java.lang.String"/>
+	<field name="prod_value_sel" class="java.lang.String"/>
+	<field name="prod_name_sel" class="java.lang.String"/>
+	<field name="bpartner_value_sel" class="java.lang.String"/>
+	<field name="bpartner_name_sel" class="java.lang.String"/>
+	<field name="proj_value_sel" class="java.lang.String"/>
+	<field name="proj_name_sel" class="java.lang.String"/>
+	<field name="activity_value_sel" class="java.lang.String"/>
+	<field name="activity_name_sel" class="java.lang.String"/>
+	<field name="salesregion_value_sel" class="java.lang.String"/>
+	<field name="salesregion_name_sel" class="java.lang.String"/>
+	<field name="campaign_value_sel" class="java.lang.String"/>
+	<field name="campaign_name_sel" class="java.lang.String"/>
+	<field name="postingtype_value" class="java.lang.String"/>
+	<field name="postingtype_name" class="java.lang.String"/>
+	<variable name="openbalance1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev1" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="openbalance2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance2" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev2" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="openbalance3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance3" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev3" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="openbalance4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance4" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev4" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="openbalance_tot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr_tot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr_tot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa_tot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance_tot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="openbalance_activity" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_activity" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdr_activity" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_activity" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcr_activity" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_activity" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsa_activity" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_activity" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalance_activity" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_activity" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<group name="Group_Lev1">
+		<groupExpression><![CDATA[$F{codigo1}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
+					<reportElement x="0" y="0" width="70" height="18" uuid="4161298a-6502-4761-9f39-3490e71b1c2d">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
+					<reportElement x="70" y="0" width="261" height="18" uuid="519f24b9-c228-435e-88d8-f50bd67f9173"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="18" uuid="42998a1f-00df-4181-ad78-bae04031575d"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr1} -$V{amtacctcr1}) == 0.00  ? 0.00  : ($V{amtacctdr1} -$V{amtacctcr1}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="18" uuid="1f034fa6-80de-45d6-bd37-c9dbd091bd1c"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
+					<reportElement x="0" y="0" width="331" height="18" uuid="168ca40e-57a9-4904-ae63-c9c474818838">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["        Total "+$F{codigo1}+" "+$F{name1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="18" uuid="7b863bd2-a8bc-4b13-a453-4600ad5760e6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr1} -$V{amtacctcr1}) == 0.00  ? 0.00  : ($V{amtacctdr1} -$V{amtacctcr1}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="18" uuid="87ea71aa-072d-461c-90e5-fe2c51548610"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_Lev2">
+		<groupExpression><![CDATA[$F{codigo2}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
+					<reportElement x="0" y="0" width="70" height="14" uuid="e08557b3-13d0-4128-a9c3-c6c9b7d7f601">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo2}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
+					<reportElement x="70" y="0" width="261" height="14" uuid="ad319aa4-bc9b-41f7-b3de-ec75fa6641cb"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="a0fde74d-0971-4b80-a89d-e78c7baefe09"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr2} -$V{amtacctcr2}) == 0.00  ? 0.00  : ($V{amtacctdr2} -$V{amtacctcr2}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="4561e507-64dc-4418-8632-35721dcbb429"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
+					<reportElement x="0" y="0" width="331" height="14" uuid="86451308-f7b2-4884-8460-310a111eec41">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["        Total "+$F{codigo2}+" "+$F{name2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="450cd195-c935-45db-afc7-2d33d8cfb363"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr2} -$V{amtacctcr2}) == 0.00  ? 0.00  : ($V{amtacctdr2} -$V{amtacctcr2}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="bcb048be-43b8-49b8-858b-493b65b0467c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_Lev3">
+		<groupExpression><![CDATA[$F{codigo3}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
+					<reportElement x="0" y="0" width="70" height="14" uuid="f695ccbe-3cb1-4576-bda5-75fb39186a52">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo3}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
+					<reportElement x="70" y="0" width="261" height="14" uuid="f0a5b74c-76e3-416a-8d68-80456d895f55"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name3}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="27387673-68ef-4ea7-ba9a-7d6feb5835cf"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr3} -$V{amtacctcr3}) == 0.00  ? 0.00  : ($V{amtacctdr3} -$V{amtacctcr3}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="97cb64ee-c929-42a9-8c2e-358d137a1dd5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
+					<reportElement x="0" y="0" width="331" height="14" uuid="2768ca8d-2cfd-42ec-bc3e-a62dcff1c346">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["        Total "+$F{codigo3}+" "+$F{name3}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="99272496-bb66-444d-ae0e-821ae6593cf6"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr3} -$V{amtacctcr3}) == 0.00  ? 0.00  : ($V{amtacctdr3} -$V{amtacctcr3}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="7f1e8d4a-96c1-4b5e-a0f9-bcee73a03fbb"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_Lev4">
+		<groupExpression><![CDATA[$F{codigo4}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
+					<reportElement x="0" y="0" width="70" height="14" uuid="2f44cf03-1aae-404c-8653-2f7186f6b47f">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo4}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
+					<reportElement x="70" y="0" width="261" height="14" uuid="dd53ca27-935e-48a2-87ed-ad48660cb20a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="0ae09c42-bedf-4776-b346-823cdb409f0b"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr4} -$V{amtacctcr4}) == 0.00  ? 0.00  : ($V{amtacctdr4} -$V{amtacctcr4}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="481d24a8-585d-4751-a630-fd37242e8d01"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
+					<reportElement x="0" y="0" width="331" height="14" uuid="0924d8e5-732d-4d73-9c03-9bd9b2903047">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["        Total "+$F{codigo4}+" "+$F{name4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="a9a5faf9-38c1-404f-92d2-cd3852ee7806"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr4} -$V{amtacctcr4}) == 0.00  ? 0.00  : ($V{amtacctdr4} -$V{amtacctcr4}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="e020d39e-5a04-48e2-b6a4-6f635de8e478"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group_activity">
+		<groupExpression><![CDATA[$F{codigo}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{isShowActivity}.compareToIgnoreCase( "Y" ) == 0  && $P{C_Activity_ID} == null && ($F{accounttype}.compareToIgnoreCase( "E" ) == 0 ||  $F{accounttype}.compareToIgnoreCase( "M" ) == 0 )]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_activity">
+					<reportElement x="0" y="0" width="70" height="14" uuid="ebfa0cc9-938c-42e8-9786-7c31be2364e2">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_activity">
+					<reportElement x="70" y="0" width="261" height="14" uuid="9d019049-910c-4079-b213-00adfba88ce4">
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{isShowActivity}.compareToIgnoreCase( "Y" ) == 0 && $P{C_Activity_ID} == null && ($F{accounttype}.compareToIgnoreCase( "E" ) == 0 ||  $F{accounttype}.compareToIgnoreCase( "M" ) == 0 )]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_activity">
+					<reportElement x="0" y="0" width="331" height="14" uuid="88df3894-bdf7-4ccc-869d-b578be178430">
+						<property name="local_mesure_unitheight" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["        Total "+$F{codigo}+" "+$F{name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_activity" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="331" y="0" width="160" height="14" uuid="4b51d57b-1f63-4871-9a32-512a3bac5309"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdr_activity} -$V{amtacctcr_activity}) == 0.00  ? 0.00  : ($V{amtacctdr_activity} -$V{amtacctcr_activity}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_activity" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="491" y="0" width="160" height="14" uuid="3d2de290-7bc8-4d35-aae1-e1945bf76c43"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalance_activity}== 0.00  ? 0.00  : $V{closebalance_activity} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="59">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
+				<reportElement key="" x="0" y="0" width="70" height="45" uuid="e9bbf6c3-803b-4a3d-868c-553d6c89306f">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$F{cli_logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="70" y="0" width="421" height="15" uuid="25c3c213-7797-49f1-b15c-d04a22f695c7">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.title}+"  "+$R{report.at}+" "+$F{dateend}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="15" width="261" height="15" uuid="837f3fd7-bd5b-420e-9a28-495525e9adda">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ? $F{cliname} : $F{orgname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="30" width="261" height="15" uuid="704fb42a-6a60-4bdc-a7d9-7f7674fd1240">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orgname}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $R{report.consolidated} : $F{orgtaxid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="491" y="0" width="160" height="15" uuid="32691e21-5c85-43d1-94ac-bf9394973495"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="331" y="15" width="320" height="15" uuid="3c72d489-578d-4bac-86c4-25287722e273">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.currency}+": "+$F{moneda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="45" width="651" height="14" uuid="50a24f92-d04a-4bf0-bcb3-ff538e65c12a">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"   " +($P{C_Project_ID}.equals( null ) ? "" : $R{report.project}+": "+$F{proj_name_sel}.trim() )+"   " +( $P{C_Activity_ID}.equals( null ) ? "" : $R{report.activity}+": "+$F{activity_name_sel}.trim() ) +"   " +( $P{M_Product_ID}.equals( null ) ? "" : $R{report.product}+": "+$F{prod_name_sel}.trim() ) + "   " +( $P{C_BPartner_ID}.equals( null ) ? "" : $R{report.bpartner}+": "+$F{bpartner_name_sel}.trim() )+ "   " +( $P{C_SalesRegion_ID}.equals( null ) ? "" : $R{report.salesregion}+": "+$F{salesregion_name_sel}.trim() )+ "   " +( $P{C_Campaign_ID}.equals( null ) ? "" : $R{report.campaign}+": "+$F{campaign_name_sel}.trim() )]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="17" width="651" height="1" uuid="be36c5cb-2cad-4f86-b53e-8efc260af97c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="0" width="70" height="16" uuid="996cee67-27b7-4770-9fb8-aec75897dea9">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="0" width="261" height="16" uuid="530aa1ca-0ed5-49e5-92a7-255b84564234">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.description}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="491" y="0" width="160" height="16" uuid="8a570381-5fb1-4193-9df0-da2322309353">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.balance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="331" y="0" width="160" height="16" uuid="1fd8c20a-7038-4c55-86bd-014ea8cd8714">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.balanceperiod}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="650" height="14" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="0467c5a0-b563-4756-9492-36d0dbedf2cc">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#E0E0E0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="650" height="14" forecolor="#CCCCCC" backcolor="#F4F4F4" uuid="c249125a-4c61-49ca-9b58-bf0a74d235fe">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineColor="#F4F4F4"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="0" width="70" height="14" uuid="62a4ad23-62a4-4a28-a988-4e7b7afd21b3">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="0" width="161" height="14" uuid="50f63fa7-638b-4751-9c83-85ab53a2b691">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="231" y="0" width="100" height="14" uuid="01f3bd3b-4507-4aab-ac8e-e17990007d42">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $P{isShowActivity}.compareToIgnoreCase( "Y" ) == 0 && ($F{accounttype}.compareToIgnoreCase( "E" ) == 0 ||  $F{accounttype}.compareToIgnoreCase( "M" ) == 0 )]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_value}.compareToIgnoreCase( "0000" ) == 0.0 ? $R{report.without_activity} :  $F{activity_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement x="331" y="0" width="160" height="14" uuid="bf4a5a1c-1d59-47df-b9ee-f62b94fcd86e">
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( ($F{amtacctdr} -$F{amtacctcr}) == 0.00  ? 0.00  : ($F{amtacctdr} -$F{amtacctcr}) )]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement x="491" y="0" width="160" height="14" uuid="455310d9-43f8-4f71-b193-a8f2a40eb85f">
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{closebalance}== 0.00  ? 0.00  : $F{closebalance} )]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="14">
+			<line>
+				<reportElement x="0" y="0" width="650" height="1" uuid="dcceae77-c070-4798-b3e9-7d43d0d6d772">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="491" y="0" width="90" height="14" uuid="f7119cbb-8f44-43c1-9a47-1c66cb8e3217">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.page} +" "+ $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="581" y="0" width="70" height="14" uuid="48940d2b-7ef6-4386-b391-7113d15628b7">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.of} +" "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="18">
+			<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
+				<reportElement x="0" y="0" width="331" height="18" uuid="17f48be3-b5ed-41ba-a109-53a289a1736a">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["        Total "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement x="331" y="0" width="160" height="18" uuid="f717f01a-824a-467c-a289-9b83c1d2cf89"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( ($V{amtacctdr_tot} -$V{amtacctcr_tot}) == 0.00  ? 0.00  : ($V{amtacctdr_tot} -$V{amtacctcr_tot}) )]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement x="491" y="0" width="160" height="18" uuid="43968795-845d-4154-aaf1-f2c01662627f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $V{closebalance_tot}== 0.00  ? 0.00  : $V{closebalance_tot} )]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="16" splitType="Stretch"/>
+	</summary>
+</jasperReport>

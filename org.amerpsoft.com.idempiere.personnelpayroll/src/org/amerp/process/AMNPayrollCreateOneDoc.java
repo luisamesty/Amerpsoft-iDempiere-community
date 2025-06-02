@@ -131,6 +131,8 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 		    // Verify if any AMN_Payroll_ID is created
 			amnpayroll = MAMN_Payroll.findByAMNPayroll(getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
 					p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
+			if (amnpayroll != null ) 
+				p_AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
 	    } else {
 	    	amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, null);
 	    }
@@ -249,28 +251,37 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     	String Message_Loc="";
     	// Verify if Employee Status 'ACTIVE'
     	if ( amnemployee.isActive() && amnemployee.getStatus().equalsIgnoreCase("A") ) {
+    		// Nueva transacción por lote
+    	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsNN"), true);
+    	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
 	    	// Create Docs Headers and Lines
     		// Document Header
 	     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, 
 	     			p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,
 	     			p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,
-	     			trxName)+"\r\n"; 
+	     			trxNameLocal)+"\r\n"; 
+	     	trx.commit(); // Guarda los cambios
 	     	//log.warning("After CreatePayrollOneDocument ="+Msg_Value1);
 	     	// Document Lines
 		    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, 
 		    		p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,
 		    		p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, 
-		    		trxName)+"\r\n";
-		    //log.warning("After CreatePayrollOneDocumentLines ="+Msg_Value2);
+		    		trxNameLocal)+"\r\n";
+		    trx.commit(); // Guarda los cambios
+			    //log.warning("After CreatePayrollOneDocumentLines ="+Msg_Value2);
 		    // Calculate Document
 		    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,
-		    		p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n";
+		    		p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal)+"\r\n";
+	     	trx.commit(); // Guarda los cambios
 		    //log.warning("After CalculateOnePayrollDocument ="+Msg_Value3);
 			// SALARY HISTORIC
 		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, 
-		    		amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName)+"\r\n";
+		    		amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal)+"\r\n";
+	     	trx.commit(); // Guarda los cambios
 		    //log.warning("After createAmnPayrollHistoric ="+Msg_Value3);
 			// SALARY HISTORIC END
+	     	// Cerrar transacción
+	     	trx.close();  
 		    return true;
     	} else {
     		Message_Loc = Msg.getElement(ctx, "AMN_Employee_ID")+":"+
@@ -292,23 +303,28 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		Timestamp p_DateAcct, Timestamp p_InvDateIni, Timestamp p_InvDateEnd, Timestamp p_RefDateIni, Timestamp p_RefDateEnd,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
 
-       	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	Timestamp NextPPDateIni = null;
     	Timestamp NextPPDateEnd = null;
 
     	// Create Docs Headers and Lines
+    	// Nueva transacción por lote
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsNV"), true);
+	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName)+"\r\n"; 
-	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName)+"\r\n";
-	    // Calculate Document
-	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName)+"\r\n";
-		// SALARY HISTORIC
-	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx , null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName)+"\r\n";
-		// SALARY HISTORIC END
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal)+"\r\n"; 
+    	trx.commit(); // Guarda los cambios
+    	// Document Lines
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal)+"\r\n";
+	    trx.commit(); // Guarda los cambios
+    	// Calculate Document
+	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal)+"\r\n";
+	    trx.commit(); // Guarda los cambios
+    	// SALARY HISTORIC
+	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx , null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal)+"\r\n";
+	    trx.commit(); // Guarda los cambios
+    	// SALARY HISTORIC END
 	    // Find AMN_Payroll_ID 
 	    // Verify if Amount Allocated Total is > 0
 		MAMN_Payroll amnpayroll = null;
@@ -317,8 +333,9 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 		if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
 		    // SOCIAL BENEFIT HISTORIC UPDATED Current Period and Two Previouss Periods
 		    // Current Period
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
-		    // Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	    	// Next Previuss Period
 			// Calculates Average last 12 months
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(amnperiod.getAMNDateIni());
@@ -332,19 +349,23 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	    	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
 		} else {
 		    // SOCIAL BENEFIT HISTORIC UPDATED Current Period ONLY
 		    // Current Period ONLY
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
-		}
-		return true;
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	    }
+		trx.close(); // Cierra 
+    	return true;
     	
     }
     /*
@@ -355,24 +376,29 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, 
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
-    	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,  C_Currency_ID, C_ConversionType_ID, 
-    			trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
 		//MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
 		//log.warning("Recibo="+amnperiod.getName()+"  Employee="+amnemployee.getValue()+"_"+amnemployee.getName());    	
 
     	// Create Docs Headers and Lines
+    	// Nueva transacción por lote
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsNV"), true);
+	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal); 
+     	trx.commit(); // Guarda los cambios
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID,p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal);
+     	trx.commit(); // Guarda los cambios
 	    // Calculate Document
-	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
+	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+     	trx.commit(); // Guarda los cambios
 		// SALARY HISTORIC
-	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName);
+	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal);
+     	trx.commit(); // Guarda los cambios
 		// SALARY HISTORIC END
+     	trx.close(); // Cierra
     	return true;
     	}
     /*
@@ -383,23 +409,28 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
-       	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID,
-    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	Timestamp NextPPDateIni = null;
     	Timestamp NextPPDateEnd = null;
    	
     	// Create Docs Headers and Lines
+    	// Nueva transacción por lote
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsNU"), true);
+	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal); 
+     	trx.commit(); // Guarda los cambios
      	// Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
-	    // Calculate Document
-	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
-	    // SALARY HISTORIC
-	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx , null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName);
-	    // SALARY HISTORIC END
+     	Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal);
+     	trx.commit(); // Guarda los cambios
+     	// Calculate Document
+	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+	    trx.commit(); // Guarda los cambios
+     	// SALARY HISTORIC
+	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx , null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal);
+	    trx.commit(); // Guarda los cambios
+     	// SALARY HISTORIC END
 	    // Find AMN_Payroll_ID 
 	    // Verify if Amount Allocated Total is > 0
 		MAMN_Payroll amnpayroll = null;
@@ -407,8 +438,9 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
 		if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
 		    // UTILITIES HISTORIC UPDATED
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx,  null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
-		    // Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx,  null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			// Calculates Average last 12 months
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(amnperiod.getAMNDateIni());
@@ -422,68 +454,80 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-			// Next Previuss Period
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
+	     	// Next Previuss Period
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, p_AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLocal);
+		    trx.commit(); // Guarda los cambios
 		}
+		trx.close(); // Cierra
 	    return true;
     }
     
@@ -495,21 +539,27 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
-       	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	
     	// Create Docs Headers and Lines
+   		// Nueva transacción por lote
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsPI"), true);
+	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal); 
+     	trx.commit(); // Guarda los cambios
 	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,trxName);
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,trxNameLocal);
+	    trx.commit(); // Guarda los cambios
 	    // Calculate Document
-	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
-		// SALARY HISTORIC
-	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName);
-		// SALARY HISTORIC END
+	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+	    trx.commit(); // Guarda los cambios
+	    // SALARY HISTORIC
+	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal);
+	    trx.commit(); // Guarda los cambios
+	    // SALARY HISTORIC END
+	    trx.close();	// Cierra trx
     	return true;
     	}
     /*
@@ -520,21 +570,27 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
-       	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	
     	// Create Docs Headers and Lines
+   		// Nueva transacción por lote
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsPL"), true);
+	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
-	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal); 
+    	trx.commit(); // Guarda los cambios
+     	// Document Lines
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal);
+    	trx.commit(); // Guarda los cambios
 	    // Calculate Document
-	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
-		// SALARY HISTORIC
-	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName);
-		// SALARY HISTORIC END
+	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+    	trx.commit(); // Guarda los cambios
+	    // SALARY HISTORIC
+	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal);
+    	trx.commit(); // Guarda los cambios
+	    // SALARY HISTORIC END
+    	trx.close();	// Cierra trx
     	return true;
     	}
     /*
@@ -545,22 +601,29 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID,
     		int C_Currency_ID, int C_ConversionType_ID, String trxName) {
   
-       	AMNPayrollCreateInvoiceNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, 
-    			p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, C_Currency_ID, C_ConversionType_ID, trxName);
     	MAMN_Period  amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
     	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
     	
     	// Create Docs Headers and Lines
+ 		// Nueva transacción por lote
+	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocsPR"), true);
+	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
     	// Document Header
-     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName); 
-	    // Document Lines
-	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxName);
-	    // Calculate Document
-	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxName);
-		// SALARY HISTORIC
-	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxName);
-	    // SALARY HISTORIC END
-    	return true;
+     	Msg_Value1 = Msg_Value1 + AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal); 
+     	trx.commit(); 
+     	// Guarda los cambios
+     	// Document Lines
+	    Msg_Value2 =  Msg_Value2 + AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, p_AMN_Employee_ID, p_AMN_Payroll_ID, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameLocal);
+	    trx.commit(); 
+     	// Calculate Document
+	    Msg_Value3= Msg_Value3 + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+	    trx.commit(); 
+     	// SALARY HISTORIC
+	    Msg_Value3= Msg_Value3+ amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLocal);
+	    trx.commit(); 
+     	// SALARY HISTORIC END
+    	trx.close();
+	    return true;
     	}
 }
 

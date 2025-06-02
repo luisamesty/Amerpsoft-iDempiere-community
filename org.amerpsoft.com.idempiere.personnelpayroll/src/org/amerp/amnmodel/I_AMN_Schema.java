@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Schema
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Schema 
@@ -32,7 +32,7 @@ public interface I_AMN_Schema
     /** TableName=AMN_Schema */
     public static final String Table_Name = "AMN_Schema";
 
-    /** AD_Table_ID=1000087 */
+    /** AD_Table_ID=1000003 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -185,10 +185,14 @@ public interface I_AMN_Schema
     /** Column name AMN_P_Liability_Advances */
     public static final String COLUMNNAME_AMN_P_Liability_Advances = "AMN_P_Liability_Advances";
 
-	/** Set Advances to Employees Short Term Account	  */
+	/** Set Advances to Employees Short Term Account.
+	  * Advances Liability short term account for PO process
+	  */
 	public void setAMN_P_Liability_Advances (int AMN_P_Liability_Advances);
 
-	/** Get Advances to Employees Short Term Account	  */
+	/** Get Advances to Employees Short Term Account.
+	  * Advances Liability short term account for PO process
+	  */
 	public int getAMN_P_Liability_Advances();
 
 	public I_C_ValidCombination getAMN_P_Liability_Advan() throws RuntimeException;
@@ -204,13 +208,32 @@ public interface I_AMN_Schema
 
 	public I_C_ValidCombination getAMN_P_Liability_Bo() throws RuntimeException;
 
+    /** Column name AMN_P_Liability_ContrBenefits */
+    public static final String COLUMNNAME_AMN_P_Liability_ContrBenefits = "AMN_P_Liability_ContrBenefits";
+
+	/** Set Other Contract Benefits TO.
+	  * Other Contract Benefits Liability short term account for TO process
+	  */
+	public void setAMN_P_Liability_ContrBenefits (int AMN_P_Liability_ContrBenefits);
+
+	/** Get Other Contract Benefits TO.
+	  * Other Contract Benefits Liability short term account for TO process
+	  */
+	public int getAMN_P_Liability_ContrBenefits();
+
+	public I_C_ValidCombination getAMN_P_Liability_ContrBenef() throws RuntimeException;
+
     /** Column name AMN_P_Liability_Other */
     public static final String COLUMNNAME_AMN_P_Liability_Other = "AMN_P_Liability_Other";
 
-	/** Set Other Benefits Short Term Account	  */
+	/** Set Other Food Benefits to Pay TI.
+	  * Other Food Benefits to Pay short term account for TI process
+	  */
 	public void setAMN_P_Liability_Other (int AMN_P_Liability_Other);
 
-	/** Get Other Benefits Short Term Account	  */
+	/** Get Other Food Benefits to Pay TI.
+	  * Other Food Benefits to Pay short term account for TI process
+	  */
 	public int getAMN_P_Liability_Other();
 
 	public I_C_ValidCombination getAMN_P_Liability_Ot() throws RuntimeException;
@@ -218,10 +241,14 @@ public interface I_AMN_Schema
     /** Column name AMN_P_Liability_Salary */
     public static final String COLUMNNAME_AMN_P_Liability_Salary = "AMN_P_Liability_Salary";
 
-	/** Set Salary Short Term Account	  */
+	/** Set Salary Short Term to pay NN.
+	  * Salary Liability short term account for NN process
+	  */
 	public void setAMN_P_Liability_Salary (int AMN_P_Liability_Salary);
 
-	/** Get Salary Short Term Account	  */
+	/** Get Salary Short Term to pay NN.
+	  * Salary Liability short term account for NN process
+	  */
 	public int getAMN_P_Liability_Salary();
 
 	public I_C_ValidCombination getAMN_P_Liability_Sal() throws RuntimeException;
@@ -229,32 +256,29 @@ public interface I_AMN_Schema
     /** Column name AMN_P_Liability_SalaryOther */
     public static final String COLUMNNAME_AMN_P_Liability_SalaryOther = "AMN_P_Liability_SalaryOther";
 
-	/** Set Salary Other Short Term Account	  */
+	/** Set Other Salary to pay NO.
+	  * Other Salary Liability short term account for NO process
+	  */
 	public void setAMN_P_Liability_SalaryOther (int AMN_P_Liability_SalaryOther);
 
-	/** Get Salary Other Short Term Account	  */
+	/** Get Other Salary to pay NO.
+	  * Other Salary Liability short term account for NO process
+	  */
 	public int getAMN_P_Liability_SalaryOther();
 
 	public I_C_ValidCombination getAMN_P_Liability_SalaryOt() throws RuntimeException;
-	
-    /** Column name AMN_P_Liability_ContrBenefits */
-    public static final String COLUMNNAME_AMN_P_Liability_ContrBenefits = "AMN_P_Liability_ContrBenefits";
 
-	/** Set Contract Benefits Other Short Term Account	  */
-	public void setAMN_P_Liability_ContrBenefits (int AMN_P_Liability_ContrBenefits);
-
-	/** Get Salary Other Short Term Account	  */
-	public int getAMN_P_Liability_ContrBenefits();
-
-	public I_C_ValidCombination getAMN_P_Liability_ContrBen() throws RuntimeException;
-	
     /** Column name AMN_P_Liability_Social */
     public static final String COLUMNNAME_AMN_P_Liability_Social = "AMN_P_Liability_Social";
 
-	/** Set Social Benefits Short Term Account	  */
+	/** Set Social Benefits to Pay PI-PL-PR.
+	  * Social Benefits Short Term Account for PI-PL-PR Processes
+	  */
 	public void setAMN_P_Liability_Social (int AMN_P_Liability_Social);
 
-	/** Get Social Benefits Short Term Account	  */
+	/** Get Social Benefits to Pay PI-PL-PR.
+	  * Social Benefits Short Term Account for PI-PL-PR Processes
+	  */
 	public int getAMN_P_Liability_Social();
 
 	public I_C_ValidCombination getAMN_P_Liability_Soc() throws RuntimeException;
@@ -262,10 +286,14 @@ public interface I_AMN_Schema
     /** Column name AMN_P_Liability_Utilities */
     public static final String COLUMNNAME_AMN_P_Liability_Utilities = "AMN_P_Liability_Utilities";
 
-	/** Set Utilities Short Term Account	  */
+	/** Set Utilities Short Term Account.
+	  * Utilities short term account for NU process
+	  */
 	public void setAMN_P_Liability_Utilities (int AMN_P_Liability_Utilities);
 
-	/** Get Utilities Short Term Account	  */
+	/** Get Utilities Short Term Account.
+	  * Utilities short term account for NU process
+	  */
 	public int getAMN_P_Liability_Utilities();
 
 	public I_C_ValidCombination getAMN_P_Liability_Utilit() throws RuntimeException;
@@ -273,10 +301,14 @@ public interface I_AMN_Schema
     /** Column name AMN_P_Liability_Vacation */
     public static final String COLUMNNAME_AMN_P_Liability_Vacation = "AMN_P_Liability_Vacation";
 
-	/** Set Vacation Short Term Account	  */
+	/** Set Vacation Short Term Account.
+	  * Vacation to Pay short term account for NU process
+	  */
 	public void setAMN_P_Liability_Vacation (int AMN_P_Liability_Vacation);
 
-	/** Get Vacation Short Term Account	  */
+	/** Get Vacation Short Term Account.
+	  * Vacation to Pay short term account for NU process
+	  */
 	public int getAMN_P_Liability_Vacation();
 
 	public I_C_ValidCombination getAMN_P_Liability_Vacat() throws RuntimeException;
@@ -696,6 +728,19 @@ public interface I_AMN_Schema
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name StdPrecision */
+    public static final String COLUMNNAME_StdPrecision = "StdPrecision";
+
+	/** Set Standard Precision.
+	  * Rule for rounding  calculated amounts
+	  */
+	public void setStdPrecision (int StdPrecision);
+
+	/** Get Standard Precision.
+	  * Rule for rounding  calculated amounts
+	  */
+	public int getStdPrecision();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

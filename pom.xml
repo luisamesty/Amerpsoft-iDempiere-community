@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>amerpsoft-idempiere-community</artifactId>
-  <version>11.0.0-SNAPSHOT</version>
+  <version>12.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
    	<module>org.amerpsoft.com.idempiere.feature</module> 	
   	<module>org.amerpsoft.com.idempiere.editors-com</module>
-  	<module>org.amerpsoft.com.idempiere.zk_themes</module>
   	<module>org.idempiere.zk.iceblue_c.theme</module>
   	<module>org.amerpsoft.com.idempiere.lco.withholding</module>
   	<module>org.amerpsoft.com.idempiere.financial</module>
@@ -15,6 +14,8 @@
   	<module>org.amerpsoft.com.idempiere.p2.targetplatform</module>
   	<module>org.amerpsoft.com.idempiere.personnelpayroll</module>
   	<module>org.amerpsoft.com.idempiere.tools</module>
+  	<module>org.amerpsoft.com.idempiere.webform</module>
+  	<module>org.amerpsoft.com.idempiere.workflow</module>
   </modules>
   <groupId>org.idempiere</groupId>
   <properties>

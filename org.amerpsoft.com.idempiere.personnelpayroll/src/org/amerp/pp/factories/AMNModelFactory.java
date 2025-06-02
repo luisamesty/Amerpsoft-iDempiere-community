@@ -129,6 +129,21 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Payroll_Schedulle
 		if(tableName.equalsIgnoreCase(MAMN_Payroll_Schedulle.Table_Name))
 			return MAMN_Payroll_Schedulle.class;	
+		// MAMN_Leaves_Flow
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Flow.Table_Name))
+			return MAMN_Leaves_Flow.class;
+		// MAMN_Leaves_Nodes
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Nodes.Table_Name))
+			return MAMN_Leaves_Nodes.class;
+		// MAMN_Leaves_Access
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Access.Table_Name))
+			return MAMN_Leaves_Access.class;
+		// MAMN_Payroll_Assist_Unit
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Unit.Table_Name))
+			return MAMN_Payroll_Assist_Unit.class;
+		// MAMN_Payroll_Assist_Row
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Row.Table_Name))
+			return MAMN_Payroll_Assist_Row.class;
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
@@ -241,6 +256,21 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Payroll_Schedulle
 		if(tableName.equalsIgnoreCase(MAMN_Payroll_Schedulle.Table_Name))
 			return new MAMN_Payroll_Schedulle(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Leaves_Flow
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Flow.Table_Name))
+			return new MAMN_Leaves_Flow(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Leaves_Nodes
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Nodes.Table_Name))
+			return new MAMN_Leaves_Nodes(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Leaves_Access
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Access.Table_Name))
+			return new MAMN_Leaves_Access(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Payroll_Assist_Unit
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Unit.Table_Name))
+			return new MAMN_Payroll_Assist_Unit(Env.getCtx(),Record_ID, trxName);
+		// MAMN_Payroll_Assist_Row
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Row.Table_Name))
+			return new MAMN_Payroll_Assist_Row(Env.getCtx(),Record_ID, trxName);
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
@@ -353,6 +383,21 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_Payroll_Schedulle
 		if(tableName.equalsIgnoreCase(MAMN_Payroll_Schedulle.Table_Name))
 			return new MAMN_Payroll_Schedulle(Env.getCtx(),rs, trxName);
+		// MAMN_Leaves_Flow
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Flow.Table_Name))
+			return new MAMN_Leaves_Flow(Env.getCtx(),rs, trxName);
+		// MAMN_Leaves_Nodes
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Nodes.Table_Name))
+			return new MAMN_Leaves_Nodes(Env.getCtx(),rs, trxName);
+		// MAMN_Leaves_Access
+		if(tableName.equalsIgnoreCase(MAMN_Leaves_Access.Table_Name))
+			return new MAMN_Leaves_Access(Env.getCtx(),rs, trxName);
+		// MAMN_Payroll_Assist_Unit
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Unit.Table_Name))
+			return new MAMN_Payroll_Assist_Unit(Env.getCtx(),rs, trxName);
+		// MAMN_Payroll_Assist_Row
+		if(tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Row.Table_Name))
+			return new MAMN_Payroll_Assist_Row(Env.getCtx(),rs, trxName);
 		// IMPORT TABLES
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))

@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollSocialSecurity" pageWidth="800" pageHeight="595" orientation="Landscape" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e050da40-646f-463a-9b25-429fec4896ab">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="iidempiere-demo MONALISA"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="283"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="712"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_Currency_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[344]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Process_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
+	<parameter name="isForExport" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isForReview" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- Payroll Social Security
+-- Amounts Allocated Valid for SSO (IRP)
+--
+SELECT * FROM
+(
+	-- REPORT HEADER
+	SELECT DISTINCT ON (cli.ad_client_id)
+		-- Client
+		cli.ad_client_id as rep_client_id,
+		-- Organization
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END as rep_org_id,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as rep_name,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN concat(COALESCE(cli.description,cli.name),' - Consolidado') ELSE COALESCE(org.description,org.name,org.value,'') END as rep_description, 
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
+	    CASE WHEN  org.ad_client_id = $P{AD_Client_ID}   AND ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 1
+	             WHEN  org.ad_client_id = $P{AD_Client_ID}  AND org.ad_org_id= $P{AD_Org_ID}  THEN 1
+	             ELSE 0 END as imp_header
+	FROM adempiere.ad_client as cli
+		 INNER JOIN adempiere.ad_org as org ON (org.ad_client_id = cli.ad_client_id)
+		 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+		  LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+		 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+		  LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+	WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
+) as header_info
+FULL JOIN
+(
+	SELECT  
+		client_id, org_id,
+		amn_process_id, prc_value, amn_contract_id, c_value,
+		amn_period_id,
+		socialsecurityid, 
+		amn_employee_id, emp_value, cedula, emplastname, empfirstname,  TO_CHAR(amndateend, 'MMYYYY') AS fechaformateada, 
+		TO_CHAR(SUM(diastrabajados), 'FM00') AS diastrabajados, 
+		SUM(amountallocated) AS amountallocated
+	FROM (
+		SELECT
+	    -- ORGANIZATION
+	       pyr.ad_client_id as client_id, pyr.ad_org_id as org_id,
+	    -- LOCATION
+		   lct.amn_location_id, lct.value as loc_value, lct.socialsecurityid,
+	    -- CONTRACT
+	       amc.amn_contract_id,
+	       COALESCE(amc.value,'') AS  c_value,
+	    -- PROCESS
+		   prc.value as prc_value, prc.amn_process_id,
+        -- AMN_PERIOD
+	       prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend, prd.amn_period_status,
+	    -- TIPO DE CONCEPTO
+	       cty.amn_concept_types_id,
+	       cty.sso,	       
+		-- EMPLOYEE
+		   emp.amn_employee_id, 
+		   emp.value as emp_value, 
+		   emp.idnumber AS cedula,
+		   CONCAT(COALESCE(emp.lastname1,''),' ',COALESCE(emp.lastname2,'')) AS emplastname,
+		   CONCAT(COALESCE(emp.firstname1,''),' ',COALESCE(emp.firstname2,'')) AS empfirstname,
+		   emp.name as emp_name, 
+	    -- CURRENCY      
+		   curr1.iso_code as iso_code1,
+		   currt1.cursymbol as cursymbol1,
+		   COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+	       curr2.iso_code as iso_code2,
+		   currt2.cursymbol as cursymbol2,
+		   COALESCE(currt2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
+	    -- PAYROLL
+		   pyr.amn_payroll_id, 
+		   pyr.invdateini, pyr.invdateend,
+	    -- PAYROLL DETAIL
+		   pyr_d.value as detail_value, pyr_d.qtyvalue as cantidad, 
+		   CASE WHEN pyr_d.value = 'SALARIO' THEN pyr_d.qtyvalue ELSE 0 END AS diastrabajados,
+		   currencyConvert(pyr_d.amountallocated, pyr.c_currency_id,$P{C_Currency_ID},pyr.dateacct,pyr.C_ConversionType_ID,pyr.ad_client_id,pyr.ad_org_id) as amountallocated
+		FROM adempiere.amn_payroll as pyr
+		LEFT JOIN adempiere.amn_payroll_detail as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
+		LEFT JOIN adempiere.amn_concept_types_proc as ctp ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
+		LEFT JOIN adempiere.amn_concept_types	as cty ON ((cty.amn_concept_types_id= ctp.amn_concept_types_id))
+		LEFT JOIN adempiere.amn_process as prc ON (prc.amn_process_id= ctp.amn_process_id)
+		INNER JOIN adempiere.amn_employee as emp ON (emp.amn_employee_id= pyr.amn_employee_id)
+		 LEFT JOIN adempiere.amn_department as dep ON (emp.amn_department_id = dep.amn_department_id)
+		 LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
+		 LEFT JOIN adempiere.c_bpartner 	as cbp	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+		 LEFT JOIN adempiere.amn_period as prd ON (prd.amn_period_id= pyr.amn_period_id)
+		 LEFT JOIN adempiere.c_period as c_prd ON (c_prd.c_period_id= prd.c_period_id)
+		 LEFT JOIN adempiere.amn_location as lct ON (emp.amn_location_id= lct.amn_location_id)
+		INNER JOIN adempiere.amn_contract as amc ON (amc.amn_contract_id= emp.amn_contract_id) 
+		 LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
+	     LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+	     LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+	     LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+		 WHERE 1 = 1  
+ 			AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
+			AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR prd.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
+ 		    AND CASE  WHEN  cty.sso='Y' THEN 1=1 ELSE 1=0 END  
+	  ) as ssodet 
+	  GROUP BY client_id, org_id, amn_process_id, prc_value, amn_contract_id, c_value, amn_period_id,  amndateend,
+		socialsecurityid, amn_employee_id, emp_value, cedula, emplastname, empfirstname, fechaformateada
+) AS sso ON (1= 0)
+WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
+  AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
+) 
+--ORDER BY sso.prc_value, sso.c_value, sso.emp_value]]>
+	</queryString>
+	<field name="rep_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_client"/>
+	</field>
+	<field name="rep_org_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="rep_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_org_id"/>
+	</field>
+	<field name="rep_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_name"/>
+	</field>
+	<field name="rep_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_description"/>
+	</field>
+	<field name="rep_taxid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_taxid"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_taxid"/>
+	</field>
+	<field name="rep_logo" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="rep_logo"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_logo"/>
+	</field>
+	<field name="imp_header" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
+		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
+	</field>
+	<field name="client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	</field>
+	<field name="amn_process_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_process_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_process_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_process"/>
+	</field>
+	<field name="prc_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prc_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="prc_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_process"/>
+	</field>
+	<field name="amn_contract_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_contract_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_contract_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
+	</field>
+	<field name="c_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
+	</field>
+	<field name="amn_period_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_period_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_period_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
+	</field>
+	<field name="socialsecurityid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="socialsecurityid"/>
+		<property name="com.jaspersoft.studio.field.label" value="socialsecurityid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_location"/>
+	</field>
+	<field name="amn_employee_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="emp_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emp_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="emp_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="cedula" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cedula"/>
+		<property name="com.jaspersoft.studio.field.label" value="cedula"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="emplastname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emplastname"/>
+		<property name="com.jaspersoft.studio.field.label" value="emplastname"/>
+	</field>
+	<field name="empfirstname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="empfirstname"/>
+		<property name="com.jaspersoft.studio.field.label" value="empfirstname"/>
+	</field>
+	<field name="fechaformateada" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fechaformateada"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechaformateada"/>
+	</field>
+	<field name="diastrabajados" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="diastrabajados"/>
+		<property name="com.jaspersoft.studio.field.label" value="diastrabajados"/>
+	</field>
+	<field name="amountallocated" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountallocated"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountallocated"/>
+	</field>
+	<variable name="v_employee_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[($F{amn_employee_id}!= null ? 1 : 0 )]]></variableExpression>
+	</variable>
+	<variable name="lineatxt" class="java.lang.String">
+		<variableExpression><![CDATA[$F{socialsecurityid} + String.format("%1$-" + (20 - $F{socialsecurityid}.length()) + "s", "")  + String.format("%" + 10 + "s", $F{cedula}) + String.format("%" + 30 + "s", $F{emplastname}.trim()) + String.format("%" + 30 + "s", $F{empfirstname}.trim())+"E"+$F{diastrabajados}+String.format("%10s", $F{amountallocated}.setScale(0, java.math.RoundingMode.DOWN).unscaledValue())
++$F{fechaformateada}]]></variableExpression>
+	</variable>
+	<variable name="v_amountallocated_t" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amountallocated}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="14">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="800" height="14" uuid="66338e6c-68ed-4594-a1c7-7e10ee94e1e3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[String.format("%-20s", "Cta Patronal")+String.format("%-10s", "Cedula")+String.format("%-30s", "apellido")+String.format("%-30s", "Nombre")+String.format("%-6s", "EDT")+String.format("%-20s", "Neto+Mes+Año")]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{isForReview}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="800" height="14" uuid="bf34f958-b5b5-4080-b204-07253fa4238c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{lineatxt}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="14">
+			<printWhenExpression><![CDATA[$P{isForReview}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="80" height="14" uuid="419ff869-0293-4db4-8368-c0fc1cdbca3c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{socialsecurityid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="80" height="14" uuid="1ea6edcb-7b65-412c-809b-b33426fd44c8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cedula}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="0" width="200" height="14" uuid="f8dbf399-77dc-48a8-8150-8f0e1c264277">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{emplastname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="0" width="200" height="14" uuid="7d8a8eea-4d38-4546-bc03-2baabb4fefb4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empfirstname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="0" width="30" height="14" uuid="7904fe3e-dbfc-41ee-a401-ee35707657d2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diastrabajados}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="590" y="0" width="130" height="14" uuid="6cd2d2e3-3d80-449e-a984-61b3af0c16c1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amountallocated}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="720" y="0" width="80" height="14" uuid="218489c7-91f4-4625-81e1-78761a6b0825">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{amn_employee_id} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaformateada}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="14">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="0" y="0" width="800" height="14" uuid="8479c25d-a504-4e06-8a45-90545a4291c5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA["Total Reporte: "+String.format("%,.2f",$V{v_amountallocated_t})  + "   -  Total Trabajadores: "+$V{v_employee_count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

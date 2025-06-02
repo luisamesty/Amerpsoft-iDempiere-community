@@ -13,6 +13,8 @@
 package org.amerp.process;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.amerp.amnmodel.MAMN_Concept_Types_Proc;
@@ -33,6 +35,7 @@ import org.compiere.process.SvrProcess;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 
 public class AMNPayrollProcessPayrollDeferredOneEmployee extends SvrProcess {
 	
@@ -94,133 +97,117 @@ public class AMNPayrollProcessPayrollDeferredOneEmployee extends SvrProcess {
 
 		boolean okProcess = false;
 		String retValue="";
-//		List<LoanPeriods> periodList = new ArrayList<LoanPeriods>();
-//		LoanPeriods loanPeriodData = null;
-	    LoanPeriods loanPeriodData = new LoanPeriods(0, null, null, p_LoanAmount);
-	    LoanPeriods[] periodList = new LoanPeriods[100];
-		
+	    LoanPeriods loanPeriodData = new LoanPeriods();
+	    ArrayList<LoanPeriods>  periodList = new ArrayList<>(); // Lista vacía
+		Properties ctx = getCtx();
+		String trxName =  get_TrxName();
 		int rRecPayrollDeferred=0;
 		int rRecPeriodAvailable=0;
 		boolean bRecPayrollDetail=false;
 		boolean bRecPeriodAvailable=false;
-//		// AMN_Process_ID for Process_Value="NN"
-//		int AMN_Process_ID_NN = ((X_AMN_Process)new Query(getCtx(),X_AMN_Process.Table_Name,"Value='NN'",null).first()).getAMN_Process_ID();
-//		// AMN_Process_ID for Process_Value="NU"
-//		int AMN_Process_ID_NU = ((X_AMN_Process)new Query(getCtx(),X_AMN_Process.Table_Name,"Value='NU'",null).first()).getAMN_Process_ID();
-//		// AMN_Process_ID for Process_Value="NV"
-//		int AMN_Process_ID_NV = ((X_AMN_Process)new Query(getCtx(),X_AMN_Process.Table_Name,"Value='NV'",null).first()).getAMN_Process_ID();
-		// AMN_Process_ID for Process_Value="PO"
-//		int AMN_Process_ID_PO = ((X_AMN_Process)new Query(getCtx(),X_AMN_Process.Table_Name,"Value='PO'",null).first()).getAMN_Process_ID();
-		//log.warning("AMN_Process_ID_PO:"+AMN_Process_ID_PO);
 		// 
-		MAMN_Contract amncontract = new MAMN_Contract(getCtx(), p_AMN_Contract_ID, null); 
-		MAMN_Process amnprocessde = new MAMN_Process(getCtx(), p_AMN_Process_ID, null); 		
-		MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, null); 
-		MAMN_Employee amnemployee = new MAMN_Employee(getCtx(), p_AMN_Employee_ID, null); 
-		MAMN_Period amnperiod = new MAMN_Period(getCtx(), p_AMN_FirstPeriod_ID, null);
-		MAMN_Concept_Types_Proc amnconcepttypesDB = new MAMN_Concept_Types_Proc(getCtx(), p_AMN_Concept_Types_Proc_DB_ID, null);
-		MAMN_Concept_Types_Proc amnconcepttypesCR = new MAMN_Concept_Types_Proc(getCtx(), p_AMN_Concept_Types_Proc_CR_ID, null);
+		MAMN_Contract amncontract = new MAMN_Contract(ctx, p_AMN_Contract_ID, null); 
+		MAMN_Process amnprocessde = new MAMN_Process(ctx, p_AMN_Process_ID, null); 		
+		MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, null); 
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null); 
+		MAMN_Period amnperiod = new MAMN_Period(ctx, p_AMN_FirstPeriod_ID, null);
+		MAMN_Concept_Types_Proc amnconcepttypesDB = new MAMN_Concept_Types_Proc(ctx, p_AMN_Concept_Types_Proc_DB_ID, null);
+		MAMN_Concept_Types_Proc amnconcepttypesCR = new MAMN_Concept_Types_Proc(ctx, p_AMN_Concept_Types_Proc_CR_ID, null);
 		// AMN_Process_ID for Process_Value="PO"
-		int AMN_Process_ID_PO = ((X_AMN_Process)new Query(getCtx(),X_AMN_Process.Table_Name,"Value='PO' AND AD_Client_ID="+amnemployee.getAD_Client_ID(),null).first()).getAMN_Process_ID();
+		int AMN_Process_ID_PO = ((X_AMN_Process)new Query(ctx,X_AMN_Process.Table_Name,"Value='PO' AND AD_Client_ID="+amnemployee.getAD_Client_ID(),null).first()).getAMN_Process_ID();
 		// MAMN_Process for PO Process
-		MAMN_Process amnprocesspo = new MAMN_Process(getCtx(), AMN_Process_ID_PO, null); 
-log.warning("p_AMN_Concept_Types_Proc_DB_ID:"+p_AMN_Concept_Types_Proc_DB_ID+" "+amnconcepttypesDB.getName());
-log.warning("p_AMN_Concept_Types_Proc_CR_ID:"+p_AMN_Concept_Types_Proc_CR_ID+" "+amnconcepttypesCR.getName());
+		MAMN_Process amnprocesspo = new MAMN_Process(ctx, AMN_Process_ID_PO, null); 
+		log.warning("p_AMN_Concept_Types_Proc_DB_ID:"+p_AMN_Concept_Types_Proc_DB_ID+" "+amnconcepttypesDB.getName());
+		log.warning("p_AMN_Concept_Types_Proc_CR_ID:"+p_AMN_Concept_Types_Proc_CR_ID+" "+amnconcepttypesCR.getName());
 		// Message Header
-		Msg_Header = Msg.getElement(getCtx(), "AMN_Process_ID")+":"+amnprocesspo.getValue().trim()+"-"+amnprocesspo.getName().trim();
+		Msg_Header = Msg.getElement(ctx, "AMN_Process_ID")+":"+amnprocesspo.getValue().trim()+"-"+amnprocesspo.getName().trim();
 	    addLog(Msg_Header);
-	    Msg_Header = Msg.getElement(getCtx(), "AMN_Contract_ID")+":"+amncontract.getValue().trim()+"-"+amncontract.getName().trim();
+	    Msg_Header = Msg.getElement(ctx, "AMN_Contract_ID")+":"+amncontract.getValue().trim()+"-"+amncontract.getName().trim();
 	    addLog(Msg_Header);
-	    Msg_Header = Msg.getElement(getCtx(), "AMN_Payroll_ID")+":"+amnpayroll.getValue().trim();
+	    Msg_Header = Msg.getElement(ctx, "AMN_Payroll_ID")+":"+amnpayroll.getValue().trim();
 	    addLog(Msg_Header);
 	    Msg_Header =amnpayroll.getName().trim();
 	    addLog(Msg_Header);
-	    Msg_Header = Msg.getElement(getCtx(), "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+amnemployee.getName().trim();
+	    Msg_Header = Msg.getElement(ctx, "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+amnemployee.getName().trim();
 	    addLog(Msg_Header);
 	    // Parameter Header
-	    Msg_Header = AmerpMsg.getParameterMsg(getCtx(), "LoanAmount")+": "+p_LoanAmount;
+	    Msg_Header = AmerpMsg.getParameterMsg(ctx, "LoanAmount")+": "+p_LoanAmount;
 	    addLog(Msg_Header);
-	    Msg_Header = AmerpMsg.getParameterMsg(getCtx(), "LoanQuotaNo")+": "+p_LoanQuotaNo;
+	    Msg_Header = AmerpMsg.getParameterMsg(ctx, "LoanQuotaNo")+": "+p_LoanQuotaNo;
 	    addLog(Msg_Header);
-	    Msg_Header = AmerpMsg.getParameterMsg(getCtx(), "AMN_Process_ID")+": "+amnprocessde.getValue().trim()+"-"+amnprocessde.getName().trim();
+	    Msg_Header = AmerpMsg.getParameterMsg(ctx, "AMN_Process_ID")+": "+amnprocessde.getValue().trim()+"-"+amnprocessde.getName().trim();
 	    addLog(Msg_Header);
-	    Msg_Header = Msg.getElement(getCtx(), "AMN_Concept_Types_Proc_ID")+" (DB): "+amnconcepttypesDB.getValue().trim()+"-"+amnconcepttypesDB.getName().trim();
+	    Msg_Header = Msg.getElement(ctx, "AMN_Concept_Types_Proc_ID")+" (DB): "+amnconcepttypesDB.getValue().trim()+"-"+amnconcepttypesDB.getName().trim();
 	    addLog(Msg_Header);
-	    Msg_Header = AmerpMsg.getParameterMsg(getCtx(), "AMN_Concept_Types_Proc_ID")+" (CR): "+amnconcepttypesCR.getValue().trim()+"-"+amnconcepttypesCR.getName().trim();
+	    Msg_Header = AmerpMsg.getParameterMsg(ctx, "AMN_Concept_Types_Proc_ID")+" (CR): "+amnconcepttypesCR.getValue().trim()+"-"+amnconcepttypesCR.getName().trim();
 	    addLog(Msg_Header);
-	    Msg_Header = AmerpMsg.getParameterMsg(getCtx(), "AMN_FirstPeriod_ID")+": "+amnperiod.getValue().trim()+	    		"  ";
+	    Msg_Header = AmerpMsg.getParameterMsg(ctx, "AMN_FirstPeriod_ID")+": "+amnperiod.getValue().trim()+	    		"  ";
 	    addLog(Msg_Header);
-	    Msg_Header = AmerpMsg.getParameterMsg(getCtx(), "Description")+": "+p_LoanDescription;
+	    Msg_Header = AmerpMsg.getParameterMsg(ctx, "Description")+": "+p_LoanDescription;
 	    addLog(Msg_Header);
-	    Msg_Header = amnperiod.getName().trim()+"  "+Msg.getMsg(getCtx(), "Date")+":"+amnperiod.getAMNDateEnd().toString().substring(0,10);
+	    Msg_Header = amnperiod.getName().trim()+"  "+Msg.getMsg(ctx, "Date")+":"+amnperiod.getAMNDateEnd().toString().substring(0,10);
 	    addLog(Msg_Header);
 	    // Verify if Lines already introduced on AMN_Payroll_Deferred
-	    rRecPayrollDeferred=AMNPayrollProcessPayrollDeferred.VerifyDeferredDetailLines(getCtx(),p_AMN_Payroll_ID, get_TrxName());
+	    rRecPayrollDeferred=AMNPayrollProcessPayrollDeferred.VerifyDeferredDetailLines(ctx,p_AMN_Payroll_ID,trxName);
 	    // Verify if Lines already introduced on AMN_Payroll_Detail
 	    // TRUE: Correct AMN_Concept_Types_Proc FALSE: INCorrect AMN_Concept_Types_Pro
-	    bRecPayrollDetail=AMNPayrollProcessPayrollDeferred.VerifyPayrollDetailLines(getCtx(),p_AMN_Payroll_ID, get_TrxName());
+	    bRecPayrollDetail=AMNPayrollProcessPayrollDeferred.VerifyPayrollDetailLines(ctx,p_AMN_Payroll_ID,trxName);
 	    // Verify Number of Period Available after Date Entered as initial Payment
 	    rRecPeriodAvailable = (int) AMNPayrollProcessPayrollDeferred.VerifyPeriodsAvailable(
-	    		getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Payroll_ID,amnperiod.getAMN_Period_ID(), get_TrxName());
-	    if (rRecPeriodAvailable < p_LoanQuotaNo) {
-			Msg_Header = "********************** ERROR ********************** \r\n "+
-					AmerpMsg.getParameterMsg(getCtx(), "LoanQuotaNo")+": ("+p_LoanQuotaNo+") \r\n "+
-					"  No. "+Msg.getElement(getCtx(), "AMN_Period_ID")+"(s) = (" + rRecPeriodAvailable +")"+" \r\n "+
-					"********************** ERROR ******************** \r\n ";
-			addLog(Msg_Header);
-			bRecPeriodAvailable = false;
-			okProcess = false;
-	    } else {
-			Msg_Header = " \r\n "+AmerpMsg.getParameterMsg(getCtx(), "LoanQuotaNo")+": ("+p_LoanQuotaNo+") \r\n "+
-					"  No. "+Msg.getElement(getCtx(), "AMN_Period_ID")+"(s) = (" + rRecPeriodAvailable+")"+" \r\n ";
-			addLog(Msg_Header);
-			bRecPeriodAvailable = true;
-			okProcess = true;
-	    }
+	    		ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Payroll_ID,amnperiod.getAMN_Period_ID(),trxName);
 		// Verifiy if AMN_Concept_Types_proc is LOAN Concept DB Debit
 		if (p_AMN_Concept_Types_Proc_DB_ID == 0)  {
-			Msg_Header = "****** ERROR ****** \r\n "+AmerpMsg.getParameterMsg(getCtx(), "AMN_Concept_Types_Proc_ID")+" (DB): "+p_AMN_Concept_Types_Proc_DB_ID;
+			Msg_Header = "****** ERROR ****** \r\n "+AmerpMsg.getParameterMsg(ctx, "AMN_Concept_Types_Proc_ID")+" (DB): "+p_AMN_Concept_Types_Proc_DB_ID;
 			addLog(Msg_Header);
 			okProcess = false;
 		}
 		if (p_AMN_Concept_Types_Proc_CR_ID == 0)  {
-			Msg_Header = "****** ERROR ****** \r\n "+AmerpMsg.getParameterMsg(getCtx(), "AMN_Concept_Types_Proc_ID")+" (CR): "+p_AMN_Concept_Types_Proc_CR_ID;
+			Msg_Header = "****** ERROR ****** \r\n "+AmerpMsg.getParameterMsg(ctx, "AMN_Concept_Types_Proc_ID")+" (CR): "+p_AMN_Concept_Types_Proc_CR_ID;
 			addLog(Msg_Header);
 			okProcess = false;
 		}
-	    if (rRecPayrollDeferred == 0  &&  bRecPayrollDetail && bRecPeriodAvailable ) {
-	    	// Create AMN_Payroll_Deferred  LInes
-	    	periodList = AMNPayrollProcessPayrollDeferred.CreatePayrollDeferredDetailLines 
-	    			(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Payroll_ID,  p_AMN_Employee_ID, 
-	    					p_AMN_Concept_Types_Proc_DB_ID, p_AMN_Concept_Types_Proc_CR_ID,
-	    					 p_LoanAmount, p_LoanQuotaNo, p_AMN_FirstPeriod_ID, p_LoanDescription, get_TrxName()) ;
+	    if (rRecPayrollDeferred == 0  &&  bRecPayrollDetail  ) {
+	 
+	    	// Nueva transacción por lote
+    	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
+    	    String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
+    	   	// Create AMN_Payroll_Deferred  LInes
+	    	periodList = (ArrayList<LoanPeriods>) AMNPayrollProcessPayrollDeferred.CreatePayrollDeferredDetailLines 
+	    			(ctx, amnpayroll,  amnprocessde, amnemployee, amnconcepttypesDB, amnconcepttypesCR,
+	    					 p_LoanAmount, p_LoanQuotaNo, p_AMN_FirstPeriod_ID, p_LoanDescription,trxNameLocal) ;
+	    	trx.commit(); // Guarda los cambios
 			//  CREATE OR VERIFY MAMN_Payroll Detail
-	    	MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), 0, null);
+	    	MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, null);
 		    // CREATE MAMN_Payroll Detail
-		    amnpayrolldetail.createAmnPayrollDetail(getCtx(), Env.getLanguage(getCtx()).getLocale(),
+		    amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(ctx).getLocale(),
 					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(),  AMN_Process_ID_PO, p_AMN_Contract_ID,
-					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, get_TrxName());
+					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID,trxNameLocal);
+		    trx.commit(); // Guarda los cambios
 			//  UPDATE MAMN_Payroll Detail
-			amnpayrolldetail.updateAmnPayrollDetail(getCtx(), Env.getLanguage(getCtx()).getLocale(),
+			amnpayrolldetail.updateAmnPayrollDetail(ctx, Env.getLanguage(ctx).getLocale(),
 					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(), AMN_Process_ID_PO, p_AMN_Contract_ID,
-					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanAmount, get_TrxName());
+					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanAmount,trxNameLocal);
+			trx.commit(); // Guarda los cambios
 			//  UPDATE MAMN_Payroll Detail Description with p_LoanDescription			
-			amnpayrolldetail.updateAmnPayrollDetailDescription(getCtx(), Env.getLanguage(getCtx()).getLocale(),
-					amncontract.getAD_Client_ID(), amncontract.getAD_Org_ID(), AMN_Process_ID_PO, p_AMN_Contract_ID,
-					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanDescription, get_TrxName());
-			// RECALC
-			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), p_AMN_Payroll_ID);
+			amnpayrolldetail.updateAmnPayrollDetailDescription(ctx, Env.getLanguage(ctx).getLocale(),
+					p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_DB_ID, p_LoanDescription,p_LoanAmount, trxNameLocal);
+			trx.commit(); // Guarda los cambios
+			// UPDATES HEADER - LINE Similar to AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, p_AMN_Payroll_ID);
+			AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,
+					amnpayroll.getAMN_Period_ID(),p_AMN_Employee_ID, p_AMN_Payroll_ID, trxNameLocal);
+			trx.commit(); // Guarda los cambios
+			trx.close();  
 			//  Title
-	    	Msg_Header ="Lin  "+Msg.getElement(getCtx(), "AMN_Period_ID")+":     "+Msg.getElement(getCtx(), "AmountQuota")+":  "+Msg.getMsg(getCtx(), "Date")+":";
+	    	Msg_Header ="Lin  "+Msg.getElement(ctx, "AMN_Period_ID")+":     "+Msg.getElement(ctx, "AmountQuota")+":  "+Msg.getMsg(ctx, "Date")+":";
 	    			addLog(Msg_Header);
 	    	// Show AMN_Payroll_Deferred  LInes
 	    	for (int i=0 ; i < p_LoanQuotaNo; i++) {
-	    		loanPeriodData = periodList[i];
+	    		loanPeriodData = periodList.get(i);
 	    		//log.warning("Muestra:....p_LoanQuotaNo:"+p_LoanQuotaNo+" Periodo:"+loanPeriodData.getPeriodValue()+"  Date:"+loanPeriodData.getPeriodDate().toString().substring(0,10));
 	    		Msg_Header = loanPeriodData.getLoanCuotaNo() +"-"+
 	    				loanPeriodData.getPeriodValue() + "    " +
 	    				loanPeriodData.getCuotaAmount() + "    " +
-	    				loanPeriodData.getPeriodDate().toString().substring(0,10);
+	    				loanPeriodData.getPeriodDateEnd().toString().substring(0,10);
 	    		addLog(Msg_Header);
 	    	}
 	    	Msg_Header = "OK";
@@ -228,16 +215,16 @@ log.warning("p_AMN_Concept_Types_Proc_CR_ID:"+p_AMN_Concept_Types_Proc_CR_ID+" "
 			okProcess = true;
 		} else {
 			if (rRecPayrollDeferred > 0 ) {
-				Msg_Header = "****** ERROR ****** "+AmerpMsg.getParameterMsg(getCtx(), "LoanQuotaNo")+": "+rRecPayrollDeferred;
-				Msg_Header = Msg_Header + " "+Msg.getMsg(getCtx(), "Records"); 
+				Msg_Header = "****** ERROR ****** "+AmerpMsg.getParameterMsg(ctx, "LoanQuotaNo")+": "+rRecPayrollDeferred;
+				Msg_Header = Msg_Header + " "+Msg.getMsg(ctx, "Records"); 
 				addLog(Msg_Header);
-				Msg_Header = " ******* "+Msg.getMsg(getCtx(), "DeleteAll")+ "****** "; 
+				Msg_Header = " ******* "+Msg.getMsg(ctx, "DeleteAll")+ "****** "; 
 				addLog(Msg_Header);
 			} 
 			if ( ! bRecPayrollDetail) {
 				Msg_Header = "****** ERROR ****** ";
 				addLog(Msg_Header);		
-				Msg_Header = Msg.getElement(getCtx(), "AMN_Payroll_Detail_ID")+": ";
+				Msg_Header = Msg.getElement(ctx, "AMN_Payroll_Detail_ID")+": ";
 				addLog(Msg_Header);		
 			}
 			okProcess = false;

@@ -5,7 +5,7 @@
   <parent>
 		<groupId>org.idempiere</groupId>
  		<artifactId>org.idempiere.parent</artifactId>
-		<version>11.0.0-SNAPSHOT</version>
+		<version>12.0.0-SNAPSHOT</version>
 		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
   </parent>  
  <artifactId>org.amerpsoft.com.idempiere.personnelpayroll</artifactId>
@@ -20,4 +20,29 @@
             </plugin>
         </plugins>
     </build>  
+    <dependencies>
+    	<dependency>
+    		<groupId>org.idempiere</groupId>
+    		<artifactId>
+    			org.amerpsoft.com.idempiere.workflow
+    		</artifactId>
+    		<version>12.0.0-SNAPSHOT</version>
+    	</dependency>
+	  	<dependency>
+	  		<groupId>org.idempiere</groupId>
+	  		<artifactId>org.adempiere.base</artifactId>
+	  		<version>12.0.0-SNAPSHOT</version>
+	  	</dependency>
+		<dependency>
+		    <groupId>org.osgi</groupId>
+		    <artifactId>org.osgi.service.event</artifactId>
+		    <version>1.4.0</version> <!-- Asegúrate de que esta sea la versión correcta -->
+		</dependency>  
+		<!-- https://mvnrepository.com/artifact/org.mozilla/rhino -->
+		<dependency>
+		    <groupId>org.mozilla</groupId>
+		    <artifactId>rhino</artifactId>
+		    <version>1.7.6</version>
+		</dependency>	    	
+    </dependencies>
 </project>

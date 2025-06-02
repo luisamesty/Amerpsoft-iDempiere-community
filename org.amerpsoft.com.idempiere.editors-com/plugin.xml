@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin>
-
+<plugin
+    id="org.amerpsoft.com.idempiere.editors-com"
+    version="12.0.0.qualifier"
+    provider-name="AMerpSoft"
+    >
 </plugin>

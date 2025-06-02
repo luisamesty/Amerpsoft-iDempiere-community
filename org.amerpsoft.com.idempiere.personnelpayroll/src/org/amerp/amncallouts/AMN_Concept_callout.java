@@ -12,17 +12,12 @@
  ******************************************************************************/
 package org.amerp.amncallouts;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
-import org.amerp.amnmodel.MAMN_Concept;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.CLogger;
-import org.compiere.util.DB;
 
 public class AMN_Concept_callout implements IColumnCallout {
 

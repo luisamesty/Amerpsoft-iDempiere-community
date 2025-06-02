@@ -31,7 +31,7 @@ SELECT * FROM
 -- DEPARTAMENT
        COALESCE(dep.name,dep.description) as departamento,
 -- EMPLOYEE
-	 emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso,
+	 emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso, emp.idnumber,
 	 (DATE_PART('year', CURRENT_TIMESTAMP) - DATE_PART('year', emp.incomedate)) as a_servicio,
    COALESCE(jtt.name, jtt.description) as cargo, cbp.taxid as nro_id, emp.salary as salario,
 -- PAYROLL
@@ -48,13 +48,13 @@ SELECT * FROM
 	currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated_t2, 
 	currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted_t2, 
 	currencyConvert(pyr.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated_t2, 
--- CURRENCY
+	-- CURRENCY
 	curr1.iso_code as iso_code1,
-	currt1.cursymbol as cursymbol1,
-	COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+	COALESCE(currt1.cursymbol,curr1.cursymbol,curr1.iso_code,'') as cursymbol1,
+	COALESCE(currt1.description,curr1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
 	curr2.iso_code as iso_code2,
-	currt2.cursymbol as cursymbol2,
-	COALESCE(currt2.description,curr2.iso_code,curr2.cursymbol,'') as currname2,
+	COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
+	COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 -- PAYROLL DETAIL
    -- MONTOS Y CIFRAS	   
 	 pyr_d.value as detail_value,
@@ -87,9 +87,9 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 
 -- LEFT JOIN adempiere.amn_rates as rat ON (pyr.RefDateIni between rat.startdate AND rat.enddate)
 LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
-LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = 'es_VE'
+LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
-LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = 'es_VE'
+LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
 WHERE prc.value= 'PO' AND org.ad_client_id=  $P{AD_Client_ID}  
 	AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )     
     AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )

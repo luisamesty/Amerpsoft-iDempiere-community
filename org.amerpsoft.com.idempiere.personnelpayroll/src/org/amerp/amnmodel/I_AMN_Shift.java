@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Shift
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Shift 
@@ -32,7 +32,7 @@ public interface I_AMN_Shift
     /** TableName=AMN_Shift */
     public static final String Table_Name = "AMN_Shift";
 
-    /** AD_Table_ID=1000031 */
+    /** AD_Table_ID=1000014 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -82,6 +82,15 @@ public interface I_AMN_Shift
 	/** Get AMN_Shift_UU	  */
 	public String getAMN_Shift_UU();
 
+    /** Column name C_Overheadindex_ID */
+    public static final String COLUMNNAME_C_Overheadindex_ID = "C_Overheadindex_ID";
+
+	/** Set Overhead Index ID	  */
+	public void setC_Overheadindex_ID (int C_Overheadindex_ID);
+
+	/** Get Overhead Index ID	  */
+	public int getC_Overheadindex_ID();
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -111,6 +120,54 @@ public interface I_AMN_Shift
 	  */
 	public String getDescription();
 
+    /** Column name HEFranquicia */
+    public static final String COLUMNNAME_HEFranquicia = "HEFranquicia";
+
+	/** Set HEFranquicia.
+	  * Extra Hours Franquicia
+	  */
+	public void setHEFranquicia (BigDecimal HEFranquicia);
+
+	/** Get HEFranquicia.
+	  * Extra Hours Franquicia
+	  */
+	public BigDecimal getHEFranquicia();
+
+    /** Column name Help */
+    public static final String COLUMNNAME_Help = "Help";
+
+	/** Set Comment/Help.
+	  * Comment or Hint
+	  */
+	public void setHelp (String Help);
+
+	/** Get Comment/Help.
+	  * Comment or Hint
+	  */
+	public String getHelp();
+
+    /** Column name HoursDay */
+    public static final String COLUMNNAME_HoursDay = "HoursDay";
+
+	/** Set Hours per day in a Shift	  */
+	public void setHoursDay (BigDecimal HoursDay);
+
+	/** Get Hours per day in a Shift	  */
+	public BigDecimal getHoursDay();
+
+    /** Column name HoursWeek */
+    public static final String COLUMNNAME_HoursWeek = "HoursWeek";
+
+	/** Set Hours of work per week.
+	  * Hours of work per week
+	  */
+	public void setHoursWeek (BigDecimal HoursWeek);
+
+	/** Get Hours of work per week.
+	  * Hours of work per week
+	  */
+	public BigDecimal getHoursWeek();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -137,6 +194,71 @@ public interface I_AMN_Shift
 	  */
 	public boolean isDefault();
 
+    /** Column name isEntryTimeLimit */
+    public static final String COLUMNNAME_isEntryTimeLimit = "isEntryTimeLimit";
+
+	/** Set Entry Time Limit.
+	  * Entry Time Limit
+	  */
+	public void setisEntryTimeLimit (boolean isEntryTimeLimit);
+
+	/** Get Entry Time Limit.
+	  * Entry Time Limit
+	  */
+	public boolean isEntryTimeLimit();
+
+    /** Column name isFlexible */
+    public static final String COLUMNNAME_isFlexible = "isFlexible";
+
+	/** Set Flexible.
+	  * Indicates if it is Flexible
+	  */
+	public void setisFlexible (boolean isFlexible);
+
+	/** Get Flexible.
+	  * Indicates if it is Flexible
+	  */
+	public boolean isFlexible();
+
+    /** Column name isFlotingShift */
+    public static final String COLUMNNAME_isFlotingShift = "isFlotingShift";
+
+	/** Set Floting Shift.
+	  * Indicates if it is Floting Shift
+	  */
+	public void setisFlotingShift (boolean isFlotingShift);
+
+	/** Get Floting Shift.
+	  * Indicates if it is Floting Shift
+	  */
+	public boolean isFlotingShift();
+
+    /** Column name isOverhead */
+    public static final String COLUMNNAME_isOverhead = "isOverhead";
+
+	/** Set Overhead.
+	  * Indicates if it is Overhead
+	  */
+	public void setisOverhead (boolean isOverhead);
+
+	/** Get Overhead.
+	  * Indicates if it is Overhead
+	  */
+	public boolean isOverhead();
+
+    /** Column name isOverheadLimit */
+    public static final String COLUMNNAME_isOverheadLimit = "isOverheadLimit";
+
+	/** Set Overhead Limit.
+	  * Indicates if it is Overhead Limit
+	  */
+	public void setisOverheadLimit (boolean isOverheadLimit);
+
+	/** Get Overhead Limit.
+	  * Indicates if it is Overhead Limit
+	  */
+	public boolean isOverheadLimit();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -149,6 +271,32 @@ public interface I_AMN_Shift
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name OverheadLimit */
+    public static final String COLUMNNAME_OverheadLimit = "OverheadLimit";
+
+	/** Set Overhead Limit Value.
+	  * Overhead Limit Value
+	  */
+	public void setOverheadLimit (BigDecimal OverheadLimit);
+
+	/** Get Overhead Limit Value.
+	  * Overhead Limit Value
+	  */
+	public BigDecimal getOverheadLimit();
+
+    /** Column name TimeControl */
+    public static final String COLUMNNAME_TimeControl = "TimeControl";
+
+	/** Set TimeControl.
+	  * Indicates if it is Time Controlled
+	  */
+	public void setTimeControl (boolean TimeControl);
+
+	/** Get TimeControl.
+	  * Indicates if it is Time Controlled
+	  */
+	public boolean isTimeControl();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -165,6 +313,32 @@ public interface I_AMN_Shift
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name ValidFrom */
+    public static final String COLUMNNAME_ValidFrom = "ValidFrom";
+
+	/** Set Valid from.
+	  * Valid from including this date (first day)
+	  */
+	public void setValidFrom (Timestamp ValidFrom);
+
+	/** Get Valid from.
+	  * Valid from including this date (first day)
+	  */
+	public Timestamp getValidFrom();
+
+    /** Column name ValidTo */
+    public static final String COLUMNNAME_ValidTo = "ValidTo";
+
+	/** Set Valid to.
+	  * Valid to including this date (last day)
+	  */
+	public void setValidTo (Timestamp ValidTo);
+
+	/** Get Valid to.
+	  * Valid to including this date (last day)
+	  */
+	public Timestamp getValidTo();
 
     /** Column name Value */
     public static final String COLUMNNAME_Value = "Value";

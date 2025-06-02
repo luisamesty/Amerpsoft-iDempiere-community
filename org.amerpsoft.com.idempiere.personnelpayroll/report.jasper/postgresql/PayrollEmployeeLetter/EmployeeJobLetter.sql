@@ -4,9 +4,9 @@ SELECT * FROM (
 -- Employee file 
 	SELECT DISTINCT
 	-- LOGO
-	img1.binarydata as org_logo,
-	INITCAP(coalesce(org.name,org.value,''))  as org_name,
-    INITCAP(COALESCE(org.description,org.name,org.name,''))  org_description, 
+	CASE WHEN emp.ad_orgto_id IS NULL THEN img1.binarydata ELSE img2.binarydata END as org_logo,
+	INITCAP(coalesce(loc_n.orgname, org.name,org.value,''))  as org_name,
+    INITCAP(COALESCE(loc_n.name, org.description, org.name,org.name,''))  org_description, 
 	COALESCE(orginfo.taxid,'')  as org_taxid,    
    -- IMAGE
     COALESCE(img3.binarydata, img4.binarydata) as foto,
@@ -21,15 +21,29 @@ SELECT * FROM (
 	CASE WHEN emp.sex = 'F' THEN 'la señora' 
 		          ELSE 'el señor'
 	END as emp_prefix,
-	CASE WHEN $P{Salary} IS NULL  THEN adempiere.amf_num2letterLPY(0,'U','es')
-		 ELSE adempiere.amf_num2letterLPY($P{Salary},'U','es')
-	END as salario_letras,
+	CASE WHEN $P{Salary} IS NULL OR $P{Salary} = 0 THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
+    	ELSE adempiere.amf_num2letterLPY($P{Salary}, 'U', 'es')
+	END AS salario_letras_param,
 	-- SALARIO
-	COALESCE(emp.salary, 0) AS salario_ficha,
+	COALESCE(TRUNC(emp.salary), 0) AS salario_ficha,
 	CASE WHEN emp.salary IS NULL OR emp.salary = 0 THEN adempiere.amf_num2letterLPY(0,'U','es')
-		 ELSE adempiere.amf_num2letterLPY(emp.salary,'U','es')
+		 ELSE adempiere.amf_num2letterLPY(TRUNC(emp.salary),'U','es')
 	END as salario_letras_ficha,
-	-- CONTRACT
+    -- Cálculo del salario base mensual
+    TRUNC(amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
+        344, 
+        114
+    ) / 6 ) AS salary_base_mensual,
+    -- Salario base mensual en letras
+    CASE WHEN amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 344, 114 ) / 6 IS NULL 
+             OR amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6 = 0
+	        THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
+        ELSE adempiere.amf_num2letterLPY(TRUNC(
+                 amp_salary_hist_calc('salary_base', emp.amn_employee_id, 
+                     ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
+                     $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6), 'U', 'es')
+    END AS salary_base_letras,
+    -- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
 	COALESCE(adp.name, adp.description, '-') as departamento,
@@ -39,6 +53,7 @@ SELECT * FROM (
 	COALESCE(job.name, job.description, '-') as puesto_trabajo,
 	-- LOCATION (NÓMINA)
 	COALESCE(loc_n.name, '-') as localidad_nomina,
+	curr2.iso_code,
 	CONCAT(curr2.iso_code,'-',currt2.description) as moneda_sol,
 	-- LOCATION
 	COALESCE(loc.postal, '-') as cod_postal, 

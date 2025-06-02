@@ -24,9 +24,26 @@ import org.compiere.util.*;
  *
  */
 public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
+	
+	private static final long serialVersionUID = 3248799250517025407L;
+	
+    /** DAY_OF_WEEK CONSTANTS */
+    public static final String DAYOFWEEK_SUNDAY 	= "1";
+    public static final String DAYOFWEEK_MONDAY 	= "2";
+    public static final String DAYOFWEEK_TUESDAY 	= "3";
+    public static final String DAYOFWEEK_WEDNESDAY 	= "4";
+    public static final String DAYOFWEEK_THURSDAY 	= "5";
+    public static final String DAYOFWEEK_FRIDAY 	= "6";
+    public static final String DAYOFWEEK_SATURDAY 	= "7";
+    // Indicates if Saturday is considered Business Day */
+    public static boolean SaturdayBusinessDay = false;
+    public static boolean SundayBusinessDay = false;
+    
 	/**	Cache							*/
 	private static CCache<Integer,MAMN_Payroll_Assist> s_cache = new CCache<Integer,MAMN_Payroll_Assist>(Table_Name, 10);
 
+	static CLogger log = CLogger.getCLogger(MAMN_Payroll_Assist.class);
+	
 	/**
 	 * @param p_ctx
 	 * @param AMN_Payroll_Assist_ID
@@ -54,13 +71,7 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
      */
 	static public String getPayrollAssist_DayofWeek (Timestamp p_DateAssit) {
 		String retValue="0";
-//		DAYOFWEEK_Sunday = "0";
-//		DAYOFWEEK_Monday = "1";
-//		DAYOFWEEK_Tuesday = "2";
-//		DAYOFWEEK_Wednesday = "3";
-//		DAYOFWEEK_Thursday = "4";
-//		DAYOFWEEK_Friday = "5";
-//		DAYOFWEEK_Saturday = "6";
+
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(p_DateAssit);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -68,19 +79,19 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);		
 		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY )
-			retValue = "0";
+			retValue = DAYOFWEEK_SUNDAY;
 		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY )
-			retValue = "1";
+			retValue = DAYOFWEEK_MONDAY;
 		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY )
-            retValue = "2";
+            retValue = DAYOFWEEK_TUESDAY;
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY )
-            retValue = "3";
+            retValue = DAYOFWEEK_WEDNESDAY;
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY )
-             retValue = "4";
+            retValue = DAYOFWEEK_THURSDAY;
         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY )
-            retValue = "5";
-         if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY )
-            retValue = "6";
+            retValue = DAYOFWEEK_FRIDAY;
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY )
+            retValue = DAYOFWEEK_SATURDAY;
 
 		return retValue;
 		
@@ -93,13 +104,7 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
      */
 	static public String getPayrollAssist_DayofWeekName (Timestamp p_DateAssit) {
 		String retValue = Msg.getMsg(Env.getCtx(), "Sunday");;
-//		DAYOFWEEK_Sunday = "0";
-//		DAYOFWEEK_Monday = "1";
-//		DAYOFWEEK_Tuesday = "2";
-//		DAYOFWEEK_Wednesday = "3";
-//		DAYOFWEEK_Thursday = "4";
-//		DAYOFWEEK_Friday = "5";
-//		DAYOFWEEK_Saturday = "6";
+
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(p_DateAssit);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -224,4 +229,82 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 		return true;
 		
 	}	//	AMN_Payroll_Assist
+	
+	/**
+	 * findMAMN_Payroll_AssistByID
+	 * @param ctx
+	 * @param p_MAMN_Payroll_Assist_ID
+	 * @return
+	 */
+	
+	public static MAMN_Payroll_Assist findMAMN_Payroll_AssistByRowID(Properties ctx, int p_MAMN_Payroll_Assist_Row_ID, String trxName) {
+	    int payrollAssistId = DB.getSQLValueEx(trxName, 
+	        "SELECT amn_payroll_assist_id FROM amn_payroll_assist WHERE AMN_Payroll_Assist_Row_ID = ?", 
+	        p_MAMN_Payroll_Assist_Row_ID);
+
+	    return payrollAssistId > 0 ? new MAMN_Payroll_Assist(ctx, payrollAssistId, trxName) : null;
+	}
+	
+	/**
+	 * Busca un registro en AMN_Payroll_Assist por AMN_Employee_ID y AMN_DateTime.
+	 *
+	 * @param ctx          Contexto de la aplicación.
+	 * @param employeeID   ID del empleado (AMN_Employee_ID).
+	 * @param amnDateTime  Fecha y hora del evento (Event_Date).
+	 * @param trxName      Nombre de la transacción.
+	 * @return Registro encontrado de MAMN_Payroll_Assist o null si no existe.
+	 */
+	public static MAMN_Payroll_Assist findByEmployeeAndDateTime(Properties ctx, int employeeID, Timestamp amnDateTime, String trxName) {
+	    MAMN_Payroll_Assist retValue = null;
+	    
+	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Employee_ID = ? AND Event_Time = ?";
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	        pstmt.setInt(1, employeeID);
+	        pstmt.setTimestamp(2, amnDateTime);
+	        
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                retValue = new MAMN_Payroll_Assist(ctx, rs, trxName);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return retValue;
+	}
+
+	/**
+	 * Busca un registro en AMN_Payroll_Assist por AMN_Payroll_Assist_Row_ID, AMN_Employee_ID y AMN_DateTime.
+	 *
+	 * @param ctx                  Contexto de la aplicación.
+	 * @param payrollAssistRowID   ID de la fila de asistencia (AMN_Payroll_Assist_Row_ID).
+	 * @param employeeID           ID del empleado (AMN_Employee_ID).
+	 * @param amnDateTime          Fecha y hora del evento (Event_Date).
+	 * @param trxName              Nombre de la transacción.
+	 * @return Registro encontrado de MAMN_Payroll_Assist o null si no existe.
+	 */
+	public MAMN_Payroll_Assist findByAssistRowEmployeeAndDateTime(Properties ctx, int payrollAssistRowID, int employeeID, Timestamp amnDateTime, String trxName) {
+	    MAMN_Payroll_Assist retValue = null;
+	    
+	    String sql = "SELECT * FROM amn_payroll_assist WHERE AMN_Payroll_Assist_Row_ID = ? AND AMN_Employee_ID = ? AND Event_Time = ?";
+	    
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+	        pstmt.setInt(1, payrollAssistRowID);
+	        pstmt.setInt(2, employeeID);
+	        pstmt.setTimestamp(3, amnDateTime);
+	        
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                retValue = new MAMN_Payroll_Assist(ctx, rs, trxName);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return retValue;
+	}
+
+	
 }

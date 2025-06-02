@@ -52,8 +52,6 @@ public class AMNPayrollProcessCompleteOneDoc extends SvrProcess{
 	String AMN_Process_Value="";
 	String AMN_Payroll_Name="";
 	String sql="";
-	boolean okprocess = false;
-	boolean okinvoice = false;
 	
 	/* (non-Javadoc)
 	 * @see org.compiere.process.SvrProcess#prepare()
@@ -90,7 +88,7 @@ public class AMNPayrollProcessCompleteOneDoc extends SvrProcess{
 		if (!amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)
 				&& MAMN_Payroll.sqlGetAMNPayrollDetailNoLines(p_AMN_Payroll_ID, get_TrxName()) > 0) {
 			// Process AMN_Payroll and Invoice if apply
-			Msg_Value0 = processAMN_Payroll(getCtx(), amnpayroll, amnprocess, get_TrxName());
+			Msg_Value0 = amnpayroll.processAMN_Payroll(getCtx(), amnpayroll, amnprocess, get_TrxName());
 			Msg_Value=Msg_Value+Msg_Value0;	
 		} else {
 			if (amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
@@ -103,91 +101,7 @@ public class AMNPayrollProcessCompleteOneDoc extends SvrProcess{
 				Msg_Value=Msg_Value+Msg_Value0;			}
 		}
 		addLog(Msg_Value);
-		if (okinvoice &&  okprocess)
-			Msg_Value = "@Ok@";
-		else 
-			Msg_Value = "@KO@";
 	    return  Msg_Value;
     }
 
-    /**
-     * processAMN_Payroll
-     * Process AMN_Payroll and C_Invoice if apply
-     * @param ctx
-     * @param amnpayroll
-     * @param amnprocess
-     * @param trxName
-     * @return
-     */
-    private String processAMN_Payroll(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String trxName) {
-    	
-    	int C_Invoice_ID = 0;
-    	MInvoice invoice = null;
-    	String P_Msg_Value="";
-		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(getCtx(), 0, trxName);
-		MAMN_Period amnperiod = new MAMN_Period(getCtx(), amnpayroll.getAMN_Period_ID(), trxName);
-		MClient cli = new MClient(getCtx(), amnpayroll.getAD_Client_ID(), trxName);
-		MOrg org = new MOrg(getCtx(),  amnpayroll.getAD_Org_ID(), trxName);  	
-    	String Msg_Value1 =amnpayroll.getSummary();
-		addLog(Msg_Value1);
-		P_Msg_Value=P_Msg_Value+Msg_Value1;
-		C_Invoice_ID = amnpayroll.getC_Invoice_ID();
-		// Verify if it is Document Controlled
-		if (amnprocess.isDocControlled()) {
-			// Creates Invoice and Complete it
-			if(C_Invoice_ID != 0) {
-				invoice = MInvoice.get(getCtx(),C_Invoice_ID);
-				if (invoice == null) {
-					C_Invoice_ID = 0;
-					invoice = new MInvoice(getCtx(), C_Invoice_ID, trxName);
-				}
-			} else {
-				invoice = new MInvoice(getCtx(), C_Invoice_ID, trxName);
-			}
-			// Invoice Header
-			amnpayroll.createCInvoice(getCtx(), cli.getAD_Client_ID(), org.getAD_Org_ID(), p_AMN_Payroll_ID,  invoice, trxName);
-			log.warning("Invoice:"+invoice.getDocumentNo() +"  AD_Org_ID:"+ invoice.getAD_Org_ID() );
-			// Invoice Lines
-			okinvoice = amnpayroll.createCInvoiceLines(getCtx(), invoice, cli.getAD_Client_ID(),  org.getAD_Org_ID(), amnpayroll.getAMN_Payroll_ID(),  amnprocess.getAMN_Process_ID(), trxName);
-			// Complete Invoice
-			if (invoice.getDocStatus().compareToIgnoreCase(DocAction.STATUS_Drafted) ==0) {
-				// Process INVOICE
-				okinvoice = invoice.processIt(DocAction.STATUS_Completed);
-			}
-		} else {
-			okinvoice = true;
-		}
-		// Process AMN_Payroll
-		try {
-			okprocess = amnpayroll.processIt(MAMN_Payroll.DOCACTION_Complete);
-		} catch (Exception e) {
-			// 
-			Msg_Value1 = e.getMessage();
-		}
-		P_Msg_Value=P_Msg_Value+Msg_Value1;
-		// Set C_Invoice_ID y Payroll Header
-		if (amnprocess.isDocControlled()) {
-			amnpayroll.setC_Invoice_ID(invoice.getC_Invoice_ID());
-		}
-		amnpayroll.saveEx();
-		// Verify if ERRORs
-		if ( !okprocess || !okinvoice)
-		{
-			//Msg_Value=Msg_Value+" ** ERROR PROCESSING **  Payroll:"+AMN_Payroll_Name+" \r\n";
-			Msg_Value1=" ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **   \r\n";	
-		} else {
-			Msg_Value1=" ** "+Msg.getMsg(Env.getCtx(), "Success")+" **   \r\n";
-		}
-		addLog(Msg_Value1);
-		P_Msg_Value=P_Msg_Value+Msg_Value1;	
-		// UPDATE SALARY IF NN
-	    // Nominal Salary UPDATE ONLY ON NN Process
-		if (AMN_Process_Value.equalsIgnoreCase("NN")) {
-			Msg_Value1= amnpayrollhistoric.updateSalaryAmnPayrollHistoric(getCtx(), null, amnpayroll.getAMN_Employee_ID(), 
-		    		amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), amnpayroll.getC_Currency_ID(), trxName)+"\r\n";
-			P_Msg_Value=P_Msg_Value+Msg_Value1;
-		}
-		// 
-		return P_Msg_Value;
-    }
 }

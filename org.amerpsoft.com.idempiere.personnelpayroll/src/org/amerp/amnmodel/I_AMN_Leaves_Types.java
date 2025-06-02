@@ -32,7 +32,7 @@ public interface I_AMN_Leaves_Types
     /** TableName=AMN_Leaves_Types */
     public static final String Table_Name = "AMN_Leaves_Types";
 
-    /** AD_Table_ID=1000099 */
+    /** AD_Table_ID=1000105 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -107,6 +107,32 @@ public interface I_AMN_Leaves_Types
 	  */
 	public int getCreatedBy();
 
+    /** Column name DaysMode */
+    public static final String COLUMNNAME_DaysMode = "DaysMode";
+
+	/** Set Days Calculation Mode.
+	  * Days Calculation Mode using Calendar  or Business Days
+	  */
+	public void setDaysMode (String DaysMode);
+
+	/** Get Days Calculation Mode.
+	  * Days Calculation Mode using Calendar  or Business Days
+	  */
+	public String getDaysMode();
+
+    /** Column name DefaultDays */
+    public static final String COLUMNNAME_DefaultDays = "DefaultDays";
+
+	/** Set Default Days.
+	  * Default Days Quantity
+	  */
+	public void setDefaultDays (BigDecimal DefaultDays);
+
+	/** Get Default Days.
+	  * Default Days Quantity
+	  */
+	public BigDecimal getDefaultDays();
+
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 
@@ -119,6 +145,15 @@ public interface I_AMN_Leaves_Types
 	  * Optional short description of the record
 	  */
 	public String getDescription();
+
+    /** Column name HoursDay */
+    public static final String COLUMNNAME_HoursDay = "HoursDay";
+
+	/** Set Hours per day in a Shift	  */
+	public void setHoursDay (BigDecimal HoursDay);
+
+	/** Get Hours per day in a Shift	  */
+	public BigDecimal getHoursDay();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -133,6 +168,45 @@ public interface I_AMN_Leaves_Types
 	  */
 	public boolean isActive();
 
+    /** Column name LeadTime */
+    public static final String COLUMNNAME_LeadTime = "LeadTime";
+
+	/** Set Lead Time.
+	  * Lead TimeLead time for a request
+	  */
+	public void setLeadTime (int LeadTime);
+
+	/** Get Lead Time.
+	  * Lead TimeLead time for a request
+	  */
+	public int getLeadTime();
+
+    /** Column name MaximunDaysToPay */
+    public static final String COLUMNNAME_MaximunDaysToPay = "MaximunDaysToPay";
+
+	/** Set Maximun Days To Pay.
+	  * Maximun Days To Pay witin a month
+	  */
+	public void setMaximunDaysToPay (int MaximunDaysToPay);
+
+	/** Get Maximun Days To Pay.
+	  * Maximun Days To Pay witin a month
+	  */
+	public int getMaximunDaysToPay();
+
+    /** Column name MinimumDays */
+    public static final String COLUMNNAME_MinimumDays = "MinimumDays";
+
+	/** Set Minimum Days.
+	  * Minimum Days for requiring Leaves
+	  */
+	public void setMinimumDays (int MinimumDays);
+
+	/** Get Minimum Days.
+	  * Minimum Days for requiring Leaves
+	  */
+	public int getMinimumDays();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -145,6 +219,19 @@ public interface I_AMN_Leaves_Types
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name ResponseTime */
+    public static final String COLUMNNAME_ResponseTime = "ResponseTime";
+
+	/** Set Response Time.
+	  * Request Response Time
+	  */
+	public void setResponseTime (int ResponseTime);
+
+	/** Get Response Time.
+	  * Request Response Time
+	  */
+	public int getResponseTime();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

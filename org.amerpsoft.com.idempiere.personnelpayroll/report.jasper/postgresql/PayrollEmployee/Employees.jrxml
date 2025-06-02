@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Employees" pageWidth="2200" pageHeight="612" orientation="Landscape" columnWidth="2160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a8631c3-b807-49b4-bd24-2bb8ccf7fd46">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Employees" pageWidth="2320" pageHeight="612" orientation="Landscape" columnWidth="2280" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a8631c3-b807-49b4-bd24-2bb8ccf7fd46">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="371"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="623"/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -15,6 +22,9 @@
 	<parameter name="AMN_Jobstation_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<parameter name="IsDetailedNames" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="isShowHeader" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
@@ -43,8 +53,13 @@ FROM (SELECT DISTINCT
 -- BPARTNER GROUP
 	 COALESCE(bpg.value, bpg.name, bpg.description) as grupo,
 -- BPARTNER
-	 cbp.name as nombre, COALESCE(cbp.taxid, cbp.amerp_rifseniat) as rif,
+	 COALESCE(cbp.taxid, cbp.amerp_rifseniat) as rif,
 -- EMPLOYEE 
+    emp.name as nombre,
+    COALESCE(emp.lastname1,'') AS apellido1,
+    COALESCE(emp.lastname2,'') AS apellido2,
+    COALESCE(emp.firstname1,'') AS nombre1,
+    COALESCE(emp.firstname2,'') AS nombre2,
     emp.value as codigo,   
     emp.idnumber as cedula,
     DATE(emp.birthday) as fecha_nacimiento,
@@ -198,7 +213,6 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  WHERE emp.isactive= 'Y' AND
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
-       AND ( CASE WHEN ( ( $P{AMN_Location_ID} = 0 OR $P{AMN_Location_ID} IS NULL ) OR emp.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 ) as trabajadores
 WHERE imprimir_nom= 1 AND imprimir_emp= 1
 AND imprimir_org=1 AND ad_client_id = $P{AD_Client_ID}
@@ -243,14 +257,30 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 		<property name="com.jaspersoft.studio.field.name" value="grupo"/>
 		<property name="com.jaspersoft.studio.field.label" value="grupo"/>
 	</field>
-	<field name="nombre" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
-		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
-	</field>
 	<field name="rif" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="rif"/>
 		<property name="com.jaspersoft.studio.field.label" value="rif"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="apellido1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apellido1"/>
+		<property name="com.jaspersoft.studio.field.label" value="apellido1"/>
+	</field>
+	<field name="apellido2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apellido2"/>
+		<property name="com.jaspersoft.studio.field.label" value="apellido2"/>
+	</field>
+	<field name="nombre1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre1"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre1"/>
+	</field>
+	<field name="nombre2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre2"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre2"/>
 	</field>
 	<field name="codigo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
@@ -357,7 +387,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 		<property name="com.jaspersoft.studio.field.label" value="fecha_ingreso"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="COLUMN_36" class="java.sql.Timestamp">
+	<field name="COLUMN_40" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="fecha_nacimiento"/>
 		<property name="com.jaspersoft.studio.field.label" value="fecha_nacimiento"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
@@ -654,11 +684,12 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CÓDIGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="170" y="0" width="240" height="16" uuid="b3f7c1c5-4228-4ed6-9713-4cd33bbc826b">
+				<reportElement x="170" y="0" width="360" height="16" uuid="b3f7c1c5-4228-4ed6-9713-4cd33bbc826b">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
@@ -677,7 +708,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CEDULA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="860" y="0" width="230" height="16" uuid="465f3d34-de3e-4cc6-a84d-da173272a21f">
+				<reportElement x="980" y="0" width="230" height="16" uuid="465f3d34-de3e-4cc6-a84d-da173272a21f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -688,7 +719,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CARGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1870" y="0" width="100" height="16" uuid="27327948-7b48-4a1e-90dd-3a7fe0e2ff7e">
+				<reportElement x="1990" y="0" width="100" height="16" uuid="27327948-7b48-4a1e-90dd-3a7fe0e2ff7e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -698,7 +729,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CONDICIÓN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="590" y="0" width="70" height="16" uuid="efa1b7e3-9920-42f1-9fc5-5a7e9d7f5c42">
+				<reportElement x="710" y="0" width="70" height="16" uuid="efa1b7e3-9920-42f1-9fc5-5a7e9d7f5c42">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -709,7 +740,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[F. INGRESO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="410" y="0" width="70" height="16" uuid="a75eab3a-9e77-4552-990d-063e615783b9">
+				<reportElement x="530" y="0" width="70" height="16" uuid="a75eab3a-9e77-4552-990d-063e615783b9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -719,7 +750,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[F. NAC.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="480" y="0" width="40" height="16" uuid="a7934b78-b1ab-4d15-94dd-a2aff1cf1915">
+				<reportElement x="600" y="0" width="40" height="16" uuid="a7934b78-b1ab-4d15-94dd-a2aff1cf1915">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -729,7 +760,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[EDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="520" y="0" width="70" height="16" uuid="03a9fcc3-b75b-481a-b86b-4b16b00bb1bf">
+				<reportElement x="640" y="0" width="70" height="16" uuid="03a9fcc3-b75b-481a-b86b-4b16b00bb1bf">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -740,7 +771,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[EDO. CIVIL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1970" y="0" width="90" height="16" uuid="8cf33025-1061-4c5b-8005-34c2a0d133c7">
+				<reportElement x="2090" y="0" width="90" height="16" uuid="8cf33025-1061-4c5b-8005-34c2a0d133c7">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -751,7 +782,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[TIPO DE PAGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1700" y="0" width="170" height="16" uuid="bd9fb9b5-7687-420d-b685-782a0d788c36">
+				<reportElement x="1820" y="0" width="170" height="16" uuid="bd9fb9b5-7687-420d-b685-782a0d788c36">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -762,7 +793,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[TELÉFONOS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2060" y="0" width="100" height="16" uuid="3c9def5e-00ea-4f41-87e7-aad8017deb86">
+				<reportElement x="2180" y="0" width="100" height="16" uuid="3c9def5e-00ea-4f41-87e7-aad8017deb86">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -771,7 +802,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[SAL. MENSUAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="660" y="0" width="200" height="16" uuid="5f25d89b-b7b8-4f81-8145-5db485ca9749">
+				<reportElement x="780" y="0" width="200" height="16" uuid="5f25d89b-b7b8-4f81-8145-5db485ca9749">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -782,7 +813,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[ANTIGUEDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1210" y="0" width="60" height="16" uuid="f47b9f63-34d8-4fa6-82c9-d7679518b993">
+				<reportElement x="1330" y="0" width="60" height="16" uuid="f47b9f63-34d8-4fa6-82c9-d7679518b993">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -794,7 +825,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[UNIDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1270" y="0" width="230" height="16" uuid="34f86625-db87-4d3c-a862-2b2a494fa557">
+				<reportElement x="1390" y="0" width="230" height="16" uuid="34f86625-db87-4d3c-a862-2b2a494fa557">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -807,7 +838,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[SECTOR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1210" y="0" width="290" height="16" uuid="eef80ac7-7983-460f-8d68-e17f97c7dc92">
+				<reportElement x="1330" y="0" width="290" height="16" uuid="eef80ac7-7983-460f-8d68-e17f97c7dc92">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -819,7 +850,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[SECTOR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1500" y="0" width="200" height="16" uuid="06c216d6-fbe2-4c9c-b92d-e72ce53fc8f2">
+				<reportElement x="1620" y="0" width="200" height="16" uuid="06c216d6-fbe2-4c9c-b92d-e72ce53fc8f2">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -830,7 +861,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CORREO ELECTRÓNICO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1150" y="0" width="60" height="16" uuid="07fb2806-8d89-4397-b4d8-2480cfbbedd9">
+				<reportElement x="1270" y="0" width="60" height="16" uuid="07fb2806-8d89-4397-b4d8-2480cfbbedd9">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -842,7 +873,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[ORG]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1090" y="0" width="60" height="16" uuid="df90a581-0faa-42d4-b598-5d5d8573b972">
+				<reportElement x="1210" y="0" width="60" height="16" uuid="df90a581-0faa-42d4-b598-5d5d8573b972">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -852,13 +883,62 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				</textElement>
 				<text><![CDATA[CONTRATO]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="170" y="0" width="90" height="16" uuid="b554e4a1-a83e-4418-a6ae-7432f56c7ca1">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="0" width="90" height="16" uuid="be14c882-4b36-4bea-882f-995ea6c95d78">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="0" width="90" height="16" uuid="a8d7809d-5d47-485d-9c18-4de5a015cc94">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDO1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="90" height="16" uuid="cf4ff895-1f49-4aca-8094-eb256a15d1d5">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDO2]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="50" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowHeader}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<textField pattern="dd/MM/yy">
-				<reportElement x="2030" y="0" width="128" height="15" uuid="cd98b8bb-c602-4475-a957-3d93ce023f44">
+				<reportElement x="2152" y="0" width="128" height="15" uuid="cd98b8bb-c602-4475-a957-3d93ce023f44">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -926,7 +1006,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[Reporte de Trabajadores]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement x="2100" y="15" width="58" height="15" uuid="b31083f3-28be-4dc0-994f-9fc4b5e713bf">
+				<reportElement x="2222" y="15" width="58" height="15" uuid="b31083f3-28be-4dc0-994f-9fc4b5e713bf">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -938,7 +1018,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="2030" y="15" width="70" height="15" uuid="d35106da-cb07-435f-94fd-89aecd91295f">
+				<reportElement x="2152" y="15" width="70" height="15" uuid="d35106da-cb07-435f-94fd-89aecd91295f">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -950,10 +1030,10 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="28" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<line>
-				<reportElement x="0" y="24" width="2160" height="1" uuid="f1912a56-953e-45a8-a15c-a411c477939b">
+				<reportElement x="0" y="24" width="2280" height="1" uuid="f1912a56-953e-45a8-a15c-a411c477939b">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -961,10 +1041,11 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="27" width="2160" height="1" uuid="86860efd-7c0a-4c0b-ab1d-b7f26f5b37bc">
+				<reportElement x="0" y="27" width="2280" height="1" uuid="86860efd-7c0a-4c0b-ab1d-b7f26f5b37bc">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<staticText>
@@ -981,23 +1062,26 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CÓDIGO]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="3" width="2160" height="1" uuid="69f43c09-0a33-4693-912d-7a0bdd2a469c">
+				<reportElement x="0" y="3" width="2280" height="1" uuid="69f43c09-0a33-4693-912d-7a0bdd2a469c">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="0" width="2160" height="1" uuid="2539f63e-2080-4e79-b28b-a5fc4f349091">
+				<reportElement x="0" y="0" width="2280" height="1" uuid="2539f63e-2080-4e79-b28b-a5fc4f349091">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="170" y="4" width="240" height="20" uuid="e542dd78-316a-4ef7-b0f0-f3b3911409d0">
+				<reportElement x="170" y="4" width="360" height="20" uuid="e542dd78-316a-4ef7-b0f0-f3b3911409d0">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
@@ -1014,7 +1098,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CEDULA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="860" y="5" width="230" height="20" uuid="438a5a30-b1c1-448b-99bd-ddf45723172d">
+				<reportElement x="980" y="4" width="230" height="20" uuid="438a5a30-b1c1-448b-99bd-ddf45723172d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -1023,7 +1107,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CARGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1870" y="4" width="100" height="20" uuid="e2666e83-e36d-4374-af41-1f3ade56a433">
+				<reportElement x="1990" y="4" width="100" height="20" uuid="e2666e83-e36d-4374-af41-1f3ade56a433">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -1033,7 +1117,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CONDICIÓN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="590" y="4" width="70" height="20" uuid="639c7cb4-301e-4ec1-8342-57a006ea234e">
+				<reportElement x="710" y="4" width="70" height="20" uuid="639c7cb4-301e-4ec1-8342-57a006ea234e">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1042,21 +1126,21 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[F. INGRESO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="410" y="4" width="70" height="20" uuid="75c154c3-3476-423f-9f2b-46d877c053c6"/>
+				<reportElement x="530" y="4" width="70" height="20" uuid="75c154c3-3476-423f-9f2b-46d877c053c6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F. NAC.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="480" y="4" width="40" height="20" uuid="6c02c9a4-ab88-4337-ab2c-9d5f5a33ded2"/>
+				<reportElement x="600" y="4" width="40" height="20" uuid="6c02c9a4-ab88-4337-ab2c-9d5f5a33ded2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[EDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="520" y="4" width="70" height="20" uuid="6da5b693-15fd-465c-b2a3-0c39d0c10b4e">
+				<reportElement x="640" y="4" width="70" height="20" uuid="6da5b693-15fd-465c-b2a3-0c39d0c10b4e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1065,7 +1149,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[EDO. CIVIL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1970" y="4" width="90" height="20" uuid="37d91518-7610-47a7-8f53-6c74f75a13ca">
+				<reportElement x="2090" y="4" width="90" height="20" uuid="37d91518-7610-47a7-8f53-6c74f75a13ca">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -1076,7 +1160,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[TIPO DE PAGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1700" y="4" width="170" height="20" uuid="c527fddb-28aa-4648-80b2-b1088c255614">
+				<reportElement x="1820" y="4" width="170" height="20" uuid="c527fddb-28aa-4648-80b2-b1088c255614">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1085,7 +1169,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[TELÉFONOS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2060" y="4" width="100" height="20" uuid="a446de9b-a30d-4199-a827-5ea82abdb5fd">
+				<reportElement x="2180" y="4" width="100" height="20" uuid="a446de9b-a30d-4199-a827-5ea82abdb5fd">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1094,7 +1178,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[SAL. MENSUAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="660" y="5" width="200" height="20" uuid="f9bdb476-03e1-424a-99d2-613fce53772d">
+				<reportElement x="780" y="4" width="200" height="20" uuid="f9bdb476-03e1-424a-99d2-613fce53772d">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -1103,7 +1187,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[ANTIGUEDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1210" y="4" width="60" height="20" uuid="27ce5e48-ac43-4e61-ac43-90889556b9cb">
+				<reportElement x="1330" y="4" width="60" height="20" uuid="27ce5e48-ac43-4e61-ac43-90889556b9cb">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
@@ -1113,7 +1197,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[UNIDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1270" y="4" width="230" height="20" uuid="ddb62eea-cb0d-4f73-922b-8adb93cd44c0">
+				<reportElement x="1390" y="4" width="230" height="20" uuid="ddb62eea-cb0d-4f73-922b-8adb93cd44c0">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
@@ -1124,7 +1208,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[SECTOR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1210" y="4" width="290" height="20" uuid="e9800c05-eebb-4c3d-9d1b-dc6448c60509">
+				<reportElement x="1330" y="4" width="290" height="20" uuid="e9800c05-eebb-4c3d-9d1b-dc6448c60509">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "N" ) != 0]]></printWhenExpression>
 				</reportElement>
@@ -1134,7 +1218,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[SECTOR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1500" y="4" width="200" height="20" uuid="c296b1b7-03a5-4819-9df4-f5704fe30a41">
+				<reportElement x="1620" y="4" width="200" height="20" uuid="c296b1b7-03a5-4819-9df4-f5704fe30a41">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -1143,7 +1227,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[CORREO ELECTRÓNICO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1150" y="4" width="60" height="20" uuid="73187389-d214-4ff6-ba3e-2f9078a0398e">
+				<reportElement x="1270" y="4" width="60" height="20" uuid="73187389-d214-4ff6-ba3e-2f9078a0398e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1153,13 +1237,65 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<text><![CDATA[ORG]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1090" y="4" width="60" height="20" uuid="8cabb5ea-9a21-4c50-bd9c-befe97c563fd">
+				<reportElement x="1210" y="4" width="60" height="20" uuid="8cabb5ea-9a21-4c50-bd9c-befe97c563fd">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CONTRATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="4" width="90" height="20" uuid="41eefe96-de8a-4c2a-8d4a-dfc7b3e38915">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="4" width="90" height="20" uuid="b0a88b29-722c-41b4-a7ed-d3b5dde34a22">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="4" width="90" height="20" uuid="f64e778f-2ff7-4a8f-a8c1-31aef9bdf3f0">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDO1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="4" width="90" height="20" uuid="a35d3d2a-1864-41b5-a17b-c2a8c547f723">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDO2]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -1175,10 +1311,11 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="170" y="0" width="240" height="14" isRemoveLineWhenBlank="true" uuid="0357fe32-bf93-424d-9492-8d1f9e28746a">
+				<reportElement stretchType="RelativeToTallestObject" x="170" y="0" width="360" height="14" isRemoveLineWhenBlank="true" uuid="0357fe32-bf93-424d-9492-8d1f9e28746a">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="11"/>
@@ -1196,7 +1333,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{cedula}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="410" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="af03411c-9abd-4d00-b3f4-5d8185de1d48">
+				<reportElement stretchType="RelativeToTallestObject" x="530" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="af03411c-9abd-4d00-b3f4-5d8185de1d48">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1205,7 +1342,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{fecha_nacimiento}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="480" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="f53acc22-77eb-4c5a-a4bb-cbea0a782745">
+				<reportElement stretchType="RelativeToTallestObject" x="600" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="f53acc22-77eb-4c5a-a4bb-cbea0a782745">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1214,7 +1351,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{edad}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="590" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="8bf6896b-f6b3-4d5e-b526-1d68f0f7906a">
+				<reportElement stretchType="RelativeToTallestObject" x="710" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="8bf6896b-f6b3-4d5e-b526-1d68f0f7906a">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -1224,7 +1361,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="520" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="c27ba8a5-f1da-44cd-a266-ceb536b40aea">
+				<reportElement stretchType="RelativeToTallestObject" x="640" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="c27ba8a5-f1da-44cd-a266-ceb536b40aea">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -1234,7 +1371,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{estado_civil}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="860" y="0" width="230" height="14" isRemoveLineWhenBlank="true" uuid="a064f868-30da-43ce-ad0b-d81d3597ba2f">
+				<reportElement stretchType="RelativeToTallestObject" x="980" y="0" width="230" height="14" isRemoveLineWhenBlank="true" uuid="a064f868-30da-43ce-ad0b-d81d3597ba2f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -1245,7 +1382,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{puesto_trabajo}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1870" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="2f3b5a53-fc3a-449a-8e74-6bdc841aa26a">
+				<reportElement stretchType="RelativeToTallestObject" x="1990" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="2f3b5a53-fc3a-449a-8e74-6bdc841aa26a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -1255,7 +1392,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{condicion_trabajo}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1970" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="747375ca-5ace-4737-8f19-731a0649abe7">
+				<reportElement stretchType="RelativeToTallestObject" x="2090" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="747375ca-5ace-4737-8f19-731a0649abe7">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -1267,7 +1404,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{tipo_pago}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1700" y="0" width="170" height="14" isRemoveLineWhenBlank="true" uuid="aa7c9030-fd24-4254-81c2-15fb6c9c22a1">
+				<reportElement stretchType="RelativeToTallestObject" x="1820" y="0" width="170" height="14" isRemoveLineWhenBlank="true" uuid="aa7c9030-fd24-4254-81c2-15fb6c9c22a1">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="2"/>
@@ -1277,7 +1414,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[($F{tel1}!= null ? $F{tel1} + ($F{tel2}!= null ? ", " + $F{tel2} : "") : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.##" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="2060" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="64795fbc-65f4-49a9-8fd7-80c896e23965">
+				<reportElement stretchType="RelativeToTallestObject" x="2180" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="64795fbc-65f4-49a9-8fd7-80c896e23965">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				</reportElement>
@@ -1287,7 +1424,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{sueldo}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1500" y="0" width="200" height="14" isRemoveLineWhenBlank="true" uuid="5856546e-a19c-427d-a192-18633299bd23">
+				<reportElement stretchType="RelativeToTallestObject" x="1620" y="0" width="200" height="14" isRemoveLineWhenBlank="true" uuid="5856546e-a19c-427d-a192-18633299bd23">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="2"/>
@@ -1297,7 +1434,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{correoe}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.##" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="2060" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="7f86bdc2-d249-4733-81d1-450a7c2cbd0e">
+				<reportElement stretchType="RelativeToTallestObject" x="2180" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="7f86bdc2-d249-4733-81d1-450a7c2cbd0e">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
@@ -1307,7 +1444,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA["*******"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="660" y="0" width="200" height="14" isRemoveLineWhenBlank="true" uuid="cf8a8f24-b15f-4f56-ade0-aeb9dea5a81e">
+				<reportElement stretchType="RelativeToTallestObject" x="780" y="0" width="200" height="14" isRemoveLineWhenBlank="true" uuid="cf8a8f24-b15f-4f56-ade0-aeb9dea5a81e">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -1316,7 +1453,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[( $F{a_servicio}== 0 ? "" : ( $F{a_servicio} == 1 ?   $F{a_servicio}.intValue()+ " año " :  $F{a_servicio}.intValue()+ " años " ) )+ ( $F{m_servicio}== 0 ? "" : ( $F{m_servicio} == 1 ?   $F{m_servicio}.intValue()+ " mes " :  $F{m_servicio}.intValue()+ " meses " ) ) + ( $F{d_servicio}== 0 ? "" : ( $F{d_servicio} == 1 ?   $F{d_servicio}.intValue()+ " dia " :  $F{d_servicio}.intValue()+ " dias " ) )]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1270" y="0" width="230" height="14" isRemoveLineWhenBlank="true" uuid="75f345da-ccca-4998-8b1a-9e01ac9a4fd3">
+				<reportElement stretchType="RelativeToTallestObject" x="1390" y="0" width="230" height="14" isRemoveLineWhenBlank="true" uuid="75f345da-ccca-4998-8b1a-9e01ac9a4fd3">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
@@ -1328,7 +1465,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{sector_name}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1210" y="0" width="290" height="14" isRemoveLineWhenBlank="true" uuid="c2b3e688-8b8a-4cdc-9f0f-34dab1daf9d4">
+				<reportElement stretchType="RelativeToTallestObject" x="1330" y="0" width="290" height="14" isRemoveLineWhenBlank="true" uuid="c2b3e688-8b8a-4cdc-9f0f-34dab1daf9d4">
 					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "N" ) != 0]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
@@ -1338,7 +1475,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{sector_name}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1210" y="0" width="60" height="14" isRemoveLineWhenBlank="true" uuid="42b06c52-96fb-4da1-b409-899083388380">
+				<reportElement stretchType="RelativeToTallestObject" x="1330" y="0" width="60" height="14" isRemoveLineWhenBlank="true" uuid="42b06c52-96fb-4da1-b409-899083388380">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
@@ -1350,7 +1487,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{loc_value}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1090" y="0" width="60" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_byOrg" uuid="1400d5a2-a393-4bb9-8caf-721fb5046f79">
+				<reportElement stretchType="RelativeToTallestObject" x="1210" y="0" width="60" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_byOrg" uuid="1400d5a2-a393-4bb9-8caf-721fb5046f79">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -1361,7 +1498,7 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 				<textFieldExpression><![CDATA[$F{codigo_contrato}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1150" y="0" width="58" height="14" isRemoveLineWhenBlank="true" uuid="02dbc569-2ebd-4b9a-aca2-b8ab978a4f88">
+				<reportElement stretchType="RelativeToTallestObject" x="1270" y="0" width="58" height="14" isRemoveLineWhenBlank="true" uuid="02dbc569-2ebd-4b9a-aca2-b8ab978a4f88">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -1370,6 +1507,54 @@ ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 					<font fontName="Arial" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{org_value}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="170" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="0a7223c5-7608-4696-8f7f-2c8db1d5ac35">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre1}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="260" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="0ff9b6db-2274-432d-b16c-00e51e408a13">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre2}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="41e9bd40-a5c1-43e0-a80b-86e9ad949c48">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apellido1}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="440" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="f6950e75-839a-4f04-8154-fa7cbbad26a5">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apellido2}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

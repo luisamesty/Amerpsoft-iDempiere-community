@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListBank" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollList" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListBank" pageWidth="1500" pageHeight="595" orientation="Landscape" columnWidth="1500" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="PayrollListBank" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiereSeed11_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="320"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="674"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -15,12 +26,22 @@
 	<parameter name="AMN_Process_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Period_ID" class="java.lang.Integer"/>
-	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
-	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
+	<parameter name="BPBankAcctUse" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PayDate" class="java.sql.Timestamp"/>
+	<parameter name="UserName" class="java.lang.String"/>
+	<parameter name="isForExport" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowSubTotal" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[-- PayrollListBank
 -- Payroll List For Bank
 SELECT 
+    -- MODELO ASUNCION
     -- ORGANIZACIÓN
     pyr.ad_client_id as client_id, pyr.ad_org_id as org_id,
     coalesce(org.name,org.value,'')  as org_name,
@@ -28,68 +49,128 @@ SELECT
 	COALESCE(orginfo.taxid,'')  as org_taxid,    
     -- LOCATION
     lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
-     -- DEPARTMENT
-    dpt.amn_department_id, dpt.value as dpto_value,COALESCE(dpt.name, dpt.description) as dpto_name,
     -- PERIOD
     prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend, prd.amn_period_status,
-    -- TIPO DE CONCEPTO
-    cty.amn_concept_types_id, cty.calcorder, cty.isshow, cty.value as cty_value, 
-    COALESCE(cty.name, cty.description) as concept_type,
-    --COALESCE(pyr_d.name,cty.name, cty.description) as concept_type,
-    -- TIPO DE CONCEPTO (PROCESO)
-    ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
-    -- PROCESS
-    prc.amn_process_id, COALESCE(prc.name, prc.description) as proceso,
-    -- CONTRACT
-     -- CURRENCY
-     curr1.iso_code as iso_code1,
-     currt1.cursymbol as cursymbol1,
-     COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
-     curr2.iso_code as iso_code2,
-     currt2.cursymbol as cursymbol2,
-     COALESCE(currt2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
-    amc.amn_contract_id, amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+    -- CURRENCY
+    curr1.iso_code as iso_code1,
+    currt1.cursymbol as cursymbol1,
+    COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'') as currname1,
+    curr2.iso_code as iso_code2,
+    currt2.cursymbol as cursymbol2,
+    COALESCE(currt2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
     -- EMPLOYEE
-    emp.amn_employee_id, emp.value as value_emp, emp.name as empleado,emp.incomedate as fecha_ingreso,
+    emp.amn_employee_id, 
+    emp.value as codigo_trabajador, 
+    emp.name as nombre_trabajador,
     COALESCE(jtt.name, jtt.description,'''') as cargo, 
-    COALESCE(emp.idnumber, cbp.taxid,'') as nro_id,
-     -- PAYROLL
-    pyr.amn_payroll_id, pyr.description as recibo,
-    --pyr.amountallocated as amountallocated_t, pyr.amountdeducted as amountdeducted_t, pyr.amountcalculated as amountcalculated_t,
-    -- PAYROLL DETAIL
-    pyr_d.amn_payroll_detail_id,
-    pyr_d.qtyvalue as cantidad, 
-	currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
-	currencyConvert(pyr_d.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
-	currencyConvert(pyr_d.amountcalculated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountcalculated
+    COALESCE(emp.idnumber, cbp.taxid,CONCAT('**-',RTRIM(emp.value),'-**')) as nro_id,
+    -- DESCRIPCION PAGO
+    CASE WHEN prc.amn_process_value = 'NN' THEN 'SALARIO PAGO'
+    	WHEN prc.amn_process_value = 'NU' THEN 'AGUINALDOS PAGO'
+    	ELSE 'SALARIO PAGO' END AS descripcion_pago,
+    CASE WHEN prc.amn_process_value = 'NN' THEN 'NO'
+    	WHEN prc.amn_process_value = 'NU' THEN 'SI'
+    	ELSE 'NO' END AS descripcion_aguinaldo_sino,	
+   	pyr.invdateend,
+    -- CUENTAS
+    COALESCE(employ1.a_name,'Cuenta Pagadora') AS cuenta_pagadora, 
+    COALESCE(employ1.accountno, '** ERROR CP**') AS cuenta_pagadora_no,
+    COALESCE(employ2.a_name,'Cuenta Acreedora') AS cuenta_acreedora, 
+    COALESCE(employ2.accountno,'** ERROR CA **') AS cuenta_acreedora_no,
+    -- PAYROLL RECEIPT
+	currencyConvert(pyr.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
+	currencyConvert(pyr.amountdeducted,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountdeducted, 
+	currencyConvert(pyr.amountnetpaid ,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountnetpaid,
+-- MODELO ASUNCION
+--Campo	Tipo de campo 	Tamaño	Decimales	Posición		Formato	Requerido	Descripción
+--					Inicio	Fin		S/N	
+--ITIREG	Alfa	1		1	1		S	Tipo de registro enviado ‘D’ Registro de Detalle ‘C’ Registro de Control
+'D' AS ITIREG,
+--ITITRA	Alfa	2		2	3		S	Tipo Transferencia ‘01’ Pago de Salarios ‘02’ Pago a Proveedores ‘03’ Cobro de Factura/Cuota '09' Débitos comandados
+'01' AS ITITRA,
+--ICDSRV	Num/A	3	0	4	6		S	Código empresa (asignado por el Banco)
+CASE WHEN cnt.value='GIO' THEN   '471' 
+	WHEN cnt.value='MO2' THEN '468' END  AS ICDSRV,
+--ICTDEB	Num		10	0	7	16		S N Cobro Cuotas	Nro. de cuenta para débito/Cuenta empresa
+COALESCE(LPAD(TRIM(employ1.accountno), 10, '0'),RPAD('',10, '0')) AS ICTDEB,
+--IBCOCR	Num		3	0	17	19		S	Nro. de Banco para crédito Obs: siempre 017
+'017' AS IBCOCR,
+--ICTCRE	Num		10	0	20	29		S N Cobro Cuotas	Nro. de cuenta para crédito Obs: Si pago en cheque relleno con ceros
+COALESCE(LPAD(TRIM(employ2.accountno), 10, '0'),RPAD('',10, '0')) AS ICTCRE,
+--ITCRDB	Alfa	1		30	30		S	Tipo débito/crédito ‘D’ Débito ‘C’ Crédito ‘H’ Cheque ‘F’ Cobro de Factura/Cuota
+'C' AS ITCRDB,
+--IORDEN	Alfa	50		31	80		S-Pgo.Proveedor. N-demas casos	Cheque a la orden de/Cliente Facturado/Beneficiario/Pagador 
+RPAD(TRIM(LEFT(REPLACE(emp.name, ',', ''), 50)),50,' ') AS IORDEN,
+--IMONED	Num		1	0	81	81		S	Moneda correspondiente al monto 0 Guaraníes 1 Dolares Obs: Para transferencias la cuenta origen debe ser de la misma moneda que la cuenta destino.
+'0' AS IMONED,
+--IMTOTR	Num		15	2	82	96		S	Monto Transferencia/Monto Factura, cuota Obs: últimos dos dígitos corresponde a decimales.
+TRIM(REPLACE(to_char(currencyConvert(pyr.amountnetpaid ,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, pyr.C_ConversionType_ID, pyr.AD_Client_ID, pyr.AD_Org_ID ), '0000000000000.00'),'.','')) AS IMTOTR,
+--IMTOT2	Num		15	2	97	111		N	Monto Transferencia (segundo vencimiento) Obs: últimos dos dígitos corresponde a decimales. Solo para Cobro de Factura/Cuota.Demas 0
+TRIM(RPAD('',15, '0')) AS IMTOT2,
+--INRODO	Alfa	12		112	123		S-Cobro Fact/Cuo N-Demás casos	Nro. de documento Obs: cédula de identidad, RUC, Pasaporte, otros. Del beneficiario, proveedor, cliente.
+RPAD('',12, ' ') AS INRODO,
+--ITIFAC	Num		1		124	124		S-Pgo.Proveedor. N-demas casos	Tipo Factura 1 Factura Contado 2 Factura Crédito Solo para Pago a Proveedores. Demás 0
+'0' AS ITIFAC,
+--INRFAC	Alfa	20		125	144		N-Pago Salario S-Demás casos	Nro. de Factura Obs:Para pago a proveedores.Demás blancos
+RPAD('',20, ' ') AS INRFAC,
+--INRCUO	Num		3	0	145	147		S-Cobro Fact/Cuo N-Demás casos	Nro. de Cuota pagada/a cobrar. Solo para ‘F’ Cobro de Factura/Cuota
+'000' AS INRCUO,
+--IFCHCR	Num		8	0	148	155	Aaaammdd	S	Fecha para realizar el crédito/Fecha vencimiento-
+TO_CHAR(CAST($P{PayDate} AS Timestamp), 'YYYYMMDD')  AS IFCHCR,
+--IFCHC2	Num		8	0	156	163	Aaaammdd	N	Fecha segundo vencimiento. Solo para ’ F’ Cobro de Factura/Cuota
+'00000000' AS IFCHC2,
+--ICEPTO	Alfa	50		164	213		N	Comentario de concepto cobrado/pagado
+RPAD('PAGO SALARIOS',50, ' ') AS ICEPTO,
+--INRREF	Alfa	15		214	228		N	Referencia operación empresa
+RPAD('',15, ' ') AS INRREF,
+--IFECCA	Num		8	0	229	236	Aaaammdd	N	Fecha de carga de transacción
+TO_CHAR(CAST($P{PayDate} AS Timestamp), 'YYYYMMDD')  AS IFECCA,
+--IHORCA	Num		6		237	242	Hhmmss	N	Hora de carga de transacción
+REPLACE(TO_CHAR(CAST($P{PayDate} AS Timestamp), 'HH12:MI:SS'),':','')   AS IHORCA,
+--IUSUCA	Alfa	10		243	252		N	Nombre del usuario que cargó
+CASE WHEN cnt.value='GIO' THEN RPAD(TRIM('LAGIOCONDA'),10, ' ')   
+	WHEN cnt.value='MO2' THEN RPAD(TRIM('MONALISA'),10, ' ') 
+END AS IUSUCA
 FROM adempiere.amn_payroll as pyr
-    LEFT JOIN adempiere.amn_payroll_detail 		as pyr_d ON (pyr_d.amn_payroll_id= pyr.amn_payroll_id)
-    LEFT JOIN adempiere.amn_concept_types_proc as ctp 	 ON (ctp.amn_concept_types_proc_id= pyr_d.amn_concept_types_proc_id)
-    LEFT JOIN adempiere.amn_concept_types 			as cty 	 ON (cty.amn_concept_types_id= ctp.amn_concept_types_id)
-    LEFT JOIN adempiere.amn_process  					as prc 	 ON (prc.amn_process_id= ctp.amn_process_id)
-    LEFT JOIN adempiere.amn_employee as emp    ON (emp.amn_employee_id= pyr.amn_employee_id) 
-    LEFT JOIN adempiere.c_bpartner 						as cbp 	 ON (emp.c_bpartner_id= cbp.c_bpartner_id)
-    LEFT JOIN adempiere.amn_jobtitle as jtt ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
-    LEFT JOIN adempiere.amn_period   					as prd 	 ON (prd.amn_period_id= pyr.amn_period_id)
-    LEFT JOIN adempiere.amn_location 					as lct 	 ON (lct.amn_location_id= pyr.amn_location_id)
-    LEFT JOIN adempiere.amn_department 				as dpt 	 ON (dpt.amn_department_id= pyr.amn_department_id)
-    LEFT JOIN adempiere.amn_contract 					as amc 	 ON (amc.amn_contract_id= pyr.amn_contract_id)	 	 
-	LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
-    LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
-    LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
-    LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-	 INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
-	 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
-	 LEFT JOIN adempiere.ad_org as org ON (org.ad_org_id = pyr.ad_org_id)
-	 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+INNER JOIN adempiere.amn_employee as emp  ON (emp.amn_employee_id= pyr.amn_employee_id) 
+INNER JOIN adempiere.c_bpartner   as cbp  ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+LEFT JOIN adempiere.amn_jobtitle as jtt   ON (emp.amn_jobtitle_id= jtt.amn_jobtitle_id)
+INNER JOIN adempiere.amn_period   as prd  ON (prd.amn_period_id= pyr.amn_period_id)
+INNER JOIN adempiere.amn_process AS prc   ON (prc.amn_process_id = pyr.amn_process_id)
+INNER JOIN adempiere.amn_contract AS cnt  ON (cnt.amn_contract_id = emp.amn_contract_id)
+LEFT JOIN adempiere.amn_location as lct	  ON (lct.amn_location_id= pyr.amn_location_id)
+LEFT JOIN adempiere.amn_department as dpt ON (dpt.amn_department_id= pyr.amn_department_id)
+LEFT JOIN c_currency curr1 on pyr.c_currency_id = curr1.c_currency_id
+LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}) 
+LEFT JOIN c_currency curr2 on curr2.c_currency_id = $P{C_Currency_ID}
+LEFT JOIN c_currency_trl currt2 on curr2.c_currency_id = currt2.c_currency_id and currt2.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+INNER JOIN adempiere.ad_client as cli ON (pyr.ad_client_id = cli.ad_client_id)
+INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+LEFT JOIN adempiere.ad_org as org ON (org.ad_org_id = emp.ad_orgto_id)
+INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+LEFT JOIN (
+	SELECT DISTINCT ON (emp1.amn_employee_id)
+		emp1.amn_employee_id,cbb1.a_name, cbb1.accountno
+		FROM adempiere.amn_employee emp1
+		LEFT JOIN (
+			SELECT ad_client_id, c_bpartner_id, a_name, accountno FROM c_bp_bankaccount  WHERE bpbankacctuse ='N'
+		)  cbb1 ON cbb1.C_BPartner_ID = emp1.C_BPartner_ID
+		WHERE emp1.AD_Client_ID=$P{AD_Client_ID}
+) AS employ1 ON employ1.amn_employee_id = emp.amn_employee_id 
+LEFT JOIN (
+	SELECT DISTINCT ON (emp2.amn_employee_id)
+		emp2.amn_employee_id,cbb2.a_name, cbb2.accountno
+		FROM adempiere.amn_employee emp2
+		LEFT JOIN (
+			SELECT ad_client_id, c_bpartner_id, a_name, accountno FROM c_bp_bankaccount  WHERE bpbankacctuse ='B'
+		)  cbb2 ON cbb2.C_BPartner_ID = emp2.C_BPartner_ID
+		WHERE emp2.AD_Client_ID=$P{AD_Client_ID}
+) AS employ2 ON employ2.amn_employee_id = emp.amn_employee_id 
 WHERE pyr.ad_client_id= $P{AD_Client_ID} 
-	AND CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END 
 	AND	( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR pyr.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR pyr.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Period_ID}  IS NULL OR pyr.amn_period_id= $P{AMN_Period_ID} ) THEN 1=1 ELSE 1=0 END )
-	AND CASE WHEN ( $P{AMN_Location_ID}  IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1= 1 ELSE 1=0 END 
-	AND CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID} ) THEN 1=1 ELSE 1=0 END 
-ORDER BY pyr.amn_period_id, pyr.amn_location_id, pyr.amn_department_id,  emp.value ASC, pyr.amn_payroll_id ASC,  pyr_d.calcorder, cty.isshow DESC]]>
+ORDER BY pyr.amn_period_id, cuenta_pagadora_no ASC,  emp.value ASC, pyr.amn_payroll_id ASC]]>
 	</queryString>
 	<field name="client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="client_id"/>
@@ -127,20 +208,6 @@ ORDER BY pyr.amn_period_id, pyr.amn_location_id, pyr.amn_department_id,  emp.val
 		<property name="com.jaspersoft.studio.field.name" value="localidad"/>
 		<property name="com.jaspersoft.studio.field.label" value="localidad"/>
 	</field>
-	<field name="amn_department_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_department_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_department_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_department"/>
-	</field>
-	<field name="dpto_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="dpto_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="dpto_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_department"/>
-	</field>
-	<field name="dpto_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="dpto_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="dpto_name"/>
-	</field>
 	<field name="amn_period_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_period_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_period_id"/>
@@ -165,48 +232,6 @@ ORDER BY pyr.amn_period_id, pyr.amn_location_id, pyr.amn_department_id,  emp.val
 		<property name="com.jaspersoft.studio.field.name" value="amn_period_status"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_period_status"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
-	</field>
-	<field name="amn_concept_types_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_concept_types_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_concept_types_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
-	</field>
-	<field name="calcorder" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="calcorder"/>
-		<property name="com.jaspersoft.studio.field.label" value="calcorder"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
-	</field>
-	<field name="isshow" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="isshow"/>
-		<property name="com.jaspersoft.studio.field.label" value="isshow"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
-	</field>
-	<field name="cty_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="cty_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="cty_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
-	</field>
-	<field name="concept_type" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="concept_type"/>
-		<property name="com.jaspersoft.studio.field.label" value="concept_type"/>
-	</field>
-	<field name="ctp_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="ctp_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="ctp_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types_proc"/>
-	</field>
-	<field name="concept_type_process" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="concept_type_process"/>
-		<property name="com.jaspersoft.studio.field.label" value="concept_type_process"/>
-	</field>
-	<field name="amn_process_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_process_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_process_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_process"/>
-	</field>
-	<field name="proceso" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="proceso"/>
-		<property name="com.jaspersoft.studio.field.label" value="proceso"/>
 	</field>
 	<field name="iso_code1" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="iso_code1"/>
@@ -236,38 +261,19 @@ ORDER BY pyr.amn_period_id, pyr.amn_location_id, pyr.amn_department_id,  emp.val
 		<property name="com.jaspersoft.studio.field.name" value="currname2"/>
 		<property name="com.jaspersoft.studio.field.label" value="currname2"/>
 	</field>
-	<field name="amn_contract_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_contract_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_contract_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
-	</field>
-	<field name="c_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="c_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_contract"/>
-	</field>
-	<field name="c_tipo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="c_tipo"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_tipo"/>
-	</field>
 	<field name="amn_employee_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="value_emp" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value_emp"/>
-		<property name="com.jaspersoft.studio.field.label" value="value_emp"/>
+	<field name="codigo_trabajador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_trabajador"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_trabajador"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="empleado" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="empleado"/>
-		<property name="com.jaspersoft.studio.field.label" value="empleado"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
-	</field>
-	<field name="fecha_ingreso" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="fecha_ingreso"/>
-		<property name="com.jaspersoft.studio.field.label" value="fecha_ingreso"/>
+	<field name="nombre_trabajador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_trabajador"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_trabajador"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
 	<field name="cargo" class="java.lang.String">
@@ -279,25 +285,38 @@ ORDER BY pyr.amn_period_id, pyr.amn_location_id, pyr.amn_department_id,  emp.val
 		<property name="com.jaspersoft.studio.field.label" value="nro_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
 	</field>
-	<field name="amn_payroll_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_payroll_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_payroll_id"/>
+	<field name="descripcion_pago" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descripcion_pago"/>
+		<property name="com.jaspersoft.studio.field.label" value="descripcion_pago"/>
+	</field>
+	<field name="descripcion_aguinaldo_sino" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descripcion_aguinaldo_sino"/>
+		<property name="com.jaspersoft.studio.field.label" value="descripcion_aguinaldo_sino"/>
+	</field>
+	<field name="invdateend" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="invdateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="invdateend"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
 	</field>
-	<field name="recibo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="recibo"/>
-		<property name="com.jaspersoft.studio.field.label" value="recibo"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll"/>
+	<field name="cuenta_pagadora" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cuenta_pagadora"/>
+		<property name="com.jaspersoft.studio.field.label" value="cuenta_pagadora"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bp_bankaccount"/>
 	</field>
-	<field name="amn_payroll_detail_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_payroll_detail_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_payroll_detail_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_detail"/>
+	<field name="cuenta_pagadora_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cuenta_pagadora_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="cuenta_pagadora_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bp_bankaccount"/>
 	</field>
-	<field name="cantidad" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
-		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_payroll_detail"/>
+	<field name="cuenta_acreedora" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cuenta_acreedora"/>
+		<property name="com.jaspersoft.studio.field.label" value="cuenta_acreedora"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bp_bankaccount"/>
+	</field>
+	<field name="cuenta_acreedora_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cuenta_acreedora_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="cuenta_acreedora_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bp_bankaccount"/>
 	</field>
 	<field name="amountallocated" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="amountallocated"/>
@@ -307,211 +326,388 @@ ORDER BY pyr.amn_period_id, pyr.amn_location_id, pyr.amn_department_id,  emp.val
 		<property name="com.jaspersoft.studio.field.name" value="amountdeducted"/>
 		<property name="com.jaspersoft.studio.field.label" value="amountdeducted"/>
 	</field>
-	<field name="amountcalculated" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amountcalculated"/>
-		<property name="com.jaspersoft.studio.field.label" value="amountcalculated"/>
+	<field name="amountnetpaid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amountnetpaid"/>
+		<property name="com.jaspersoft.studio.field.label" value="amountnetpaid"/>
+	</field>
+	<field name="itireg" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="itireg"/>
+		<property name="com.jaspersoft.studio.field.label" value="itireg"/>
+	</field>
+	<field name="ititra" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ititra"/>
+		<property name="com.jaspersoft.studio.field.label" value="ititra"/>
+	</field>
+	<field name="icdsrv" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="icdsrv"/>
+		<property name="com.jaspersoft.studio.field.label" value="icdsrv"/>
+	</field>
+	<field name="ictdeb" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ictdeb"/>
+		<property name="com.jaspersoft.studio.field.label" value="ictdeb"/>
+	</field>
+	<field name="ibcocr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ibcocr"/>
+		<property name="com.jaspersoft.studio.field.label" value="ibcocr"/>
+	</field>
+	<field name="ictcre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ictcre"/>
+		<property name="com.jaspersoft.studio.field.label" value="ictcre"/>
+	</field>
+	<field name="itcrdb" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="itcrdb"/>
+		<property name="com.jaspersoft.studio.field.label" value="itcrdb"/>
+	</field>
+	<field name="iorden" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iorden"/>
+		<property name="com.jaspersoft.studio.field.label" value="iorden"/>
+	</field>
+	<field name="imoned" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="imoned"/>
+		<property name="com.jaspersoft.studio.field.label" value="imoned"/>
+	</field>
+	<field name="imtotr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="imtotr"/>
+		<property name="com.jaspersoft.studio.field.label" value="imtotr"/>
+	</field>
+	<field name="imtot2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="imtot2"/>
+		<property name="com.jaspersoft.studio.field.label" value="imtot2"/>
+	</field>
+	<field name="inrodo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inrodo"/>
+		<property name="com.jaspersoft.studio.field.label" value="inrodo"/>
+	</field>
+	<field name="itifac" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="itifac"/>
+		<property name="com.jaspersoft.studio.field.label" value="itifac"/>
+	</field>
+	<field name="inrfac" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inrfac"/>
+		<property name="com.jaspersoft.studio.field.label" value="inrfac"/>
+	</field>
+	<field name="inrcuo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inrcuo"/>
+		<property name="com.jaspersoft.studio.field.label" value="inrcuo"/>
+	</field>
+	<field name="ifchcr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ifchcr"/>
+		<property name="com.jaspersoft.studio.field.label" value="ifchcr"/>
+	</field>
+	<field name="ifchc2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ifchc2"/>
+		<property name="com.jaspersoft.studio.field.label" value="ifchc2"/>
+	</field>
+	<field name="icepto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="icepto"/>
+		<property name="com.jaspersoft.studio.field.label" value="icepto"/>
+	</field>
+	<field name="inrref" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="inrref"/>
+		<property name="com.jaspersoft.studio.field.label" value="inrref"/>
+	</field>
+	<field name="ifecca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ifecca"/>
+		<property name="com.jaspersoft.studio.field.label" value="ifecca"/>
+	</field>
+	<field name="ihorca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ihorca"/>
+		<property name="com.jaspersoft.studio.field.label" value="ihorca"/>
+	</field>
+	<field name="iusuca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iusuca"/>
+		<property name="com.jaspersoft.studio.field.label" value="iusuca"/>
 	</field>
 	<variable name="v_org_name" class="java.lang.String">
 		<variableExpression><![CDATA[$V{v_org_name}]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{org_name}]]></initialValueExpression>
 	</variable>
+	<variable name="19ceros" class="java.lang.String">
+		<variableExpression><![CDATA["0000000000000000000"]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<variable name="14ceros" class="java.lang.String">
+		<variableExpression><![CDATA["00000000000000"]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
 	<variable name="v_org_taxid" class="java.lang.String">
 		<variableExpression><![CDATA[$V{v_org_taxid}]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{org_taxid}]]></initialValueExpression>
 	</variable>
-	<variable name="v_asignaciones_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountallocated}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_deducciones_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountdeducted}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_calculado_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountcalculated}!= null && $F{isshow}.compareToIgnoreCase("N")== 0
- ? $F{amountcalculated}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_asignaciones_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountallocated}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="v_deducciones_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountdeducted}
- : BigDecimal.ZERO
-)]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
 	<variable name="v_asignaciones_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountallocated}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountallocated}
- : BigDecimal.ZERO
-)]]></variableExpression>
+		<variableExpression><![CDATA[($F{amountallocated}!= null  ? $F{amountallocated} : BigDecimal.ZERO)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="v_deducciones_t" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[($F{amountdeducted}!= null && $F{isshow}.compareToIgnoreCase("Y")== 0
- ? $F{amountdeducted}
- : BigDecimal.ZERO
-)]]></variableExpression>
+		<variableExpression><![CDATA[($F{amountdeducted}!= null ? $F{amountdeducted} : BigDecimal.ZERO)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="v_employee_count" class="java.lang.Integer" incrementType="Group" incrementGroup="Group_porEmpleado" calculation="Sum">
-		<variableExpression><![CDATA[(($F{amn_period_id}!= null && $F{amn_payroll_id}!= null && $F{amn_location_id}!= null && $F{amn_employee_id}!= null) ? 1 : 0 )]]></variableExpression>
+	<variable name="v_totalamount" class="java.lang.String">
+		<variableExpression><![CDATA[String.format("%15s",$V{v_asignaciones_t}.subtract($V{v_deducciones_t} ).setScale(2, RoundingMode.DOWN).toString().replace(".","")).replace(" ","0")]]></variableExpression>
+	</variable>
+	<variable name="v_employee_count_cuentapag" class="java.lang.Integer" resetType="Group" resetGroup="GroupporCuentaPagadora" calculation="Sum">
+		<variableExpression><![CDATA[(($F{amn_period_id}!= null &&  $F{amn_location_id}!= null && $F{amn_employee_id}!= null) ? 1 : 0 )]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<group name="Group_porLocalidad">
-		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
+	<variable name="v_employee_count" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[(($F{amn_period_id}!= null &&  $F{amn_location_id}!= null && $F{amn_employee_id}!= null) ? 1 : 0 )]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="lineatxt" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[$F{itireg}+$F{ititra}+$F{icdsrv}+$F{ictdeb}+$F{ibcocr}+$F{ictcre}+$F{itcrdb}+$F{iorden}+$F{imoned}+$F{imtotr}+$F{imtot2}+$F{inrodo}+$F{itifac}+$F{inrfac}+$F{inrcuo}+$F{ifchcr}+$F{ifchc2}+$F{icepto}+$F{inrref}+$F{ifecca}+$F{ihorca}+$F{iusuca}]]></variableExpression>
+		<initialValueExpression><![CDATA[""]]></initialValueExpression>
+	</variable>
+	<variable name="lineafinal" class="java.lang.String">
+		<variableExpression><![CDATA["C"+$F{ititra}+$F{icdsrv}+$F{ictdeb}+"0000000000000"+"D"+$F{iusuca}+String.format("%40s", " ")+$F{imoned}+$V{v_totalamount}+$F{imtot2}+String.format("%12s", " ")+$F{itifac}+$F{inrfac}+"0000000000000000000                                                                 00000000000000          "]]></variableExpression>
+	</variable>
+	<variable name="v_asignaciones_cuentapag" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupporCuentaPagadora" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountallocated}!= null  ? $F{amountallocated} : BigDecimal.ZERO)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="v_deducciones_cuentapag" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[($F{amountdeducted}!= null ? $F{amountdeducted} : BigDecimal.ZERO)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="GroupporCuentaPagadora">
+		<groupExpression><![CDATA[$F{cuenta_pagadora_no}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$P{isShowSubTotal}.compareToIgnoreCase( "Y" )==0 && $P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				<textField>
-					<reportElement x="0" y="0" width="802" height="14" uuid="67a1e007-a2f8-418f-92db-dbc934206408">
+					<reportElement x="0" y="0" width="120" height="14" printWhenGroupChanges="GroupporCuentaPagadora" uuid="0515ba42-1f5e-4232-b07e-31225920003f">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement>
-						<font fontName="Arial" size="12" isBold="true"/>
+						<font fontName="Courier New" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report.location}+": "+$F{loc_value}.trim()+" "+$F{localidad}.trim()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{report.account}]]></textFieldExpression>
 				</textField>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="Group_porEmpleado">
-		<groupExpression><![CDATA[$F{value_emp}]]></groupExpression>
-		<groupHeader>
-			<band height="14" splitType="Stretch">
-				<property name="local_mesure_unitheight" value="pixel"/>
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{amn_employee_id}!= null]]></printWhenExpression>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="260" height="14" uuid="7a43b167-7987-4654-bad4-3b695f942b5b">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					</reportElement>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{empleado}.toUpperCase()]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
-					<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="112" height="14" uuid="dee8c450-467d-472e-ab20-97ce2c19ba55">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					</reportElement>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{nro_id}.toUpperCase()]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Band">
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="70" height="14" uuid="088d00ca-506a-4ffc-86ef-f0de16ab79a8">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					</reportElement>
-					<box leftPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{value_emp}.toUpperCase()]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="682" y="0" width="120" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a62b55d1-eaca-440a-8096-75f2925e0321">
+				<textField>
+					<reportElement x="120" y="0" width="180" height="14" printWhenGroupChanges="GroupporCuentaPagadora" uuid="c035b78c-4447-4c58-a864-0d289def8e40">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
-					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					<textElement>
+						<font fontName="Courier New" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{v_asignaciones_concepto}.subtract($V{v_deducciones_concepto})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cuenta_pagadora_no}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{isShowSubTotal}.compareToIgnoreCase( "Y" )==0 && $P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				<textField>
+					<reportElement mode="Transparent" x="0" y="0" width="320" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f0ced311-f215-4409-beac-5f62f53eaa13">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Sub-Total Trabajadores:"+$V{v_employee_count}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Transparent" x="320" y="0" width="260" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="1a5704d1-a239-43be-b097-62d2098ef1e2">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Sub-Total Reporte:"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement mode="Transparent" x="580" y="0" width="160" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="090e1c98-a2f2-4269-a608-41dd07f73aed">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{v_asignaciones_t}.subtract( $V{v_deducciones_t})]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+			</band>
+		</groupFooter>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<columnHeader>
 		<band height="14">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && $P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 			<textField>
-				<reportElement x="0" y="0" width="330" height="14" uuid="66338e6c-68ed-4594-a1c7-7e10ee94e1e3">
+				<reportElement x="0" y="0" width="120" height="14" uuid="66338e6c-68ed-4594-a1c7-7e10ee94e1e3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="Courier New" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.employee}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.cedula}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="330" y="0" width="112" height="14" uuid="8afab97b-7350-4e84-9867-ea655fbb2d7f">
+				<reportElement x="320" y="0" width="260" height="14" uuid="8afab97b-7350-4e84-9867-ea655fbb2d7f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="Courier New" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.taxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.concept}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="682" y="0" width="120" height="14" uuid="609f8b6d-a4b8-4ae0-ab17-b00dfaf47a98">
+				<reportElement x="580" y="0" width="160" height="14" uuid="609f8b6d-a4b8-4ae0-ab17-b00dfaf47a98">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement>
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="Courier New" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.amountsalary}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="0" width="200" height="14" uuid="baed813a-8851-4c73-9e39-a80e8e43c8e6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Courier New" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.account_deb}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="740" y="0" width="160" height="14" uuid="4a80648c-beac-4795-ae38-3fa0da75ab15">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Courier New" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.aguinaldosn}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
-	<summary>
-		<band height="14" splitType="Stretch">
-			<textField pattern="#,##0.00">
-				<reportElement mode="Transparent" x="682" y="0" width="120" height="14" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="ca074736-058a-4e8d-bd9b-119eb6cf4415">
+	<detail>
+		<band height="14">
+			<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+			<textField textAdjust="StretchHeight" evaluationTime="Band">
+				<reportElement stretchType="RelativeToTallestObject" x="120" y="0" width="200" height="14" uuid="a5951397-cbf7-428e-b332-6e023327b7e8">
 					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cuenta_pagadora_no}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Band">
+				<reportElement stretchType="RelativeToTallestObject" x="320" y="0" width="260" height="14" uuid="ae2d3d47-fe74-402a-9cb8-e648ca689d99">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Courier New" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion_pago}+" "+(new SimpleDateFormat("MM-yyyy").format($F{invdateend}))]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Band">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="120" height="14" uuid="4277cc63-d7ce-4c71-89f9-1257088e8621">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_id}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Band" pattern="###0.00">
+				<reportElement mode="Transparent" x="580" y="0" width="160" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="97cdf466-302a-42fa-a4ff-e65ad1781757">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[]]></printWhenExpression>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{v_asignaciones_t}.subtract($V{v_deducciones_t})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amountnetpaid}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
-			<staticText>
-				<reportElement x="442" y="0" width="240" height="14" isRemoveLineWhenBlank="true" uuid="3795fead-515c-46b6-a70c-ac7d38e2d79d">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[]]></printWhenExpression>
+			<textField textAdjust="StretchHeight" evaluationTime="Band">
+				<reportElement stretchType="RelativeToTallestObject" x="740" y="0" width="160" height="14" uuid="317300dc-b478-4e82-ab74-46e2bd59c667">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="12" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Total Reporte: ]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$F{descripcion_aguinaldo_sino}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="14">
+			<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) != 0]]></printWhenExpression>
+			<textField textAdjust="StretchHeight" evaluationTime="Auto">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="1500" height="14" uuid="0a183daa-ec5c-435f-a9cd-0074f8b0ee77">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{lineatxt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
-				<reportElement mode="Transparent" x="0" y="0" width="330" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fcfb056d-dfb6-45b2-8958-a62cf83b8e89"/>
+				<reportElement mode="Transparent" x="0" y="0" width="320" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="8bb39a40-8add-41f3-a9a1-ffb0061ae8b0">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Total Trabajadores:"+$V{v_employee_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="320" y="0" width="260" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="b88bae2c-fbf9-4bcd-9aca-4ae65f97f105">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total Reporte:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Transparent" x="580" y="0" width="160" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fc58fc70-4b25-4263-b0d0-ca84ce6f7ba5">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{v_asignaciones_t}.subtract( $V{v_deducciones_t})]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement mode="Transparent" x="0" y="0" width="1500" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d648cadf-3d7b-4b52-9be0-49e2adc4d9fd">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{BPBankAcctUse}.compareToIgnoreCase( "N" ) != 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Courier New" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{lineafinal}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

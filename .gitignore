@@ -1,4 +1,5 @@
 .DS_Store
+**/logs/
 **/target/
 **/bin/
 **/lib/*.jar

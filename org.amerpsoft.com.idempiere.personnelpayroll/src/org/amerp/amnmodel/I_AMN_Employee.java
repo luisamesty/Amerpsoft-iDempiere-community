@@ -46,8 +46,8 @@ public interface I_AMN_Employee
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Employee
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -89,6 +89,21 @@ public interface I_AMN_Employee
 	  * Alergic to chemicals ór Medicament
 	  */
 	public String getAlergic();
+
+    /** Column name AMN_CommissionGroup_ID */
+    public static final String COLUMNNAME_AMN_CommissionGroup_ID = "AMN_CommissionGroup_ID";
+
+	/** Set Commission Group.
+	  * Payroll Employee commission Group OrgSector
+	  */
+	public void setAMN_CommissionGroup_ID (int AMN_CommissionGroup_ID);
+
+	/** Get Commission Group.
+	  * Payroll Employee commission Group OrgSector
+	  */
+	public int getAMN_CommissionGroup_ID();
+
+	public I_AMN_CommissionGroup getAMN_CommissionGroup() throws RuntimeException;
 
     /** Column name AMN_Contract_ID */
     public static final String COLUMNNAME_AMN_Contract_ID = "AMN_Contract_ID";
@@ -387,14 +402,14 @@ public interface I_AMN_Employee
 	/** Get COMMISIONGOAL	  */
 	public BigDecimal getCOMMISIONGOAL();
 
-    /** Column name COMMISSIONSGROUP */
-    public static final String COLUMNNAME_COMMISSIONSGROUP = "COMMISSIONSGROUP";
+    /** Column name CommissionsGroup */
+    public static final String COLUMNNAME_CommissionsGroup = "CommissionsGroup";
 
 	/** Set COMMISSIONSGROUP	  */
-	public void setCOMMISSIONSGROUP (String COMMISSIONSGROUP);
+	public void setCommissionsGroup (String CommissionsGroup);
 
 	/** Get COMMISSIONSGROUP	  */
-	public String getCOMMISSIONSGROUP();
+	public String getCommissionsGroup();
 
     /** Column name CountryofNacionality_ID */
     public static final String COLUMNNAME_CountryofNacionality_ID = "CountryofNacionality_ID";
@@ -535,6 +550,19 @@ public interface I_AMN_Employee
 	  */
 	public String getEMail();
 
+    /** Column name EMail2 */
+    public static final String COLUMNNAME_EMail2 = "EMail2";
+
+	/** Set EMail Address 2.
+	  * Electronic Mail Address Corporative
+	  */
+	public void setEMail2 (String EMail2);
+
+	/** Get EMail Address 2.
+	  * Electronic Mail Address Corporative
+	  */
+	public String getEMail2();
+
     /** Column name empimg1_ID */
     public static final String COLUMNNAME_empimg1_ID = "empimg1_ID";
 
@@ -569,6 +597,24 @@ public interface I_AMN_Employee
 
 	/** Get FIRSTHIREDATE	  */
 	public String getFIRSTHIREDATE();
+
+    /** Column name FirstName1 */
+    public static final String COLUMNNAME_FirstName1 = "FirstName1";
+
+	/** Set First Name 1	  */
+	public void setFirstName1 (String FirstName1);
+
+	/** Get First Name 1	  */
+	public String getFirstName1();
+
+    /** Column name FirstName2 */
+    public static final String COLUMNNAME_FirstName2 = "FirstName2";
+
+	/** Set First Name 2	  */
+	public void setFirstName2 (String FirstName2);
+
+	/** Get First Name 2	  */
+	public String getFirstName2();
 
     /** Column name HandUse */
     public static final String COLUMNNAME_HandUse = "HandUse";
@@ -614,23 +660,23 @@ public interface I_AMN_Employee
 	  */
 	public String getHobbyes();
 
-    /** Column name IDCARDAUX */
-    public static final String COLUMNNAME_IDCARDAUX = "IDCARDAUX";
+    /** Column name IDCardAux */
+    public static final String COLUMNNAME_IDCardAux = "IDCardAux";
 
-	/** Set IDCARDAUX	  */
-	public void setIDCARDAUX (String IDCARDAUX);
+	/** Set IDCardAux	  */
+	public void setIDCardAux (String IDCardAux);
 
-	/** Get IDCARDAUX	  */
-	public String getIDCARDAUX();
+	/** Get IDCardAux	  */
+	public String getIDCardAux();
 
-    /** Column name IDCARDNO */
-    public static final String COLUMNNAME_IDCARDNO = "IDCARDNO";
+    /** Column name IDCardNo */
+    public static final String COLUMNNAME_IDCardNo = "IDCardNo";
 
-	/** Set IDCARDNO	  */
-	public void setIDCARDNO (String IDCARDNO);
+	/** Set IDCardNo	  */
+	public void setIDCardNo (String IDCardNo);
 
-	/** Get IDCARDNO	  */
-	public String getIDCARDNO();
+	/** Get IDCardNo	  */
+	public String getIDCardNo();
 
     /** Column name IDCOUNTRY */
     public static final String COLUMNNAME_IDCOUNTRY = "IDCOUNTRY";
@@ -641,23 +687,23 @@ public interface I_AMN_Employee
 	/** Get IDCOUNTRY	  */
 	public int getIDCOUNTRY();
 
-    /** Column name IDNUMBER */
-    public static final String COLUMNNAME_IDNUMBER = "IDNUMBER";
+    /** Column name IDNumber */
+    public static final String COLUMNNAME_IDNumber = "IDNumber";
 
-	/** Set IDNUMBER	  */
-	public void setIDNUMBER (String IDNUMBER);
+	/** Set IDNumber	  */
+	public void setIDNumber (String IDNumber);
 
-	/** Get IDNUMBER	  */
-	public String getIDNUMBER();
+	/** Get IDNumber	  */
+	public String getIDNumber();
 
-    /** Column name IDTYPE */
-    public static final String COLUMNNAME_IDTYPE = "IDTYPE";
+    /** Column name IDType */
+    public static final String COLUMNNAME_IDType = "IDType";
 
-	/** Set IDTYPE	  */
-	public void setIDTYPE (String IDTYPE);
+	/** Set IDType	  */
+	public void setIDType (String IDType);
 
-	/** Get IDTYPE	  */
-	public String getIDTYPE();
+	/** Get IDType	  */
+	public String getIDType();
 
     /** Column name incomedate */
     public static final String COLUMNNAME_incomedate = "incomedate";
@@ -734,6 +780,15 @@ public interface I_AMN_Employee
 
 	/** Get ISBPASSIGNED	  */
 	public boolean isBPASSIGNED();
+
+    /** Column name IsDetailedNames */
+    public static final String COLUMNNAME_IsDetailedNames = "IsDetailedNames";
+
+	/** Set Detailed Names	  */
+	public void setIsDetailedNames (boolean IsDetailedNames);
+
+	/** Get Detailed Names	  */
+	public boolean isDetailedNames();
 
     /** Column name ISEDI */
     public static final String COLUMNNAME_ISEDI = "ISEDI";
@@ -824,14 +879,14 @@ public interface I_AMN_Employee
 	/** Get ISSNDHIREDATE	  */
 	public boolean isSNDHIREDATE();
 
-    /** Column name ISSOCIALSECURITY */
-    public static final String COLUMNNAME_ISSOCIALSECURITY = "ISSOCIALSECURITY";
+    /** Column name isSocialSecurity */
+    public static final String COLUMNNAME_isSocialSecurity = "isSocialSecurity";
 
-	/** Set ISSOCIALSECURITY	  */
-	public void setISSOCIALSECURITY (boolean ISSOCIALSECURITY);
+	/** Set isSocialSecurity	  */
+	public void setisSocialSecurity (boolean isSocialSecurity);
 
-	/** Get ISSOCIALSECURITY	  */
-	public boolean isSOCIALSECURITY();
+	/** Get isSocialSecurity	  */
+	public boolean isSocialSecurity();
 
     /** Column name ISSSPRIVATE */
     public static final String COLUMNNAME_ISSSPRIVATE = "ISSSPRIVATE";
@@ -873,14 +928,14 @@ public interface I_AMN_Employee
 	/** Get jobcondition	  */
 	public String getjobcondition();
 
-    /** Column name JOBREMUNERATION */
-    public static final String COLUMNNAME_JOBREMUNERATION = "JOBREMUNERATION";
+    /** Column name JobRemuneration */
+    public static final String COLUMNNAME_JobRemuneration = "JobRemuneration";
 
-	/** Set JOBREMUNERATION	  */
-	public void setJOBREMUNERATION (BigDecimal JOBREMUNERATION);
+	/** Set JobRemuneration	  */
+	public void setJobRemuneration (BigDecimal JobRemuneration);
 
-	/** Get JOBREMUNERATION	  */
-	public BigDecimal getJOBREMUNERATION();
+	/** Get JobRemuneration	  */
+	public BigDecimal getJobRemuneration();
 
     /** Column name JRCURRENCY_ID */
     public static final String COLUMNNAME_JRCURRENCY_ID = "JRCURRENCY_ID";
@@ -890,6 +945,24 @@ public interface I_AMN_Employee
 
 	/** Get JRCURRENCY_ID	  */
 	public int getJRCURRENCY_ID();
+
+    /** Column name LastName1 */
+    public static final String COLUMNNAME_LastName1 = "LastName1";
+
+	/** Set Last Name 1	  */
+	public void setLastName1 (String LastName1);
+
+	/** Get Last Name 1	  */
+	public String getLastName1();
+
+    /** Column name LastName2 */
+    public static final String COLUMNNAME_LastName2 = "LastName2";
+
+	/** Set Last Name 2	  */
+	public void setLastName2 (String LastName2);
+
+	/** Get Last Name 2	  */
+	public String getLastName2();
 
     /** Column name MOLI_BPARTNERTYPE */
     public static final String COLUMNNAME_MOLI_BPARTNERTYPE = "MOLI_BPARTNERTYPE";
@@ -976,14 +1049,14 @@ public interface I_AMN_Employee
 	/** Get NAME_IDCARD	  */
 	public String getNAME_IDCARD();
 
-    /** Column name ORGSECTOR */
-    public static final String COLUMNNAME_ORGSECTOR = "ORGSECTOR";
+    /** Column name OrgSector */
+    public static final String COLUMNNAME_OrgSector = "OrgSector";
 
-	/** Set ORGSECTOR	  */
-	public void setORGSECTOR (String ORGSECTOR);
+	/** Set OrgSector	  */
+	public void setOrgSector (String OrgSector);
 
-	/** Get ORGSECTOR	  */
-	public String getORGSECTOR();
+	/** Get OrgSector	  */
+	public String getOrgSector();
 
     /** Column name paymenttype */
     public static final String COLUMNNAME_paymenttype = "paymenttype";
@@ -1006,12 +1079,12 @@ public interface I_AMN_Employee
     /** Column name PIN */
     public static final String COLUMNNAME_PIN = "PIN";
 
-	/** Set PIN Personal ID Number.
+	/** Set PIN.
 	  * Personal Identification Number
 	  */
 	public void setPIN (String PIN);
 
-	/** Get PIN Personal ID Number.
+	/** Get PIN.
 	  * Personal Identification Number
 	  */
 	public String getPIN();
@@ -1100,14 +1173,14 @@ public interface I_AMN_Employee
 	/** Get SNDHIREDATE	  */
 	public String getSNDHIREDATE();
 
-    /** Column name SOCIALSECURITYNO */
-    public static final String COLUMNNAME_SOCIALSECURITYNO = "SOCIALSECURITYNO";
+    /** Column name SocialSecurityNO */
+    public static final String COLUMNNAME_SocialSecurityNO = "SocialSecurityNO";
 
-	/** Set SOCIALSECURITYNO	  */
-	public void setSOCIALSECURITYNO (String SOCIALSECURITYNO);
+	/** Set SocialSecurityNO	  */
+	public void setSocialSecurityNO (String SocialSecurityNO);
 
-	/** Get SOCIALSECURITYNO	  */
-	public String getSOCIALSECURITYNO();
+	/** Get SocialSecurityNO	  */
+	public String getSocialSecurityNO();
 
     /** Column name Sports */
     public static final String COLUMNNAME_Sports = "Sports";

@@ -35,7 +35,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240823L;
+	private static final long serialVersionUID = 20250313L;
 
     /** Standard Constructor */
     public X_AMN_Employee (Properties ctx, int AMN_Employee_ID, String trxName)
@@ -68,6 +68,8 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISBPASSIGNED (false);
 // N
+			setIsDetailedNames (false);
+// N
 			setISEDI (false);
 // N
 			setISFIRSTHIREDATE (false);
@@ -86,7 +88,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISSNDHIREDATE (false);
 // N
-			setISSOCIALSECURITY (false);
+			setisSocialSecurity (false);
 // N
 			setISSSPRIVATE (false);
 // N
@@ -140,6 +142,8 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISBPASSIGNED (false);
 // N
+			setIsDetailedNames (false);
+// N
 			setISEDI (false);
 // N
 			setISFIRSTHIREDATE (false);
@@ -158,7 +162,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISSNDHIREDATE (false);
 // N
-			setISSOCIALSECURITY (false);
+			setisSocialSecurity (false);
 // N
 			setISSSPRIVATE (false);
 // N
@@ -212,6 +216,8 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISBPASSIGNED (false);
 // N
+			setIsDetailedNames (false);
+// N
 			setISEDI (false);
 // N
 			setISFIRSTHIREDATE (false);
@@ -230,7 +236,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISSNDHIREDATE (false);
 // N
-			setISSOCIALSECURITY (false);
+			setisSocialSecurity (false);
 // N
 			setISSSPRIVATE (false);
 // N
@@ -284,6 +290,8 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISBPASSIGNED (false);
 // N
+			setIsDetailedNames (false);
+// N
 			setISEDI (false);
 // N
 			setISFIRSTHIREDATE (false);
@@ -302,7 +310,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 // N
 			setISSNDHIREDATE (false);
 // N
-			setISSOCIALSECURITY (false);
+			setisSocialSecurity (false);
 // N
 			setISSSPRIVATE (false);
 // N
@@ -389,6 +397,34 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	public String getAlergic()
 	{
 		return (String)get_Value(COLUMNNAME_Alergic);
+	}
+
+	public I_AMN_CommissionGroup getAMN_CommissionGroup() throws RuntimeException
+	{
+		return (I_AMN_CommissionGroup)MTable.get(getCtx(), I_AMN_CommissionGroup.Table_ID)
+			.getPO(getAMN_CommissionGroup_ID(), get_TrxName());
+	}
+
+	/** Set Commission Group.
+		@param AMN_CommissionGroup_ID Payroll Employee commission Group OrgSector
+	*/
+	public void setAMN_CommissionGroup_ID (int AMN_CommissionGroup_ID)
+	{
+		if (AMN_CommissionGroup_ID < 1)
+			set_Value (COLUMNNAME_AMN_CommissionGroup_ID, null);
+		else
+			set_Value (COLUMNNAME_AMN_CommissionGroup_ID, Integer.valueOf(AMN_CommissionGroup_ID));
+	}
+
+	/** Get Commission Group.
+		@return Payroll Employee commission Group OrgSector
+	  */
+	public int getAMN_CommissionGroup_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_CommissionGroup_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Payroll Contract.
@@ -996,18 +1032,18 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	}
 
 	/** Set COMMISSIONSGROUP.
-		@param COMMISSIONSGROUP COMMISSIONSGROUP
+		@param CommissionsGroup COMMISSIONSGROUP
 	*/
-	public void setCOMMISSIONSGROUP (String COMMISSIONSGROUP)
+	public void setCommissionsGroup (String CommissionsGroup)
 	{
-		set_Value (COLUMNNAME_COMMISSIONSGROUP, COMMISSIONSGROUP);
+		set_Value (COLUMNNAME_CommissionsGroup, CommissionsGroup);
 	}
 
 	/** Get COMMISSIONSGROUP.
 		@return COMMISSIONSGROUP	  */
-	public String getCOMMISSIONSGROUP()
+	public String getCommissionsGroup()
 	{
-		return (String)get_Value(COLUMNNAME_COMMISSIONSGROUP);
+		return (String)get_Value(COLUMNNAME_CommissionsGroup);
 	}
 
 	/** Set Nacionality.
@@ -1243,6 +1279,22 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return (String)get_Value(COLUMNNAME_EMail);
 	}
 
+	/** Set EMail Address 2.
+		@param EMail2 Electronic Mail Address Corporative
+	*/
+	public void setEMail2 (String EMail2)
+	{
+		set_Value (COLUMNNAME_EMail2, EMail2);
+	}
+
+	/** Get EMail Address 2.
+		@return Electronic Mail Address Corporative
+	  */
+	public String getEMail2()
+	{
+		return (String)get_Value(COLUMNNAME_EMail2);
+	}
+
 	/** Set Employee Image 1.
 		@param empimg1_ID Employee Image 1
 	*/
@@ -1300,6 +1352,36 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	public String getFIRSTHIREDATE()
 	{
 		return (String)get_Value(COLUMNNAME_FIRSTHIREDATE);
+	}
+
+	/** Set First Name 1.
+		@param FirstName1 First Name 1
+	*/
+	public void setFirstName1 (String FirstName1)
+	{
+		set_Value (COLUMNNAME_FirstName1, FirstName1);
+	}
+
+	/** Get First Name 1.
+		@return First Name 1	  */
+	public String getFirstName1()
+	{
+		return (String)get_Value(COLUMNNAME_FirstName1);
+	}
+
+	/** Set First Name 2.
+		@param FirstName2 First Name 2
+	*/
+	public void setFirstName2 (String FirstName2)
+	{
+		set_Value (COLUMNNAME_FirstName2, FirstName2);
+	}
+
+	/** Get First Name 2.
+		@return First Name 2	  */
+	public String getFirstName2()
+	{
+		return (String)get_Value(COLUMNNAME_FirstName2);
 	}
 
 	/** Both Hands = B */
@@ -1374,34 +1456,34 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return (String)get_Value(COLUMNNAME_Hobbyes);
 	}
 
-	/** Set IDCARDAUX.
-		@param IDCARDAUX IDCARDAUX
+	/** Set IDCardAux.
+		@param IDCardAux IDCardAux
 	*/
-	public void setIDCARDAUX (String IDCARDAUX)
+	public void setIDCardAux (String IDCardAux)
 	{
-		set_Value (COLUMNNAME_IDCARDAUX, IDCARDAUX);
+		set_Value (COLUMNNAME_IDCardAux, IDCardAux);
 	}
 
-	/** Get IDCARDAUX.
-		@return IDCARDAUX	  */
-	public String getIDCARDAUX()
+	/** Get IDCardAux.
+		@return IDCardAux	  */
+	public String getIDCardAux()
 	{
-		return (String)get_Value(COLUMNNAME_IDCARDAUX);
+		return (String)get_Value(COLUMNNAME_IDCardAux);
 	}
 
-	/** Set IDCARDNO.
-		@param IDCARDNO IDCARDNO
+	/** Set IDCardNo.
+		@param IDCardNo IDCardNo
 	*/
-	public void setIDCARDNO (String IDCARDNO)
+	public void setIDCardNo (String IDCardNo)
 	{
-		set_Value (COLUMNNAME_IDCARDNO, IDCARDNO);
+		set_Value (COLUMNNAME_IDCardNo, IDCardNo);
 	}
 
-	/** Get IDCARDNO.
-		@return IDCARDNO	  */
-	public String getIDCARDNO()
+	/** Get IDCardNo.
+		@return IDCardNo	  */
+	public String getIDCardNo()
 	{
-		return (String)get_Value(COLUMNNAME_IDCARDNO);
+		return (String)get_Value(COLUMNNAME_IDCardNo);
 	}
 
 	/** Set IDCOUNTRY.
@@ -1422,34 +1504,34 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set IDNUMBER.
-		@param IDNUMBER IDNUMBER
+	/** Set IDNumber.
+		@param IDNumber IDNumber
 	*/
-	public void setIDNUMBER (String IDNUMBER)
+	public void setIDNumber (String IDNumber)
 	{
-		set_Value (COLUMNNAME_IDNUMBER, IDNUMBER);
+		set_Value (COLUMNNAME_IDNumber, IDNumber);
 	}
 
-	/** Get IDNUMBER.
-		@return IDNUMBER	  */
-	public String getIDNUMBER()
+	/** Get IDNumber.
+		@return IDNumber	  */
+	public String getIDNumber()
 	{
-		return (String)get_Value(COLUMNNAME_IDNUMBER);
+		return (String)get_Value(COLUMNNAME_IDNumber);
 	}
 
-	/** Set IDTYPE.
-		@param IDTYPE IDTYPE
+	/** Set IDType.
+		@param IDType IDType
 	*/
-	public void setIDTYPE (String IDTYPE)
+	public void setIDType (String IDType)
 	{
-		set_Value (COLUMNNAME_IDTYPE, IDTYPE);
+		set_Value (COLUMNNAME_IDType, IDType);
 	}
 
-	/** Get IDTYPE.
-		@return IDTYPE	  */
-	public String getIDTYPE()
+	/** Get IDType.
+		@return IDType	  */
+	public String getIDType()
 	{
-		return (String)get_Value(COLUMNNAME_IDTYPE);
+		return (String)get_Value(COLUMNNAME_IDType);
 	}
 
 	/** Set incomedate.
@@ -1586,6 +1668,28 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 	public boolean isBPASSIGNED()
 	{
 		Object oo = get_Value(COLUMNNAME_ISBPASSIGNED);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Detailed Names.
+		@param IsDetailedNames Detailed Names
+	*/
+	public void setIsDetailedNames (boolean IsDetailedNames)
+	{
+		set_Value (COLUMNNAME_IsDetailedNames, Boolean.valueOf(IsDetailedNames));
+	}
+
+	/** Get Detailed Names.
+		@return Detailed Names	  */
+	public boolean isDetailedNames()
+	{
+		Object oo = get_Value(COLUMNNAME_IsDetailedNames);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
@@ -1795,19 +1899,19 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return false;
 	}
 
-	/** Set ISSOCIALSECURITY.
-		@param ISSOCIALSECURITY ISSOCIALSECURITY
+	/** Set isSocialSecurity.
+		@param isSocialSecurity isSocialSecurity
 	*/
-	public void setISSOCIALSECURITY (boolean ISSOCIALSECURITY)
+	public void setisSocialSecurity (boolean isSocialSecurity)
 	{
-		set_Value (COLUMNNAME_ISSOCIALSECURITY, Boolean.valueOf(ISSOCIALSECURITY));
+		set_Value (COLUMNNAME_isSocialSecurity, Boolean.valueOf(isSocialSecurity));
 	}
 
-	/** Get ISSOCIALSECURITY.
-		@return ISSOCIALSECURITY	  */
-	public boolean isSOCIALSECURITY()
+	/** Get isSocialSecurity.
+		@return isSocialSecurity	  */
+	public boolean isSocialSecurity()
 	{
-		Object oo = get_Value(COLUMNNAME_ISSOCIALSECURITY);
+		Object oo = get_Value(COLUMNNAME_isSocialSecurity);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
@@ -1908,19 +2012,19 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return (String)get_Value(COLUMNNAME_jobcondition);
 	}
 
-	/** Set JOBREMUNERATION.
-		@param JOBREMUNERATION JOBREMUNERATION
+	/** Set JobRemuneration.
+		@param JobRemuneration JobRemuneration
 	*/
-	public void setJOBREMUNERATION (BigDecimal JOBREMUNERATION)
+	public void setJobRemuneration (BigDecimal JobRemuneration)
 	{
-		set_Value (COLUMNNAME_JOBREMUNERATION, JOBREMUNERATION);
+		set_Value (COLUMNNAME_JobRemuneration, JobRemuneration);
 	}
 
-	/** Get JOBREMUNERATION.
-		@return JOBREMUNERATION	  */
-	public BigDecimal getJOBREMUNERATION()
+	/** Get JobRemuneration.
+		@return JobRemuneration	  */
+	public BigDecimal getJobRemuneration()
 	{
-		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_JOBREMUNERATION);
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_JobRemuneration);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
@@ -1945,6 +2049,36 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Last Name 1.
+		@param LastName1 Last Name 1
+	*/
+	public void setLastName1 (String LastName1)
+	{
+		set_Value (COLUMNNAME_LastName1, LastName1);
+	}
+
+	/** Get Last Name 1.
+		@return Last Name 1	  */
+	public String getLastName1()
+	{
+		return (String)get_Value(COLUMNNAME_LastName1);
+	}
+
+	/** Set Last Name 2.
+		@param LastName2 Last Name 2
+	*/
+	public void setLastName2 (String LastName2)
+	{
+		set_Value (COLUMNNAME_LastName2, LastName2);
+	}
+
+	/** Get Last Name 2.
+		@return Last Name 2	  */
+	public String getLastName2()
+	{
+		return (String)get_Value(COLUMNNAME_LastName2);
 	}
 
 	/** Set MOLI_BPARTNERTYPE.
@@ -2107,19 +2241,26 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return (String)get_Value(COLUMNNAME_NAME_IDCARD);
 	}
 
-	/** Set ORGSECTOR.
-		@param ORGSECTOR ORGSECTOR
+	/** Central Office - Group A = OCAA */
+	public static final String ORGSECTOR_CentralOffice_GroupA = "OCAA";
+	/** Central Office - Group B = OCBA */
+	public static final String ORGSECTOR_CentralOffice_GroupB = "OCBA";
+	/** Central Office - Group C = OCCA */
+	public static final String ORGSECTOR_CentralOffice_GroupC = "OCCA";
+	/** Set OrgSector.
+		@param OrgSector OrgSector
 	*/
-	public void setORGSECTOR (String ORGSECTOR)
+	public void setOrgSector (String OrgSector)
 	{
-		set_Value (COLUMNNAME_ORGSECTOR, ORGSECTOR);
+
+		set_Value (COLUMNNAME_OrgSector, OrgSector);
 	}
 
-	/** Get ORGSECTOR.
-		@return ORGSECTOR	  */
-	public String getORGSECTOR()
+	/** Get OrgSector.
+		@return OrgSector	  */
+	public String getOrgSector()
 	{
-		return (String)get_Value(COLUMNNAME_ORGSECTOR);
+		return (String)get_Value(COLUMNNAME_OrgSector);
 	}
 
 	/** Check = C */
@@ -2170,7 +2311,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return (String)get_Value(COLUMNNAME_payrollmode);
 	}
 
-	/** Set PIN Personal ID Number.
+	/** Set PIN.
 		@param PIN Personal Identification Number
 	*/
 	public void setPIN (String PIN)
@@ -2178,7 +2319,7 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		set_Value (COLUMNNAME_PIN, PIN);
 	}
 
-	/** Get PIN Personal ID Number.
+	/** Get PIN.
 		@return Personal Identification Number
 	  */
 	public String getPIN()
@@ -2322,19 +2463,19 @@ public class X_AMN_Employee extends PO implements I_AMN_Employee, I_Persistent
 		return (String)get_Value(COLUMNNAME_SNDHIREDATE);
 	}
 
-	/** Set SOCIALSECURITYNO.
-		@param SOCIALSECURITYNO SOCIALSECURITYNO
+	/** Set SocialSecurityNO.
+		@param SocialSecurityNO SocialSecurityNO
 	*/
-	public void setSOCIALSECURITYNO (String SOCIALSECURITYNO)
+	public void setSocialSecurityNO (String SocialSecurityNO)
 	{
-		set_Value (COLUMNNAME_SOCIALSECURITYNO, SOCIALSECURITYNO);
+		set_Value (COLUMNNAME_SocialSecurityNO, SocialSecurityNO);
 	}
 
-	/** Get SOCIALSECURITYNO.
-		@return SOCIALSECURITYNO	  */
-	public String getSOCIALSECURITYNO()
+	/** Get SocialSecurityNO.
+		@return SocialSecurityNO	  */
+	public String getSocialSecurityNO()
 	{
-		return (String)get_Value(COLUMNNAME_SOCIALSECURITYNO);
+		return (String)get_Value(COLUMNNAME_SocialSecurityNO);
 	}
 
 	/** Set Sports.

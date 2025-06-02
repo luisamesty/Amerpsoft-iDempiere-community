@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Payroll_Assist_Proc
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Payroll_Assist_Proc 
@@ -32,7 +32,7 @@ public interface I_AMN_Payroll_Assist_Proc
     /** TableName=AMN_Payroll_Assist_Proc */
     public static final String Table_Name = "AMN_Payroll_Assist_Proc";
 
-    /** AD_Table_ID=1000062 */
+    /** AD_Table_ID=1000031 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -46,8 +46,8 @@ public interface I_AMN_Payroll_Assist_Proc
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Payroll_Assist_Proc
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -129,6 +129,15 @@ public interface I_AMN_Payroll_Assist_Proc
 	  */
 	public int getCreatedBy();
 
+    /** Column name dayofweek */
+    public static final String COLUMNNAME_dayofweek = "dayofweek";
+
+	/** Set dayofweek	  */
+	public void setdayofweek (String dayofweek);
+
+	/** Get dayofweek	  */
+	public String getdayofweek();
+
     /** Column name Descanso */
     public static final String COLUMNNAME_Descanso = "Descanso";
 
@@ -186,6 +195,15 @@ public interface I_AMN_Payroll_Assist_Proc
 	  */
 	public boolean isActive();
 
+    /** Column name IsNonBusinessDay */
+    public static final String COLUMNNAME_IsNonBusinessDay = "IsNonBusinessDay";
+
+	/** Set Non Business Day	  */
+	public void setIsNonBusinessDay (boolean IsNonBusinessDay);
+
+	/** Get Non Business Day	  */
+	public boolean isNonBusinessDay();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -199,16 +217,31 @@ public interface I_AMN_Payroll_Assist_Proc
 	  */
 	public String getName();
 
+    /** Column name Protected */
+    public static final String COLUMNNAME_Protected = "Protected";
+
+	/** Set Protected.
+	  * Protected to write
+	  */
+	public void setProtected (boolean Protected);
+
+	/** Get Protected.
+	  * Protected to write
+	  */
+	public boolean isProtected();
+
     /** Column name Shift_Attendance */
     public static final String COLUMNNAME_Shift_Attendance = "Shift_Attendance";
 
 	/** Set Shift_Attendance.
-	  * Indicates Employee's Atthendance during one day
+	  * Indicates Employee&#039;
+s Atthendance during one day
 	  */
 	public void setShift_Attendance (BigDecimal Shift_Attendance);
 
 	/** Get Shift_Attendance.
-	  * Indicates Employee's Atthendance during one day
+	  * Indicates Employee&#039;
+s Atthendance during one day
 	  */
 	public BigDecimal getShift_Attendance();
 
@@ -216,50 +249,134 @@ public interface I_AMN_Payroll_Assist_Proc
     public static final String COLUMNNAME_Shift_AttendanceBonus = "Shift_AttendanceBonus";
 
 	/** Set Shift_AttendanceBonus.
-	  * Indicates Employee's Atthendance Bonus during one day
+	  * Indicates Employee&#039;
+s Atthendance Bonus during one day
 	  */
 	public void setShift_AttendanceBonus (BigDecimal Shift_AttendanceBonus);
 
 	/** Get Shift_AttendanceBonus.
-	  * Indicates Employee's Atthendance Bonus during one day
+	  * Indicates Employee&#039;
+s Atthendance Bonus during one day
 	  */
 	public BigDecimal getShift_AttendanceBonus();
+
+    /** Column name Shift_EDE */
+    public static final String COLUMNNAME_Shift_EDE = "Shift_EDE";
+
+	/** Set EDE.
+	  * Shift_EDE Early Departures
+	  */
+	public void setShift_EDE (BigDecimal Shift_EDE);
+
+	/** Get EDE.
+	  * Shift_EDE Early Departures
+	  */
+	public BigDecimal getShift_EDE();
+
+    /** Column name Shift_HC */
+    public static final String COLUMNNAME_Shift_HC = "Shift_HC";
+
+	/** Set HC.
+	  * Shift_HC Complete Hours
+	  */
+	public void setShift_HC (BigDecimal Shift_HC);
+
+	/** Get HC.
+	  * Shift_HC Complete Hours
+	  */
+	public BigDecimal getShift_HC();
 
     /** Column name Shift_HED */
     public static final String COLUMNNAME_Shift_HED = "Shift_HED";
 
-	/** Set Extra Daytime Hours.
+	/** Set HED.
 	  * Extra Daytime Hours
 	  */
 	public void setShift_HED (BigDecimal Shift_HED);
 
-	/** Get Extra Daytime Hours.
+	/** Get HED.
 	  * Extra Daytime Hours
 	  */
 	public BigDecimal getShift_HED();
 
+    /** Column name Shift_HEF */
+    public static final String COLUMNNAME_Shift_HEF = "Shift_HEF";
+
+	/** Set HEF.
+	  * Shift_HEF  Extra Holliday Hours	
+	  */
+	public void setShift_HEF (BigDecimal Shift_HEF);
+
+	/** Get HEF.
+	  * Shift_HEF  Extra Holliday Hours	
+	  */
+	public BigDecimal getShift_HEF();
+
     /** Column name Shift_HEN */
     public static final String COLUMNNAME_Shift_HEN = "Shift_HEN";
 
-	/** Set Extra Nighttime Hours.
+	/** Set HEN.
 	  * Extra Nighttime Hours
 	  */
 	public void setShift_HEN (BigDecimal Shift_HEN);
 
-	/** Get Extra Nighttime Hours.
+	/** Get HEN.
 	  * Extra Nighttime Hours
 	  */
 	public BigDecimal getShift_HEN();
 
+    /** Column name Shift_HER */
+    public static final String COLUMNNAME_Shift_HER = "Shift_HER";
+
+	/** Set HER.
+	  * Shift_HER  Extra Clock Hours
+	  */
+	public void setShift_HER (BigDecimal Shift_HER);
+
+	/** Get HER.
+	  * Shift_HER  Extra Clock Hours
+	  */
+	public BigDecimal getShift_HER();
+
+    /** Column name Shift_HLGT15 */
+    public static final String COLUMNNAME_Shift_HLGT15 = "Shift_HLGT15";
+
+	/** Set HLGT15.
+	  * Shift_HLGT15 Free Hours Greater than 15&#039;
+
+	  */
+	public void setShift_HLGT15 (BigDecimal Shift_HLGT15);
+
+	/** Get HLGT15.
+	  * Shift_HLGT15 Free Hours Greater than 15&#039;
+
+	  */
+	public BigDecimal getShift_HLGT15();
+
+    /** Column name Shift_HLLT15 */
+    public static final String COLUMNNAME_Shift_HLLT15 = "Shift_HLLT15";
+
+	/** Set HLLT15.
+	  * Shift_HLLT15 Free Hours Less than 15&#039;
+
+	  */
+	public void setShift_HLLT15 (BigDecimal Shift_HLLT15);
+
+	/** Get HLLT15.
+	  * Shift_HLLT15 Free Hours Less than 15&#039;
+
+	  */
+	public BigDecimal getShift_HLLT15();
+
     /** Column name Shift_HND */
     public static final String COLUMNNAME_Shift_HND = "Shift_HND";
 
-	/** Set Normal Daytime Hours.
+	/** Set HND.
 	  * Normal Daytime Hours
 	  */
 	public void setShift_HND (BigDecimal Shift_HND);
 
-	/** Get Normal Daytime Hours.
+	/** Get HND.
 	  * Normal Daytime Hours
 	  */
 	public BigDecimal getShift_HND();
@@ -267,51 +384,106 @@ public interface I_AMN_Payroll_Assist_Proc
     /** Column name Shift_HNN */
     public static final String COLUMNNAME_Shift_HNN = "Shift_HNN";
 
-	/** Set Normal Nighttime Hours.
+	/** Set HNN.
 	  * Normal Nighttime Hours
 	  */
 	public void setShift_HNN (BigDecimal Shift_HNN);
 
-	/** Get Normal Nighttime Hours.
+	/** Get HNN.
 	  * Normal Nighttime Hours
 	  */
 	public BigDecimal getShift_HNN();
 
+    /** Column name Shift_HT */
+    public static final String COLUMNNAME_Shift_HT = "Shift_HT";
+
+	/** Set HT.
+	  * Shift_HT Total Work Hours	
+	  */
+	public void setShift_HT (BigDecimal Shift_HT);
+
+	/** Get HT.
+	  * Shift_HT Total Work Hours	
+	  */
+	public BigDecimal getShift_HT();
+
     /** Column name Shift_In1 */
     public static final String COLUMNNAME_Shift_In1 = "Shift_In1";
 
-	/** Set Shift_In1	  */
+	/** Set Shift_In1.
+	  * First Shift Entry
+	  */
 	public void setShift_In1 (Timestamp Shift_In1);
 
-	/** Get Shift_In1	  */
+	/** Get Shift_In1.
+	  * First Shift Entry
+	  */
 	public Timestamp getShift_In1();
 
     /** Column name Shift_In2 */
     public static final String COLUMNNAME_Shift_In2 = "Shift_In2";
 
-	/** Set Shift_In2	  */
+	/** Set Shift_In2.
+	  * Second Shift Entry
+	  */
 	public void setShift_In2 (Timestamp Shift_In2);
 
-	/** Get Shift_In2	  */
+	/** Get Shift_In2.
+	  * Second Shift Entry
+	  */
 	public Timestamp getShift_In2();
+
+    /** Column name Shift_LTA */
+    public static final String COLUMNNAME_Shift_LTA = "Shift_LTA";
+
+	/** Set LT.
+	  * HR_LTA Late Arrivals
+	  */
+	public void setShift_LTA (BigDecimal Shift_LTA);
+
+	/** Get LT.
+	  * HR_LTA Late Arrivals
+	  */
+	public BigDecimal getShift_LTA();
 
     /** Column name Shift_Out1 */
     public static final String COLUMNNAME_Shift_Out1 = "Shift_Out1";
 
-	/** Set Shift_Out1	  */
+	/** Set Shift_Out1.
+	  * First Shift Output
+	  */
 	public void setShift_Out1 (Timestamp Shift_Out1);
 
-	/** Get Shift_Out1	  */
+	/** Get Shift_Out1.
+	  * First Shift Output
+	  */
 	public Timestamp getShift_Out1();
 
     /** Column name Shift_Out2 */
     public static final String COLUMNNAME_Shift_Out2 = "Shift_Out2";
 
-	/** Set Shift_Out2	  */
+	/** Set Shift_Out2.
+	  * Second Shift Output
+	  */
 	public void setShift_Out2 (Timestamp Shift_Out2);
 
-	/** Get Shift_Out2	  */
+	/** Get Shift_Out2.
+	  * Second Shift Output
+	  */
 	public Timestamp getShift_Out2();
+
+    /** Column name Shift_THL */
+    public static final String COLUMNNAME_Shift_THL = "Shift_THL";
+
+	/** Set THL.
+	  * HR_THL Free Hours
+	  */
+	public void setShift_THL (BigDecimal Shift_THL);
+
+	/** Get THL.
+	  * HR_THL Free Hours
+	  */
+	public BigDecimal getShift_THL();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -328,13 +500,4 @@ public interface I_AMN_Payroll_Assist_Proc
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name dayofweek */
-    public static final String COLUMNNAME_dayofweek = "dayofweek";
-
-	/** Set dayofweek	  */
-	public void setdayofweek (String dayofweek);
-
-	/** Get dayofweek	  */
-	public String getdayofweek();
 }

@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeesGraphics" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e2bceec0-f6cf-444c-b5b5-332e682f2a3e">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<subDataset name="PieChartDatasetSex" uuid="98f809e0-dbb9-492e-829e-76a3a38907b4">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="AD_Client_ID" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT 'Hombres' AS Hombres, SUM(CASE WHEN emp.sex = 'M' THEN 1 ELSE 0 END) AS qty_Hombres,
+'Mujeres' AS Mujeres, SUM(CASE WHEN emp.sex = 'F' THEN 1 ELSE 0 END) AS qty_Mujeres
+FROM AMN_Employee emp
+WHERE emp.isactive= 'Y'  
+    AND emp.status IN ('A','V','S') 
+    AND emp.ad_client_id = $P{AD_Client_ID}]]>
+		</queryString>
+		<field name="hombres" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="hombres"/>
+			<property name="com.jaspersoft.studio.field.label" value="hombres"/>
+		</field>
+		<field name="qty_hombres" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_hombres"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_hombres"/>
+		</field>
+		<field name="mujeres" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="mujeres"/>
+			<property name="com.jaspersoft.studio.field.label" value="mujeres"/>
+		</field>
+		<field name="qty_mujeres" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_mujeres"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_mujeres"/>
+		</field>
+	</subDataset>
+	<subDataset name="PieChartDatasetAges" uuid="942effc0-ac4a-4902-af28-7885c68f354e">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="AD_Client_ID" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+	'18-25' AS e1, '26-35' AS e2, '36-45' AS e3, '46-60' AS e4, '+ 60' AS e5,  
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 18 AND 25 THEN 1 ELSE 0 END) AS qty_e1,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 26 AND 35 THEN 1 ELSE 0 END) AS qty_e2,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 36 AND 45 THEN 1 ELSE 0 END) AS qty_e3,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 46 AND 60 THEN 1 ELSE 0 END) AS qty_e4,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) > 60 THEN 1 ELSE 0 END) AS qty_e5
+FROM AMN_Employee emp
+WHERE emp.isactive= 'Y'  
+    AND emp.status IN ('A','V','S') 
+    AND emp.ad_client_id = $P{AD_Client_ID}]]>
+		</queryString>
+		<field name="e1" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="e1"/>
+			<property name="com.jaspersoft.studio.field.label" value="e1"/>
+		</field>
+		<field name="e2" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="e2"/>
+			<property name="com.jaspersoft.studio.field.label" value="e2"/>
+		</field>
+		<field name="e3" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="e3"/>
+			<property name="com.jaspersoft.studio.field.label" value="e3"/>
+		</field>
+		<field name="e4" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="e4"/>
+			<property name="com.jaspersoft.studio.field.label" value="e4"/>
+		</field>
+		<field name="e5" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="e5"/>
+			<property name="com.jaspersoft.studio.field.label" value="e5"/>
+		</field>
+		<field name="qty_e1" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_e1"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_e1"/>
+		</field>
+		<field name="qty_e2" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_e2"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_e2"/>
+		</field>
+		<field name="qty_e3" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_e3"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_e3"/>
+		</field>
+		<field name="qty_e4" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_e4"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_e4"/>
+		</field>
+		<field name="qty_e5" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="qty_e5"/>
+			<property name="com.jaspersoft.studio.field.label" value="qty_e5"/>
+		</field>
+	</subDataset>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
+	<parameter name="DateTo" class="java.sql.Timestamp"/>
+	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
+	<parameter name="IsSummary" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- EmployeeGraphics
+-- Employee Graphics V2
+SELECT
+	-- REPORT HEADER
+	img1.binarydata as rep_logo,
+    concat(COALESCE(cli.name,cli.value),' - Consolidado') as rep_name,
+	-- GRAPHIC Fields
+    loc.orgname AS Empresa,
+    CASE WHEN emp.sex = 'M' THEN 'Hombres' ELSE 'Mujeres' END AS sex,
+    SUM(CASE WHEN emp.sex = 'M' THEN 1 ELSE 0 END) AS Hombres,
+    SUM(CASE WHEN emp.sex = 'F' THEN 1 ELSE 0 END) AS Mujeres,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 18 AND 25 THEN 1 ELSE 0 END) AS edad1,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 26 AND 35 THEN 1 ELSE 0 END) AS edad2,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 36 AND 45 THEN 1 ELSE 0 END) AS edad3,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 46 AND 60 THEN 1 ELSE 0 END) AS edad4,
+    SUM(CASE WHEN date_part('year', age(emp.Birthday)) > 60 THEN 1 ELSE 0 END) AS edad5
+FROM AMN_Employee emp
+LEFT JOIN AMN_Location loc ON loc.AMN_Location_ID = emp.AMN_Location_ID
+INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
+INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
+LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)
+INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
+INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
+LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
+WHERE emp.isactive= 'Y'  AND emp.status IN ('A','V','S')
+	AND  emp.ad_client_id =  $P{AD_Client_ID} 
+GROUP BY rep_logo, rep_name, loc.orgname, emp.sex
+ORDER BY loc.orgname, Empresa, Sex]]>
+	</queryString>
+	<field name="rep_logo" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="rep_logo"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_logo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_image"/>
+	</field>
+	<field name="rep_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_name"/>
+	</field>
+	<field name="empresa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="empresa"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_location"/>
+	</field>
+	<field name="sex" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sex"/>
+		<property name="com.jaspersoft.studio.field.label" value="sex"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
+	</field>
+	<field name="hombres" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="hombres"/>
+		<property name="com.jaspersoft.studio.field.label" value="hombres"/>
+	</field>
+	<field name="mujeres" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="mujeres"/>
+		<property name="com.jaspersoft.studio.field.label" value="mujeres"/>
+	</field>
+	<field name="edad1" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="edad1"/>
+		<property name="com.jaspersoft.studio.field.label" value="edad1"/>
+	</field>
+	<field name="edad2" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="edad2"/>
+		<property name="com.jaspersoft.studio.field.label" value="edad2"/>
+	</field>
+	<field name="edad3" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="edad3"/>
+		<property name="com.jaspersoft.studio.field.label" value="edad3"/>
+	</field>
+	<field name="edad4" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="edad4"/>
+		<property name="com.jaspersoft.studio.field.label" value="edad4"/>
+	</field>
+	<field name="edad5" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="edad5"/>
+		<property name="com.jaspersoft.studio.field.label" value="edad5"/>
+	</field>
+	<variable name="qty_Hombres" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{hombres}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="qty_Mujeres" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{mujeres}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="qty_emp_Mujeres" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{mujeres}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="qty_emp_Hombres" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{hombres}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="qty_emp_1" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad1}]]></variableExpression>
+	</variable>
+	<variable name="qty_emp_2" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad2}]]></variableExpression>
+	</variable>
+	<variable name="qty_emp_3" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad3}]]></variableExpression>
+	</variable>
+	<variable name="qty_emp_4" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad4}]]></variableExpression>
+	</variable>
+	<variable name="qty_emp_5" class="java.lang.Integer" resetType="Group" resetGroup="Group_Empresa" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad5}]]></variableExpression>
+	</variable>
+	<variable name="qty_tot_1" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad1}]]></variableExpression>
+	</variable>
+	<variable name="qty_tot_2" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad2}]]></variableExpression>
+	</variable>
+	<variable name="qty_tot_3" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad3}]]></variableExpression>
+	</variable>
+	<variable name="qty_tot_4" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad4}]]></variableExpression>
+	</variable>
+	<variable name="qty_tot_5" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{edad5}]]></variableExpression>
+	</variable>
+	<group name="Group_Empresa">
+		<groupExpression><![CDATA[$F{empresa}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="0" y="0" width="205" height="14" uuid="55c77940-1be5-4656-8df6-14702c3dbe66">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="6"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{empresa}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="205" y="0" width="50" height="14" uuid="accc0b09-08b2-4762-aad1-ecba17e072c8">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_Hombres} != 0 ? $V{qty_emp_Hombres} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="255" y="0" width="50" height="14" uuid="2995b48e-09f7-40df-b71a-21e19f8979bc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_Mujeres} != 0 ? $V{qty_emp_Mujeres} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="305" y="0" width="50" height="14" uuid="f0163692-2b59-4c13-b10d-02ed828bf3a7">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_Mujeres} +$V{qty_emp_Hombres}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="355" y="0" width="40" height="14" uuid="d6bae797-cb6e-485f-908e-dfe072e73111">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_1} != 0 ? $V{qty_emp_1} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="395" y="0" width="40" height="14" uuid="c690f73d-8e77-4522-a073-ea14d15a243c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_2} != 0 ? $V{qty_emp_2} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="435" y="0" width="40" height="14" uuid="17826391-40c2-466d-8e55-56da266f21b1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_3} != 0 ? $V{qty_emp_3} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="475" y="0" width="40" height="14" uuid="5c1ae461-c2d8-4e2e-af11-e498fa69a984">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_4} != 0 ? $V{qty_emp_4} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="515" y="0" width="40" height="14" uuid="e5d894de-c231-429a-905e-554eeadf56b1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_5} != 0 ? $V{qty_emp_5} : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="205" y="0" width="50" height="14" uuid="e8b60206-7d43-4be4-9877-793fcb813e11">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[1==2]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_Hombres} != 0 ? $V{qty_emp_Hombres} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="255" y="0" width="50" height="14" uuid="5d091bd4-45a8-4c64-bd2b-cebfd7895c3f">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[1==2]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_Mujeres} != 0 ? $V{qty_emp_Mujeres} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="0" y="0" width="205" height="14" uuid="90e1a6fd-2eaf-4462-b12c-cd838c90e565">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="5"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total Empresa "+$F{empresa}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="305" y="0" width="50" height="14" uuid="a6dc3d8f-c033-4221-a3d5-0b2ef039355c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_Mujeres} +$V{qty_emp_Hombres}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="355" y="0" width="40" height="14" uuid="fa5042a3-4a8e-4652-a44b-d00708dc6907">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_1} != 0 ? $V{qty_emp_1} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="395" y="0" width="40" height="14" uuid="23b6a55e-e97d-4bbb-9306-233ae44ee00c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_2} != 0 ? $V{qty_emp_2} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="435" y="0" width="40" height="14" uuid="223cbcf4-30c8-4a44-a41d-6dabfff22f68">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_3} != 0 ? $V{qty_emp_3} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="475" y="0" width="40" height="14" uuid="ddf2afbd-2a3f-41f7-a9f4-ccad133ee19c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_4} != 0 ? $V{qty_emp_4} : ""]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+					<reportElement x="515" y="0" width="40" height="14" uuid="b9cf5414-223e-47ae-a6d1-0a351a0f94ea">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="0" rightPadding="4"/>
+					<textElement textAlignment="Right">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{qty_emp_5} != 0 ? $V{qty_emp_5} : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="28">
+			<textField pattern="dd/MM/yy">
+				<reportElement key="" x="395" y="0" width="158" height="14" uuid="924a6157-3657-4ded-8689-0798acfb43ea">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy", new java.util.Locale("es", "ES")).format($P{DateTo})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="" x="475" y="14" width="80" height="14" uuid="871a683b-bb7c-419e-9847-f5b91ec19880">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="50" y="0" width="345" height="14" isRemoveLineWhenBlank="true" uuid="2279f3e0-0a4a-4095-a841-c7b8130704d9">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
+				<reportElement key="" x="0" y="0" width="50" height="28" isPrintInFirstWholeBand="true" uuid="6391a717-1781-406d-ab00-5dcd319e4864">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement key="" x="395" y="14" width="78" height="14" uuid="67b3f4f1-51ed-4f25-b1ff-5846930aaabf">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="50" y="14" width="345" height="14" isRemoveLineWhenBlank="true" uuid="c1282753-4624-4108-b6f2-62ed0ac1272e">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Reporte de Trabajadores por Sexo y Rango de Edad"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="14">
+			<staticText>
+				<reportElement x="0" y="0" width="205" height="14" uuid="9de9b328-21d7-46e1-acc4-6ce4db9fe2e4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empresa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="0" width="50" height="14" printWhenGroupChanges="Group_Empresa" uuid="3fb1b457-3094-43b1-85a9-45974acf027c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hombres]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="0" width="40" height="14" uuid="a2dc3a55-7cbe-4c05-96a9-8bba9fe98390">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[18-25]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="0" width="50" height="14" uuid="f39c50d2-71fa-4ebc-b2a9-15597488dc28">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mujeres]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="395" y="0" width="40" height="14" uuid="eefed449-2ed3-4d10-bd1a-42f1e685882c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[26-35]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="0" width="40" height="14" uuid="90cc32e3-d078-49f7-b10e-20e206c4f0d4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[36-45]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="0" width="40" height="14" uuid="fa644db4-2f38-4a71-bd3e-d4bc913db7af">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[45-60]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="515" y="0" width="40" height="14" uuid="431a0f8d-8511-40a2-bb08-05bf89abef45">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[+60]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="0" width="50" height="14" uuid="da38c3ac-d24c-4a27-8379-ef289a735a9c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="0" width="50" height="14" uuid="fd06172b-d854-4cff-bdd2-37545cb39ce7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="205" height="14" uuid="1ff51bb4-3e0d-4309-a9b6-894c05706b04">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="6"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa}+" - "+$F{sex}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="205" y="0" width="50" height="14" uuid="9c6bb95f-1063-48ea-8ac7-2e7bd69351cd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[1==2]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hombres} != 0 ? $F{hombres} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="0" width="40" height="14" uuid="e9158206-4578-4c6d-8fb3-38f8891faa4f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{edad1} != 0 ? $F{edad1} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="255" y="0" width="50" height="14" uuid="fa4cac2a-b15c-432f-a73c-a4d5534ce2fb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[1==2]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mujeres} != 0 ? $F{mujeres} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="395" y="0" width="40" height="14" uuid="11f22ccc-30e9-47a2-8d16-3d1f67a8dc67">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{edad2} != 0 ? $F{edad2} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="0" width="40" height="14" uuid="f1e72fff-b78a-4e03-8dfb-0188288c522f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{edad3} != 0 ? $F{edad3} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="475" y="0" width="40" height="14" uuid="e7e5186a-4a8a-4847-bd76-4bec8a6d69f7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{edad4} != 0 ? $F{edad4} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="515" y="0" width="40" height="14" uuid="967059fb-f04d-4198-8f18-5a822d55fddd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{edad5} != 0 ? $F{edad5} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="305" y="0" width="50" height="14" uuid="4d07dd11-a6ba-424b-a1f2-a5f8b153a795">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mujeres} +$F{hombres}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="228">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField evaluationTime="Group" evaluationGroup="Group_Empresa">
+				<reportElement x="0" y="0" width="205" height="14" uuid="ea3325c5-5c76-4797-80d6-6a85a411f658">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="205" y="0" width="50" height="14" uuid="0cf5cea0-ff6d-494c-a514-d6abfc6392dd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_Hombres}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="255" y="0" width="50" height="14" uuid="8e858910-a541-43b7-8db7-2343c3847f3f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_Mujeres}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="305" y="0" width="50" height="14" uuid="dbda8eed-42c8-4b74-b820-69bfa685cc90">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_Mujeres} +$V{qty_Hombres}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="355" y="0" width="40" height="14" uuid="15d89f23-2c7b-464d-ba65-01079b824147">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_tot_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="395" y="0" width="40" height="14" uuid="97b00632-0f32-47ef-9251-b04a8aa537cc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_tot_2}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="435" y="0" width="40" height="14" uuid="2303ee6d-afc2-49fd-bfa6-b372c62b42df">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_tot_3}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="475" y="0" width="40" height="14" uuid="0388d86b-b482-4f86-b5a5-290b1c11415e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_tot_4}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="0" width="40" height="14" uuid="090a7da2-f875-44fb-8374-f81af91ef3ab">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="0" rightPadding="4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{qty_tot_5}]]></textFieldExpression>
+			</textField>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="30" y="25" width="200" height="200" uuid="790d572a-1709-4883-a0bb-6b397872f802"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Trabajadores segun Sexo"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="PieChartDatasetSex" uuid="82e688f5-1442-4bbc-94e4-dd7fe0de4ed8">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{hombres}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_hombres}]]></valueExpression>
+						<labelExpression><![CDATA[$F{hombres}]]></labelExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{mujeres}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_mujeres}]]></valueExpression>
+						<labelExpression><![CDATA[$F{mujeres}]]></labelExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="305" y="28" width="200" height="200" uuid="10876f24-d2c0-4f29-b7d4-0ba1c745b603"/>
+					<chartTitle>
+						<titleExpression><![CDATA["Trabajadores según Edad"
+]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="PieChartDatasetAges" uuid="a7f164d4-c04f-4f1e-89d1-84fd4fca71f2">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{e1}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_e1}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{e2}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_e2}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{e3}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_e3}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{e4}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_e4}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA[$F{e5}]]></keyExpression>
+						<valueExpression><![CDATA[$F{qty_e5}]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollEmployeeLeavesTypes" pageWidth="1470" pageHeight="100" columnWidth="1470" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="05309c5c-22ff-47ed-a281-cb0ad1f791dc">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<import value="java.util.concurrent.*"/>
+	<import value="net.sf.jasperreports.engine.analytics.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE" class="java.util.ResourceBundle"/>
+	<queryString>
+		<![CDATA[SELECT STRING_AGG(lt_reference, ', ') AS leaves_all
+FROM (
+	SELECT CONCAT( amlt.Value,':',amltt.name) AS lt_reference, amlt.Value AS lt_value, amlt.Name AS lt_name, amltt.name AS ltt_name, amltt.description AS ltt_description
+	FROM AMN_leaves_Types amlt
+	INNER JOIN AMN_leaves_Types_Trl amltt ON amltt.amn_leaves_types_id = amlt.amn_leaves_types_id 
+	WHERE amlt.ad_client_id = $P{AD_Client_ID} AND amltt.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID =$P{AD_Client_ID} )
+) AS leatyp]]>
+	</queryString>
+	<field name="leaves_all" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="leaves_all"/>
+		<property name="com.jaspersoft.studio.field.label" value="leaves_all"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="0" y="0" width="1430" height="30" uuid="88427617-0b58-4d75-bdc1-f2719392e80f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="09831b08-4b27-405b-81c0-b075d670df61"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{leaves_all}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

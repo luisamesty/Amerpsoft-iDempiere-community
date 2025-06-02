@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.amerp.amnmodel;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -31,6 +32,10 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 */
     private static final long serialVersionUID = 1L;
 
+    // Variable Indicates if Saturday is considered Business Day */
+    public boolean isSaturdayBusinessDay = false;
+    public boolean isSundayBusinessDay = false;
+    
 	/**
 	 * Logger
 	 */
@@ -44,7 +49,7 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 */
     public MAMN_NonBusinessDay(Properties p_ctx, int C_NonBusinessDay_ID, String p_trxName) {
 	    super(p_ctx, C_NonBusinessDay_ID, p_trxName);
-	    // TODO Auto-generated constructor stub
+	    // 
     }
 
 	/**
@@ -54,7 +59,7 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 */
     public MAMN_NonBusinessDay(Properties p_ctx, ResultSet p_rs, String p_trxName) {
 	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
+	    // 
     }
 
     /*********************************************************************************
@@ -67,7 +72,7 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 * 	@param  p_AD_Org_ID	organization
 	 *  @return BigDecimal number of Holidays between 2 dates 
 	 *********************************************************************************/
-	public static BigDecimal sqlGetHolliDaysBetween (Timestamp p_StartDate, 
+	public static BigDecimal sqlGetHolliDaysBetween (boolean isSaturdayBusinessDay, Timestamp p_StartDate, 
 			 Timestamp p_EndDate, int p_AD_Client_ID, int p_AD_Org_ID)
 	{
 
@@ -131,15 +136,14 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 *  @param int p_AD_Org_ID
 	 * Returns BigDecimal number of business days between 2 dates 
 	 * ***********************************************************************/
-	public static BigDecimal sqlGetBusinessDaysBetween(Timestamp p_StartDate,
-			Timestamp p_EndDate, int p_AD_Client_ID, int p_AD_Org_ID)
-	{
+	public static BigDecimal sqlGetBusinessDaysBetween(boolean isSaturdayBusinessDay, Timestamp p_StartDate,
+			Timestamp p_EndDate, int p_AD_Client_ID, int p_AD_Org_ID) 	{
 		MCalendar mcalendar = MCalendar.getDefault(Env.getCtx(), p_AD_Client_ID);
 		BigDecimal retValue = null;
 		BigDecimal NonWeekendDays = BigDecimal.valueOf(0);
 		BigDecimal HolidaysonNonWeekendDays = BigDecimal.valueOf(0);
 		// Get NonWeekendDays
-		NonWeekendDays = sqlGetNonWeekEndDaysBetween ( p_StartDate, 
+		NonWeekendDays = sqlGetNonWeekEndDaysBetween (isSaturdayBusinessDay, p_StartDate, 
 				  p_EndDate,  p_AD_Client_ID, null);
 		int C_Calendar_ID = mcalendar.getC_Calendar_ID();
 		//	Get Rate
@@ -149,10 +153,14 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 				"WHERE date1 BETWEEN ? AND ? " +
 				"AND ad_client_id IN (0,?) "+
 				"AND ad_org_id IN (0,?) " +
-				"AND IsActive ='Y' " +
-//				"AND extract(dow from date1::timestamp) IN(1,2,3,4,5,6) "  
-				"AND extract(dow from date1::timestamp) IN(1,2,3,4,5) "  // MONDAYS THRU FIDAYS (Sundays/Saturdays OFF)
-				 ;
+				"AND IsActive ='Y' " ;
+		if (isSaturdayBusinessDay) {
+			// MONDAYS THRU SATURDAY (Sundays/Saturdays OFF)
+			sql = sql + " AND extract(dow from date1::timestamp) IN(1,2,3,4,5,6) ";
+		} else {
+			// MONDAYS THRU FRIDAYS (Sundays/Saturdays OFF)
+			sql = sql + " AND extract(dow from date1::timestamp) IN(1,2,3,4,5) ";
+		}
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try
@@ -207,7 +215,7 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 * 	@param  p_AD_Org_ID	organization
 	 *  @return BigDecimal number of non business days between 2 dates 
 	 *********************************************************************************/
-	public static BigDecimal sqlGetNonBusinessDayBetween (Timestamp p_StartDate, 
+	public static BigDecimal sqlGetNonBusinessDayBetween (boolean isSaturdayBusinessDay, Timestamp p_StartDate, 
 			 Timestamp p_EndDate, int p_AD_Client_ID, int p_AD_Org_ID)
 	{
 		MCalendar mcalendar = MCalendar.getDefault(Env.getCtx(), p_AD_Client_ID);
@@ -215,7 +223,7 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		BigDecimal WeekendDays = BigDecimal.valueOf(0);
 		BigDecimal HolidaysonNonWeekendDays = BigDecimal.valueOf(0);
 		// Get NonWeekendDays
-		WeekendDays = sqlGetWeekEndDaysBetween ( p_StartDate, 
+		WeekendDays = sqlGetWeekEndDaysBetween ( isSaturdayBusinessDay, p_StartDate, 
 				  p_EndDate,  p_AD_Client_ID, null);
 		int C_Calendar_ID = mcalendar.getC_Calendar_ID();
 		//	Get Rate
@@ -276,21 +284,9 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 *  @param String trxName
 	 * Returns BigDecimal number of non business days between 2 dates 
 	 * ***********************************************************************/
-	public static BigDecimal sqlGetWeekEndDaysBetween(Timestamp startDate, Timestamp endDate, int p_AD_Client_ID, String trxName)
+	public static BigDecimal sqlGetWeekEndDaysBetween(boolean isSaturdayBusinessDay, Timestamp startDate, Timestamp endDate, int p_AD_Client_ID, String trxName)
 	{
 		double retValue = 0;
-
-		if (startDate.equals(endDate))
-			return BigDecimal.valueOf(0.00);
-
-		boolean negative = false;
-		if (endDate.before(startDate)) {
-			negative = true;
-			Timestamp temp = startDate;
-			startDate = endDate;
-			endDate = temp;
-		}
-
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(startDate);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -304,15 +300,29 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		calEnd.set(Calendar.MINUTE, 0);
 		calEnd.set(Calendar.SECOND, 0);
 		calEnd.set(Calendar.MILLISECOND, 0);
-
-		while (cal.before(calEnd) || cal.equals(calEnd)) {
+		
+		if (startDate.equals(endDate)) {
 			if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
 				retValue++;
 			}
-			cal.add(Calendar.DAY_OF_MONTH, 1);
+		} else {
+			boolean negative = false;
+			if (endDate.before(startDate)) {
+				negative = true;
+				Timestamp temp = startDate;
+				startDate = endDate;
+				endDate = temp;
+			}
+	
+			while (cal.before(calEnd) || cal.equals(calEnd)) {
+				if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+					retValue++;
+				}
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			if (negative)
+				retValue = retValue * -1;
 		}
-		if (negative)
-			retValue = retValue * -1;
 		return BigDecimal.valueOf(retValue);
 	}
 	
@@ -326,22 +336,10 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 	 *  @param String trxName
 	 * Returns BigDecimal number of non business days between 2 dates 
 	 * ***********************************************************************/
-	public static BigDecimal sqlGetNonWeekEndDaysBetween(Timestamp startDate, 
+	public static BigDecimal sqlGetNonWeekEndDaysBetween(boolean isSaturdayBusinessDay, Timestamp startDate, 
 			Timestamp endDate, int p_AD_Client_ID, String trxName)
 	{
 		double retValue = 0;
-
-		if (startDate.equals(endDate))
-			return BigDecimal.valueOf(0.00);
-
-		boolean negative = false;
-		if (endDate.before(startDate)) {
-			negative = true;
-			Timestamp temp = startDate;
-			startDate = endDate;
-			endDate = temp;
-		}
-
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(startDate);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -355,17 +353,46 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		calEnd.set(Calendar.MINUTE, 0);
 		calEnd.set(Calendar.SECOND, 0);
 		calEnd.set(Calendar.MILLISECOND, 0);
-
-		while (cal.before(calEnd) || cal.equals(calEnd)) {
-			if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-				retValue++;
-				//log.warning(".....................sqlGetNonWeekEndDaysBetween...................................");
-				//log.warning("retValue: ="+retValue+"  getTimeInMillis()="+cal.getTimeInMillis());	
+		
+		if (startDate.equals(endDate)) {
+			if(isSaturdayBusinessDay) {
+				// Mon thru Saturday
+				if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+					retValue++;
+				}
+			} else {
+				// Mon thru Friday
+				if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+					retValue++;
+				}
 			}
-			cal.add(Calendar.DAY_OF_MONTH, 1);
+		} else {
+			boolean negative = false;
+			if (endDate.before(startDate)) {
+				negative = true;
+				Timestamp temp = startDate;
+				startDate = endDate;
+				endDate = temp;
+			}
+	
+			while (cal.before(calEnd) || cal.equals(calEnd)) {
+
+				if(isSaturdayBusinessDay) {
+					// Mon thru Saturday
+					if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+						retValue++;
+					}
+				} else {
+					// Mon thru Friday
+					if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+						retValue++;
+					}
+				}
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			if (negative)
+				retValue = retValue * -1;
 		}
-		if (negative)
-			retValue = retValue * -1;
 		return BigDecimal.valueOf(retValue);
 	}
 
@@ -420,4 +447,281 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		}	//	getDaysBetween
 		return BigDecimal.valueOf(difftmp);
 	}
+	
+	/**
+	 * getNextBusinessDay
+	 * Returns Next Business Day from a given Date and dayselapsed variable
+	 * @param StartDate
+	 * @param dayselapsed
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public Timestamp getNextBusinessDay(boolean isSaturdayBusinessDay, Timestamp StartDate, BigDecimal dayselapsed, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		Timestamp currentDate = StartDate;
+		if (dayselapsed != null ) {
+			if (dayselapsed.compareTo(BigDecimal.ZERO) > 0) {
+				int diasInt = dayselapsed.intValue();
+				BigDecimal dias = dayselapsed.subtract(dayselapsed.setScale(0, RoundingMode.DOWN));
+				// Calcular horas totales
+		        BigDecimal horasTotales = dias.multiply(BigDecimal.valueOf(24));
+		        // Obtener la parte entera de horas
+		        BigDecimal horas = horasTotales.setScale(0, RoundingMode.DOWN);
+		        // Obtener los minutos (parte decimal de horas * 60)
+		        BigDecimal minutosDecimal = horasTotales.subtract(horas).multiply(BigDecimal.valueOf(60));
+		        BigDecimal minutos = minutosDecimal.setScale(0, RoundingMode.HALF_UP); // Redondear a entero
+				//
+				if (diasInt > 0 || horasTotales.intValue() > 0) { 
+					GregorianCalendar cal = new GregorianCalendar();
+					cal.setTime(StartDate);
+					cal.set(Calendar.HOUR_OF_DAY, 0);
+					cal.set(Calendar.MINUTE, 0);
+					cal.set(Calendar.SECOND, 0);
+					cal.set(Calendar.MILLISECOND, 0);
+					// Verify if currentDate is Business day
+					if (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						while (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+							cal.add(Calendar.DAY_OF_YEAR, 1);
+							currentDate   = new Timestamp(cal.getTimeInMillis());
+						}
+					}
+					// Review Next days
+					int i=0;
+					while ( i < diasInt ) {
+						cal.add(Calendar.DAY_OF_YEAR, 1);
+						currentDate   = new Timestamp(cal.getTimeInMillis());
+						if (isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+							i++;
+						}					
+					}
+					currentDate   = new Timestamp(cal.getTimeInMillis());
+					// Add Hours
+					cal.add(Calendar.HOUR, horas.intValue());
+					cal.add(Calendar.MINUTE, minutos.intValue());
+					// Verify if currentDate is Business day
+					if (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						while (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+							cal.add(Calendar.DAY_OF_YEAR, 1);
+							currentDate   = new Timestamp(cal.getTimeInMillis());
+						}
+					}
+					// Final 
+					currentDate   = new Timestamp(cal.getTimeInMillis());
+				}
+			}
+		}
+		return currentDate;
+	}
+	
+	/**
+	 * getPreviusBusinessDay
+	 * Returns Previus Business Day from a given Date and dayselapsed variable
+	 * @param isSaturdayBusinessDay
+	 * @param StartDate
+	 * @param dayselapsed
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public Timestamp getPreviusBusinessDay(boolean isSaturdayBusinessDay, Timestamp StartDate, BigDecimal dayselapsed, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		Timestamp currentDate = StartDate;
+		if (dayselapsed != null && dayselapsed.compareTo(BigDecimal.ZERO) > 0) {
+			int diasInt = dayselapsed.intValue();
+			BigDecimal dias = dayselapsed.subtract(dayselapsed.setScale(0, RoundingMode.DOWN));
+			// Calcular horas totales
+	        BigDecimal horasTotales = dias.multiply(BigDecimal.valueOf(24));
+	        // Obtener la parte entera de horas
+	        BigDecimal horas = horasTotales.setScale(0, RoundingMode.DOWN);
+	        // Obtener los minutos (parte decimal de horas * 60)
+	        BigDecimal minutosDecimal = horasTotales.subtract(horas).multiply(BigDecimal.valueOf(60));
+	        BigDecimal minutos = minutosDecimal.setScale(0, RoundingMode.HALF_UP); // Redondear a entero
+			//
+			if (diasInt > 0 || horasTotales.intValue() > 0) { 
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(StartDate);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Verify if currentDate is Business day
+				if (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+					while (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						cal.add(Calendar.DAY_OF_YEAR, -1);
+						currentDate   = new Timestamp(cal.getTimeInMillis());
+					}
+				}
+				// Review Next days
+				int i=0;
+				while ( i < diasInt ) {
+					cal.add(Calendar.DAY_OF_YEAR, -1);
+					currentDate   = new Timestamp(cal.getTimeInMillis());
+					if (isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						i++;
+					}
+				}
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+				// Add Hours
+				cal.add(Calendar.HOUR, horas.intValue());
+				cal.add(Calendar.MINUTE, minutos.intValue());
+				// Verify if currentDate is Business day
+				if (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+					while (!isBusinessDay(isSaturdayBusinessDay, currentDate, p_AD_Client_ID, p_AD_Org_ID )) {
+						cal.add(Calendar.DAY_OF_YEAR, -1);
+						currentDate   = new Timestamp(cal.getTimeInMillis());
+					}
+				}
+				// Final 
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+			}
+		}
+		return currentDate;
+	}
+	
+	/**
+	 * isBusinessDay
+	 * @param reviewDate
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public boolean isBusinessDay(boolean isSaturdayBusinessDay, Timestamp reviewDate, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		boolean retValue = true;
+	
+		if (sqlGetBusinessDaysBetween(isSaturdayBusinessDay, reviewDate,reviewDate, p_AD_Client_ID, p_AD_Org_ID).compareTo(BigDecimal.ZERO)== 0) {
+			retValue = false;
+		}
+		return retValue;
+	}
+
+	/**
+	 * getNextCalendarDay
+	 * Returns Next Calendar Day from a given Date and dayselapsed variable
+	 * @param StartDate
+	 * @param dayselapsed
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public Timestamp getNextCalendarDay(Timestamp StartDate, BigDecimal dayselapsed, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		Timestamp currentDate = StartDate;
+		if (dayselapsed != null && dayselapsed.compareTo(BigDecimal.ZERO) > 0) {
+			int diasInt = dayselapsed.intValue();
+			BigDecimal dias = dayselapsed.subtract(dayselapsed.setScale(0, RoundingMode.DOWN));
+			// Calcular horas totales
+	        BigDecimal horasTotales = dias.multiply(BigDecimal.valueOf(24));
+	        // Obtener la parte entera de horas
+	        BigDecimal horas = horasTotales.setScale(0, RoundingMode.DOWN);
+	        // Obtener los minutos (parte decimal de horas * 60)
+	        BigDecimal minutosDecimal = horasTotales.subtract(horas).multiply(BigDecimal.valueOf(60));
+	        BigDecimal minutos = minutosDecimal.setScale(0, RoundingMode.HALF_UP); // Redondear a entero
+			//
+			if (diasInt > 0 || horasTotales.intValue() > 0) { 
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(StartDate);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Add Days
+				cal.add(Calendar.DAY_OF_YEAR, diasInt);
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+				// Add Hours
+				cal.add(Calendar.HOUR, horas.intValue());
+				cal.add(Calendar.MINUTE, minutos.intValue());
+				// Final 
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+			}
+		}
+		return currentDate;
+	}
+	
+	/**
+	 * getPreviusCalendarDay
+	 * Returns Previuss Calendar Day from a given Date and dayselapsed variable
+	 * @param StartDate
+	 * @param dayselapsed
+	 * @param p_AD_Client_ID
+	 * @param p_AD_Org_ID
+	 * @return
+	 */
+	static public Timestamp getPreviusCalendarDay(Timestamp StartDate, BigDecimal dayselapsed, int p_AD_Client_ID, int p_AD_Org_ID) {
+		
+		Timestamp currentDate = StartDate;
+		if (dayselapsed != null && dayselapsed.compareTo(BigDecimal.ZERO) > 0) {
+			int diasInt = dayselapsed.intValue();
+			BigDecimal dias = dayselapsed.subtract(dayselapsed.setScale(0, RoundingMode.DOWN));
+			// Calcular horas totales
+	        BigDecimal horasTotales = dias.multiply(BigDecimal.valueOf(24));
+	        // Obtener la parte entera de horas
+	        BigDecimal horas = horasTotales.setScale(0, RoundingMode.DOWN);
+	        // Obtener los minutos (parte decimal de horas * 60)
+	        BigDecimal minutosDecimal = horasTotales.subtract(horas).multiply(BigDecimal.valueOf(60));
+	        BigDecimal minutos = minutosDecimal.setScale(0, RoundingMode.HALF_UP); // Redondear a entero
+			//
+			if (diasInt > 0 || horasTotales.intValue() > 0) { 
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(StartDate);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Add Days
+				cal.add(Calendar.DAY_OF_YEAR, -diasInt);
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+				// Add Hours
+				cal.add(Calendar.HOUR, horas.intValue());
+				cal.add(Calendar.MINUTE, minutos.intValue());
+				// Final 
+				currentDate   = new Timestamp(cal.getTimeInMillis());
+			}
+		}
+		return currentDate;
+	}
+	
+	/**
+	 * getDaysHoursBetween
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	static public BigDecimal getDaysHoursBetween (Timestamp start, Timestamp end)
+	{
+		boolean negative = false;
+		double difftmp=0;
+		if (end.before(start))
+		{
+			negative = true;
+			Timestamp temp = start;
+			start = end;
+			end = temp;
+		}
+		//
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(start);
+		GregorianCalendar calEnd = new GregorianCalendar();
+		calEnd.setTime(end);
+		//	log.warning("Start=" + start + ", End=" + end + ", dayStart=" + cal.get(Calendar.DAY_OF_YEAR) + ", dayEnd=" + calEnd.get(Calendar.DAY_OF_YEAR));
+		//	in same year
+		if (cal.get(Calendar.YEAR) == calEnd.get(Calendar.YEAR))
+		{
+			if (negative)
+				difftmp = (calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR)) * -1;
+			difftmp = calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR);
+		} else {
+			//	not very efficient, but correct
+			while (calEnd.after(cal))
+			{
+				cal.add (Calendar.DAY_OF_YEAR, 1);
+				difftmp++;
+			}
+			if (negative)
+				difftmp = difftmp * -1;
+		}	//	getDaysBetween
+		return BigDecimal.valueOf(difftmp);
+	}
+	
 }

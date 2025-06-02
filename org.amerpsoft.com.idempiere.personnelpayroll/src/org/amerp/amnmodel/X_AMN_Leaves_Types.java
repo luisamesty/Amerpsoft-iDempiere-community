@@ -17,9 +17,11 @@
 /** Generated Model - DO NOT CHANGE */
 package org.amerp.amnmodel;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.compiere.util.Env;
 
 /** Generated Model for AMN_Leaves_Types
  *  @author iDempiere (generated)
@@ -31,7 +33,7 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240918L;
+	private static final long serialVersionUID = 20250108L;
 
     /** Standard Constructor */
     public X_AMN_Leaves_Types (Properties ctx, int AMN_Leaves_Types_ID, String trxName)
@@ -40,6 +42,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_ID == 0)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -51,6 +55,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_ID == 0)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -62,6 +68,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_UU == null)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -73,6 +81,8 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
       /** if (AMN_Leaves_Types_UU == null)
         {
 			setAMN_Leaves_Types_ID (0);
+			setMinimumDays (0);
+// 0
 			setName (null);
         } */
     }
@@ -162,6 +172,46 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_Types_UU);
 	}
 
+	/** Business Days = B */
+	public static final String DAYSMODE_BusinessDays = "B";
+	/** Calendar Days = C */
+	public static final String DAYSMODE_CalendarDays = "C";
+	/** Set Days Calculation Mode.
+		@param DaysMode Days Calculation Mode using Calendar  or Business Days
+	*/
+	public void setDaysMode (String DaysMode)
+	{
+
+		set_Value (COLUMNNAME_DaysMode, DaysMode);
+	}
+
+	/** Get Days Calculation Mode.
+		@return Days Calculation Mode using Calendar  or Business Days
+	  */
+	public String getDaysMode()
+	{
+		return (String)get_Value(COLUMNNAME_DaysMode);
+	}
+
+	/** Set Default Days.
+		@param DefaultDays Default Days Quantity
+	*/
+	public void setDefaultDays (BigDecimal DefaultDays)
+	{
+		set_Value (COLUMNNAME_DefaultDays, DefaultDays);
+	}
+
+	/** Get Default Days.
+		@return Default Days Quantity
+	  */
+	public BigDecimal getDefaultDays()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DefaultDays);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
@@ -178,6 +228,81 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	/** Set Hours per day in a Shift.
+		@param HoursDay Hours per day in a Shift
+	*/
+	public void setHoursDay (BigDecimal HoursDay)
+	{
+		set_Value (COLUMNNAME_HoursDay, HoursDay);
+	}
+
+	/** Get Hours per day in a Shift.
+		@return Hours per day in a Shift	  */
+	public BigDecimal getHoursDay()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_HoursDay);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Lead Time.
+		@param LeadTime Lead TimeLead time for a request
+	*/
+	public void setLeadTime (int LeadTime)
+	{
+		set_Value (COLUMNNAME_LeadTime, Integer.valueOf(LeadTime));
+	}
+
+	/** Get Lead Time.
+		@return Lead TimeLead time for a request
+	  */
+	public int getLeadTime()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_LeadTime);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Maximun Days To Pay.
+		@param MaximunDaysToPay Maximun Days To Pay witin a month
+	*/
+	public void setMaximunDaysToPay (int MaximunDaysToPay)
+	{
+		set_Value (COLUMNNAME_MaximunDaysToPay, Integer.valueOf(MaximunDaysToPay));
+	}
+
+	/** Get Maximun Days To Pay.
+		@return Maximun Days To Pay witin a month
+	  */
+	public int getMaximunDaysToPay()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_MaximunDaysToPay);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Minimum Days.
+		@param MinimumDays Minimum Days for requiring Leaves
+	*/
+	public void setMinimumDays (int MinimumDays)
+	{
+		set_Value (COLUMNNAME_MinimumDays, Integer.valueOf(MinimumDays));
+	}
+
+	/** Get Minimum Days.
+		@return Minimum Days for requiring Leaves
+	  */
+	public int getMinimumDays()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_MinimumDays);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -192,6 +317,25 @@ public class X_AMN_Leaves_Types extends PO implements I_AMN_Leaves_Types, I_Pers
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
+	}
+
+	/** Set Response Time.
+		@param ResponseTime Request Response Time
+	*/
+	public void setResponseTime (int ResponseTime)
+	{
+		set_Value (COLUMNNAME_ResponseTime, Integer.valueOf(ResponseTime));
+	}
+
+	/** Get Response Time.
+		@return Request Response Time
+	  */
+	public int getResponseTime()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_ResponseTime);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Search Key.

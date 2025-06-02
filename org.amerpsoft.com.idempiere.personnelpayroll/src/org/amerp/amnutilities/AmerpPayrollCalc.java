@@ -56,6 +56,7 @@ public class AmerpPayrollCalc  {
 	public static Double CTL_AmountAllocated;	// Default Value ZERO
 	public static Double CTL_QtyTimes;  		// Default Value ONE
 	public static Double CTL_Rate;				// Default Value ZERO
+	public static Double CTL_QtyReceipts;		// Default Value ZERO
 	public static String ORGSECTOR=""; 
 	public static Double UNIDADTRIBUTARIA,SBMIN,TAXRATE;
 	public static Double QTY_HND,QTY_HNN,QTY_HED,QTY_HEN;
@@ -169,7 +170,10 @@ public class AmerpPayrollCalc  {
     	}
 //    	// Variables allways init
    		VariablesInit(AD_Client_ID);
-    	new MAMN_Employee(p_ctx, Employee_ID, null);
+   		MAMN_Employee emp = new MAMN_Employee(p_ctx, Employee_ID, null);
+   		int AMN_Shift_ID = emp.getAMN_Shift_ID();
+   		// OJO Buscar dealle 
+   		boolean isSaturdayBusinessDay = false;
     	//amnperiod.getAMNDateIni();
     	//amnperiod.getAMNDateEnd(); 	
     	MAMN_Contract amncontract = new MAMN_Contract(p_ctx, Contract_ID, null);
@@ -183,16 +187,16 @@ public class AmerpPayrollCalc  {
     	// SET FIXED VARIABLE NONLABORDAYS Double
 		AMNPayrollStartDate=amnpayroll.getInvDateIni();
 		AMNPayrollEndDate=amnpayroll.getInvDateEnd();
-		HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, AD_Org_ID).doubleValue();
+		HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, AD_Org_ID).doubleValue();
 	    // SET FIXED VARIABLES LABORDAYS,HOLLIDAYS,DTREC Double
-		LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, null).doubleValue();
+		LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, null).doubleValue();
 		DTREC =1.00+ MAMN_NonBusinessDay.getDaysBetween(AMNPayrollStartDate, AMNPayrollEndDate).doubleValue();
 		NONLABORDAYS = DTREC - LABORDAYS;
 		// SET OTHER FIXED VARIABLES BUSINESSDAYS, NONBUSINESSDAYS, WEEKENDDAYS, NONWEEKENDDAYS;
-		BUSINESSDAYS=MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, AD_Org_ID).doubleValue();
-		NONBUSINESSDAYS=MAMN_NonBusinessDay.sqlGetNonBusinessDayBetween(AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, AD_Org_ID).doubleValue();
-		WEEKENDDAYS=MAMN_NonBusinessDay.sqlGetWeekEndDaysBetween(AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, null).doubleValue();
-		NONWEEKENDDAYS=MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, null).doubleValue();
+		BUSINESSDAYS=MAMN_NonBusinessDay.sqlGetBusinessDaysBetween(isSaturdayBusinessDay, AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, AD_Org_ID).doubleValue();
+		NONBUSINESSDAYS=MAMN_NonBusinessDay.sqlGetNonBusinessDayBetween(isSaturdayBusinessDay, AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, AD_Org_ID).doubleValue();
+		WEEKENDDAYS=MAMN_NonBusinessDay.sqlGetWeekEndDaysBetween(isSaturdayBusinessDay, AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, null).doubleValue();
+		NONWEEKENDDAYS=MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, AMNPayrollStartDate, AMNPayrollEndDate, AD_Client_ID, null).doubleValue();
 		// SET FIXED VARIABLE DTPER (PayrollDays from Contract)
 		DTPER = amncontract.getPayRollDays().doubleValue();
 		DTOK=DTREC; // Alternative
@@ -673,6 +677,7 @@ public class AmerpPayrollCalc  {
             calcAmntNet = calcAmntNet.subtract(calcAmntCR);
             sql3 = "UPDATE AMN_Payroll "
             		+ " set amountnetpaid="+calcAmntNet+","
+            		+ " amountcalculated="+calcAmntNet+","
 					+ " amountallocated="+calcAmntDR+","
 					+ " amountdeducted="+calcAmntCR
 					+ " where amn_payroll_id ="+p_AMN_Payroll_ID;
@@ -767,7 +772,7 @@ public class AmerpPayrollCalc  {
 		AM_PaymentType=amnemployee.getpaymenttype();
 		AM_CivilStatus=amnemployee.getcivilstatus();
 		AM_Sex=amnemployee.getsex();
-		ORGSECTOR = amnemployee.getORGSECTOR();
+		ORGSECTOR = amnemployee.getOrgSector();
 		AM_Spouse=amnemployee.getspouse();
 		if (curr.getISO_Code()!=null)
 			AM_Currency=curr.getISO_Code();
@@ -776,7 +781,9 @@ public class AmerpPayrollCalc  {
 		// Rounding Mode
 		int roundingMode = 2;
 		if (forceRounding )  
-			roundingMode = curr.getStdPrecision();
+			// roundingMode = curr.getStdPrecision();
+			// Precision from Contract Variable
+			roundingMode = amncontract.getStdPrecision();
 		// SHOW VARIABLES
 		//logVariablesShow();
 		//log.warning("AM_Currency="+AM_Currency);
@@ -809,10 +816,34 @@ public class AmerpPayrollCalc  {
 		int C_Currency_ID_To = C_Currency_ID;
 		if (amnpayroll.getC_Currency_ID_To() != 0)
 			C_Currency_ID_To = amnpayroll.getC_Currency_ID_To();
-		
-		CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
-		CTL_QtyTimes=MAMN_Concept_Types_Limit.getCTL_QtyTimes(C_Currency_ID, C_Currency_ID_To,  amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
-		CTL_Rate=MAMN_Concept_Types_Limit.getCTL_Rate(C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+		// COMMISSION CONCEPTS
+		// AMN_Concept_Types_Limits CTLD
+		CTL_AmountAllocated = 0.00; 
+		CTL_QtyTimes= 1.00;
+		CTL_Rate= 0.0;
+		CTL_QtyReceipts = 0.00;
+		Integer AMN_CommissionGroup_ID = amnemployee.getAMN_CommissionGroup_ID();
+		Integer AMN_Concept_Types_Limit_ID = 0;
+		// Verify if contains CTL_AmountAllocated
+		if ( AMN_CommissionGroup_ID != null && AMN_CommissionGroup_ID > 0 ) {
+			// Commission Group
+			MAMN_CommissionGroup amncomgru = new MAMN_CommissionGroup(p_ctx, AMN_CommissionGroup_ID, null);
+			// Search AMN_Concept_Types_Limit_ID
+			AMN_Concept_Types_Limit_ID =MAMN_Concept_Types_Limit.searchAMN_Concept_Types_Limit_ID_(AMN_Concept_Types_ID, amnpayroll.getAD_Client_ID(), 0, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getC_Currency_ID());
+			if ( amncomgru != null && AMN_Concept_Types_Limit_ID != null && AMN_Concept_Types_Limit_ID > 0) {
+				MAMN_Concept_Types_Limit amncontyl = new MAMN_Concept_Types_Limit(p_ctx,AMN_Concept_Types_Limit_ID, null);
+				CTL_AmountAllocated=MAMN_Concept_Types_Limit.getCTL_AmountAllocated(AMN_Concept_Types_Limit_ID, C_Currency_ID, C_Currency_ID_To, amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+				CTL_QtyTimes=MAMN_Concept_Types_Limit.getCTL_QtyTimes(C_Currency_ID, C_Currency_ID_To,  amnpayroll.getDateAcct(), amnpayroll.getC_ConversionType_ID(), amnpayroll.getAD_Client_ID(), amnct.getAD_Org_ID()).doubleValue();
+				CTL_Rate= amncomgru.getCommission().doubleValue();
+//				log.warning("p_Concept_Reference="+p_Concept_Reference+"  CTL_Rate="+CTL_Rate);
+//				log.warning("p_Concept_Reference="+p_Concept_Reference+"  CTL_AmountAllocated="+CTL_AmountAllocated);
+				if (p_script.contains("CTL_QtyReceipts")) {
+					CTL_QtyReceipts = amncomgru.calculateCTL_QtyReceipts(amnpayroll.getAD_Client_ID(), amncomgru.getValue(), AMN_Concept_Types_ID, AMN_Concept_Types_Limit_ID).doubleValue();
+//					log.warning("p_Concept_Reference="+p_Concept_Reference+"  CTL_QtyReceipts="+CTL_QtyReceipts);
+				}
+			}
+			//CTL_QtyReceipts = amncomgru
+		}
 		//scriptResult RetVal = null ;
 		scriptResult RetVal = new scriptResult();
 		// Reference Concepts Returns OK 
@@ -1249,6 +1280,10 @@ public class AmerpPayrollCalc  {
 				ScriptableObject.putProperty(scope,"CTL_Rate", BigDecimal.valueOf(CTL_Rate));
 				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
 			}
+			if (p_script.contains("CTL_QtyReceipts")) {
+				ScriptableObject.putProperty(scope,"CTL_QtyReceipts", BigDecimal.valueOf(CTL_QtyReceipts));
+				//ctx.setAttribute("RSU_HEN",  BigDecimal.valueOf(RSU_HEN), ScriptContext.ENGINE_SCOPE);
+			}
 			// ORGSECTOR
 			if (p_script.contains("ORGSECTOR")) {
 				ScriptableObject.putProperty(scope,"ORGSECTOR", ORGSECTOR );
@@ -1465,7 +1500,7 @@ public class AmerpPayrollCalc  {
 			BDCalcAmnt = BigDecimal.valueOf(CalcAmnt);
 			// ROUND two Decimals
 			//BDCalcAmnt= BDCalcAmnt.round(new MathContext(2, RoundingMode.CEILING));
-			BDCalcAmnt = BDCalcAmnt.setScale(roundingMode, RoundingMode.CEILING);
+			BDCalcAmnt = BDCalcAmnt.setScale(roundingMode, RoundingMode.HALF_UP);
 			//return BDCalcAmnt;
 			RetVal.setBDCalcAmnt(BDCalcAmnt);
 			RetVal.setErrorMessage(ErrorMessage.trim());			

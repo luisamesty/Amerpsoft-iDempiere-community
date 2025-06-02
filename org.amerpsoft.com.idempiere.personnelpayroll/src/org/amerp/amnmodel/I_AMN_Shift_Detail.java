@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for AMN_Shift_Detail
  *  @author iDempiere (generated) 
- *  @version Release 2.1
+ *  @version Release 11
  */
 @SuppressWarnings("all")
 public interface I_AMN_Shift_Detail 
@@ -32,7 +32,7 @@ public interface I_AMN_Shift_Detail
     /** TableName=AMN_Shift_Detail */
     public static final String Table_Name = "AMN_Shift_Detail";
 
-    /** AD_Table_ID=1000032 */
+    /** AD_Table_ID=1000015 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -91,6 +91,32 @@ public interface I_AMN_Shift_Detail
 	/** Get Shift	  */
 	public int getAMN_Shift_ID();
 
+    /** Column name BreakMinutes */
+    public static final String COLUMNNAME_BreakMinutes = "BreakMinutes";
+
+	/** Set Break Minutes.
+	  * Break time in Minutes
+	  */
+	public void setBreakMinutes (int BreakMinutes);
+
+	/** Get Break Minutes.
+	  * Break time in Minutes
+	  */
+	public int getBreakMinutes();
+
+    /** Column name BreakStart */
+    public static final String COLUMNNAME_BreakStart = "BreakStart";
+
+	/** Set Break Start.
+	  * Break start time
+	  */
+	public void setBreakStart (Timestamp BreakStart);
+
+	/** Get Break Start.
+	  * Break start time
+	  */
+	public Timestamp getBreakStart();
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -106,6 +132,15 @@ public interface I_AMN_Shift_Detail
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name dayofweek */
+    public static final String COLUMNNAME_dayofweek = "dayofweek";
+
+	/** Set dayofweek	  */
+	public void setdayofweek (String dayofweek);
+
+	/** Get dayofweek	  */
+	public String getdayofweek();
 
     /** Column name Descanso */
     public static final String COLUMNNAME_Descanso = "Descanso";
@@ -133,6 +168,19 @@ public interface I_AMN_Shift_Detail
 	  */
 	public String getDescription();
 
+    /** Column name EntryTime */
+    public static final String COLUMNNAME_EntryTime = "EntryTime";
+
+	/** Set Entry Time.
+	  * Entry Time
+	  */
+	public void setEntryTime (Timestamp EntryTime);
+
+	/** Get Entry Time.
+	  * Entry Time
+	  */
+	public Timestamp getEntryTime();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -145,6 +193,58 @@ public interface I_AMN_Shift_Detail
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name isFlexible */
+    public static final String COLUMNNAME_isFlexible = "isFlexible";
+
+	/** Set Flexible.
+	  * Indicates if it is Flexible
+	  */
+	public void setisFlexible (boolean isFlexible);
+
+	/** Get Flexible.
+	  * Indicates if it is Flexible
+	  */
+	public boolean isFlexible();
+
+    /** Column name isNextDay */
+    public static final String COLUMNNAME_isNextDay = "isNextDay";
+
+	/** Set Next Day.
+	  * Indicates if it is Next Day
+	  */
+	public void setisNextDay (boolean isNextDay);
+
+	/** Get Next Day.
+	  * Indicates if it is Next Day
+	  */
+	public boolean isNextDay();
+
+    /** Column name isOutTimeFlexible */
+    public static final String COLUMNNAME_isOutTimeFlexible = "isOutTimeFlexible";
+
+	/** Set Out Time Flexible.
+	  * Indicates if it is Out Time Flexible
+	  */
+	public void setisOutTimeFlexible (boolean isOutTimeFlexible);
+
+	/** Get Out Time Flexible.
+	  * Indicates if it is Out Time Flexible
+	  */
+	public boolean isOutTimeFlexible();
+
+    /** Column name isShiftOffset */
+    public static final String COLUMNNAME_isShiftOffset = "isShiftOffset";
+
+	/** Set Shift Offset.
+	  * Indicates if it is Shift Offset
+	  */
+	public void setisShiftOffset (boolean isShiftOffset);
+
+	/** Get Shift Offset.
+	  * Indicates if it is Shift Offset
+	  */
+	public boolean isShiftOffset();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
@@ -177,6 +277,32 @@ public interface I_AMN_Shift_Detail
 	/** Get Shift_In2	  */
 	public Timestamp getShift_In2();
 
+    /** Column name ShiftOffsetET */
+    public static final String COLUMNNAME_ShiftOffsetET = "ShiftOffsetET";
+
+	/** Set Shift Offset ET Value.
+	  * Indicates Shift Offset ET Value
+	  */
+	public void setShiftOffsetET (int ShiftOffsetET);
+
+	/** Get Shift Offset ET Value.
+	  * Indicates Shift Offset ET Value
+	  */
+	public int getShiftOffsetET();
+
+    /** Column name ShiftOffsetOT */
+    public static final String COLUMNNAME_ShiftOffsetOT = "ShiftOffsetOT";
+
+	/** Set Shift Offset OT Value.
+	  * Indicates Shift Offset OT Value
+	  */
+	public void setShiftOffsetOT (int ShiftOffsetOT);
+
+	/** Get Shift Offset OT Value.
+	  * Indicates Shift Offset OT Value
+	  */
+	public int getShiftOffsetOT();
+
     /** Column name Shift_Out1 */
     public static final String COLUMNNAME_Shift_Out1 = "Shift_Out1";
 
@@ -195,6 +321,32 @@ public interface I_AMN_Shift_Detail
 	/** Get Shift_Out2	  */
 	public Timestamp getShift_Out2();
 
+    /** Column name TimeOut */
+    public static final String COLUMNNAME_TimeOut = "TimeOut";
+
+	/** Set Time Out.
+	  * Shift Time Out
+	  */
+	public void setTimeOut (Timestamp TimeOut);
+
+	/** Get Time Out.
+	  * Shift Time Out
+	  */
+	public Timestamp getTimeOut();
+
+    /** Column name Tolerance */
+    public static final String COLUMNNAME_Tolerance = "Tolerance";
+
+	/** Set Tolerance.
+	  * Tolerance in minutes
+	  */
+	public void setTolerance (int Tolerance);
+
+	/** Get Tolerance.
+	  * Tolerance in minutes
+	  */
+	public int getTolerance();
+
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
 
@@ -211,12 +363,29 @@ public interface I_AMN_Shift_Detail
 	  */
 	public int getUpdatedBy();
 
-    /** Column name dayofweek */
-    public static final String COLUMNNAME_dayofweek = "dayofweek";
+    /** Column name ValidFrom */
+    public static final String COLUMNNAME_ValidFrom = "ValidFrom";
 
-	/** Set dayofweek	  */
-	public void setdayofweek (String dayofweek);
+	/** Set Valid from.
+	  * Valid from including this date (first day)
+	  */
+	public void setValidFrom (Timestamp ValidFrom);
 
-	/** Get dayofweek	  */
-	public String getdayofweek();
+	/** Get Valid from.
+	  * Valid from including this date (first day)
+	  */
+	public Timestamp getValidFrom();
+
+    /** Column name ValidTo */
+    public static final String COLUMNNAME_ValidTo = "ValidTo";
+
+	/** Set Valid to.
+	  * Valid to including this date (last day)
+	  */
+	public void setValidTo (Timestamp ValidTo);
+
+	/** Get Valid to.
+	  * Valid to including this date (last day)
+	  */
+	public Timestamp getValidTo();
 }

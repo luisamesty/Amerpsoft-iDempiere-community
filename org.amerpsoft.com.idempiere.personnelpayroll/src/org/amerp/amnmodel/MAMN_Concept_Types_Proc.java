@@ -16,10 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
-import org.compiere.util.Env;
 /**
  * @author luisamesty
  *
@@ -41,7 +39,7 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 	 */
     public MAMN_Concept_Types_Proc(Properties p_ctx, int AMN_Concept_Types_Proc_ID, String p_trxName) {
 	    super(p_ctx, AMN_Concept_Types_Proc_ID, p_trxName);
-	    // TODO Auto-generated constructor stub
+	    // 
     }
     
 	/**
@@ -51,7 +49,7 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 	 */
     public MAMN_Concept_Types_Proc(Properties p_ctx, ResultSet p_rs, String p_trxName) {
 	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
+	    // 
     }
 
     
@@ -68,16 +66,30 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
     public boolean updateAMNConcept_Types_Proc(int p_AMNConcept_Types_Proc_ID, 
     		String p_Process_Value, String p_Value, String p_Name, int p_CalcOrder) {
 
-    	MAMN_Concept_Types_Proc actp = new MAMN_Concept_Types_Proc(p_ctx, p_AMNConcept_Types_Proc_ID, null);
-    	if (actp != null) {
-    		
-    		actp.setValue(p_Process_Value.trim()+p_CalcOrder);
-    		actp.setName(String.format("%08d", p_CalcOrder)+'-'+p_Name.trim());
-    		actp.setDescription(p_Value.trim()+'-'+p_Name.trim());
-    		actp.save();
-        	return true;
-    	}
-       	return false;
+        // Validar si el ID es válido
+        if (p_AMNConcept_Types_Proc_ID <= 0) {
+            return false;
+        }
+
+        // Trim de los parámetros una vez
+        String processValue = p_Process_Value != null ? p_Process_Value.trim() : "";
+        String value = p_Value != null ? p_Value.trim() : "";
+        String name = p_Name != null ? p_Name.trim() : "";
+
+        // Cargar el registro existente
+        MAMN_Concept_Types_Proc actp = new MAMN_Concept_Types_Proc(p_ctx, p_AMNConcept_Types_Proc_ID, null);
+        
+        if (actp.get_ID() <= 0) { // Verificar si el registro realmente existe en la BD
+            return false;
+        }
+
+        // Construcción de valores formateados
+        actp.setValue(processValue + p_CalcOrder);
+        actp.setName(String.format("%08d-%s", p_CalcOrder, name));
+        actp.setDescription(String.format("%s-%s", value, name));
+
+        // Guardar y verificar si se guardó correctamente
+        return actp.save();
     }
     
 	/**
@@ -101,6 +113,26 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 		return AMN_Concept_Type_Proc_ID;	
 	}
 
+	/**
+	 * sqlGetAMNConceptTypesProc_FromConcept ()
+	 * @param int p_AMNConcept_Types_ID
+	 * @param int p_AMNProcess_ID
+	 */
+	public static int sqlGetAMNConceptTypesProc_FromConcept (int p_AMNConcept_Types_ID,
+			int p_AMNProcess_ID)
+	{
+		String sql;
+		int AMN_Concept_Type_Proc_ID = 0;
+		// AMN_Location
+    	sql = "select amn_concept_types_proc_id "+
+    			"from adempiere.amn_concept_types_proc "+
+    			"WHERE amn_concept_types_id = ? "+
+    			"AND amn_process_id=? " ;
+    	AMN_Concept_Type_Proc_ID = DB.getSQLValue(null, sql, p_AMNConcept_Types_ID,p_AMNProcess_ID);	
+		return AMN_Concept_Type_Proc_ID;	
+	}
+	
+	
 	/**
 	 * sqlGetAMNConceptTypesProcPRESTAMODB ()
 	 * @param int p_AMNConcept_Types_ID
@@ -220,7 +252,7 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 		int AMN_Concept_Type_Proc_ID = 0;
 		// AMN_Concept_Types_ID for ABONOPS="ABONOPS"
 		//int AMN_Concept_Types_ID_ABONOPSA = ((X_AMN_Concept_Types)new Query(Env.getCtx(),X_AMN_Concept_Types.Table_Name,"Value='ABONOPSA'",null).first()).getAMN_Concept_Types_ID();
-		int AMN_Concept_Types_ID_ABONOPSA =  MAMN_Concept_Types.sqlGetAMNConceptTypesByValue(p_AD_Client_ID,"ABONOPSA");
+		// int AMN_Concept_Types_ID_ABONOPSA =  MAMN_Concept_Types.sqlGetAMNConceptTypesByValue(p_AD_Client_ID,"ABONOPSA");
 		// AMN_Location
     	sql = "select amn_concept_types_proc_id "+
     			"from adempiere.amn_concept_types_proc "+
@@ -266,7 +298,7 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 		int AMN_Concept_Type_Proc_ID = 0;
 		// AMN_Concept_Types_ID for ABONOPS="ABONOPS"
 		//int AMN_Concept_Types_ID_ABONOPSA = ((X_AMN_Concept_Types)new Query(Env.getCtx(),X_AMN_Concept_Types.Table_Name,"Value='ABONOMPSA'",null).first()).getAMN_Concept_Types_ID();
-		int AMN_Concept_Types_ID_ABONOPSA =  MAMN_Concept_Types.sqlGetAMNConceptTypesByValue(p_AD_Client_ID,"ABONOMPSA");
+		// int AMN_Concept_Types_ID_ABONOPSA =  MAMN_Concept_Types.sqlGetAMNConceptTypesByValue(p_AD_Client_ID,"ABONOMPSA");
 		// AMN_Location
     	sql = "select amn_concept_types_proc_id "+
     			"from adempiere.amn_concept_types_proc "+
@@ -299,4 +331,47 @@ public class MAMN_Concept_Types_Proc extends X_AMN_Concept_Types_Proc {
 		return AMN_Concept_Type_Proc_ID;	
 	}
 
+	/**
+	 * Obtiene el AMN_Concept_Types_Proc_ID basado en el valor del proceso, el modo de opción y el signo.
+	 * @param p_ctx Contexto de propiedades.
+	 * @param p_Process_Value Valor del proceso (por ejemplo, 'PL').
+	 * @param p_OptMode Modo de opción (por ejemplo, 'B').
+	 * @param p_Sign Signo (por ejemplo, 'C').
+	 * @param p_trxName Nombre de la transacción.
+	 * @return El AMN_Concept_Types_Proc_ID que cumple con las condiciones, o 0 si no se encuentra.
+	 */
+	public static int getConceptTypesProcIDByConditions(Properties p_ctx, String p_Process_Value, String p_OptMode, String p_Sign, String p_trxName) {
+	    String sql = "SELECT actp.AMN_Concept_Types_Proc_ID " +
+	                 "FROM AMN_Concept_types AS acty " +
+	                 "INNER JOIN AMN_Concept_Types_Proc AS actp ON actp.AMN_Concept_types_ID = acty.AMN_Concept_types_ID " +
+	                 "INNER JOIN AMN_Process AS proc ON proc.amn_process_id = actp.amn_process_id " +
+	                 "WHERE proc.amn_process_value = ? " +
+	                 "AND acty.optmode = ? " +
+	                 "AND acty.sign = ?";
+
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    int amnConceptTypesProcID = 0;
+
+	    try {
+	        pstmt = DB.prepareStatement(sql, p_trxName);
+	        pstmt.setString(1, p_Process_Value); // Valor del proceso
+	        pstmt.setString(2, p_OptMode);      // Modo de opción
+	        pstmt.setString(3, p_Sign);         // Signo
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            // Si se encuentra un registro, obtener el AMN_Concept_Types_Proc_ID
+	            amnConceptTypesProcID = rs.getInt("AMN_Concept_Types_Proc_ID");
+	        }
+	    } catch (SQLException e) {
+	        log.severe("Error al ejecutar la consulta: " + e.getMessage());
+	    } finally {
+	        DB.close(rs, pstmt);
+	        rs = null;
+	        pstmt = null;
+	    }
+
+	    return amnConceptTypesProcID;
+	}
 }

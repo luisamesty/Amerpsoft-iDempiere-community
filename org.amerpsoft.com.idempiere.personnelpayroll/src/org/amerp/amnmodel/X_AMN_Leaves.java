@@ -34,7 +34,7 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20241001L;
+	private static final long serialVersionUID = 20250302L;
 
     /** Standard Constructor */
     public X_AMN_Leaves (Properties ctx, int AMN_Leaves_ID, String trxName)
@@ -42,22 +42,19 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_ID, trxName);
       /** if (AMN_Leaves_ID == 0)
         {
-			setAction (null);
-// CO
 			setAMN_Employee_ID (0);
-// @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
-			setDateDoc (new Timestamp( System.currentTimeMillis() ));
-// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
-			setDocAction (null);
-// CO
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -72,22 +69,19 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_ID, trxName, virtualColumns);
       /** if (AMN_Leaves_ID == 0)
         {
-			setAction (null);
-// CO
 			setAMN_Employee_ID (0);
-// @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
-			setDateDoc (new Timestamp( System.currentTimeMillis() ));
-// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
-			setDocAction (null);
-// CO
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -102,22 +96,19 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_UU, trxName);
       /** if (AMN_Leaves_UU == null)
         {
-			setAction (null);
-// CO
 			setAMN_Employee_ID (0);
-// @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
-			setDateDoc (new Timestamp( System.currentTimeMillis() ));
-// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
-			setDocAction (null);
-// CO
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -132,22 +123,19 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
       super (ctx, AMN_Leaves_UU, trxName, virtualColumns);
       /** if (AMN_Leaves_UU == null)
         {
-			setAction (null);
-// CO
 			setAMN_Employee_ID (0);
-// @AMN_Employee_ID@
 			setAMN_Leaves_ID (0);
 			setAMN_Leaves_Types_ID (0);
-			setDateDoc (new Timestamp( System.currentTimeMillis() ));
-// @#Date@
 			setDateFrom (new Timestamp( System.currentTimeMillis() ));
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDateTo (new Timestamp( System.currentTimeMillis() ));
-			setDocAction (null);
-// CO
+// @SQL=SELECT TRUNC(SYSDATE)
 			setDocStatus (null);
 // DR
 			setDocumentNo (null);
 			setIsApproved (false);
+// N
+			setIsOverrideCalc (false);
 // N
 			setProcessed (false);
 // N
@@ -183,41 +171,6 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
-
-	/** Filed = AR */
-	public static final String ACTION_Filed = "AR";
-	/** Closed = CL */
-	public static final String ACTION_Closed = "CL";
-	/** Completed = CO */
-	public static final String ACTION_Completed = "CO";
-	/** Drafted = DR */
-	public static final String ACTION_Drafted = "DR";
-	/** HR Approved = RA */
-	public static final String ACTION_HRApproved = "RA";
-	/** Reactivate = RE */
-	public static final String ACTION_Reactivate = "RE";
-	/** HR Rejected = RR */
-	public static final String ACTION_HRRejected = "RR";
-	/** Supervisor Approved = SA */
-	public static final String ACTION_SupervisorApproved = "SA";
-	/** Supervisor Rejected = SR */
-	public static final String ACTION_SupervisorRejected = "SR";
-	/** Set Action.
-		@param Action Indicates the Action to be performed
-	*/
-	public void setAction (String Action)
-	{
-
-		set_Value (COLUMNNAME_Action, Action);
-	}
-
-	/** Get Action.
-		@return Indicates the Action to be performed
-	  */
-	public String getAction()
-	{
-		return (String)get_Value(COLUMNNAME_Action);
-	}
 
 	public I_AMN_Employee getAMN_Employee() throws RuntimeException
 	{
@@ -268,10 +221,58 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return ii.intValue();
 	}
 
-	public I_AMN_Leaves_Types getAMN_Leaves_Types() throws RuntimeException
+	/** Set Leaves Process.
+		@param AMN_Leaves_Process Leaves Process to next valid step
+	*/
+	public void setAMN_Leaves_Process (String AMN_Leaves_Process)
 	{
-		return (I_AMN_Leaves_Types)MTable.get(getCtx(), I_AMN_Leaves_Types.Table_ID)
-			.getPO(getAMN_Leaves_Types_ID(), get_TrxName());
+		set_Value (COLUMNNAME_AMN_Leaves_Process, AMN_Leaves_Process);
+	}
+
+	/** Get Leaves Process.
+		@return Leaves Process to next valid step
+	  */
+	public String getAMN_Leaves_Process()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_Leaves_Process);
+	}
+
+	/** Unknown = ?? */
+	public static final String AMN_LEAVES_STATUS_Unknown = "??";
+	/** Filed = AR */
+	public static final String AMN_LEAVES_STATUS_Filed = "AR";
+	/** Closed = CL */
+	public static final String AMN_LEAVES_STATUS_Closed = "CL";
+	/** Completed = CO */
+	public static final String AMN_LEAVES_STATUS_Completed = "CO";
+	/** Draft = DR */
+	public static final String AMN_LEAVES_STATUS_Draft = "DR";
+	/** HR Approved = RA */
+	public static final String AMN_LEAVES_STATUS_HRApproved = "RA";
+	/** HR Review = RH */
+	public static final String AMN_LEAVES_STATUS_HRReview = "RH";
+	/** HR Rejected = RR */
+	public static final String AMN_LEAVES_STATUS_HRRejected = "RR";
+	/** Supervisor Approved = SA */
+	public static final String AMN_LEAVES_STATUS_SupervisorApproved = "SA";
+	/** Supervisor Rejected = SR */
+	public static final String AMN_LEAVES_STATUS_SupervisorRejected = "SR";
+	/** Supervisor Review = SU */
+	public static final String AMN_LEAVES_STATUS_SupervisorReview = "SU";
+	/** Set Leaves Status.
+		@param AMN_Leaves_Status Leaves Status
+	*/
+	public void setAMN_Leaves_Status (String AMN_Leaves_Status)
+	{
+
+		set_Value (COLUMNNAME_AMN_Leaves_Status, AMN_Leaves_Status);
+	}
+
+	/** Get Leaves Status.
+		@return Leaves Status	  */
+	public String getAMN_Leaves_Status()
+	{
+		return (String)get_Value(COLUMNNAME_AMN_Leaves_Status);
 	}
 
 	/** Set Leaves Types.
@@ -308,6 +309,55 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public String getAMN_Leaves_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Leaves_UU);
+	}
+
+	public I_AMN_Payroll getAMN_Payroll() throws RuntimeException
+	{
+		return (I_AMN_Payroll)MTable.get(getCtx(), I_AMN_Payroll.Table_ID)
+			.getPO(getAMN_Payroll_ID(), get_TrxName());
+	}
+
+	/** Set Payroll Invoice.
+		@param AMN_Payroll_ID Payroll Invoice
+	*/
+	public void setAMN_Payroll_ID (int AMN_Payroll_ID)
+	{
+		if (AMN_Payroll_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Payroll_ID, Integer.valueOf(AMN_Payroll_ID));
+	}
+
+	/** Get Payroll Invoice.
+		@return Payroll Invoice	  */
+	public int getAMN_Payroll_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set AMW Work Flows.
+		@param AMW_WorkFlow_ID Plugin AMW Work Flows defined by User
+	*/
+	public void setAMW_WorkFlow_ID (int AMW_WorkFlow_ID)
+	{
+		if (AMW_WorkFlow_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMW_WorkFlow_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMW_WorkFlow_ID, Integer.valueOf(AMW_WorkFlow_ID));
+	}
+
+	/** Get AMW Work Flows.
+		@return Plugin AMW Work Flows defined by User
+	  */
+	public int getAMW_WorkFlow_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMW_WorkFlow_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException
@@ -414,6 +464,25 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return (Timestamp)get_Value(COLUMNNAME_DateTo);
 	}
 
+	/** Set Days To.
+		@param DaysTo Number of days To 
+	*/
+	public void setDaysTo (BigDecimal DaysTo)
+	{
+		set_Value (COLUMNNAME_DaysTo, DaysTo);
+	}
+
+	/** Get Days To.
+		@return Number of days To 
+	  */
+	public BigDecimal getDaysTo()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DaysTo);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
@@ -430,79 +499,28 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
-	/** DocAction AD_Reference_ID=135 */
-	public static final int DOCACTION_AD_Reference_ID=135;
-	/** &lt;None&gt; = -- */
-	public static final String DOCACTION_None = "--";
-	/** Approve = AP */
-	public static final String DOCACTION_Approve = "AP";
-	/** Close = CL */
-	public static final String DOCACTION_Close = "CL";
-	/** Complete = CO */
-	public static final String DOCACTION_Complete = "CO";
-	/** Invalidate = IN */
-	public static final String DOCACTION_Invalidate = "IN";
-	/** Post = PO */
-	public static final String DOCACTION_Post = "PO";
-	/** Prepare = PR */
-	public static final String DOCACTION_Prepare = "PR";
-	/** Reverse - Accrual = RA */
-	public static final String DOCACTION_Reverse_Accrual = "RA";
-	/** Reverse - Correct = RC */
-	public static final String DOCACTION_Reverse_Correct = "RC";
-	/** Re-activate = RE */
-	public static final String DOCACTION_Re_Activate = "RE";
-	/** Reject = RJ */
-	public static final String DOCACTION_Reject = "RJ";
-	/** Void = VO */
-	public static final String DOCACTION_Void = "VO";
-	/** Wait Complete = WC */
-	public static final String DOCACTION_WaitComplete = "WC";
-	/** Unlock = XL */
-	public static final String DOCACTION_Unlock = "XL";
-	/** Set Document Action.
-		@param DocAction The targeted status of the document
-	*/
-	public void setDocAction (String DocAction)
-	{
-
-		set_Value (COLUMNNAME_DocAction, DocAction);
-	}
-
-	/** Get Document Action.
-		@return The targeted status of the document
-	  */
-	public String getDocAction()
-	{
-		return (String)get_Value(COLUMNNAME_DocAction);
-	}
-
-	/** DocStatus AD_Reference_ID=131 */
-	public static final int DOCSTATUS_AD_Reference_ID=131;
 	/** Unknown = ?? */
 	public static final String DOCSTATUS_Unknown = "??";
-	/** Approved = AP */
-	public static final String DOCSTATUS_Approved = "AP";
+	/** Filed = AR */
+	public static final String DOCSTATUS_Filed = "AR";
 	/** Closed = CL */
 	public static final String DOCSTATUS_Closed = "CL";
 	/** Completed = CO */
 	public static final String DOCSTATUS_Completed = "CO";
-	/** Drafted = DR */
-	public static final String DOCSTATUS_Drafted = "DR";
-	/** Invalid = IN */
-	public static final String DOCSTATUS_Invalid = "IN";
-	/** In Progress = IP */
-	public static final String DOCSTATUS_InProgress = "IP";
-	/** Not Approved = NA */
-	public static final String DOCSTATUS_NotApproved = "NA";
-	/** Reversed = RE */
-	public static final String DOCSTATUS_Reversed = "RE";
-	/** Voided = VO */
-	public static final String DOCSTATUS_Voided = "VO";
-	/** Waiting Confirmation = WC */
-	public static final String DOCSTATUS_WaitingConfirmation = "WC";
-	/** Waiting Payment = WP */
-	public static final String DOCSTATUS_WaitingPayment = "WP";
+	/** Draft = DR */
+	public static final String DOCSTATUS_Draft = "DR";
+	/** HR Approved = RA */
+	public static final String DOCSTATUS_HRApproved = "RA";
+	/** HR Review = RH */
+	public static final String DOCSTATUS_HRReview = "RH";
+	/** HR Rejected = RR */
+	public static final String DOCSTATUS_HRRejected = "RR";
+	/** Supervisor Approved = SA */
+	public static final String DOCSTATUS_SupervisorApproved = "SA";
+	/** Supervisor Rejected = SR */
+	public static final String DOCSTATUS_SupervisorRejected = "SR";
+	/** Supervisor Review = SU */
+	public static final String DOCSTATUS_SupervisorReview = "SU";
 	/** Set Document Status.
 		@param DocStatus The current status of the document
 	*/
@@ -536,6 +554,24 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 		return (String)get_Value(COLUMNNAME_DocumentNo);
 	}
 
+	/** Set Hours per day in a Shift.
+		@param HoursDay Hours per day in a Shift
+	*/
+	public void setHoursDay (BigDecimal HoursDay)
+	{
+		set_Value (COLUMNNAME_HoursDay, HoursDay);
+	}
+
+	/** Get Hours per day in a Shift.
+		@return Hours per day in a Shift	  */
+	public BigDecimal getHoursDay()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_HoursDay);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Approved.
 		@param IsApproved Indicates if this document requires approval
 	*/
@@ -550,6 +586,29 @@ public class X_AMN_Leaves extends PO implements I_AMN_Leaves, I_Persistent
 	public boolean isApproved()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApproved);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Override Calculations.
+		@param IsOverrideCalc Override Calculations on Dates
+	*/
+	public void setIsOverrideCalc (boolean IsOverrideCalc)
+	{
+		set_Value (COLUMNNAME_IsOverrideCalc, Boolean.valueOf(IsOverrideCalc));
+	}
+
+	/** Get Override Calculations.
+		@return Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc()
+	{
+		Object oo = get_Value(COLUMNNAME_IsOverrideCalc);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)

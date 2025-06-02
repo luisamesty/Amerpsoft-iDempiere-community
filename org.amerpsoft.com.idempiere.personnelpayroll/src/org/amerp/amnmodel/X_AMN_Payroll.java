@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240807L;
+	private static final long serialVersionUID = 20250205L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)
@@ -52,7 +52,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -64,6 +64,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -93,7 +95,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -105,6 +107,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -134,7 +138,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -146,6 +150,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -175,7 +181,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setAMN_Period_ID (0);
 			setAMN_Process_ID (0);
 			setC_Currency_ID (0);
-// @C_Currency_ID@
+// @SQL=SELECT C_Currency_ID FROM AMN_Contract WHERE AMN_Contract_ID = @AMN_Contract_ID@
 			setC_DocType_ID (0);
 // 0
 			setDocAction (null);
@@ -187,6 +193,8 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			setInvDateIni (new Timestamp( System.currentTimeMillis() ));
 			setIsApproved (false);
 // @IsApproved@
+			setIsOverrideCalc (false);
+// N
 			setIsOverrideCurrencyRate (false);
 // N
 			setIsPaid (false);
@@ -675,7 +683,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	*/
 	public void setC_Currency_ID_To (int C_Currency_ID_To)
 	{
-		set_ValueNoCheck (COLUMNNAME_C_Currency_ID_To, Integer.valueOf(C_Currency_ID_To));
+		set_Value (COLUMNNAME_C_Currency_ID_To, Integer.valueOf(C_Currency_ID_To));
 	}
 
 	/** Get Currency To.
@@ -892,6 +900,92 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return (Timestamp)get_Value(COLUMNNAME_DateAcct);
 	}
 
+	/** Set Application Date.
+		@param DateApplication Application Date for period
+	*/
+	public void setDateApplication (Timestamp DateApplication)
+	{
+		set_Value (COLUMNNAME_DateApplication, DateApplication);
+	}
+
+	/** Get Application Date.
+		@return Application Date for period
+	  */
+	public Timestamp getDateApplication()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateApplication);
+	}
+
+	/** Set ReEntry Date.
+		@param DateReEntry Entry Date for Vacation period
+	*/
+	public void setDateReEntry (Timestamp DateReEntry)
+	{
+		set_Value (COLUMNNAME_DateReEntry, DateReEntry);
+	}
+
+	/** Get ReEntry Date.
+		@return Entry Date for Vacation period
+	  */
+	public Timestamp getDateReEntry()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateReEntry);
+	}
+
+	/** Set ReEntry Date Real.
+		@param DateReEntryReal Real ReEntry Date for Employee
+	*/
+	public void setDateReEntryReal (Timestamp DateReEntryReal)
+	{
+		set_Value (COLUMNNAME_DateReEntryReal, DateReEntryReal);
+	}
+
+	/** Get ReEntry Date Real.
+		@return Real ReEntry Date for Employee
+	  */
+	public Timestamp getDateReEntryReal()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateReEntryReal);
+	}
+
+	/** Set DaysVacation.
+		@param DaysVacation Number of days for Vacations
+	*/
+	public void setDaysVacation (int DaysVacation)
+	{
+		set_Value (COLUMNNAME_DaysVacation, Integer.valueOf(DaysVacation));
+	}
+
+	/** Get DaysVacation.
+		@return Number of days for Vacations
+	  */
+	public int getDaysVacation()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_DaysVacation);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Days Vacation Collective.
+		@param DaysVacationCollective Number of days for Collective Vacations
+	*/
+	public void setDaysVacationCollective (int DaysVacationCollective)
+	{
+		set_Value (COLUMNNAME_DaysVacationCollective, Integer.valueOf(DaysVacationCollective));
+	}
+
+	/** Get Days Vacation Collective.
+		@return Number of days for Collective Vacations
+	  */
+	public int getDaysVacationCollective()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_DaysVacationCollective);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
@@ -1044,6 +1138,22 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return (Timestamp)get_Value(COLUMNNAME_InvDateIni);
 	}
 
+	/** Set Invoice Date Receipt.
+		@param InvDateRec Invoice Date of  Receipt
+	*/
+	public void setInvDateRec (Timestamp InvDateRec)
+	{
+		set_Value (COLUMNNAME_InvDateRec, InvDateRec);
+	}
+
+	/** Get Invoice Date Receipt.
+		@return Invoice Date of  Receipt
+	  */
+	public Timestamp getInvDateRec()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_InvDateRec);
+	}
+
 	/** Set Approved.
 		@param IsApproved Indicates if this document requires approval
 	*/
@@ -1058,6 +1168,29 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public boolean isApproved()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApproved);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Override Calculations.
+		@param IsOverrideCalc Override Calculations on Dates
+	*/
+	public void setIsOverrideCalc (boolean IsOverrideCalc)
+	{
+		set_Value (COLUMNNAME_IsOverrideCalc, Boolean.valueOf(IsOverrideCalc));
+	}
+
+	/** Get Override Calculations.
+		@return Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc()
+	{
+		Object oo = get_Value(COLUMNNAME_IsOverrideCalc);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
@@ -1134,6 +1267,24 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** Set month.
+		@param month month
+	*/
+	public void setmonth (int month)
+	{
+		set_Value (COLUMNNAME_month, Integer.valueOf(month));
+	}
+
+	/** Get month.
+		@return month	  */
+	public int getmonth()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_month);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Name.
@@ -1293,5 +1444,23 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set year.
+		@param year year
+	*/
+	public void setyear (int year)
+	{
+		set_Value (COLUMNNAME_year, Integer.valueOf(year));
+	}
+
+	/** Get year.
+		@return year	  */
+	public int getyear()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_year);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 }

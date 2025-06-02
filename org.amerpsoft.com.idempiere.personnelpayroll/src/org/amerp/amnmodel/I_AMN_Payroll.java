@@ -46,8 +46,8 @@ public interface I_AMN_Payroll
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Payroll
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -422,6 +422,71 @@ public interface I_AMN_Payroll
 	  */
 	public Timestamp getDateAcct();
 
+    /** Column name DateApplication */
+    public static final String COLUMNNAME_DateApplication = "DateApplication";
+
+	/** Set Application Date.
+	  * Application Date for period
+	  */
+	public void setDateApplication (Timestamp DateApplication);
+
+	/** Get Application Date.
+	  * Application Date for period
+	  */
+	public Timestamp getDateApplication();
+
+    /** Column name DateReEntry */
+    public static final String COLUMNNAME_DateReEntry = "DateReEntry";
+
+	/** Set ReEntry Date.
+	  * Entry Date for Vacation period
+	  */
+	public void setDateReEntry (Timestamp DateReEntry);
+
+	/** Get ReEntry Date.
+	  * Entry Date for Vacation period
+	  */
+	public Timestamp getDateReEntry();
+
+    /** Column name DateReEntryReal */
+    public static final String COLUMNNAME_DateReEntryReal = "DateReEntryReal";
+
+	/** Set ReEntry Date Real.
+	  * Real ReEntry Date for Employee
+	  */
+	public void setDateReEntryReal (Timestamp DateReEntryReal);
+
+	/** Get ReEntry Date Real.
+	  * Real ReEntry Date for Employee
+	  */
+	public Timestamp getDateReEntryReal();
+
+    /** Column name DaysVacation */
+    public static final String COLUMNNAME_DaysVacation = "DaysVacation";
+
+	/** Set DaysVacation.
+	  * Number of days for Vacations
+	  */
+	public void setDaysVacation (int DaysVacation);
+
+	/** Get DaysVacation.
+	  * Number of days for Vacations
+	  */
+	public int getDaysVacation();
+
+    /** Column name DaysVacationCollective */
+    public static final String COLUMNNAME_DaysVacationCollective = "DaysVacationCollective";
+
+	/** Set Days Vacation Collective.
+	  * Number of days for Collective Vacations
+	  */
+	public void setDaysVacationCollective (int DaysVacationCollective);
+
+	/** Get Days Vacation Collective.
+	  * Number of days for Collective Vacations
+	  */
+	public int getDaysVacationCollective();
+
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 
@@ -492,6 +557,19 @@ public interface I_AMN_Payroll
 	/** Get InvDateIni	  */
 	public Timestamp getInvDateIni();
 
+    /** Column name InvDateRec */
+    public static final String COLUMNNAME_InvDateRec = "InvDateRec";
+
+	/** Set Invoice Date Receipt.
+	  * Invoice Date of  Receipt
+	  */
+	public void setInvDateRec (Timestamp InvDateRec);
+
+	/** Get Invoice Date Receipt.
+	  * Invoice Date of  Receipt
+	  */
+	public Timestamp getInvDateRec();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -517,6 +595,19 @@ public interface I_AMN_Payroll
 	  * Indicates if this document requires approval
 	  */
 	public boolean isApproved();
+
+    /** Column name IsOverrideCalc */
+    public static final String COLUMNNAME_IsOverrideCalc = "IsOverrideCalc";
+
+	/** Set Override Calculations.
+	  * Override Calculations on Dates
+	  */
+	public void setIsOverrideCalc (boolean IsOverrideCalc);
+
+	/** Get Override Calculations.
+	  * Override Calculations on Dates
+	  */
+	public boolean isOverrideCalc();
 
     /** Column name IsOverrideCurrencyRate */
     public static final String COLUMNNAME_IsOverrideCurrencyRate = "IsOverrideCurrencyRate";
@@ -556,6 +647,15 @@ public interface I_AMN_Payroll
 	  * Indicates if this document / line is printed
 	  */
 	public boolean isPrinted();
+
+    /** Column name month */
+    public static final String COLUMNNAME_month = "month";
+
+	/** Set month	  */
+	public void setmonth (int month);
+
+	/** Get month	  */
+	public int getmonth();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
@@ -672,4 +772,13 @@ public interface I_AMN_Payroll
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name year */
+    public static final String COLUMNNAME_year = "year";
+
+	/** Set year	  */
+	public void setyear (int year);
+
+	/** Get year	  */
+	public int getyear();
 }

@@ -16,10 +16,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.util.IProcessUI;
 import org.amerp.amnmodel.MAMN_Employee;
+import org.amerp.amnmodel.MAMN_Payroll_Assist_Proc;
+import org.amerp.amnmodel.MAMN_Payroll_Assist_Row;
+import org.compiere.model.MMessage;
+import org.compiere.model.MNote;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.CLogger;
@@ -47,6 +53,8 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 	private int p_AMN_Employee_ID = 0;
 	private Timestamp p_AMNDateAssist;
 	private String p_AMN_Assist_Process_Mode="1";
+	private boolean	p_IsScheduled = false;
+	
 	String Employee_Name="";
 	String sql="";
 	@Override
@@ -62,6 +70,8 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 				p_AMNDateAssist =  para.getParameterAsTimestamp();
 			else if (paraName.equals("AMN_Assist_Process_Mode"))
 				p_AMN_Assist_Process_Mode = para.getParameterAsString();
+			else if (paraName.equals("IsScheduled"))
+				p_IsScheduled = para.getParameterAsBoolean();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
@@ -71,10 +81,13 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		// TODO Auto-generated method stub
+
 		// ARRAY Assist for one Day EMPLOYEE - CONTRACT
 		// ARRAY 
 		//
+        String messagetoNotify= "";
+	    Properties ctx = getCtx();
+        //
 		IProcessUI processMonitor = Env.getProcessUI(Env.getCtx());
 		sql = "SELECT DISTINCT "+
 				"amnem.amn_employee_id, "+
@@ -101,18 +114,24 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 				MAMN_Employee amnemployee = new MAMN_Employee(Env.getCtx(), p_AMN_Employee_ID, null);
 				Employee_Name = amnemployee.getName();
 				Msg_Value=Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+
-						Employee_Name+" \r\n";				
-				addLog(Msg_Value);
+						Employee_Name+" \r\n";	
+				messagetoNotify = messagetoNotify+ Msg_Value;
+				if (!p_IsScheduled)
+					addLog(Msg_Value);
 				if (processMonitor != null)
 				{
-					//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Day")+": "+p_PeriodDate.toString());
-					processMonitor.statusUpdate(Msg_Value);
+					// processMonitor
+					if (!p_IsScheduled && processMonitor != null) {
+						processMonitor.statusUpdate(Msg_Value);
+					}
 				}
 				Msg_Value = "";
 				//Msg_Value = Msg.getMsg(Env.getCtx(), "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
 		    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-		    			p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode);
-		    	addLog(Msg_Value);
+		    			p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
+		    	if (!p_IsScheduled)
+		    		addLog(Msg_Value);
+		    	messagetoNotify = messagetoNotify+ Msg_Value;
 			}
 		}
 	    catch (SQLException e)
@@ -123,7 +142,53 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 			DB.close(rs, pstmt);
 			rs = null; pstmt = null;
 		}
-		return null;
+		// Send Notification
+		messagetoNotify = messagetoNotify + Msg_Value;
+        sendNotification(ctx, "N", messagetoNotify);
+        log.warning("Notification:\r\n"+ messagetoNotify);
+		return messagetoNotify;
 	}
 
+	/**
+	 * sendNotification
+	 * N Notice : E Email : B Both - E Email and Notice : X None
+	 * @param leave
+	 * @param notificationType
+	 * @return
+	 */
+	private boolean sendNotification(Properties ctx, String notificationType , String notifactionMessage) {
+		
+		boolean retValue = true;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+    	// MOre Option (FUTURE
+		// N Notice
+    	if (notificationType.compareToIgnoreCase("N") == 0) {
+        	MNote note = new MNote(ctx, "ProcessAttendance",getAD_User_ID(), null);
+        	note.setTextMsg(notifactionMessage);
+        	note.setDescription(MMessage.get(ctx, "Process") +" "+ 
+        			Msg.getElement(ctx, "AMN_Payroll_Assist")+" "+ 
+        	        Msg.getElement(ctx, "RefDateIni") + ":" + dateFormat.format(p_AMNDateAssist) );
+        	note.setAD_Table_ID(MAMN_Payroll_Assist_Proc.Table_ID);
+    		note.setRecord_ID(0);
+    		note.setAD_Org_ID(0);
+    		note.setAD_User_ID(getAD_User_ID());
+    		note.saveEx();	
+    	} 
+    	// E Email
+    	else if (notificationType.compareToIgnoreCase("E") == 0) {
+    		
+    	}
+    	// B Both - E Email and Notice
+    	else if(notificationType.compareToIgnoreCase("B") == 0) {
+    		
+    	}
+    	// X None
+    	else if (notificationType.compareToIgnoreCase("X") == 0) {
+    		
+    	}
+	
+		return retValue;
+		
+	}
 }

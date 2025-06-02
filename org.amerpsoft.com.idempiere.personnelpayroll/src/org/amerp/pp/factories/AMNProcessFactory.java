@@ -15,6 +15,8 @@ package org.amerp.pp.factories;
 import org.adempiere.base.IProcessFactory;
 import org.amerp.process.*;
 import org.amerp.process.imp.AMNImportDeleteRecords;
+import org.amerp.process.imp.AMNImportEmployee;
+import org.amerp.process.imp.AMNImportPayrollAssistRow;
 import org.amerp.process.imp.AMNImportSalarySocialBenefits;
 import org.compiere.process.ProcessCall;
 import org.compiere.util.CLogger;
@@ -180,7 +182,28 @@ public class AMNProcessFactory implements IProcessFactory {
     		try {
 				process =   AMNYearCreateSchedule.class.newInstance();
 			} catch (Exception e) {}
-        // **************************
+        // AMNPayrollRefreshOnePeriodConcept
+        if (p_className.equals("org.amerp.process.AMNPayrollRefreshOnePeriodConcept"))
+    		try {
+				process =   AMNPayrollRefreshOnePeriodConcept.class.newInstance();
+			} catch (Exception e) {}
+       	if (p_className.equals("org.amerp.process.AMNPayrollDeleteOnePeriod"))
+    		try {
+				process =   AMNPayrollDeleteOnePeriod.class.newInstance();
+			} catch (Exception e) {}
+    		//return new AMNPayrollDeleteOnePeriod();
+        // AMNPayrolLeavesProcess
+        if (p_className.equals("org.amerp.process.AMNPayrolLeavesProcess"))
+    		try {
+				process =   AMNPayrolLeavesProcess.class.newInstance();
+			} catch (Exception e) {}
+        // AMNPayrolLeavesCreatesFromPayroll
+        if (p_className.equals("org.amerp.process.AMNPayrolLeavesCreatesFromPayroll"))
+    		try {
+				process =   AMNPayrolLeavesCreatesFromPayroll.class.newInstance();
+			} catch (Exception e) {}
+        
+       	// **************************
         // Import Processes 
         // **************************
         // AMNImportDeleteRecords
@@ -195,6 +218,18 @@ public class AMNProcessFactory implements IProcessFactory {
           	try {
     			process =   AMNImportSalarySocialBenefits.class.newInstance();
     		} catch (Exception e) {}
-          return process;
+        // AMNImportEmployee
+        if (p_className.equals("org.amerp.process.imp.AMNImportEmployee")) 
+          	//log.warning("AMNImportEmployee........PAso");
+          	try {
+    			process =   AMNImportEmployee.class.newInstance();
+    		} catch (Exception e) {}
+        // AMNImportPayrollAssistRow
+        if (p_className.equals("org.amerp.process.imp.AMNImportPayrollAssistRow")) 
+          	//log.warning("AMNImportPayrollAssistRow........PAso");
+          	try {
+    			process =   AMNImportPayrollAssistRow.class.newInstance();
+    		} catch (Exception e) {}
+        return process;
     }
 }

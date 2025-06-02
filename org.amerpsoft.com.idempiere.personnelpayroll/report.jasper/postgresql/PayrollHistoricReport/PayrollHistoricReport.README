@@ -1,0 +1,22 @@
+Report Filtes AS
+Parameters:
+
+	$P{AMN_Concept_ValidFor}
+	$P{AllocationsOnly}
+	
+$P{AMN_Concept_ValidFor}: Posible Values AA-IM-NU-NV-NP ...
+
+	CASE WHEN ($P{AMN_Concept_ValidFor} = 'AA' ) THEN 1=1 
+          WHEN ($P{AMN_Concept_ValidFor} = 'IM' AND  cty.arc='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'NU' AND  cty.utilidad='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'NV' AND  cty.vacacion='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'NP' AND  cty.prestacion='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'IN' AND  cty.ince='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'SS' AND  cty.sso='Y') THEN 1=1 
+          WHEN ($P{AMN_Concept_ValidFor} = 'FA' AND  cty.faov='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'PI' AND  cty.spf='Y') THEN 1=1
+          WHEN ($P{AMN_Concept_ValidFor} = 'SA' AND  cty.salario='Y') THEN 1=1
+         
+ $P{AllocationsOnly}: Posible values Y or N   
+    CASE WHEN ( $P{AllocationsOnly} IS NULL OR $P{AllocationsOnly} = 'N' OR ($P{AllocationsOnly} = 'Y' AND cty.sign ='D') ) THEN 1=1 ELSE 1=0 END       
+    

@@ -17,12 +17,17 @@ import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Employee_Salary;
 import org.amerp.amnmodel.MAMN_NonBusinessDay;
 import org.amerp.amnmodel.MAMN_Payroll;
+import org.amerp.amnmodel.MAMN_Payroll_Assist;
 import org.amerp.amnmodel.MAMN_Process;
+import org.amerp.amnmodel.MAMN_Shift;
+import org.compiere.model.MCountry;
 import org.compiere.model.MCurrency;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.TimeUtil;
 
+import java.lang.System.Logger.Level;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
@@ -67,8 +72,12 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	 */
 	
 	public static List<String> listDV_Variables = new ArrayList<String>();
-
-	/**
+	
+    // Indicates if Saturday is considered Business Day */
+    public static boolean isSaturdayBusinessDay = MAMN_Payroll_Assist.SaturdayBusinessDay;
+    public static boolean SundayBusinessDay = MAMN_Payroll_Assist.SundayBusinessDay;
+    
+    /**
 	 * initDV_Variables
 	 * @return List<String>
 	 */
@@ -161,6 +170,8 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			listDV_Variables.add("DV_SALUTIL");
 			listDV_Variables.add("DV_UTILIDADES");
 			listDV_Variables.add("DV_UTILIDDEV");
+			listDV_Variables.add("DV_UTILIDDEV6M");
+			listDV_Variables.add("DV_UTILIDDEV12M");
 			listDV_Variables.add("DV_UTILANT");
 			listDV_Variables.add("DV_UTILDEF");
 			listDV_Variables.add("DV_UTILADIC");
@@ -172,184 +183,192 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	static public BigDecimal processDefaultValue(Properties p_ctx, String p_CTVarDefValue, int p_AMN_Payroll_ID, String trxName) throws Exception {
 		
 		BigDecimal retValue = BigDecimal.ZERO; //BigDecimal.valueOf(1);
-		//log.warning("p_CTVarDefValue="+p_CTVarDefValue+"  p_AMN_Payroll_ID="+ p_AMN_Payroll_ID);		
-		// ***********************
-		// NN Default Values VAR
-		// ***********************
-		if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY")) || (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO"))) {
-			retValue = DV_SALARY(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_DAYS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_DIAS")))  {
-			retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOURS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_HORAS")))  {
-			retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_TRANSPORTBONUS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOTRANSPOR"))) {
-				retValue = DV_TRANSPORTBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if   ((p_CTVarDefValue.equalsIgnoreCase("DV_ATTENDANCEBONUS"))  || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOASIST"))) {
-			retValue = DV_ATTENDANCEBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_RESTDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_DESCANSO"))) {
-			retValue = DV_RESTDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
-		} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOLLIDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_FERIADO"))) {
-			retValue = DV_HOLLIDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+		if (p_CTVarDefValue != null) {
+			//log.warning("p_CTVarDefValue="+p_CTVarDefValue+"  p_AMN_Payroll_ID="+ p_AMN_Payroll_ID);		
+			// ***********************
+			// NN Default Values VAR
+			// ***********************
+			if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY")) || (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO"))) {
+				retValue = DV_SALARY(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_DAYS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_DIAS")))  {
+				retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOURS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_HORAS")))  {
+				retValue = DV_DAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_TRANSPORTBONUS")) || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOTRANSPOR"))) {
+					retValue = DV_TRANSPORTBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if   ((p_CTVarDefValue.equalsIgnoreCase("DV_ATTENDANCEBONUS"))  || (p_CTVarDefValue.equalsIgnoreCase("DV_BONOASIST"))) {
+				retValue = DV_ATTENDANCEBONUS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_RESTDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_DESCANSO"))) {
+				retValue = DV_RESTDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			} else if  	((p_CTVarDefValue.equalsIgnoreCase("DV_HOLLIDAYS")) ||(p_CTVarDefValue.equalsIgnoreCase("DV_FERIADO"))) {
+				retValue = DV_HOLLIDAYS(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+	
+			// ***********************
+			// NV default Values 
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALVACAC")) {
+				retValue = DV_SALVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACION")) {
+				retValue = DV_VACACION(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC190")) {
+				retValue = DV_VACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192")) {
+				retValue = DV_VACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192A")) {
+				retValue = DV_VACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACFER")) {
+				retValue = DV_VACACFER(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDES")) {
+				retValue = DV_VACACDES(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIADIC")) {
+				retValue = DV_VACACDIADIC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIA45")) {
+				retValue = DV_VACACDIA45(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			// **********************************
+			// NP default Values Social Benefits
+			// **********************************
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARYSB")) 
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIOP"))
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALPREST"))) {
+				retValue = DV_SALARYSB(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYLAST")) {
+				retValue = DV_SALARYLAST(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPS")) {
+				retValue = DV_ABONOPS(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY12SB")) 
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO12P"))
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_SAL12PREST"))) {
+				retValue = DV_SALARY12SB(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPSA"))
+				|| (p_CTVarDefValue.equalsIgnoreCase("DV_ABONOMPSA"))) {
+				retValue = DV_ABONOPSA(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INCUTILID")) {
+				retValue = DV_INCUTILID(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_INCVACAC"))
+					|| (p_CTVarDefValue.equalsIgnoreCase("DV_INCVACACADIC"))) {
+				retValue = DV_INCVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			// *******************************************
+			// PI default Value Interest Social Benefits
+			// *******************************************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INTERPRESTAC")) {
+				retValue = DV_INTERPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			// ***********************************************************
+			// PR default Value Anticipate payment Social Benefits
+			// ***********************************************************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUMPRESTAC")) {
+				//log.warning("......DV_ACUMPRESTAC");
+				retValue = DV_ACUMPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUANTPRESTAC")) {
+				//log.warning("......DV_ACUANTPRESTAC");
+				retValue = DV_ACUANTPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+	
+			// ***********************
+			// NU default Values 
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALUTIL")) {
+				retValue = DV_SALUTIL(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDADES")) {
+				retValue = DV_UTILIDADES(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV")) {
+				retValue = DV_UTILIDDEV(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV6M")) {
+				retValue = DV_UTILIDDEV6M(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV12M")) {
+				retValue = DV_UTILIDDEV12M(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILANT")) {
+				retValue = DV_UTILANT(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILDEF")) {
+				retValue = DV_UTILDEF(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILADIC")) {
+				retValue = DV_UTILADIC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+	
+			// ***********************
+			// YTD Default Values VAR
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYYTD")) {
+				retValue = DV_SALARYYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYTAXYTD")) {
+				retValue = DV_SALARYTAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_TAXYTD")) {
+				retValue = DV_TAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SSOYTD")) {
+				retValue = DV_SSOYTD(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			
+			// ***********************
+			// PL default Values 
+			// ***********************
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FSALARY6M")) {
+				retValue = DV_FSALARY6M(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190")) {
+				retValue = DV_FVACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190ADI")) {
+				retValue = DV_FVACAC190ADI(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192")) {
+				retValue = DV_FVACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192A")) {
+				retValue = DV_FVACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV11")) {
+				retValue = DV_FUTILIDDEV11(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV12")) {
+				retValue = DV_FUTILIDDEV12(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYSFRAC")) {
+				retValue = DV_FDAYSFRAC(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_THISYEAR")) {
+				retValue = DV_FDAYS_THISYEAR(p_ctx, p_AMN_Payroll_ID, trxName);
+			}
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FYEAR_SERVICE")) {
+				retValue = DV_FYEAR_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
+			}	
+			else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_SERVICE")) {
+				retValue = DV_FDAYS_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
+			}	
+			// ***********************
+			// END
+			// ***********************
+			
+			else
+				retValue = BigDecimal.valueOf(0);
 		}
-
-		// ***********************
-		// NV default Values 
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALVACAC")) {
-			retValue = DV_SALVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACION")) {
-			retValue = DV_VACACION(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC190")) {
-			retValue = DV_VACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192")) {
-			retValue = DV_VACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACAC192A")) {
-			retValue = DV_VACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACFER")) {
-			retValue = DV_VACACFER(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDES")) {
-			retValue = DV_VACACDES(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIADIC")) {
-			retValue = DV_VACACDIADIC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_VACACDIA45")) {
-			retValue = DV_VACACDIA45(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		// **********************************
-		// NP default Values Social Benefits
-		// **********************************
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARYSB")) 
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIOP"))
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALPREST"))) {
-			retValue = DV_SALARYSB(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYLAST")) {
-			retValue = DV_SALARYLAST(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPS")) {
-			retValue = DV_ABONOPS(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_SALARY12SB")) 
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SALARIO12P"))
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_SAL12PREST"))) {
-			retValue = DV_SALARY12SB(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_ABONOPSA"))
-			|| (p_CTVarDefValue.equalsIgnoreCase("DV_ABONOMPSA"))) {
-			retValue = DV_ABONOPSA(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INCUTILID")) {
-			retValue = DV_INCUTILID(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	((p_CTVarDefValue.equalsIgnoreCase("DV_INCVACAC"))
-				|| (p_CTVarDefValue.equalsIgnoreCase("DV_INCVACACADIC"))) {
-			retValue = DV_INCVACAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		// *******************************************
-		// PI default Value Interest Social Benefits
-		// *******************************************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_INTERPRESTAC")) {
-			retValue = DV_INTERPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		// ***********************************************************
-		// PR default Value Anticipate payment Social Benefits
-		// ***********************************************************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUMPRESTAC")) {
-			//log.warning("......DV_ACUMPRESTAC");
-			retValue = DV_ACUMPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_ACUANTPRESTAC")) {
-			//log.warning("......DV_ACUANTPRESTAC");
-			retValue = DV_ACUANTPRESTAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-
-		// ***********************
-		// NU default Values 
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALUTIL")) {
-			retValue = DV_SALUTIL(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDADES")) {
-			retValue = DV_UTILIDADES(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILIDDEV")) {
-			retValue = DV_UTILIDDEV(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILANT")) {
-			retValue = DV_UTILANT(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILDEF")) {
-			retValue = DV_UTILDEF(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_UTILADIC")) {
-			retValue = DV_UTILADIC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-
-		// ***********************
-		// YTD Default Values VAR
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYYTD")) {
-			retValue = DV_SALARYYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SALARYTAXYTD")) {
-			retValue = DV_SALARYTAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_TAXYTD")) {
-			retValue = DV_TAXYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_SSOYTD")) {
-			retValue = DV_SSOYTD(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		
-		// ***********************
-		// PL default Values 
-		// ***********************
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FSALARY6M")) {
-			retValue = DV_FSALARY6M(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190")) {
-			retValue = DV_FVACAC190(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC190ADI")) {
-			retValue = DV_FVACAC190ADI(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192")) {
-			retValue = DV_FVACAC192(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FVACAC192A")) {
-			retValue = DV_FVACAC192A(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV11")) {
-			retValue = DV_FUTILIDDEV11(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FUTILIDDEV12")) {
-			retValue = DV_FUTILIDDEV12(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYSFRAC")) {
-			retValue = DV_FDAYSFRAC(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_THISYEAR")) {
-			retValue = DV_FDAYS_THISYEAR(p_ctx, p_AMN_Payroll_ID, trxName);
-		}
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FYEAR_SERVICE")) {
-			retValue = DV_FYEAR_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
-		}	
-		else if 	(p_CTVarDefValue.equalsIgnoreCase("DV_FDAYS_SERVICE")) {
-			retValue = DV_FDAYS_SERVICE(p_ctx, p_AMN_Payroll_ID, trxName);
-		}	
-		// ***********************
-		// END
-		// ***********************
-		
-		else
-			retValue = BigDecimal.valueOf(0);
 		//log.warning("CTVarDefValue:"+p_CTVarDefValue+"  AMN_Payroll_ID:"+p_AMN_Payroll_ID+"   retValue:"+retValue);
 		if (retValue.equals(null))
 			return BigDecimal.ZERO;
@@ -581,7 +600,10 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
 		InvDateIni=amnpayroll.getInvDateIni();
 		InvDateEnd=amnpayroll.getInvDateEnd();
-		LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, amnpayroll.getAD_Client_ID(), null).doubleValue();
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
+		LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, amnpayroll.getAD_Client_ID(), null).doubleValue();
 		retValue = LABORDAYS*8;
 		return BigDecimal.valueOf(retValue);
 	}
@@ -604,7 +626,10 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
 			// Calculates LABORDAY from MAMN_Payroll Class
-			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
+			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(LABORDAYS);
 
@@ -627,8 +652,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateIni=amnpayroll.getInvDateIni();
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 			// Calculates LABORDAY from MAMN_Payroll Class
-			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
+			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(LABORDAYS);
 
@@ -653,9 +681,12 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
 			AD_Org_ID=amnpayroll.getAD_Org_ID();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 			// Calculates LABORDAY ,DTREC,NONLABORDAYS,HOLLIDAYS from MAMN_NonBusinessDay Class
-			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
-			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
+			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
+			LABORDAYS =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, trxName).doubleValue();
 			DTREC =1.00+ MAMN_NonBusinessDay.getDaysBetween(InvDateIni, InvDateEnd).doubleValue();
 			NONLABORDAYS = DTREC - LABORDAYS;
 			// Return BigDecimal Value
@@ -680,8 +711,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			InvDateEnd=amnpayroll.getInvDateEnd();;
 			AD_Client_ID=amnpayroll.getAD_Client_ID();
 			AD_Org_ID=amnpayroll.getAD_Org_ID();
+			// Verify isSaturdayBusinessDay
+			MAMN_Shift shift = new MAMN_Shift();
+			isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 			// Calculates LABORDAY ,DTREC,NONLABORDAYS,HOLLIDAYS from MAMN_NonBusinessDay Class
-			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
+			HOLLIDAYS = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, AD_Org_ID).doubleValue();
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(HOLLIDAYS);
 	}
@@ -770,7 +804,36 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	 * 	Properties Ctx, int AMN_Payroll_ID, String trxName
 	 */
 	public static BigDecimal DV_VACACION (Properties Ctx, int AMN_Payroll_ID, String trxName) {
+		
 		double retValue = 15;	
+		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+		MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+		MCountry country = MCountry.get(Env.getCtx(), amnemployee.getC_Country_ID());
+		// VE Venezuela
+		if (country.getCountryCode().compareToIgnoreCase("VE")==0 ) {
+			retValue = 15;	
+		// PARAGUAY
+		} else if (country.getCountryCode().compareToIgnoreCase("PY")==0 ) {
+			/* Calculates years of Antiquity */
+			BigDecimal yearsAnt = AmerpDateUtils.getYearsBetween(amnemployee.getincomedate(), amnpayroll.getInvDateIni());
+			//	DE         Hasta        Derecho de Vacaciones 
+			//	1 ano    5 años      12 días hábiles corridos. 
+			//	6 años 10 años     18 días hábiles corridos. 
+			//	11 años Adelante 30 días hábiles corridos.
+			/* Compare with Table */
+			// Lógica de cálculo
+	        if (yearsAnt.compareTo(BigDecimal.ONE) >= 0 && yearsAnt.compareTo(new BigDecimal("5")) <= 0) {
+	        	retValue = 12; // 1 año a 5 años: 12 días hábiles corridos
+	        } else if (yearsAnt.compareTo(new BigDecimal("6")) >= 0 && yearsAnt.compareTo(new BigDecimal("10")) <= 0) {
+	        	retValue = 18; // 6 años a 10 años: 18 días hábiles corridos
+	        } else if (yearsAnt.compareTo(new BigDecimal("11")) >= 0) {
+	        	retValue = 30; // 11 años en adelante: 30 días hábiles corridos
+	        } else {
+	        	retValue = 0; // Por debajo de 1 año, 0 días
+	        }
+		} else if (country.getCountryCode().compareToIgnoreCase("ES")==0 ){
+			retValue = 30;	
+		}
 		return BigDecimal.valueOf(retValue);
 	}
 	
@@ -856,8 +919,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 
 		double retValue = 15;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 		// HOLLIDAYS ON VACATION PERIOD
-		retValue = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID()).doubleValue();
+		retValue = MAMN_NonBusinessDay.sqlGetHolliDaysBetween(isSaturdayBusinessDay, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID()).doubleValue();
 
 		return BigDecimal.valueOf(retValue);
 	}
@@ -873,8 +939,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
 		// Business Days ON VACATION PERIOD
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 		//retValue = MAMN_NonBusinessDay.sqlGetNonBusinessDay(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID()).doubleValue();
-		double	LABORDAYS = MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), null).doubleValue();
+		double	LABORDAYS = MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), amnpayroll.getAD_Client_ID(), null).doubleValue();
 		double DTREC = 1.00+ MAMN_NonBusinessDay.getDaysBetween(amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd()).doubleValue();
 		return BigDecimal.valueOf(DTREC - LABORDAYS);
 	}
@@ -1894,7 +1963,133 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		return retValue;
 	}
 
+	/**
+	 *  processDefaultValue: DV_UTILIDDEV6M
+	 * 	Description: Return Accrued Payments during last 6 period in term of Monthly Salary
+	 *  All Paymentens during the period
+	 *  Summarizing all Concepts Types where IS_UTILIDAD ='Y'
+	 *  Parameters:
+	 * 	Properties Ctx, int AMN_Payroll_ID, String trxName
+	 */
+	public static BigDecimal DV_UTILIDDEV6M(Properties Ctx, int AMN_Payroll_ID, String trxName) {
+	    BigDecimal retValue = BigDecimal.ZERO;
+	    BigDecimal Historic_Salary = BigDecimal.ZERO;
+	    
+	    MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+	    MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 
+	    // Configuración de fechas: Final = getRefDateEnd(), Inicial = 6 meses antes
+	    GregorianCalendar cal = new GregorianCalendar();
+	    cal.setTime(amnpayroll.getRefDateEnd());  // Usamos getRefDateEnd() en lugar de getInvDateEnd()
+	    
+	    // Normalizar hora a 00:00:00
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+	    
+	    Timestamp EndDate = new Timestamp(cal.getTimeInMillis());
+	    
+	    // Calcular fecha inicial (6 meses antes)
+	    cal.add(Calendar.MONTH, -6);  // Restamos 6 meses exactos
+	    cal.set(Calendar.DAY_OF_MONTH, 1);    // Forzar primer día del mes
+	    Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
+
+	    // Consulta SQL (igual que el original)
+	    String sql = "select amp_salary_hist_calc('salary_utilities', ?, ?, ?, ?, ?)";
+	    PreparedStatement pstmt = null;
+	    ResultSet rspc = null;
+	    
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        pstmt.setInt(1, amnemployee.getAMN_Employee_ID());
+	        pstmt.setTimestamp(2, StartDate);
+	        pstmt.setTimestamp(3, EndDate);
+	        pstmt.setInt(4, amnpayroll.getC_Currency_ID());
+	        pstmt.setInt(5, amnpayroll.getC_ConversionType_ID());
+	        
+	        rspc = pstmt.executeQuery();
+	        if (rspc.next()) {
+	            Historic_Salary = rspc.getBigDecimal(1);
+	        }
+	    } catch (SQLException e) {
+	    	log.warning("Error en DV_UTILIDDEV_6Months_FirstDay "+e.getMessage());
+	        Historic_Salary = BigDecimal.ZERO;
+	    } finally {
+	        DB.close(rspc, pstmt);
+	    }
+
+	    // Validar resultado
+	    retValue = Historic_Salary != null ? Historic_Salary : BigDecimal.ZERO;
+	    return retValue;
+	}
+
+	/**
+	 *  processDefaultValue: DV_UTILIDDEV12M
+	 * 	Description: Return Accrued Payments during last 12 period in term of Monthly Salary
+	 *  All Paymentens during the period
+	 *  Summarizing all Concepts Types where IS_UTILIDAD ='Y'
+	 *  Parameters:
+	 * 	Properties Ctx, int AMN_Payroll_ID, String trxName
+	 */
+	public static BigDecimal DV_UTILIDDEV12M(Properties Ctx, int AMN_Payroll_ID, String trxName) {
+	    BigDecimal retValue = BigDecimal.ZERO;
+	    BigDecimal Historic_Salary = BigDecimal.ZERO;
+	    
+	    MAMN_Payroll amnpayroll = new MAMN_Payroll(Ctx, AMN_Payroll_ID, trxName);
+	    MAMN_Employee amnemployee = new MAMN_Employee(Ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+
+	    // Configuración de fechas: Final = getRefDateEnd(), Inicial = 6 meses antes
+	    GregorianCalendar cal = new GregorianCalendar();
+	    cal.setTime(amnpayroll.getRefDateEnd());  // Usamos getRefDateEnd() en lugar de getInvDateEnd()
+	    
+	    // Normalizar hora a 00:00:00
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+	    
+	    Timestamp EndDate = new Timestamp(cal.getTimeInMillis());
+	    
+	    // Calcular fecha inicial (12 meses antes)
+	    cal.setTime(amnpayroll.getRefDateIni());  // Usamos getRefDateIni() en lugar de getInvDateIni()
+
+	    // Normalizar hora a 00:00:00
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+
+	    Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
+
+	    // Consulta SQL (igual que el original)
+	    String sql = "select amp_salary_hist_calc('salary_utilities', ?, ?, ?, ?, ?)";
+	    PreparedStatement pstmt = null;
+	    ResultSet rspc = null;
+	    
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        pstmt.setInt(1, amnemployee.getAMN_Employee_ID());
+	        pstmt.setTimestamp(2, StartDate);
+	        pstmt.setTimestamp(3, EndDate);
+	        pstmt.setInt(4, amnpayroll.getC_Currency_ID());
+	        pstmt.setInt(5, amnpayroll.getC_ConversionType_ID());
+	        
+	        rspc = pstmt.executeQuery();
+	        if (rspc.next()) {
+	            Historic_Salary = rspc.getBigDecimal(1);
+	        }
+	    } catch (SQLException e) {
+	    	log.warning("Error en DV_UTILIDDEV_6Months_FirstDay "+e.getMessage());
+	        Historic_Salary = BigDecimal.ZERO;
+	    } finally {
+	        DB.close(rspc, pstmt);
+	    }
+
+	    // Validar resultado
+	    retValue = Historic_Salary != null ? Historic_Salary : BigDecimal.ZERO;
+	    return retValue;
+	}
 	/**
 	 *  processDefaultValue: DV_UTILIDADES
 	 * 	Description: Return 120 days according to Labor Law Art. 131 y 132 LOTT
@@ -2254,8 +2449,11 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// AD_Client_ID
 		sql = "SELECT AD_Client_ID FROM amn_payroll WHERE amn_payroll_id=?" ;
 		AD_Client_ID=DB.getSQLValue(trxName, sql, AMN_Payroll_ID);
+		// Verify isSaturdayBusinessDay
+		MAMN_Shift shift = new MAMN_Shift();
+		isSaturdayBusinessDay = shift.isSaturdayBusinessDayfromPayroll(Ctx, AMN_Payroll_ID);
 		// Calculates LABORDAY from MAMN_Payroll Class
-		retValue =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(InvDateIni, InvDateEnd, AD_Client_ID, null).doubleValue();
+		retValue =  MAMN_NonBusinessDay.sqlGetNonWeekEndDaysBetween(isSaturdayBusinessDay, InvDateIni, InvDateEnd, AD_Client_ID, null).doubleValue();
 		// Return BigDecimal Value
 		return BigDecimal.valueOf(retValue);
 	}
