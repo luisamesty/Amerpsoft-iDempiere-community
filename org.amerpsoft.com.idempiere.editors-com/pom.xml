@@ -21,11 +21,4 @@
             </plugin>
         </plugins>
     </build>
-<!--    <dependencies>-->
-<!--    	<dependency>-->
-<!--    		<groupId>org.idempiere</groupId>-->
-<!--    		<artifactId>org.monalisa.com.base</artifactId>-->
-<!--    		<version>11.0.0-SNAPSHOT</version>-->
-<!--    	</dependency>-->
-<!--    </dependencies>-->
 </project>
