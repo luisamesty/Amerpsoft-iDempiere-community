@@ -34,8 +34,7 @@ Service-Component: OSGI-INF/AMNCalloutFactory.xml,
  OSGI-INF/AMNEventFactory.xml,
  OSGI-INF/AMNFormFactory.xml,
  OSGI-INF/AMNModelFactory.xml,
- OSGI-INF/AMNProcessFactory.xml,
- OSGI-INF/AMNValidatorFactory.xml 
+ OSGI-INF/AMNProcessFactory.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.amerp.amndocument,
  org.compiere.model,
