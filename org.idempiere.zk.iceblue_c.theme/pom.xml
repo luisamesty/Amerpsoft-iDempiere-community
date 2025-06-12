@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.idempiere</groupId>
 		<artifactId>org.idempiere.parent</artifactId>
-		<version>${revision}</version>
+		<version>12.0.0-SNAPSHOT</version>
 		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
 	</parent>	
 	<artifactId>org.idempiere.zk.iceblue_c.theme</artifactId>

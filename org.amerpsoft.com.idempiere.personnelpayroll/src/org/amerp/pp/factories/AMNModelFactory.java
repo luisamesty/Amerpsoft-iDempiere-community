@@ -71,10 +71,8 @@ public class AMNModelFactory implements IModelFactory {
 		if(tableName.equalsIgnoreCase(MAMN_Payroll_Historic.Table_Name))
 			return MAMN_Payroll_Historic.class;
 		// MAMN_Payroll
-		if(tableName.equalsIgnoreCase(MAMN_Payroll.Table_Name)) {
-			//log.warning("===============MAMN_Payroll================================");
+		if(tableName.equalsIgnoreCase(MAMN_Payroll.Table_Name)) 
 			return MAMN_Payroll.class;
-		}
 		// MAMN_Period
 		if(tableName.equalsIgnoreCase(MAMN_Period.Table_Name))
 			return MAMN_Period.class;
@@ -148,7 +146,10 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
 			return MAMN_I_Employee_Salary.class;
-		//
+		// BPartner Tables
+		// MCustom BPartnerLocation Table
+		if(tableName.equalsIgnoreCase(MCustomBPartnerLocation.Table_Name))
+			return MCustomBPartnerLocation.class;
 		return null;
 	}
 
@@ -198,10 +199,8 @@ public class AMNModelFactory implements IModelFactory {
 		if(tableName.equalsIgnoreCase(MAMN_Payroll_Historic.Table_Name))
 			return new MAMN_Payroll_Historic(Env.getCtx(),Record_ID, trxName);
 		// MAMN_Payroll
-		if(tableName.equalsIgnoreCase(MAMN_Payroll.Table_Name)) {
-			//log.warning("===============MAMN_Payroll================================");
+		if(tableName.equalsIgnoreCase(MAMN_Payroll.Table_Name))
 			return new MAMN_Payroll(Env.getCtx(),Record_ID, trxName);
-			}
 		// MAMN_Period
 		if(tableName.equalsIgnoreCase(MAMN_Period.Table_Name))
 			return new MAMN_Period(Env.getCtx(),Record_ID, trxName);
@@ -275,7 +274,10 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
 			return new MAMN_I_Employee_Salary(Env.getCtx(),Record_ID, trxName);
-		//
+		// BPartner Tables
+		// MCustom BPartnerLocation Table
+		if(tableName.equalsIgnoreCase(MCustomBPartnerLocation.Table_Name))
+			return new MCustomBPartnerLocation(Env.getCtx(),Record_ID, trxName);
 		return null;
 	}
 
@@ -325,10 +327,8 @@ public class AMNModelFactory implements IModelFactory {
 		if(tableName.equalsIgnoreCase(MAMN_Payroll_Historic.Table_Name))
 			return new MAMN_Payroll_Historic(Env.getCtx(),rs, trxName);
 		// MAMN_Payroll
-		if(tableName.equalsIgnoreCase(MAMN_Payroll.Table_Name)) {
-//			log.warning("===============MAMN_Payroll================================");
+		if(tableName.equalsIgnoreCase(MAMN_Payroll.Table_Name)) 
 			return new MAMN_Payroll(Env.getCtx(),rs, trxName);
-		}
 		// MAMN_Period
 		if(tableName.equalsIgnoreCase(MAMN_Period.Table_Name))
 			return new MAMN_Period(Env.getCtx(),rs, trxName);
@@ -402,7 +402,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MAMN_I_Employee_Salary
 		if(tableName.equalsIgnoreCase(MAMN_I_Employee_Salary.Table_Name))
 			return new MAMN_I_Employee_Salary(Env.getCtx(),rs, trxName);
-		//
+		// MCustom BPartnerLocation Table
+		if(tableName.equalsIgnoreCase(MCustomBPartnerLocation.Table_Name))
+			return new MCustomBPartnerLocation(Env.getCtx(),rs, trxName);
 		return null;
 	}
 
