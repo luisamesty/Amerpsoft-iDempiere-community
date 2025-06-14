@@ -1,4 +1,3 @@
---DailyBiometricPayrollAttendance.
 SELECT * FROM
 (
 		-- REPORT HEADER
@@ -27,19 +26,21 @@ SELECT * FROM
      -- ORGANIZACIÓN
      pyr_as.ad_client_id as client_id, pyr_as.ad_org_id as org_id,
      -- LOCATION
-     lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad, 
+     lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
+     CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad, 
      -- SHIFT
-     shf.amn_shift_id,
      shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
+     CASE WHEN ( $P{AMN_Shift_ID}  IS NULL OR shf.amn_shift_id= $P{AMN_Shift_ID}  ) THEN 1 ELSE 0 END AS imp_shift, 
      -- CONTRACT
-     amc.amn_contract_id,
      amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
+     CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato, 
      -- EMPLOYEE
      emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp, emp.biocode,
+     CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1 ELSE 0 END AS imp_empleado, 
      -- BPARTNER
      cbp.taxid as nro_id,
      -- PAYROLL_ASSIST
-     pyr_as.event_date as fecha_evento,
+     pyr_as.event_date as fecha,
      CONCAT(
 	CASE WHEN CAST(extract(hour from pyr_as.event_time) as integer) < 10 THEN CONCAT('0', CAST(extract(hour from pyr_as.event_time) as text))
 	     ELSE CAST(extract(hour from pyr_as.event_time) as text)
@@ -67,13 +68,10 @@ SELECT * FROM
 	 LEFT JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id = cbp.c_bpartner_id)
 	 LEFT JOIN adempiere.amn_location as lct ON (emp.amn_location_id= lct.amn_location_id)
 	 LEFT JOIN adempiere.amn_shift as shf ON (shf.amn_shift_id= pyr_as.amn_shift_id)
-	 WHERE pyr_as.isactive= 'Y' AND pyr_as.event_date= DATE( $P{DateEnd} )
+	 WHERE pyr_as.isactive= 'Y'
 	) as asistencia ON (1= 0)
-WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID} 
-  AND CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END  
-  AND CASE WHEN ( $P{AMN_Location_ID} IS NULL OR asistencia.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END 
-  AND CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR asistencia.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END 
-  AND CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR asistencia.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1=1 ELSE 1=0 END
-  AND CASE WHEN ( $P{AMN_Shift_ID} IS NULL OR asistencia.amn_shift_id= $P{AMN_Shift_ID} ) THEN 1=1 ELSE 1=0 END 
+WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}  AND org_id= $P{AD_Org_ID}
+  AND imp_localidad= 1 AND imp_shift= 1 AND imp_contrato= 1 AND imp_empleado= 1
+  AND fecha = DATE($P{DateEnd} )
   )
-ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, asistencia.fecha_evento, asistencia.hora, header_info ASC
+ORDER BY asistencia.loc_value, asistencia.codigo_shift, asistencia.value_emp, asistencia.fecha, asistencia.hora, header_info ASC
