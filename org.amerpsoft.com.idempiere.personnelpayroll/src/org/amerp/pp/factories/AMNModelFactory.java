@@ -150,6 +150,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MCustom BPartnerLocation Table
 		if(tableName.equalsIgnoreCase(MCustomBPartnerLocation.Table_Name))
 			return MCustomBPartnerLocation.class;
+		// C_Invoice Table
+		if(tableName.equalsIgnoreCase(MAMN_Invoice.Table_Name))
+			return MAMN_Invoice.class;
 		return null;
 	}
 
@@ -278,6 +281,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MCustom BPartnerLocation Table
 		if(tableName.equalsIgnoreCase(MCustomBPartnerLocation.Table_Name))
 			return new MCustomBPartnerLocation(Env.getCtx(),Record_ID, trxName);
+		// C_Invoice Table
+		if(tableName.equalsIgnoreCase(MAMN_Invoice.Table_Name))
+			return new MAMN_Invoice(Env.getCtx(),Record_ID, trxName);
 		return null;
 	}
 
@@ -405,6 +411,9 @@ public class AMNModelFactory implements IModelFactory {
 		// MCustom BPartnerLocation Table
 		if(tableName.equalsIgnoreCase(MCustomBPartnerLocation.Table_Name))
 			return new MCustomBPartnerLocation(Env.getCtx(),rs, trxName);
+		// C_Invoice Table
+		if(tableName.equalsIgnoreCase(MAMN_Invoice.Table_Name))
+			return new MAMN_Invoice(Env.getCtx(),rs, trxName);
 		return null;
 	}
 
