@@ -43,8 +43,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     
 	@Override
     protected void prepare() {
-	    // TODO Auto-generated method stub
-    	//log.warning("...........Toma de Parametros...................");
+	    // Toma de Parametros
     	ProcessInfoParameter[] paras = getParameter();
 		for (ProcessInfoParameter para : paras)
 		{
@@ -65,7 +64,11 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-		//log.warning("...........Parametros...................");
+		log.warning("Parámetros: AD_Client_ID=" + p_AD_Client_ID 
+				+ " | AD_Org_ID=" + p_AD_Org_ID 
+				+ " | DateIni=" + p_RefDateIni 
+				+ " | DateEnd=" + p_RefDateEnd
+				+ " | Schedule=" + p_IsScheduled);
 		
     }
 
@@ -291,7 +294,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         }
         // Send Notification
         sendNotification(ctx, "N", messagetoNotify);
-        log.warning("Notification:\r\n"+ messagetoNotify);
+        log.warning("AMNImportPayrollAssistRow - Notification:\r\n"+ messagetoNotify);
         // return Msg.getMsg(ctx, "ProcessOK");
         return "@Processed@ " + rowCount + " - @Updated@ " + rowsUpdated;
 
