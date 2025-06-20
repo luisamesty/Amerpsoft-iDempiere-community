@@ -98,7 +98,7 @@ public class AMNPayrollRefreshHistoric extends SvrProcess {
 
 			// SALARY HISTORIC
 			MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(getCtx(), 0, null);
-			if (amnpayrollhistoric.createAmnPayrollHistoric(getCtx(), null, emp.getAMN_Employee_ID(), p_DateIni, p_DateEnd, get_TrxName())) {
+			if (amnpayrollhistoric.createAmnPayrollHistoricV2(getCtx(), null, emp.getAMN_Employee_ID(), p_DateIni, p_DateEnd, get_TrxName())) {
 				Msg_Value += "Empleado " + emp.getName() + ": OK\n";
 			}
 			// SALARY HISTORIC END
