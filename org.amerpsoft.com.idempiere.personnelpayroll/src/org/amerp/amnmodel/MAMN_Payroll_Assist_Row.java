@@ -23,29 +23,29 @@ public class MAMN_Payroll_Assist_Row extends X_AMN_Payroll_Assist_Row{
 	
 	public MAMN_Payroll_Assist_Row(Properties ctx, int AMN_Payroll_Assist_Row_ID, String trxName) {
 		super(ctx, AMN_Payroll_Assist_Row_ID, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 	
 	public MAMN_Payroll_Assist_Row(Properties ctx, int AMN_Payroll_Assist_Row_ID, String trxName,
 			String[] virtualColumns) {
 		super(ctx, AMN_Payroll_Assist_Row_ID, trxName, virtualColumns);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	public MAMN_Payroll_Assist_Row(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	public MAMN_Payroll_Assist_Row(Properties ctx, String AMN_Payroll_Assist_Row_UU, String trxName) {
 		super(ctx, AMN_Payroll_Assist_Row_UU, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	public MAMN_Payroll_Assist_Row(Properties ctx, String AMN_Payroll_Assist_Row_UU, String trxName,
 			String[] virtualColumns) {
 		super(ctx, AMN_Payroll_Assist_Row_UU, trxName, virtualColumns);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	/**

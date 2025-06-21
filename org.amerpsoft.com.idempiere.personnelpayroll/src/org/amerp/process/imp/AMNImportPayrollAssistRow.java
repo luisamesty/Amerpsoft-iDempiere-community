@@ -200,7 +200,9 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 		                    	// If return false Add to array to show at end of process
 		                    	PayrollAssistRowImport foundUnit = PayrollAssistRowImport.searchByPin(payrollassistrowRejected, row.getPIN());
 		                        if (foundUnit == null) {
-		                        	MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),get_TrxName() );
+		                     		// Constructor setea AD_Client_ID
+		                    		MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, p_AD_Client_ID, p_AD_Org_ID ,trxName );
+		                    		amnunit.setAMN_Payroll_Assist_Unit_ID(row.getAMN_Payroll_Assist_Unit_ID());
 		                        	PayrollAssistRowImport newPRR = new PayrollAssistRowImport(row.getPIN(), amnunit.getName(), 1 );
 		                        	payrollassistrowRejected.add(newPRR);
 		                        } else {
@@ -324,14 +326,20 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         // If Null Creates New
         if (amnemployee != null && row != null) {
            description = amnemployee.getValue()+"-"+amnemployee.getName().trim();
-        	if (UnitID != 0) {
-        		MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),trxName );
-	        	description = "U"+amnunit.getName().trim()+" "+description;            
+           if (UnitID != 0) {
+        	    MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(), trxName);
+        	    String unitName = amnunit.getName();
+        	    if (unitName != null) {
+        	        description = "U" + unitName.trim() + " " + description;
+        	    } else {
+        	        description = "U? " + description;  
+        	    }
         	}
         	// Verificar si el registro existe para ese trabajador y fecha
             MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findByEmployeeAndDateTime(ctx, amnemployee.getAMN_Employee_ID(), row.getAMN_DateTime(), trxName);
         	if (amnpayrollassist == null  ) {
-	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, 0 , trxName);
+	           	// Nuevo constructor que setea AD_Client_ID
+	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, p_AD_Client_ID, p_AD_Org_ID, trxName);
 				amnpayrollassist.setAD_Org_ID(p_AD_Org_ID);
 				amnpayrollassist.setIsActive(true);
 	        } 
