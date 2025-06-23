@@ -16,3 +16,4 @@
 /runtime-*.app/
 org.idempiere.maven.to.p2/org.idempiere.webservice.client/.settings/
 **/org.eclipse.jdt.core.prefs
+/build.plugins/
