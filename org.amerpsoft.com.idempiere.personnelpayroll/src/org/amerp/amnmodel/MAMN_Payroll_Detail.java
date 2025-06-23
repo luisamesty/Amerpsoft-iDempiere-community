@@ -21,7 +21,6 @@ import javax.script.*;
 
 import org.adempiere.util.IProcessUI;
 import org.amerp.amnutilities.*;
-import org.amerp.amnutilities.AmerpPayrollCalc.scriptResult;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MSysConfig;
@@ -242,23 +241,23 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			int p_AD_Client_ID, int p_AD_Org_ID,  int p_AMN_Process_ID, int p_AMN_Contract_ID,
 			int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID, String trxName) {
 		
+		PayrollVariables pyVars;
+		AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+		PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
 		int Concept_CalcOrder=0;
 		String Concept_Value = "" ;
 		String Concept_Name = "Nombre del Concepto" ;
 		String Concept_Description = "Descripcion del Concepto" ;
 		int AMN_Concept_Uom_ID= 0;
 		BigDecimal Concept_DefaultValue=BigDecimal.valueOf(0.00);
-		scriptResult RetVal = new scriptResult();
+		ScriptResult RetVal = new ScriptResult();
 		String Concept_DefaultValueST="";
 		String Concept_ScriptDefaultValueST="";
 		// Rules only on PL
 		boolean forceRulesInit=false;
-//		if (amnprocess.getAMN_Process_Value().compareToIgnoreCase("PL")== 0)
-//			forceRulesInit=true;
 		boolean forceDVInit=true;
        	// MSysConfig AMERP_Payroll_Rules_Apply 
 		String apra = MSysConfig.getValue("AMERP_Payroll_Rules_Apply","N",p_AD_Client_ID);
-//log.warning("AMERP_Payroll_Rules_Apply = "+apra);
 		if (apra.compareToIgnoreCase("Y")==0)
 			forceRulesInit=true;
 		else
@@ -315,15 +314,15 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		Concept_DefaultValue = BigDecimal.valueOf(1.00);;
 		// CALCULATE DEFAULT VALUE
 		try {
-			AmerpPayrollCalc.PayrollEvaluation(p_ctx, p_AMN_Payroll_ID, Concept_CalcOrder, forceRulesInit, forceDVInit, false);
+			pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx, p_AMN_Payroll_ID, Concept_CalcOrder, forceRulesInit, forceDVInit, false);
 			// Evauate Concept_ScriptDefaultValueST if Empty
 			if (Concept_ScriptDefaultValueST==null || Concept_ScriptDefaultValueST.isEmpty()) {
-				RetVal=AmerpPayrollCalc.FormulaEvaluationScript(
-						p_AMN_Payroll_ID, Concept_Value, Concept_DefaultValueST, Concept_DefaultValue, Salary, Payrolldays, "", false);
+				RetVal=pyScriptEngine.FormulaEvaluationScript(
+						p_AMN_Payroll_ID, pyVars, Concept_Value, Concept_DefaultValueST, Concept_DefaultValue, Salary, Payrolldays, "", false);
 				Concept_DefaultValue = RetVal.getBDCalcAmnt();
 			} else {
-				RetVal=AmerpPayrollCalc.FormulaEvaluationScript(
-						p_AMN_Payroll_ID, Concept_Value, Concept_ScriptDefaultValueST, Concept_DefaultValue, Salary, Payrolldays, "", false);
+				RetVal=pyScriptEngine.FormulaEvaluationScript(
+						p_AMN_Payroll_ID, pyVars, Concept_Value, Concept_ScriptDefaultValueST, Concept_DefaultValue, Salary, Payrolldays, "", false);
 				Concept_DefaultValue = RetVal.getBDCalcAmnt();				
 			}
 		}
@@ -436,7 +435,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
 			// p_mTab.setValue("Script",Concept_Script );			
 			// SAVES NEW
-			amnpayrolldetail.save(get_TrxName());
+			amnpayrolldetail.saveEx(get_TrxName());
 
 		} else {
 			//log.warning("................Values in MAMN_Payroll (UPDATE)...................");
@@ -447,7 +446,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			amnpayrolldetail.setDescription(Concept_Description);
 			amnpayrolldetail.setQtyValue(QtyValue);
 			amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
-			amnpayrolldetail.save(get_TrxName());
+			amnpayrolldetail.saveEx(get_TrxName());
 		}
 		if (processMonitor != null)
 		{

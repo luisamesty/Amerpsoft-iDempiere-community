@@ -14,8 +14,6 @@ package org.amerp.process;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -32,7 +30,10 @@ import org.amerp.amnmodel.MAMN_Payroll_Detail;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
 import org.amerp.amnutilities.AmerpPayrollCalc;
-import org.amerp.amnutilities.AmerpPayrollCalc.scriptResult;
+import org.amerp.amnutilities.AmerpPayrollCalcArray;
+import org.amerp.amnutilities.PayrollScriptEngine;
+import org.amerp.amnutilities.PayrollVariables;
+import org.amerp.amnutilities.ScriptResult;
 import org.compiere.model.MSysConfig;
 import org.compiere.util.*;
 
@@ -160,6 +161,8 @@ public class AMNPayrollCreateDocs {
 		Msg_Value=Msg_Value+Msg.getElement(ctx, "AMN_Employee_ID")+":"+amnpayroll.getName().trim()+" \r\n";
 		// CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
 		CreatePayrollOneDocDetailLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, amnpayroll.getAMN_Payroll_ID(), trxName);
+		// CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
+		CreatePayrollOneDocDetailLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, amnpayroll.getAMN_Payroll_ID(), trxName);
 		// LOANS
 		if (AMN_Process_Value.equalsIgnoreCase("NN") ||
 				AMN_Process_Value.equalsIgnoreCase("TI") ) {
@@ -214,8 +217,11 @@ public class AMNPayrollCreateDocs {
 		(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID,
 			 int p_AMN_Payroll_ID, String trxName ) {
 		
+		PayrollVariables pyVars;
 		// Receipt Lines List
 		AMNReceiptLines ReceiptLines = null;
+		AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+		PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
 		List<AMNReceiptLines> ReceiptConcepts = new ArrayList<AMNReceiptLines>();
 		BigDecimal Concept_DefaultValue = BigDecimal.ZERO;
 		// SQL
@@ -242,7 +248,7 @@ public class AMNPayrollCreateDocs {
 			Payrolldays = PayrolldaysC;
 		}		
 		//
-		scriptResult RetVal = new scriptResult();
+		ScriptResult RetVal = new ScriptResult();
 		// Rules only on PL
 		boolean forceRulesInit=false;
 		boolean forceDVInit=true;
@@ -291,7 +297,7 @@ public class AMNPayrollCreateDocs {
             rsod1 = pstmt1.executeQuery();
 			while (rsod1.next())
 			{
-				lin = +1;
+				lin = lin +1;
 				// log.warning("  AMN_Payroll_ID="+p_AMN_Payroll_ID+"  AMN_Concept_Types_Proc_ID="+AMN_Concept_Types_Proc_ID);
 				// CREATE MAMN_Payroll Detail
 				ReceiptLines = new AMNReceiptLines();
@@ -315,15 +321,15 @@ public class AMNPayrollCreateDocs {
 				}
 				// CALCULATE DEFAULT VALUE
 				try {
-					AmerpPayrollCalc.PayrollEvaluation(ctx, p_AMN_Payroll_ID, ReceiptLines.getCalcOrder(), forceRulesInit, forceDVInit, false);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(ctx, p_AMN_Payroll_ID, ReceiptLines.getCalcOrder(), forceRulesInit, forceDVInit, false);
 					// Evauate Concept_ScriptDefaultValueST if Empty
 					if (ReceiptLines.getScriptDefaultValue()==null || ReceiptLines.getScriptDefaultValue().isEmpty()) {
-						RetVal=AmerpPayrollCalc.FormulaEvaluationScript(
-								p_AMN_Payroll_ID, ReceiptLines.getConceptValue(), ReceiptLines.getDefaultValue(), Concept_DefaultValue, Salary, Payrolldays, "", false);
+						RetVal=pyScriptEngine.FormulaEvaluationScript(
+								p_AMN_Payroll_ID, pyVars, ReceiptLines.getConceptValue(), ReceiptLines.getDefaultValue(), Concept_DefaultValue, Salary, Payrolldays, "", false);
 						Concept_DefaultValue = RetVal.getBDCalcAmnt();
 					} else {
-						RetVal=AmerpPayrollCalc.FormulaEvaluationScript(
-								p_AMN_Payroll_ID, ReceiptLines.getConceptValue(), ReceiptLines.getScriptDefaultValue(), Concept_DefaultValue, Salary, Payrolldays, "", false);
+						RetVal=pyScriptEngine.FormulaEvaluationScript(
+								p_AMN_Payroll_ID, pyVars, ReceiptLines.getConceptValue(), ReceiptLines.getScriptDefaultValue(), Concept_DefaultValue, Salary, Payrolldays, "", false);
 						Concept_DefaultValue = RetVal.getBDCalcAmnt();				
 					}
 				}
@@ -335,7 +341,7 @@ public class AMNPayrollCreateDocs {
 		        }
 				// SET QtyValue of Array
 				ReceiptLines.setQtyValue(Concept_DefaultValue);
-				// log.warning("  AMN_Payroll_ID="+p_AMN_Payroll_ID+"  CONCEPTO="+ ReceiptLines.getConceptValue()+" Concept_DefaultValue="+Concept_DefaultValue);
+				//log.warning("  AMN_Payroll_ID="+p_AMN_Payroll_ID+"  CONCEPTO="+ ReceiptLines.getConceptValue()+" Concept_DefaultValue="+Concept_DefaultValue);
 				// ADD to ReceiptConcepts Array
 				ReceiptConcepts.add(ReceiptLines);
 			}
@@ -356,7 +362,10 @@ public class AMNPayrollCreateDocs {
 		// ----------------
 		//  CREATE MAMN_Payroll Detail
 		for (int j=0 ; j < ReceiptConcepts.size() ; j++) {
-			// log.warning("Concepts j=("+j+") "+ReceiptConcepts.get(j).getConceptValue()+" "+ReceiptConcepts.get(j).getConceptName()+" "+ReceiptConcepts.get(j).getCalcOrder());
+			//log.warning("Concepts j=("+j+") "+ReceiptConcepts.get(j).getConceptValue()+" "+
+			//		ReceiptConcepts.get(j).getConceptName()+" "+
+			//		ReceiptConcepts.get(j).getCalcOrder()+" "+
+			//		ReceiptConcepts.get(j).getQtyValue());
 			// RECEIPT LINES
 			amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
 					amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),  ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(),
@@ -391,6 +400,9 @@ public class AMNPayrollCreateDocs {
 	    String AMN_Process_Value="";
 	    String EmpName="";
 	    Msg_Value="";
+		AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+		AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
+		PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
 		IProcessUI processMonitor = Env.getProcessUI(Env.getCtx());
 		// Employee
 		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
@@ -411,8 +423,8 @@ public class AMNPayrollCreateDocs {
 		//log.warning(" BEGIN CalculateOnePayrollDocument...p_AMN_Payroll_ID="+p_AMN_Payroll_ID+"\r\n"+Msg_Value);
 		// RECALC DOCUMENT
 		try {
-			// OJO AMN_Payroll_ID
-            AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, p_AMN_Payroll_ID);
+			// AMN_Payroll_ID
+            amerpPayrollCalcArray.PayrollEvaluationArrayCalculate(ctx, p_AMN_Payroll_ID);
         }
         catch (ScriptException ex) {
             // TODO Auto-generated catch block
@@ -552,137 +564,7 @@ public class AMNPayrollCreateDocs {
 
 	}
 
-	/**
-	 * CreatePayrollOneDocumentLinesFromArray: 
-	 * Similar CreatePayrollOneDocumentLines method but using Array
-	 * 		List<AMNReceiptLines> ReceiptConcepts
-	 * @param ctx
-	 * @param List<AMNReceiptLines> ReceiptConcepts
-	 * @param int p_AMN_Period_ID
-	 * @param int p_AMN_Payroll_Lot_ID
-	 * @param int p_AMN_Employee_ID
-	 * @param int p_AMN_Payroll_ID
-	 * @param trxName
-	 * @return
-	 */
-	public static String CreatePayrollOneDocumentLinesFromArray (Properties ctx, List<AMNReceiptLines> ReceiptConcepts, int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int p_AMN_Employee_ID, int p_AMN_Payroll_ID, String trxName) {
-	    String AMN_Process_Value="NN";
-	    Msg_Value="";
-		MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, null);
-		MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, null);
-		BigDecimal Concept_DefaultValue = BigDecimal.ZERO;
-		// MAMN_Contract
-		MAMN_Contract amncontract = new MAMN_Contract(ctx,amnpayroll.getAMN_Contract_ID(),null);		
-		new MAMN_Process(ctx, amnpayroll.getAMN_Process_ID(), null);
-		//BigDecimal PayrolldaysC from AMN_Contract
-		BigDecimal PayrolldaysC = amncontract.getPayRollDays();
-		// GET Salary from AMN_Employee
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
-		BigDecimal Salary=amnemployee.getSalary();
-		// GET Payrolldays from AMN_Payroll
-		//log.warning(" MAMN_Payroll_Detail---p_AMN_Payroll_ID="+p_AMN_Payroll_ID+"  fechas INI="+amnpayroll.getInvDateIni()+"  End="+amnpayroll.getInvDateEnd());	
-		// deprecated BigDecimal Payrolldays = MAMN_Payroll.sqlGetAMNPayrollDays(p_AMN_Payroll_ID);    
-		BigDecimal Payrolldays = amnpayroll.getAMNPayrollDays(p_AMN_Payroll_ID ); 
-		if (PayrolldaysC.equals(Payrolldays) ) {
-			Payrolldays = PayrolldaysC;
-		}	
-		scriptResult RetVal = new scriptResult();
-		// Rules only on PL
-		boolean forceRulesInit=false;
-		boolean forceDVInit=true;
-		int lin = 0;
-       	// MSysConfig AMERP_Payroll_Rules_Apply 
-		String apra = MSysConfig.getValue("AMERP_Payroll_Rules_Apply","N",amnpayroll.getAD_Client_ID());
-		if (apra.compareToIgnoreCase("Y")==0)
-			forceRulesInit=true;
-		else
-			forceRulesInit=false;
-		// 
-		// UPDATE ARRAY
-		//
-		for (int j=0 ; j < ReceiptConcepts.size() ; j++) {
-			// QTY DEFAULT VALUE
-			Concept_DefaultValue = BigDecimal.valueOf(1.00);;
-			// CALC RULES AND DV VAR ONLY ON FIRST LINE
-			if (lin > 1) {
-				forceRulesInit=false;
-				forceDVInit=false;
-			}
-			// CALCULATE DEFAULT VALUES
-			try {
-				AmerpPayrollCalc.PayrollEvaluation(ctx, p_AMN_Payroll_ID, ReceiptConcepts.get(j).getCalcOrder(), forceRulesInit, forceDVInit, false);
-				// Evauate Concept_ScriptDefaultValueST if Empty
-				if (ReceiptConcepts.get(j).getScriptDefaultValue()==null || ReceiptConcepts.get(j).getScriptDefaultValue().isEmpty()) {
-					RetVal=AmerpPayrollCalc.FormulaEvaluationScript(
-							p_AMN_Payroll_ID, ReceiptConcepts.get(j).getConceptValue(), ReceiptConcepts.get(j).getDefaultValue(), Concept_DefaultValue, Salary, Payrolldays, "", false);
-					Concept_DefaultValue = RetVal.getBDCalcAmnt();
-				} else {
-					RetVal=AmerpPayrollCalc.FormulaEvaluationScript(
-							p_AMN_Payroll_ID, ReceiptConcepts.get(j).getConceptValue(), ReceiptConcepts.get(j).getScriptDefaultValue(), Concept_DefaultValue, Salary, Payrolldays, "", false);
-					Concept_DefaultValue = RetVal.getBDCalcAmnt();				
-				}
-			}
-	        catch (ScriptException ex) {
-	            // TODO Auto-generated catch block
-	        	Concept_DefaultValue = BigDecimal.valueOf(1.00);
-	            //ex.printStackTrace();
-	            log.log(Level.WARNING, "** ERROR ON ** FormulaEvaluationScript" + ReceiptConcepts.get(j).getConceptValue(), ex);
-	        }
-			// SET QtyValue of Array
-			ReceiptConcepts.get(j).setQtyValue(Concept_DefaultValue);
-		}
-		// ---------------------------------------------
-		//  CREATE MAMN_Payroll Detail
-		// 	CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
-		// ---------------------------------------------
-		for (int j=0 ; j < ReceiptConcepts.size() ; j++) {
-			// RECEIPT LINES
-			Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
-			String trxNameLocal = trx.getTrxName();  // ✅ Usar esta transacción en todo el proceso
-			amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
-					amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),  ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(),
-					p_AMN_Payroll_ID, ReceiptConcepts.get(j).getAMN_Concept_Types_Proc_ID(), 
-					ReceiptConcepts.get(j).getConceptValue(), ReceiptConcepts.get(j).getCalcOrder(), 
-					ReceiptConcepts.get(j).getConceptName(), ReceiptConcepts.get(j).getConceptName(), 
-					ReceiptConcepts.get(j).getAMN_Concept_Uom_ID(),ReceiptConcepts.get(j).getQtyValue(), 
-					trxNameLocal);
-			 trx.commit(); // Guarda los cambios
-			// RECEIPT LINES FOR LOANS PAYMENTS
-			// VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-			CreatePayrollOneDocDetailDeferredLines(ctx, ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxNameLocal);
-			// LOANS 		
-			trx.commit(); // Guarda los cambios
-			trx.close();
-		}	
-		
-		//CreatePayrollOneDocDetailLines(ctx, ReceiptLine.getAMN_Process_ID(), ReceiptLine.getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxName);
-		//
-		if (AMN_Process_Value.equalsIgnoreCase("NN") ||
-				AMN_Process_Value.equalsIgnoreCase("TI") ) {
-			// ************************
-			// Process NNN an TI	
-			// ************************
-			
-		} else if (AMN_Process_Value.equalsIgnoreCase("NV")) {
-			// ************************
-			// Process NV	
-			// ************************
-			
-		} else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
-			// ************************
-			// Process NP
-			// ************************
-			
-		} else if (AMN_Process_Value.equalsIgnoreCase("NU")) {
-			// ************************
-			// Process NU
-			// ************************
-		} else {
-			Msg_Value=Msg_Value+(Msg.getMsg(ctx, "Process")+":"+AMN_Process_Value.trim()+"NotAvailable"+" \r\n");
-		}
-		return Msg_Value;
-	}
-	
+
 	/**
 	 * CreatePayrollOneDocDetailDeferredLinesforAllPL
 	 * Return all Loan Deferred for all processes

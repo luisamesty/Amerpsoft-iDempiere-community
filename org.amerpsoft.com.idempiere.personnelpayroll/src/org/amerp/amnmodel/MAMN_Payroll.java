@@ -497,7 +497,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			// SAVES NEW
 			//amnpayroll.saveNew_getID();
 			//log.warning("get_TrxName()="+get_TrxName());
-			amnpayroll.save(get_TrxName());
+			amnpayroll.saveEx(get_TrxName());
 		} else 	{
 			//log.warning("................Values in MAMN_Payroll (UPDATE)...................");
 			//log.warning(" p_AMN_Period_ID:"+p_AMN_Period_ID+"  p_AMN_Contract_ID:"+p_AMN_Contract_ID+"  p_AMN_Process_ID:"+p_AMN_Process_ID+"  p_AMN_Employee_ID:"+p_AMN_Employee_ID);
@@ -541,7 +541,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			amnpayroll.setC_ConversionType_ID(ConversionType_ID);
 			amnpayroll.setC_Currency_ID_To(m_defaultCurrency_ID);
 			//log.warning("get_TrxName()="+get_TrxName());
-			amnpayroll.save(get_TrxName());
+			amnpayroll.saveEx(get_TrxName());
 		}
 		if (processMonitor != null)
 		{
