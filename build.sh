@@ -13,6 +13,7 @@ cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/org.amerpsoft.c
 cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/org.amerpsoft.com.idempiere.tools*.jar build.plugins/
 cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/org.amerpsoft.com.idempiere.webform*.jar build.plugins/
 cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/org.amerpsoft.com.idempiere.workflow*.jar build.plugins/
+cp org.amerpsoft.com.idempiere.p2.site/target/repository/plugins/org.idempiere.zk.iceblue_c.theme*.jar  build.plugins/
 
 # NOTE: Compilation is configured for local MAC OS development environment
 # Compiling in a different server setup you need to change relativePath and Location.
