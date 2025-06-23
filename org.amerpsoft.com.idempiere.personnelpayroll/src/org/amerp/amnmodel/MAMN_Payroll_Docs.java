@@ -126,7 +126,7 @@ public class MAMN_Payroll_Docs extends X_AMN_Payroll_Docs{
                 .setParameters(payrollID, invoiceID)
                 .firstId();
 
-        return (docID == null) ? null : new MAMN_Payroll_Docs(ctx, docID, trxName);
+        return (docID == null || docID < 0) ? null : new MAMN_Payroll_Docs(ctx, docID, trxName);
     }
 
     
@@ -147,7 +147,7 @@ public class MAMN_Payroll_Docs extends X_AMN_Payroll_Docs{
                 .setParameters(payrollID, docTypeID)
                 .firstId();
 
-        return (docID == null) ? null : new MAMN_Payroll_Docs(ctx, docID, trxName);
+        return (docID == null || docID < 0) ? null : new MAMN_Payroll_Docs(ctx, docID, trxName);
     }
 
     
@@ -169,7 +169,7 @@ public class MAMN_Payroll_Docs extends X_AMN_Payroll_Docs{
                 .setParameters(payrollID, conceptTypesID)
                 .firstId();
 
-        return (docID == null) ? null : new MAMN_Payroll_Docs(ctx, docID, trxName);
+        return (docID == null || docID < 0) ? null : new MAMN_Payroll_Docs(ctx, docID, trxName);
     }
 
 

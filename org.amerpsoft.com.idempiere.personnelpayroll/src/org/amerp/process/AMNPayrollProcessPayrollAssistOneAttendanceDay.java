@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import org.adempiere.util.IProcessUI;
 import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Payroll_Assist_Proc;
-import org.amerp.amnmodel.MAMN_Payroll_Assist_Row;
 import org.compiere.model.MMessage;
 import org.compiere.model.MNote;
 import org.compiere.process.ProcessInfoParameter;
@@ -59,8 +58,8 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 	String sql="";
 	@Override
 	protected void prepare() {
-		// TODO Auto-generated method stub
-    	//log.warning("...........Toma de Parametros...................");
+		
+    	// Toma de Parametros.
     	ProcessInfoParameter[] paras = getParameter();
 		for (ProcessInfoParameter para : paras)
 		{
@@ -75,8 +74,10 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-		//log.warning("...........Parametros...................");
-		//log.warning("p_AMNDateAssist:"+p_AMNDateAssist+"  p_AMN_Assist_Process_Mode:"+p_AMN_Assist_Process_Mode);	    
+		log.warning(">>> Parametros AMNPayrollProcessPayrollAssistOneAttendanceDay -"
+				+ " AMNDateAssis="+p_AMNDateAssist+""
+				+ " | AMN_Assist_Process_Mode="+p_AMN_Assist_Process_Mode+""
+				+ " | IsScheduled="+p_IsScheduled);	    
 	}
 
 	@Override
@@ -145,7 +146,7 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 		// Send Notification
 		messagetoNotify = messagetoNotify + Msg_Value;
         sendNotification(ctx, "N", messagetoNotify);
-        log.warning("Notification:\r\n"+ messagetoNotify);
+        log.warning("AMNPayrollProcessPayrollAssistOneAttendanceDay - Notification:\r\n"+ messagetoNotify);
 		return messagetoNotify;
 	}
 

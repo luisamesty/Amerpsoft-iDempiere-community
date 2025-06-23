@@ -1,5 +1,6 @@
 package org.amerp.amnmodel;
 
+
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +10,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.adempiere.util.IProcessUI;
 import org.amerp.amnutilities.AmerpUtilities;
@@ -44,215 +46,6 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub
 	}
-
-	/**
-	 * createAmnPayrollHistoric
-	 * @param ctx
-	 * @param locale
-	 * @param p_AMN_Employee_ID
-	 * @param p_ValueFrom
-	 * @param p_ValueTo	
-	 * @param trxName
-	 * @return boolean
-	 */
-	public boolean createAmnPayrollHistoric(Properties ctx, Locale locale, 
-			int p_AMN_Employee_ID, Timestamp p_ValueFrom, Timestamp p_ValueTo, String trxName) {
-		
-		Integer Currency_ID = 0;
-		Integer CU_Currency_ID = 0;
-		Integer ConversionType_ID = MConversionType.TYPE_SPOT;
-		Integer AcctSchema_ID = 0;
-		Timestamp StartDate=null;
-		Timestamp EndDate=null;
-		String Period_Value = "" ;
-		String Period_Name = "Nombre del Período" ;
-		String AMN_Period_YYYYMM ="";
-		BigDecimal Salary_Base, Salary_Integral, Salary_Vacation;
-		BigDecimal Salary_Utilities_NV, Salary_Utilities,Salary_Utilities_NN;
-		BigDecimal Salary_Socialbenefits, Salary_Socialbenefits_NN, Salary_Socialbenefits_NV, Salary_Socialbenefits_NU ;
-		BigDecimal Salary_Socialbenefits_Updated ;
-		BigDecimal Salary_Utilities_Updated ;
-		// GET Employee 
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
-		// log.warning("Parameters...p_AMN_Employee_ID:"+p_AMN_Employee_ID+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo);
-		// Default Account Schema
-		MClientInfo info = MClientInfo.get(Env.getCtx(), amnemployee.getAD_Client_ID(), null); 
-		MAcctSchema as = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
-		AcctSchema_ID= as.getC_AcctSchema_ID();
-		if (locale == null)
-		{
-			MClient client = MClient.get(ctx);
-			locale = client.getLocale();
-		}
-		if (locale == null && Language.getLoginLanguage() != null)
-			locale = Language.getLoginLanguage().getLocale();
-		if (locale == null)
-			locale = Env.getLanguage(ctx).getLocale();
-   		// Default Currency  for Contract
-   		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(amnemployee.getAMN_Contract_ID());
-   		if (Currency_ID == null )
-   			Currency_ID = AmerpUtilities.defaultAcctSchemaCurrency(amnemployee.getAD_Client_ID());	
-   		// Default ConversionType for Contract
-   		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amnemployee.getAMN_Contract_ID());
-   		if (ConversionType_ID == null)	
-   			ConversionType_ID = MConversionType.TYPE_SPOT;
-		//
-		IProcessUI processMonitor = Env.getProcessUI(ctx);
-		// ************************************************************
-    	// * Get HSTORIC SALARY FROM VIEW (amn_employee_salary_hist_v)
-    	// ************************************************************
-		String sql = "" +
-	    		 "SELECT " + 
-	    		 	"value,name, " +
-	    		 	"amn_period_yyyymm,  " +
-	    		 	"startdate, enddate,  " +
-	    		 	"salary_base,  " +
-	    		 	"salary_integral,  " +
-	    		 	"salary_vacation,  " +
-	    		 	"salary_utilities,  " +
-	    		 	"salary_utilities_nn,  " +
-	    		 	"salary_utilities_nv,  " +
-	    		 	"salary_socialbenefits,  " +
-	    		 	"salary_socialbenefits_nn,  " +
-	    		 	"salary_socialbenefits_nv,  " +
-	    		 	"salary_socialbenefits_nu, " +
-	    		 	"cu_currency_id, " +
-	    		 	"c_conversiontype_id "+
-	    		 	"FROM adempiere.amn_employee_salary_hist_v " +
-	    		 	"WHERE amn_employee_id = ? AND c_acctschema_id = ?";
-	    PreparedStatement pstmt = null;
-	    ResultSet rs = null;
-	    try
-	    {
-	            pstmt = DB.prepareStatement(sql, null);
-	            pstmt.setInt(1, p_AMN_Employee_ID);
-	            pstmt.setInt(2, AcctSchema_ID);
-	            rs = pstmt.executeQuery();
-	            while (rs.next())
-	            {
-	            	Period_Value= rs.getString(1).trim();
-	                Period_Name = rs.getString(2).trim();
-	                AMN_Period_YYYYMM = rs.getString(3).trim();
-	                StartDate		= rs.getTimestamp(4);
-	                EndDate			=rs.getTimestamp(5);
-	                Salary_Base 	= rs.getBigDecimal(6);
-	                Salary_Integral = rs.getBigDecimal(7);
-	                Salary_Vacation = rs.getBigDecimal(8);
-	                Salary_Utilities= rs.getBigDecimal(9);
-	                Salary_Utilities_NN= rs.getBigDecimal(10);
-	                Salary_Utilities_NV= rs.getBigDecimal(11);
-	        		Salary_Socialbenefits= rs.getBigDecimal(12);
-	        		Salary_Socialbenefits_NN= rs.getBigDecimal(13);
-	        		Salary_Socialbenefits_NV= rs.getBigDecimal(14); 
-	        		Salary_Socialbenefits_NU = rs.getBigDecimal(15);
-	        		CU_Currency_ID= rs.getInt(16);
-	        		ConversionType_ID= rs.getInt(17);
-	        		//log.warning("Cicle...AMN_Period_YYYYMM"+AMN_Period_YYYYMM+" StartDate:"+StartDate+"  EndDate:"+EndDate);
-	        		//log.warning("AMN_Period_YYYYMM"+AMN_Period_YYYYMM);
-	        		if (p_AMN_Employee_ID !=0 && StartDate != null &&  EndDate!=null) {
-	        			// Verify if Exists
-	        			MAMN_Payroll_Historic amnpayrollhistoric = MAMN_Payroll_Historic.findAMNPayrollHistoricbyDates(
-	        					ctx, locale, p_AMN_Employee_ID, StartDate,  EndDate, CU_Currency_ID);
-	        			if (amnpayrollhistoric == null) {
-	        				//log.warning(".....(NEW).AMN_Employee_ID:"+p_AMN_Employee_ID+"  Period_YYYYMM:"+AMN_Period_YYYYMM+" StartDate:"+StartDate+"  EndDate:"+EndDate);
-							amnpayrollhistoric = new  MAMN_Payroll_Historic(ctx, getAMN_Payroll_Historic_ID(), get_TrxName());
-		        			amnpayrollhistoric.setAMN_Employee_ID(p_AMN_Employee_ID);
-		        			amnpayrollhistoric.setAD_Client_ID(amnemployee.getAD_Client_ID());
-		        			amnpayrollhistoric.setAD_Org_ID(amnemployee.getAD_Org_ID());
-		        			amnpayrollhistoric.setValue(Period_Value);
-		        			amnpayrollhistoric.setName(Period_Name);
-		        			amnpayrollhistoric.setAMN_Period_YYYYMM(AMN_Period_YYYYMM);
-		        			amnpayrollhistoric.setValidFrom(StartDate);
-		        			amnpayrollhistoric.setValidTo(EndDate);
-		        			amnpayrollhistoric.setSalary_Base(Salary_Base);
-		        			amnpayrollhistoric.setSalary_Integral(Salary_Integral);
-		        			amnpayrollhistoric.setSalary_Socialbenefits(Salary_Socialbenefits);
-		        			// Updated Values for Salary_Socialbenefits
-		        			amnpayrollhistoric.setSalary_Socialbenefits_Updated(Salary_Socialbenefits);
-		        			amnpayrollhistoric.setSalary_Socialbenefits_NN(Salary_Socialbenefits_NN);
-		        			amnpayrollhistoric.setSalary_Socialbenefits_NU(Salary_Socialbenefits_NU);
-		        			amnpayrollhistoric.setSalary_Socialbenefits_NV(Salary_Socialbenefits_NV);
-		        			amnpayrollhistoric.setSalary_Utilities(Salary_Utilities);
-		        			// Updated Values for Salary_Utilities
-		        			amnpayrollhistoric.setSalary_Utilities_Updated(Salary_Utilities);
-		        			amnpayrollhistoric.setSalary_Utilities_NN(Salary_Utilities_NN);
-		        			amnpayrollhistoric.setSalary_Utilities_NV(Salary_Utilities_NV);
-		        			amnpayrollhistoric.setSalary_Vacation(Salary_Vacation);
-		        			// Currency
-		        			amnpayrollhistoric.setC_Currency_ID(CU_Currency_ID);
-		        			amnpayrollhistoric.setC_ConversionType_ID(ConversionType_ID);
-		        			// SAVES NEW
-		        			amnpayrollhistoric.save(get_TrxName());
-		        		} else {
-		        			// Verifiy Updated Value
-		        			Salary_Socialbenefits_Updated=amnpayrollhistoric.getSalary_Socialbenefits_Updated();
-		        			Salary_Utilities_Updated=amnpayrollhistoric.getSalary_Utilities_Updated();
-		        			//log.warning(".....(UPDATE).AMN_Employee_ID:"+p_AMN_Employee_ID+"  Period_YYYYMM:"+AMN_Period_YYYYMM+" StartDate:"+StartDate+"  EndDate:"+EndDate);
-							amnpayrollhistoric.setAD_Client_ID(amnemployee.getAD_Client_ID());
-							amnpayrollhistoric.setAD_Org_ID(amnemployee.getAD_Org_ID());;
-		        			amnpayrollhistoric.setValue(Period_Value);
-		        			amnpayrollhistoric.setName(Period_Name);
-		        			amnpayrollhistoric.save(trxName);
-		        			amnpayrollhistoric.setAMN_Period_YYYYMM(AMN_Period_YYYYMM);
-		        			amnpayrollhistoric.setValidFrom(StartDate);
-		        			amnpayrollhistoric.setValidTo(EndDate);
-		        			amnpayrollhistoric.setSalary_Base(Salary_Base);
-		        			amnpayrollhistoric.setSalary_Integral(Salary_Integral);
-		        			// Verify is Null or Zero Salary_Socialbenefits_Updated
-	        				if (Salary_Socialbenefits_Updated.compareTo(new BigDecimal("0.00")) == 0 
-	        						|| Salary_Socialbenefits_Updated == null) {
-	        					// Updated Value
-			        			amnpayrollhistoric.setSalary_Socialbenefits_Updated(Salary_Socialbenefits);
-	        				}
-		        			// Verify is Null or Zero Salary_Utilities_Updated
-	        				if (Salary_Utilities_Updated.compareTo(new BigDecimal("0.00")) == 0 
-	        						|| Salary_Utilities_Updated == null) {
-	        					// Updated Value
-			        			amnpayrollhistoric.setSalary_Utilities_Updated(Salary_Utilities);
-	        				}
-		        			amnpayrollhistoric.setSalary_Socialbenefits(Salary_Socialbenefits);
-		        			amnpayrollhistoric.setSalary_Socialbenefits_NN(Salary_Socialbenefits_NN);
-		        			amnpayrollhistoric.setSalary_Socialbenefits_NU(Salary_Socialbenefits_NU);
-		        			amnpayrollhistoric.setSalary_Socialbenefits_NV(Salary_Socialbenefits_NV);
-		        			amnpayrollhistoric.setSalary_Utilities(Salary_Utilities);
-		        			amnpayrollhistoric.setSalary_Utilities_NN(Salary_Utilities_NN);
-		        			amnpayrollhistoric.setSalary_Utilities_NV(Salary_Utilities_NV);
-		        			amnpayrollhistoric.setSalary_Vacation(Salary_Vacation);
-		        			// Currency
-		        			amnpayrollhistoric.setC_Currency_ID(CU_Currency_ID);
-		        			amnpayrollhistoric.setC_ConversionType_ID(ConversionType_ID);
-		        			// SAVES UPDATES
-		        			amnpayrollhistoric.save(get_TrxName());
-		        		}
-	        		}
-	            }
-	    }
-	    catch (SQLException e)
-	    {
-	    	Period_Name = "Error: Nombre del Período" ;
-	    }
-	    finally
-	    {
-	            DB.close(rs, pstmt);
-	            rs = null; pstmt = null;
-	    }
-		//amnpayroll.saveEx(trxName);	//	Creates AMNPayroll Control
-		if (processMonitor != null)
-		{
-			processMonitor.statusUpdate(String.format("%-15s","Historic Rec1").replace(' ', '_')+
-			Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
-			String.format("%-50s",amnemployee.getValue()+"_"+amnemployee.getName().trim()).replace(' ', '_')+
-			Msg.getElement(Env.getCtx(), "AMN_Payroll_Historic_ID")+": "+
-			AMN_Period_YYYYMM);
-
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
-			processMonitor.statusUpdate(Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
-					Period_Value+"-"+Period_Name);
-		}
-
-		return true;
-		
-	}	//	createAmnPayrollDetail
 
 	/**
 	 * resetSocialbenefitsUpdatedValue
@@ -595,5 +388,408 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 //log.warning(" After...sql:"+sql+"\r\n retValue:"+retValue);
 		return retValue;	
 	}
+	/**
+	 * createAmnPayrollHistoric
+	 * Replaced with createAmnPayrollHistoricV2
+	 * @param ctx
+	 * @param locale
+	 * @param p_AMN_Employee_ID
+	 * @param p_ValueFrom
+	 * @param p_ValueTo	
+	 * @param trxName
+	 * @return boolean
+	 */
+	public boolean createAmnPayrollHistoric(Properties ctx, Locale locale, 
+			int p_AMN_Employee_ID, Timestamp p_ValueFrom, Timestamp p_ValueTo, String trxName) {
+		
+		Integer Currency_ID = 0;
+		Integer CU_Currency_ID = 0;
+		Integer ConversionType_ID = MConversionType.TYPE_SPOT;
+		Integer AcctSchema_ID = 0;
+		Timestamp StartDate=null;
+		Timestamp EndDate=null;
+		String Period_Value = "" ;
+		String Period_Name = "Nombre del Período" ;
+		String AMN_Period_YYYYMM ="";
+		BigDecimal Salary_Base, Salary_Integral, Salary_Vacation;
+		BigDecimal Salary_Utilities_NV, Salary_Utilities,Salary_Utilities_NN;
+		BigDecimal Salary_Socialbenefits, Salary_Socialbenefits_NN, Salary_Socialbenefits_NV, Salary_Socialbenefits_NU ;
+		BigDecimal Salary_Socialbenefits_Updated ;
+		BigDecimal Salary_Utilities_Updated ;
+		// GET Employee 
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+		// log.warning("Parameters...p_AMN_Employee_ID:"+p_AMN_Employee_ID+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo);
+		// Default Account Schema
+		MClientInfo info = MClientInfo.get(Env.getCtx(), amnemployee.getAD_Client_ID(), null); 
+		MAcctSchema as = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
+		AcctSchema_ID= as.getC_AcctSchema_ID();
+		if (locale == null)
+		{
+			MClient client = MClient.get(ctx);
+			locale = client.getLocale();
+		}
+		if (locale == null && Language.getLoginLanguage() != null)
+			locale = Language.getLoginLanguage().getLocale();
+		if (locale == null)
+			locale = Env.getLanguage(ctx).getLocale();
+   		// Default Currency  for Contract
+   		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(amnemployee.getAMN_Contract_ID());
+   		if (Currency_ID == null )
+   			Currency_ID = AmerpUtilities.defaultAcctSchemaCurrency(amnemployee.getAD_Client_ID());	
+   		// Default ConversionType for Contract
+   		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amnemployee.getAMN_Contract_ID());
+   		if (ConversionType_ID == null)	
+   			ConversionType_ID = MConversionType.TYPE_SPOT;
+		//
+		IProcessUI processMonitor = Env.getProcessUI(ctx);
+		// ************************************************************
+    	// * Get HSTORIC SALARY FROM VIEW (amn_employee_salary_hist_v)
+    	// ************************************************************
+		String sql = "" +
+	    		 "SELECT " + 
+	    		 	"value,name, " +
+	    		 	"amn_period_yyyymm,  " +
+	    		 	"startdate, enddate,  " +
+	    		 	"salary_base,  " +
+	    		 	"salary_integral,  " +
+	    		 	"salary_vacation,  " +
+	    		 	"salary_utilities,  " +
+	    		 	"salary_utilities_nn,  " +
+	    		 	"salary_utilities_nv,  " +
+	    		 	"salary_socialbenefits,  " +
+	    		 	"salary_socialbenefits_nn,  " +
+	    		 	"salary_socialbenefits_nv,  " +
+	    		 	"salary_socialbenefits_nu, " +
+	    		 	"cu_currency_id, " +
+	    		 	"c_conversiontype_id "+
+	    		 	"FROM adempiere.amn_employee_salary_hist_v " +
+	    		 	"WHERE amn_employee_id = ? AND c_acctschema_id = ?";
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    try
+	    {
+	            pstmt = DB.prepareStatement(sql, null);
+	            pstmt.setInt(1, p_AMN_Employee_ID);
+	            pstmt.setInt(2, AcctSchema_ID);
+	            rs = pstmt.executeQuery();
+	            while (rs.next())
+	            {
+	            	Period_Value= rs.getString(1).trim();
+	                Period_Name = rs.getString(2).trim();
+	                AMN_Period_YYYYMM = rs.getString(3).trim();
+	                StartDate		= rs.getTimestamp(4);
+	                EndDate			=rs.getTimestamp(5);
+	                Salary_Base 	= rs.getBigDecimal(6);
+	                Salary_Integral = rs.getBigDecimal(7);
+	                Salary_Vacation = rs.getBigDecimal(8);
+	                Salary_Utilities= rs.getBigDecimal(9);
+	                Salary_Utilities_NN= rs.getBigDecimal(10);
+	                Salary_Utilities_NV= rs.getBigDecimal(11);
+	        		Salary_Socialbenefits= rs.getBigDecimal(12);
+	        		Salary_Socialbenefits_NN= rs.getBigDecimal(13);
+	        		Salary_Socialbenefits_NV= rs.getBigDecimal(14); 
+	        		Salary_Socialbenefits_NU = rs.getBigDecimal(15);
+	        		CU_Currency_ID= rs.getInt(16);
+	        		ConversionType_ID= rs.getInt(17);
+	        		//log.warning("Cicle...AMN_Period_YYYYMM"+AMN_Period_YYYYMM+" StartDate:"+StartDate+"  EndDate:"+EndDate);
+	        		//log.warning("AMN_Period_YYYYMM"+AMN_Period_YYYYMM);
+	        		if (p_AMN_Employee_ID !=0 && StartDate != null &&  EndDate!=null) {
+	        			// Verify if Exists
+	        			MAMN_Payroll_Historic amnpayrollhistoric = MAMN_Payroll_Historic.findAMNPayrollHistoricbyDates(
+	        					ctx, locale, p_AMN_Employee_ID, StartDate,  EndDate, CU_Currency_ID);
+	        			if (amnpayrollhistoric == null) {
+	        				//log.warning(".....(NEW).AMN_Employee_ID:"+p_AMN_Employee_ID+"  Period_YYYYMM:"+AMN_Period_YYYYMM+" StartDate:"+StartDate+"  EndDate:"+EndDate);
+							amnpayrollhistoric = new  MAMN_Payroll_Historic(ctx, getAMN_Payroll_Historic_ID(), get_TrxName());
+		        			amnpayrollhistoric.setAMN_Employee_ID(p_AMN_Employee_ID);
+		        			amnpayrollhistoric.setAD_Client_ID(amnemployee.getAD_Client_ID());
+		        			amnpayrollhistoric.setAD_Org_ID(amnemployee.getAD_Org_ID());
+		        			amnpayrollhistoric.setValue(Period_Value);
+		        			amnpayrollhistoric.setName(Period_Name);
+		        			amnpayrollhistoric.setAMN_Period_YYYYMM(AMN_Period_YYYYMM);
+		        			amnpayrollhistoric.setValidFrom(StartDate);
+		        			amnpayrollhistoric.setValidTo(EndDate);
+		        			amnpayrollhistoric.setSalary_Base(Salary_Base);
+		        			amnpayrollhistoric.setSalary_Integral(Salary_Integral);
+		        			amnpayrollhistoric.setSalary_Socialbenefits(Salary_Socialbenefits);
+		        			// Updated Values for Salary_Socialbenefits
+		        			amnpayrollhistoric.setSalary_Socialbenefits_Updated(Salary_Socialbenefits);
+		        			amnpayrollhistoric.setSalary_Socialbenefits_NN(Salary_Socialbenefits_NN);
+		        			amnpayrollhistoric.setSalary_Socialbenefits_NU(Salary_Socialbenefits_NU);
+		        			amnpayrollhistoric.setSalary_Socialbenefits_NV(Salary_Socialbenefits_NV);
+		        			amnpayrollhistoric.setSalary_Utilities(Salary_Utilities);
+		        			// Updated Values for Salary_Utilities
+		        			amnpayrollhistoric.setSalary_Utilities_Updated(Salary_Utilities);
+		        			amnpayrollhistoric.setSalary_Utilities_NN(Salary_Utilities_NN);
+		        			amnpayrollhistoric.setSalary_Utilities_NV(Salary_Utilities_NV);
+		        			amnpayrollhistoric.setSalary_Vacation(Salary_Vacation);
+		        			// Currency
+		        			amnpayrollhistoric.setC_Currency_ID(CU_Currency_ID);
+		        			amnpayrollhistoric.setC_ConversionType_ID(ConversionType_ID);
+		        			// SAVES NEW
+		        			amnpayrollhistoric.save(get_TrxName());
+		        		} else {
+		        			// Verifiy Updated Value
+		        			Salary_Socialbenefits_Updated=amnpayrollhistoric.getSalary_Socialbenefits_Updated();
+		        			Salary_Utilities_Updated=amnpayrollhistoric.getSalary_Utilities_Updated();
+		        			//log.warning(".....(UPDATE).AMN_Employee_ID:"+p_AMN_Employee_ID+"  Period_YYYYMM:"+AMN_Period_YYYYMM+" StartDate:"+StartDate+"  EndDate:"+EndDate);
+							amnpayrollhistoric.setAD_Client_ID(amnemployee.getAD_Client_ID());
+							amnpayrollhistoric.setAD_Org_ID(amnemployee.getAD_Org_ID());;
+		        			amnpayrollhistoric.setValue(Period_Value);
+		        			amnpayrollhistoric.setName(Period_Name);
+		        			amnpayrollhistoric.save(trxName);
+		        			amnpayrollhistoric.setAMN_Period_YYYYMM(AMN_Period_YYYYMM);
+		        			amnpayrollhistoric.setValidFrom(StartDate);
+		        			amnpayrollhistoric.setValidTo(EndDate);
+		        			amnpayrollhistoric.setSalary_Base(Salary_Base);
+		        			amnpayrollhistoric.setSalary_Integral(Salary_Integral);
+		        			// Verify is Null or Zero Salary_Socialbenefits_Updated
+	        				if (Salary_Socialbenefits_Updated.compareTo(new BigDecimal("0.00")) == 0 
+	        						|| Salary_Socialbenefits_Updated == null) {
+	        					// Updated Value
+			        			amnpayrollhistoric.setSalary_Socialbenefits_Updated(Salary_Socialbenefits);
+	        				}
+		        			// Verify is Null or Zero Salary_Utilities_Updated
+	        				if (Salary_Utilities_Updated.compareTo(new BigDecimal("0.00")) == 0 
+	        						|| Salary_Utilities_Updated == null) {
+	        					// Updated Value
+			        			amnpayrollhistoric.setSalary_Utilities_Updated(Salary_Utilities);
+	        				}
+		        			amnpayrollhistoric.setSalary_Socialbenefits(Salary_Socialbenefits);
+		        			amnpayrollhistoric.setSalary_Socialbenefits_NN(Salary_Socialbenefits_NN);
+		        			amnpayrollhistoric.setSalary_Socialbenefits_NU(Salary_Socialbenefits_NU);
+		        			amnpayrollhistoric.setSalary_Socialbenefits_NV(Salary_Socialbenefits_NV);
+		        			amnpayrollhistoric.setSalary_Utilities(Salary_Utilities);
+		        			amnpayrollhistoric.setSalary_Utilities_NN(Salary_Utilities_NN);
+		        			amnpayrollhistoric.setSalary_Utilities_NV(Salary_Utilities_NV);
+		        			amnpayrollhistoric.setSalary_Vacation(Salary_Vacation);
+		        			// Currency
+		        			amnpayrollhistoric.setC_Currency_ID(CU_Currency_ID);
+		        			amnpayrollhistoric.setC_ConversionType_ID(ConversionType_ID);
+		        			// SAVES UPDATES
+		        			amnpayrollhistoric.save(get_TrxName());
+		        		}
+	        		}
+	            }
+	    }
+	    catch (SQLException e)
+	    {
+	    	Period_Name = "Error: Nombre del Período" ;
+	    }
+	    finally
+	    {
+	            DB.close(rs, pstmt);
+	            rs = null; pstmt = null;
+	    }
+		//amnpayroll.saveEx(trxName);	//	Creates AMNPayroll Control
+		if (processMonitor != null)
+		{
+			processMonitor.statusUpdate(String.format("%-15s","Historic Rec1").replace(' ', '_')+
+			Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
+			String.format("%-50s",amnemployee.getValue()+"_"+amnemployee.getName().trim()).replace(' ', '_')+
+			Msg.getElement(Env.getCtx(), "AMN_Payroll_Historic_ID")+": "+
+			AMN_Period_YYYYMM);
+
+			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
+			processMonitor.statusUpdate(Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
+					Period_Value+"-"+Period_Name);
+		}
+
+		return true;
+		
+	}	//	createAmnPayrollDetail
+	
+	/**
+	 * createAmnPayrollHistoric
+	 * @param ctx
+	 * @param locale
+	 * @param p_AMN_Employee_ID
+	 * @param p_ValueFrom
+	 * @param p_ValueTo
+	 * @param trxName
+	 * @return
+	 */
+	public boolean createAmnPayrollHistoricV2(Properties ctx, Locale locale,
+	        int p_AMN_Employee_ID, Timestamp p_ValueFrom, Timestamp p_ValueTo, String trxName) {
+
+	    MAMN_Employee employee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+	    MAcctSchema acctSchema = getDefaultAcctSchema(ctx, employee);
+	    int acctSchemaID = acctSchema.getC_AcctSchema_ID();
+
+	    if (locale == null) {
+	        locale = getDefaultLocale(ctx);
+	    }
+
+	    int currencyID = getDefaultCurrency(employee);
+	    int conversionTypeID = getDefaultConversionType(employee);
+
+	    IProcessUI processMonitor = Env.getProcessUI(ctx);
+
+	    String sql = "SELECT value, name, amn_period_yyyymm, startdate, enddate, " +
+	            "salary, salary_base, salary_integral, salary_vacation, " +
+	            "salary_utilities, salary_utilities_nn, salary_utilities_nv, " +
+	            "salary_socialbenefits, salary_socialbenefits_nn, salary_socialbenefits_nv, salary_socialbenefits_nu, " +
+	            "cu_currency_id, c_conversiontype_id " +
+	            "FROM adempiere.amn_employee_salary_hist_v " +
+	            "WHERE amn_employee_id = ? AND c_acctschema_id = ? " +
+	            "AND startdate >= ? AND enddate <= ?";
+
+	    try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+	        pstmt.setInt(1, p_AMN_Employee_ID);
+	        pstmt.setInt(2, acctSchemaID);
+	        pstmt.setTimestamp(3, p_ValueFrom);
+	        pstmt.setTimestamp(4, p_ValueTo);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                processSalaryRow(ctx, rs, employee, trxName, locale, processMonitor);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        log.log(Level.SEVERE, "Error loading salary history", e);
+	        return false;
+	    }
+
+	    return true;
+	}
+
+
+	
+	private MAcctSchema getDefaultAcctSchema(Properties ctx, MAMN_Employee employee) {
+	    MClientInfo info = MClientInfo.get(ctx, employee.getAD_Client_ID(), null);
+	    return MAcctSchema.get(ctx, info.getC_AcctSchema1_ID(), null);
+	}
+
+	private Locale getDefaultLocale(Properties ctx) {
+	    MClient client = MClient.get(ctx);
+	    if (client.getLocale() != null) return client.getLocale();
+	    if (Language.getLoginLanguage() != null) return Language.getLoginLanguage().getLocale();
+	    return Env.getLanguage(ctx).getLocale();
+	}
+
+	private int getDefaultCurrency(MAMN_Employee employee) {
+	    Integer currency = AmerpUtilities.defaultAMNContractCurrency(employee.getAMN_Contract_ID());
+	    if (currency == null)
+	        currency = AmerpUtilities.defaultAcctSchemaCurrency(employee.getAD_Client_ID());
+	    return currency;
+	}
+
+	private int getDefaultConversionType(MAMN_Employee employee) {
+	    Integer type = AmerpUtilities.defaultAMNContractConversionType(employee.getAMN_Contract_ID());
+	    return type != null ? type : MConversionType.TYPE_SPOT;
+	}
+
+	
+	private void processSalaryRow(Properties ctx, ResultSet rs, MAMN_Employee employee,
+            String trxName, Locale locale, IProcessUI processMonitor) throws SQLException {
+		
+		String periodValue = rs.getString("value").trim();
+		String periodName = rs.getString("name").trim();
+		String periodYYYYMM = rs.getString("amn_period_yyyymm").trim();
+		Timestamp startDate = rs.getTimestamp("startdate");
+		Timestamp endDate = rs.getTimestamp("enddate");
+		
+		if (employee.getAMN_Employee_ID() == 0 || startDate == null || endDate == null) return;
+		
+		BigDecimal salary = rs.getBigDecimal("salary");
+		BigDecimal salaryBase = rs.getBigDecimal("salary_base");
+		BigDecimal salaryIntegral = rs.getBigDecimal("salary_integral");
+		BigDecimal salaryVacation = rs.getBigDecimal("salary_vacation");
+		BigDecimal salaryUtilities = rs.getBigDecimal("salary_utilities");
+		BigDecimal salaryUtilitiesNN = rs.getBigDecimal("salary_utilities_nn");
+		BigDecimal salaryUtilitiesNV = rs.getBigDecimal("salary_utilities_nv");
+		BigDecimal salaryBenefits = rs.getBigDecimal("salary_socialbenefits");
+		BigDecimal salaryBenefitsNN = rs.getBigDecimal("salary_socialbenefits_nn");
+		BigDecimal salaryBenefitsNV = rs.getBigDecimal("salary_socialbenefits_nv");
+		BigDecimal salaryBenefitsNU = rs.getBigDecimal("salary_socialbenefits_nu");
+		
+		int cuCurrencyID = rs.getInt("cu_currency_id");
+		int conversionTypeID = rs.getInt("c_conversiontype_id");
+		
+		MAMN_Payroll_Historic record = MAMN_Payroll_Historic.findAMNPayrollHistoricbyDates(
+		ctx, locale, employee.getAMN_Employee_ID(), startDate, endDate, cuCurrencyID);
+		
+		if (record == null) {
+			record = new MAMN_Payroll_Historic(ctx, 0, trxName);
+			record.setAD_Client_ID(employee.getAD_Client_ID());
+			record.setAD_Org_ID(employee.getAD_Org_ID());
+			record.setAMN_Employee_ID(employee.getAMN_Employee_ID());
+			record.setValue(periodValue);
+			record.setName(periodName);
+			record.setAMN_Period_YYYYMM(periodYYYYMM);
+			record.setValidFrom(startDate);
+			record.setValidTo(endDate);
+			record.setSalary(salary);
+			record.setSalary_Base(salaryBase);
+			record.setSalary_Integral(salaryIntegral);
+			record.setSalary_Vacation(salaryVacation);
+			record.setSalary_Utilities(salaryUtilities);
+			record.setSalary_Utilities_Updated(salaryUtilities);
+			record.setSalary_Utilities_NN(salaryUtilitiesNN);
+			record.setSalary_Utilities_NV(salaryUtilitiesNV);
+			record.setSalary_Socialbenefits(salaryBenefits);
+			record.setSalary_Socialbenefits_Updated(salaryBenefits);
+			record.setSalary_Socialbenefits_NN(salaryBenefitsNN);
+			record.setSalary_Socialbenefits_NV(salaryBenefitsNV);
+			record.setSalary_Socialbenefits_NU(salaryBenefitsNU);
+			record.setC_Currency_ID(cuCurrencyID);
+			record.setC_ConversionType_ID(conversionTypeID);
+			record.saveEx(trxName);
+		} else {
+			updateExistingRecord(record, periodValue, periodName, periodYYYYMM,
+			startDate, endDate, salary, salaryBase, salaryIntegral,
+			salaryVacation, salaryUtilities, salaryUtilitiesNN, salaryUtilitiesNV,
+			salaryBenefits, salaryBenefitsNN, salaryBenefitsNV, salaryBenefitsNU,
+			cuCurrencyID, conversionTypeID, trxName);
+		}
+		
+		if (processMonitor != null) {
+		processMonitor.statusUpdate("Historic Rec1 " +
+		Msg.getElement(ctx, "AMN_Employee_ID") + ": " +
+		employee.getValue() + "_" + employee.getName().trim() + " " +
+		Msg.getElement(ctx, "AMN_Payroll_Historic_ID") + ": " +
+		periodYYYYMM);
+		}
+}
+
+	
+	private void updateExistingRecord(MAMN_Payroll_Historic record,
+	        String value, String name, String yyyymm, Timestamp from, Timestamp to,
+	        BigDecimal salary, BigDecimal base, BigDecimal integral, BigDecimal vacation,
+	        BigDecimal utilities, BigDecimal utilitiesNN, BigDecimal utilitiesNV,
+	        BigDecimal benefits, BigDecimal benefitsNN, BigDecimal benefitsNV, BigDecimal benefitsNU,
+	        int currencyID, int conversionTypeID, String trxName) {
+
+	    record.setValue(value);
+	    record.setName(name);
+	    record.setAMN_Period_YYYYMM(yyyymm);
+	    record.setValidFrom(from);
+	    record.setValidTo(to);
+	    record.setSalary(salary);
+	    record.setSalary_Base(base);
+	    record.setSalary_Integral(integral);
+	    record.setSalary_Vacation(vacation);
+	    record.setSalary_Utilities(utilities);
+	    record.setSalary_Utilities_NN(utilitiesNN);
+	    record.setSalary_Utilities_NV(utilitiesNV);
+	    record.setSalary_Socialbenefits(benefits);
+	    record.setSalary_Socialbenefits_NN(benefitsNN);
+	    record.setSalary_Socialbenefits_NV(benefitsNV);
+	    record.setSalary_Socialbenefits_NU(benefitsNU);
+	    record.setC_Currency_ID(currencyID);
+	    record.setC_ConversionType_ID(conversionTypeID);
+
+	    if (record.getSalary_Socialbenefits_Updated() == null ||
+	            record.getSalary_Socialbenefits_Updated().compareTo(BigDecimal.ZERO) == 0) {
+	        record.setSalary_Socialbenefits_Updated(benefits);
+	    }
+
+	    if (record.getSalary_Utilities_Updated() == null ||
+	            record.getSalary_Utilities_Updated().compareTo(BigDecimal.ZERO) == 0) {
+	        record.setSalary_Utilities_Updated(utilities);
+	    }
+
+	    record.saveEx(trxName);
+	}
+
 	
 }
