@@ -1555,15 +1555,23 @@ public class AMFAllocationMultipleBP
 	}
 	
 	// Método para obtener el valor predeterminado de AMN_Process_ID
-    public int getDefaultAMNProcessID() {
-        MAMN_Process process = new Query(Env.getCtx(), MAMN_Process.Table_Name, 
-                "IsActive='Y' AND AMN_Process_Value='NN' AND AD_Client_ID=?", null)
-                .setParameters(Env.getAD_Client_ID(Env.getCtx()))
-                .setOrderBy("AMN_Process_ID")
-                .first();
+	public int getDefaultAMNProcessID() {
+	    // Obtener solo el ID utilizando Query para mejorar la eficiencia
+	    Integer processID = new Query(Env.getCtx(), MAMN_Process.Table_Name, 
+	            "IsActive='Y' AND AMN_Process_Value='NN' AND AD_Client_ID=?", null)
+	            .setParameters(Env.getAD_Client_ID(Env.getCtx()))
+	            .setOrderBy("AMN_Process_ID")
+	            .firstId();  // Devuelve solo el ID en lugar de todo el objeto
 
-            return process != null ? process.getAMN_Process_ID() : 0;
-    }
+	    // Si el ID es válido, cargar el objeto completo, si es necesario
+	    if (processID != null && processID > 0) {
+	        MAMN_Process process = new MAMN_Process(Env.getCtx(), processID, null);
+	        return process.getAMN_Process_ID();
+	    }
+
+	    return 0;  // Si no se encuentra, devuelve 0
+	}
+
 
     protected List<KeyNamePair> getValidProcesses() {
 	    List<KeyNamePair> processList = new ArrayList<>();

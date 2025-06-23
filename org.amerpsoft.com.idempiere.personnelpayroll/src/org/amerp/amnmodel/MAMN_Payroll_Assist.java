@@ -51,7 +51,6 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	 */
     public MAMN_Payroll_Assist(Properties p_ctx, int AMN_Payroll_Assist_ID, String p_trxName) {
 	    super(p_ctx, AMN_Payroll_Assist_ID, p_trxName);
-	    // TODO Auto-generated constructor stub
     }
     
 	/**
@@ -61,7 +60,20 @@ public class MAMN_Payroll_Assist extends X_AMN_Payroll_Assist {
 	 */
     public MAMN_Payroll_Assist(Properties p_ctx, ResultSet p_rs, String p_trxName) {
 	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
+    }
+
+    /**
+     * Constructor para setear AD_Client_ID
+     * @param ctx
+     * @param AD_Client_ID
+     * @param AD_Org_ID
+     * @param trxName
+     */
+    public MAMN_Payroll_Assist(Properties ctx, int AD_Client_ID, int AD_Org_ID, String trxName) {
+        super(ctx, 0, trxName);
+        setAD_Client_ID(AD_Client_ID);  // ← Visible porque estás dentro de la subclase
+        setAD_Org_ID(AD_Org_ID);
+        setIsActive(true);
     }
 
     /*
