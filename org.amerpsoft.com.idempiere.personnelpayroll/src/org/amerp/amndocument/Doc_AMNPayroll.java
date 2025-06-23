@@ -297,7 +297,7 @@ public class Doc_AMNPayroll extends Doc {
 		if ( list.size() > 2)
 			isResume = true;
 		if (isResume) {
-			linea = new MAMN_Docline(p_po, null);
+			linea = new MAMN_Docline(p_po, this);
 			int reslin=0;
 			BigDecimal Qtyres = BigDecimal.ONE;
 			AmountAccDebres=Zero;
@@ -347,7 +347,7 @@ public class Doc_AMNPayroll extends Doc {
 				} 
 			}	//	END VERIFY DUPLICITY	
 			// ADD MASTERAccountCR
-			MAMN_Docline lineares = new MAMN_Docline(p_po, null);
+			MAMN_Docline lineares = new MAMN_Docline(p_po, this);
 			lineares = list.get(0);
 			lineares.setAccount(MASTERAccountCR);
 			lineares.setQty(Qtyres, false);

@@ -131,7 +131,7 @@ public class AMNPayrollRefresh extends SvrProcess {
 			//log.warning("---Despues PayrollEvaluationArrayCalculate AMN_Payroll_ID:"+p_AMN_Payroll_ID);
 			// SALARY HISTORIC
 	    	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(getCtx(), 0, null);
-			if (amnpayrollhistoric.createAmnPayrollHistoric(getCtx(), null, amnpayroll.getAMN_Employee_ID(), amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), get_TrxName()) ) {
+			if (amnpayrollhistoric.createAmnPayrollHistoricV2(getCtx(), null, amnpayroll.getAMN_Employee_ID(), amnpayroll.getInvDateIni(), amnpayroll.getInvDateEnd(), get_TrxName()) ) {
 				Msg_Value= Msg_Value+ "  OK \r\n";
 			}
 			//log.warning("---Despues createAmnPayrollHistoric AMN_Payroll_ID:"+p_AMN_Payroll_ID);

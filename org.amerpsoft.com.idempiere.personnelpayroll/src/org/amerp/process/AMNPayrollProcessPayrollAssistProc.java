@@ -56,8 +56,6 @@ public class AMNPayrollProcessPayrollAssistProc {
 		Timestamp p_Event_Date,  int p_AMN_Employee_ID, String p_AMN_Assist_Process_Mode, boolean p_IsScheduled) {
 		
 		// LOCAL VARS
-		BigDecimal BDZero = BigDecimal.valueOf(0);
-		MAMN_Payroll_Assist_Proc atthours = new MAMN_Payroll_Assist_Proc(Env.getCtx(),null);
 		Timestamp Shift_In1=null;
 		Timestamp Shift_In2=null;
 		Timestamp Shift_Out1=null;
@@ -82,6 +80,8 @@ public class AMNPayrollProcessPayrollAssistProc {
 	    MAMN_Employee amnemployee = new MAMN_Employee(Env.getCtx(), p_AMN_Employee_ID, null);
 	    p_AD_Org_ID=amnemployee.getAD_Org_ID();
 	    p_AD_Client_ID=amnemployee.getAD_Client_ID();
+	    // Setear AD_Client_ID
+	 	MAMN_Payroll_Assist_Proc atthours = new MAMN_Payroll_Assist_Proc(Env.getCtx(), p_AD_Client_ID, p_AD_Org_ID, null);
 	    // Get Employee AMN_Shift_ID by default
 	    empAMN_Shift_ID = amnemployee.getAMN_Shift_ID();
 		// LOOK FOR Default Shift if exists
