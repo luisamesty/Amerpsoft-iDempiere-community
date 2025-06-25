@@ -1,4 +1,4 @@
--- ACCOUNT ELEMENTS
+-- Trial Balance One Period Tree
 -- FROM DEfault AD_Tree FROM A GIVEN AD_Client_ID and C_AcctSchema_ID
 -- FOR NEW ACCOUNTING REPORTS
 WITH RECURSIVE Nodos AS (

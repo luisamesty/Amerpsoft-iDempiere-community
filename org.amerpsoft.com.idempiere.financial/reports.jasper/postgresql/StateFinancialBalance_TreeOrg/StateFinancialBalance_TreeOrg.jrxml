@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg" language="groovy" pageWidth="710" pageHeight="790" columnWidth="650" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="316"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="678"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -434,7 +436,8 @@ LEFT JOIN (
 					) as pr2 ON (pr2.AD_Client_ID = fa22.AD_Client_ID AND pr2.C_Project_ID = fa22.C_Project_ID)
 					WHERE fa22.c_acctschema_id = $P{C_AcctSchema_ID}  
 					AND fa22.ad_client_id=$P{AD_Client_ID}
-					AND ( CASE WHEN  fa22.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 			
+					AND ( CASE WHEN  fa22.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 
+					AND el2.AccountType IN ('R','E','M')			
 				) fas22
 				INNER JOIN c_period as per2 ON (per2.c_period_id = $P{C_Period_ID})
 				WHERE fas22.DateAcct <= per2.EndDate
