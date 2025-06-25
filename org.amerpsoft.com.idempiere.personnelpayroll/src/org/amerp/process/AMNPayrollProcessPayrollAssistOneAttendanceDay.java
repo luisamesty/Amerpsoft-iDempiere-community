@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -73,7 +74,13 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 				p_IsScheduled = para.getParameterAsBoolean();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
-		}	 
+		}
+		// Valida fecha
+		if (p_AMNDateAssist == null) {
+			p_AMNDateAssist = Timestamp.valueOf(LocalDate.now().atStartOfDay());
+			log.warning(">>> No se recibió AMNDateAssist, se asigna fecha actual sin hora: " + p_AMNDateAssist);
+		}
+		// Parametros recibidos
 		log.warning(">>> Parametros AMNPayrollProcessPayrollAssistOneAttendanceDay -"
 				+ " AMNDateAssis="+p_AMNDateAssist+""
 				+ " | AMN_Assist_Process_Mode="+p_AMN_Assist_Process_Mode+""
