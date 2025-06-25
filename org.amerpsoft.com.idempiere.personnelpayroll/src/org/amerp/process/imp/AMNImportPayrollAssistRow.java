@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -64,6 +65,20 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
+		// Si RefDateIni es null → primer día del mes actual a las 00:00
+		if (p_RefDateIni == null) {
+			LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+			p_RefDateIni = Timestamp.valueOf(firstDayOfMonth.atStartOfDay());
+			log.warning(">>> RefDateIni no recibido. Se asigna primer día del mes actual: " + p_RefDateIni);
+		}
+
+		// Si RefDateEnd es null → hoy sin hora
+		if (p_RefDateEnd == null) {
+			LocalDate today = LocalDate.now();
+			p_RefDateEnd = Timestamp.valueOf(today.atStartOfDay());
+			log.warning(">>> RefDateEnd no recibido. Se asigna fecha actual sin hora: " + p_RefDateEnd);
+		}
+		// Parametros
 		log.warning("Parámetros: AD_Client_ID=" + p_AD_Client_ID 
 				+ " | AD_Org_ID=" + p_AD_Org_ID 
 				+ " | DateIni=" + p_RefDateIni 
