@@ -1,5 +1,5 @@
 -- Pruebas de funciones
--- amf_balance_account_org.sql
+-- amf_balance_account_org_test.sql
 -- Para una sola cuenta:
 
 -- AD_Clien_ID =1000000
@@ -16,9 +16,10 @@ SELECT * FROM amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_Acct
 -- Balance
 select
 	org.org_ad_org_id, org.org_value, org.org_name,
+	eve.value, eve.name, eve.description, eve.length, eve.accounttype, eve.accountsign,
+	bal.openbalance, bal.amtacctdr, bal.amtacctcr , bal.closebalance, bal.amtacctsa,
     eve.level, eve.node_id, eve.parent_id, eve.c_element_id, eve.c_elementvalue_id,
-    eve.ad_client_id, eve.ad_org_id, eve.isactive, eve.value, eve.name,
-    eve.description, eve.length, eve.accounttype, eve.accountsign,
+    eve.ad_client_id, eve.ad_org_id, eve.isactive, 
     eve.isdoccontrolled, eve.issummary, eve.acctparent, eve.pathel, eve.ancestry,
     eve.codigo0, eve.name0, eve.description0, eve.issummary0,
     eve.codigo1, eve.name1, eve.description1, eve.issummary1,
@@ -31,8 +32,8 @@ select
     eve.codigo8, eve.name8, eve.description8, eve.issummary8,
     eve.codigo9, eve.name9, eve.description9, eve.issummary9
 FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve
-inner join amf_org_tree($P{AD_Client_ID},$P{AD_Org_ID},$P{AD_OrgParent_ID}) as org on org.org_ad_client_id = eve.ad_client_id
-inner join amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, $P{C_ElementValue_ID}) 
+LEFT join amf_org_tree($P{AD_Client_ID},$P{AD_Org_ID},$P{AD_OrgParent_ID}) as org on org.org_ad_client_id = eve.ad_client_id
+LEFT join amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, $P{C_ElementValue_ID}) 
 as bal on bal.c_elementvalue_id = eve.c_elementvalue_id and bal.ad_org_id = org.org_ad_org_id
 order by eve.value, org.org_value
 ;
