@@ -445,7 +445,7 @@ public class Doc_AMNPayroll extends Doc {
 			amtAcctDr = BigDecimal.ZERO;
 			amtAcctCr = BigDecimal.ZERO;
 			// Convert Amounts 
-			if (as != asdef && CurrencyRate != null && CurrencyRate.signum() > 0)
+			if (CurrencyRate != null && CurrencyRate.signum() > 0 && CurrencyRate != BigDecimal.ONE)
 			{
 				//int stdPrecision = MCurrency.getStdPrecision(getCtx(), as.getC_Currency_ID());
 				if (p_lines[i].getAmtAcctDr().compareTo(BigDecimal.ZERO) != 0) {
