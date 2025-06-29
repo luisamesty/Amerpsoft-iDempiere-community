@@ -5,7 +5,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="IdempiereMCC8.2pro_Strato Amerpsoft"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -16,23 +16,22 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000006]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
 	<parameter name="AD_Org_ID" class="java.lang.Integer">
 		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA[1000006]]></defaultValueExpression>
 	</parameter>
 	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1000006]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
 	<parameter name="PostingType" class="java.lang.String">
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="C_ElementValue1_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1002395]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[1000078]]></defaultValueExpression>
 	</parameter>
 	<parameter name="C_ElementValue2_ID" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[1002403]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[1000774]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SummaryType" class="java.lang.String">
 		<defaultValueExpression><![CDATA["X"]]></defaultValueExpression>

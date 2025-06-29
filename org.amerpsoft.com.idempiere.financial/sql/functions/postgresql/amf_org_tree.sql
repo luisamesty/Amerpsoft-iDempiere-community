@@ -2,16 +2,18 @@
 -- Function amf_org_tree
 -- Devueve Las Organizaciones
 
-DROP FUNCTION IF EXISTS amf_org_tree(INTEGER, INTEGER, INTEGER);
+DROP FUNCTION IF EXISTS amf_org_tree(NUMERIC, NUMERIC, NUMERIC);
 
 CREATE OR REPLACE FUNCTION amf_org_tree(
-    p_ad_client_id INTEGER,
-    p_ad_org_id INTEGER DEFAULT 0,
-    p_ad_orgparent_id INTEGER DEFAULT 0
+    p_ad_client_id NUMERIC,
+    p_ad_org_id NUMERIC DEFAULT 0,
+    p_ad_orgparent_id NUMERIC DEFAULT 0
 )
 RETURNS TABLE (
     org_ad_client_id NUMERIC,
     org_ad_org_id NUMERIC,
+    org_ad_orgparent_id NUMERIC,
+    issummary CHAR(1),
     org_value VARCHAR,
     org_description TEXT,
     org_name VARCHAR,
@@ -24,9 +26,9 @@ RETURN QUERY
 WITH OrgTree AS (
     WITH RECURSIVE OrgTreeBase AS (
         SELECT 
- 			org.ad_client_id AS ad_client_id,
+            org.ad_client_id AS ad_client_id,
             org.ad_org_id,
-            org.issummary,
+            org.issummary AS org_issummary,
             org.name,
             org.value, 
             COALESCE(org.description, org.name, '') AS description,
@@ -43,15 +45,15 @@ WITH OrgTree AS (
         LEFT JOIN ad_orginfo info ON org.ad_org_id = info.ad_org_id
         LEFT JOIN ad_image img ON info.logo_id = img.ad_image_id
         WHERE tree.treetype = 'OO' 
-        AND node.parent_id = 0
-        AND org.ad_client_id = p_ad_client_id
+          AND node.parent_id = 0
+          AND org.ad_client_id = p_ad_client_id
 
         UNION ALL
 
         SELECT 
             org.ad_client_id AS ad_client_id,
             org.ad_org_id,
-            org.issummary,
+            org.issummary AS org_issummary,
             org.name,
             org.value, 
             COALESCE(org.description, org.name, '') AS description,
@@ -68,14 +70,13 @@ WITH OrgTree AS (
         LEFT JOIN ad_orginfo info ON org.ad_org_id = info.ad_org_id
         LEFT JOIN ad_image img ON info.logo_id = img.ad_image_id
         WHERE node.ad_tree_id = parent.ad_tree_id
-        AND org.ad_client_id = p_ad_client_id
+          AND org.ad_client_id = p_ad_client_id
     )
-
     SELECT DISTINCT ON (ad_client_id, value)
         ad_client_id,
-		ad_org_id,
+        ad_org_id,
         parent_id AS ad_orgparent_id,
-        issummary,
+        org_issummary AS issummary,
         value,
         name,
         description, 
@@ -84,19 +85,19 @@ WITH OrgTree AS (
         (
             SELECT STRING_AGG(DISTINCT ORGX.value, ' - ' ORDER BY ORGX.value) 
             FROM OrgTreeBase ORGX
-            WHERE ORGX.issummary = 'N'
+            WHERE ORGX.org_issummary = 'N'
         ) AS all_orgs
     FROM OrgTreeBase AS orgtb
     WHERE orgtb.ad_client_id = p_ad_client_id
-    AND orgtb.issummary = 'N'
-	AND (COALESCE(p_ad_org_id, 0) = 0 OR orgtb.ad_org_id = p_ad_org_id)
-	AND (COALESCE(p_ad_orgparent_id, 0) = 0 OR orgtb.parent_id = p_ad_orgparent_id)
+      AND (COALESCE(p_ad_org_id, 0) = 0 OR orgtb.ad_org_id = p_ad_org_id)
+      AND (COALESCE(p_ad_orgparent_id, 0) = 0 OR orgtb.parent_id = p_ad_orgparent_id)
     ORDER BY ad_client_id, value
 )
-
 SELECT
     ORG.ad_client_id,
-    ORG.ad_org_id  AS ad_org_id,
+    ORG.ad_org_id,
+    ORG.ad_orgparent_id,
+    ORG.issummary,
     ORG.value AS org_value,
     ORG.description::TEXT AS org_description,
     CASE 
@@ -121,12 +122,10 @@ FROM (
             SELECT STRING_AGG(DISTINCT ORGX.value, '-' ORDER BY ORGX.value) 
             FROM OrgTree ORGX
             WHERE ORGX.ad_client_id = ORG12.ad_client_id
-            AND (ORGX.ad_org_id = p_ad_org_id OR p_ad_org_id = 0)
-            AND (ORGX.ad_orgparent_id = p_ad_orgparent_id OR p_ad_orgparent_id = 0)
+              AND (ORGX.ad_org_id = p_ad_org_id OR p_ad_org_id = 0)
+              AND (ORGX.ad_orgparent_id = p_ad_orgparent_id OR p_ad_orgparent_id = 0)
         ) AS all_orgs
     FROM OrgTree AS ORG12
 ) AS ORG;
 END;
 $$ LANGUAGE plpgsql;
-
-

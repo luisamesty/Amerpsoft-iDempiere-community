@@ -113,8 +113,7 @@ ORDER BY
 	balances.codigo0, balances.codigo1, balances.codigo2,
 	balances.codigo3, balances.codigo4, balances.codigo5,
 	balances.codigo6, balances.codigo7, balances.codigo8, balances.codigo9,
-	balances.codigo, balances.org_value;
-]]>
+	balances.codigo, balances.org_value;]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -2394,7 +2393,7 @@ ORDER BY
 				</box>
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
-			<textField>
+			<textField evaluationTime="Report">
 				<reportElement x="980" y="16" width="360" height="16" uuid="37470bb9-214c-4aa1-bd25-5f32b222c8a1">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
