@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Webform
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.webform
 Bundle-Version: 11.0.0.qualifier
-Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
+Bundle-Activator: org.amerp.webform.amwebform.Activator
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  org.adempiere.plugin.utils;bundle-version="0.0.0",
  org.adempiere.report.jasper;bundle-version="0.0.0",
@@ -22,12 +22,13 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  zcommon;bundle-version="0.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
-Import-Package: org.amerp.amnmodel,
- org.compiere.model,
- com.lowagie.text.pdf,
+Import-Package: com.lowagie.text.pdf,
+ net.sf.jasperreports.engine,
+ org.amerp.amnmodel,
  org.compiere.apps,
  org.compiere.grid,
  org.compiere.minigrid,
+ org.compiere.model,
  org.osgi.framework;version="1.6.0"
 Bundle-Vendor: Amerpsoft
 Export-Package: org.amerp.webform.amwmodel
