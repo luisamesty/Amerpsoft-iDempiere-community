@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Library
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.report.jasper.library
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.amerpsoft.com.idempiere.report.library
+Bundle-RequiredExecutionEnvironment: JavaSE-17

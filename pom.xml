@@ -17,6 +17,7 @@
   	<module>org.amerpsoft.com.idempiere.tools</module>
   	<module>org.amerpsoft.com.idempiere.webform</module>
   	<module>org.amerpsoft.com.idempiere.workflow</module>
+  	<module>org.amerpsoft.com.idempiere.report.jasper</module>
   </modules>
   <groupId>org.idempiere</groupId>
   <properties>
