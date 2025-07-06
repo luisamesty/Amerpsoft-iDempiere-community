@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import org.adempiere.base.IServiceReferenceHolder;
 import org.adempiere.base.Service;
 import org.adempiere.report.jasper.JRViewerProvider;
+import org.amerp.reports.JasperUtils;
 import org.compiere.model.PrintInfo;
 import org.compiere.print.MPrintFormat;
 import org.compiere.print.ServerReportCtl;
@@ -85,17 +86,8 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
     @Override
     protected String doIt() throws Exception {
         // Carpeta temporal
-        String tmpFolder = System.getProperty("java.io.tmpdir") + File.separator + "idempiere_reports" + File.separator;
-
-        // Crear carpeta base
-        File tmpFolderFile = new File(tmpFolder);
-        if (!tmpFolderFile.exists()) {
-            boolean created = tmpFolderFile.mkdirs();
-            if (!created) {
-                throw new Exception("No se pudo crear el directorio temporal: " + tmpFolder);
-            }
-        }
-
+        JasperUtils jasperUtils = new JasperUtils();
+        String tmpFolder = jasperUtils.getTempFolder();
         // Lista de recursos a copiar
         String[] resourcesToCopy = new String[]{
             "org/amerp/reports/AccountElements_Tree/AccountElements_Tree.jrxml",
@@ -107,7 +99,7 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
 
         // Copiar físicamente cada recurso al tmpFolder
         for (String resource : resourcesToCopy) {
-            copyResourceToTmp(resource, tmpFolder);
+        	jasperUtils.copyResourceToTmp(resource, tmpFolder);
         }
         
         // Prueba que el archivo ahora existe físicamente
@@ -146,49 +138,5 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
     }
 
 	private static IServiceReferenceHolder<JRViewerProvider> s_viewerProviderReference = null;
-	
-	/**
-	 * 
-	 * @return {@link JRViewerProvider}
-	 */
-	public static synchronized JRViewerProvider getViewerProvider() {
-		JRViewerProvider viewerLauncher = null;
-		if (s_viewerProviderReference != null) {
-			viewerLauncher = s_viewerProviderReference.getService();
-			if (viewerLauncher != null)
-				return viewerLauncher;
-		}
-		IServiceReferenceHolder<JRViewerProvider> viewerReference = Service.locator().locate(JRViewerProvider.class).getServiceReference();
-		if (viewerReference != null) {
-			viewerLauncher = viewerReference.getService();
-			s_viewerProviderReference = viewerReference;
-		}
-		return viewerLauncher;
-	}	
-	
-    private void copyResourceToTmp(String resourceName, String tmpFolder) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL resourceUrl = classLoader.getResource(resourceName);
-        if (resourceUrl == null) {
-            throw new IOException("No se encontró el recurso: " + resourceName);
-        }
-        String localName = resourceName;
-        if (localName.startsWith("/")) {
-            localName = localName.substring(1);
-        }
-        // Convertir la carpeta padre en un nombre con _
-        String parentPath = localName.substring(0, localName.lastIndexOf("/")).replace("/", "_");
-        String fileName = localName.substring(localName.lastIndexOf("/") + 1);
-
-        Path targetFolder = Path.of(tmpFolder, parentPath);
-        if (!Files.exists(targetFolder)) {
-            Files.createDirectories(targetFolder);
-        }
-        Path destFile = targetFolder.resolve(fileName);
-
-        try (InputStream in = resourceUrl.openStream()) {
-            Files.copy(in, destFile, StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
 
 }
