@@ -68,9 +68,6 @@ public class AMFProcessfactory implements IProcessFactory{
     		} catch (Exception e) {}
     	// AMFRebuildANewClientSchema
     	if(p_className.equals("org.amerp.process.AMFRebuildANewClientSchema"))
-//    		try {
-//    			process =   (ProcessCall) AMFRebuildANewClientSchema.class.newInstance();
-//    		} catch (Exception e) {}
     		return new org.amerp.process.AMFRebuildANewClientSchema();
     	// REPORTS 
     	// AccountElements_Tree 
