@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 
 import org.adempiere.base.IServiceReferenceHolder;
 import org.adempiere.base.Service;
-import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.report.jasper.JRViewerProvider;
 import org.compiere.model.PrintInfo;
 import org.compiere.print.MPrintFormat;
@@ -31,17 +30,12 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
-
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.JasperReportsContext;
-import net.sf.jasperreports.engine.fill.JRBaseFiller;
-import net.sf.jasperreports.engine.fill.JRFiller;
-import net.sf.jasperreports.engine.util.JRLoader;
 
 public class AccountElements_Tree extends SvrProcess implements ProcessCall, ClientProcess {
 
@@ -55,18 +49,9 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
 	private PrintInfo    printInfo;
 	ProcessInfo processInfo;
 	public static final String IDEMPIERE_REPORT_TYPE = "IDEMPIERE_REPORT_TYPE";
-	JasperReportsContext jasperReportContext = null;
-	  
+	
     @Override
     protected void prepare() {
-    	
-    	// Inicialización de la configuración Jasper
-        try {
-            Class.forName("org.amerp.reports.JasperReportsConfig");
-        } catch (Exception e) {
-            throw new RuntimeException("No se pudo inicializar JasperReportsConfig", e);
-        }
-        
     	// Parametros delreporte
     	pip = getParameter();
         for (ProcessInfoParameter param : pip) {
@@ -100,11 +85,6 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
 
     @Override
     protected String doIt() throws Exception {
-    	
-    	// jasperReportContext
-    	jasperReportContext = DefaultJasperReportsContext.getInstance();
-        jasperReportContext.setProperty("net.sf.jasperreports.extension.chart.theme.factory.spring.enabled", "false");
-
         // Carpeta temporal
         String tmpFolder = System.getProperty("java.io.tmpdir") + File.separator + "idempiere_reports" + File.separator;
 
@@ -130,7 +110,7 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
         for (String resource : resourcesToCopy) {
             copyResourceToTmp(resource, tmpFolder);
         }
-
+        
         // Prueba que el archivo ahora existe físicamente
         File jrxmlFile = new File(tmpFolder + "org_amerp_reports_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml");
         if (!jrxmlFile.exists()) {
@@ -142,9 +122,8 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
         
         
         try (InputStream reportStream = new FileInputStream(jrxmlPath)) {
-        	// Compile report (1)
             JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
-            
+
             // Parámetros, conexión, etc.
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("AD_Client_ID", p_AD_Client_ID);
@@ -155,11 +134,7 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
             	));
 
             try (Connection conn = DB.getConnectionRO()) {
-            	    // Crea jasperprint (2)
-                    //jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);     
-    				JRBaseFiller filler = JRFiller.createFiller(jasperReportContext, jasperReport);
-    				JasperPrint jasperPrint = filler.fill(parameters, conn);
-    				
+                    jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
                     // export to viewer
                     processInfo = getProcessInfo();
                     printInfo = new PrintInfo(processInfo);
@@ -173,25 +148,24 @@ public class AccountElements_Tree extends SvrProcess implements ProcessCall, Cli
 
 	private static IServiceReferenceHolder<JRViewerProvider> s_viewerProviderReference = null;
 	
-	
-    /**
-     * @param reportFile
-     * @param jasperFile
-     * @return compiled JasperReport
-     */
-    private JasperReport compileReport( File reportFile, File jasperFile)
-    {
-    	JasperReport compiledJasperReport = null;
-        try {
-        	JasperCompileManager manager = JasperCompileManager.getInstance(jasperReportContext);
-        	manager.compileToFile(reportFile.getAbsolutePath(), jasperFile.getAbsolutePath() );
-            jasperFile.setLastModified( reportFile.lastModified()); //Synchronize Dates
-            compiledJasperReport =  (JasperReport)JRLoader.loadObject(jasperFile);
-        } catch (JRException e) {
-            throw new AdempiereException(e);
-        }
-        return compiledJasperReport;                
-    }
+	/**
+	 * 
+	 * @return {@link JRViewerProvider}
+	 */
+	public static synchronized JRViewerProvider getViewerProvider() {
+		JRViewerProvider viewerLauncher = null;
+		if (s_viewerProviderReference != null) {
+			viewerLauncher = s_viewerProviderReference.getService();
+			if (viewerLauncher != null)
+				return viewerLauncher;
+		}
+		IServiceReferenceHolder<JRViewerProvider> viewerReference = Service.locator().locate(JRViewerProvider.class).getServiceReference();
+		if (viewerReference != null) {
+			viewerLauncher = viewerReference.getService();
+			s_viewerProviderReference = viewerReference;
+		}
+		return viewerLauncher;
+	}	
 	
     private void copyResourceToTmp(String resourceName, String tmpFolder) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();

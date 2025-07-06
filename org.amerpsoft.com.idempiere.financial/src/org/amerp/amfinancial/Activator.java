@@ -4,8 +4,6 @@ import java.io.InputStream;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 
 public class Activator implements BundleActivator {
@@ -13,7 +11,7 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext context) throws Exception {
         // 1. Forzar la carga de JasperReportsConfig
-		System.out.println("✅ Financial Activator:  Class org.amerp.reports.JasperReportsConfig loading...");
+		System.out.println("✅ Financial Activator: Class org.amerp.reports.JasperReportsConfig loading...");
         Class.forName("org.amerp.reports.JasperReportsConfig");
         System.out.println("✅ Financial Activator: inicializando en arranque del bundle...");
         // 2. Compilar un reporte dummy
