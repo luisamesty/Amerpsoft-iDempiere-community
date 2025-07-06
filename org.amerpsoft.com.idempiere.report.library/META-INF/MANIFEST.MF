@@ -5,3 +5,13 @@ Bundle-SymbolicName: org.amerpsoft.com.idempiere.report.jasper.library
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.amerpsoft.com.idempiere.report.library
 Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ClassPath: .,
+ lib/castor-core.jar,
+ lib/castor-xml.jar,
+ lib/jasperreports-chart-customizers.jar,
+ lib/jasperreports-chart-themes.jar,
+ lib/jasperreports-fonts.jar,
+ lib/jasperreports-functions.jar,
+ lib/olap4j.jar,
+ lib/xmpcore.jar
+Bundle-Vendor: AMERPSOFT

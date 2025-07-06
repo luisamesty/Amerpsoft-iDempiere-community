@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
 		<attributes>
+			<attribute name="module" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
@@ -17,5 +18,13 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/castor-core.jar"/>
+	<classpathentry kind="lib" path="lib/castor-xml.jar"/>
+	<classpathentry kind="lib" path="lib/jasperreports-chart-customizers.jar"/>
+	<classpathentry kind="lib" path="lib/jasperreports-chart-themes.jar"/>
+	<classpathentry kind="lib" path="lib/jasperreports-fonts.jar"/>
+	<classpathentry kind="lib" path="lib/jasperreports-functions.jar"/>
+	<classpathentry kind="lib" path="lib/olap4j.jar"/>
+	<classpathentry kind="lib" path="lib/xmpcore.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

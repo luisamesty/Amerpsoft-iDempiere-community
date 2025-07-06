@@ -1124,7 +1124,7 @@ public class ReportStarter implements ProcessCall, ClientProcess
      * @param jasperFile
      * @return compiled JasperReport
      */
-    private JasperReport compileReport( File reportFile, File jasperFile)
+    public JasperReport compileReport( File reportFile, File jasperFile)
     {
     	JasperReport compiledJasperReport = null;
         try {
