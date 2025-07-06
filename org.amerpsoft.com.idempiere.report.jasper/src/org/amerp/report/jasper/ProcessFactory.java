@@ -29,10 +29,13 @@ public class ProcessFactory implements IProcessFactory {
 		 * Special code to use this as an replacement for the standard
 		 * JasperReports starter class
 		 */
-		if(AMERP_JASPER_STARTER_CLASS.equals(className))
-			return new ReportStarter();
-		if (ProcessUtil.JASPER_STARTER_CLASS.equals(className))
-			return new ReportStarter();
+		 // Si AMERP_JASPER, se devuelve este
+	    if (AMERP_JASPER_STARTER_CLASS.equals(className))
+	        return new ReportStarter();
+		// Si es el starter de iDempiere, se devuelve  el original
+	    if (ProcessUtil.JASPER_STARTER_CLASS.equals(className)) {
+	        return new org.adempiere.report.jasper.ReportStarter();
+	    }
 		// this is for compatibility with older installations
 		if (JASPER_STARTER_CLASS_DEPRECATED.equals(className))
 			return new ReportStarter();
