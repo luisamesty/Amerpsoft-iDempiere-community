@@ -11,6 +11,17 @@
   <artifactId>org.amerpsoft.com.idempiere.financial</artifactId>
   <packaging>eclipse-plugin</packaging>
     <build>
+		<resources>
+		    <resource>
+		      <directory>src</directory>
+		      <includes>
+		        <include>**/*.properties</include>
+		        <include>**/*.jasper</include>
+		        <include>**/*.jrxml</include>
+		        <include>**/*.sql</include>
+		      </includes>
+		    </resource>
+		</resources>
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -20,4 +31,21 @@
             </plugin>
         </plugins>
     </build>  
+	 <repositories>
+	    <repository>
+	      <id>idempiere</id>
+	      <url>https://repo.idempiere.org/releases/</url>
+	    </repository>
+	    <repository>
+	      <id>idempiere-snapshots</id>
+	      <url>https://repo.idempiere.org/snapshots/</url>
+	    </repository>
+	 </repositories>
+	 <dependencies>
+	 	<dependency>
+	 		<groupId>org.idempiere</groupId>
+	 		<artifactId>org.adempiere.base</artifactId>
+	 		<version>11.0.0-SNAPSHOT</version>
+	 	</dependency>
+	 </dependencies>
 </project>

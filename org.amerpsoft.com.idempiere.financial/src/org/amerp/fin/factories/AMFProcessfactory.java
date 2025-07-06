@@ -68,11 +68,14 @@ public class AMFProcessfactory implements IProcessFactory{
     		} catch (Exception e) {}
     	// AMFRebuildANewClientSchema
     	if(p_className.equals("org.amerp.process.AMFRebuildANewClientSchema"))
-    		try {
-    			process =   (ProcessCall) AMFRebuildANewClientSchema.class.newInstance();
-    		} catch (Exception e) {}
-    	
-//log.warning("AMFProcessfactory........PAso process="+process);
+//    		try {
+//    			process =   (ProcessCall) AMFRebuildANewClientSchema.class.newInstance();
+//    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFRebuildANewClientSchema();
+    	// REPORTS 
+    	// AccountElements_Tree 
+        if (p_className.equals("org.amerp.reports.AccountElements_Tree.AccountElements_Tree"))
+            return new org.amerp.reports.AccountElements_Tree.AccountElements_Tree();
     	return process;
     }
 }
