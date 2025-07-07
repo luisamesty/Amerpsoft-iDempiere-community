@@ -1,4 +1,4 @@
-package org.amerp.amnpersonnel;
+package org.amerp.tools.amtools;
 
 import org.adempiere.plugin.utils.Incremental2PackActivator;
 import org.osgi.framework.BundleContext;
@@ -21,12 +21,12 @@ public class Activator extends Incremental2PackActivator {
 		
 		// Llamada a Incremental2PackActivator
         super.start(context);
-		System.out.println("✅ Personnel-Payroll Activator: Bundle started.");
+		System.out.println("✅ Tools Activator: Bundle started.");
 	}
 
 	@Override
     public void stop(BundleContext context) throws Exception {
-		 System.out.println("✅ Personnel-Payroll: Bundle stopped.");
+		 System.out.println("✅ Tools: Bundle stopped.");
 		 // Llamada a Incremental2PackActivator
 	     super.stop(context);
 	     
