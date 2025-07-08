@@ -1,4 +1,6 @@
 /**
+ * AccountElements_Tree_Std.
+ * Utiliza Query del Datasource del jrxml
  * @author luisamesty
  *
  */
@@ -6,12 +8,7 @@ package org.amerp.reports.AccountElements_Tree;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,7 +34,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
-public class AccountElements_Tree extends SvrProcess implements ProcessCall, ClientProcess {
+public class AccountElements_Tree_Std extends SvrProcess implements ProcessCall, ClientProcess {
 
     private int p_AD_Client_ID = 0;
     private int p_C_AcctSchema_ID = 0;
