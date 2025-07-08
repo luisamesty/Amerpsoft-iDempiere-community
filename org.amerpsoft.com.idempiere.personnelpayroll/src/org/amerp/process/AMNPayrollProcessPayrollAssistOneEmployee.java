@@ -16,6 +16,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.amerp.amnmodel.*;
@@ -93,6 +94,7 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
     	String Msg_Value="";
     	String eol = System.getProperty("line.separator");
 		String Employee_Name="";
+        Properties ctx = getCtx();
 		GregorianCalendar cal = new GregorianCalendar();
 		GregorianCalendar cal2 = new GregorianCalendar();		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -172,7 +174,7 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 			Msg_Value = "";
 			//Msg_Value = Msg.getMsg(Env.getCtx(), "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
 	    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-	    			p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
+	    			ctx, amnemployee.getAD_Client_ID(), amnemployee.getAD_OrgTo_ID(), p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
 	    	addLog(Msg_Value);
 	    	cal.add(Calendar.DAY_OF_MONTH, 1);
 		}   	
