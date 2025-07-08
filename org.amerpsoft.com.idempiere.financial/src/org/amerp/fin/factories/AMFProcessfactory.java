@@ -71,8 +71,10 @@ public class AMFProcessfactory implements IProcessFactory{
     		return new org.amerp.process.AMFRebuildANewClientSchema();
     	// REPORTS 
     	// AccountElements_Tree 
-        if (p_className.equals("org.amerp.reports.AccountElements_Tree.AccountElements_Tree"))
-            return new org.amerp.reports.AccountElements_Tree.AccountElements_Tree();
+        if (p_className.equals("org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Std"))
+            return new org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Std();
+        if (p_className.equals("org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Pojo"))
+            return new org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Pojo();
     	return process;
     }
 }
