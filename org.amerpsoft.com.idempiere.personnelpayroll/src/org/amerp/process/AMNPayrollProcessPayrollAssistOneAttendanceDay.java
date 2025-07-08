@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -57,7 +59,9 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 	private int p_AD_Client_ID = 0;
 	private int p_AD_Org_ID = 0;
     private String paramMsg = "";
-    
+	LocalDateTime now = LocalDateTime.now();
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	
 	String Employee_Name="";
 	String sql="";
 	@Override
@@ -82,14 +86,17 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}
+		// Obtener fecha y hora actual
+		paramMsg = "Hora de ejecución: " + now.format(formatter) + "\r\n" ;
 		// Valida fecha
 		if (p_AMNDateAssist == null) {
 			p_AMNDateAssist = Timestamp.valueOf(LocalDate.now().atStartOfDay());
-			paramMsg = (">>> No se recibió AMNDateAssist, se asigna fecha actual sin hora: " + p_AMNDateAssist)+"\r\n";
+			paramMsg =  paramMsg + (">>> No se recibió AMNDateAssist, se asigna fecha actual sin hora: " + p_AMNDateAssist)+"\r\n";
 		}
 		// Parametros recibidos
-		paramMsg = paramMsg + ">>> Parametros AMNPayrollProcessPayrollAssistOneAttendanceDay -"
-				+ " AMNDateAssis="+p_AMNDateAssist+""
+		paramMsg = paramMsg + "Parámetros AMNPayrollProcessPayrollAssistOneAttendanceDay - AD_Client_ID=" + p_AD_Client_ID 
+				+ " | AD_Org_ID=" + p_AD_Org_ID 
+				+ " | AMNDateAssis="+p_AMNDateAssist+""
 				+ " | AMN_Assist_Process_Mode="+p_AMN_Assist_Process_Mode+""
 				+ " | IsScheduled="+p_IsScheduled+"\r\n";	
 		log.warning(paramMsg);
@@ -130,7 +137,7 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 				MAMN_Employee amnemployee = new MAMN_Employee(Env.getCtx(), p_AMN_Employee_ID, null);
 				Employee_Name = amnemployee.getName();
 				Msg_Value=Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+
-						Employee_Name+" \r\n";	
+						Employee_Name;	
 				messagetoNotify = messagetoNotify+ Msg_Value;
 				if (!p_IsScheduled)
 					addLog(Msg_Value);
@@ -147,7 +154,7 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 		    			ctx, p_AD_Client_ID, p_AD_Org_ID, p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
 		    	if (!p_IsScheduled)
 		    		addLog(Msg_Value);
-		    	messagetoNotify = messagetoNotify+ Msg_Value;
+		    	messagetoNotify = messagetoNotify+ Msg_Value +" \r\n";
 			}
 		}
 	    catch (SQLException e)

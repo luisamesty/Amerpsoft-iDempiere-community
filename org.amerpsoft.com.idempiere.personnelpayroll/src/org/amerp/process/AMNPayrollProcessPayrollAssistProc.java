@@ -110,6 +110,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 		    if (isError) {
 		    	return locMsg_Value;
 		    }
+log.warning("PASO - Turno - Trabajador="+amnemployee.getValue()+" ShiftDetail="+amnshiftdetail.getName()+" Dayof Week= "+amnshiftdetail.getdayofweek());
 		    // Creates Shift_in1, Shift_in2, Shift_out1, shift_oou2 from entrytime, breakstart, timeout and breakminutes
 		    if (amnshiftdetail.getShift_In1()==null)
 		    	amnshiftdetail.setShift_In1(amnshiftdetail.getEntryTime());
@@ -182,6 +183,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 							break;		
 					}
 				}	
+log.warning("PASO - Eventos - Trabajador="+amnemployee.getValue()+" No Eventos="+AssistCounter);
 				// Verify for AssistCounter AND AMN_Shift_ID
 				if (AssistCounter == 0 ) {
 					assitAMN_Shift_ID = empAMN_Shift_ID;
@@ -224,6 +226,7 @@ public class AMNPayrollProcessPayrollAssistProc {
 									p_AMN_Employee_ID, p_Event_Date, assitAMN_Shift_ID,
 									Descanso, Excused ,
 									atthours, p_IsScheduled) ;
+log.warning("PASO - Crear Registro de AMN_payroll_asist - Trabajador="+amnemployee.getValue()+" Evento="+p_Event_Date);
 							break;
 						//  "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
 						case "2":
