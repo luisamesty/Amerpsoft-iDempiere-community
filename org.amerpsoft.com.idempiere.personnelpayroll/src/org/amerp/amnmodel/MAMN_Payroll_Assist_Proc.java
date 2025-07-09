@@ -242,6 +242,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 	    MAMN_Payroll_Assist_Proc amnpayrollassistproc = MAMN_Payroll_Assist_Proc.findbyEmployeeandDate(ctx, locale,  p_AMN_Employee_ID, p_Event_Date);
 		if (amnpayrollassistproc == null)
 		{
+log.warning("PASO - NUEVO Registro de AMN_payroll_asist - Trabajador="+amnemployee.getValue()+" Evento="+p_Event_Date);
 			amnpayrollassistproc = new MAMN_Payroll_Assist_Proc(ctx, 0, null);
 			amnpayrollassistproc.setAD_Client_ID(amnemployee.getAD_Client_ID());
 			amnpayrollassistproc.setAD_Org_ID(amnemployee.getAD_OrgTo_ID());
@@ -277,6 +278,7 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 		}
 		else
 		{
+log.warning("PASO - ACTUALIZACION Registro de AMN_payroll_asist - Trabajador="+amnemployee.getValue()+" Evento="+p_Event_Date);
 			//amnpayrollassist.setAMN_AssistRecord(Msg.getMsg(ctx, "Day")+"_"+p_PeriodDate.toString().substring(0, 10)+"_"+p_PeriodDay);
 			amnpayrollassistproc.setDescription(payassistrow.getDescription().trim());
 			amnpayrollassistproc.setdayofweek(p_DayOfWeek);
