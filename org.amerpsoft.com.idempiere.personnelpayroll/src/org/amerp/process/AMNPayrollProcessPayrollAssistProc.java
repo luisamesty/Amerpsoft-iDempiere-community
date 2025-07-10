@@ -183,7 +183,7 @@ log.warning("PASO - Turno - Trabajador="+amnemployee.getValue()+" ShiftDetail="+
 							break;		
 					}
 				}	
-log.warning("PASO - Eventos - Trabajador="+amnemployee.getValue()+" No Eventos="+AssistCounter);
+log.warning("PASO - Eventos - Trabajador="+amnemployee.getValue()+" No Eventos="+AssistCounter+" assitAMN_Shift_ID= "+assitAMN_Shift_ID+ " p_AMN_Assist_Process_Mode="+p_AMN_Assist_Process_Mode);
 				// Verify for AssistCounter AND AMN_Shift_ID
 				if (AssistCounter == 0 ) {
 					assitAMN_Shift_ID = empAMN_Shift_ID;
@@ -198,8 +198,10 @@ log.warning("PASO - Eventos - Trabajador="+amnemployee.getValue()+" No Eventos="
 					// *   "1": Create or Update Records Only from  AMN_Payroll_Assist
 					// *   "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
 					// *   "3: Create or Update Records from Only from  AMN_Shift_Detail
+log.warning("PASO - MODO Seleccion - Trabajador="+amnemployee.getValue()+" No Eventos="+AssistCounter+" assitAMN_Shift_ID= "+assitAMN_Shift_ID+ " p_AMN_Assist_Process_Mode="+p_AMN_Assist_Process_Mode);
 					switch (p_AMN_Assist_Process_Mode) {
 						//  "0": Clean Records on AMN_Payroll_Assist_Proc 
+
 						case "0":
 							//  "0": Clean Records on AMN_Payroll_Assist_Proc 
 							locMsg_Value=locMsg_Value+Msg.getElement(ctx, "AMN_Shift_ID")+":"+assitAMN_Shift_ID+" "+
@@ -212,6 +214,7 @@ log.warning("PASO - Eventos - Trabajador="+amnemployee.getValue()+" No Eventos="
 							break;
 						//   "1": Create or Update Records Only from  AMN_Payroll_Assist
 						case "1":
+log.warning("PASO - MODO 1 - Trabajador="+amnemployee.getValue()+" No Eventos="+AssistCounter+" assitAMN_Shift_ID= "+assitAMN_Shift_ID+ " p_AMN_Assist_Process_Mode="+p_AMN_Assist_Process_Mode);
 							//   "1": Create or Update Records Only from  AMN_Payroll_Assist
 							locMsg_Value=locMsg_Value+Msg.getElement(ctx, "AMN_Shift_ID")+":"+assitAMN_Shift_ID+" "+
 									Msg.getMsg(ctx,"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
@@ -305,6 +308,11 @@ log.warning("PASO - Crear Registro de AMN_payroll_asist - Trabajador="+amnemploy
 									Descanso, Excused ,
 									atthours, p_IsScheduled) ;	
 							break;	
+						default:
+							locMsg_Value=locMsg_Value+Msg.getElement(ctx, "AMN_Shift_ID")+":"+assitAMN_Shift_ID+" "+
+									Msg.getMsg(ctx,"Date")+":"+p_Event_Date.toString().substring(0,10)+" "+
+									"** Invalid Mode **";
+							break;
 					}				
 					if (amnpayrollassistproc) {
 						locMsg_Value=locMsg_Value+"  OK";
