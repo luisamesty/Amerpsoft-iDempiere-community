@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Personnel and Payroll
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.personnelpayroll
 Bundle-Version: 12.0.0.qualifier
-Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
+Bundle-Activator: org.amerp.amnpersonnel.Activator
 Export-Package: org.amerp.amndocument,
  org.amerp.amnevents,
  org.amerp.amnmodel,
@@ -36,6 +36,8 @@ Service-Component: OSGI-INF/AMNCalloutFactory.xml,
  OSGI-INF/AMNProcessFactory.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.adempiere.base.event,
+Import-Package: net.sf.jasperreports.engine,
+ org.amerp.amndocument,
  org.compiere.model,
  org.mozilla.classfile;version="1.7.6",
  org.mozilla.javascript;version="1.7.6"
