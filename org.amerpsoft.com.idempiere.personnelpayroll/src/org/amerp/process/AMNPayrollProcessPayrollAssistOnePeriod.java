@@ -105,237 +105,184 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 	 */
     @Override
     protected String doIt() throws Exception {
-	    // 
-    	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    String sql="";
-	    String AMN_Process_Value="NN";
-	    String AMN_Process_Name="";
-	    String Msg_Value="";
-        String messagetoNotify= "";
-	    String messagetoShow="";
-	    Properties ctx = getCtx();
-	    int AMN_Employee_ID=0;
-	    int AMN_Payroll_ID=0;
-	    int noMarcaciones=0;
-	    Timestamp p_currDate;
-	    String Period_Name="";
-	    String Contract_Name="";
-	    String Employee_Name="";
-		// Determines Process Value to see if NN & Name
-		MAMN_Process amprocess = new MAMN_Process(ctx, p_AMN_Process_ID, null);
-		AMN_Process_Name = amprocess.getName().trim();
-		AMN_Process_Value = amprocess.getValue().trim();
-		// AMN_contract
-		MAMN_Contract amncontract = new MAMN_Contract(ctx, p_AMN_Contract_ID, null);
-		Contract_Name = amncontract.getName().trim();
-		// Determines AMN_Period - AMN_DateIni and AMNDateEnd
-		MAMN_Period amnperiod = new MAMN_Period(ctx, p_AMN_Period_ID, null);
-		// Si no se proporcionaron fechas, usa las del período
-		if (p_RefDateIni == null && p_RefDateEnd == null) {
-		    p_RefDateIni = amnperiod.getAMNDateIni();
-		    p_RefDateEnd = amnperiod.getAMNDateEnd();
-		}
-		// Validar que las fechas estén dentro del período
-		boolean fechasInvalidas = p_RefDateIni.after(p_RefDateEnd)
-		        || p_RefDateIni.before(amnperiod.getAMNDateIni())
-		        || p_RefDateIni.after(amnperiod.getAMNDateEnd())
-		        || p_RefDateEnd.after(amnperiod.getAMNDateEnd())
-		        || p_RefDateEnd.before(amnperiod.getAMNDateIni());
 
-		if (fechasInvalidas) {
-		    Msg_Value = Msg.getElement(ctx, "RefDateIni") + ": " + dateFormat.format(p_RefDateIni) + "\r\n";
-		    addLogIFNotScheduled(Msg_Value);
-		    Msg_Value = Msg.getElement(ctx, "RefDateEnd") + ": " + dateFormat.format(p_RefDateEnd) + "\r\n";
-		    addLogIFNotScheduled(Msg_Value);
-		    addLogIFNotScheduled(" ***** DATE REFERENCE ERROR ****");
-		    return "@Error@ ";
-		}	
-		Period_Name = amnperiod.getName().trim();
-		//
-		IProcessUI processMonitor = Env.getProcessUI(ctx);
-		// Message Value Init
-		Msg_Value=(Msg.getMsg(ctx, "Process")+": "+AMN_Process_Value.trim())+"-"+AMN_Process_Name+"\r\n";
-		addLogIFNotScheduled(Msg_Value);
-		messagetoNotify = Msg_Value;
-		Msg_Value=Msg.getElement(ctx, "AMN_Contract_ID")+": "+Contract_Name+" \r\n";
-		addLogIFNotScheduled(Msg_Value);
-		messagetoNotify = messagetoNotify + Msg_Value;
-		Msg_Value=Msg.getElement(ctx, "AMN_Period_ID")+": "+Period_Name+"  "+
-				Msg.getElement(ctx, "AMNDateIni")+": "+dateFormat.format(p_RefDateIni)+"  "+
-				Msg.getElement(ctx, "AMNDateEnd")+": "+dateFormat.format(p_RefDateEnd)+" \r\n";
-		addLogIFNotScheduled(Msg_Value);
-		messagetoNotify = messagetoNotify + Msg_Value;
-		if (!p_IsScheduled && processMonitor != null) {
-			processMonitor.statusUpdate(Msg_Value);
-		}
-		
-        // Determina el Numero de Registros
-        int rowCount = 0;
-        
-//        String countSql = "SELECT COUNT(*) FROM ( "
-//        	    + " SELECT DISTINCT emp.amn_employee_id "
-//        	    + " FROM amn_period prd "
-//        	    + " INNER JOIN amn_contract cnt ON cnt.amn_contract_id = prd.amn_contract_id "
-//        	    + " INNER JOIN amn_employee emp ON emp.amn_contract_id = cnt.amn_contract_id "
-//        	    + " WHERE prd.amn_process_id IN ( "
-//        	    + "     SELECT amn_process_id FROM amn_process "
-//        	    + "     WHERE ad_client_id = ? AND amn_process_value = 'NN' "
-//        	    + " ) "
-//        	    + " AND emp.isactive = 'Y' "
-//        	    + " AND prd.amn_period_id = ? "
-//        	    + ") AS recs";
-        String countSql = 
-        	    "SELECT COUNT(DISTINCT emp.amn_employee_id) AS recs \n" +
-        	    "FROM amn_period prd \n" +
-        	    "INNER JOIN amn_contract cnt ON cnt.amn_contract_id = prd.amn_contract_id \n" +
-        	    "INNER JOIN amn_employee emp ON emp.amn_contract_id = cnt.amn_contract_id \n" +
-        	    "WHERE prd.amn_process_id = ? \n" +   
-        	    "AND emp.isactive = 'Y' \n" +
-        	    "AND prd.amn_period_id = ?";
-
-        PreparedStatement countStmt = DB.prepareStatement(countSql, get_TrxName());
-        countStmt.setInt (1, p_AMN_Process_ID);
-        countStmt.setInt (2, p_AMN_Period_ID);
-        ResultSet countRs = countStmt.executeQuery();
-        if (countRs.next()) {
-        	rowCount = countRs.getInt(1);  // Obtiene el total de filas
-        }
-        DB.close(countRs, countStmt); // Cierra el ResultSet y el PreparedStatement
-		
-		// ARRAY 
-
-        sql =   "SELECT \n" +
-        	    "    emp.amn_employee_id, \n" +
-        	    "    emp.name AS employee_name, \n" +
-        	    "    COALESCE(prl.amn_payroll_id, 0) AS amn_payroll_id, \n" +
-        	    "    COUNT(pa.amn_payroll_assist_id) AS total_marcaciones \n" +
-        	    " FROM amn_period prd \n" +
-        	    " INNER JOIN amn_contract cnt \n" +
-        	    "    ON cnt.amn_contract_id = prd.amn_contract_id \n" +
-        	    " INNER JOIN amn_employee emp \n" +
-        	    "    ON emp.amn_contract_id = cnt.amn_contract_id \n" +
-        	    " LEFT JOIN amn_payroll_assist pa \n" +
-        	    "    ON pa.amn_employee_id = emp.amn_employee_id \n" +
-        	    "    AND pa.event_date BETWEEN prd.amndateini AND prd.amndateend \n" +
-        	    " LEFT JOIN amn_payroll prl \n" +
-        	    "    ON prl.amn_employee_id = emp.amn_employee_id \n" +
-        	    "    AND prl.amn_period_id = prd.amn_period_id \n" +
-        	    " WHERE prd.amn_process_id = ? \n" +
-        	    "  AND emp.isactive = 'Y' \n" +
-        	    "  AND prd.amn_period_id = ? \n" +
-        	    " GROUP BY emp.amn_employee_id, emp.name, prl.amn_payroll_id \n" +
-        	    " ORDER BY emp.name";
-
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-        int percent = 0;
+        final int BATCH_SIZE = 20;
+        int offset = 0;
+        boolean hasMoreRows = true;
         int rowNumber = 0;
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
-			pstmt.setInt (1, p_AMN_Process_ID);
-            pstmt.setInt (2, p_AMN_Period_ID);
-			rs = pstmt.executeQuery();
-			while (rs.next())
-			{
-				rowNumber++; // Incrementamos en cada iteración
-				AMN_Payroll_ID= rs.getInt(3);
-				AMN_Employee_ID = rs.getInt(1);
-				noMarcaciones = rs.getInt(3);
-				// AMN_Employee_ID
-				MAMN_Employee amnemployee = new MAMN_Employee(ctx, AMN_Employee_ID, null);
-				Employee_Name = String.format("%-30.30s", amnemployee.getName()); // Se asegura que tenga 30 caracteres
-				p_AMN_Employee_ID=AMN_Employee_ID;
-				Msg_Value=Msg.getElement(ctx, "AMN_Employee_ID")+":"+amnemployee.getValue().trim()+"-"+
-						Employee_Name+" \r\n";				
-				addLogIFNotScheduled(Msg_Value);
-				// Percentage Monitor
-                percent = (int) (100.0 * rowNumber / rowCount);
-                int totalLength = 100; // Longitud deseada
-				// AMN_Payroll Must Be DRAFT DR (Not Processed)
-				MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, null);
-				if (AMN_Payroll_ID != 0 && !amnpayroll.getDocStatus().equalsIgnoreCase("DR")) {
-					Msg_Value=Msg_Value+Msg.getElement(ctx,"AMN_Payroll_ID")+":"+amnpayroll.getName();
-					Msg_Value=Msg_Value+Msg.getElement(ctx,"DocStatus")+":"+amnpayroll.getDocStatus()+
-							"  "+" ***** ALREADY PROCESSED ****";
-					addLogIFNotScheduled(Msg_Value);
-					if (!p_IsScheduled && processMonitor != null) {
-						messagetoShow = String.format("%-10s", rowNumber) + "/" + 
-				                String.format("%-10s", rowCount) + " ( " + 
-				                String.format("%6s", percent) + "% ) : " + 
-				                String.format("%-10s", amnemployee.getValue()) + " - " + 
-				                String.format("%-30s", amnemployee.getName().trim()) + " - " + 
-								String.format("%-40s",Msg.getElement(ctx,"DocStatus")+":"+amnpayroll.getDocStatus()+
-								"  "+" ***** ALREADY PROCESSED ****");
-		                messagetoShow = String.format("%-" + totalLength + "s", messagetoShow);
-						processMonitor.statusUpdate(Msg_Value);
-					}
-				} else {
-					//log.warning("Process_ID:"+p_AMN_Process_ID+"  AMN_Contract_ID:"+p_AMN_Contract_ID+"  AMN_Period_ID:"+p_AMN_Period_ID);
-					//log.warning("----- Payroll:"+Payroll_Name+"  AMN_Employee_ID:"+AMN_Employee_ID+"  p_AMN_Assist_Process_Mode:"+p_AMN_Assist_Process_Mode);
-					//  PROCESS MAMN_Payroll_Assist
-					// Process MODE: p_AMN_Assist_Process_Mode
-					// *   "0": Clean Records on AMN_Payroll_Assist_Proc 
-					// *   "1": Create or Update Records Only from  AMN_Payroll_Assist
-					// *   "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
-					// *   "32: Create or Update Records from Only from  AMN_Shift_Detail
-			    	// Payroll Assist  (One Employee One Date)
-					GregorianCalendar cal = new GregorianCalendar();
-					GregorianCalendar cal2 = new GregorianCalendar();	
-					cal.setTime(p_RefDateIni);
-					cal.set(Calendar.HOUR_OF_DAY, 0);
-					cal.set(Calendar.MINUTE, 0);
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					cal2.setTime(p_RefDateEnd);
-					cal2.set(Calendar.HOUR_OF_DAY, 0);
-					cal2.set(Calendar.MINUTE, 0);
-					cal2.set(Calendar.SECOND, 0);
-					cal2.set(Calendar.MILLISECOND, 0);
-					// Process MODE: p_AMN_Assist_Process_Mode
-					// *   "0": Clean Records on AMN_Payroll_Assist_Proc 
-					// *   "1": Create or Update Records Only from  AMN_Payroll_Assist
-					// *   "2": Create or Update Records from  AMN_Payroll_Assist and Fill Default Values from AMN_Shift_Detail
-					// *   "32: Create or Update Records from Only from  AMN_Shift_Detail
-			    	// Payroll Assist  (One Employee One Date)
-					while (cal.getTimeInMillis() <= cal2.getTimeInMillis())   {
-						// ARRAY EMPLOYEE - CONTRACT
-						p_currDate=new Timestamp(cal.getTimeInMillis());
-						Msg_Value = "";
-						//Msg_Value = Msg.getMsg(ctx, "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
-				    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-				    			p_AMN_Contract_ID, p_currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
-				    	addLogIFNotScheduled(Msg_Value);
-				    	if (!p_IsScheduled && processMonitor != null) {
-							messagetoShow = String.format("%-10s", rowNumber) + "/" + 
-					                String.format("%-10s", rowCount) + " ( " + 
-					                String.format("%6s", percent) + "% ) : " + 
-					                String.format("%-10s", amnemployee.getValue()) + " - " + 
-					                String.format("%-30s", amnemployee.getName().trim()) + " - " + 
-					                String.format("%-20s", p_currDate) + 
-					                String.format("%-20s", " Processed ");
-			                messagetoShow = String.format("%-" + totalLength + "s", messagetoShow);
-							processMonitor.statusUpdate(messagetoShow);
-						}
-				    	cal.add(Calendar.DAY_OF_MONTH, 1);
-					}
-				}
-			}
-		}
-	    catch (SQLException e)
-	    {
-	    }
-		finally
-		{
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-		// Send Notification
-		messagetoNotify = messagetoNotify + Msg_Value;
+        int rowCount = 0;
+        int percent = 0;
+	    String messagetoShow="";
+	    
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Properties ctx = getCtx();
+        IProcessUI processMonitor = Env.getProcessUI(ctx);
+        String messagetoNotify = "";
+        String Msg_Value = "";
+
+        // Validaciones iniciales de Periodo
+        MAMN_Process amprocess = new MAMN_Process(ctx, p_AMN_Process_ID, null);
+        MAMN_Contract amncontract = new MAMN_Contract(ctx, p_AMN_Contract_ID, null);
+        MAMN_Period amnperiod = new MAMN_Period(ctx, p_AMN_Period_ID, null);
+
+        if (p_RefDateIni == null && p_RefDateEnd == null) {
+            p_RefDateIni = amnperiod.getAMNDateIni();
+            p_RefDateEnd = amnperiod.getAMNDateEnd();
+        }
+
+        boolean fechasInvalidas = p_RefDateIni.after(p_RefDateEnd)
+                || p_RefDateIni.before(amnperiod.getAMNDateIni())
+                || p_RefDateEnd.after(amnperiod.getAMNDateEnd());
+
+        if (fechasInvalidas) {
+            addLog(Msg.getMsg(ctx, "DateReferenceError"));
+            return "@Error@";
+        }
+
+        // Conteo total de empleados
+        String countSql = 
+            "SELECT COUNT(DISTINCT emp.amn_employee_id) " +
+            "FROM amn_period prd " +
+            "JOIN amn_contract cnt ON cnt.amn_contract_id = prd.amn_contract_id " +
+            "JOIN amn_employee emp ON emp.amn_contract_id = cnt.amn_contract_id " +
+            "WHERE prd.amn_process_id = ? AND prd.amn_period_id = ? AND emp.isactive='Y'";
+
+        try (PreparedStatement countStmt = DB.prepareStatement(countSql, get_TrxName())) {
+            countStmt.setInt(1, p_AMN_Process_ID);
+            countStmt.setInt(2, p_AMN_Period_ID);
+            try (ResultSet countRs = countStmt.executeQuery()) {
+                if (countRs.next()) {
+                    rowCount = countRs.getInt(1);
+                }
+            }
+        }
+
+        // Query principal con LIMIT/OFFSET
+        String sql = 
+            "SELECT emp.amn_employee_id, emp.name, COALESCE(prl.amn_payroll_id,0) " +
+            "FROM amn_period prd " +
+            "JOIN amn_contract cnt ON cnt.amn_contract_id = prd.amn_contract_id " +
+            "JOIN amn_employee emp ON emp.amn_contract_id = cnt.amn_contract_id " +
+            "LEFT JOIN amn_payroll prl ON prl.amn_employee_id = emp.amn_employee_id " +
+            "   AND prl.amn_period_id = prd.amn_period_id " +
+            "WHERE prd.amn_process_id = ? AND prd.amn_period_id = ? AND emp.isactive='Y' " +
+            "ORDER BY emp.name LIMIT ? OFFSET ?";
+
+        while (hasMoreRows) {
+            int rowsThisBatch = 0;
+            Trx trx = Trx.get(Trx.createTrxName("AMNPayrollBatch"), true);
+
+            try (PreparedStatement pstmt = DB.prepareStatement(sql, trx.getTrxName())) {
+                pstmt.setInt(1, p_AMN_Process_ID);
+                pstmt.setInt(2, p_AMN_Period_ID);
+                pstmt.setInt(3, BATCH_SIZE);
+                pstmt.setInt(4, offset);
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                	while (rs.next()) {
+                	    rowsThisBatch++;
+                	    rowNumber++;
+
+                	    int employeeId = rs.getInt(1);
+                	    String employeeName = rs.getString(2);
+                	    int payrollId = rs.getInt(3);
+
+                	    MAMN_Employee amnemployee = new MAMN_Employee(ctx, employeeId, trx.getTrxName());
+
+                	    // Calcular porcentaje
+                	    percent = (int)(100.0 * rowNumber / rowCount);
+                	    int totalLength = 100;
+
+                	    // Verificar si la nómina ya está procesada
+                	    if (payrollId != 0) {
+                	        MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, payrollId, trx.getTrxName());
+                	        if (!"DR".equalsIgnoreCase(amnpayroll.getDocStatus())) {
+                	            Msg_Value = Msg.getElement(ctx, "AMN_Employee_ID") + ": " + amnemployee.getValue() + " - " +
+                	                    String.format("%-30s", amnemployee.getName().trim()) + " ";
+                	            Msg_Value = Msg_Value + Msg.getElement(ctx,"AMN_Payroll_ID") + ":" + amnpayroll.getName() + " ";
+                	            Msg_Value = Msg_Value + Msg.getElement(ctx,"DocStatus") + ":" + amnpayroll.getDocStatus() +
+                	                    "  ***** ALREADY PROCESSED ****";
+                	            addLogIFNotScheduled(Msg_Value);
+
+                	            if (!p_IsScheduled && processMonitor != null) {
+                	                messagetoShow = String.format("%-10s", rowNumber) + "/" + 
+                	                        String.format("%-10s", rowCount) + " ( " + 
+                	                        String.format("%6s", percent) + "% ) : " + 
+                	                        String.format("%-10s", amnemployee.getValue()) + " - " + 
+                	                        String.format("%-30s", amnemployee.getName().trim()) + " - " + 
+                	                        String.format("%-40s",
+                	                                Msg.getElement(ctx,"DocStatus") + ":" + amnpayroll.getDocStatus() +
+                	                                "  ***** ALREADY PROCESSED ****");
+                	                messagetoShow = String.format("%-" + totalLength + "s", messagetoShow);
+                	                processMonitor.statusUpdate(messagetoShow);
+                	            }
+                	            continue;
+                	        }
+                	    }
+
+                	    // Procesar cada día
+                	    GregorianCalendar cal = new GregorianCalendar();
+                	    GregorianCalendar cal2 = new GregorianCalendar();
+                	    cal.setTime(p_RefDateIni);
+                	    cal2.setTime(p_RefDateEnd);
+                	    cal.set(Calendar.HOUR_OF_DAY, 0);
+                	    cal2.set(Calendar.HOUR_OF_DAY, 0);
+
+                	    while (!cal.after(cal2)) {
+                	        Timestamp currDate = new Timestamp(cal.getTimeInMillis());
+                	        String result = AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
+                	                ctx,
+                	                amnemployee.getAD_Client_ID(),
+                	                amnemployee.getAD_Org_ID(),
+                	                p_AMN_Contract_ID,
+                	                currDate,
+                	                employeeId,
+                	                p_AMN_Assist_Process_Mode,
+                	                p_IsScheduled
+                	        );
+                	        addLogIFNotScheduled(result);
+
+                	        if (!p_IsScheduled && processMonitor != null) {
+                	            messagetoShow = String.format("%-10s", rowNumber) + "/" + 
+                	                    String.format("%-10s", rowCount) + " ( " + 
+                	                    String.format("%6s", percent) + "% ) : " + 
+                	                    String.format("%-10s", amnemployee.getValue()) + " - " + 
+                	                    String.format("%-30s", amnemployee.getName().trim()) + " - " + 
+                	                    String.format("%-20s", currDate.toString().substring(0,10)) + " Processed";
+                	            messagetoShow = String.format("%-" + totalLength + "s", messagetoShow);
+                	            processMonitor.statusUpdate(messagetoShow);
+                	        }
+
+                	        cal.add(Calendar.DAY_OF_MONTH, 1);
+                	    }
+                	}
+
+                }
+
+                trx.commit();
+
+            } catch (Exception e) {
+                trx.rollback();
+                throw e;
+            } finally {
+                trx.close();
+            }
+
+            hasMoreRows = rowsThisBatch == BATCH_SIZE;
+            offset += BATCH_SIZE;
+
+            Env.clearWinContext(ctx, 0);
+            System.gc();
+            Thread.sleep(500);
+        }
+
+        // Mensaje final
+        messagetoNotify = Msg.getMsg(ctx, "ProcessCompleted") + ": " + rowNumber + " " + Msg.getElement(ctx, "RecordsProcessed");
         sendNotification(ctx, "N", messagetoNotify);
-        log.warning("Notification:\r\n"+ messagetoNotify);
-		return messagetoNotify;
+
+        return messagetoNotify;
     }
+
     
 	/**
 	 * sendNotification

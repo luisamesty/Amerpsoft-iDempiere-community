@@ -1,0 +1,6 @@
+2Pack_2.1.1 Rebuild
+References and Tables, Processes
+Added:
+Busines Partner Table Changes and Product Tables Changes.
+Product Class, Product Line, Product Discipline, Product Brand
+Also include on 2pack_7.1.1
