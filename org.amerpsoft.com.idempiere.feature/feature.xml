@@ -18,64 +18,34 @@
 
    <plugin
          id="org.amerpsoft.com.idempiere.editors-com"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.zk_themes"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.lco.withholding"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.financial"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
-
-   <plugin
-         id="org.idempiere.zk.iceblue_c.theme"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.personnelpayroll"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.tools"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
+
    <plugin
          id="org.amerpsoft.com.idempiere.workflow"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
    <plugin
          id="org.amerpsoft.com.idempiere.webform"
-	     download-size="0"
-	     install-size="0"
-	     version="12.0.0.qualifier"
-	     unpack="false"/>
+         version="12.0.0.qualifier"/>
 
 </feature>
