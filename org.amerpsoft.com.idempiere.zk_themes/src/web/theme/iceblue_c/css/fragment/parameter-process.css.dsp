@@ -1,12 +1,6 @@
-/* .z-window.z-window-noborder.z-window-noheader.z-window-embedded
-.z-window.z-window-noborder.z-window-noheader.z-window-embedded .z-window-content
-twwo css make height of window always 100% its parent,
-it fix some issue relate resize, but can make side effect
-when detect side effect, fix to only apply for parameter window*/
-.z-window.z-window-noborder.z-window-noheader.z-window-embedded,
-.z-window.z-window-noborder.z-window-noheader.z-window-embedded .z-window-content,
-.main-parameter-layout {
-	height: 100%;
+<%-- process modal dialog --%>
+.process-modal-dialog {
+	width: 600px;
 }
 .process-modal-dialog .main-parameter-layout{
 	height: auto;
@@ -15,7 +9,15 @@ when detect side effect, fix to only apply for parameter window*/
 .process-modal-dialog.z-window > .z-window-content {
 	flex: 1 1 auto;
 }
+@media screen and (max-width: 600px) {
+	.process-modal-dialog {
+		width: 100%;
+	}
+}
 
+.main-parameter-layout {
+	height: 100%;
+}
 .main-parameter-layout,
 .top-parameter-layout,
 .bottom-parameter-layout,
@@ -26,81 +28,110 @@ when detect side effect, fix to only apply for parameter window*/
 .bottom-container{
 	width: 100%;
 }
-
 .report-option-container {
-	overflow-x: auto;
+	display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
 }
+
+.report-option-container div {
+    padding: 2px;
+}
+
+/* Chromium based browsers + Safari */
+@supports (not (-moz-appearance: none)) {
+	.report-option-container {
+		height: 100% !important;
+	}
+}
+
+<%-- process/report parameters --%>
 .top-parameter-layout{
 	overflow: auto;
 	padding-bottom: 2vh;
 	flex-basis: auto;
 }
 
+<%-- run history and action buttons --%>
 .bottom-parameter-layout{
-	padding: 4px 4px 0px 4px;
+	padding: 4px;
 	border-top: 1px solid rgba(0, 0, 0, 0.2);
 	overflow: visible;
 }
+.bottom-container{
+	overflow: hidden;
+}
+.save-parameter-container{
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+.button-container{
+	float: right;
+	overflow: hidden;
+	padding: 4px;
+}
+@media screen and (max-width: 500px) {
+	.save-parameter-container .saved-parameter-label {
+		display: none;
+	}
+}
+@media screen and (min-width: 501px) {
+	.save-parameter-container .saved-parameter-list > input::-webkit-input-placeholder {
+		color: white;
+	}
+}
+@media screen and (min-width: 501px) {
+	.save-parameter-container .saved-parameter-list > input::-moz-placeholder {
+		color: white;
+	}
+}
+@media screen and (min-width: 501px) {
+	.save-parameter-container .saved-parameter-list > input::-ms-input-placeholder {
+		color: white;
+	}
+}
 
-.message-paramenter{
+<%-- process help text --%>
+.message-parameter{
 	max-height: 300pt; 
 	overflow: auto; 
 	margin: 10px;
 	line-height: normal;
 }
 
-.option-input-parameter{
-	
+.message-parameter p {
+	margin-bottom: 10px;
 }
 
-.bottom-container{
-	overflow: hidden;
-}
-
-.button-container{
-	float: right;
-	overflow: hidden;
-	padding: 4px;
-}
-
-.save-parameter-container{
-	overflow-x: auto;
-	overflow-y: hidden;
-}
-
+<%-- execution result panel --%>
 .result-parameter-layout {
 	overflow: auto;
 }
 
-.popup-dialog.z-window.z-window-overlapped.z-window-shadow,
-.popup-dialog.z-window.z-window-noborder.z-window-highlighted.z-window-shadow{
-	width:600px;
-}
-@media screen and (max-width: 600px) {
-	.popup-dialog.z-window.z-window-overlapped.z-window-shadow,
-	.popup-dialog.z-window.z-window-noborder.z-window-highlighted.z-window-shadow{
-		width:100%;
-	}
-}
-
+<%-- process parameters --%>
 .input-paramenter-layout{
 	width: 70%;
+	margin-left: 5%;
+	margin-right: 25%;
 }
 @media screen and (max-width: 700px) {
 	.input-paramenter-layout{
 		width: 90% !important;
+		margin-left: 2% !important;
+		margin-right: 8% !important;
 	}
 }
 @media screen and (max-width: 500px) {
 	.input-paramenter-layout{
 		width: 100% !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
 	}
 }
-
 .popup-dialog .input-paramenter-layout{
 	width: 90%;
 }
-
 @media screen and (max-width: 500px) {
 	.option-input-parameter.z-label.print-format-label,
 	.option-input-parameter.z-label.view-report-label {
@@ -130,25 +161,5 @@ when detect side effect, fix to only apply for parameter window*/
 @media screen and (max-width: 320px) {
 	.option-input-parameter.print-format-list {
 		width: 150px !important;
-	}
-}
-@media screen and (max-width: 500px) {
-	.save-parameter-container .saved-parameter-label {
-		display: none;
-	}
-}
-@media screen and (min-width: 501px) {
-	.save-parameter-container .saved-parameter-list > input::-webkit-input-placeholder {
-		color: white;
-	}
-}
-@media screen and (min-width: 501px) {
-	.save-parameter-container .saved-parameter-list > input::-moz-placeholder {
-		color: white;
-	}
-}
-@media screen and (min-width: 501px) {
-	.save-parameter-container .saved-parameter-list > input::-ms-input-placeholder {
-		color: white;
 	}
 }

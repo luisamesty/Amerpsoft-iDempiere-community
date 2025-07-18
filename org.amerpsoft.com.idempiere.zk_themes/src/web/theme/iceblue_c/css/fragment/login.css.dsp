@@ -1,55 +1,52 @@
 .login-window {
-	background-color: #E5E5E5;
+	background-color: #c7e8ff;
 }
 
 .login-window .z-window-content {
-	background-color: #E5E5E5;
-	background-image: url(../images/background-world-moderm.png) !important;
-    background-position: center;
-	background-repeat: no-repeat;
+	background-color: #c7e8ff;
 }
 
 .login-box-body {
-	width: 580px;
-    background: rgba(234,240,256,0.5);
-	border-radius: 20px;
-	font-weight: 100;
-	color: #222222;
-	z-index: 1;
-	padding: 40px 40px 60px 40px;
+	width: 720px;
+	background-color: white;
+	padding: 0px 5px 0px 0px;
 	margin: 0;
 	text-align: center;
-	padding-bottom: 100px;
 }
 
 .login-box-header {
-	<%-- background-image: url(../images/login-box-header.png); --%>
-	background-color: transparent;
-	z-index: 2;
-	height: 54px;
-	width: 660px;
+	background-color: white;
+	width: 720px;
+	border-radius: 10px 10px 0px 0px;
+	padding-left: 30px;
+	padding-top: 30px;
+	padding-right: 30px;
+	box-sizing: border-box;
 }
 
 .login-box-header-txt {
-	color: white !important;
 	font-weight: bold;
 	position: relative;
-	top: 30px;
+	display: inline-block;
+	text-align: left;
+	padding: 10px;
+	color: #484848 !important;
+	width: 100%;	
+	font-size: 1.6em !important;
 }
 
 .login-box-header-logo {
-	padding-top: 20px;
-	padding-bottom: 25px;
+	padding-bottom: 25px !important;
 }
 
 .login-box-footer {
-	/*background-image: url(../images/login-box-footer.png);*/
-	background-position: top right;
-	background-attachment: scroll;
-	background-repeat: repeat-y;
-	z-index: 2;
-	height: 110px;
-	width: 660px;
+	height: 130px;
+	width: 720px;
+	background-color: white;
+	border-radius: 0px 0px 10px 10px;
+	padding-left: 30px;
+  	padding-right: 30px;
+  	box-sizing: border-box;
 }
 
 .login-box-footer .confirm-panel {
@@ -60,18 +57,24 @@
 	width: 604px;
 	margin-left: 10px;
 	margin-right: 10px;
-	padding-top: 40px !important;
+	padding-top: 60px !important;
 }
 
 .login-label {
 	color: black;
 	text-align: right;
 	width: 40%;
+	padding: 2px !important;
 }
 
 .login-field {
 	text-align: left;
 	width: 55%;
+	padding: 2px !important;
+}
+
+.login-field input:not([type="checkbox"]) {
+	width: 220px !important;
 }
 
 .login-btn {
@@ -79,9 +82,10 @@
 }
 
 .login-east-panel, .login-west-panel {
-	width: 350px;
-	background-color: #E0EAF7;
+	width: 380px;
+	background-color: #ffffff; 
 	position: relative;
+	border: none;
 }
 @media screen and (max-width: 659px) {
 	.login-box-body, .login-box-header, .login-box-footer {
@@ -89,8 +93,13 @@
 		width: 90%;
 	}
 	.login-box-footer .confirm-panel, .login-box-footer-pnl {
-		width: 90% !important;
+		width: 100% !important;
+        margin: 0px;
 	}
+	.login-box-footer {
+		padding-left: 10px;
+		padding-right: 10px;
+    }
 	.login-box-header-txt {
 		display: none;
 	}
@@ -109,8 +118,18 @@
 		height: 0px;
 	}
 }
+@media screen and (max-device-width: 500px) {
+	.login-field input:not([type="checkbox"]) {
+		width: 100% !important;
+	}
+}
+@media screen and (max-device-width: 380px) {
+	.login-west-panel {
+		width: 350px;
+	}
+}
 @media screen and (max-width: 359px) {
 	.login-window .z-center > .z-center-body .z-window.z-window-embedded > .z-window-content {
-		padding: 0px
+		padding: 5px
 	}
 }
