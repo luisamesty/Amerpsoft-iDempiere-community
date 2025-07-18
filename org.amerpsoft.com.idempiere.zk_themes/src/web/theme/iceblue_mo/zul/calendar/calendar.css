@@ -1,6 +1,5 @@
 .float-left {
 	float: left;
-	padding-left: 10px;
 }
 .float-right {
 	float: right;
@@ -17,11 +16,9 @@
 	cursor: pointer;
 }
 .tabs .bd {
-	background: #7ac8ff;
 	zoom: 1;
 }
 .tabs .t1, .tabs .t2, .tabs .t3 {
-	background: #0093f9;
 	font-size: 0;
 	line-height: 0;
 	margin: 0 2px;
@@ -69,7 +66,7 @@
 	vertical-align: middle;
 	text-align: center;
 	white-space: nowrap;
-	color: #f0f3f5;
+	padding: 2px 5px;
 }
 .tabs .text, .tabs .text * {
 	background: none;
@@ -106,7 +103,6 @@
 	margin: -3px;
 }
 .arrows .cnt {
-	background: #0093f9;
 	zoom: 1;
 }
 .arrow-left {
@@ -116,7 +112,6 @@
 	height: 0;
 	width: 0;
 	position: absolute;
-	top: 3px;
 	left: 0px;
 	font-size: 0;
 	line-height: 0;
@@ -128,8 +123,6 @@
 	height: 0;
 	width: 0;
 	position: absolute;
-	top: 3px;
-	left: 5px;
 	font-size: 0;
 	line-height: 0;
 }
@@ -381,21 +374,18 @@
 
 .z-calendars-fl{
 	background:transparent no-repeat 0 bottom;
-	background-image:url(/erp/zkau/web/b13c8796/img/shdlf.gif);
 	padding-left:6px;
 	zoom:1
 }
 
 .z-calendars-fr{
 	background:transparent no-repeat right bottom;
-	background-image:url(/erp/zkau/web/b13c8796/img/shdrg.gif);
 	padding-right:6px;
 	zoom:1
 }
 
 .z-calendars-fm{
 	background:transparent repeat-x 0 0;
-	background-image:url(/erp/zkau/web/b13c8796/img/shdmd.gif);
 	height:6px;
 	font-size:0;
 	line-height:0;
@@ -638,7 +628,7 @@
 
 .z-calendars-day-over,z-calendars-month-day-over{
 	cursor:pointer;
-	text-decoration:underline
+	text-decoration: none;
 }
 
 .z-calendars-month .z-calendars-inner{
@@ -701,8 +691,13 @@
 }
 
 .z-calendars-day-of-month-bg td{
-    border-left: 4px solid #FFFFFF;
+    border: 1px solid #d9d9d9;
     background: #FFFFFF;
+}
+
+.z-calendars-day-of-month-bg td:hover{
+	cursor: pointer;
+    background: #0093f9 !important;
 }
 
 .z-calendars-day-of-month-body{
@@ -712,15 +707,13 @@
 }
 
 .z-calendars-month-date{
-	background-color: #f0f3f5;
-    border-left: 4px solid #FFFFFF;
-    border-top: 4px solid #FFFFFF;
-    color: #000000;
-    line-height: 16px;
-    overflow: hidden;
-    padding-right: 2px;
-    text-align: center;
-    font-size: 14px;
+	background-color: transparent;
+	color: #000000;
+	line-height: 16px;
+	overflow: hidden;
+	padding-right: 2px;
+	text-align: right;
+	font-size: 14px;
 	padding-top: 4px;
 	padding-bottom: 3px;
 }
@@ -731,15 +724,27 @@
 	line-height:14px
 }
 
-.z-calendars-month-date-off{
+.z-calendars-month-date-off:hover{
+	background: transparent;
+}
+
+.z-calendars-month-date-off>.z-calendars-month-date-cnt{
     background-color: #74777b;
     color: #FFFFFF;
+	border-radius: 2px;
+	padding: 1px;
 }
 
 .z-calendars-month-date.z-calendars-week-today{
+	background: transparent;
+}
+
+.z-calendars-month-date.z-calendars-week-today>.z-calendars-month-date-cnt{
 	 background-color:#0093f9 !important;
+	 border-radius: 2px;
 	 color: #ffffff;
 	 font-weight: bold;
+	 padding: 1px;
 }
 
 .z-calendars-day-of-month-bg .z-calendars-week-today{
@@ -836,13 +841,13 @@
 }
 
 .z-calevent-t2{
-	margin:0 1px
+	margin:0 0px;
 }
 
 .z-calevent-t3{
 	background:white;
 	height:1px;
-	margin:0 1px
+	margin:0 0px;
 }
 
 .z-calevent-b1,.z-calevent-b2,.z-calevent-b3{
@@ -856,13 +861,13 @@
 }
 
 .z-calevent-b2{
-	margin:0 1px
+	margin:0 0px;
 }
 
 .z-calevent-b3{
 	background:white;
 	height:1px;
-	margin:0 1px
+	margin:0 0px;
 }
 
 .z-calevent-header{
@@ -917,10 +922,6 @@
 	width:100%;
 	white-space:nowrap;
 	overflow:hidden
-}
-
-.z-calevent-daylong-month .z-calevent-text{
-	height:13px;
 }
 
 .z-calevent-left-arrow-icon,.z-calevent-right-arrow-icon{
@@ -1010,3 +1011,7 @@ a.refresh > span.z-toolbarbutton-content {
     padding: 5px;
 }
 
+/*notes: without this fix calendar increases repeatedly height when switching between home and window tab in dashboard row orientation*/
+.z-calendars-month-cnt {
+	height: 300px !important;
+}

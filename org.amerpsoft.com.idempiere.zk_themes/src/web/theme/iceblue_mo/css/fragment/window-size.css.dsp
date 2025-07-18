@@ -1,13 +1,13 @@
 .about-window {
-	width: 600px;
-	height: 450px;
+	width: 800px;
+	height: 600px;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 375px) {
 	.about-window {
 		width: 100%;
 	}
 }
-@media screen and (max-height: 450px) {
+@media screen and (max-height: 600px) {
 	.about-window {
 		height: 100%;
 	}
@@ -386,3 +386,17 @@
 	}
 }
 
+.chosenbox-assistant-dialog {
+	height: 600px;
+	width: 700px;
+}
+@media screen and (max-width: 500px) {
+	.chosenbox-assistant-dialog {
+		width: 100%;
+	}
+}
+@media screen and (max-height: 500px) {
+	.chosenbox-assistant-dialog {
+		height: 100%;
+	}
+}

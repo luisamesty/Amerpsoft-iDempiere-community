@@ -1,17 +1,40 @@
-.form-label 
+.form-label
 {
 	text-align: right;
 }
-
 .form-label-heading
 {
 	text-align: center;
+}
+td.form-label-above-input div.form-label {
+    text-align: left;
+}
+td.form-label-above-input div.form-label > span.z-label {
+    font-weight: 400;
+    font-size: smaller !important;
+}
+td.form-label-above-input.z-cell {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+td.form-label-above-input.login-label {
+    text-align: left;
+}
+td.form-label-above-input.login-label .z-label,
+.form-label-above-input .idempiere-label.z-label {
+    font-weight: 400;
+    font-size: smaller !important;
+}
+.form-label-above-input.z-window .login-box-body,
+.form-label-above-input.adwindow-form,
+.form-label-above-input.input-paramenter-layout {
+    padding-left: 1em !important;
+    padding-right: 1em !important;
 }
 
 .form-button {
 	width: 99%;
 }
-
 .form-button img {
 	width: 16px;
 	height: 16px;
@@ -27,6 +50,7 @@
 }
 .confirm-panel-right {
 	float: right;
+	padding: 1px;
 }
 .confirm-panel-left {
 	float: left;
@@ -64,8 +88,9 @@
 	height: 29px;
 }
 .status-db {
+	white-space: nowrap;
 	padding-top: 0;
-	pdding-bottom: 0;
+	padding-bottom: 0;
 	padding-left: 5px;
 	padding-right: 5px;
 	cursor: pointer;
@@ -73,6 +98,7 @@
 	height: 100%;
 	margin: 0;
 	border-left: solid 1px #9CBDFF;
+	display: inline-block;
 }
 .status-info {
 	padding-right: 10px;
@@ -92,4 +118,15 @@
 <%-- report wizard --%>
 .report-wizard-footer {
 	width: 100%;
+}
+
+<%-- workflow activity --%>
+.workflow-activity-form {
+}
+.workflow-panel-table {
+	border: 0px;
+}
+
+<%-- payment form --%>
+.payment-form-content {
 }
