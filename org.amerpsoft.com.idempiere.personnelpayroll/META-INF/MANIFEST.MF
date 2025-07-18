@@ -35,8 +35,8 @@ Service-Component: OSGI-INF/AMNCalloutFactory.xml,
  OSGI-INF/AMNModelFactory.xml,
  OSGI-INF/AMNProcessFactory.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: org.adempiere.base.event,
-Import-Package: net.sf.jasperreports.engine,
+Import-Package: org.osgi.service.event,
+ net.sf.jasperreports.engine,
  org.amerp.amndocument,
  org.compiere.model,
  org.mozilla.classfile;version="1.7.6",
