@@ -32,18 +32,18 @@
 }
 
 .progressmeter-setupwizard {
-	background: #FFFF00 repeat-x 0 0 ;
-	background-image: none;
-	border: 1px solid #CFCFCF;
-	text-align: left;
-	height: 20px;
-	overflow: hidden;
+background: #FFFF00 repeat-x 0 0 ;
+background-image: none;
+border: 1px solid #CFCFCF;
+text-align: left;
+height: 20px;
+overflow: hidden;
 }
 .progressmeter-setupwizard-image {
-	display: inline-block;
-	background: #90EE90;
-	background-image: none;
-	height: 20px;
-	line-height: 0;
-	font-size: 0;
+display: inline-block;
+background: #90EE90;
+background-image: none;
+height: 20px;
+line-height: 0;
+font-size: 0;
 }

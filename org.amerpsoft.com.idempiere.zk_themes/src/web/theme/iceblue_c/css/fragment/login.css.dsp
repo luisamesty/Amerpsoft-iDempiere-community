@@ -1,3 +1,5 @@
+<!-- login.css.dsp -->
+/* ✅ Estás usando login.css.dsp STANDARD */
 .login-window {
 	background-color: #c7e8ff;
 }

@@ -10,7 +10,6 @@
 	overflow: visible !important;
 }
 
-<%-- main vlayout of AD window --%>
 .adwindow-layout {
 	position:absolute; 
 	border: none;
@@ -22,7 +21,6 @@
 	border: none;
 }
 
-<%-- toolbar, breadcrumb and status bar --%>
 .adwindow-north {
 	min-height: 56px;
 	width: 100%;
@@ -31,14 +29,18 @@
 	border: none;
 }
 
-<%-- north status bar --%>
-.adwindow-status {
-	min-height: 22px;
-	padding-top: 3px;
-	background-color: #f6fafe;
+.adwindow-south {
+	height: 20px;
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+	border-top: 1px solid #C5C5C5 !important;
 }
 
-<%-- record info text, east of status bar --%>
+.adwindow-status {
+	min-height: 22px;
+}
+
 .adwindow-status-docinfo {
 	display: inline-block;
 	position: absolute;
@@ -50,7 +52,6 @@
 	color: red;
 }
 
-<%-- status text, west of status bar --%>
 .adwindow-status-docstatus {
 	display: inline-block;
 	float: left;
@@ -60,6 +61,9 @@
 .adwindow-toolbar.mobile {
 	position: relative;
 	overflow: hidden;
+}
+.adwindow-toolbar.z-toolbar .z-toolbarbutton {
+	display: inline-flex;
 }
 
 .adwindow-breadcrumb {
@@ -81,9 +85,6 @@
 	display: inline-block; 
 	text-align: right;
 }
-.adwindow-breadcrumb-toolbar .z-toolbarbutton {
-	margin-left: 2px;
-}
 .adwindow-breadcrumb-toolbar .z-toolbar {
 	background-image: none; 
 	background-color: transparent; 
@@ -95,29 +96,15 @@
 	line-height: inherit;
 }
 
-<%-- dropdown menu icon --%>
-.adwindow-breadcrumb-menu::after {
-	font-family: FontAwesome;
-	font-weight: 900;
-    font-style: normal;
-	font-size: 12px;
-    content: "\f0d7";
-    margin-left: 3px;
-}
-
-<%-- div container of detail tabbox --%>
 .adwindow-detailpane {
 	width: 100%; 
 	overflow-y: visible;
 }
 
-.adwindow-detailpane-tabbox {
-	width: 99%; 
-	margin: auto;
-}
 .adwindow-detailpane-tabbox .z-tab-selected span.z-tab-text {
 	cursor: pointer;
 }
+
 .adwindow-detailpane-tabbox .z-tab-selected span.z-tab-text:hover {
 	text-decoration: underline;
 }
@@ -126,44 +113,49 @@
 	background-color: #fff
 }
 
-<%-- toolbar of detail panel --%>
 .adwindow-detailpane-toolbar {
 	border: none;
 	height: 2em;
 	background: none;
 }
+
 .adwindow-detailpane-toolbar .z-toolbar-body {
 	width: 100%;
 }
+
 .adwindow-detailpane-toolbar .z-toolbarbutton {
-	display: inline-flex;
+	float: left;
+	display: inline-block;
 	padding: 0px;
+	padding-left: 1px;
 	width: 20px;
-	line-height: 14px;
 }
+
 .adwindow-detailpane-toolbar .z-toolbarbutton img {
 	width: 16px;
 	height: 16px;
 }
+
 .adwindow-detailpane-toolbar .z-toolbar-body .docstatus-normal,  
 .adwindow-detailpane-toolbar .z-toolbar-body .docstatus-error {
 	padding-left: 4px;
 	margin-top: 2px;
 }
+
 .adwindow-detailpane-toolbar .z-toolbar-body .docstatus-normal .z-label,
 .adwindow-detailpane-toolbar .z-toolbar-body .docstatus-error .z-label {
 	${fontSizeM};
-}
-.adwindow-detailpane-toolbar .z-toolbarbutton-content {
-	line-height: 14px;
-	height: 16px;
 }
 
 .adwindow-detailpane-message {
 	float: right;
 }
 
-<%-- south of grid view for record and paging navigation --%>
+.adwindow-detailpane-tabbox {
+	width: 99%; 
+	margin: auto;
+}
+
 .adwindow-detailpane-adtab-grid-south {
 	background-color: transparent; 
 	position: absolute; 
@@ -171,31 +163,35 @@
 	top: 0px; 
 	height: 24px;
 }
+
 .adwindow-detailpane-adtab-grid-south .z-paging {
 	padding: 0px !important;
 	height: 2em;
 	border: none;
-	background: #ffffff;
+	background: #f2f3f2;
 }
+
 .adwindow-detailpane-adtab-grid-south .z-paging .z-paging-inp {
 	height: 16px;
 	line-height: 16px;
 }
-.z-paging .z-paging-icon {
-    font-size: 12px;
-    font-weight: normal;
-}
 
-<%-- south region of AD tab for detail panel --%>
 .adwindow-gridview-detail {
 	min-height: 200px;
 	height: 35%;
 }
+
+.adwindow-gridview-detail + .z-south-splitter {
+}
+
 .adwindow-gridview-detail .z-south-body {
 	padding-top: 1px;
 }
 
-<%-- AD tab in detail panel with tab level greater than 0 --%>
+.adwindow-gridview-borderlayout {
+	position: absolute; height: 100%; width: 100%;
+}
+
 .adwindow-detailpane-sub-tab::before {
 	content: '';
 	position: absolute;
@@ -207,7 +203,6 @@
 	border-left: 5px dashed #696969;
 	border-right: 5px dashed transparent;
 	border-bottom: 5px solid transparent;
-	margin-top: 4px;
 }
 
 <%-- ad tab --%>
@@ -218,47 +213,42 @@
 	position: relative;
 }
 
-.adtab-grid {
-	margin-top: -1px;
-	border: none !important;
-}
-.adtab-grid-south {
-	border: none;
-	height: 30px;
-}
-.adtab-grid-south .z-paging {
-	border: none;
-	padding: 0;
-}
-.adtab-grid .z-checkbox > input[type="checkbox"] {
-	font-size: 14px;
-	height: 14px;
-	width: 14px;
-}
-.adtab-grid > .z-grid-header > table > tbody > tr.z-columns > th.z-column > .z-column-content {
-	text-overflow: ellipsis;	
-}
-
 .adtab-form {
 	border:none !important;
 	margin:0;
 	padding:0;
 }
-<%-- border layout for west tree, center header panel and south detail panel --%>
+
+.adtab-grid {
+	margin-top: -1px;
+	border: none !important;
+}
+
+.adtab-grid-south {
+	border: none;
+	height: 30px;
+}
+
+.adtab-grid-south .z-paging {
+	border: none;
+	padding: 0;
+}
+
+.adtab-grid .z-checkbox > input[type="checkbox"] {
+	font-size: 14px;
+	height: 14px;
+	width: 14px;
+}
+
 .adtab-form-borderlayout {
 	width: 100%; 
 	height: 100%; 
 	position: absolute;
 }
-.adtab-form-borderlayout .z-center-body {
-	background-color: #f6fafe;
+
+.adtab-form-borderlayout .z-center {
 }
 
-.adtab-form-borderlayout .z-grid-body {
-	background-color: #f6fafe;
- }
-
-<%-- title text for collapsed detail panel --%>
 .adtab-form-borderlayout .z-south-collapsed:before { 
 	content: '${u:cleanAmp(u:getMsg(u:getCtx(), "Detail"))}';
 	position: absolute; 
@@ -268,7 +258,6 @@
 	line-height: 12px;
 	left: 4px;
 	height: 12px;
-	top: 4px;
 }
 
 @media screen and (max-height: 767px) {
@@ -302,7 +291,6 @@
 	}
 }
 
-<%-- record info --%>
 .activity-card {
 	border: 1px solid #d0cdc8;
 	border-top-left-radius: 2px;
@@ -318,7 +306,6 @@
 }
 .activity-card .help-content {
 	font-size: 13px;
-	line-height: 1em;
 }
 .mobile .activity-card .help-content {
 	font-size: 16px;
@@ -336,6 +323,9 @@
 	.mobile .adtab-grid > .z-cell > .z-label {
 		white-space: pre-line;
 	}	
+}
+.adtab-grid > .z-grid-header > table > tbody > tr.z-columns > th.z-column > .z-column-content {
+	text-overflow: ellipsis;	
 }
 @media only screen 
   and (max-device-width: 700px) {

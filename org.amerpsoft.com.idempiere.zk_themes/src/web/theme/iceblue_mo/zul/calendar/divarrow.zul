@@ -14,7 +14,7 @@
 	<div class="bd">
 		<div class="cm cnt">
 			<div class="text"
-				style="position:relative;">
+				style="position:relative; width:15px; height:15px;">
 				<div sclass="${arg.type}" />
 			</div>
 		</div>

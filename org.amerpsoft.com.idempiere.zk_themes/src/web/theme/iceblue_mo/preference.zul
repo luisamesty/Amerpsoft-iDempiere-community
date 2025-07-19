@@ -18,9 +18,17 @@
 	/* Env.setContext(Env.getCtx(), "#ZK_BROWSER_TITLE", "iDempiere"); */
 	Env.setContext(Env.getCtx(), ITheme.USE_CSS_FOR_WINDOW_SIZE, "Y");
 	Env.setContext(Env.getCtx(), ITheme.USE_FONT_ICON_FOR_IMAGE, MSysConfig.getBooleanValue(MSysConfig.ZK_THEME_USE_FONT_ICON_FOR_IMAGE, false));
-	var setZkTheme = "iceblue_c";
+	/* Themes.setTheme(Executions.getCurrent(), "iceblue_c"); */
+	/* Leer el tema desde System Configurator */
+	String setZkTheme = MSysConfig.getValue("ZK_THEME", "iceblue_c");
+	/* Aplicar el tema */
 	Themes.setTheme(Executions.getCurrent(), setZkTheme);
-	Executions.getCurrent().setAttribute("Themes.setTheme",setZkTheme);
+	Executions.getCurrent().setAttribute("Themes.setTheme", setZkTheme);
+	/* System.out.println("🧩 ZK_THEME: " + setZkTheme); */
+	/* THEME Variant */ 
+	String themeVariant = MSysConfig.getValue("ZK_THEME_VARIANT", "default");
+	Executions.getCurrent().setAttribute("zkThemeVariant", themeVariant);
+	/* System.out.println("🧩 ZK_THEME_VARIANT: " + themeVariant); */
 ]]>
 </zscript>
 </zk>
