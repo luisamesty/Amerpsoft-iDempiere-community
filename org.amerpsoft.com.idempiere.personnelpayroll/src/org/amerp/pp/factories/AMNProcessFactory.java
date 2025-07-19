@@ -207,6 +207,11 @@ public class AMNProcessFactory implements IProcessFactory {
     		try {
 				process =   AMNPayrollRefreshHistoric.class.newInstance();
 			} catch (Exception e) {}
+        // SetClientAccountingMode
+        if (p_className.equals("org.amerp.process.SetClientAccountingMode"))
+    		try {
+				process =   SetClientAccountingMode.class.newInstance();
+			} catch (Exception e) {}
        	// **************************
         // Import Processes 
         // **************************
