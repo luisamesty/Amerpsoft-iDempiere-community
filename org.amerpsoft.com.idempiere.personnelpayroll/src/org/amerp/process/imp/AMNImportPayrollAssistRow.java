@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     List<PayrollAssistRowImport> payrollassistrowRejected = new ArrayList<>();
     int recMAMN_Payroll_Assist_Row_ID = 0;
     Map<String, Integer> pinToEmployeeMap = new HashMap<>();
+    private String paramMsg = "";
     
 	@Override
     protected void prepare() {
@@ -64,12 +66,26 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-		log.warning("Parámetros: AD_Client_ID=" + p_AD_Client_ID 
+		// Si RefDateIni es null → primer día del mes actual a las 00:00
+		if (p_RefDateIni == null) {
+			LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+			p_RefDateIni = Timestamp.valueOf(firstDayOfMonth.atStartOfDay());
+			paramMsg = ">>> RefDateIni no recibido. Se asigna primer día del mes actual: " + p_RefDateIni +"\r\n";
+		}
+
+		// Si RefDateEnd es null → hoy sin hora
+		if (p_RefDateEnd == null) {
+			LocalDate today = LocalDate.now();
+			p_RefDateEnd = Timestamp.valueOf(today.atStartOfDay());
+			paramMsg = paramMsg + ">>> RefDateEnd no recibido. Se asigna fecha actual sin hora: " + p_RefDateEnd +"\r\n";
+		}
+		// Parametros
+		paramMsg = paramMsg + "Parámetros enviados: AD_Client_ID=" + p_AD_Client_ID 
 				+ " | AD_Org_ID=" + p_AD_Org_ID 
 				+ " | DateIni=" + p_RefDateIni 
 				+ " | DateEnd=" + p_RefDateEnd
-				+ " | Schedule=" + p_IsScheduled);
-		
+				+ " | Schedule=" + p_IsScheduled+"\r\n";
+		log.warning(paramMsg);
     }
 
     @Override
@@ -273,7 +289,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     	// Final Message PINs Rejected
     	// HEADER
     	messagetoShow="";
-    	messagetoNotify = Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
+    	messagetoNotify = paramMsg + Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
     	addLogIFNotScheduled(messagetoNotify);
     	// rowsUpdated rowsUpdated
     	messagetoShow=Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Updated")+"(s) = "+
@@ -346,9 +362,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         	amnpayrollassist.setAMN_Payroll_Assist_Row_ID(row.getAMN_Payroll_Assist_Row_ID());
         	amn_assistrecord = MAMN_Payroll_Assist.getPayrollAssist_DayofWeek(row.getAMN_DateTime()) + "-"+
             		MAMN_Payroll_Assist.getPayrollAssist_DayofWeekName(row.getAMN_DateTime())+ "-"+
-            		row.getAMN_DateTime().toString();
-//			log.warning("AMN_Payroll_Assist_Row_ID:"+row.getAMN_Payroll_Assist_Row_ID()+
-//					"  amn_assistrecord:"+amn_assistrecord+"  description:"+description);	    
+            		row.getAMN_DateTime().toString();	    
 			amnpayrollassist.setDescription(description);
 			amnpayrollassist.setAMN_Employee_ID(amnemployee.getAMN_Employee_ID());
 			amnpayrollassist.setAMN_Shift_ID(amnemployee.getAMN_Shift_ID()); // ID del turno

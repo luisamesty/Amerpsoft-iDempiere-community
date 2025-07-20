@@ -1,6 +1,8 @@
+--DailyPersonnelPayrollAttendance.
 SELECT *
 FROM
-(  SELECT * FROM
+(
+    SELECT * FROM
 	(
 		-- REPORT HEADER
 		SELECT DISTINCT ON (cli.ad_client_id)
@@ -24,25 +26,23 @@ FROM
 		WHERE cli.ad_client_id = $P{AD_Client_ID} AND CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR org.ad_org_id = $P{AD_Org_ID} ) THEN 1 = 1 ELSE 1 = 0 END
 	) as header_info
 	FULL JOIN
-	(SELECT DISTINCT
+	(
+	  SELECT DISTINCT
 	  -- ORGANIZACIÓN
 	  pyr_asp.ad_client_id as client_id, pyr_asp.ad_org_id as org_id,
 	  -- LOCATION
 	  lct.amn_location_id, lct.value as loc_value, COALESCE(lct.name, lct.description) as localidad,
-	  CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1 ELSE 0 END AS imp_localidad,
 	  -- SHIFT
-	  shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
-	  CASE WHEN ( $P{AMN_Shift_ID} IS NULL OR shf.amn_shift_id= $P{AMN_Shift_ID} ) THEN 1 ELSE 0 END AS imp_shift, 
+	  shf.amn_shift_id, shf.value as codigo_shift, COALESCE(shf.name, shf.description) as nombre_shift,
 	  -- CONTRACT
-	  amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-	  CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1 ELSE 0 END AS imp_contrato, 
+	  amc.amn_contract_id, amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
 	  -- EMPLOYEE
-	  emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp,emp.biocode,
-	  CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1 ELSE 0 END AS imp_empleado,
+	  emp.amn_employee_id, emp.value as value_emp, emp.name as nombre_emp,emp.biocode, 
 	  -- BPARTNER
 	  cbp.taxid as nro_id,
 	  -- PAYROLL_ASSIST_PROC
-	  pyr_asp.event_date as fecha, pyr_asp.description as observaciones,
+	  pyr_asp.event_date as fecha_evento, 
+	  pyr_asp.description as observaciones,
 	  pyr_asp.shift_hed as hed, pyr_asp.shift_hen as hen, pyr_asp.shift_hnd as hnd, pyr_asp.shift_hnn as hnn,
 	  pyr_asp.shift_attendance as bono_asist, pyr_asp.shift_attendancebonus as bono_assistpuntual,
 	  CONCAT(
@@ -84,8 +84,8 @@ FROM
 	 LEFT JOIN adempiere.amn_location as lct ON (emp.amn_location_id= lct.amn_location_id)
 	 LEFT JOIN adempiere.amn_shift as shf ON (shf.amn_shift_id= pyr_asp.amn_shift_id)
 	) as asistencia ON (1= 0)
-    ) as asistencia_ant_sig
-    LEFT JOIN
+ ) as asistencia_ant_sig
+ LEFT JOIN
     (
         SELECT 
          pyr_asp.amn_employee_id as emp_id, 
@@ -120,9 +120,8 @@ FROM
 	 ) as dia_anterior
         FROM adempiere.amn_payroll_assist_proc as pyr_asp  
         WHERE pyr_asp.event_date = DATE( $P{DateEnd} ) - CAST('1 days' AS INTERVAL)
-    ) as fecha_anterior 
-    ON (fecha_anterior.emp_id = asistencia_ant_sig.amn_employee_id)
-    LEFT JOIN
+    ) as fecha_anterior ON (fecha_anterior.emp_id = asistencia_ant_sig.amn_employee_id)
+LEFT JOIN
     (
         SELECT 
         pyr_asp.amn_employee_id as emp_id2, 
@@ -159,8 +158,12 @@ FROM
 	WHERE pyr_asp.event_date = DATE( $P{DateEnd} ) + CAST('1 days' AS INTERVAL)
     ) as fecha_siguiente
     ON (fecha_siguiente.emp_id2 = asistencia_ant_sig.amn_employee_id)
-WHERE (imp_header= 1) 
-   OR (client_id= $P{AD_Client_ID} AND org_id= $P{AD_Org_ID}
-  AND fecha= DATE( $P{DateEnd} )
-  AND imp_localidad= 1 AND imp_shift= 1 AND imp_contrato= 1 AND imp_empleado= 1)
-ORDER BY loc_value, codigo_shift, value_emp, fecha
+WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID} 
+  AND CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END      
+  AND fecha_evento= DATE( $P{DateEnd} ) 
+  AND CASE WHEN ( $P{AMN_Location_ID} IS NULL OR asistencia_ant_sig.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END 
+  AND CASE WHEN ( $P{AMN_Contract_ID} IS NULL OR asistencia_ant_sig.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END 
+  AND CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR asistencia_ant_sig.amn_employee_id= $P{AMN_Employee_ID}  ) THEN 1=1 ELSE 1=0 END
+  AND CASE WHEN ( $P{AMN_Shift_ID} IS NULL OR asistencia_ant_sig.amn_shift_id= $P{AMN_Shift_ID} ) THEN 1=1 ELSE 1=0 END 
+  )
+ORDER BY loc_value, codigo_shift, value_emp, fecha_evento
