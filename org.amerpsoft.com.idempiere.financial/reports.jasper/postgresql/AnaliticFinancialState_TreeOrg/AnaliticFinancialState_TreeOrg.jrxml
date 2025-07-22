@@ -29,6 +29,9 @@
 	<parameter name="DateFrom" class="java.sql.Timestamp"/>
 	<parameter name="DateTo" class="java.sql.Timestamp"/>
 	<parameter name="ReportDate" class="java.sql.Timestamp"/>
+	<parameter name="isShowOrganization" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="isShowZERO" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
@@ -269,9 +272,7 @@ ORDER BY
 	balances.codigo0, balances.codigo1, balances.codigo2,
 	balances.codigo3, balances.codigo4, balances.codigo5,
 	balances.codigo6, balances.codigo7, balances.codigo8, balances.codigo9,
-	balances.codigo, balances.org_value, dateacct_order ASC
-
-]]>
+	balances.codigo, balances.org_value, dateacct_order ASC]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>

@@ -1,6 +1,18 @@
-
 -- Function amf_org_tree
 -- Devueve Las Organizaciones
+-- Caso 1: p_ad_orgparent_id NO es nulo ni cero
+-- 	Subcaso A: p_ad_org_id es nulo o 0
+-- 	→ Devuelve todas las organizaciones hijas recursivas de p_ad_orgparent_id.
+-- 	Subcaso B: p_ad_org_id es válida
+-- 	Si es descendiente de p_ad_orgparent_id
+-- 	→ Devuélvela sola.
+-- 	Si NO es hija
+-- 	→ Devuelve vacío.
+-- Caso 2: p_ad_orgparent_id es nulo o cero
+-- 	Subcaso A: p_ad_org_id es nulo o 0
+-- 	→ Devuelve todas las organizaciones del cliente.
+-- 	Subcaso B: p_ad_org_id es válida
+-- 	→ Devuélvela sola.
 
 DROP FUNCTION IF EXISTS amf_org_tree(NUMERIC, NUMERIC, NUMERIC);
 

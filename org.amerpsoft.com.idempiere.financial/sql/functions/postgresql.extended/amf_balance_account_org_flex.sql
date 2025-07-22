@@ -1,12 +1,10 @@
 -- Function amf_balance_account_org_flex
--- Devuelve el balance en un periodo o rango de fechas dado de una cuenta y una Organizacion
+-- Devuelve los balances de cuentas en un periodo o rango de fechas dado de una cuenta y una Organizacion
 -- Si no tiene movimiento devuelve un registro con cero
 
 DROP FUNCTION IF EXISTS amf_balance_account_org_flex(
     NUMERIC, NUMERIC, NUMERIC, NUMERIC, VARCHAR, NUMERIC, TIMESTAMP, TIMESTAMP
 );
-
-
 
 CREATE OR REPLACE FUNCTION adempiere.amf_balance_account_org_flex(
     p_ad_client_id numeric,
