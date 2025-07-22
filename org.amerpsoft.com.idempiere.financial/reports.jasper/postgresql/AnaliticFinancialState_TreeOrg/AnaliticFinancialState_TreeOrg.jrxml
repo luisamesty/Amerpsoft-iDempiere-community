@@ -42,29 +42,29 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- AnaliticFinacialState_TreeOrg V3
+		<![CDATA[-- AnaliticFinacialState_TreeOrg V4
 -- With Functions 
 -- One Account
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
 	SELECT DISTINCT ON (cli.ad_client_id)
-		cli.ad_client_id AS rep_client_id,
-		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END AS rep_org_id,
+		cli.ad_client_id AS "rep_client_id",
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END AS "rep_org_id",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
 			THEN concat(COALESCE(cli.name, cli.value), ' - Consolidado')
-			ELSE COALESCE(orgh.name, orgh.value, '') END AS rep_name,
+			ELSE COALESCE(orgh.name, orgh.value, '') END AS "rep_name",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
 			THEN concat(COALESCE(cli.description, cli.name), ' - Consolidado')
-			ELSE COALESCE(orgh.description, orgh.name, orgh.value, '') END AS rep_description,
+			ELSE COALESCE(orgh.description, orgh.name, orgh.value, '') END AS "rep_description",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
-			THEN '' ELSE COALESCE(orginfo.taxid, '') END AS rep_taxid,
+			THEN '' ELSE COALESCE(orginfo.taxid, '') END AS "rep_taxid",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
-			THEN img1.binarydata ELSE img2.binarydata END AS rep_logo,
-		CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as moneda,
-		posttype.value as postingtype_value,
-		posttype.name as postingtype_name,
-		1 AS imp_header
+			THEN img1.binarydata ELSE img2.binarydata END AS "rep_logo",
+		CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as "moneda",
+		posttype.value as "postingtype_value",
+		posttype.name as "postingtype_name",
+		1 AS "imp_header"
 	FROM adempiere.ad_client cli
 	INNER JOIN adempiere.ad_org orgh ON orgh.ad_client_id = cli.ad_client_id
 	INNER JOIN adempiere.ad_clientinfo cliinfo ON cli.ad_client_id = cliinfo.ad_client_id
@@ -100,25 +100,70 @@ FULL JOIN (
 		CASE WHEN $P{C_ElementValue1_ID} IS NULL AND $P{C_ElementValue2_ID} IS NULL THEN 'Y' ELSE 'N' END as shown_resumme,
         1 AS imp_balance
 	FROM (
-		SELECT eve1.*, org1.*, bal1.*,
+		SELECT DISTINCT ON (eve1.ad_client_id, eve1.c_elementvalue_id, org_ad_org_id)
+		-- eve1 (function:amf_element_value_tree_extended)
+	    eve1.c_elementvalue_id,
+	    eve1.ad_client_id,
+	    eve1.isactive,
+	    eve1.codigo,
+	    eve1.name,
+	    eve1.description,
+	    eve1.length,
+	    eve1.accounttype,
+	    eve1.accountsign,
+	    eve1.isdoccontrolled,
+	    eve1.issummary,
+	    eve1.acctparent,
+	    eve1.codigo0, eve1.name0, eve1.description0, eve1.issummary0,
+	    eve1.codigo1, eve1.name1, eve1.description1, eve1.issummary1,
+	    eve1.codigo2, eve1.name2, eve1.description2, eve1.issummary2,
+	    eve1.codigo3, eve1.name3, eve1.description3, eve1.issummary3,
+	    eve1.codigo4, eve1.name4, eve1.description4, eve1.issummary4,
+	    eve1.codigo5, eve1.name5, eve1.description5, eve1.issummary5,
+	    eve1.codigo6, eve1.name6, eve1.description6, eve1.issummary6,
+	    eve1.codigo7, eve1.name7, eve1.description7, eve1.issummary7,
+	    eve1.codigo8, eve1.name8, eve1.description8, eve1.issummary8,
+	    eve1.codigo9, eve1.name9, eve1.description9, eve1.issummary9,
+		-- org (function:amf_org_tree)
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE org1.org_ad_org_id END AS org_ad_org_id, 
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'ALL' ELSE org1.org_value END AS org_value,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'Todas las Organizaciones' ELSE org1.org_name END AS org_name, 
+		org1.all_orgs,
+		-- bal1 (function:amf_balance_account_org_flex)
+		bal1.bal_c_elementvalue_id,
+		bal1.dateini, bal1.dateend, 
+		bal1.openbalance, bal1.amtacctdr, bal1.amtacctcr, bal1.closebalance, bal1.amtacctsa,
+		-- 
 		CASE WHEN $P{C_ElementValue_ID} IS NOT NULL THEN eve1.codigo ELSE '' END AS valueacct,
 		ce1.valueacct1, ce2.valueacct2		
 		FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 		LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-		LEFT JOIN amf_balance_account_org_flex($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, $P{DateFrom}, $P{DateTo} )
+		LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, $P{DateFrom}, $P{DateTo} )
 		    AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
 		LEFT JOIN (
-			SELECT ad_client_id, value AS valueacct1 FROM C_ElementValue 
-			WHERE ad_client_id = $P{AD_Client_ID} AND issummary='N' AND ( $P{C_ElementValue1_ID} IS NULL OR C_ElementValue_ID = $P{C_ElementValue1_ID} )
-			ORDER BY value ASC 
-			FETCH FIRST 1 ROWS ONLY
-		) ce1 ON (eve1.ad_client_id = ce1.ad_client_id )
+		  SELECT *
+		  FROM (
+		    SELECT ev1.ad_client_id, ev1.value AS valueacct1,
+			   ROW_NUMBER() OVER (ORDER BY ev1.value ASC) AS rn
+		    FROM C_ElementValue ev1
+		    WHERE ev1.ad_client_id = $P{AD_Client_ID}
+		      AND ev1.issummary = 'N'
+		      AND ($P{C_ElementValue1_ID} IS NULL OR ev1.C_ElementValue_ID = $P{C_ElementValue1_ID})
+		  ) sub
+		  WHERE sub.rn = 1
+		) ce1 ON (eve1.ad_client_id = ce1.ad_client_id)
 		LEFT JOIN (
-			SELECT ad_client_id, value AS valueacct2 FROM C_ElementValue 
-			WHERE ad_client_id = $P{AD_Client_ID} AND issummary='N' AND ( $P{C_ElementValue2_ID} IS NULL OR C_ElementValue_ID = $P{C_ElementValue2_ID} )
-			ORDER BY value DESC 
-			FETCH FIRST 1 ROWS ONLY
-		) ce2 ON (eve1.ad_client_id = ce2.ad_client_id )
+		  SELECT *
+		  FROM (
+		    SELECT ev2.ad_client_id, ev2.value AS valueacct2,
+			   ROW_NUMBER() OVER (ORDER BY ev2.value DESC) AS rn
+		    FROM C_ElementValue ev2
+		    WHERE ev2.ad_client_id = $P{AD_Client_ID}
+		      AND ev2.issummary = 'N'
+		      AND ($P{C_ElementValue2_ID} IS NULL OR ev2.C_ElementValue_ID = $P{C_ElementValue2_ID})
+		  ) sub
+		  WHERE sub.rn = 1
+		) ce2 ON (eve1.ad_client_id = ce2.ad_client_id)
 		WHERE eve1.codigo >= ce1.valueacct1 AND eve1.codigo <= valueacct2 
 				AND eve1.issummary = 'N' AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' 
 				AND (	COALESCE(bal1.openbalance, 0) <> 0
@@ -129,14 +174,15 @@ FULL JOIN (
 	) AS bal
 	LEFT JOIN (
 		SELECT
-		fas2.Movements, fas2.ad_client_id, fas2.ad_org_id, fas2.c_period_id, fas2.c_acctschema_id, fas2.account_id, fas2.c_bpartner_id, fas2.m_product_id, 
+		fas2.ad_client_id, 
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE fas2.ad_org_id END AS ad_org_id, 
+		fas2.c_period_id, fas2.c_acctschema_id, fas2.account_id, fas2.c_bpartner_id, fas2.m_product_id, 
 		fas2.C_SalesRegion_ID, fas2.C_Campaign_ID,
 		fas2.documentno, fas2.c_doctype_id, fas2.docbasetype, fas2.printnamel, fas2.amtacctdr, fas2.amtacctcr,
 		fas2.dateacct_mov, fas2.description_mov, fas2.description_tbl,
 		fas2.bpartner_value, fas2.bpartner_name, fas2.prod_value, fas2.prod_name
 		FROM (
 			SELECT
-			'1' as Movements,  -- 0 Balance 1 Movements
 			fac.ad_client_id, 
 			fac.ad_org_id,
 			fac.c_period_id, 
@@ -272,7 +318,9 @@ ORDER BY
 	balances.codigo0, balances.codigo1, balances.codigo2,
 	balances.codigo3, balances.codigo4, balances.codigo5,
 	balances.codigo6, balances.codigo7, balances.codigo8, balances.codigo9,
-	balances.codigo, balances.org_value, dateacct_order ASC]]>
+	balances.codigo, balances.org_value, dateacct_order ASC
+
+]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -315,22 +363,6 @@ ORDER BY
 	<field name="imp_header" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
 		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
-	</field>
-	<field name="level" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="level"/>
-		<property name="com.jaspersoft.studio.field.label" value="level"/>
-	</field>
-	<field name="node_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="node_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="node_id"/>
-	</field>
-	<field name="parent_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="parent_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="parent_id"/>
-	</field>
-	<field name="c_element_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="c_element_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_element_id"/>
 	</field>
 	<field name="c_elementvalue_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
@@ -379,14 +411,6 @@ ORDER BY
 	<field name="acctparent" class="java.sql.Array">
 		<property name="com.jaspersoft.studio.field.name" value="acctparent"/>
 		<property name="com.jaspersoft.studio.field.label" value="acctparent"/>
-	</field>
-	<field name="pathel" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="pathel"/>
-		<property name="com.jaspersoft.studio.field.label" value="pathel"/>
-	</field>
-	<field name="ancestry" class="java.sql.Array">
-		<property name="com.jaspersoft.studio.field.name" value="ancestry"/>
-		<property name="com.jaspersoft.studio.field.label" value="ancestry"/>
 	</field>
 	<field name="codigo0" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo0"/>
@@ -548,29 +572,13 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.name" value="issummary9"/>
 		<property name="com.jaspersoft.studio.field.label" value="issummary9"/>
 	</field>
-	<field name="org_ad_client_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="org_ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_ad_client_id"/>
-	</field>
 	<field name="org_ad_org_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="org_ad_org_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="org_ad_org_id"/>
 	</field>
-	<field name="org_ad_orgparent_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="org_ad_orgparent_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_ad_orgparent_id"/>
-	</field>
-	<field name="COLUMN_72" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
-		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
-	</field>
 	<field name="org_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
 		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
-	</field>
-	<field name="org_description" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_description"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_description"/>
 	</field>
 	<field name="org_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
@@ -580,29 +588,9 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.name" value="all_orgs"/>
 		<property name="com.jaspersoft.studio.field.label" value="all_orgs"/>
 	</field>
-	<field name="org_taxid" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_taxid"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_taxid"/>
-	</field>
-	<field name="org_logo" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="org_logo"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_logo"/>
-	</field>
 	<field name="bal_c_elementvalue_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="bal_c_elementvalue_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="bal_c_elementvalue_id"/>
-	</field>
-	<field name="account_code" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="account_code"/>
-		<property name="com.jaspersoft.studio.field.label" value="account_code"/>
-	</field>
-	<field name="account_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="account_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="account_name"/>
-	</field>
-	<field name="ad_org_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
 	</field>
 	<field name="dateini" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="dateini"/>
@@ -2220,7 +2208,7 @@ ORDER BY
 					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="260" height="14" uuid="6e4981f3-f33a-4a23-b5e4-d1fb16f6ebb6">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" )==0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
@@ -2233,7 +2221,7 @@ ORDER BY
 					<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="100" height="14" uuid="816944ce-ef01-413b-9de9-568dfb68b147">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" )==0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
@@ -2254,6 +2242,19 @@ ORDER BY
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance_org}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Organizacion">
+					<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="360" height="14" uuid="0e7d646a-e6b6-4c19-b745-93042f38075c">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" )==0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -2372,17 +2373,17 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.from}+" "+$F{dateini}+"  "+$R{report.to}+" "+$F{dateend}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="100" y="16" width="360" height="16" uuid="37340fcd-61f8-4c51-a286-df21cba3be7a">
+			<textField>
+				<reportElement x="100" y="16" width="360" height="32" uuid="37340fcd-61f8-4c51-a286-df21cba3be7a">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{all_orgs} != null ?  $F{all_orgs} :$F{rep_taxid}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="460" y="0" width="540" height="16" uuid="787a7eaf-c673-43f6-87a8-3b6ae2ec55ab">
@@ -2396,7 +2397,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="100" height="32" uuid="638e5f9e-8e87-412a-adfb-c9aec689d026">
+				<reportElement key="" x="0" y="0" width="100" height="48" uuid="638e5f9e-8e87-412a-adfb-c9aec689d026">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2414,7 +2415,7 @@ ORDER BY
 				</box>
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
-			<textField>
+			<textField evaluationTime="Report">
 				<reportElement x="1000" y="16" width="340" height="16" uuid="37470bb9-214c-4aa1-bd25-5f32b222c8a1">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2426,26 +2427,15 @@ ORDER BY
 				<textFieldExpression><![CDATA[$R{report.currency}+": "+$F{moneda}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="0" y="32" width="460" height="16" uuid="8d01140b-7dbf-4854-9502-685bc833dcd4">
+				<reportElement x="460" y="31" width="540" height="16" uuid="8d01140b-7dbf-4854-9502-685bc833dcd4">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="12" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim()+"  -  "+( $P{SummaryType}.compareToIgnoreCase( "D" ) == 0 ? $R{report.summary_d} : ( $P{SummaryType}.compareToIgnoreCase( "N" ) == 0 ? $R{report.summary_n} :  ( $P{SummaryType}.compareToIgnoreCase( "T" ) == 0 ? $R{report.summary_t} :( $P{SummaryType}.compareToIgnoreCase( "X" ) == 0 ? $R{report.summary_x} :$R{report.summary_x}  ) ) ) )]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="460" y="32" width="540" height="16" uuid="06ced944-0941-43c7-9fe8-1eaf31daa4f7">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $P{C_ElementValue1_ID}.equals( null) && $P{C_ElementValue2_ID}.equals( null ) ? ( $P{C_ElementValue_ID}.equals(null) ? $R{report.allaccounts} : $R{report.account}+": "+$F{valueacct} ) : $R{report.from}+" "+$F{valueacct1}+"  "+$R{report.to}+" "+$F{valueacct2} )]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -2503,7 +2493,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$R{report.balanceinitial}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="639" y="0" width="180" height="16" uuid="cbbf08bc-9fa4-4443-b3b3-aebf416d796f">
+				<reportElement x="640" y="0" width="180" height="16" uuid="cbbf08bc-9fa4-4443-b3b3-aebf416d796f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>

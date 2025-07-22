@@ -1,26 +1,26 @@
--- AnaliticFinacialState_TreeOrg V3
+-- AnaliticFinacialState_TreeOrg V4
 -- With Functions 
 -- One Account
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
 	SELECT DISTINCT ON (cli.ad_client_id)
-		cli.ad_client_id AS rep_client_id,
-		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END AS rep_org_id,
+		cli.ad_client_id AS "rep_client_id",
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END AS "rep_org_id",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
 			THEN concat(COALESCE(cli.name, cli.value), ' - Consolidado')
-			ELSE COALESCE(orgh.name, orgh.value, '') END AS rep_name,
+			ELSE COALESCE(orgh.name, orgh.value, '') END AS "rep_name",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
 			THEN concat(COALESCE(cli.description, cli.name), ' - Consolidado')
-			ELSE COALESCE(orgh.description, orgh.name, orgh.value, '') END AS rep_description,
+			ELSE COALESCE(orgh.description, orgh.name, orgh.value, '') END AS "rep_description",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
-			THEN '' ELSE COALESCE(orginfo.taxid, '') END AS rep_taxid,
+			THEN '' ELSE COALESCE(orginfo.taxid, '') END AS "rep_taxid",
 		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
-			THEN img1.binarydata ELSE img2.binarydata END AS rep_logo,
-		CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as moneda,
-		posttype.value as postingtype_value,
-		posttype.name as postingtype_name,
-		1 AS imp_header
+			THEN img1.binarydata ELSE img2.binarydata END AS "rep_logo",
+		CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as "moneda",
+		posttype.value as "postingtype_value",
+		posttype.name as "postingtype_name",
+		1 AS "imp_header"
 	FROM adempiere.ad_client cli
 	INNER JOIN adempiere.ad_org orgh ON orgh.ad_client_id = cli.ad_client_id
 	INNER JOIN adempiere.ad_clientinfo cliinfo ON cli.ad_client_id = cliinfo.ad_client_id
@@ -56,25 +56,70 @@ FULL JOIN (
 		CASE WHEN $P{C_ElementValue1_ID} IS NULL AND $P{C_ElementValue2_ID} IS NULL THEN 'Y' ELSE 'N' END as shown_resumme,
         1 AS imp_balance
 	FROM (
-		SELECT eve1.*, org1.*, bal1.*,
+		SELECT DISTINCT ON (eve1.ad_client_id, eve1.c_elementvalue_id, org_ad_org_id)
+		-- eve1 (function:amf_element_value_tree_extended)
+	    eve1.c_elementvalue_id,
+	    eve1.ad_client_id,
+	    eve1.isactive,
+	    eve1.codigo,
+	    eve1.name,
+	    eve1.description,
+	    eve1.length,
+	    eve1.accounttype,
+	    eve1.accountsign,
+	    eve1.isdoccontrolled,
+	    eve1.issummary,
+	    eve1.acctparent,
+	    eve1.codigo0, eve1.name0, eve1.description0, eve1.issummary0,
+	    eve1.codigo1, eve1.name1, eve1.description1, eve1.issummary1,
+	    eve1.codigo2, eve1.name2, eve1.description2, eve1.issummary2,
+	    eve1.codigo3, eve1.name3, eve1.description3, eve1.issummary3,
+	    eve1.codigo4, eve1.name4, eve1.description4, eve1.issummary4,
+	    eve1.codigo5, eve1.name5, eve1.description5, eve1.issummary5,
+	    eve1.codigo6, eve1.name6, eve1.description6, eve1.issummary6,
+	    eve1.codigo7, eve1.name7, eve1.description7, eve1.issummary7,
+	    eve1.codigo8, eve1.name8, eve1.description8, eve1.issummary8,
+	    eve1.codigo9, eve1.name9, eve1.description9, eve1.issummary9,
+		-- org (function:amf_org_tree)
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE org1.org_ad_org_id END AS org_ad_org_id, 
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'ALL' ELSE org1.org_value END AS org_value,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'Todas las Organizaciones' ELSE org1.org_name END AS org_name, 
+		org1.all_orgs,
+		-- bal1 (function:amf_balance_account_org_flex)
+		bal1.bal_c_elementvalue_id,
+		bal1.dateini, bal1.dateend, 
+		bal1.openbalance, bal1.amtacctdr, bal1.amtacctcr, bal1.closebalance, bal1.amtacctsa,
+		-- 
 		CASE WHEN $P{C_ElementValue_ID} IS NOT NULL THEN eve1.codigo ELSE '' END AS valueacct,
 		ce1.valueacct1, ce2.valueacct2		
 		FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 		LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-		LEFT JOIN amf_balance_account_org_flex($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, $P{DateFrom}, $P{DateTo} )
+		LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, $P{DateFrom}, $P{DateTo} )
 		    AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
 		LEFT JOIN (
-			SELECT ad_client_id, value AS valueacct1 FROM C_ElementValue 
-			WHERE ad_client_id = $P{AD_Client_ID} AND issummary='N' AND ( $P{C_ElementValue1_ID} IS NULL OR C_ElementValue_ID = $P{C_ElementValue1_ID} )
-			ORDER BY value ASC 
-			FETCH FIRST 1 ROWS ONLY
-		) ce1 ON (eve1.ad_client_id = ce1.ad_client_id )
+		  SELECT *
+		  FROM (
+		    SELECT ev1.ad_client_id, ev1.value AS valueacct1,
+			   ROW_NUMBER() OVER (ORDER BY ev1.value ASC) AS rn
+		    FROM C_ElementValue ev1
+		    WHERE ev1.ad_client_id = $P{AD_Client_ID}
+		      AND ev1.issummary = 'N'
+		      AND ($P{C_ElementValue1_ID} IS NULL OR ev1.C_ElementValue_ID = $P{C_ElementValue1_ID})
+		  ) sub
+		  WHERE sub.rn = 1
+		) ce1 ON (eve1.ad_client_id = ce1.ad_client_id)
 		LEFT JOIN (
-			SELECT ad_client_id, value AS valueacct2 FROM C_ElementValue 
-			WHERE ad_client_id = $P{AD_Client_ID} AND issummary='N' AND ( $P{C_ElementValue2_ID} IS NULL OR C_ElementValue_ID = $P{C_ElementValue2_ID} )
-			ORDER BY value DESC 
-			FETCH FIRST 1 ROWS ONLY
-		) ce2 ON (eve1.ad_client_id = ce2.ad_client_id )
+		  SELECT *
+		  FROM (
+		    SELECT ev2.ad_client_id, ev2.value AS valueacct2,
+			   ROW_NUMBER() OVER (ORDER BY ev2.value DESC) AS rn
+		    FROM C_ElementValue ev2
+		    WHERE ev2.ad_client_id = $P{AD_Client_ID}
+		      AND ev2.issummary = 'N'
+		      AND ($P{C_ElementValue2_ID} IS NULL OR ev2.C_ElementValue_ID = $P{C_ElementValue2_ID})
+		  ) sub
+		  WHERE sub.rn = 1
+		) ce2 ON (eve1.ad_client_id = ce2.ad_client_id)
 		WHERE eve1.codigo >= ce1.valueacct1 AND eve1.codigo <= valueacct2 
 				AND eve1.issummary = 'N' AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' 
 				AND (	COALESCE(bal1.openbalance, 0) <> 0
@@ -85,14 +130,15 @@ FULL JOIN (
 	) AS bal
 	LEFT JOIN (
 		SELECT
-		fas2.Movements, fas2.ad_client_id, fas2.ad_org_id, fas2.c_period_id, fas2.c_acctschema_id, fas2.account_id, fas2.c_bpartner_id, fas2.m_product_id, 
+		fas2.ad_client_id, 
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE fas2.ad_org_id END AS ad_org_id, 
+		fas2.c_period_id, fas2.c_acctschema_id, fas2.account_id, fas2.c_bpartner_id, fas2.m_product_id, 
 		fas2.C_SalesRegion_ID, fas2.C_Campaign_ID,
 		fas2.documentno, fas2.c_doctype_id, fas2.docbasetype, fas2.printnamel, fas2.amtacctdr, fas2.amtacctcr,
 		fas2.dateacct_mov, fas2.description_mov, fas2.description_tbl,
 		fas2.bpartner_value, fas2.bpartner_name, fas2.prod_value, fas2.prod_name
 		FROM (
 			SELECT
-			'1' as Movements,  -- 0 Balance 1 Movements
 			fac.ad_client_id, 
 			fac.ad_org_id,
 			fac.c_period_id, 
