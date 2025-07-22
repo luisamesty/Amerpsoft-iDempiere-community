@@ -134,8 +134,6 @@ FROM (
             SELECT STRING_AGG(DISTINCT ORGX.value, '-' ORDER BY ORGX.value) 
             FROM OrgTree ORGX
             WHERE ORGX.ad_client_id = ORG12.ad_client_id
-              AND (ORGX.ad_org_id = p_ad_org_id OR p_ad_org_id = 0)
-              AND (ORGX.ad_orgparent_id = p_ad_orgparent_id OR p_ad_orgparent_id = 0)
         ) AS all_orgs
     FROM OrgTree AS ORG12
 ) AS ORG;
