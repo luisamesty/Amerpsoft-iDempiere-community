@@ -6,7 +6,7 @@
 ## <b>Description</b>
 
 AMERPSOFT ZK_Themes contains two basic themes.
-- iceblue_c
+- iceblue_mo
 - ksys
 
 Based on IDEMPIERE-4421, Some Theme Migration Notes:
@@ -29,6 +29,11 @@ is replace with:
 background-image: url(${c:encodeURL('~./theme/default/images/EditRecord16.png')}). 
 Note the added “~./” prefix.
 </pre>
+
+Additional folders containing images for customers
+
+- web.theme.iceblue_mo.images_mo
+- web.theme.iceblue_mo.images_mcc
 
 ## <b>Features</b>
 
@@ -57,7 +62,7 @@ See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
 
 ### <b>Install Jar Plugin </b>
     Available on p2 site target plugins
-    org.amerpsoft.com.idempiere.zk_themes_11.0.0.XXXXXXXXXXXXXX.jar
+    org.amerpsoft.com.idempiere.zk_themes_12.0.0.XXXXXXXXXXXXXX.jar
 
 ### <b>Pack in AMERPSOFT ZK_Themes.zip</b>
 

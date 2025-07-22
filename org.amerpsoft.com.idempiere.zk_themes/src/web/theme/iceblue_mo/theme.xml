@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<themes>
+    <theme id="iceblue_mo" extends="iceblue_c">
+        <label>MO Iceblue Theme</label>
+        <description>Customized MO Iceblue theme for Customers.</description>
+        <version>1.0.0</version>
+        <author>Amerpsoft</author>
+        <files>
+            <file>css/mo_custom_styles.css</file>
+            <file>css/mo_override_zkex.css</file>
+            </files>
+    </theme>
+</themes>
