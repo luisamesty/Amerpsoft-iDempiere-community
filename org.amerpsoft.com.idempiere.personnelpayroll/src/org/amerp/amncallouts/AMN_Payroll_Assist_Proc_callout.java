@@ -131,11 +131,9 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
 	    		&& Event_Date != null && attAMN_Shift_ID>0 
 	    		&& AMN_Payroll_Assist_Proc_ID >0 )	{
 				atthours= AMNPayrollProcessPayrollAssistProc.calcAttendanceValuesofPayrollVars(
-						C_Country_ID, Event_Date, attAMN_Shift_ID, 
+						Env.getCtx(), amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID(), C_Country_ID, Event_Date, attAMN_Shift_ID, 
 						Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
 	    		updateTabs = true;
-
-				
 	    	}		
     	}
     	// // Update Tabs
@@ -170,7 +168,6 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
 			p_mTab.setValue("Shift_EDE", atthours.getShift_EDE());     // Early Departure (Shift_EDE)
 			p_mTab.setValue("Shift_HER", atthours.getShift_HER());     // Extra Clock Hours (Shift_HER)
 			p_mTab.setValue("Shift_HEF", atthours.getShift_HEF());     // Extra Holiday Hours (Shift_HEF)
-
     	}
     	return null;
 	}

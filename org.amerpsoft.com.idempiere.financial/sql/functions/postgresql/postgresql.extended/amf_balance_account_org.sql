@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION amf_balance_account_org(
     p_c_elementvalue_id NUMERIC
 )
 RETURNS TABLE (
-    c_elementvalue_id NUMERIC,
+    bal_c_elementvalue_id NUMERIC,
     account_code VARCHAR,
     account_name VARCHAR,
     ad_org_id NUMERIC,
