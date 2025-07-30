@@ -364,6 +364,26 @@ Database Password: fill here with the password usually adempiere
 Mail: Can be configured later
 ```
 
+Update the 
+
+In order to keep the database synchronized with the code it is required to run the following script:
+
+```bash
+su - idempiere  # not necessary if you're already as user idempiere
+cd /opt/idempiere-server/utils
+sh RUN_SyncDB.sh
+```
+
+Register version code in database
+In order to sign the database with the version code running on the server it is advised (or required depending on configuration) to run the following script:
+
+```bash
+su - idempiere  # not necessary if you're already as user idempiere
+cd /opt/idempiere-server
+sh sign-database-build-alt.sh
+```
+
+
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 ### <a name="step6"></a>6-⭐️Running idempiere11
