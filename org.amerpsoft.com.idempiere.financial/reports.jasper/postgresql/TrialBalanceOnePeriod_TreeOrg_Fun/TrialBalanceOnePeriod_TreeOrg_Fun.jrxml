@@ -36,11 +36,15 @@
 	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
+	<parameter name="isShowOrganization" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- TrialBalance_Tree V9 usando Funciones
+		<![CDATA[-- TrialBalance_Tree V10 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- Matriz de Cuentas y Organizaciones en Arbol con el Saldo
 -- Balance
+-- isShowOrganization
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
@@ -82,14 +86,48 @@ FROM (
 FULL JOIN (
 	-- Balance extendido
 	SELECT 
-	*,
+	--*,
+	-- eve1 (function:amf_element_value_tree_extended)
+    c_elementvalue_id,
+    ad_client_id,
+    isactive,
+    codigo,
+    name,
+    description,
+    length,
+    accounttype,
+    accountsign,
+    isdoccontrolled,
+--    issummary,
+    acctparent,
+    codigo0, name0, description0, issummary0,
+    codigo1, name1, description1, issummary1,
+    codigo2, name2, description2, issummary2,
+    codigo3, name3, description3, issummary3,
+    codigo4, name4, description4, issummary4,
+    codigo5, name5, description5, issummary5,
+    codigo6, name6, description6, issummary6,
+    codigo7, name7, description7, issummary7,
+    codigo8, name8, description8, issummary8,
+    codigo9, name9, description9, issummary9,
+	-- org (function:amf_org_tree) org_id
+    CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE ad_org_id END AS ad_org_id, 
+    -- org (function:amf_org_tree)
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE org_ad_org_id END AS org_ad_org_id, 
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'ALL' ELSE org_value END AS org_value,
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'Todas las Organizaciones' ELSE org_name END AS org_name, 
+	all_orgs,
+	-- bal1 (function:amf_balance_account_org_flex)
+	bal_c_elementvalue_id,
+	dateini, dateend, 
+	openbalance, amtacctdr, amtacctcr, closebalance, amtacctsa,
 	1 AS imp_balance
 	FROM (
 		SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-			LEFT JOIN amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL)
-				AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
+			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
+		    	AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
 			WHERE eve1.issummary = 'N' AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' AND (
 							COALESCE(bal1.openbalance, 0) <> 0
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
@@ -99,8 +137,8 @@ FULL JOIN (
 			SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
-			LEFT JOIN amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, $P{C_ElementValue_ID})
-				AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id
+			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
+		    	AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id						
 			WHERE 
 			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
 			AND eve2.issummary = 'N' 
@@ -108,7 +146,7 @@ FULL JOIN (
 ) AS balances ON 1=0
 WHERE header_info.imp_header = 1 OR 
 	(ad_client_id= $P{AD_Client_ID} 
-	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
+	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR balances.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
 ORDER BY 
 	balances.codigo0, balances.codigo1, balances.codigo2,
 	balances.codigo3, balances.codigo4, balances.codigo5,
@@ -157,22 +195,6 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
 		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
 	</field>
-	<field name="level" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="level"/>
-		<property name="com.jaspersoft.studio.field.label" value="level"/>
-	</field>
-	<field name="node_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="node_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="node_id"/>
-	</field>
-	<field name="parent_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="parent_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="parent_id"/>
-	</field>
-	<field name="c_element_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="c_element_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_element_id"/>
-	</field>
 	<field name="c_elementvalue_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="c_elementvalue_id"/>
@@ -213,21 +235,9 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.name" value="isdoccontrolled"/>
 		<property name="com.jaspersoft.studio.field.label" value="isdoccontrolled"/>
 	</field>
-	<field name="issummary" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
-		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
-	</field>
 	<field name="acctparent" class="java.sql.Array">
 		<property name="com.jaspersoft.studio.field.name" value="acctparent"/>
 		<property name="com.jaspersoft.studio.field.label" value="acctparent"/>
-	</field>
-	<field name="pathel" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="pathel"/>
-		<property name="com.jaspersoft.studio.field.label" value="pathel"/>
-	</field>
-	<field name="ancestry" class="java.sql.Array">
-		<property name="com.jaspersoft.studio.field.name" value="ancestry"/>
-		<property name="com.jaspersoft.studio.field.label" value="ancestry"/>
 	</field>
 	<field name="codigo0" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo0"/>
@@ -417,9 +427,9 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.label" value="issummary9"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
 	</field>
-	<field name="org_ad_client_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="org_ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_ad_client_id"/>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
 	</field>
 	<field name="org_ad_org_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="org_ad_org_id"/>
@@ -429,10 +439,6 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
 		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
 	</field>
-	<field name="org_description" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_description"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_description"/>
-	</field>
 	<field name="org_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
@@ -441,29 +447,9 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.name" value="all_orgs"/>
 		<property name="com.jaspersoft.studio.field.label" value="all_orgs"/>
 	</field>
-	<field name="org_taxid" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_taxid"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_taxid"/>
-	</field>
-	<field name="org_logo" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="org_logo"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_logo"/>
-	</field>
 	<field name="bal_c_elementvalue_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="bal_c_elementvalue_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="bal_c_elementvalue_id"/>
-	</field>
-	<field name="account_code" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="account_code"/>
-		<property name="com.jaspersoft.studio.field.label" value="account_code"/>
-	</field>
-	<field name="account_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="account_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="account_name"/>
-	</field>
-	<field name="ad_org_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
 	</field>
 	<field name="dateini" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="dateini"/>
@@ -628,6 +614,25 @@ ORDER BY
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="closebalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev6" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="openbalanceOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdrOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcrOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsaOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalanceOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
 	</variable>
 	<variable name="openbalance7" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev7" calculation="Sum">
@@ -2028,7 +2033,7 @@ ORDER BY
 					<textFieldExpression><![CDATA[( $V{amtacctdr7} == 0.00  ? "-"  : $V{amtacctdr7} )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="800" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="415055a0-c124-4f46-8ed5-304dce6d7db4">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2040,7 +2045,7 @@ ORDER BY
 					<textFieldExpression><![CDATA[( $V{amtacctcr7}== 0.00  ? "-"  : $V{amtacctcr7} )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="980" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="dc3721ef-2507-4e30-abe7-b18fec0d0d27">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -2051,7 +2056,7 @@ ORDER BY
 					<textFieldExpression><![CDATA[( ($V{amtacctdr7} -$V{amtacctcr7}) == 0.00  ? 0.00  : ($V{amtacctdr7} -$V{amtacctcr7}) )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1160" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="ba50584a-ebca-4cc3-93dc-83ffd8cc4d14">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -2101,7 +2106,7 @@ ORDER BY
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="760" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="e329d880-f742-4fe8-9cdc-ee023c1a90ba">
+					<reportElement x="800" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="e329d880-f742-4fe8-9cdc-ee023c1a90ba">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -2312,6 +2317,118 @@ ORDER BY
 				</line>
 			</band>
 		</groupFooter>
+	</group>
+	<group name="Group_Org">
+		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="5925365a-060f-412a-a005-53d8fa97d736">
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineColor="#E0E0E0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="dcb9d907-37cf-440e-8ef5-ea311d49b308">
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<printWhenExpression><![CDATA[($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineColor="#F4F4F4"/>
+					</graphicElement>
+				</rectangle>
+				<textField evaluationTime="Group" evaluationGroup="Group_Org">
+					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="100" height="14" uuid="78aa1fbe-47a6-4cb1-9ba4-c4b0e2582975">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)">
+					<reportElement isPrintRepeatedValues="false" x="440" y="0" width="180" height="14" uuid="d98f2cc2-1ee3-4b6f-8643-9b095f0efcb9">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{openbalanceOrg}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement isPrintRepeatedValues="false" x="620" y="0" width="180" height="14" uuid="bfc3fb22-3be3-4e20-a576-7cdd1e51411f">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{amtacctdrOrg}== 0.00  ? "-"  : $V{amtacctdrOrg} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement isPrintRepeatedValues="false" x="800" y="0" width="180" height="14" uuid="460299a3-e7b2-48b7-a70c-8ef29dff09e1">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{amtacctcrOrg}== 0.00  ? "-"  : $V{amtacctcrOrg} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement isPrintRepeatedValues="false" x="980" y="0" width="180" height="14" uuid="9284ecf2-503f-48a0-85d5-935aa25917cc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( ($V{amtacctdrOrg}-$V{amtacctcrOrg}) == 0.00  ? 0.00  : ($V{amtacctdrOrg} -$V{amtacctcrOrg}) )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement isPrintRepeatedValues="false" x="1160" y="0" width="180" height="14" uuid="29165a26-af12-4fb3-8da7-16c398b34b95">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{closebalanceOrg}== 0.00  ? 0.00  : $V{closebalanceOrg} )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Org">
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="100" y="0" width="340" height="14" uuid="c53fac05-b83c-48d3-b2c0-821f67d3e95a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}.trim()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
@@ -2548,23 +2665,26 @@ ORDER BY
 	<detail>
 		<band height="14">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1300" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
+				<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
 					<pen lineColor="#E0E0E0"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1300" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="b70a8487-a3b0-412a-8c22-dc243966582b">
+				<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="b70a8487-a3b0-412a-8c22-dc243966582b">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
 					<pen lineColor="#F4F4F4"/>
@@ -2575,7 +2695,7 @@ ORDER BY
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -2589,7 +2709,7 @@ ORDER BY
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -2601,7 +2721,7 @@ ORDER BY
 			<textField pattern="#,##0.00;(-#,##0.00)">
 				<reportElement x="440" y="0" width="180" height="14" uuid="0dc04485-7859-481a-ae6f-836b5305994e">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
@@ -2613,7 +2733,7 @@ ORDER BY
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="620" y="0" width="180" height="14" uuid="c40f7c5e-67ba-4a18-baa5-84ff69c76422">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
@@ -2625,7 +2745,7 @@ ORDER BY
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="800" y="0" width="180" height="14" uuid="e4a327e5-2150-4639-bf99-17e3d613f88f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
@@ -2637,7 +2757,7 @@ ORDER BY
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="980" y="0" width="180" height="14" uuid="e0bc75ef-5c4f-4e63-8f1f-d65c7d43f8f2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
@@ -2649,7 +2769,7 @@ ORDER BY
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="1160" y="0" width="180" height="14" uuid="e0fc8ff2-2812-465b-845f-765fe860a2ca">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
@@ -2662,7 +2782,6 @@ ORDER BY
 				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="240" height="14" uuid="f1b5e254-2572-473b-9b58-f16222ff88d3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">

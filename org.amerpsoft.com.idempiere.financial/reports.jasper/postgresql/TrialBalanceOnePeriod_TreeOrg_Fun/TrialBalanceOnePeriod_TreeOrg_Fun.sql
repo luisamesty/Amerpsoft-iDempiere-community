@@ -1,7 +1,8 @@
--- TrialBalance_Tree V9 usando Funciones
+-- TrialBalance_Tree V10 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- Matriz de Cuentas y Organizaciones en Arbol con el Saldo
 -- Balance
+-- isShowOrganization
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
@@ -43,14 +44,48 @@ FROM (
 FULL JOIN (
 	-- Balance extendido
 	SELECT 
-	*,
+	--*,
+	-- eve1 (function:amf_element_value_tree_extended)
+    c_elementvalue_id,
+    ad_client_id,
+    isactive,
+    codigo,
+    name,
+    description,
+    length,
+    accounttype,
+    accountsign,
+    isdoccontrolled,
+--    issummary,
+    acctparent,
+    codigo0, name0, description0, issummary0,
+    codigo1, name1, description1, issummary1,
+    codigo2, name2, description2, issummary2,
+    codigo3, name3, description3, issummary3,
+    codigo4, name4, description4, issummary4,
+    codigo5, name5, description5, issummary5,
+    codigo6, name6, description6, issummary6,
+    codigo7, name7, description7, issummary7,
+    codigo8, name8, description8, issummary8,
+    codigo9, name9, description9, issummary9,
+	-- org (function:amf_org_tree) org_id
+    CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE ad_org_id END AS ad_org_id, 
+    -- org (function:amf_org_tree)
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE org_ad_org_id END AS org_ad_org_id, 
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'ALL' ELSE org_value END AS org_value,
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'Todas las Organizaciones' ELSE org_name END AS org_name, 
+	all_orgs,
+	-- bal1 (function:amf_balance_account_org_flex)
+	bal_c_elementvalue_id,
+	dateini, dateend, 
+	openbalance, amtacctdr, amtacctcr, closebalance, amtacctsa,
 	1 AS imp_balance
 	FROM (
 		SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-			LEFT JOIN amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL)
-				AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
+			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
+		    	AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
 			WHERE eve1.issummary = 'N' AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' AND (
 							COALESCE(bal1.openbalance, 0) <> 0
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
@@ -60,8 +95,8 @@ FULL JOIN (
 			SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
-			LEFT JOIN amf_balance_account_org($P{AD_Client_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, $P{C_ElementValue_ID})
-				AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id
+			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
+		    	AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id						
 			WHERE 
 			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
 			AND eve2.issummary = 'N' 
@@ -69,7 +104,7 @@ FULL JOIN (
 ) AS balances ON 1=0
 WHERE header_info.imp_header = 1 OR 
 	(ad_client_id= $P{AD_Client_ID} 
-	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
+	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR balances.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
 ORDER BY 
 	balances.codigo0, balances.codigo1, balances.codigo2,
 	balances.codigo3, balances.codigo4, balances.codigo5,
