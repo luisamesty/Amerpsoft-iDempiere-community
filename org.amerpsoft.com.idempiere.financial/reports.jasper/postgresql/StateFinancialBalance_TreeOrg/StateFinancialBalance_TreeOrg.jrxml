@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg" language="groovy" pageWidth="710" pageHeight="790" columnWidth="650" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -1759,7 +1759,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name7}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="GroupLev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="490" y="0" width="170" height="14" uuid="b724b8f8-8144-413e-93d6-4313d7a5082e">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1861,7 +1861,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name8}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="GroupLev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="490" y="0" width="170" height="14" uuid="ea79d399-2a05-401d-af89-6bedd54cecae">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
