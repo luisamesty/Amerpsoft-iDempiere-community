@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg" language="groovy" pageWidth="710" pageHeight="790" columnWidth="650" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg_Fun" language="groovy" pageWidth="710" pageHeight="790" columnWidth="650" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -8,6 +8,7 @@
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="316"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="678"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -18,6 +19,12 @@
 	</parameter>
 	<parameter name="PostingType" class="java.lang.String">
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AccountTreeLevel" class="java.lang.String">
+		<defaultValueExpression><![CDATA["9"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowOrganization" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="PositiveBalance" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
@@ -34,468 +41,198 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- StateFInancialBalance_TreeOrg V1
+		<![CDATA[-- StateFInancialBalance_TreeOrg V2 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
 -- Removed Activity AND others
 -- Parámetro PositiveBalance
-WITH OrgTree AS (
-    WITH RECURSIVE OrgTreeBase AS (
-        -- Nodo raíz (organizaciones sin padre)
-        SELECT 
-            org.ad_client_id,
-            org.ad_org_id,
-            org.issummary,
-            org.name,
-            org.value, 
-            COALESCE(org.description, org.name, '') AS description,
-            COALESCE(info.taxid, '?') AS taxid,
-            img.binarydata AS binarydata,
-            tree.ad_tree_id,
-            node.node_id,
-            0 AS level,
-            node.parent_id,
-            ARRAY [node.node_id::text] AS ancestry
-        FROM ad_treenode node
-        JOIN ad_tree tree ON node.ad_tree_id = tree.ad_tree_id
-        JOIN ad_org org ON node.node_id = org.ad_org_id
-        LEFT JOIN ad_orginfo info ON org.ad_org_id = info.ad_org_id
-        LEFT JOIN ad_image img ON info.logo_id = img.ad_image_id
-        WHERE tree.treetype = 'OO' 
-        AND node.parent_id = 0
-        AND org.ad_client_id = $P{AD_Client_ID}
-        UNION ALL
-        -- Nodos hijos
-        SELECT 
-            org.ad_client_id,
-            org.ad_org_id,
-            org.issummary,
-            org.name,
-            org.value, 
-            COALESCE(org.description, org.name, '') AS description,
-            COALESCE(info.taxid, '?') AS taxid,
-            img.binarydata AS binarydata,
-            parent.ad_tree_id,
-            node.node_id,
-            parent.level + 1 AS level,
-            node.parent_id,
-            parent.ancestry || ARRAY [node.node_id::text] AS ancestry
-        FROM ad_treenode node
-        JOIN OrgTreeBase parent ON node.parent_id = parent.node_id
-        JOIN ad_org org ON node.node_id = org.ad_org_id
-        LEFT JOIN ad_orginfo info ON org.ad_org_id = info.ad_org_id
-        LEFT JOIN ad_image img ON info.logo_id = img.ad_image_id
-        WHERE node.ad_tree_id = parent.ad_tree_id
-        AND org.ad_client_id = $P{AD_Client_ID}
-    )
-    -- Selección final con los datos completos del árbol
-    SELECT DISTINCT ON (ad_client_id, value)
-        ad_client_id, 
-        ad_org_id,
-        parent_id AS ad_orgparent_id,
-        issummary,
-        value,
-        name,
-        description, 
-        taxid, 
-        binarydata,
-        (SELECT STRING_AGG(DISTINCT ORGX.value, ' - ' ORDER BY ORGX.value) 
-         FROM OrgTreeBase ORGX
-         WHERE ORGX.issummary = 'N') AS all_orgs
-    FROM OrgTreeBase AS orgtb
-    WHERE orgtb.ad_client_id = $P{AD_Client_ID}
-    AND orgtb.issummary = 'N'
-    AND ($P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL OR orgtb.ad_org_id = $P{AD_Org_ID})
-    AND ($P{AD_OrgParent_ID} = 0 OR $P{AD_OrgParent_ID} IS NULL OR orgtb.parent_id = $P{AD_OrgParent_ID})
-    ORDER BY ad_client_id, value
-), ElementValueTree AS (
-    -- Lógica para la jerarquía de cuentas contables
-    WITH RECURSIVE AccountTreeBase AS (
-    -- Nodos raíz (con conversión explícita de tipos)
-    SELECT 
-    	ev.isactive,
-    	ev.ad_client_id,
-		ev.accountsign,
-		ev.isdoccontrolled,
-        tn.AD_Tree_ID,
-        tn.Node_ID,
-        tn.Parent_ID,
-        tn.SeqNo,
-        0 AS level,
-        ev.Value::VARCHAR(2000) AS path,  -- Conversión explícita con longitud suficiente
-        ev.Value::VARCHAR(40) AS AccountValue,
-        ev.Name::VARCHAR(60) AS AccountName,
-        ev.AccountType::VARCHAR(40) AS AccountType,
-        ev.IsSummary,
-        t.Name::VARCHAR(60) AS TreeName,
-        ARRAY [tn.Node_ID::text] AS ancestry,
-        ARRAY [ev.value::text] AS acctparent
-    FROM AD_TreeNode tn
-    JOIN C_ElementValue ev ON tn.Node_ID = ev.C_ElementValue_ID
-    JOIN AD_Tree t ON tn.AD_Tree_ID = t.AD_Tree_ID
-    WHERE (tn.Parent_ID IS NULL OR tn.Parent_ID = 0)
-        AND tn.AD_Client_ID = $P{AD_Client_ID}
-        AND tn.IsActive = 'Y'
-        AND ev.IsActive = 'Y'
-        AND tn.AD_tree_ID = (
-            SELECT tree.AD_Tree_ID
-            FROM AD_Client adcli
-            LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
-            LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
-            LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
-            LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID = accel.AD_Tree_ID
-            WHERE accee.ElementType = 'AC' 
-            AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID} 
-            AND adcli.AD_client_ID = $P{AD_Client_ID}
-        )
-    UNION ALL
-    -- Nodos hijos (manteniendo los mismos tipos)
-    SELECT 
-    	child_ev.isactive,
-    	child_ev.ad_client_id,
-		child_ev.accountsign,
-		child_ev.isdoccontrolled,
-        child.AD_Tree_ID,
-        child.Node_ID,
-        child.Parent_ID,
-        child.SeqNo,
-        parent.level + 1,
-        (parent.path || '->' || child_ev.Value)::VARCHAR(2000) AS path,
-        child_ev.Value::VARCHAR(40) AS AccountValue,
-        child_ev.Name::VARCHAR(60) AS AccountName,
-        child_ev.AccountType::VARCHAR(40) AS AccountType,
-        child_ev.IsSummary,
-        parent.TreeName,
-        parent.ancestry || ARRAY[child.Node_ID::text] AS ancestry,
-        parent.acctparent || ARRAY[child_ev.value::text] AS acctparent
-    FROM AD_TreeNode child
-    JOIN C_ElementValue child_ev ON child.Node_ID = child_ev.C_ElementValue_ID
-    JOIN AD_Tree t2 ON child.AD_Tree_ID = t2.AD_Tree_ID
-    JOIN AccountTreeBase parent ON child.Parent_ID = parent.Node_ID
-    WHERE child.IsActive = 'Y'
-        AND child_ev.IsActive = 'Y'
-        AND t2.AD_tree_ID = (
-            SELECT tree.AD_Tree_ID
-            FROM AD_Client adcli
-            LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
-            LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
-            LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
-            LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID = accel.AD_Tree_ID
-            WHERE accee.ElementType = 'AC' 
-            AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID} 
-            AND adcli.AD_client_ID = $P{AD_Client_ID}
-        )
-	)
-	SELECT * FROM AccountTreeBase
-)
--- MAIN QUERY
--- ORG - PAR - ELVN1-7
-SELECT
-	-- ORG
-	ORG.binarydata as cli_logo,
-	ORG.value AS org_value,
-	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN 'Consolidado' ELSE ORG.name END as orgname,
-	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN 'Consolidado' ELSE COALESCE(ORG.description,ORG.name) END as orgdescription,
-	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN ORG.binarydata ELSE ORG.binarydata END as org_logo,
-	CASE WHEN $P{AD_Org_ID}=0 OR $P{AD_Org_ID} IS NULL THEN 'Consolidado' ELSE ORG.taxid END as orgtaxid,
-	ORG.all_orgs,
-	CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as moneda,
-	-- PAR
-	PAR.AccountValue AS codigo,
-	COALESCE(PAR.AccountName,'') as name,
-	LPAD('', char_length(PAR.AccountValue),' ') || COALESCE(PAR.AccountName,'') as description,
-	-- Balances
-	to_char(perba.startdate,'DD-MM-YYYY') AS dateini,
-	to_char(perba.enddate,'DD-MM-YYYY') AS dateend,
-	COALESCE(openbalance,0) as openbalance,
-	COALESCE(amtacctdr,0) as amtacctdr,
-	COALESCE(amtacctcr,0) as amtacctcr,
-	COALESCE(amtacctdr - amtacctcr,0) as amtacctsa,
-	COALESCE(closebalance,0) as closebalance,
-	-- ELVN(0-8)
-	COALESCE(ELVN0.value,'Z') as codigo0,
-	COALESCE(ELVN0.name,CONCAT('Tree error value=',PAR.AccountValue)) as name0,
-	ELVN0.description as description0,
-	ELVN0.issummary as issummary0,
-	COALESCE(ELVN1.value,'Z') as codigo1,
-	COALESCE(ELVN1.name,CONCAT('Tree error value=',PAR.AccountValue)) as name1,
-	ELVN1.description as description1,
-	ELVN1.issummary as issummary1,
-	CASE WHEN ELVN1.value <> '' THEN ELVN2.value ELSE 'ZZ' END as codigo2,
-	ELVN2.name as name2,
-	ELVN2.description as description2,
-	ELVN2.issummary as issummary2,
-	CASE WHEN ELVN1.value <> '' THEN ELVN3.value ELSE 'ZZZ' END as codigo3,
-	ELVN3.name as name3,
-	ELVN3.description as description3,
-	ELVN3.issummary as issummary3,
-	CASE WHEN ELVN1.value <> '' THEN ELVN4.value ELSE 'ZZZZ' END as codigo4,
-	ELVN4.name as name4,
-	ELVN4.description as description4,
-	ELVN4.issummary as issummary4,
-	CASE WHEN ELVN1.value <> '' THEN ELVN5.value ELSE 'ZZZZZ' END as codigo5,
-	ELVN5.name as name5,
-	ELVN5.description as description5,
-	ELVN5.issummary as issummary5,
-	CASE WHEN ELVN1.value <> '' THEN ELVN6.value ELSE 'ZZZZZZ' END as codigo6,
-	ELVN6.name as name6,
-	ELVN6.description as description6,
-	ELVN6.issummary as issummary6,
-	CASE WHEN ELVN1.value <> '' THEN ELVN7.value ELSE 'ZZZZZZZ' END as codigo7,
-	ELVN7.name as name7,
-	ELVN7.description as description7,
-	ELVN7.issummary as issummary7,
-	CASE WHEN ELVN1.value <> '' THEN ELVN8.value ELSE 'ZZZZZZZZ' END as codigo8,
-	ELVN8.name as name8,
-	ELVN8.description as description8,
-	ELVN8.issummary as issummary8,	
-	CASE WHEN ELVN1.value <> '' THEN ELVN9.value ELSE 'ZZZZZZZZZ' END as codigo9,
-	ELVN9.name as name9,
-	ELVN9.description as description9,
-	ELVN9.issummary as issummary9,	
-	-- ElementValueTree
-	--
-	PAR.ANCESTRY,
-	PAR.Level,
-	PAR.Node_ID, 
-	PAR.Parent_ID ,
---	PAR.c_element_id,
-	PAR.node_id AS c_elementvalue_id,
-	PAR.ad_client_id,
-	PAR.isactive,
-	char_length(PAR.AccountValue) as length,
-	PAR.accounttype,
-	PAR.accountsign,
-	PAR.isdoccontrolled,
-	PAR.issummary,
-	PAR.AccountValue AS codigo_cuenta,
-	COALESCE(ELVPT.value,'') as value_parent,
-	COALESCE(PAR.acctparent[1],'') as Value0,
-	COALESCE(PAR.acctparent[2],'') as Value1,
-	COALESCE(PAR.acctparent[3],'') as Value2,
-	COALESCE(PAR.acctparent[4],'') as Value3,
-	COALESCE(PAR.acctparent[5],'') as Value4,
-	COALESCE(PAR.acctparent[6],'') as Value5,	
-	COALESCE(PAR.acctparent[7],'') as Value6,
-	COALESCE(PAR.acctparent[8],'') as Value7,
-	COALESCE(PAR.acctparent[9],'') as Value8,
-	COALESCE(PAR.acctparent[10],'') as Value9,
-	posttype.value as postingtype_value,
-	posttype.name as postingtype_name
+-- isShowOrganization
+SELECT *
 FROM (
-	SELECT DISTINCT ON (ad_client_id, AccountValue) * FROM ElementValueTree
-	ORDER BY ad_client_id, AccountValue
-) AS PAR 
-LEFT JOIN (
-	SELECT adcli.AD_Client_ID, accsh.C_AcctSchema_ID, accee.C_Element_ID, accel.name as element_name, tree.AD_Tree_ID, tree.name as tree_name
-	FROM AD_Client adcli
-	LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
-	LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
-	LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
-	LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= accel.AD_Tree_ID
-	WHERE accee.ElementType='AC' AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID}
-) as ELE ON ELE.AD_Tree_ID = PAR.AD_Tree_ID
-INNER JOIN C_elementValue ELVT ON ELVT.C_ElementValue_ID = PAR.NODE_ID
-INNER JOIN C_elementValue ELVPT ON ELVPT.C_ElementValue_ID = PAR.Parent_ID
-INNER JOIN (
-	-- ORGs as from OrgTree
-	SELECT DISTINCT ON  (ORG12.ad_client_id, ORG12.ad_orgparent_id, ORG12.name)
-	    ORG12.ad_client_id, 
-	    ORG12.ad_org_id,
-	    ORG12.ad_orgparent_id,
-	    ORG12.issummary,
-	    ORG12.value, 
-	    ORG12.name, 
-	    COALESCE(ORG12.description, ORG12.name,'') as description, 
-	    COALESCE(ORG12.taxid,'?') as taxid, 
-	    ORG12.binarydata as binarydata,
-	    -- Columna con todos los valores únicos concatenados
-	    (SELECT STRING_AGG(DISTINCT ORGX.value, '-' ORDER BY ORGX.value) 
-	     FROM OrgTree ORGX
-	     WHERE ORGX.ad_client_id = ORG12.ad_client_id
-	     AND (ORGX.ad_org_id = $P{AD_Org_ID} OR $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL)
-	     AND (ORGX.ad_orgparent_id = $P{AD_OrgParent_ID} OR $P{AD_OrgParent_ID} = 0 OR $P{AD_OrgParent_ID} IS NULL)
-	    ) AS all_orgs
-	FROM OrgTree AS ORG12
-) AS ORG ON (ORG.ad_client_id = PAR.ad_client_id) 
-LEFT JOIN c_elementvalue as ELVN0 ON (ELVN0.Value = PAR.acctparent[1] AND ELVN0.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN1 ON (ELVN1.Value = PAR.acctparent[2] AND ELVN1.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN2 ON (ELVN2.Value = PAR.acctparent[3] AND ELVN2.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN3 ON (ELVN3.Value = PAR.acctparent[4] AND ELVN3.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN4 ON (ELVN4.Value = PAR.acctparent[5] AND ELVN4.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN5 ON (ELVN5.Value = PAR.acctparent[6] AND ELVN5.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN6 ON (ELVN6.Value = PAR.acctparent[7] AND ELVN6.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN7 ON (ELVN7.Value = PAR.acctparent[8] AND ELVN7.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN8 ON (ELVN8.Value = PAR.acctparent[9] AND ELVN8.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_elementvalue as ELVN9 ON (ELVN9.Value = PAR.acctparent[10] AND ELVN9.AD_Client_ID= PAR.AD_Client_ID)
-LEFT JOIN c_acctschema sch ON (sch.c_acctschema_id = $P{C_AcctSchema_ID})
-LEFT JOIN c_currency curr1 on sch.c_currency_id = curr1.c_currency_id
-LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
-LEFT JOIN c_period as perba ON (perba.c_period_id = $P{C_Period_ID})
-LEFT JOIN (
-	SELECT DISTINCT ON (rfl.value) rfl.value, COALESCE(rflt.name,rfl.name,'') as name FROM AD_Reference as rfr
-	LEFT JOIN AD_Ref_List as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
-	LEFT JOIN AD_Ref_List_Trl as rflt ON (rflt.ad_ref_list_id = rfl.ad_ref_list_id AND rflt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}))
-	WHERE rfr.name like '%Posting Type%'
-) as posttype ON (posttype.value= $P{PostingType} )
-LEFT JOIN (	
-	--- BALANCES
-	SELECT
-		ele.ad_client_id,
-		ele.c_elementvalue_id, 
-		ele.value,
-		org2.ad_org_id,
-		dateini,
-		dateend,
-		COALESCE(openbalance,0) as openbalance,
-		COALESCE(amtacctdr,0) as amtacctdr,
-		COALESCE(amtacctcr,0) as amtacctcr,
-		COALESCE(amtacctdr - amtacctcr,0) as amtacctsa,
-		COALESCE(closebalance,0) as closebalance
-		FROM c_elementvalue ele
-		INNER JOIN (
-			-- ORGs as from OrgTree
-			SELECT DISTINCT ON  (ORG12.ad_client_id, ORG12.ad_orgparent_id, ORG12.name)
-			    ORG12.ad_client_id, 
-			    ORG12.ad_org_id,
-			    ORG12.ad_orgparent_id,
-			    ORG12.issummary,
-			    ORG12.name
-			FROM OrgTree AS ORG12
-		) AS org2 ON org2.ad_client_id = ele.ad_client_id		
-		LEFT JOIN (
-			SELECT
-			fas.ad_client_id,
-			fas.ad_org_id,
-			fas.account_id, 
-			fas.C_AcctSchema_ID, 
-			to_char(per.startdate,'DD-MM-YYYY') AS dateini,
-			to_char(per.enddate,'DD-MM-YYYY') AS dateend,
-			SUM(CASE WHEN (fas.DateAcct < per.StartDAte) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as openbalance,
-					SUM(CASE WHEN (fas.DateAcct >= per.StartDAte AND fas.DateAcct <= per.EndDate) THEN COALESCE(fas.amtacctdr,0) ELSE 0 END) as amtacctdr,
-					SUM(CASE WHEN (fas.DateAcct >= per.StartDAte AND fas.DateAcct <= per.EndDate) THEN COALESCE(fas.amtacctcr,0) ELSE 0 END) as amtacctcr,
-					SUM(CASE WHEN (fas.DateAcct <= per.EndDate ) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as closebalance
-			FROM (
-				SELECT 
-				fa2.ad_client_id, fa2.ad_org_id, fa2.fact_acct_id,
-				fa2.c_acctschema_id, fa2.DateAcct, fa2.account_id, 
-				fa2.amtacctdr, fa2.amtacctcr
-				FROM fact_acct fa2
-				LEFT JOIN c_elementvalue el2 ON (el2.c_elementvalue_id = fa2.account_id)
-				LEFT JOIN (
-					SELECT AD_Client_ID,C_Activity_ID, Value, Name FROM C_Activity WHERE isSummary='N' AND isActive='Y' AND AD_Client_ID=$P{AD_Client_ID}
-				) as ac2 ON (ac2.AD_Client_ID = fa2.AD_Client_ID AND ac2.C_Activity_ID = fa2.C_Activity_ID)
-				LEFT JOIN (
-					SELECT AD_Client_ID,C_Project_ID, Value, Name FROM C_Project WHERE isSummary='N' AND isActive='Y' AND AD_Client_ID=$P{AD_Client_ID}
-				) as pr2 ON (pr2.AD_Client_ID = fa2.AD_Client_ID AND pr2.C_Project_ID = fa2.C_Project_ID)
-				WHERE fa2.c_acctschema_id = $P{C_AcctSchema_ID}  
-				AND fa2.ad_client_id=$P{AD_Client_ID}
-				AND ( CASE WHEN  fa2.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 			
-			) fas
-			INNER JOIN c_period as per ON (per.c_period_id = $P{C_Period_ID})
-			WHERE fas.DateAcct <= per.EndDate
-			AND fas.ad_client_id=$P{AD_Client_ID}
-			GROUP BY fas.ad_client_id, fas.ad_org_id, fas.account_id, 
-					per.startdate, per.enddate, fas.C_AcctSchema_ID
-			UNION
-		SELECT 
-		  $P{AD_Client_ID} as ad_client_id, 
-		  fas2.ad_org_id,
-		  $P{C_ElementValue_ID} as account_id,
-		  fas2.C_AcctSchema_ID, 
-		  fas2.dateini,
-		  fas2.dateend,
-		  SUM(fas2.openbalance) as openbalance,
-		  SUM(fas2.amtacctdr) as amtacctdr,
-		  SUM(fas2.amtacctcr) as amtacctcr,
-		  SUM(fas2.closebalance) as closebalance
-		FROM (
-			SELECT
-				fas22.ad_client_id,
-				fas22.ad_org_id,
-				fas22.account_id, fas22.C_AcctSchema_ID, 
-				to_char(per2.startdate,'DD-MM-YYYY') AS dateini,
-				to_char(per2.enddate,'DD-MM-YYYY') AS dateend,
-				SUM(CASE WHEN (fas22.DateAcct < per2.StartDAte) THEN (fas22.amtacctdr - fas22.amtacctcr) ELSE 0 END) as openbalance,
-						SUM(CASE WHEN (fas22.DateAcct >= per2.StartDAte AND fas22.DateAcct <= per2.EndDate) THEN COALESCE(fas22.amtacctdr,0) ELSE 0 END) as amtacctdr,
-						SUM(CASE WHEN (fas22.DateAcct >= per2.StartDAte AND fas22.DateAcct <= per2.EndDate) THEN COALESCE(fas22.amtacctcr,0) ELSE 0 END) as amtacctcr,
-						SUM(CASE WHEN (fas22.DateAcct <= per2.EndDate ) THEN (fas22.amtacctdr - fas22.amtacctcr) ELSE 0 END) as closebalance
+	-- Encabezado del Reportes Contabilidad
+	SELECT DISTINCT ON (cli.ad_client_id)
+		cli.ad_client_id AS rep_client_id,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN 0 ELSE $P{AD_Org_ID} END AS rep_org_id,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
+			THEN concat(COALESCE(cli.name, cli.value), ' - Consolidado')
+			ELSE COALESCE(orgh.name, orgh.value, '') END AS rep_name,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
+			THEN concat(COALESCE(cli.description, cli.name), ' - Consolidado')
+			ELSE COALESCE(orgh.description, orgh.name, orgh.value, '') END AS rep_description,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
+			THEN '' ELSE COALESCE(orginfo.taxid, '') END AS rep_taxid,
+		CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0)
+			THEN img1.binarydata ELSE img2.binarydata END AS rep_logo,
+		CONCAT(curr1.iso_code,'-',currt1.cursymbol,'-',COALESCE(currt1.description,curr1.iso_code,curr1.cursymbol,'')) as moneda,
+		posttype.value as postingtype_value,
+		posttype.name as postingtype_name,
+		1 AS imp_header
+	FROM adempiere.ad_client cli
+	INNER JOIN adempiere.ad_org orgh ON orgh.ad_client_id = cli.ad_client_id
+	INNER JOIN adempiere.ad_clientinfo cliinfo ON cli.ad_client_id = cliinfo.ad_client_id
+	LEFT JOIN adempiere.ad_image img1 ON cliinfo.logoreport_id = img1.ad_image_id
+	INNER JOIN adempiere.ad_orginfo orginfo ON orgh.ad_org_id = orginfo.ad_org_id
+	LEFT JOIN adempiere.ad_image img2 ON orginfo.logo_id = img2.ad_image_id
+	LEFT JOIN c_acctschema sch ON (sch.c_acctschema_id = $P{C_AcctSchema_ID})
+	LEFT JOIN c_currency curr1 on sch.c_currency_id = curr1.c_currency_id
+	LEFT JOIN c_currency_trl currt1 on curr1.c_currency_id = currt1.c_currency_id and currt1.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID})
+	LEFT JOIN (
+		SELECT DISTINCT ON (rfl.value) rfl.value, COALESCE(rflt.name,rfl.name,'') as name FROM AD_Reference as rfr
+		LEFT JOIN AD_Ref_List as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
+		LEFT JOIN AD_Ref_List_Trl as rflt ON (rflt.ad_ref_list_id = rfl.ad_ref_list_id AND rflt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID=$P{AD_Client_ID}))
+		WHERE rfr.name like '%Posting Type%'
+	) as posttype ON (posttype.value= $P{PostingType} )
+	WHERE cli.ad_client_id = $P{AD_Client_ID}
+	  AND ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR orgh.ad_org_id = $P{AD_Org_ID})
+) AS header_info
+FULL JOIN (
+	-- Balance extendido
+	SELECT 
+	-- eve1 (function:amf_element_value_tree_extended)
+    c_elementvalue_id,
+    ad_client_id,
+    isactive,
+    codigo,
+    name,
+    description,
+    length,
+    'N' as issummary,
+    accounttype,
+    accountsign,
+    isdoccontrolled,
+--    issummary,
+    acctparent,
+    codigo0, name0, description0, issummary0,
+    codigo1, name1, description1, issummary1,
+    codigo2, name2, description2, issummary2,
+    codigo3, name3, description3, issummary3,
+    codigo4, name4, description4, issummary4,
+    codigo5, name5, description5, issummary5,
+    codigo6, name6, description6, issummary6,
+    codigo7, name7, description7, issummary7,
+    codigo8, name8, description8, issummary8,
+    codigo9, name9, description9, issummary9,
+	-- org (function:amf_org_tree) org_id
+    CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE ad_org_id END AS ad_org_id, 
+    -- org (function:amf_org_tree)
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 0 ELSE org_ad_org_id END AS org_ad_org_id, 
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'ALL' ELSE org_value END AS org_value,
+	CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID}=0) AND $P{isShowOrganization} IS NOT NULL AND $P{isShowOrganization} = 'N' THEN 'Todas las Organizaciones' ELSE org_name END AS org_name, 
+	all_orgs,
+	-- bal1 (function:amf_balance_account_org_flex)
+	bal_c_elementvalue_id,
+	dateini, dateend, 
+	 COALESCE(openbalance,0) AS openbalance, 
+	 COALESCE(amtacctdr,0) AS amtacctdr, 
+	 COALESCE(amtacctcr,0) AS amtacctcr, 
+	 COALESCE(closebalance,0) AS closebalance, 
+	 COALESCE(amtacctsa,0) AS amtacctsa,
+	1 AS imp_balance
+	FROM (
+	 	-- Saldos cuentas Reales AccountType IN ('A','L','O')
+		SELECT * 
+			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
+			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
+			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
+		    	AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
+			WHERE eve1.issummary = 'N' AND eve1.AccountType IN ('A','L','O') AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' AND (
+							COALESCE(bal1.openbalance, 0) <> 0
+							OR COALESCE(bal1.amtacctdr, 0) <> 0
+							OR COALESCE(bal1.amtacctcr, 0) <> 0
+							OR COALESCE(bal1.closebalance, 0) <> 0 )))
+		-- Resultado del ejercicio AccountType IN ('R','E','M'))
+		UNION ALL				
+		SELECT * 
+			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
+			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
+			LEFT JOIN (
+				SELECT
+				    $P{C_ElementValue_ID} AS bal_c_elementvalue_id,
+				    ceva.value AS account_code,
+				    ceva.name AS account_name,
+				    abcfo.ad_org_id,
+				    abcfo.dateini,
+				    abcfo.dateend,
+				    SUM(abcfo.openbalance) AS openbalance,
+				    SUM(abcfo.amtacctdr) AS amtacctdr,
+				    SUM(abcfo.amtacctcr) AS amtacctcr,
+				    SUM(abcfo.closebalance) AS closebalance,
+				    SUM(abcfo.amtacctdr) - SUM(abcfo.amtacctcr) AS amtacctsa
 				FROM (
-					SELECT 
-					fa22.ad_client_id, fa22.ad_org_id, fa22.fact_acct_id,
-					fa22.c_acctschema_id, fa22.DateAcct, fa22.account_id, 
-					fa22.amtacctdr, fa22.amtacctcr
-					FROM fact_acct fa22
-					LEFT JOIN c_elementvalue el2 ON (el2.c_elementvalue_id = fa22.account_id)
-					LEFT JOIN (
-						SELECT AD_Client_ID,C_Activity_ID, Value, Name FROM C_Activity WHERE isSummary='N' AND isActive='Y' AND AD_Client_ID=$P{AD_Client_ID}
-					) as ac2 ON (ac2.AD_Client_ID = fa22.AD_Client_ID AND ac2.C_Activity_ID = fa22.C_Activity_ID)
-					LEFT JOIN (
-						SELECT AD_Client_ID,C_Project_ID, Value, Name FROM C_Project WHERE isSummary='N' AND isActive='Y' AND AD_Client_ID=$P{AD_Client_ID}
-					) as pr2 ON (pr2.AD_Client_ID = fa22.AD_Client_ID AND pr2.C_Project_ID = fa22.C_Project_ID)
-					WHERE fa22.c_acctschema_id = $P{C_AcctSchema_ID}  
-					AND fa22.ad_client_id=$P{AD_Client_ID}
-					AND ( CASE WHEN  fa22.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 
-					AND el2.AccountType IN ('R','E','M')			
-				) fas22
-				INNER JOIN c_period as per2 ON (per2.c_period_id = $P{C_Period_ID})
-				WHERE fas22.DateAcct <= per2.EndDate
-				AND fas22.ad_client_id=$P{AD_Client_ID}
-				GROUP BY fas22.ad_client_id, fas22.ad_org_id, fas22.account_id, 
-						per2.startdate, per2.enddate, fas22.C_AcctSchema_ID
-		) AS fas2
-		LEFT JOIN C_ElementValue cel2 ON (cel2.C_ElementValue_ID = $P{C_ElementValue_ID})
-		WHERE openbalance <> 0 
-		   OR amtacctcr <> 0 
-		   OR amtacctdr <> 0 
-		   OR closebalance <> 0
-		GROUP BY 
-		  fas2.ad_org_id, 
-		  fas2.C_AcctSchema_ID, 
-		  fas2.dateini, 
-		  fas2.dateend			
-		) as bal2 ON bal2.ad_client_id = ele.ad_client_id AND bal2.account_id = ele.c_elementvalue_id AND bal2.ad_org_id  = org2.ad_org_id
-		WHERE ele.ad_client_id = $P{AD_Client_ID}  AND ele.issummary = 'N' AND ele.AccountType IN ('A','L','O')
-		ORDER BY ele.ad_client_id , bal2.ad_org_id, ele.c_elementvalue_id
--- BALANCES
-) AS bal ON bal.ad_client_id = PAR.ad_client_id AND bal.ad_org_id = ORG.ad_org_id AND bal.c_elementvalue_id = PAR.node_id
-WHERE PAR.ad_client_id = $P{AD_Client_ID}  AND PAR.issummary='N' 
-AND posttype.value = 'A'
-AND CASE WHEN  $P{isShowZERO} = 'Y' OR PAR.isSummary='Y' OR ( $P{isShowZERO} = 'N' AND ( PAR.isSummary = 'N' AND bal.openbalance<> 0 or bal.amtacctcr<> 0 or bal.amtacctdr <>0 or bal.closebalance <> 0  ) ) THEN 1=1  ELSE 1=0 END
-ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo6 ASC, codigo7 ASC, codigo8 ASC,  codigo9 ASC, codigo ASC, org_value ASC]]>
+					SELECT * FROM adempiere.amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID} , $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL)
+					WHERE bal_c_elementvalue_id IN ( SELECT c_elementvalue_id FROM C_ElementValue WHERE AD_Client_ID = $P{AD_Client_ID} AND AccountType IN ('R','E','M'))
+				) AS abcfo
+				CROSS JOIN (SELECT c_elementvalue_id, value, name FROM C_ElementValue WHERE AD_Client_ID = $P{AD_Client_ID} AND C_ElementValue_ID = $P{C_ElementValue_ID} ) AS ceva
+				GROUP BY ceva.value,  ceva.name, abcfo.ad_org_id, abcfo.dateini, abcfo.dateend
+			) AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id					
+			WHERE 
+			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
+			AND eve2.issummary = 'N' 
+	) AS bal
+) AS balances ON 1=0
+WHERE header_info.imp_header = 1 OR 
+	(ad_client_id= $P{AD_Client_ID} 
+	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR balances.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
+ORDER BY 
+	balances.codigo0, balances.codigo1, balances.codigo2,
+	balances.codigo3, balances.codigo4, balances.codigo5,
+	balances.codigo6, balances.codigo7, balances.codigo8, balances.codigo9,
+	balances.codigo, balances.org_value;]]>
 	</queryString>
-	<field name="cli_logo" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="cli_logo"/>
-		<property name="com.jaspersoft.studio.field.label" value="cli_logo"/>
+	<field name="rep_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_client"/>
 	</field>
-	<field name="org_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
+	<field name="rep_org_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="rep_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_org_id"/>
 	</field>
-	<field name="orgname" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="orgname"/>
-		<property name="com.jaspersoft.studio.field.label" value="orgname"/>
+	<field name="rep_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_name"/>
 	</field>
-	<field name="orgdescription" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="orgdescription"/>
-		<property name="com.jaspersoft.studio.field.label" value="orgdescription"/>
+	<field name="rep_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_description"/>
 	</field>
-	<field name="org_logo" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="org_logo"/>
-		<property name="com.jaspersoft.studio.field.label" value="org_logo"/>
+	<field name="rep_taxid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rep_taxid"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_taxid"/>
 	</field>
-	<field name="orgtaxid" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="orgtaxid"/>
-		<property name="com.jaspersoft.studio.field.label" value="orgtaxid"/>
-	</field>
-	<field name="all_orgs" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="all_orgs"/>
-		<property name="com.jaspersoft.studio.field.label" value="all_orgs"/>
+	<field name="rep_logo" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="rep_logo"/>
+		<property name="com.jaspersoft.studio.field.label" value="rep_logo"/>
 	</field>
 	<field name="moneda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="moneda"/>
 		<property name="com.jaspersoft.studio.field.label" value="moneda"/>
+	</field>
+	<field name="postingtype_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="postingtype_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="postingtype_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_ref_list"/>
+	</field>
+	<field name="postingtype_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="postingtype_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="postingtype_name"/>
+	</field>
+	<field name="imp_header" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="imp_header"/>
+		<property name="com.jaspersoft.studio.field.label" value="imp_header"/>
+	</field>
+	<field name="c_elementvalue_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_elementvalue_id"/>
+	</field>
+	<field name="ad_client_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+	</field>
+	<field name="isactive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
 	</field>
 	<field name="codigo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
@@ -509,33 +246,29 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<property name="com.jaspersoft.studio.field.name" value="description"/>
 		<property name="com.jaspersoft.studio.field.label" value="description"/>
 	</field>
-	<field name="dateini" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="dateini"/>
-		<property name="com.jaspersoft.studio.field.label" value="dateini"/>
+	<field name="length" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="length"/>
+		<property name="com.jaspersoft.studio.field.label" value="length"/>
 	</field>
-	<field name="dateend" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="dateend"/>
-		<property name="com.jaspersoft.studio.field.label" value="dateend"/>
+	<field name="issummary" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
+		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
 	</field>
-	<field name="openbalance" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="openbalance"/>
-		<property name="com.jaspersoft.studio.field.label" value="openbalance"/>
+	<field name="accounttype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accounttype"/>
+		<property name="com.jaspersoft.studio.field.label" value="accounttype"/>
 	</field>
-	<field name="amtacctdr" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amtacctdr"/>
-		<property name="com.jaspersoft.studio.field.label" value="amtacctdr"/>
+	<field name="accountsign" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountsign"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountsign"/>
 	</field>
-	<field name="amtacctcr" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amtacctcr"/>
-		<property name="com.jaspersoft.studio.field.label" value="amtacctcr"/>
+	<field name="isdoccontrolled" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isdoccontrolled"/>
+		<property name="com.jaspersoft.studio.field.label" value="isdoccontrolled"/>
 	</field>
-	<field name="amtacctsa" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amtacctsa"/>
-		<property name="com.jaspersoft.studio.field.label" value="amtacctsa"/>
-	</field>
-	<field name="closebalance" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="closebalance"/>
-		<property name="com.jaspersoft.studio.field.label" value="closebalance"/>
+	<field name="acctparent" class="java.sql.Array">
+		<property name="com.jaspersoft.studio.field.name" value="acctparent"/>
+		<property name="com.jaspersoft.studio.field.label" value="acctparent"/>
 	</field>
 	<field name="codigo0" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigo0"/>
@@ -725,110 +458,61 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<property name="com.jaspersoft.studio.field.label" value="issummary9"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
 	</field>
-	<field name="ancestry" class="java.sql.Array">
-		<property name="com.jaspersoft.studio.field.name" value="ancestry"/>
-		<property name="com.jaspersoft.studio.field.label" value="ancestry"/>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
 	</field>
-	<field name="level" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="level"/>
-		<property name="com.jaspersoft.studio.field.label" value="level"/>
+	<field name="org_ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="org_ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_ad_org_id"/>
 	</field>
-	<field name="node_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="node_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="node_id"/>
+	<field name="org_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
 	</field>
-	<field name="parent_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="parent_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="parent_id"/>
+	<field name="org_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
 	</field>
-	<field name="c_elementvalue_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_elementvalue_id"/>
+	<field name="all_orgs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="all_orgs"/>
+		<property name="com.jaspersoft.studio.field.label" value="all_orgs"/>
 	</field>
-	<field name="ad_client_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
+	<field name="bal_c_elementvalue_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="bal_c_elementvalue_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bal_c_elementvalue_id"/>
 	</field>
-	<field name="isactive" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
-		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
+	<field name="dateini" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dateini"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateini"/>
 	</field>
-	<field name="length" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="length"/>
-		<property name="com.jaspersoft.studio.field.label" value="length"/>
+	<field name="dateend" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="dateend"/>
+		<property name="com.jaspersoft.studio.field.label" value="dateend"/>
 	</field>
-	<field name="accounttype" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="accounttype"/>
-		<property name="com.jaspersoft.studio.field.label" value="accounttype"/>
+	<field name="openbalance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="openbalance"/>
+		<property name="com.jaspersoft.studio.field.label" value="openbalance"/>
 	</field>
-	<field name="accountsign" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="accountsign"/>
-		<property name="com.jaspersoft.studio.field.label" value="accountsign"/>
+	<field name="amtacctdr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amtacctdr"/>
+		<property name="com.jaspersoft.studio.field.label" value="amtacctdr"/>
 	</field>
-	<field name="isdoccontrolled" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="isdoccontrolled"/>
-		<property name="com.jaspersoft.studio.field.label" value="isdoccontrolled"/>
+	<field name="amtacctcr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amtacctcr"/>
+		<property name="com.jaspersoft.studio.field.label" value="amtacctcr"/>
 	</field>
-	<field name="issummary" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
-		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
+	<field name="closebalance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="closebalance"/>
+		<property name="com.jaspersoft.studio.field.label" value="closebalance"/>
 	</field>
-	<field name="codigo_cuenta" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="codigo_cuenta"/>
-		<property name="com.jaspersoft.studio.field.label" value="codigo_cuenta"/>
+	<field name="amtacctsa" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amtacctsa"/>
+		<property name="com.jaspersoft.studio.field.label" value="amtacctsa"/>
 	</field>
-	<field name="value_parent" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value_parent"/>
-		<property name="com.jaspersoft.studio.field.label" value="value_parent"/>
-	</field>
-	<field name="value0" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value0"/>
-		<property name="com.jaspersoft.studio.field.label" value="value0"/>
-	</field>
-	<field name="value1" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value1"/>
-		<property name="com.jaspersoft.studio.field.label" value="value1"/>
-	</field>
-	<field name="value2" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value2"/>
-		<property name="com.jaspersoft.studio.field.label" value="value2"/>
-	</field>
-	<field name="value3" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value3"/>
-		<property name="com.jaspersoft.studio.field.label" value="value3"/>
-	</field>
-	<field name="value4" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value4"/>
-		<property name="com.jaspersoft.studio.field.label" value="value4"/>
-	</field>
-	<field name="value5" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value5"/>
-		<property name="com.jaspersoft.studio.field.label" value="value5"/>
-	</field>
-	<field name="value6" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value6"/>
-		<property name="com.jaspersoft.studio.field.label" value="value6"/>
-	</field>
-	<field name="value7" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value7"/>
-		<property name="com.jaspersoft.studio.field.label" value="value7"/>
-	</field>
-	<field name="value8" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value8"/>
-		<property name="com.jaspersoft.studio.field.label" value="value8"/>
-	</field>
-	<field name="value9" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value9"/>
-		<property name="com.jaspersoft.studio.field.label" value="value9"/>
-	</field>
-	<field name="postingtype_value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="postingtype_value"/>
-		<property name="com.jaspersoft.studio.field.label" value="postingtype_value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="ad_ref_list"/>
-	</field>
-	<field name="postingtype_name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="postingtype_name"/>
-		<property name="com.jaspersoft.studio.field.label" value="postingtype_name"/>
+	<field name="imp_balance" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="imp_balance"/>
+		<property name="com.jaspersoft.studio.field.label" value="imp_balance"/>
 	</field>
 	<variable name="openbalance0" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev0" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
@@ -1030,10 +714,38 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="all_orgs_v" class="java.lang.String" calculation="First">
+		<variableExpression><![CDATA[$F{all_orgs}]]></variableExpression>
+		<initialValueExpression><![CDATA["Orgs.."]]></initialValueExpression>
+	</variable>
+	<variable name="dateend_v" class="java.lang.String" calculation="First">
+		<variableExpression><![CDATA[$F{dateend}]]></variableExpression>
+	</variable>
+	<variable name="openbalanceOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctdrOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctcrOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="amtacctsaOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="closebalanceOrg" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Org" calculation="Sum">
+		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
 	<group name="Group_Lev0">
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
+				<printWhenExpression><![CDATA[$F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="100" height="18" uuid="be522a27-8e5b-431e-ad84-0053e8fdba76">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1085,6 +797,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		</groupHeader>
 		<groupFooter>
 			<band height="18">
+				<printWhenExpression><![CDATA[$F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="490" height="18" uuid="f7199a52-4116-4bb5-bada-19421e67fd29"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1129,7 +842,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="100" height="18" uuid="0bd46f61-7da3-45ac-890b-9a1c67ea5758">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1182,9 +895,11 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1)]]></printWhenExpression>
 				<line>
-					<reportElement x="0" y="0" width="660" height="1" uuid="442c7a06-7a9e-4939-b6a1-d77de4be6a23"/>
+					<reportElement x="0" y="0" width="660" height="1" uuid="442c7a06-7a9e-4939-b6a1-d77de4be6a23">
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
+					</reportElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="490" height="18" uuid="e490fb02-0f5a-4a33-b6b3-2c8859644702"/>
@@ -1230,7 +945,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="15">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="100" height="15" uuid="c1163605-e931-45e3-8eb8-8cc142348667">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1283,7 +998,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="15">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="490" height="15" uuid="f44a1814-629c-49ba-b0d0-b9c2760244e7"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1323,6 +1038,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="8bb17033-6312-4bde-8fe3-546c71e63cf1">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
@@ -1333,7 +1049,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
 					<reportElement x="0" y="0" width="100" height="14" uuid="464afd3e-ee87-430f-82fa-a85eec4cfd46">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1385,7 +1101,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
 					<reportElement x="0" y="0" width="490" height="14" uuid="bc7c9b12-fe8f-44af-be9c-5eda85d19e91"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1425,6 +1141,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="4d23d44e-7d8f-4cc7-92b3-8b20f96f61e7">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
@@ -1435,7 +1152,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
 					<reportElement x="0" y="0" width="100" height="14" uuid="f9ba4fa8-8692-4d6e-95d0-37aaa09cf2da">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1487,7 +1204,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
 					<reportElement x="0" y="0" width="490" height="14" uuid="0de0addf-56fb-48b2-bbd3-c76440542db2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1527,6 +1244,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="899cc294-7781-4518-9224-eb71b88bf133">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
@@ -1537,7 +1255,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5)]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="490" y="0" width="170" height="14" uuid="a265959b-c839-4a9e-a589-6d13f414eb19">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -1589,7 +1307,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
 					<reportElement x="0" y="0" width="490" height="14" uuid="18685da0-f108-42a3-b15a-cd5b92be874c"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1629,6 +1347,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="0baf63b2-486b-4fee-b08c-1e6cd9c14537">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
@@ -1639,7 +1358,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="0" y="0" width="100" height="14" uuid="a6071d7a-ce52-4085-baf2-89633c51e510">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1691,7 +1410,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="0" y="0" width="490" height="14" uuid="14423afc-e4d5-4cb6-9276-afad71df871f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1731,6 +1450,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="e3d064d9-e085-4f69-93fa-63a3cf5fcc1e">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
@@ -1741,8 +1461,8 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false]]></printWhenExpression>
-				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="100" height="14" uuid="8aea0a1a-9c4c-4de5-adc8-1ac41a0b7c0c">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -1752,7 +1472,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo7}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="100" y="0" width="390" height="14" uuid="414cd01d-8e1a-44a1-808e-ae27d6553b2b"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -1793,7 +1513,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="490" height="14" uuid="dc3eb70b-6fd4-439b-96d8-dd5fd4367672"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1833,6 +1553,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="325011c1-bbb5-47ab-9305-f4811ca49022">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
@@ -1843,7 +1564,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="100" height="14" uuid="0e0490d6-6167-4a52-8c4d-a0cfd925a357">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1895,7 +1616,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="490" height="14" uuid="bbc17225-31aa-429f-bf9d-a0a3e68715a4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1935,10 +1656,90 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="8da1327c-ddff-453d-bb25-1e8c17e962da">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 			</band>
 		</groupFooter>
+	</group>
+	<group name="Group_Org">
+		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" ) == 0  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#E0E0E0" backcolor="#E0E0E0" uuid="e1b993c9-4d98-4bc0-8568-3cccb016eaa4">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineColor="#E0E0E0"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#F4F4F4" backcolor="#F4F4F4" uuid="7e099a29-b9b0-4a90-92b4-6109cb9afac1">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineColor="#F4F4F4"/>
+					</graphicElement>
+				</rectangle>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="490" y="0" width="170" height="14" uuid="73a5846f-f9b7-4752-babb-229a290f8245">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $V{closebalanceOrg}.doubleValue() == 0.00
+                    ? 0.00
+                    : $V{closebalanceOrg}.doubleValue()
+              )
+            : (
+                (-1 * $V{closebalanceOrg}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $V{closebalanceOrg}.doubleValue())
+              )
+      )
+    : (
+        $V{closebalanceOrg}.doubleValue() == 0.00
+            ? 0.00
+            : $V{closebalanceOrg}.doubleValue()
+      )]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Org">
+					<reportElement x="100" y="0" width="390" height="14" uuid="eff16a1f-c58d-45ad-9f19-c2d68e5a863f">
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="4"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Org">
+					<reportElement x="0" y="0" width="100" height="14" uuid="3ead55f7-0c8e-471c-a0d9-0fa01933c8fe">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="4"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
@@ -1957,7 +1758,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{orgname}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement mode="Transparent" x="490" y="0" width="170" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="bff159ef-a854-4620-afdd-f5f8613ec6c8">
@@ -1972,7 +1773,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				</textElement>
 				<textFieldExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy ")).format(new Date())]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField evaluationTime="Report">
 				<reportElement x="100" y="33" width="559" height="20" uuid="4be5a388-ccb2-4a47-8599-710cd5803586">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1983,7 +1784,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y") ? $R{report.positivebalance} +" - "  : "")
-+ ($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$F{all_orgs}]]></textFieldExpression>
++ ($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$V{all_orgs_v}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="100" y="0" width="390" height="18" uuid="e2d7399c-e548-4b89-b901-2cfbd0daec8e">
@@ -1993,7 +1794,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.title}+"   "+$R{report.at}+" "+$F{dateend}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.title}+"   "+$R{report.at}+" "+$V{dateend_v}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
 				<reportElement key="" x="0" y="0" width="100" height="52" uuid="96130f37-8346-4bf1-9917-e947dca826ab">
@@ -2012,7 +1813,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<imageExpression><![CDATA[$F{cli_logo}]]></imageExpression>
+				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField evaluationTime="Report">
 				<reportElement x="490" y="18" width="170" height="15" uuid="833fc71c-fdda-4f5a-a5c0-9aaf8dfe11c4">
@@ -2093,6 +1894,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	<detail>
 		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0 && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 			<rectangle>
 				<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#E0E0E0" backcolor="#E0E0E0" uuid="c249125a-4c61-49ca-9b58-bf0a74d235fe">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2116,7 +1918,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 			<textField>
 				<reportElement x="0" y="0" width="100" height="14" uuid="62a4ad23-62a4-4a28-a988-4e7b7afd21b3">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="4"/>
 				<textElement verticalAlignment="Middle">
@@ -2126,7 +1928,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 			</textField>
 			<textField>
 				<reportElement x="100" y="0" width="300" height="14" uuid="50f63fa7-638b-4751-9c83-85ab53a2b691">
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="4"/>
 				<textElement verticalAlignment="Middle">
@@ -2138,7 +1940,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				<reportElement x="490" y="0" width="170" height="14" uuid="455310d9-43f8-4f71-b193-a8f2a40eb85f">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10"/>
@@ -2166,7 +1968,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 			</textField>
 			<textField>
 				<reportElement x="400" y="0" width="90" height="14" uuid="6a84795b-b901-46ce-bfb6-a5c18f827a54">
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10"/>
@@ -2213,6 +2015,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 	<lastPageFooter>
 		<band height="18">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<printWhenExpression><![CDATA[$F{codigo}!=null]]></printWhenExpression>
 			<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 				<reportElement x="0" y="0" width="490" height="18" uuid="b74042d3-bb91-4eaf-b4c9-1c151e928b07">
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
