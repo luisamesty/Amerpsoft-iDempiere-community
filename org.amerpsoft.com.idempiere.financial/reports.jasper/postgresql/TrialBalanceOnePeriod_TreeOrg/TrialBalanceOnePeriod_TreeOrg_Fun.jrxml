@@ -32,7 +32,6 @@
 	<parameter name="isForExport" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="C_ElementValue_ID" class="java.lang.Integer"/>
 	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -98,7 +97,7 @@ FULL JOIN (
     accounttype,
     accountsign,
     isdoccontrolled,
---    issummary,
+	'N' AS issummary,
     acctparent,
     codigo0, name0, description0, issummary0,
     codigo1, name1, description1, issummary1,
@@ -133,15 +132,6 @@ FULL JOIN (
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
 							OR COALESCE(bal1.amtacctcr, 0) <> 0
 							OR COALESCE(bal1.closebalance, 0) <> 0 )))
-			UNION ALL				
-			SELECT * 
-			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
-			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
-			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
-		    	AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id						
-			WHERE 
-			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
-			AND eve2.issummary = 'N' 
 	) AS bal
 ) AS balances ON 1=0
 WHERE header_info.imp_header = 1 OR 
@@ -234,6 +224,10 @@ ORDER BY
 	<field name="isdoccontrolled" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="isdoccontrolled"/>
 		<property name="com.jaspersoft.studio.field.label" value="isdoccontrolled"/>
+	</field>
+	<field name="issummary" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
+		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
 	</field>
 	<field name="acctparent" class="java.sql.Array">
 		<property name="com.jaspersoft.studio.field.name" value="acctparent"/>
@@ -691,6 +685,16 @@ ORDER BY
 	</variable>
 	<variable name="closebalance_tot" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
+	</variable>
+	<variable name="all_orgs_v" class="java.lang.String" calculation="First">
+		<variableExpression><![CDATA[$F{all_orgs}]]></variableExpression>
+		<initialValueExpression><![CDATA["Orgs.."]]></initialValueExpression>
+	</variable>
+	<variable name="dateini_v" class="java.lang.String" calculation="First">
+		<variableExpression><![CDATA[$F{dateini}]]></variableExpression>
+	</variable>
+	<variable name="dateend_v" class="java.lang.String" calculation="First">
+		<variableExpression><![CDATA[$F{dateend}]]></variableExpression>
 	</variable>
 	<group name="Group_Lev0">
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
@@ -2322,7 +2326,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="5925365a-060f-412a-a005-53d8fa97d736">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -2459,7 +2463,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="440" y="16" width="500" height="16" uuid="f1b4c938-7e09-45b1-ad28-c71e73450595">
+				<reportElement x="440" y="16" width="540" height="16" uuid="f1b4c938-7e09-45b1-ad28-c71e73450595">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -2479,10 +2483,10 @@ ORDER BY
 					<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rep_name}.compareToIgnoreCase( "Consolidado" ) == 0 ?  $F{all_orgs} : $F{rep_taxid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{all_orgs_v}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="440" y="0" width="500" height="16" uuid="787a7eaf-c673-43f6-87a8-3b6ae2ec55ab">
+				<reportElement x="440" y="0" width="540" height="16" uuid="787a7eaf-c673-43f6-87a8-3b6ae2ec55ab">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -2665,7 +2669,7 @@ ORDER BY
 	<detail>
 		<band height="14">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 			<rectangle>
 				<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
 					<property name="local_mesure_unitx" value="pixel"/>

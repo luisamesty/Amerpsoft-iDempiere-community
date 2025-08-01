@@ -56,7 +56,7 @@ FULL JOIN (
     accounttype,
     accountsign,
     isdoccontrolled,
---    issummary,
+	'N' AS issummary,
     acctparent,
     codigo0, name0, description0, issummary0,
     codigo1, name1, description1, issummary1,
@@ -91,15 +91,6 @@ FULL JOIN (
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
 							OR COALESCE(bal1.amtacctcr, 0) <> 0
 							OR COALESCE(bal1.closebalance, 0) <> 0 )))
-			UNION ALL				
-			SELECT * 
-			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
-			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
-			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
-		    	AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id						
-			WHERE 
-			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
-			AND eve2.issummary = 'N' 
 	) AS bal
 ) AS balances ON 1=0
 WHERE header_info.imp_header = 1 OR 
