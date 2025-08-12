@@ -1264,51 +1264,71 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
     @Override
     public String completeIt() {
-//log.warning("===============completeIt================================");
-		//	Re-Check
-		if (!m_justPrepared)
-		{
-			String status = prepareIt();
-			if (!DocAction.STATUS_InProgress.equals(status))
-				return status;
-		}
-		
-		m_processMsg = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_BEFORE_COMPLETE);
-		if (m_processMsg != null)
-			return DocAction.STATUS_Invalid;
-		
-		//	Implicit Approval
-		if (!isApproved())
-			approveIt();
-		if (log.isLoggable(Level.INFO)) log.info(toString());
-		//	User Validation
-		String valid = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_AFTER_COMPLETE);
-		if (valid != null)
-		{
-			m_processMsg = valid;
-			return DocAction.STATUS_Invalid;
-		}
+        if (!m_justPrepared) {
+            String status = prepareIt();
+            if (!DocAction.STATUS_InProgress.equals(status))
+                return status;
+        }
 
-		// Set the definite document number after completed (if needed)
-		setDefiniteDocumentNo();
-		//  MAcctSchema Select Client Default 
-		MClientInfo info = MClientInfo.get(Env.getCtx(), getAD_Client_ID(), null); 
-		MAcctSchema as = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
-		// AMN_Employee_salary EMPLOYEEHISTORIC TABLE
-		int p_currency =  0 ; //Integer.parseInt(System.getenv(COLUMNNAME_C_Currency_ID));
-		// Verify if Receipt currency is set
-		Integer receiptcurrency = getC_Currency_ID();
-		if (receiptcurrency == 0)
-			p_currency =  as.getC_Currency_ID(); 
-		else
-			p_currency = receiptcurrency;
-		//log.warning("AMN_Payroll_ID():"+getAMN_Payroll_ID());
-		MAMN_Employee_Salary.updateAMN_Employee_Salary(Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-				getAD_Client_ID(), getAD_Org_ID(), 
-				p_currency, getAMN_Payroll_ID());
-				
-		//    	setProcessed(true);
-    	return DocAction.STATUS_Completed;
+        m_processMsg = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_BEFORE_COMPLETE);
+        if (m_processMsg != null)
+            return DocAction.STATUS_Invalid;
+
+        if (!isApproved())
+            approveIt();
+
+        String valid = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_AFTER_COMPLETE);
+        if (valid != null) {
+            m_processMsg = valid;
+            return DocAction.STATUS_Invalid;
+        }
+
+        setDefiniteDocumentNo();
+
+        // Procesamiento de lógica interna
+        MClientInfo info = MClientInfo.get(getCtx(), getAD_Client_ID(), null); 
+        MAcctSchema as = MAcctSchema.get(getCtx(), info.getC_AcctSchema1_ID(), null);
+        int p_currency = getC_Currency_ID() == 0 ? as.getC_Currency_ID() : getC_Currency_ID();
+
+        MAMN_Employee_Salary.updateAMN_Employee_Salary(
+            getCtx(), Env.getLanguage(getCtx()).getLocale(), 
+            getAD_Client_ID(), getAD_Org_ID(), 
+            p_currency, getAMN_Payroll_ID()
+        );
+
+        // ✅ Contabilizar este documento (nómina) ignorando CLIENT_ACCOUNTING
+        DocumentEngine.postImmediate(
+            getCtx(), getAD_Client_ID(), get_Table_ID(), get_ID(), true, get_TrxName()
+        );
+
+        // ✅ Contabilizar y completar las facturas asociadas
+        String sql = "SELECT C_Invoice_ID FROM AMN_Payroll_Docs WHERE AMN_Payroll_ID=?";
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, get_TrxName())) {
+            pstmt.setInt(1, get_ID());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    MInvoice invoice = new MInvoice(getCtx(), rs.getInt(1), get_TrxName());
+                    if (!invoice.isProcessed() || !DocAction.STATUS_Completed.equals(invoice.getDocStatus())) {
+                        invoice.processIt(DocAction.ACTION_Complete);
+                        invoice.saveEx();
+                    }
+                    DocumentEngine.postImmediate(
+                        getCtx(), invoice.getAD_Client_ID(), invoice.get_Table_ID(), invoice.get_ID(), true, get_TrxName()
+                    );
+                }
+            }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error al procesar facturas asociadas", e);
+            m_processMsg = e.getMessage();
+            return DocAction.STATUS_Invalid;
+        }
+
+        // Finalizar
+        setProcessed(true);
+        setDocStatus(DocAction.STATUS_Completed);
+        setDocAction(DocAction.ACTION_None);
+
+        return DocAction.STATUS_Completed;
     }
 	
 	/**
