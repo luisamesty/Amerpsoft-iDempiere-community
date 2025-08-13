@@ -14,6 +14,7 @@ package org.amerp.amnmodel;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -610,9 +611,6 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	                msgBuilder.append(updateSalaryHistoric(ctx, amnpayroll, trxName));
 	            }
 	            okprocess = amnpayroll.processIt(MAMN_Payroll.DOCACTION_Complete);
-//				if (MClient.isClientAccountingQueue()) {
-//					DocumentEngine.postImmediate(Env.getCtx(), getAD_Client_ID(), amnpayroll.get_Table_ID(), amnpayroll.getAMN_Payroll_ID(), true, trxName);
-//				}
 	        } catch (Exception e) {
 	            msgBuilder.append(" ** ERROR: ").append(e.getMessage()).append(" **\r\n");
 	        }
@@ -1135,10 +1133,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		BigDecimal PayrollDays = BigDecimal.ZERO;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, null);
 		// PayrollDays
-		//log.warning("p_AMN_Payroll_ID="+p_AMN_Payroll_ID+"  fechas INI="+amnpayroll.getInvDateIni()+"  End="+amnpayroll.getInvDateEnd());	
 		PayrollDays = AmerpDateUtils.getDaysElapsed(amnpayroll.getInvDateIni(),amnpayroll.getInvDateEnd());
-		//log.warning("payrollDays="+PayrollDays);
-		PayrollDays = PayrollDays.setScale(0,BigDecimal.ROUND_UP);
+		PayrollDays = PayrollDays.setScale(0, RoundingMode.UP);
     	//
     	return PayrollDays;	
 	}
@@ -1404,10 +1400,10 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		// teo_sarca - FR [ 1776045 ] Add ReActivate action to GL Journal
 		MPeriod.testPeriodOpen(getCtx(), getDateAcct(), getC_DocType_ID(), getAD_Org_ID());
 		MFactAcct.deleteEx(MAMN_Payroll.Table_ID, get_ID(), get_TrxName());
-		setPosted(false);
-		setProcessed(false);
-		setDocAction("CL");
-		setDocStatus("DR");
+		setPosted(false);           			// No contabilizado
+		setProcessed(false);        			// No procesado
+		setDocAction(DocAction.ACTION_Complete); // Acción siguiente: completar
+		setDocStatus(DocAction.STATUS_Drafted);  // Estado actual: borrador
 		
 		// After reActivate
 		m_processMsg = ModelValidationEngine.get().fireDocValidate(this,ModelValidator.TIMING_AFTER_REACTIVATE);
@@ -1847,10 +1843,10 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		MPeriod.testPeriodOpen(getCtx(), getDateAcct(), invoice.getC_DocType_ID(), invoice.getAD_Org_ID());
 		MFactAcct.deleteEx(MInvoice.Table_ID, invoice.getC_Invoice_ID(), trxName);
 		// Invoice
-		invoice.setDocAction("CO");
-		invoice.setDocStatus("DR");
-		invoice.setProcessed(false);
-		invoice.setPosted(false);
+		invoice.setPosted(false);           // No contabilizado
+		invoice.setProcessed(false);        // No procesado
+		invoice.setDocAction(DocAction.ACTION_Complete); // Acción siguiente: completar
+		invoice.setDocStatus(DocAction.STATUS_Drafted);  // Estado actual: borrador
 		invoice.save(trxName);
 
 		return true;
