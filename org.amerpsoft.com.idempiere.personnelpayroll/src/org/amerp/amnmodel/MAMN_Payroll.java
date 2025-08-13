@@ -1016,14 +1016,15 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 
 	        if (existingInvoiceDoc != null) {
 	            minvoice = MInvoice.get(ctx, existingInvoiceDoc.getC_Invoice_ID());
-	            if (minvoice != null && minvoice.isComplete() && !minvoice.isPaid()) {
-	                log.warning("Factura procesada o con asignaciones.");
+	            if (minvoice != null && !minvoice.isPaid()) {
 	                if (amnpayroll.reActivateCInvoice(minvoice,  trxName)) {
 	                	returnMsg = returnMsg + " ** "+Msg.translate(ctx, "Success").trim()+" **\r\n" +
 	                		Msg.translate(ctx, "DocReactivated") + " "+ minvoice.getDocumentNo() ;
 	                } else {
-	                	returnMsg = returnMsg + " ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
-	                				Msg.getElement(Env.getCtx(),"C_Invoice_ID")+":"+minvoice.getDocumentNo()+" \r\n";
+	                	log.warning("Factura procesada o con asignaciones.");
+		                returnMsg = returnMsg + " ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
+		                		"Factura procesada o con asignaciones. - "+
+	                			Msg.getElement(Env.getCtx(),"C_Invoice_ID")+":"+minvoice.getDocumentNo()+" \r\n";
 	                }
 	            } else {
 	            	minvoice = null; 
@@ -1068,8 +1069,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		            MAMN_Payroll_Docs existingCreditMemo = MAMN_Payroll_Docs.getFirstByPayrollAndConceptTypesID(ctx, amnpayroll.getAMN_Payroll_ID(), doc.getAMN_Concept_Types_ID(), trxName);
 		            MInvoice creditMemo = (existingCreditMemo != null) ? MInvoice.get(ctx, existingCreditMemo.getC_Invoice_ID()) : new MInvoice(ctx, 0, trxName);
 	
-		            if (creditMemo != null && creditMemo.isComplete() && !creditMemo.isPaid()) {
-		                log.warning("Credit Memo procesada o con asignaciones.");
+		            if (creditMemo != null && !creditMemo.isPaid()) {
 		                if (amnpayroll.reActivateCInvoice(creditMemo,  trxName)) {
 		                	returnMsg = returnMsg + " ** "+Msg.translate(ctx, "Success").trim()+" **\r\n" +
 		                		Msg.translate(ctx, "DocReactivated") + creditMemo.getDocumentNo() ;
@@ -1078,7 +1078,9 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		                				Msg.getElement(Env.getCtx(),"C_Invoice_ID")+":"+creditMemo.getDocumentNo()+" \r\n";
 		                }
 		            } else {
+		            	log.warning("Credit Memo procesada o con asignaciones.");
 		            	returnMsg = returnMsg + " ** "+Msg.getMsg(Env.getCtx(), "PocessFailed")+" **  "+
+		            			"Credit Memo procesada o con asignaciones. - "+
                 				Msg.getElement(Env.getCtx(),"C_Invoice_ID")+":"+creditMemo.getDocumentNo()+" \r\n";
 		            }
 	        	}
