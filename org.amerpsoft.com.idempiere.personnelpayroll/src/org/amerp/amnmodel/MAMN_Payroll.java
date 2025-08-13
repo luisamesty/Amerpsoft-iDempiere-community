@@ -623,11 +623,14 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 
 	private MInvoice processInvoice(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String returnMsg, String trxName) {
         MInvoice minvoice = null;
-
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+    	MOrg org = MOrg.get(amnemployee.getAD_OrgTo_ID());
         // Buscar factura existente en `AMN_Payroll_Docs`
         MAMN_Payroll_Docs existingInvoiceDoc = MAMN_Payroll_Docs.getFirstByPayrollAndDocTypeID(
                 ctx, amnpayroll.getAMN_Payroll_ID(), amnprocess.getC_DocTypeTarget_ID(), trxName);
-
+        // 
+        String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(amnpayroll.getInvDateEnd());
+   		String DocumentNo=org.getValue()+"-"+amnemployee.getValue().trim()+"-"+amnpayroll.getDocumentNo()+"-"+dateStr;
         if (existingInvoiceDoc != null) {
             minvoice = MInvoice.get(ctx, existingInvoiceDoc.getC_Invoice_ID());
             if (minvoice != null && (minvoice.isComplete() || minvoice.isPaid())) {
@@ -639,13 +642,12 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
             minvoice = new MInvoice(ctx, 0, trxName);
             returnMsg = returnMsg + Msg.getElement(ctx, "C_Invoice_ID").trim() + " "+Msg.translate(ctx, "New").trim();
         }
-
         // Configurar la factura
+		minvoice.setDocumentNo(DocumentNo);
         minvoice.setGrandTotal(amnpayroll.getAmountNetpaid());
         minvoice.setC_DocType_ID(amnprocess.getC_DocTypeTarget_ID());
         minvoice.setC_DocTypeTarget_ID(amnprocess.getC_DocTypeTarget_ID());
         minvoice = createCInvoiceDoc(ctx, amnpayroll, minvoice, getChargeProcess(amnprocess), trxName);
-
         // Completar factura
         if (minvoice.getDocStatus().equals(DocAction.STATUS_Drafted)) {
             minvoice.processIt(DocAction.STATUS_Completed);
@@ -758,7 +760,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		String Employee_Name="";
 		String Payroll_Name="";
 		String PayrollDescription="";
-		String DocumentNo="";
+		String DocumentNo = "";
 		MAMN_Process amnprocess = new MAMN_Process(ctx, amnpayroll.getAMN_Process_ID(), trxName);
     	MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
     	MUser empUser = null;
@@ -768,6 +770,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     	MBPartner empBp = new MBPartner(ctx, amnemployee.getC_BPartner_ID(), trxName);
     	// Default Org Location Location
     	MOrgInfo oi = MOrgInfo.get( amnemployee.getAD_OrgTo_ID(), trxName);
+    	MOrg org = MOrg.get(amnemployee.getAD_OrgTo_ID());
     	int Default_C_BPartner_Location_ID = oi.getC_Location_ID();
     	// Get employe  BPartner for Invoice	
     	if (amnemployee.getBill_BPartner_ID() != 0) {
@@ -788,7 +791,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
    		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(amncontract.getAMN_Contract_ID());
    		// Default ConversionType for Contract
    		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amncontract.getAMN_Contract_ID());
-   		DocumentNo=DocumentNo+Employee_Value+01;
+   		String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(amnperiod.getAMNDateEnd());
+   		DocumentNo=org.getValue()+"-"+Employee_Value+"-"+amnpayroll.getDocumentNo()+"-"+dateStr;
     	Payroll_Value=AmerpUtilities.truncate((amnprocess.getValue().trim()+"-"+Contract_Value+"-"+Employee_Value+"-"+amnperiod.getValue().trim()),39);
 		Payroll_Name=AmerpUtilities.truncate((amnprocess.getValue().trim()+"-"+Contract_Value+"-"+Employee_Name),59);
 		PayrollDescription=AmerpUtilities.truncate((amnprocess.getValue().trim()+"-"+Contract_Value+"-"+Employee_Name+"-"+amnperiod.getValue().trim()),255);		
@@ -804,6 +808,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		}
 		amnpayroll.set_TrxName(trxName);
 		// C_Invoice
+		minvoice.setDocumentNo(DocumentNo);
 		minvoice.setAD_Org_ID(amnemployee.getAD_OrgTo_ID());
 		minvoice.setDescription(PayrollDescription);
 		minvoice.setC_Activity_ID(amnemployee.getC_Activity_ID());
