@@ -821,12 +821,15 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			minvoice.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
 			minvoice.setM_PriceList_ID(empBp.getPO_PriceList_ID());
 		}
+		minvoice.setSalesRep_ID(empUser.getAD_User_ID());
 		if (billBp.getPrimaryC_BPartner_Location_ID() != 0)
 			minvoice.setC_BPartner_Location_ID(billBp.getPrimaryC_BPartner_Location_ID());
 		else
 		minvoice.setC_BPartner_Location_ID(Default_C_BPartner_Location_ID);
 		minvoice.setSalesRep_ID(empUser.getAD_User_ID());
 		minvoice.setIsSOTrx(false);
+		minvoice.setDocStatus(DocAction.STATUS_Drafted);
+	    minvoice.setDocAction(DocAction.ACTION_Complete);
 		// Save C_Invoice header
 		minvoice.save(trxName);
 		// 
@@ -1158,33 +1161,6 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	}
 	
 	
-	/** DocStatus AD_Reference_ID=131 */
-	public static final int DOCSTATUS_AD_Reference_ID=131;
-	/** Drafted = DR */
-	public static final String DOCSTATUS_Drafted = "DR";
-	/** Completed = CO */
-	public static final String DOCSTATUS_Completed = "CO";
-	/** Approved = AP */
-	public static final String DOCSTATUS_Approved = "AP";
-	/** Not Approved = NA */
-	public static final String DOCSTATUS_NotApproved = "NA";
-	/** Voided = VO */
-	public static final String DOCSTATUS_Voided = "VO";
-	/** Invalid = IN */
-	public static final String DOCSTATUS_Invalid = "IN";
-	/** Reversed = RE */
-	public static final String DOCSTATUS_Reversed = "RE";
-	/** Closed = CL */
-	public static final String DOCSTATUS_Closed = "CL";
-	/** Unknown = ?? */
-	public static final String DOCSTATUS_Unknown = "??";
-	/** In Progress = IP */
-	public static final String DOCSTATUS_InProgress = "IP";
-	/** Waiting Payment = WP */
-	public static final String DOCSTATUS_WaitingPayment = "WP";
-	/** Waiting Confirmation = WC */
-	public static final String DOCSTATUS_WaitingConfirmation = "WC";
-
 	/* (non-Javadoc)
 	 * @see org.compiere.process.DocAction#processIt(java.lang.String)
 	 */
