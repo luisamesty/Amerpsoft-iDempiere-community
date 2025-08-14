@@ -1324,19 +1324,25 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
         try {
             // Preparar documento si no estaba preparado
             if (!m_justPrepared) {
-                String status = prepareIt();
+            	log.warning("R/"+getAMN_Payroll_ID()+" preparando nómina ID=" + getAMN_Payroll_ID());
+            	String status = prepareIt();
+            	log.warning("R/"+getAMN_Payroll_ID()+" estado después de prepareIt=" + status);
                 if (!DocAction.STATUS_InProgress.equals(status))
                     return status;
             }
 
             // Validaciones antes de completar
+            log.warning("R/"+getAMN_Payroll_ID()+" validaciones BEFORE_COMPLETE pasadas");
             m_processMsg = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_BEFORE_COMPLETE);
+            log.warning("R/"+getAMN_Payroll_ID()+" validaciones AFTER_COMPLETE pasadas");
             if (m_processMsg != null)
                 return DocAction.STATUS_Invalid;
 
             // Aprobar si no está aprobado
-            if (!isApproved())
+            if (!isApproved()) {
                 approveIt();
+                log.warning("R/"+getAMN_Payroll_ID()+" nómina aprobada");
+            }
 
             // Validaciones después de completar
             String valid = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_AFTER_COMPLETE);
@@ -1357,25 +1363,42 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
                 getAD_Client_ID(), getAD_Org_ID(), 
                 p_currency, getAMN_Payroll_ID()
             );
-
-            // Contabiliza solo el recibo de nómina
+            log.warning("R/"+getAMN_Payroll_ID()+" salarios internos actualizados");
+            
+            // Marcar como procesado antes de contabilizar
+            setProcessed(true);
+            // Lógica de completar documento
+            setDocStatus(DOCSTATUS_Completed);
             try {
-                DocumentEngine.postImmediate(getCtx(), getAD_Client_ID(), get_Table_ID(), get_ID(), true, trxName);
+                saveEx();   // intenta guardar, lanza excepción si falla
             } catch (Exception e) {
-                log.warning("No se pudo registrar en AD_PInstance (JsonData/DocManager), ignorando: " + e.getMessage());
+                log.warning("R/" + getAMN_Payroll_ID() + " ERROR al guardar el recibo de nómina: " + e.getMessage());
+                // Opcional: continuar sin detener el flujo
             }
+            
+            // Contabiliza solo el recibo de nómina
+            log.warning("R/"+getAMN_Payroll_ID()+" contabilizando recibo de nómina ID=" + getAMN_Payroll_ID());
+	        String retPost = DocumentEngine.postImmediate(getCtx(), getAD_Client_ID(), get_Table_ID(), get_ID(), true, trxName);
+	        if (retPost != null && !retPost.isEmpty()) {
+	             log.warning("R/" + getAMN_Payroll_ID() + " ERROR al contabilizar: " + retPost);
+	        } else {
+	            log.warning("R/" + getAMN_Payroll_ID() + " recibo de nómina contabilizado correctamente");
+	        }
+
             // Contabiliza y completa las facturas asociadas dentro de la misma trx
             String sql = "SELECT C_Invoice_ID FROM AMN_Payroll_Docs WHERE AMN_Payroll_ID=?";
             try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
                 pstmt.setInt(1, get_ID());
                 try (ResultSet rs = pstmt.executeQuery()) {
+                	log.warning("R/"+getAMN_Payroll_ID()+" procesando facturas asociadas de nómina ID=" + getAMN_Payroll_ID());
                     while (rs.next()) {
                         int invoiceID = rs.getInt(1);
                         MInvoice invoice = new MInvoice(getCtx(), invoiceID, trxName);
-
+                        log.warning("R/"+getAMN_Payroll_ID()+" procesando factura ID=" + invoiceID+" Status="+invoice.getDocStatus());
                         if (!invoice.isProcessed() || !DocAction.STATUS_Completed.equals(invoice.getDocStatus())) {
                             invoice.processIt(DocAction.ACTION_Complete);
                             invoice.saveEx(); // guardar cambios
+                            log.warning("R/"+getAMN_Payroll_ID()+" factura ID=" + invoiceID + " procesada"+" - Status="+invoice.getDocStatus());
                         }
                     }
                 }
@@ -1386,10 +1409,11 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
             }
 
             // Finaliza la nómina
+            log.warning("R/"+getAMN_Payroll_ID()+" finalizando nómina ID=" + getAMN_Payroll_ID());
             setProcessed(true);
             setDocStatus(DocAction.STATUS_Completed);
-            setDocAction(DocAction.ACTION_None);
-
+            setDocAction(DocAction.ACTION_Close);
+            log.warning("R/"+getAMN_Payroll_ID()+" nómina finalizada - Status="+getDocStatus());
             return DocAction.STATUS_Completed;
 
         } catch (Exception e) {
