@@ -12,14 +12,11 @@ public class AMNFormFactory implements IFormFactory {
 
 	@Override
 	public ADForm newFormInstance(String formName) {
-	// AMNFileImport
-	// ******************************
-	// AMNFileImport
-	// ******************************
+
+		// ******************************
+		// AMNFileImport
+		// ******************************
 		if (formName.equals("org.amerp.amnforms.AMNFileImport")) {
-			//log.warning(".....isEqual........formName:"+formName);
-			//log.warning(".....Igual....");
-			//Object AMform = EquinoxExtensionLocator.instance().locate(Object.class, formName, null).getExtension();		
 			Object AMform2 = null;
 			String webClassName2="org.amerp.amnforms.AMNFileImport";
 			Class<?> clazz2 = null; 
@@ -33,15 +30,13 @@ public class AMNFormFactory implements IFormFactory {
 				log.log(Level.FINE, "Load Form Class Failed in org.amerp.amnforms.AMNFileImport", e);
 			}
 			if (clazz2 != null) {
-				//log.warning(".....clazz != null....");
-				try
-	    		{
-					AMform2 = clazz2.newInstance();
-	    		}
-	    		catch (Exception e)
-	    		{
-	    			log.log(Level.FINE, "Load Form Class Failed in org.amerp.amnforms.AMNFileImport", e);	   
-	    		}
+			    try {
+			        // Usar el constructor vacío (default constructor)
+			        AMform2 = clazz2.getDeclaredConstructor().newInstance();
+			    } catch (Exception e) {
+			        log.log(Level.FINE, 
+			            "Load Form Class Failed in org.amerp.amnforms.AMNPayrollAssistForm", e);
+			    }
 			}
 			if (AMform2 != null) {
 				if (AMform2 instanceof ADForm) {
@@ -55,6 +50,43 @@ public class AMNFormFactory implements IFormFactory {
 				}
 			}
 		}	// AMNFileImport
+		
+		// ******************************
+		// AMNPayrollAssistForm
+		// ******************************
+		if (formName.equals("org.amerp.amnforms.AMNPayrollAssistForm")) {
+			Object AMform2 = null;
+			String webClassName2="org.amerp.amnforms.AMNPayrollAssistForm";
+			Class<?> clazz2 = null; 
+			ClassLoader loader2 = getClass().getClassLoader();
+			try
+			{
+	    		clazz2 = loader2.loadClass(webClassName2);
+			}
+			catch (Exception e)
+			{
+				log.log(Level.FINE, "Load Form Class Failed in org.amerp.amnforms.AMNPayrollAssistForm", e);
+			}
+			if (clazz2 != null) {
+			    try {
+			        // Usar el constructor vacío (default constructor)
+			        AMform2 = clazz2.getDeclaredConstructor().newInstance();
+			    } catch (Exception e) {
+			        log.log(Level.FINE, 
+			            "Load Form Class Failed in org.amerp.amnforms.AMNPayrollAssistForm", e);
+			    }
+			}
+			if (AMform2 != null) {
+				if (AMform2 instanceof ADForm) {
+					return (ADForm)AMform2;
+				} else if (AMform2 instanceof IFormController) {
+					IFormController controller = (IFormController) AMform2;
+					ADForm adForm = controller.getForm();
+					return adForm;
+				}
+			}
+		}	// AMNPayrollAssistForm
+		// 
 		return null;
 	}	
 }
