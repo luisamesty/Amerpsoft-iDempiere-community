@@ -48,6 +48,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	private String		m_processMsg = null;
 	/**	Just Prepared Flag			*/
 	private boolean		m_justPrepared = false;
+	/** trX proceso comun */
+	private String m_trxName;
 
 	/**	Invoice Lines			*/
 	private MAMN_Payroll_Detail[]	m_payrolldetail;
@@ -622,83 +624,117 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	}	
 
 	private MInvoice processInvoice(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String returnMsg, String trxName) {
-        MInvoice minvoice = null;
+	    
+	    MInvoice minvoice = null;
+	    MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
 
-        // Buscar factura existente en `AMN_Payroll_Docs`
-        MAMN_Payroll_Docs existingInvoiceDoc = MAMN_Payroll_Docs.getFirstByPayrollAndDocTypeID(
-                ctx, amnpayroll.getAMN_Payroll_ID(), amnprocess.getC_DocTypeTarget_ID(), trxName);
+	    // Buscar factura existente en AMN_Payroll_Docs
+	    MAMN_Payroll_Docs existingInvoiceDoc = MAMN_Payroll_Docs.getFirstByPayrollAndDocTypeID(
+	            ctx, amnpayroll.getAMN_Payroll_ID(), amnprocess.getC_DocTypeTarget_ID(), trxName);
 
-        if (existingInvoiceDoc != null) {
-            minvoice = MInvoice.get(ctx, existingInvoiceDoc.getC_Invoice_ID());
-            if (minvoice != null && (minvoice.isComplete() || minvoice.isPaid())) {
-                log.warning("Factura ya procesada o con asignaciones.");
-                returnMsg = returnMsg + Msg.translate(ctx, "InvoiceProcessed") + minvoice.getDocumentNo() ;
-                return null;
-            }
-        } else {
-            minvoice = new MInvoice(ctx, 0, trxName);
-            returnMsg = returnMsg + Msg.getElement(ctx, "C_Invoice_ID").trim() + " "+Msg.translate(ctx, "New").trim();
-        }
+	    if (existingInvoiceDoc != null) {
+	        // Usar documento existente
+	        minvoice = new MInvoice(ctx, existingInvoiceDoc.getC_Invoice_ID(), trxName);
+	        if (minvoice.isProcessed() || minvoice.isPaid()) {
+	            log.warning("Factura ya procesada o con asignaciones: " + minvoice.getDocumentNo());
+	            returnMsg += Msg.translate(ctx, "InvoiceProcessed") + minvoice.getDocumentNo();
+	            return minvoice; // Retornar para que se contabilice si es necesario
+	        }
+	        returnMsg += Msg.getElement(ctx, "C_Invoice_ID") + " existente";
+	    } else {
+	        // Crear nuevo documento principal
+	        minvoice = new MInvoice(ctx, 0, trxName);
+	        returnMsg += Msg.getElement(ctx, "C_Invoice_ID") + " nuevo";
 
-        // Configurar la factura
-        minvoice.setGrandTotal(amnpayroll.getAmountNetpaid());
-        minvoice.setC_DocType_ID(amnprocess.getC_DocTypeTarget_ID());
-        minvoice.setC_DocTypeTarget_ID(amnprocess.getC_DocTypeTarget_ID());
-        minvoice = createCInvoiceDoc(ctx, amnpayroll, minvoice, getChargeProcess(amnprocess), trxName);
+	        // Configurar la factura principal
+	        minvoice.setGrandTotal(amnpayroll.getAmountNetpaid());
+	        minvoice.setC_DocType_ID(amnprocess.getC_DocTypeTarget_ID());
+	        minvoice.setC_DocTypeTarget_ID(amnprocess.getC_DocTypeTarget_ID());
 
-        // Completar factura
-        if (minvoice.getDocStatus().equals(DocAction.STATUS_Drafted)) {
-            minvoice.processIt(DocAction.STATUS_Completed);
-        }
+	        // Crear cabecera y líneas
+	        boolean isNew = (existingInvoiceDoc == null);
+	        minvoice = createCInvoiceDoc(ctx, amnpayroll, minvoice, getChargeProcess(amnprocess), 1, isNew, trxName);
 
-        // Crear o actualizar `AMN_Payroll_Docs`
-        int conceptTypesID = MAMN_Concept_Types.sqlGetAMNConceptTypesSB(amnpayroll.getAD_Client_ID());
-        MAMN_Payroll_Docs.createOrUpdate(ctx, amnpayroll.getAMN_Payroll_ID(), conceptTypesID, minvoice, trxName);
+	        // Guardar en AMN_Payroll_Docs
+	        int conceptTypesID = MAMN_Concept_Types.sqlGetAMNConceptTypesSB(amnpayroll.getAD_Client_ID());
+	        MAMN_Payroll_Docs.createOrUpdate(ctx, amnpayroll.getAMN_Payroll_ID(), conceptTypesID, minvoice, trxName);
+	    }
 
-        return minvoice;
-    }
+	    // Completar o contabilizar la factura si no está procesada
+	    if (!minvoice.isProcessed()) {
+	        minvoice.processIt(DocAction.ACTION_Complete);
+	        minvoice.saveEx(trxName);
 
-    private boolean processCreditMemos(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String returnMsg, String trxName) {
-        
-    	List<MAMN_Concept_Types> concepts = MAMN_Concept_Types.getFilteredConcepts("B", "C", amnprocess.getAMN_Process_ID());
+	        DocumentEngine.postImmediate(ctx, minvoice.getAD_Client_ID(), minvoice.get_Table_ID(), minvoice.get_ID(), true, trxName);
+	    }
 
-        if (concepts.isEmpty()) {
-        	// Retorna true porque no encuentra conceptos definidos
-            return true;
-        }
+	    return minvoice;
+	}
 
-        Map<Integer, MAMN_Payroll_Detail> payrollDetails = MAMN_Payroll_Detail.findPayrollDetailsByConcepts(ctx, amnpayroll.getAMN_Payroll_ID(), concepts);
-        if (payrollDetails.isEmpty()) {
-        	// Retorna true porque no encuentra conceptos en el recibo
-            return true;
-        }
 
-        for (MAMN_Payroll_Detail detail : payrollDetails.values()) {
-            int conceptTypesID = new MAMN_Concept_Types_Proc(ctx, detail.getAMN_Concept_Types_Proc_ID(), trxName).getAMN_Concept_Types_ID();
+	private boolean processCreditMemos(Properties ctx, MAMN_Payroll amnpayroll, MAMN_Process amnprocess, String returnMsg, String trxName) {
+	    
+	    List<MAMN_Concept_Types> concepts = MAMN_Concept_Types.getFilteredConcepts("B", "C", amnprocess.getAMN_Process_ID());
 
-            MAMN_Payroll_Docs existingCreditMemo = MAMN_Payroll_Docs.getFirstByPayrollAndConceptTypesID(ctx, amnpayroll.getAMN_Payroll_ID(), conceptTypesID, trxName);
-            MInvoice creditMemo = (existingCreditMemo != null) ? MInvoice.get(ctx, existingCreditMemo.getC_Invoice_ID()) : new MInvoice(ctx, 0, trxName);
+	    if (concepts.isEmpty()) {
+	        // No hay conceptos de crédito definidos
+	        return true;
+	    }
 
-            if (creditMemo != null && (creditMemo.isComplete() || creditMemo.isPaid())) {
-                log.warning("Nota de crédito ya procesada o con asignaciones.");
-                returnMsg = returnMsg + "Nota de crédito ya procesada o con asignaciones."+"\r\n";
-                return false;
-            }
+	    Map<Integer, MAMN_Payroll_Detail> payrollDetails = MAMN_Payroll_Detail.findPayrollDetailsByConcepts(ctx, amnpayroll.getAMN_Payroll_ID(), concepts);
+	    if (payrollDetails.isEmpty()) {
+	        // No hay conceptos de crédito en el recibo
+	        return true;
+	    }
 
-            creditMemo.setGrandTotal(detail.getAmountDeducted());
-            creditMemo.setC_DocType_ID(amnprocess.getC_DocTypeCreditMemo_ID());
-            creditMemo.setC_DocTypeTarget_ID(amnprocess.getC_DocTypeCreditMemo_ID());
-            creditMemo = createCInvoiceDoc(ctx, amnpayroll, creditMemo, getChargeProcess(amnprocess), trxName);
+	    int seq = 0;
+	    for (MAMN_Payroll_Detail detail : payrollDetails.values()) {
+	        seq++;
+	        int conceptTypesID = new MAMN_Concept_Types_Proc(ctx, detail.getAMN_Concept_Types_Proc_ID(), trxName)
+	                                .getAMN_Concept_Types_ID();
 
-            if (creditMemo.getDocStatus().equals(DocAction.STATUS_Drafted)) {
-                creditMemo.processIt(DocAction.STATUS_Completed);
-            }
+	        // Buscar nota de crédito existente
+	        MAMN_Payroll_Docs existingCreditMemo = MAMN_Payroll_Docs.getFirstByPayrollAndConceptTypesID(
+	                                                ctx, amnpayroll.getAMN_Payroll_ID(), conceptTypesID, trxName);
 
-            MAMN_Payroll_Docs.createOrUpdate(ctx, amnpayroll.getAMN_Payroll_ID(), conceptTypesID, creditMemo, trxName);
-        }
+	        MInvoice creditMemo;
+	        if (existingCreditMemo != null) {
+	            creditMemo = new MInvoice(ctx, existingCreditMemo.getC_Invoice_ID(), trxName);
+	            if (creditMemo.isProcessed() || creditMemo.isPaid()) {
+	                log.warning("Nota de crédito ya procesada o con asignaciones: " + creditMemo.getDocumentNo());
+	                returnMsg += "Nota de crédito ya procesada: " + creditMemo.getDocumentNo() + "\r\n";
+	                continue; // Pasar al siguiente detalle
+	            }
+	            returnMsg += "Reutilizando nota de crédito existente: " + creditMemo.getDocumentNo() + "\r\n";
+	        } else {
+	            // Crear nueva nota de crédito
+	            creditMemo = new MInvoice(ctx, 0, trxName);
+	            returnMsg += "Creando nueva nota de crédito para concepto: " + conceptTypesID + "\r\n";
+	        }
 
-        return true;
-    }
+	        // Configurar nota de crédito
+	        creditMemo.setGrandTotal(detail.getAmountDeducted());
+	        creditMemo.setC_DocType_ID(amnprocess.getC_DocTypeCreditMemo_ID());
+	        creditMemo.setC_DocTypeTarget_ID(amnprocess.getC_DocTypeCreditMemo_ID());
+
+	        // Cabecera y líneas
+	        boolean isNew = (existingCreditMemo == null);
+	        creditMemo = createCInvoiceDoc(ctx, amnpayroll, creditMemo, getChargeProcess(amnprocess), seq, isNew, trxName);
+
+	        // Completar y contabilizar si no está procesada
+	        if (!creditMemo.isProcessed()) {
+	            creditMemo.processIt(DocAction.ACTION_Complete);
+	            creditMemo.saveEx(trxName);
+	            DocumentEngine.postImmediate(ctx, creditMemo.getAD_Client_ID(), creditMemo.get_Table_ID(), creditMemo.get_ID(), true, trxName);
+	        }
+
+	        // Crear o actualizar registro en AMN_Payroll_Docs
+	        MAMN_Payroll_Docs.createOrUpdate(ctx, amnpayroll.getAMN_Payroll_ID(), conceptTypesID, creditMemo, trxName);
+	    }
+
+	    return true;
+	}
+
 
     private String getChargeProcess(MAMN_Process amnprocess) {
         MDocType mdoctype = new MDocType(getCtx(), amnprocess.getC_DocTypeTarget_ID(), get_TrxName());
@@ -725,15 +761,18 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
      * @param trxName
      * @return
      */
-    private MInvoice createCInvoiceDoc( Properties ctx, MAMN_Payroll amnpayroll, MInvoice minvoice, String chargeProcess,  String trxName) {
+    private MInvoice createCInvoiceDoc( Properties ctx, MAMN_Payroll amnpayroll, MInvoice minvoice, String chargeProcess, int seq, boolean isNew, String trxName) {
 		
-
-		// Invoice Header
-    	createCInvoiceHdr(getCtx(), amnpayroll,  minvoice,  trxName);
-		// Creates Invoice Lines 
-		createCInvoiceLines(getCtx(), minvoice, amnpayroll, chargeProcess, trxName);
-		log.warning("Invoice:"+minvoice.getDocumentNo().trim() +"  AD_Org_ID:"+ minvoice.getAD_Org_ID()+" "+ minvoice.getDescription().trim() );
-    	return minvoice;
+        if (isNew) {
+            createCInvoiceHdr(ctx, amnpayroll, minvoice, seq, trxName);
+            createCInvoiceLines(ctx, minvoice, amnpayroll, chargeProcess, isNew, trxName);
+        } else {
+            // Opcional: actualizar totales o descripción
+            minvoice.setGrandTotal(amnpayroll.getAmountNetpaid());
+            minvoice.setDescription("Actualización del recibo");
+            minvoice.saveEx(trxName);
+        }
+        return minvoice;
     }
     
     
@@ -748,7 +787,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 * @param trxName
 	 * @return
 	 */
-	private int createCInvoiceHdr(Properties ctx, MAMN_Payroll amnpayroll, MInvoice minvoice, String trxName) {
+	private int createCInvoiceHdr(Properties ctx, MAMN_Payroll amnpayroll, MInvoice minvoice, int seq, String trxName) {
 		int retValue = 0;
 		Integer Currency_ID = 0;
 		Integer ConversionType_ID = MConversionType.TYPE_SPOT;
@@ -758,7 +797,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		String Employee_Name="";
 		String Payroll_Name="";
 		String PayrollDescription="";
-		String DocumentNo="";
+		String DocumentNo = "";
 		MAMN_Process amnprocess = new MAMN_Process(ctx, amnpayroll.getAMN_Process_ID(), trxName);
     	MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
     	MUser empUser = null;
@@ -768,6 +807,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     	MBPartner empBp = new MBPartner(ctx, amnemployee.getC_BPartner_ID(), trxName);
     	// Default Org Location Location
     	MOrgInfo oi = MOrgInfo.get( amnemployee.getAD_OrgTo_ID(), trxName);
+    	MOrg org = MOrg.get(amnemployee.getAD_OrgTo_ID());
     	int Default_C_BPartner_Location_ID = oi.getC_Location_ID();
     	// Get employe  BPartner for Invoice	
     	if (amnemployee.getBill_BPartner_ID() != 0) {
@@ -787,8 +827,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
    		// Default Currency  for Contract
    		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(amncontract.getAMN_Contract_ID());
    		// Default ConversionType for Contract
-   		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amncontract.getAMN_Contract_ID());
-   		DocumentNo=DocumentNo+Employee_Value+01;
+   		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amncontract.getAMN_Contract_ID());  		
+   		DocumentNo = getPayrollInvoiceDocumentNo(ctx, amnpayroll, minvoice, seq, trxName);
     	Payroll_Value=AmerpUtilities.truncate((amnprocess.getValue().trim()+"-"+Contract_Value+"-"+Employee_Value+"-"+amnperiod.getValue().trim()),39);
 		Payroll_Name=AmerpUtilities.truncate((amnprocess.getValue().trim()+"-"+Contract_Value+"-"+Employee_Name),59);
 		PayrollDescription=AmerpUtilities.truncate((amnprocess.getValue().trim()+"-"+Contract_Value+"-"+Employee_Name+"-"+amnperiod.getValue().trim()),255);		
@@ -804,6 +844,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		}
 		amnpayroll.set_TrxName(trxName);
 		// C_Invoice
+		minvoice.setDocumentNo(DocumentNo);
 		minvoice.setAD_Org_ID(amnemployee.getAD_OrgTo_ID());
 		minvoice.setDescription(PayrollDescription);
 		minvoice.setC_Activity_ID(amnemployee.getC_Activity_ID());
@@ -821,12 +862,15 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 			minvoice.setC_BPartner_ID(amnemployee.getC_BPartner_ID());
 			minvoice.setM_PriceList_ID(empBp.getPO_PriceList_ID());
 		}
+		minvoice.setSalesRep_ID(empUser.getAD_User_ID());
 		if (billBp.getPrimaryC_BPartner_Location_ID() != 0)
 			minvoice.setC_BPartner_Location_ID(billBp.getPrimaryC_BPartner_Location_ID());
 		else
 		minvoice.setC_BPartner_Location_ID(Default_C_BPartner_Location_ID);
 		minvoice.setSalesRep_ID(empUser.getAD_User_ID());
 		minvoice.setIsSOTrx(false);
+		minvoice.setDocStatus(DocAction.STATUS_Drafted);
+	    minvoice.setDocAction(DocAction.ACTION_Complete);
 		// Save C_Invoice header
 		minvoice.save(trxName);
 		// 
@@ -860,23 +904,15 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 * @param trxName
 	 * @return
 	 */
-	private boolean createCInvoiceLines(Properties ctx, MInvoice invoice, MAMN_Payroll  amnpayroll, String chargeProcess, String trxName) {
+	private boolean createCInvoiceLines(Properties ctx, MInvoice invoice, MAMN_Payroll  amnpayroll, String chargeProcess, boolean isNew, String trxName) {
 		
-		boolean retValue = false;
-		MInvoiceLine invlin = null;
-		
-		// Verify if previouss line
-		if (invoice != null) {
-			MInvoiceLine[] invlines = invoice.getLines();
-			if (invlines.length == 0 ) {
-				invlin  = new MInvoiceLine(ctx, 0, trxName);
-			}  else {
-				deleteInvoiceLines(ctx, invoice,  trxName);
-				invlin  = new MInvoiceLine(ctx, 0, trxName);
-			}
-		} else {
-			return retValue;
-		}
+	    if (!isNew) {
+	        // La factura ya existe, no se crean nuevas líneas
+	        return false;
+	    }
+
+	    // Solo crea líneas si la factura es nueva
+	    MInvoiceLine invlin = new MInvoiceLine(ctx, 0, trxName);
 		// Default Exent Tax
 		int C_Tax_ID = getExemptTax(ctx, amnpayroll.getAD_Client_ID(), trxName);
 		// Workforce from AMN_payroll --ª AMN_Jobtitle
@@ -905,9 +941,8 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 		invlin.setC_Activity_ID(invoice.getC_Activity_ID());
 		invlin.setC_Project_ID(invoice.getC_Project_ID());
 		invlin.saveEx(trxName);
-		retValue=true;
 		// 
-		return retValue;
+		return true;
 		
 	}	//	createCInvoice
 	
@@ -926,6 +961,27 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 				// Delete
 				invlin.deleteEx(true);
 			}
+	}
+	
+	private String getPayrollInvoiceDocumentNo(Properties ctx, MAMN_Payroll amnpayroll, MInvoice minvoice, int seq, String trxName) {
+		
+		String seqStr = "";
+		String DocumentNo = "";
+		MAMN_Process amnprocess = new MAMN_Process(ctx, amnpayroll.getAMN_Process_ID(), trxName);
+    	MAMN_Employee amnemployee = new MAMN_Employee(ctx, amnpayroll.getAMN_Employee_ID(), trxName);
+	   	MOrg org = MOrg.get(amnemployee.getAD_OrgTo_ID());
+  		String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(amnpayroll.getDateAcct());
+   		if (amnprocess.getC_DocTypeCreditMemo_ID()== minvoice.getC_DocTypeTarget_ID()) 
+   			seqStr = String.format("NC-%02d", seq);
+   		else if (amnprocess.getC_DocTypeTarget_ID()== minvoice.getC_DocTypeTarget_ID()){
+   			seqStr = String.format("FA-%02d", seq);
+   		} else {
+   			seqStr = String.format("DO-%02d", seq);
+   		}   		
+   		DocumentNo=org.getValue()+"-"+seqStr.trim()+"-"+amnpayroll.getDocumentNo()+"-"+dateStr;
+		
+		return DocumentNo;
+		
 	}
 	
 	/**
@@ -1157,64 +1213,64 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     	return AMNPayrollDetailNoLines;	
 	}
 	
-	
-	/** DocStatus AD_Reference_ID=131 */
-	public static final int DOCSTATUS_AD_Reference_ID=131;
-	/** Drafted = DR */
-	public static final String DOCSTATUS_Drafted = "DR";
-	/** Completed = CO */
-	public static final String DOCSTATUS_Completed = "CO";
-	/** Approved = AP */
-	public static final String DOCSTATUS_Approved = "AP";
-	/** Not Approved = NA */
-	public static final String DOCSTATUS_NotApproved = "NA";
-	/** Voided = VO */
-	public static final String DOCSTATUS_Voided = "VO";
-	/** Invalid = IN */
-	public static final String DOCSTATUS_Invalid = "IN";
-	/** Reversed = RE */
-	public static final String DOCSTATUS_Reversed = "RE";
-	/** Closed = CL */
-	public static final String DOCSTATUS_Closed = "CL";
-	/** Unknown = ?? */
-	public static final String DOCSTATUS_Unknown = "??";
-	/** In Progress = IP */
-	public static final String DOCSTATUS_InProgress = "IP";
-	/** Waiting Payment = WP */
-	public static final String DOCSTATUS_WaitingPayment = "WP";
-	/** Waiting Confirmation = WC */
-	public static final String DOCSTATUS_WaitingConfirmation = "WC";
-
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#processIt(java.lang.String)
+	/**
+	 * processIt(String p_action) 
 	 */
-    @Override
-    public boolean processIt(String p_action) throws Exception {
-//log.warning("Processing Action=" + p_action + " - DocStatus=" + getDocStatus() + " - DocAction=" + getDocAction());    	
-    	m_processMsg = null;
-    	boolean m_retVal = true;
-    	DocumentEngine engine = new DocumentEngine(this, getDocStatus());
-    	if (getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
-		{
-			m_retVal = true;
-		} else {
-			m_processMsg = "Process MSG: " + getProcessMsg();
-			setProcessed(true);
-			m_retVal = engine.processIt(p_action, getDocAction());
-			if (!m_retVal) {
-				setProcessed(false);
-			}
-			DocumentEngine.postImmediate(Env.getCtx(), getAD_Client_ID(), get_Table_ID(), getAMN_Payroll_ID(), true, get_TrxName());
-		}
-    	return m_retVal;
-    }
+	// ------------------------
+	@Override
+	public boolean processIt(String p_action) throws Exception {
+	    m_processMsg = null;
+	    boolean m_retVal = true;
 
-	/* (non-Javadoc)
-	 * @see org.compiere.process.DocAction#unlockIt()
+	    if (getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
+	        return true;
+	    }
+
+	    // Solo loguea las facturas asociadas, no las procesa
+	    logAssociatedInvoices();
+
+	    DocumentEngine engine = new DocumentEngine(this, getDocStatus());
+	    m_retVal = engine.processIt(p_action, getDocAction());
+
+	    if (!m_retVal) {
+	        setProcessed(false);
+	    }
+
+	    return m_retVal;
+	}
+
+
+	public void postInvoice(int invoiceID) {
+	    Trx trx = Trx.get(Trx.createTrxName(), true);
+	    try {
+	        MInvoice invoice = new MInvoice(Env.getCtx(), invoiceID, trx.getTrxName());
+	        if (invoice.get_ID() == 0 || invoice.isProcessed()) {
+	            trx.rollback();
+	            return;
+	        }
+
+	        invoice.processIt(DocAction.ACTION_Complete);
+	        invoice.saveEx();
+
+	        DocumentEngine.postImmediate(
+	            invoice.getCtx(), invoice.getAD_Client_ID(), invoice.get_Table_ID(), invoice.get_ID(), true, trx.getTrxName()
+	        );
+
+	        trx.commit();
+	    } catch (Exception e) {
+	        trx.rollback();
+	        log.log(Level.SEVERE, "Error contabilizando factura " + invoiceID, e);
+	    } finally {
+	        trx.close();
+	    }
+	}
+
+	/**
+	 * 
 	 */
     @Override
     public boolean unlockIt() {
-//log.warning("===============unlockIt================================");
+    	//log.warning("===============unlockIt================================");
 	    return true;
     }
 
@@ -1223,7 +1279,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
     @Override
     public boolean invalidateIt() {
-//log.warning("===============invalidateIt================================");
+    	//log.warning("===============invalidateIt================================");
 	    return true;
     }
 
@@ -1232,7 +1288,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
     @Override
     public String prepareIt() {
-//log.warning("===============prepareIt================================");
+    	//log.warning("===============prepareIt================================");
     	setC_DocType_ID(getC_DocTypeTarget_ID());
     	return DocAction.STATUS_InProgress;
     }
@@ -1242,7 +1298,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
     @Override
     public boolean approveIt() {
-//log.warning("=================approveIt==============================");
+    	//log.warning("=================approveIt==============================");
 		if (log.isLoggable(Level.INFO)) log.info(toString());
 		setIsApproved(true);
 		return true;
@@ -1253,82 +1309,141 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	 */
     @Override
     public boolean rejectIt() {
-//log.warning("================rejectIt===============================");
+    	//log.warning("================rejectIt===============================");
 	    return true;
     }
 
 	/* (non-Javadoc)
 	 * @see org.compiere.process.DocAction#completeIt()
 	 */
+ // ------------------------
     @Override
     public String completeIt() {
-        if (!m_justPrepared) {
-            String status = prepareIt();
-            if (!DocAction.STATUS_InProgress.equals(status))
-                return status;
-        }
+        String trxName = get_TrxName(); // usar la trx de la nómina
 
-        m_processMsg = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_BEFORE_COMPLETE);
-        if (m_processMsg != null)
-            return DocAction.STATUS_Invalid;
-
-        if (!isApproved())
-            approveIt();
-
-        String valid = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_AFTER_COMPLETE);
-        if (valid != null) {
-            m_processMsg = valid;
-            return DocAction.STATUS_Invalid;
-        }
-
-        setDefiniteDocumentNo();
-
-        // Procesamiento de lógica interna
-        MClientInfo info = MClientInfo.get(getCtx(), getAD_Client_ID(), null); 
-        MAcctSchema as = MAcctSchema.get(getCtx(), info.getC_AcctSchema1_ID(), null);
-        int p_currency = getC_Currency_ID() == 0 ? as.getC_Currency_ID() : getC_Currency_ID();
-
-        MAMN_Employee_Salary.updateAMN_Employee_Salary(
-            getCtx(), Env.getLanguage(getCtx()).getLocale(), 
-            getAD_Client_ID(), getAD_Org_ID(), 
-            p_currency, getAMN_Payroll_ID()
-        );
-
-        // ✅ Contabilizar este documento (nómina) ignorando CLIENT_ACCOUNTING
-        DocumentEngine.postImmediate(
-            getCtx(), getAD_Client_ID(), get_Table_ID(), get_ID(), true, get_TrxName()
-        );
-
-        // ✅ Contabilizar y completar las facturas asociadas
-        String sql = "SELECT C_Invoice_ID FROM AMN_Payroll_Docs WHERE AMN_Payroll_ID=?";
-        try (PreparedStatement pstmt = DB.prepareStatement(sql, get_TrxName())) {
-            pstmt.setInt(1, get_ID());
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    MInvoice invoice = new MInvoice(getCtx(), rs.getInt(1), get_TrxName());
-                    if (!invoice.isProcessed() || !DocAction.STATUS_Completed.equals(invoice.getDocStatus())) {
-                        invoice.processIt(DocAction.ACTION_Complete);
-                        invoice.saveEx();
-                    }
-                    DocumentEngine.postImmediate(
-                        getCtx(), invoice.getAD_Client_ID(), invoice.get_Table_ID(), invoice.get_ID(), true, get_TrxName()
-                    );
-                }
+        try {
+            // Preparar documento si no estaba preparado
+            if (!m_justPrepared) {
+            	log.warning("R/"+getAMN_Payroll_ID()+" preparando nómina ID=" + getAMN_Payroll_ID());
+            	String status = prepareIt();
+            	log.warning("R/"+getAMN_Payroll_ID()+" estado después de prepareIt=" + status);
+                if (!DocAction.STATUS_InProgress.equals(status))
+                    return status;
             }
+
+            // Validaciones antes de completar
+            log.warning("R/"+getAMN_Payroll_ID()+" validaciones BEFORE_COMPLETE pasadas");
+            m_processMsg = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_BEFORE_COMPLETE);
+            log.warning("R/"+getAMN_Payroll_ID()+" validaciones AFTER_COMPLETE pasadas");
+            if (m_processMsg != null)
+                return DocAction.STATUS_Invalid;
+
+            // Aprobar si no está aprobado
+            if (!isApproved()) {
+                approveIt();
+                log.warning("R/"+getAMN_Payroll_ID()+" nómina aprobada");
+            }
+
+            // Validaciones después de completar
+            String valid = ModelValidationEngine.get().fireDocValidate(this, ModelValidator.TIMING_AFTER_COMPLETE);
+            if (valid != null) {
+                m_processMsg = valid;
+                return DocAction.STATUS_Invalid;
+            }
+
+            setDefiniteDocumentNo();
+
+            // Actualiza salarios internos
+            MClientInfo info = MClientInfo.get(getCtx(), getAD_Client_ID(), null); 
+            MAcctSchema as = MAcctSchema.get(getCtx(), info.getC_AcctSchema1_ID(), null);
+            int p_currency = getC_Currency_ID() == 0 ? as.getC_Currency_ID() : getC_Currency_ID();
+
+            MAMN_Employee_Salary.updateAMN_Employee_Salary(
+                getCtx(), Env.getLanguage(getCtx()).getLocale(), 
+                getAD_Client_ID(), getAD_Org_ID(), 
+                p_currency, getAMN_Payroll_ID()
+            );
+            log.warning("R/"+getAMN_Payroll_ID()+" salarios internos actualizados");
+            
+            // Marcar como procesado antes de contabilizar
+            setProcessed(true);
+            // Lógica de completar documento
+            setDocStatus(DOCSTATUS_Completed);
+            try {
+                saveEx();   // intenta guardar, lanza excepción si falla
+            } catch (Exception e) {
+                log.warning("R/" + getAMN_Payroll_ID() + " ERROR al guardar el recibo de nómina: " + e.getMessage());
+                // Opcional: continuar sin detener el flujo
+            }
+            
+            // Contabiliza solo el recibo de nómina
+            log.warning("R/"+getAMN_Payroll_ID()+" contabilizando recibo de nómina ID=" + getAMN_Payroll_ID());
+	        String retPost = DocumentEngine.postImmediate(getCtx(), getAD_Client_ID(), get_Table_ID(), get_ID(), true, trxName);
+	        if (retPost != null && !retPost.isEmpty()) {
+	             log.warning("R/" + getAMN_Payroll_ID() + " ERROR al contabilizar: " + retPost);
+	        } else {
+	            log.warning("R/" + getAMN_Payroll_ID() + " recibo de nómina contabilizado correctamente");
+	        }
+
+            // Contabiliza y completa las facturas asociadas dentro de la misma trx
+            String sql = "SELECT C_Invoice_ID FROM AMN_Payroll_Docs WHERE AMN_Payroll_ID=?";
+            try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+                pstmt.setInt(1, get_ID());
+                try (ResultSet rs = pstmt.executeQuery()) {
+                	log.warning("R/"+getAMN_Payroll_ID()+" procesando facturas asociadas de nómina ID=" + getAMN_Payroll_ID());
+                    while (rs.next()) {
+                        int invoiceID = rs.getInt(1);
+                        MInvoice invoice = new MInvoice(getCtx(), invoiceID, trxName);
+                        log.warning("R/"+getAMN_Payroll_ID()+" procesando factura ID=" + invoiceID+" Status="+invoice.getDocStatus());
+                        if (!invoice.isProcessed() || !DocAction.STATUS_Completed.equals(invoice.getDocStatus())) {
+                            invoice.processIt(DocAction.ACTION_Complete);
+                            invoice.saveEx(); // guardar cambios
+                            log.warning("R/"+getAMN_Payroll_ID()+" factura ID=" + invoiceID + " procesada"+" - Status="+invoice.getDocStatus());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "Error al contabilizar facturas asociadas", e);
+                m_processMsg = e.getMessage();
+                return DocAction.STATUS_Invalid;
+            }
+
+            // Finaliza la nómina
+            log.warning("R/"+getAMN_Payroll_ID()+" finalizando nómina ID=" + getAMN_Payroll_ID());
+            setProcessed(true);
+            setDocStatus(DocAction.STATUS_Completed);
+            setDocAction(DocAction.ACTION_Close);
+            log.warning("R/"+getAMN_Payroll_ID()+" nómina finalizada - Status="+getDocStatus());
+            return DocAction.STATUS_Completed;
+
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Error al procesar facturas asociadas", e);
+            log.log(Level.SEVERE, "Error al completar la nómina", e);
             m_processMsg = e.getMessage();
             return DocAction.STATUS_Invalid;
         }
-
-        // Finalizar
-        setProcessed(true);
-        setDocStatus(DocAction.STATUS_Completed);
-        setDocAction(DocAction.ACTION_None);
-
-        return DocAction.STATUS_Completed;
     }
-	
+
+    
+    /**
+     * LOG todas las facturas asociadas a la nómina existente.
+     */
+ 	// ------------------------
+    private void logAssociatedInvoices() {
+        String sql = "SELECT C_Invoice_ID FROM AMN_Payroll_Docs WHERE AMN_Payroll_ID=?";
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) { // trx=null, solo lectura
+            pstmt.setInt(1, getAMN_Payroll_ID());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int invoiceID = rs.getInt(1);
+                    MInvoice invoice = new MInvoice(getCtx(), invoiceID, null); // sin trx
+                    log.info("Factura asociada a nómina: " + invoice.getDocumentNo() + " C_Invoice_ID=" + invoiceID);
+                }
+            }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error al listar facturas asociadas", e);
+        }
+    }
+
 	/**
 	 * 	Set the definite document number after completed
 	 */
@@ -1476,6 +1591,11 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
     public String getProcessMsg() {
     	//log.warning("=====================getProcessMsg===========================");
 	    return null;
+    }
+    
+    
+    public void setTrxName(String trxName) {
+        this.m_trxName = trxName;
     }
 
 
