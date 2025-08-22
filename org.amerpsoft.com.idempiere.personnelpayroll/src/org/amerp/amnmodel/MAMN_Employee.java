@@ -22,7 +22,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 
+import org.compiere.model.MBPartner;
 import org.compiere.model.MRefList;
+import org.compiere.model.MUser;
 import org.compiere.model.Query;
 import org.compiere.model.X_AD_Reference;
 import org.compiere.model.X_I_BPartner;
@@ -421,4 +423,41 @@ public class MAMN_Employee extends X_AMN_Employee {
         return Timestamp.valueOf(lastAnniversary.atStartOfDay());
     }
 
+	/**
+	 * getFirstUserOfBPartner
+	 * @return
+	 */
+	public MUser getFirstUserOfBPartner() {
+	    if (getC_BPartner_ID() <= 0)
+	        return null;
+
+	    MBPartner bp = new MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
+
+	    // Obtener todos los usuarios activos del tercero
+	    MUser[] users = bp.getContacts(true); // true = solo activos
+
+	    if (users != null && users.length > 0)
+	        return users[0];
+
+	    return null;
+	}
+	
+	/**
+	 * getFirstUserOfBillBPartner
+	 * @return
+	 */
+	public MUser getFirstUserOfBillBPartner() {
+	    if (getC_BPartner_ID() <= 0)
+	        return null;
+
+	    MBPartner bp = new MBPartner(getCtx(), getBill_BPartner_ID(), get_TrxName());
+
+	    // Obtener todos los usuarios activos del tercero a facturar
+	    MUser[] users = bp.getContacts(true); // true = solo activos
+
+	    if (users != null && users.length > 0)
+	        return users[0];
+
+	    return null;
+	}
 }

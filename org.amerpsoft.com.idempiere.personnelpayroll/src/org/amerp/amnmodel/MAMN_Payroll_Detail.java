@@ -301,7 +301,10 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
         Concept_Name = amncty.getName();
         Concept_Description = amncty.getDescription();
         Concept_CalcOrder =amncty.getCalcOrder();
-        Concept_DefaultValueST=amncty.getDefaultValue().trim();
+        if (amncty.getDefaultValue()!= null)
+        	Concept_DefaultValueST=amncty.getDefaultValue().trim();
+        else 
+        	Concept_DefaultValueST="";
         if (!Util.isEmpty(amncty.getScriptDefaultValue(), true))
         	Concept_ScriptDefaultValueST=amncty.getScriptDefaultValue();
         else 
