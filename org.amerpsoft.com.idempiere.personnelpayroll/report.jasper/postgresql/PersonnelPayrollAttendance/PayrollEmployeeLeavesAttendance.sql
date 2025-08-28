@@ -70,7 +70,15 @@ SELECT * FROM
 	SELECT 
 		LTALL.ad_client_id, 
 		LTALL.report_date,
-		org.ad_org_id, org.value AS emp_org_value, org.name AS emp_org_name,
+		CASE EXTRACT(DOW FROM report_date)
+		    WHEN 0 THEN 1
+		    ELSE EXTRACT(DOW FROM report_date)+1
+		END AS day_of_week,
+		org.ad_org_id, 
+		CASE WHEN $P{isShowOrganization} ='N' OR $P{isShowOrganization} = '' THEN 'ALL-ORG' ELSE
+	  			org.value END AS emp_org_value, 
+	  	CASE WHEN $P{isShowOrganization} ='N' OR $P{isShowOrganization} = '' THEN 'ALL-ORGS' ELSE
+	  			org.name END AS emp_org_name,
 		-- EMPLOYEE
 		LTALL.amn_employee_id, 
 		emp2.value as emp_value, 
@@ -85,6 +93,7 @@ SELECT * FROM
 		amc.value as c_value, 
 		COALESCE(amc.name, amc.description) as c_tipo, 
 		-- LOCATION isShowLocation
+		lct.value AS location, 
 		CASE WHEN $P{isShowLocation} ='N' OR $P{isShowLocation} = '' THEN 'ALL-LOC' ELSE
 	  			lct.value END AS location_value, 
 	  	CASE WHEN $P{isShowLocation} ='N' OR $P{isShowLocation} = '' THEN 'ALL-LOCATIONS' ELSE
