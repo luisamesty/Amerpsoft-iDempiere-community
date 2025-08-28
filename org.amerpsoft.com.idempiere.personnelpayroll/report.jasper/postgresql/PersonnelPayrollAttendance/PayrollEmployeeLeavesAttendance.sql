@@ -76,8 +76,7 @@ SELECT * FROM
 		emp2.value as emp_value, 
 	  	emp2.name as emp_name, 
 	  	-- WORKFORCE
-	  	CASE WHEN $P{Workforce} IS NULL OR $P{Workforce} = '' THEN 'ALL-WF' ELSE
-	  			jtt.workforce END AS workforce_value, 
+	  	jtt.workforce AS workforce_value, 
 	  	CASE WHEN $P{Workforce} IS NULL OR $P{Workforce} = '' THEN 'ALL-WORKFORCES' ELSE
 	  			COALESCE(reflistr.name,reflis.name) END AS workforce_name, 
 	  	-- SECTOR
