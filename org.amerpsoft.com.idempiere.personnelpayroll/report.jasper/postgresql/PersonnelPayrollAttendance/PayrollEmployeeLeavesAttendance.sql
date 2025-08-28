@@ -70,7 +70,15 @@ SELECT * FROM
 	SELECT 
 		LTALL.ad_client_id, 
 		LTALL.report_date,
-		org.ad_org_id, org.value AS emp_org_value, org.name AS emp_org_name,
+		CASE EXTRACT(DOW FROM report_date)
+		    WHEN 0 THEN 1
+		    ELSE EXTRACT(DOW FROM report_date)+1
+		END AS day_of_week,
+		org.ad_org_id, 
+		CASE WHEN $P{isShowOrganization} ='N' OR $P{isShowOrganization} = '' THEN 'ALL-ORG' ELSE
+	  			org.value END AS emp_org_value, 
+	  	CASE WHEN $P{isShowOrganization} ='N' OR $P{isShowOrganization} = '' THEN 'ALL-ORGS' ELSE
+	  			org.name END AS emp_org_name,
 		-- EMPLOYEE
 		LTALL.amn_employee_id, 
 		emp2.value as emp_value, 
@@ -85,6 +93,7 @@ SELECT * FROM
 		amc.value as c_value, 
 		COALESCE(amc.name, amc.description) as c_tipo, 
 		-- LOCATION isShowLocation
+		lct.value AS location, 
 		CASE WHEN $P{isShowLocation} ='N' OR $P{isShowLocation} = '' THEN 'ALL-LOC' ELSE
 	  			lct.value END AS location_value, 
 	  	CASE WHEN $P{isShowLocation} ='N' OR $P{isShowLocation} = '' THEN 'ALL-LOCATIONS' ELSE
@@ -148,6 +157,18 @@ SELECT * FROM
 	  COALESCE(pyr_asp.shift_hen, CAST(0 AS int)) as hen, 
 	  COALESCE(pyr_asp.shift_hnd, CAST(0 AS int)) as hnd, 
 	  COALESCE(pyr_asp.shift_hnn, CAST(0 AS int)) as hnn,
+	  -- 
+	  COALESCE(pyr_asp.shift_ht, CAST(0 AS int)) as ht,
+	  COALESCE(pyr_asp.shift_hc, CAST(0 AS int)) as hc,
+	  COALESCE(pyr_asp.shift_hlgt15, CAST(0 AS int)) as hlgt15,
+	  COALESCE(pyr_asp.shift_hllt15, CAST(0 AS int)) as hllt15,
+	  COALESCE(pyr_asp.shift_thl, CAST(0 AS int)) as thl,
+	  COALESCE(pyr_asp.shift_lta, CAST(0 AS int)) as lta,
+	  COALESCE(pyr_asp.shift_ede, CAST(0 AS int)) as ede,
+	  COALESCE(pyr_asp.shift_her, CAST(0 AS int)) as her,
+	  COALESCE(pyr_asp.shift_hef, CAST(0 AS int)) as hef,
+	  COALESCE(pyr_asp.shift_hno, CAST(0 AS int)) as hno,
+	  COALESCE(pyr_asp.shift_hea, CAST(0 AS int)) as hea,
 	  COALESCE(pyr_asp.shift_attendance, CAST(0 AS int)) as bono_asist, 
 	  COALESCE(pyr_asp.shift_attendancebonus, CAST(0 AS int)) as bono_assistpuntual,
 	  COALESCE(pyr_asp.description,'') as observaciones, 
