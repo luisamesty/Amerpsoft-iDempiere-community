@@ -129,15 +129,6 @@ public interface I_AMN_Payroll_Assist_Proc
 	  */
 	public int getCreatedBy();
 
-    /** Column name dayofweek */
-    public static final String COLUMNNAME_dayofweek = "dayofweek";
-
-	/** Set dayofweek	  */
-	public void setdayofweek (String dayofweek);
-
-	/** Get dayofweek	  */
-	public String getdayofweek();
-
     /** Column name Descanso */
     public static final String COLUMNNAME_Descanso = "Descanso";
 
@@ -286,6 +277,19 @@ s Atthendance Bonus during one day
 	  */
 	public BigDecimal getShift_HC();
 
+    /** Column name Shift_HEA */
+    public static final String COLUMNNAME_Shift_HEA = "Shift_HEA";
+
+	/** Set HEA.
+	  * Shift_HEA  Authorized Extra Clock Hours
+	  */
+	public void setShift_HEA (BigDecimal Shift_HEA);
+
+	/** Get HEA.
+	  * Shift_HEA  Authorized Extra Clock Hours
+	  */
+	public BigDecimal getShift_HEA();
+
     /** Column name Shift_HED */
     public static final String COLUMNNAME_Shift_HED = "Shift_HED";
 
@@ -394,6 +398,19 @@ s Atthendance Bonus during one day
 	  */
 	public BigDecimal getShift_HNN();
 
+    /** Column name Shift_HNO */
+    public static final String COLUMNNAME_Shift_HNO = "Shift_HNO";
+
+	/** Set HNO Night Hours after 20:00.
+	  * Shift_HNO  Night Extra Clock Hours after 20:00
+	  */
+	public void setShift_HNO (BigDecimal Shift_HNO);
+
+	/** Get HNO Night Hours after 20:00.
+	  * Shift_HNO  Night Extra Clock Hours after 20:00
+	  */
+	public BigDecimal getShift_HNO();
+
     /** Column name Shift_HT */
     public static final String COLUMNNAME_Shift_HT = "Shift_HT";
 
@@ -500,4 +517,13 @@ s Atthendance Bonus during one day
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name dayofweek */
+    public static final String COLUMNNAME_dayofweek = "dayofweek";
+
+	/** Set dayofweek	  */
+	public void setdayofweek (String dayofweek);
+
+	/** Get dayofweek	  */
+	public String getdayofweek();
 }

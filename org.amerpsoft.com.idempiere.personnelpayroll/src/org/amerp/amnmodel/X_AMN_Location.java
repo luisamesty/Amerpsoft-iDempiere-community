@@ -32,7 +32,7 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240823L;
+	private static final long serialVersionUID = 20250829L;
 
     /** Standard Constructor */
     public X_AMN_Location (Properties ctx, int AMN_Location_ID, String trxName)
@@ -41,7 +41,6 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
       /** if (AMN_Location_ID == 0)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
 			setName (null);
         } */
     }
@@ -53,7 +52,6 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
       /** if (AMN_Location_ID == 0)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
 			setName (null);
         } */
     }
@@ -65,7 +63,6 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
       /** if (AMN_Location_UU == null)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
 			setName (null);
         } */
     }
@@ -77,7 +74,6 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
       /** if (AMN_Location_UU == null)
         {
 			setAMN_Location_ID (0);
-			setC_Location_ID (0);
 			setName (null);
         } */
     }
@@ -109,6 +105,28 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
+
+	/** Set Inter-Organization.
+		@param AD_OrgTo_ID Organization valid for intercompany documents
+	*/
+	public void setAD_OrgTo_ID (int AD_OrgTo_ID)
+	{
+		if (AD_OrgTo_ID < 1)
+			set_Value (COLUMNNAME_AD_OrgTo_ID, null);
+		else
+			set_Value (COLUMNNAME_AD_OrgTo_ID, Integer.valueOf(AD_OrgTo_ID));
+	}
+
+	/** Get Inter-Organization.
+		@return Organization valid for intercompany documents
+	  */
+	public int getAD_OrgTo_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_OrgTo_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	/** Set Payroll Location.
 		@param AMN_Location_ID Payroll Location
@@ -174,14 +192,30 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 		return ii.intValue();
 	}
 
-	public I_C_Location getC_Location() throws RuntimeException
+	/** Set Fiscal Address.
+		@param C_Location_FA_ID Location or Address for Fiscal purposes. Parent  organization OrgInfo address.
+	*/
+	public void setC_Location_FA_ID (int C_Location_FA_ID)
 	{
-		return (I_C_Location)MTable.get(getCtx(), I_C_Location.Table_ID)
-			.getPO(getC_Location_ID(), get_TrxName());
+		if (C_Location_FA_ID < 1)
+			set_Value (COLUMNNAME_C_Location_FA_ID, null);
+		else
+			set_Value (COLUMNNAME_C_Location_FA_ID, Integer.valueOf(C_Location_FA_ID));
+	}
+
+	/** Get Fiscal Address.
+		@return Location or Address for Fiscal purposes. Parent  organization OrgInfo address.
+	  */
+	public int getC_Location_FA_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Location_FA_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Address.
-		@param C_Location_ID Location or Address
+		@param C_Location_ID Location or Address. Organization OrgInfo address.
 	*/
 	public void setC_Location_ID (int C_Location_ID)
 	{
@@ -192,11 +226,33 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	}
 
 	/** Get Address.
-		@return Location or Address
+		@return Location or Address. Organization OrgInfo address.
 	  */
 	public int getC_Location_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Location_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Social Security Address.
+		@param C_Location_SS_ID Location or Address for Social Security
+	*/
+	public void setC_Location_SS_ID (int C_Location_SS_ID)
+	{
+		if (C_Location_SS_ID < 1)
+			set_Value (COLUMNNAME_C_Location_SS_ID, null);
+		else
+			set_Value (COLUMNNAME_C_Location_SS_ID, Integer.valueOf(C_Location_SS_ID));
+	}
+
+	/** Get Social Security Address.
+		@return Location or Address for Social Security
+	  */
+	public int getC_Location_SS_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Location_SS_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -216,6 +272,22 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
+	}
+
+	/** Set EMail Address.
+		@param EMail Electronic Mail Address
+	*/
+	public void setEMail (String EMail)
+	{
+		set_Value (COLUMNNAME_EMail, EMail);
+	}
+
+	/** Get EMail Address.
+		@return Electronic Mail Address
+	  */
+	public String getEMail()
+	{
+		return (String)get_Value(COLUMNNAME_EMail);
 	}
 
 	/** Set Name.
@@ -241,6 +313,70 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
     {
         return new KeyNamePair(get_ID(), getName());
     }
+
+	/** Set Organization Name.
+		@param OrgName Name of the Organization
+	*/
+	public void setOrgName (String OrgName)
+	{
+		set_Value (COLUMNNAME_OrgName, OrgName);
+	}
+
+	/** Get Organization Name.
+		@return Name of the Organization
+	  */
+	public String getOrgName()
+	{
+		return (String)get_Value(COLUMNNAME_OrgName);
+	}
+
+	/** Set Phone.
+		@param Phone Identifies a telephone number
+	*/
+	public void setPhone (String Phone)
+	{
+		set_Value (COLUMNNAME_Phone, Phone);
+	}
+
+	/** Get Phone.
+		@return Identifies a telephone number
+	  */
+	public String getPhone()
+	{
+		return (String)get_Value(COLUMNNAME_Phone);
+	}
+
+	/** Set Social Security ID.
+		@param SocialSecurityID Social Security ID Number
+	*/
+	public void setSocialSecurityID (String SocialSecurityID)
+	{
+		set_Value (COLUMNNAME_SocialSecurityID, SocialSecurityID);
+	}
+
+	/** Get Social Security ID.
+		@return Social Security ID Number
+	  */
+	public String getSocialSecurityID()
+	{
+		return (String)get_Value(COLUMNNAME_SocialSecurityID);
+	}
+
+	/** Set Social Security MTESS.
+		@param SocialSecurityMTESS Social Security ID Number for Ministry of Labor, Employment and Social Security.
+	*/
+	public void setSocialSecurityMTESS (String SocialSecurityMTESS)
+	{
+		set_Value (COLUMNNAME_SocialSecurityMTESS, SocialSecurityMTESS);
+	}
+
+	/** Get Social Security MTESS.
+		@return Social Security ID Number for Ministry of Labor, Employment and Social Security.
+	  */
+	public String getSocialSecurityMTESS()
+	{
+		return (String)get_Value(COLUMNNAME_SocialSecurityMTESS);
+	}
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique

@@ -301,10 +301,19 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DaysTo)) {
 	    		list.add(new AMN_Leaves_callout());
 	    	}
-//	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_Note)) {
-//		 		list.add(new AMN_Leaves_callout());
-//	    	}
+
 		}
+
+		// *********************************
+		// TableRef: MAMN_Location
+		// *********************************
+		if (tableName.equalsIgnoreCase(MAMN_Location.Table_Name)) {
+			
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_AD_OrgTo_ID) ) {
+		 		list.add(new AMN_Location_callout());
+		 	}
+		}
+			
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 

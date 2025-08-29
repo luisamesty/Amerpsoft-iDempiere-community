@@ -2,11 +2,25 @@
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollEmployeeAttendanceSummary" pageWidth="1730" pageHeight="595" orientation="Landscape" columnWidth="1690" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollEmployeeLeaves" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="297"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="696"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<import value="java.util.concurrent.*"/>
+	<style name="colorDiaSemana">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_date}).equalsIgnoreCase("domingo")]]></conditionExpression>
+			<style forecolor="#FF0814" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_date}).equalsIgnoreCase("sabado") || new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_date}).equalsIgnoreCase("sábado")]]></conditionExpression>
+			<style forecolor="#390DFF" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{feriado}.equalsIgnoreCase("Y")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FF0814" backcolor="#FAD3D2" isBold="true"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -3274,8 +3288,14 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 	<detail>
 		<band height="12">
 			<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
+			<rectangle>
+				<reportElement style="colorDiaSemana" mode="Opaque" x="0" y="0" width="1690" height="12" uuid="38caf747-a306-4dcc-8021-7a99d20694e0"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" x="90" y="0" width="80" height="12" uuid="a78ffdbd-d42b-4a83-b499-7d11134c95fd">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="90" y="0" width="80" height="12" uuid="a78ffdbd-d42b-4a83-b499-7d11134c95fd">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
@@ -3416,7 +3436,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<imageExpression><![CDATA[$P{RESOURCE_DIR} + "check.png"]]></imageExpression>
 			</image>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" x="170" y="0" width="30" height="12" uuid="bb740f34-dbbb-4c4b-89e0-ed53051f7a60">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="170" y="0" width="30" height="12" uuid="bb740f34-dbbb-4c4b-89e0-ed53051f7a60">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
@@ -3428,7 +3448,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd").format($F{report_date})]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" x="200" y="0" width="30" height="12" uuid="174a816c-7972-4524-9c56-81d0b0d5fb39">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="200" y="0" width="30" height="12" uuid="174a816c-7972-4524-9c56-81d0b0d5fb39">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
@@ -3440,7 +3460,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[new SimpleDateFormat("MM").format($F{report_date})]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement stretchType="RelativeToTallestObject" x="230" y="0" width="40" height="12" uuid="e14e16c6-a1c8-4e23-925a-2f0e75ac52a6">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="230" y="0" width="40" height="12" uuid="e14e16c6-a1c8-4e23-925a-2f0e75ac52a6">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
@@ -3452,7 +3472,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[new SimpleDateFormat("yyyy").format($F{report_date})]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="365" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="d59701ec-004d-4361-852f-d0069e5673bc">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="365" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="d59701ec-004d-4361-852f-d0069e5673bc">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{e1}.length()> 1]]></printWhenExpression>
@@ -3466,7 +3486,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{e1}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="400" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="26595eb0-5c10-4ab8-a90d-ca44e8ac17e2">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="400" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="26595eb0-5c10-4ab8-a90d-ca44e8ac17e2">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{s1}.length()> 1]]></printWhenExpression>
 				</reportElement>
@@ -3479,7 +3499,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{s1}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="435" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="129052e1-13ec-498c-bfaf-d38d4f4dcdab">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="435" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="129052e1-13ec-498c-bfaf-d38d4f4dcdab">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{e2}.length()> 1]]></printWhenExpression>
 				</reportElement>
@@ -3492,7 +3512,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{e2}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="470" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="387f2c53-fd38-46c0-9817-561b5725c542">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Opaque" x="470" y="0" width="35" height="12" backcolor="#D9D9D9" uuid="387f2c53-fd38-46c0-9817-561b5725c542">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{s2}.length()> 1]]></printWhenExpression>
 				</reportElement>
@@ -3505,7 +3525,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{s2}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="505" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="41bcbec8-1fdd-4907-b633-dd993a736eda">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="505" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="41bcbec8-1fdd-4907-b633-dd993a736eda">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -3515,7 +3535,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_date}).equals("domingo") ? "Y" : "N"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="530" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="8b3cab55-71d9-4d8e-a850-4c8418d9de92">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="530" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="8b3cab55-71d9-4d8e-a850-4c8418d9de92">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -3524,7 +3544,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{feriado}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="555" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="d53a45b0-3464-489d-9b27-11b5a75fc3f8">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="555" y="0" width="25" height="12" isRemoveLineWhenBlank="true" uuid="d53a45b0-3464-489d-9b27-11b5a75fc3f8">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -3533,7 +3553,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{excused}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1220" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="1e6611a9-b6e9-4c6f-b29a-96f06c85fca4">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1220" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="1e6611a9-b6e9-4c6f-b29a-96f06c85fca4">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -3547,7 +3567,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{hnd}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnd} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1260" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="168ce439-18d2-40bf-960c-378e095b0430">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1260" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="168ce439-18d2-40bf-960c-378e095b0430">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -3560,7 +3580,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{hnn}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hnn} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1300" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="fe598a0a-87f2-4c2e-b245-319c2c20ac47">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1300" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="fe598a0a-87f2-4c2e-b245-319c2c20ac47">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -3573,7 +3593,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{hed}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hed} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1340" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="c56ea567-5d98-459a-977f-efefa61ab46f">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1340" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="c56ea567-5d98-459a-977f-efefa61ab46f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -3586,7 +3606,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{hen}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hen} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1380" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="6b86b73c-697e-43fe-8387-9d93b953d95f">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1380" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="6b86b73c-697e-43fe-8387-9d93b953d95f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -3599,7 +3619,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{bono_asist}.compareTo( BigDecimal.ZERO )!= 0 ? $F{bono_asist} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1420" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="41f753a9-4be2-4de9-ba92-5ec85555828e">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1420" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="41f753a9-4be2-4de9-ba92-5ec85555828e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -3612,7 +3632,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{bono_assistpuntual}.compareTo( BigDecimal.ZERO )!= 0 ? $F{bono_assistpuntual} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="1500" y="0" width="190" height="12" isRemoveLineWhenBlank="true" uuid="1a2aee9f-97f7-4e7f-96ac-83a37cf6d693">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1500" y="0" width="190" height="12" isRemoveLineWhenBlank="true" uuid="1a2aee9f-97f7-4e7f-96ac-83a37cf6d693">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
@@ -3622,14 +3642,14 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="335" y="0" width="30" height="12" isRemoveLineWhenBlank="true" uuid="1282461a-1339-421a-8c71-ad7b2c8ba4db"/>
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="335" y="0" width="30" height="12" isRemoveLineWhenBlank="true" uuid="1282461a-1339-421a-8c71-ad7b2c8ba4db"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ta}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="30" height="12" isRemoveLineWhenBlank="true" uuid="b269816d-9518-4220-b4d2-27e8577c5bf9">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="270" y="0" width="30" height="12" isRemoveLineWhenBlank="true" uuid="b269816d-9518-4220-b4d2-27e8577c5bf9">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -3638,7 +3658,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[$F{entrytime}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="300" y="0" width="35" height="12" isRemoveLineWhenBlank="true" uuid="763b4120-e9d6-421f-af65-46bcce2f4b51">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="300" y="0" width="35" height="12" isRemoveLineWhenBlank="true" uuid="763b4120-e9d6-421f-af65-46bcce2f4b51">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
