@@ -1,10 +1,7 @@
 package org.amerp.amncallouts;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Properties;
 import java.util.Properties;
 import org.compiere.model.MTree;
 import org.compiere.model.MTreeNode;
@@ -12,18 +9,14 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 
 import org.adempiere.base.IColumnCallout;
+import org.adempiere.exceptions.AdempiereException;
 import org.amerp.amnmodel.MAMN_Location;
+import org.amerp.amxeditor.model.MLocationExt;
+
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
-import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
-import org.compiere.model.MTree;
-import org.compiere.model.MTreeNode;
-import org.compiere.model.X_AD_Org;
-import org.compiere.util.DB;
-import org.compiere.util.Env;
 
 public class AMN_Location_callout implements IColumnCallout {
 
@@ -31,17 +24,27 @@ public class AMN_Location_callout implements IColumnCallout {
 	int AD_Org_ID=0;
 	int AD_OrgTo_ID=0;
 	int AMN_Location_ID=0;
+	String TaxID="";
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Override
 	public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
 		// 
 		String columnName = mField.getColumnName();
-		AD_Client_ID = (int) mTab.getValue(MAMN_Location.COLUMNNAME_AD_Client_ID);
-		AD_OrgTo_ID = (int) mTab.getValue(MAMN_Location.COLUMNNAME_AD_OrgTo_ID);
+		if (mTab.getValue(MAMN_Location.COLUMNNAME_AD_Client_ID)  != null ) {
+			AD_Client_ID = (int) mTab.getValue(MAMN_Location.COLUMNNAME_AD_Client_ID);
+		}
+		if (mTab.getValue(MAMN_Location.COLUMNNAME_AD_OrgTo_ID)  != null ) {
+			AD_OrgTo_ID = (int) mTab.getValue(MAMN_Location.COLUMNNAME_AD_OrgTo_ID);
+		}
 		AMN_Location_ID=0;
-		// AD_OrgTo_ID
-		if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_AD_OrgTo_ID)) {
+		// AD_OrgTo_ID - SocialSecurityID - SocialSecurityMTESS - BusinessActivity -Name
+		if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_AD_OrgTo_ID)
+				|| columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_SocialSecurityID)
+				|| columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_SocialSecurityMTESS)
+				|| columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_BusinessActivity)
+				|| columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_Name)
+				) {
 			if (mTab.getValue(MAMN_Location.COLUMNNAME_AD_OrgTo_ID)  != null ) {
 				// 
 				AD_OrgTo_ID = (int) mTab.getValue(MAMN_Location.COLUMNNAME_AD_OrgTo_ID);
@@ -60,8 +63,9 @@ public class AMN_Location_callout implements IColumnCallout {
 				    if (parent != null) {
 				    	// este es el AD_Org_ID padre
 				    	MOrgInfo orgInfoParent = MOrgInfo.get(Env.getCtx(), parent.getNode_ID(), null);
+				    	TaxID = orgInfoParent.getTaxID();
 				    	location_FA_ID = orgInfoParent.getC_Location_ID();  
-				        System.out.println("Padre de " + AD_OrgTo_ID + " es " + location_FA_ID);
+				        System.out.println("AMN_Location_callaout: Padre de " + AD_OrgTo_ID + " es " + location_FA_ID);
 				    } else {
 				    	location_FA_ID = 0;
 				        System.out.println("La organización es raíz (no tiene padre).");
@@ -70,10 +74,42 @@ public class AMN_Location_callout implements IColumnCallout {
 				//
 				if (locationID > 0)
 					mTab.setValue(MAMN_Location.COLUMNNAME_C_Location_ID, locationID);
-				if (location_FA_ID > 0)
+				if (location_FA_ID > 0) {
 					mTab.setValue(MAMN_Location.COLUMNNAME_C_Location_FA_ID, location_FA_ID);
+					mTab.setValue(MAMN_Location.COLUMNNAME_TaxID, TaxID);
+				}
 			}
 
+		}
+		// C_Location_SS_ID
+		if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_C_Location_SS_ID)) {
+			// Obtiene la C_Location_ID seleccionada
+			Integer location_SS_ID = (Integer)mTab.getValue("C_Location_SS_ID");
+			
+			// Si no se ha seleccionado una ubicación, no hacemos nada.
+		    if (location_SS_ID != null && location_SS_ID != 0) {
+
+				MLocationExt originalLocation = MLocationExt.get(Env.getCtx(), location_SS_ID, null);
+			    // Es un registro nuevo. Crea la copia y asigna la nueva ID.
+				// Crea una nueva instancia de MLocation (la copia)
+			    MLocationExt newLocation = new MLocationExt(Env.getCtx(), 0, null);
+			    newLocation.setAD_Org_ID(originalLocation.getAD_Org_ID());
+			    newLocation.setAddress1(originalLocation.getAddress1());
+			    newLocation.setAddress2(originalLocation.getAddress2());
+			    newLocation.setCity(originalLocation.getCity());
+			    newLocation.setPostal(originalLocation.getPostal());
+			    newLocation.setC_Country_ID(originalLocation.getC_Country_ID());
+			    newLocation.setC_Municipality_ID(originalLocation.getC_Municipality_ID());
+			    newLocation.setC_Parish_ID(originalLocation.getC_Parish_ID());
+			    newLocation.setC_Region_ID(originalLocation.getC_Region_ID());
+			    // Guarda la nueva ubicación en la base de datos
+			    // Esto le asignará un nuevo C_Location_ID
+			    if (!newLocation.save()) {
+			        throw new AdempiereException("No se pudo guardar la nueva ubicación.");
+			    }
+			    // Asigna el ID de la nueva ubicación a tu campo principal
+			    mTab.setValue("C_Location_SS_ID", newLocation.getC_Location_ID());
+		    }
 		}
 		return null;
 	}
@@ -118,10 +154,10 @@ public class AMN_Location_callout implements IColumnCallout {
         MTreeNode root = tree.getRoot();
         // Verificamos hijos
         if (root != null && root.getChildCount() > 0) {
-            System.out.println("Hijos de la raíz:");
+            // System.out.println("Hijos de la raíz:");
             for (int i = 0; i < root.getChildCount(); i++) {
                 MTreeNode child = (MTreeNode) root.getChildAt(i);
-                System.out.println(child.getName());
+                // System.out.println(child.getName());
             }
         }
 

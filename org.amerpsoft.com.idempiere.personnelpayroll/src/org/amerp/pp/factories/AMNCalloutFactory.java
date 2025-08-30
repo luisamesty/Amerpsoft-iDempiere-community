@@ -312,6 +312,25 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_AD_OrgTo_ID) ) {
 		 		list.add(new AMN_Location_callout());
 		 	}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_C_Location_SS_ID)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_SocialSecurityID)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_SocialSecurityMTESS)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_BusinessActivity)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_Name)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_TaxID)) {
+				list.add(new AMN_Location_callout());
+			}
+			
 		}
 			
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];

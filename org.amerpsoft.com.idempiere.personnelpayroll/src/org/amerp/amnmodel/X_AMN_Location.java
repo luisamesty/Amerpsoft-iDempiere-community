@@ -32,7 +32,7 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250829L;
+	private static final long serialVersionUID = 20250830L;
 
     /** Standard Constructor */
     public X_AMN_Location (Properties ctx, int AMN_Location_ID, String trxName)
@@ -162,6 +162,22 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	public String getAMN_Location_UU()
 	{
 		return (String)get_Value(COLUMNNAME_AMN_Location_UU);
+	}
+
+	/** Set Business Activity.
+		@param BusinessActivity Business Activity for Organization
+	*/
+	public void setBusinessActivity (String BusinessActivity)
+	{
+		set_Value (COLUMNNAME_BusinessActivity, BusinessActivity);
+	}
+
+	/** Get Business Activity.
+		@return Business Activity for Organization
+	  */
+	public String getBusinessActivity()
+	{
+		return (String)get_Value(COLUMNNAME_BusinessActivity);
 	}
 
 	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
@@ -376,6 +392,22 @@ public class X_AMN_Location extends PO implements I_AMN_Location, I_Persistent
 	public String getSocialSecurityMTESS()
 	{
 		return (String)get_Value(COLUMNNAME_SocialSecurityMTESS);
+	}
+
+	/** Set Tax ID.
+		@param TaxID Tax Identification
+	*/
+	public void setTaxID (String TaxID)
+	{
+		set_ValueNoCheck (COLUMNNAME_TaxID, TaxID);
+	}
+
+	/** Get Tax ID.
+		@return Tax Identification
+	  */
+	public String getTaxID()
+	{
+		return (String)get_Value(COLUMNNAME_TaxID);
 	}
 
 	/** Set Search Key.

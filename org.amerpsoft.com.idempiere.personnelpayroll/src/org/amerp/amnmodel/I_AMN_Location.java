@@ -95,6 +95,19 @@ public interface I_AMN_Location
 	/** Get AMN_Location_UU	  */
 	public String getAMN_Location_UU();
 
+    /** Column name BusinessActivity */
+    public static final String COLUMNNAME_BusinessActivity = "BusinessActivity";
+
+	/** Set Business Activity.
+	  * Business Activity for Organization
+	  */
+	public void setBusinessActivity (String BusinessActivity);
+
+	/** Get Business Activity.
+	  * Business Activity for Organization
+	  */
+	public String getBusinessActivity();
+
     /** Column name C_Activity_ID */
     public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
 
@@ -268,6 +281,19 @@ public interface I_AMN_Location
 	  * Social Security ID Number for Ministry of Labor, Employment and Social Security.
 	  */
 	public String getSocialSecurityMTESS();
+
+    /** Column name TaxID */
+    public static final String COLUMNNAME_TaxID = "TaxID";
+
+	/** Set Tax ID.
+	  * Tax Identification
+	  */
+	public void setTaxID (String TaxID);
+
+	/** Get Tax ID.
+	  * Tax Identification
+	  */
+	public String getTaxID();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
