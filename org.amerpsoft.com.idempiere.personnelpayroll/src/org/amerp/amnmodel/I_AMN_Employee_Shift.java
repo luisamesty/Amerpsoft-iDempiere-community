@@ -64,6 +64,17 @@ public interface I_AMN_Employee_Shift
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name AMN_Employee_ID */
+    public static final String COLUMNNAME_AMN_Employee_ID = "AMN_Employee_ID";
+
+	/** Set Payroll employee	  */
+	public void setAMN_Employee_ID (int AMN_Employee_ID);
+
+	/** Get Payroll employee	  */
+	public int getAMN_Employee_ID();
+
+	public I_AMN_Employee getAMN_Employee() throws RuntimeException;
+
     /** Column name AMN_Employee_Shift_ID */
     public static final String COLUMNNAME_AMN_Employee_Shift_ID = "AMN_Employee_Shift_ID";
 
