@@ -1,7 +1,8 @@
--- PayrollEmployeeAttendanceSummary
+-- PayrollEmployeeLeavesAttendance V2
 -- Payroll Employee Leaves and Attendance (BOTH)
 -- Summary Late Entries, Early Leaves, Late Leaves
 -- ORDERED BY and Filtered  WorkForce
+-- 
 WITH date_series AS (
     -- Generamos todas las fechas dentro del período dado
     SELECT generate_series(
@@ -69,19 +70,34 @@ SELECT * FROM
 	SELECT 
 		LTALL.ad_client_id, 
 		LTALL.report_date,
-		org.ad_org_id, org.value AS emp_org_value, org.name AS emp_org_name,
+		CASE EXTRACT(DOW FROM report_date)
+		    WHEN 0 THEN 1
+		    ELSE EXTRACT(DOW FROM report_date)+1
+		END AS day_of_week,
+		org.ad_org_id, 
+		CASE WHEN $P{isShowOrganization} ='N' OR $P{isShowOrganization} = '' THEN 'ALL-ORG' ELSE
+	  			org.value END AS emp_org_value, 
+	  	CASE WHEN $P{isShowOrganization} ='N' OR $P{isShowOrganization} = '' THEN 'ALL-ORGS' ELSE
+	  			org.name END AS emp_org_name,
 		-- EMPLOYEE
 		LTALL.amn_employee_id, 
 		emp2.value as emp_value, 
 	  	emp2.name as emp_name, 
 	  	-- WORKFORCE
-	  	jtt.workforce AS workforce_value, COALESCE(reflistr.name,reflis.name) AS workforce_name,
+	  	jtt.workforce AS workforce_value, 
+	  	CASE WHEN $P{Workforce} IS NULL OR $P{Workforce} = '' THEN 'ALL-WORKFORCES' ELSE
+	  			COALESCE(reflistr.name,reflis.name) END AS workforce_name, 
 	  	-- SECTOR
 	  	emp2.amn_sector_id, sct.name AS sector_name,
 		-- CONTRACT
-		amc.value as c_value, COALESCE(amc.name, amc.description) as c_tipo, 
-		-- LOCATION
-		emp2.amn_location_id, lct.value AS location_value, lct.name AS location_name,
+		amc.value as c_value, 
+		COALESCE(amc.name, amc.description) as c_tipo, 
+		-- LOCATION isShowLocation
+		lct.value AS location, 
+		CASE WHEN $P{isShowLocation} ='N' OR $P{isShowLocation} = '' THEN 'ALL-LOC' ELSE
+	  			lct.value END AS location_value, 
+	  	CASE WHEN $P{isShowLocation} ='N' OR $P{isShowLocation} = '' THEN 'ALL-LOCATIONS' ELSE
+	  			lct.name END AS location_name, 
 		-- SHIFT (SELECT Attendance or Employee if null)
 		COALESCE(attsh.name,amnsh.name) AS shift_name,
 		COALESCE(attshd.breakminutes,amnshd.breakminutes,60) AS TA,
@@ -141,6 +157,18 @@ SELECT * FROM
 	  COALESCE(pyr_asp.shift_hen, CAST(0 AS int)) as hen, 
 	  COALESCE(pyr_asp.shift_hnd, CAST(0 AS int)) as hnd, 
 	  COALESCE(pyr_asp.shift_hnn, CAST(0 AS int)) as hnn,
+	  -- 
+	  COALESCE(pyr_asp.shift_ht, CAST(0 AS int)) as ht,
+	  COALESCE(pyr_asp.shift_hc, CAST(0 AS int)) as hc,
+	  COALESCE(pyr_asp.shift_hlgt15, CAST(0 AS int)) as hlgt15,
+	  COALESCE(pyr_asp.shift_hllt15, CAST(0 AS int)) as hllt15,
+	  COALESCE(pyr_asp.shift_thl, CAST(0 AS int)) as thl,
+	  COALESCE(pyr_asp.shift_lta, CAST(0 AS int)) as lta,
+	  COALESCE(pyr_asp.shift_ede, CAST(0 AS int)) as ede,
+	  COALESCE(pyr_asp.shift_her, CAST(0 AS int)) as her,
+	  COALESCE(pyr_asp.shift_hef, CAST(0 AS int)) as hef,
+	  COALESCE(pyr_asp.shift_hno, CAST(0 AS int)) as hno,
+	  COALESCE(pyr_asp.shift_hea, CAST(0 AS int)) as hea,
 	  COALESCE(pyr_asp.shift_attendance, CAST(0 AS int)) as bono_asist, 
 	  COALESCE(pyr_asp.shift_attendancebonus, CAST(0 AS int)) as bono_assistpuntual,
 	  COALESCE(pyr_asp.description,'') as observaciones, 
@@ -225,13 +253,13 @@ SELECT * FROM
 	) AS leaves_all ON leaves_all.ad_client_id = emp2.ad_client_id
 	WHERE emp2.isActive = 'Y' AND emp2.AD_Client_ID= $P{AD_Client_ID} 
 		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR emp2.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
-		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Sector_ID} IS NULL OR sct.amn_sector_id= $P{AMN_Sector_ID} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
+		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR $P{AMN_Location_ID} = 0 OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
+		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR $P{AMN_Contract_ID} = 0  OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 		AND ( CASE WHEN ( $P{Workforce} IS NULL OR jtt.Workforce= $P{Workforce} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR emp2.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
+		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR $P{AMN_Employee_ID} = 0 OR emp2.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
 	) as leaves ON (1= 0)
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
-ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.location_value, leaves.sector_name, leaves.emp_value, leaves.report_date, header_info ASC
+ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.location_value, leaves.emp_value, leaves.report_date, header_info ASC
+-- END

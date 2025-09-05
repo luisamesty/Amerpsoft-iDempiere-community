@@ -1,22 +1,38 @@
 # Reportes de Asistencia
 
-- PersonnelPayrollAttendance.jrxml
+Definitivos:
+
 - PayrollEmployeeLeavesAttendance.jrxml
+- PayrollEmployeeAttendance.jrxml
+
+Utilizan la misma query:
+
+[PayrollEmployeeLeavesAttendance.sql](PayrollEmployeeLeavesAttendance.sql)
+
+Mismo fichero de propiedades:
+
+[PayrollEmployeeLeavesAttendance.properties](PayrollEmployeeLeavesAttendance.properties)
+
+Descontinuados:
+
 - PayrollEmployeeAttendanceSummary.jrxml
-
-
-## PersonnelPayrollAttendance.jrxml
-
-Reporte de Asistencia
-
-Reporte muestra asistencia solamente.
+- PersonnelPayrollAttendance.jrxml
 
 ## PayrollEmployeeLeavesAttendance.jrxml
 
 Reporte muestra Asistencia y ausencias.
 
+## PayrollEmployeeAttendance.jrxml
 
-## PayrollEmployeeAttendanceSummary.jrxml
+Reporte muestra Asistencia solamente.
+
+## PersonnelPayrollAttendance.jrxml (DEPRECATED)
+
+Reporte de Asistencia
+
+Reporte muestra asistencia solamente.
+
+## PayrollEmployeeAttendanceSummary.jrxml (DEPRECATED)
 
 Reporte muestra asistencia y ausencias.
 Identico al Anterior
