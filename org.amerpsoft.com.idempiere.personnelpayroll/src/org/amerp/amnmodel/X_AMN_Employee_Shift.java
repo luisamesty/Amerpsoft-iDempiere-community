@@ -31,7 +31,27 @@ public class X_AMN_Employee_Shift extends PO implements I_AMN_Employee_Shift, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250829L;
+	private static final long serialVersionUID = 20250902L;
+
+    /** Standard Constructor */
+    public X_AMN_Employee_Shift (Properties ctx, int AMN_Employee_Shift_ID, String trxName)
+    {
+      super (ctx, AMN_Employee_Shift_ID, trxName);
+      /** if (AMN_Employee_Shift_ID == 0)
+        {
+			setAMN_Employee_Shift_ID (0);
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_AMN_Employee_Shift (Properties ctx, int AMN_Employee_Shift_ID, String trxName, String ... virtualColumns)
+    {
+      super (ctx, AMN_Employee_Shift_ID, trxName, virtualColumns);
+      /** if (AMN_Employee_Shift_ID == 0)
+        {
+			setAMN_Employee_Shift_ID (0);
+        } */
+    }
 
     /** Standard Constructor */
     public X_AMN_Employee_Shift (Properties ctx, String AMN_Employee_Shift_UU, String trxName)
@@ -39,6 +59,7 @@ public class X_AMN_Employee_Shift extends PO implements I_AMN_Employee_Shift, I_
       super (ctx, AMN_Employee_Shift_UU, trxName);
       /** if (AMN_Employee_Shift_UU == null)
         {
+			setAMN_Employee_Shift_ID (0);
         } */
     }
 
@@ -48,6 +69,7 @@ public class X_AMN_Employee_Shift extends PO implements I_AMN_Employee_Shift, I_
       super (ctx, AMN_Employee_Shift_UU, trxName, virtualColumns);
       /** if (AMN_Employee_Shift_UU == null)
         {
+			setAMN_Employee_Shift_ID (0);
         } */
     }
 
@@ -75,9 +97,36 @@ public class X_AMN_Employee_Shift extends PO implements I_AMN_Employee_Shift, I_
     public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_AMN_Employee_Shift[")
-        .append(get_UUID()).append("]");
+        .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	public I_AMN_Employee getAMN_Employee() throws RuntimeException
+	{
+		return (I_AMN_Employee)MTable.get(getCtx(), I_AMN_Employee.Table_ID)
+			.getPO(getAMN_Employee_ID(), get_TrxName());
+	}
+
+	/** Set Payroll employee.
+		@param AMN_Employee_ID Payroll employee
+	*/
+	public void setAMN_Employee_ID (int AMN_Employee_ID)
+	{
+		if (AMN_Employee_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_AMN_Employee_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_AMN_Employee_ID, Integer.valueOf(AMN_Employee_ID));
+	}
+
+	/** Get Payroll employee.
+		@return Payroll employee	  */
+	public int getAMN_Employee_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Employee_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	/** Set Employee Shift list ID.
 		@param AMN_Employee_Shift_ID Employee Shift list ID

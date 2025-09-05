@@ -230,16 +230,28 @@ public class AMNPayrollProcessPayrollAssistOnePeriod extends SvrProcess {
 
                 	    while (!cal.after(cal2)) {
                 	        Timestamp currDate = new Timestamp(cal.getTimeInMillis());
-                	        String result = AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-                	                ctx,
+//                	        String result = AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
+//                	                ctx,
+//                	                amnemployee.getAD_Client_ID(),
+//                	                amnemployee.getAD_Org_ID(),
+//                	                p_AMN_Contract_ID,
+//                	                currDate,
+//                	                employeeId,
+//                	                p_AMN_Assist_Process_Mode,
+//                	                p_IsScheduled
+//                	        );
+                	        
+            		    	AMNPayrollProcessPayrollAssistProcess pppa = new AMNPayrollProcessPayrollAssistProcess();		    	
+            		    	String result = pppa.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
+            		    			ctx, 
                 	                amnemployee.getAD_Client_ID(),
                 	                amnemployee.getAD_Org_ID(),
-                	                p_AMN_Contract_ID,
-                	                currDate,
-                	                employeeId,
-                	                p_AMN_Assist_Process_Mode,
-                	                p_IsScheduled
-                	        );
+            		    			p_AMN_Contract_ID, 
+            		    			currDate, 
+            		    			employeeId,
+            		    			p_AMN_Assist_Process_Mode, 
+            		    			p_IsScheduled);
+            	        
                 	        addLogIFNotScheduled(result);
 
                 	        if (!p_IsScheduled && processMonitor != null) {
