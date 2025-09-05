@@ -210,6 +210,8 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 		// TableRef: amn_payroll_assist_proc
 		// *********************************
 		if (tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.Table_Name)) {
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID))
+				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In1))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out1))
@@ -218,7 +220,9 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
-			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID))
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Event_Date))
+				list.add(new AMN_Payroll_Assist_Proc_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_dayofweek))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 		}
 		
