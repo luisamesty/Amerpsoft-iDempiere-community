@@ -13,6 +13,7 @@ Special considerations and notes for LVE, LPY and LES localization.
 
 - [Install Idempiere](./org.amerpsoft.com.stuff/iDempiere/InstallIdempiere/README.md)
 - [Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
+- [ZK_Themes](./org.amerpsoft.com.idempiere.zk_themes/README.md)
 - [Language Pack](./org.amerpsoft.com.idempiere.languages/README.md)
 - [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 - [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
