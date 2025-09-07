@@ -71,6 +71,7 @@ Once plugin is running, then Pack-In:
 <b>AMERPSOFT ZK_Themes.zip</b>
 
 It contains SysConfig Variables:
+
 ```text
     - ZK_THEME 
     - ZK_LOGO_LARGE
@@ -81,6 +82,7 @@ It contains SysConfig Variables:
     
     SET ZK_THEME_USE_FONT_ICON_FOR_IMAGE to 'N'
 ```
+
 
 ### <b>Manually enter Configured values</b>
 
