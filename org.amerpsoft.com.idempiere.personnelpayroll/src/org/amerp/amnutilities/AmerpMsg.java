@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.compiere.model.MTable;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -227,5 +228,17 @@ public class AmerpMsg {
 		return getElementPrintText (Env.getAD_Language(ctx), ColumnName, isSOTrx);
 	}   //  getElement
 
+	/**
+	 * getTranslatedTableName
+	 * @param tableName
+	 * @return
+	 */
+	public static String getTranslatedTableName(String tableName) {
+        MTable table = MTable.get(Env.getCtx(), tableName);
+        if (table != null) {
+            return table.get_Translation(MTable.COLUMNNAME_Name);
+        }
+        return tableName; // fallback si no existe
+    }
 
 }

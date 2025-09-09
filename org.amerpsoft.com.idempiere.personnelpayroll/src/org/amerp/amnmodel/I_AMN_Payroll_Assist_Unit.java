@@ -46,8 +46,8 @@ public interface I_AMN_Payroll_Assist_Unit
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_AMN_Payroll_Assist_Unit
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -130,6 +130,19 @@ public interface I_AMN_Payroll_Assist_Unit
 
 	/** Get Port	  */
 	public int getAMN_Port();
+
+    /** Column name C_Location_ID */
+    public static final String COLUMNNAME_C_Location_ID = "C_Location_ID";
+
+	/** Set Address.
+	  * Location or Address. Organization OrgInfo address.
+	  */
+	public void setC_Location_ID (int C_Location_ID);
+
+	/** Get Address.
+	  * Location or Address. Organization OrgInfo address.
+	  */
+	public int getC_Location_ID();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -214,4 +227,30 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * Work Code
 	  */
 	public String getWorkCode();
+
+    /** Column name lat */
+    public static final String COLUMNNAME_lat = "lat";
+
+	/** Set Latitude.
+	  * Latitude Degrees
+	  */
+	public void setlat (String lat);
+
+	/** Get Latitude.
+	  * Latitude Degrees
+	  */
+	public String getlat();
+
+    /** Column name lng */
+    public static final String COLUMNNAME_lng = "lng";
+
+	/** Set Longitude.
+	  * Longitude in degrees
+	  */
+	public void setlng (String lng);
+
+	/** Get Longitude.
+	  * Longitude in degrees
+	  */
+	public String getlng();
 }
