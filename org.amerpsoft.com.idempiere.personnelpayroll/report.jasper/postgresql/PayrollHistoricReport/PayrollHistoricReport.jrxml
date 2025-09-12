@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollHistoricReport" pageWidth="1660" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1630" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" whenResourceMissingType="Empty" uuid="b8ec4eab-6126-4c75-9439-a5c4de821fe1">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollHistoricReport" pageWidth="1750" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1720" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" whenResourceMissingType="Empty" uuid="b8ec4eab-6126-4c75-9439-a5c4de821fe1">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="383"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="610"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -832,8 +825,12 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 		<variableExpression><![CDATA[($V{period01_1}.add( $V{period02_1}.add($V{period03_1}.add($V{period04_1}.add($V{period05_1}.add( $V{period06_1}.add( $V{period07_1}.add( $V{period08_1}.add( $V{period09_1}.add( $V{period10_1}.add( $V{period11_1}.add( $V{period12_1} ))))))))))))]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="promedio_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Empleado">
-		<variableExpression><![CDATA[($V{period01_1}.add( $V{period02_1}.add($V{period03_1}.add($V{period04_1}.add($V{period05_1}.add( $V{period06_1}.add( $V{period07_1}.add( $V{period08_1}.add( $V{period09_1}.add( $V{period10_1}.add( $V{period11_1}.add( $V{period12_1} )))))))))))).divide(new BigDecimal(6), MathContext.DECIMAL128)]]></variableExpression>
+	<variable name="promedio6_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Empleado">
+		<variableExpression><![CDATA[( $V{period07_1}.add( $V{period08_1}.add( $V{period09_1}.add( $V{period10_1}.add( $V{period11_1}.add( $V{period12_1} )))))).divide(new BigDecimal(6), MathContext.DECIMAL128)]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="promedio12_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Empleado">
+		<variableExpression><![CDATA[($V{period01_1}.add( $V{period02_1}.add($V{period03_1}.add($V{period04_1}.add($V{period05_1}.add( $V{period06_1}.add( $V{period07_1}.add( $V{period08_1}.add( $V{period09_1}.add( $V{period10_1}.add( $V{period11_1}.add( $V{period12_1} )))))))))))).divide(new BigDecimal(12), MathContext.DECIMAL128)]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="period01_tc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porContrato" incrementType="Group" incrementGroup="Group_porConcepto" calculation="Sum">
@@ -961,10 +958,11 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 			<band height="12">
 				<printWhenExpression><![CDATA[$F{c_tipo}!= null]]></printWhenExpression>
 				<line>
-					<reportElement x="310" y="1" width="1320" height="1" uuid="c0a99b62-0292-4861-b4b7-0d4dcbfb4fa3">
+					<reportElement x="310" y="0" width="1410" height="1" uuid="c0a99b62-0292-4861-b4b7-0d4dcbfb4fa3">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<graphicElement>
 						<pen lineStyle="Dashed"/>
@@ -1308,7 +1306,18 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{promedio_1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{promedio6_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empleado" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="1630" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="a28be856-86bd-4cb7-8b9b-38df4cc21f08">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{promedio12_1}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1317,7 +1326,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<printWhenExpression><![CDATA[$F{amn_employee_id}!= null && $P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				<line>
-					<reportElement x="310" y="0" width="1320" height="1" uuid="a94c4363-2048-4e4f-b331-a55d576b7bb6">
+					<reportElement x="310" y="0" width="1410" height="1" uuid="a94c4363-2048-4e4f-b331-a55d576b7bb6">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1482,7 +1491,17 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{promedio_1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{promedio6_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_Empleado" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement isPrintRepeatedValues="false" x="1630" y="1" width="90" height="14" isRemoveLineWhenBlank="true" uuid="e8b11211-c4c3-4326-a04e-53fa0b0ec933">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{promedio12_1}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1518,7 +1537,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 					<textFieldExpression><![CDATA["Subtotal " + $F{prc_value}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="310" y="0" width="1320" height="1" uuid="eca9904b-a6a2-40bf-baa6-19721e402da5">
+					<reportElement x="310" y="0" width="1410" height="1" uuid="eca9904b-a6a2-40bf-baa6-19721e402da5">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1988,7 +2007,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 		<band height="48">
 			<printWhenExpression><![CDATA[$F{c_tipo}!= null]]></printWhenExpression>
 			<textField>
-				<reportElement key="" x="1430" y="18" width="90" height="15" uuid="c99635fb-565a-4889-88a0-940ac3de8382">
+				<reportElement key="" x="1520" y="18" width="90" height="15" uuid="c99635fb-565a-4889-88a0-940ac3de8382">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -1998,7 +2017,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="1520" y="0" width="110" height="18" uuid="4fbb3267-d717-4d8d-8ab8-e35d9fb5e751">
+				<reportElement key="" x="1610" y="0" width="110" height="18" uuid="4fbb3267-d717-4d8d-8ab8-e35d9fb5e751">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -2008,7 +2027,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement key="" x="1520" y="18" width="110" height="15" uuid="9233d6f4-fd80-4047-bc69-c68a69577ab3">
+				<reportElement key="" x="1610" y="18" width="110" height="15" uuid="9233d6f4-fd80-4047-bc69-c68a69577ab3">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -2109,7 +2128,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				<textFieldExpression><![CDATA["Período desde " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateIni}) + " al " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateEnd})]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement x="1250" y="33" width="380" height="15" uuid="9a771979-0ad4-49a9-aa81-ee2cf53e20c0">
+				<reportElement x="1340" y="33" width="380" height="15" uuid="9a771979-0ad4-49a9-aa81-ee2cf53e20c0">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -2124,7 +2143,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 		<band height="21" splitType="Stretch">
 			<printWhenExpression><![CDATA[$F{startdate}!= null]]></printWhenExpression>
 			<line>
-				<reportElement x="0" y="0" width="1630" height="1" uuid="9ef21d5d-f26a-43ea-bfb3-db64fbd51c43">
+				<reportElement x="0" y="0" width="1720" height="1" uuid="9ef21d5d-f26a-43ea-bfb3-db64fbd51c43">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2133,7 +2152,7 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="2" width="1630" height="1" uuid="0c8be3c7-22d2-4f4a-bcb5-020127298a25">
+				<reportElement x="0" y="2" width="1720" height="1" uuid="0c8be3c7-22d2-4f4a-bcb5-020127298a25">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2142,14 +2161,14 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="20" width="1630" height="1" uuid="c2f3ec0c-94d8-4b81-bcf4-a1afa0492575">
+				<reportElement x="0" y="20" width="1720" height="1" uuid="c2f3ec0c-94d8-4b81-bcf4-a1afa0492575">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="18" width="1630" height="1" uuid="172c9271-910b-469c-a0b3-9f5a3418a1ee">
+				<reportElement x="0" y="18" width="1720" height="1" uuid="172c9271-910b-469c-a0b3-9f5a3418a1ee">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2323,14 +2342,24 @@ ORDER BY phis.c_value, phis.value_emp, phis.prc_value, phis.calcorder, phis.star
 				</textElement>
 				<textFieldExpression><![CDATA["Promedio 6 m."]]></textFieldExpression>
 			</textField>
+			<textField evaluationTime="Group" evaluationGroup="Group_Empleado">
+				<reportElement x="1630" y="4" width="90" height="15" uuid="4a8bf1bf-6419-42f4-a327-38df34b464b1">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Promedio 12 m."]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<summary>
 		<band height="12">
 			<line>
-				<reportElement x="310" y="1" width="1320" height="1" uuid="468b548b-92c6-44f2-92fa-309005447c19">
+				<reportElement x="310" y="0" width="1410" height="1" uuid="468b548b-92c6-44f2-92fa-309005447c19">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<graphicElement>
 					<pen lineStyle="Dashed"/>
