@@ -1,5 +1,9 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 
+<div>
+    🇬🇧 English | 🇪🇸 <a href="README_ES.md">Español</a>
+</div>
+
 <a name="readme-top"></a>
 
 # <b>Languages</b>

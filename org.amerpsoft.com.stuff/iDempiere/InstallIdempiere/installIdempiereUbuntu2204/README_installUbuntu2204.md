@@ -1,6 +1,12 @@
 &lArr;[Installing Idempiere](../README.md)
 <a name="readme-top"></a>
 
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Versión en Español](es/README_installUbuntu2204.md)
+
+</div>
+
 ## Install Idempiere in Ubuntu 22.04
 
 

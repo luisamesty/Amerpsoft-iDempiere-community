@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollSocialSecurityMTESS" pageWidth="1600" pageHeight="595" orientation="Landscape" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollSocialSecurity" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollSocialSecurityMTESS" pageWidth="1600" pageHeight="760" orientation="Landscape" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollSocialSecurity" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="297"/>
@@ -43,7 +43,7 @@
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="isForExport" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="isShowZERO" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
@@ -517,8 +517,7 @@ SELECT
 			day_31
 		ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 	) AS recibocur
-)  AS sso ON (1 = 0)
-]]>
+)  AS sso ON (1 = 0)]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="rep_client_id"/>
@@ -2413,7 +2412,7 @@ SELECT
 				</textElement>
 				<textFieldExpression><![CDATA["EMPLEADOR: "+$F{razon_social}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="28" width="775" height="14" isRemoveLineWhenBlank="true" uuid="2d9ba5ae-c77a-415e-b85d-441d9db29f6d">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -2449,7 +2448,7 @@ SELECT
 				</textElement>
 				<textFieldExpression><![CDATA["AÑO:"]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="42" width="775" height="14" isRemoveLineWhenBlank="true" uuid="f7c4a0ec-c0cf-4994-91aa-4225e1111050">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -2461,7 +2460,7 @@ SELECT
 				</textElement>
 				<textFieldExpression><![CDATA["DOMICILIO: "+$F{direccion_sso}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="56" width="775" height="14" isRemoveLineWhenBlank="true" uuid="dbc500f6-beed-4823-bb53-1445d5868089">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>

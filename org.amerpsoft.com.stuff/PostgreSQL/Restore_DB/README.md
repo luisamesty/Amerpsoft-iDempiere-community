@@ -1,3 +1,4 @@
+&lArr;[PostgreSQL Stuff](../PostgreSQL.md)
 # Idempiere_Restore
 
 ## <b>Description</b>

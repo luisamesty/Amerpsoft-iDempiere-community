@@ -2,6 +2,12 @@
 
 <a name="readme-top"></a>
 
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Versión en Español](es/README_installCentOS.md)
+
+</div>
+
 ## Install Idempiere in CentOS
 
 Install Procedures for CentOS using PostgreSQL database.
