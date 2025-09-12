@@ -19,6 +19,8 @@ report for Leaves and Attendance
 Deprecated Similar Amper Personnel Payroll Leaves and Attendance Summary ",,,,
 *,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5030,P,,,,,,,,,ALL,,,,,AmperRepPayrollListSocialSecurityMTESS,,,,,,,,,,"LPY-53
 Report Social Security MTESS",,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5110,P,,,,,,,,,ALL,,,,,AmperRepPayrollHistoric,,,,,,,,,,LPY-55,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5120,P,,,,,,,,,ALL,,,,,AmperRepPayrollHistoricNU,,,,,,,,,,LPY-55,,,,
 *,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,6010,X,,,,,,,,,ALL,,,,Personnel and Payroll Attendance Form,,,,,,,,,,,LPY-51,,,,
 *,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,8010,M,,Personnel and Payroll Attendance Form,,,,,,,ALL,,,,,,,,,,,,,,,LPY-51,,,,
 *,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,8020,M,,Personnel and Payroll Attendance Processes,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
