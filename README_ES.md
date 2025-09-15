@@ -4,10 +4,13 @@
 
 </div>
 
+
 # Amerpsoft-iDempiere-Community
+<a name="readme-top"></a>
+
 Plugins de Idempiere Community
 
-<a name="readme-top"></a>
+
 
 ## <b>Descripción</b>
 
@@ -22,10 +25,10 @@ Consideraciones y notas especiales para la localización de LVE, en particular l
 - [Postgres SQL](./org.amerpsoft.com.stuff/PostgreSQL/PostgreSQL.md)
 - [Editor - Localización extendida](./org.amerpsoft.com.idempiere.editors-com/README_ES.md)
 - [ZK_Themes](./org.idempiere.com.zk_themes/README_ES.md)
-- [Paquete de idiomas](./org.amerpsoft.lve.idempiere.languages/README_ES.md)
-- [Finanzas - Básico](./org.amerpsoft.lve.idempiere.financial/README_ES.md)
-- [Retenciones de LCO](./org.amerpsoft.lve.idempiere.lco.withholding/README_ES.md)
-- [Nómina (Versión 12)](./org.amerpsoft.lve.idempiere.personnelpayroll/README.md)
+- [Paquete de idiomas](./org.amerpsoft.com.idempiere.languages/README_ES.md)
+- [Finanzas - Básico](./org.amerpsoft.com.idempiere.financial/README_ES.md)
+- [Retenciones de LCO](./org.amerpsoft.com.idempiere.lco.withholding/README_ES.md)
+- [Nómina (Versión 12)](./org.amerpsoft.com.idempiere.personnelpayroll/README_ES.md)
 
 </div>
 ## <b>Wiki Idempiere</b>
