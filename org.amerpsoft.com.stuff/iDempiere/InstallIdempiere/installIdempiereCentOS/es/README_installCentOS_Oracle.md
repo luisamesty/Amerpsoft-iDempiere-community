@@ -1,4 +1,4 @@
-&lArr;[Instalación de Idempiere](../../InstallIdempiere/README_ES.md)
+&lArr;[Instalación de Idempiere](../../README_ES.md)
 
 <a name="readme-top"></a>
 
