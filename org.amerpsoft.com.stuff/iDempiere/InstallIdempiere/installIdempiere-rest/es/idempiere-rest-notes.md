@@ -1,4 +1,4 @@
-&lArr;[PLUGINS DE LA COMUNIDAD](../../README_ES.md) | [Inicio](../../README_ES.md)
+&lArr;[Instalación de Idempiere](../../README_ES.md)
 <!-- LOGOTIPO DEL PROYECTO -->
 <br />
 <div align="center">

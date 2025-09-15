@@ -1,5 +1,5 @@
-&lArr;[Instalación de Idempiere](../../InstallIdempiere/README_ES.md)
-
+&lArr;[Instalación de Idempiere](../../README_ES.md)
+<!-- LOGOTIPO DEL PROYECTO -->
 <a name="readme-top"></a>
 
 <div style="text-align: right;">
