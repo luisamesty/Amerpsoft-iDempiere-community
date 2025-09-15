@@ -1,5 +1,6 @@
 -- EmployeeLetter
 -- Employee Letter
+-- Updated with average from historic
 SELECT * FROM (
 -- Employee file 
 	SELECT DISTINCT
@@ -30,19 +31,10 @@ SELECT * FROM (
 		 ELSE adempiere.amf_num2letterLPY(TRUNC(emp.salary),'U','es')
 	END as salario_letras_ficha,
     -- Cálculo del salario base mensual
-    TRUNC(amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 
-        344, 
-        114
-    ) / 6 ) AS salary_base_mensual,
+    salprom.promedio_ajustado as salary_base_mensual,
     -- Salario base mensual en letras
-    CASE WHEN amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, 344, 114 ) / 6 IS NULL 
-             OR amp_salary_hist_calc('salary_base', emp.amn_employee_id, ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6 = 0
-	        THEN adempiere.amf_num2letterLPY(0, 'U', 'es')
-        ELSE adempiere.amf_num2letterLPY(TRUNC(
-                 amp_salary_hist_calc('salary_base', emp.amn_employee_id, 
-                     ($P{DateEnd}::date - interval '6 months' + interval '1 day')::date, 
-                     $P{DateEnd}, $P{C_Currency_ID}, 114 ) / 6), 'U', 'es')
-    END AS salary_base_letras,
+    adempiere.amf_num2letterLPY( salprom.promedio_ajustado, 'U', 'es') AS salary_base_letras,
+    salprom.periodos_utilizados,
     -- CONTRACT
 	COALESCE(amn_c.name, amn_c.description, '-') as tipo_contrato,
 	-- DEPARTMENT 
@@ -76,7 +68,21 @@ SELECT * FROM (
 	orginfo.fax,
 	orginfo.email
 	FROM adempiere.amn_employee as emp
-	 INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
+	INNER JOIN (
+		SELECT 
+	    $P{AMN_Employee_ID} AS amn_employee_id,
+	    ROUND(COALESCE(AVG(salary_utilities), 0), 2) AS promedio_ajustado,
+	    COUNT(*) AS periodos_utilizados
+		FROM (
+		    SELECT salary_utilities
+		    FROM AMN_Payroll_Historic
+		    WHERE AMN_Employee_ID = $P{AMN_Employee_ID}
+		      AND amn_period_yyyymm < TO_CHAR(CAST($P{DateEnd} AS DATE), 'YYYY-MM')
+		    ORDER BY amn_period_yyyymm DESC
+		    LIMIT 6
+		) sub
+	) salprom on salprom.amn_employee_id = emp.amn_employee_id
+	INNER JOIN adempiere.c_bpartner as cbp ON (emp.c_bpartner_id= cbp.c_bpartner_id)
 	INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
 	INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
 	 LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_id)

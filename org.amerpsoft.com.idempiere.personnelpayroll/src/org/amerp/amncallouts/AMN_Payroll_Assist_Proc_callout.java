@@ -9,7 +9,7 @@ import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Leaves;
 import org.amerp.amnmodel.MAMN_Payroll_Assist_Proc;
 import org.amerp.amnmodel.MAMN_Shift_Detail;
-import org.amerp.process.AMNPayrollProcessPayrollAssistProc;
+import org.amerp.process.AMNPayrollProcessPayrollAssistUtil;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.CLogger;
@@ -58,6 +58,23 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Payroll_Assist_Proc_ID) != null ) {
     		AMN_Payroll_Assist_Proc_ID = (Integer) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Payroll_Assist_Proc_ID);
     	}
+    	// Is Protected 
+    	if (p_mTab.getValue("Protected") != null && (Boolean)p_mTab.getValue("Protected")) {
+    	    // Cancelar cambio del campo
+    	    if (columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID) || 
+    	    	columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In1) || 
+    	        columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out1) || 
+    	        columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In2) || 
+    	        columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2)|| 
+    	        columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_Event_Date) || 
+    	        columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_dayofweek)|| 
+    	        columnName.equals(MAMN_Payroll_Assist_Proc.COLUMNNAME_Event_Date)
+    	        ) {
+    	    	 // Restituir valor anterior
+    	        p_mTab.setValue(columnName, p_oldValue);
+    	        return Msg.getMsg(Env.getCtx(), "ProtectedRecordNoEdit");
+    	    }
+    	}
 	    // Event_Date
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Event_Date) != null) {
     		Event_Date = (Timestamp) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Event_Date);
@@ -86,25 +103,25 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In1) != null) {
     		Shift_In1 = (Timestamp) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In1);
     		// Normalize to Even_Date
-    		Shift_In1 = AMNPayrollProcessPayrollAssistProc.getTimestampShifdetailEventTime(Event_Date,Shift_In1);
+    		Shift_In1 = AMNPayrollProcessPayrollAssistUtil.getTimestampShifdetailEventTime(Event_Date,Shift_In1);
     	}
 	    // Shift_Out1
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out1) != null) {
     		Shift_Out1 = (Timestamp) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out1);
     		// Normalize to Even_Date
-    		Shift_Out1 = AMNPayrollProcessPayrollAssistProc.getTimestampShifdetailEventTime(Event_Date,Shift_Out1);
+    		Shift_Out1 = AMNPayrollProcessPayrollAssistUtil.getTimestampShifdetailEventTime(Event_Date,Shift_Out1);
     	}
 	    // Shift_In2
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In2) != null) {
     		Shift_In2 = (Timestamp) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In2);
     		// Normalize to Even_Date
-    		Shift_In2 = AMNPayrollProcessPayrollAssistProc.getTimestampShifdetailEventTime(Event_Date,Shift_In2);
+    		Shift_In2 = AMNPayrollProcessPayrollAssistUtil.getTimestampShifdetailEventTime(Event_Date,Shift_In2);
     	}	 
 	    // Shift_Out2
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2) != null) {
     		Shift_Out2 = (Timestamp) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2);
     		// Normalize to Even_Date
-    		Shift_Out2 = AMNPayrollProcessPayrollAssistProc.getTimestampShifdetailEventTime(Event_Date,Shift_Out2);;
+    		Shift_Out2 = AMNPayrollProcessPayrollAssistUtil.getTimestampShifdetailEventTime(Event_Date,Shift_Out2);;
     	}
 		// *****************************************************
 		// Calculate Hours
@@ -130,12 +147,10 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
 	    		&& Shift_In2!=null && Shift_Out2!=null 
 	    		&& Event_Date != null && attAMN_Shift_ID>0 
 	    		&& AMN_Payroll_Assist_Proc_ID >0 )	{
-				atthours= AMNPayrollProcessPayrollAssistProc.calcAttendanceValuesofPayrollVars(
-						C_Country_ID, Event_Date, attAMN_Shift_ID, 
+				atthours= AMNPayrollProcessPayrollAssistUtil.calcAttendanceValuesofPayrollVars(
+						Env.getCtx(), amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID(), C_Country_ID, Event_Date, attAMN_Shift_ID, 
 						Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
 	    		updateTabs = true;
-
-				
 	    	}		
     	}
     	// // Update Tabs
@@ -170,7 +185,6 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
 			p_mTab.setValue("Shift_EDE", atthours.getShift_EDE());     // Early Departure (Shift_EDE)
 			p_mTab.setValue("Shift_HER", atthours.getShift_HER());     // Extra Clock Hours (Shift_HER)
 			p_mTab.setValue("Shift_HEF", atthours.getShift_HEF());     // Extra Holiday Hours (Shift_HEF)
-
     	}
     	return null;
 	}

@@ -20,4 +20,11 @@
             </plugin>
         </plugins>
     </build>  
+    <dependencies>
+    	<dependency>
+    		<groupId>org.zkoss.zk</groupId>
+    		<artifactId>zk</artifactId>
+    		<version>9.6.0</version>
+    	</dependency>
+    </dependencies>
 </project>

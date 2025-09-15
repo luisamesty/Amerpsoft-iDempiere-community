@@ -9,6 +9,14 @@
 		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
   </parent>
   <packaging>eclipse-repository</packaging>
+  <dependencies>
+	  <dependency>
+	    <groupId>org.amerpsoft.com.idempiere</groupId>
+	    <artifactId>org.amerpsoft.com.idempiere.feature</artifactId>
+	    <version>12.0.0-SNAPSHOT</version>
+	    <type>eclipse-feature</type>
+	  </dependency>
+  </dependencies>
   <build>
 		<plugins>
 			<plugin>
@@ -25,8 +33,6 @@
 				</executions>
 				<configuration>
 					<includeAllDependencies>true</includeAllDependencies>
-                    <excludeDefaultDirectories>false</excludeDefaultDirectories>
-					<!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=512396 -->
 					<xzCompress>false</xzCompress>
 				</configuration>
 			</plugin>

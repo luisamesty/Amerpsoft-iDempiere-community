@@ -1,0 +1,25 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT ZK_Themes,10,SQL,,,,,,,,System Configurator,Oracle,"-- UPDATE ZK_THEME with ksys
+UPDATE adempiere.ad_sysconfig
+SET ad_client_id=0, ad_org_id=0, created=SYSDATE, updated=SYSDATE, createdby=100, updatedby=10, isactive='Y', name='ZK_THEME', value='ksys', description='Available choices amtheme amthemeblu businessteam businessTeamBlue ksys kbs iceblue optumTheme iceblue_c', entitytype='D', configurationlevel='S', ad_sysconfig_uu='054399ad-3705-411d-b79e-7ec7111888c5'
+WHERE ad_sysconfig_id=200021;
+-- UPDATE ZK_THEME_USE_FONT_ICON_FOR_IMAGE to N
+UPDATE adempiere.ad_sysconfig
+SET ad_client_id=0, ad_org_id=0, created=SYSDATE, updated=SYSDATE, createdby=0, updatedby=10, isactive='Y', name='ZK_THEME_USE_FONT_ICON_FOR_IMAGE', value='N', description='Use Font Icon Yes or No', entitytype='D', configurationlevel='S', ad_sysconfig_uu='29a0d95d-af05-477a-a047-241c350dc8e3'
+WHERE ad_sysconfig_id=200111;
+",,,,,,,,,,,,,,,,,,
+*,AMERPSOFT ZK_Themes,20,SQL,,,,,,,,System Configurator,Oracle,"--INSERTS
+INSERT INTO adempiere.ad_sysconfig
+(ad_sysconfig_id, ad_client_id, ad_org_id, created, updated, createdby, updatedby, isactive, name, value, description, entitytype, configurationlevel, ad_sysconfig_uu)
+VALUES(1000000, 0, 0, SYSDATE, SYSDATE, 0, 10, 'Y', 'ZK_LOGO_LARGE', '~./theme/ksys/images/login-logo-amerp2.png', 'Login Logo Large', 'AMERP', 'S', 'bfe6284e-00a2-412f-be82-37ed38363768');
+INSERT INTO adempiere.ad_sysconfig
+(ad_sysconfig_id, ad_client_id, ad_org_id, created, updated, createdby, updatedby, isactive, name, value, description, entitytype, configurationlevel, ad_sysconfig_uu)
+VALUES(1000001, 0, 0, SYSDATE, SYSDATE, 0, 10, 'Y', 'ZK_LOGO_SMALL', '~./theme/ksys/images/header-logo-amerp.png', 'Login Logo Small', 'AMERP', 'S', '69007345-c36f-4b02-870a-c41d8fb9deea');
+INSERT INTO adempiere.ad_sysconfig
+(ad_sysconfig_id, ad_client_id, ad_org_id, created, updated, createdby, updatedby, isactive, name, value, description, entitytype, configurationlevel, ad_sysconfig_uu)
+VALUES(1000012, 0, 0, SYSDATE, SYSDATE, 10, 10, 'Y', 'ZK_BROWSER_TITLE', 'iDempiere AMERP', 'Browser Title', 'AMERP', 'S', 'c587f6f8-2910-4b27-913e-2e41e8581ea0');
+INSERT INTO adempiere.ad_sysconfig
+(ad_sysconfig_id, ad_client_id, ad_org_id, created, updated, createdby, updatedby, isactive, name, value, description, entitytype, configurationlevel, ad_sysconfig_uu)
+VALUES(1000013, 0, 0, SYSDATE, SYSDATE, 10, 10, 'Y', 'ZK_BROWSER_ICON', '~./theme/ksys/images/icon-idempiere.png', 'Browse Icon Path', 'AMERP', 'S', '4cf766fd-5982-49dd-82f2-e8347214dbf0');
+",,,,,,,,,,,,,,,,,,
+*,AMERPSOFT ZK_Themes,200,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='ea871c62-8434-459b-be50-6bbce02fb419';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,

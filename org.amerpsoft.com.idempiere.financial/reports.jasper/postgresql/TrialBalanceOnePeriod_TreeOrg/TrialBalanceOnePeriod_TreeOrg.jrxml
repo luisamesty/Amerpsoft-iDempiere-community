@@ -2305,7 +2305,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[( $V{amtacctdr7} == 0.00  ? "-"  : $V{amtacctdr7} )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="800" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="415055a0-c124-4f46-8ed5-304dce6d7db4">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2317,7 +2317,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[( $V{amtacctcr7}== 0.00  ? "-"  : $V{amtacctcr7} )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="980" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="dc3721ef-2507-4e30-abe7-b18fec0d0d27">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -2328,7 +2328,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[( ($V{amtacctdr7} -$V{amtacctcr7}) == 0.00  ? 0.00  : ($V{amtacctdr7} -$V{amtacctcr7}) )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1160" y="0" width="180" height="14" isRemoveLineWhenBlank="true" uuid="ba50584a-ebca-4cc3-93dc-83ffd8cc4d14">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -2826,10 +2826,11 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 		<band height="14">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1300" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
+				<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#E0E0E0" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -2837,10 +2838,11 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1300" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="b70a8487-a3b0-412a-8c22-dc243966582b">
+				<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="b70a8487-a3b0-412a-8c22-dc243966582b">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>

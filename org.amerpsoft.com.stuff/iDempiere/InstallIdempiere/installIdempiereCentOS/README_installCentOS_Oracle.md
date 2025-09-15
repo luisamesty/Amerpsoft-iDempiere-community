@@ -443,7 +443,8 @@ NOTE: if your system has a group with name dba, it's possible that this command 
 
 #### Update the database seed
 
-Not necessary on Seed, buty just in case.
+Not necessary on Seed, buty just in case
+
 ```text
 cd /opt/idempiere-server/utils
 bash RUN_SyncDB.sh
@@ -457,7 +458,9 @@ bash idempiere-server.sh
 ```
 
 #### Enjoy iDempiere Web
+
 Open URL.
+
 ```copy
 http://localhost:8080/
 ```

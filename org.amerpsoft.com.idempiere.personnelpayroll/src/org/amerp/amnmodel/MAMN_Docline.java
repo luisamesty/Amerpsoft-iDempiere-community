@@ -10,7 +10,7 @@ public class MAMN_Docline extends DocLine {
 
 	public MAMN_Docline(PO po, Doc doc) {
 		super(po, doc);
-		// TODO Auto-generated constructor stub
+		//
 	}
 
 	private String Concept_Value="";

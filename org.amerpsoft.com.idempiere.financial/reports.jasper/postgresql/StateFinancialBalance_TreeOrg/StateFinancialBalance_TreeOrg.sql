@@ -400,7 +400,8 @@ LEFT JOIN (
 					) as pr2 ON (pr2.AD_Client_ID = fa22.AD_Client_ID AND pr2.C_Project_ID = fa22.C_Project_ID)
 					WHERE fa22.c_acctschema_id = $P{C_AcctSchema_ID}  
 					AND fa22.ad_client_id=$P{AD_Client_ID}
-					AND ( CASE WHEN  fa22.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 			
+					AND ( CASE WHEN  fa22.postingtype = $P{PostingType} THEN 1=1 ELSE 1=0 END ) 
+					AND el2.AccountType IN ('R','E','M')			
 				) fas22
 				INNER JOIN c_period as per2 ON (per2.c_period_id = $P{C_Period_ID})
 				WHERE fas22.DateAcct <= per2.EndDate
@@ -427,4 +428,3 @@ WHERE PAR.ad_client_id = $P{AD_Client_ID}  AND PAR.issummary='N'
 AND posttype.value = 'A'
 AND CASE WHEN  $P{isShowZERO} = 'Y' OR PAR.isSummary='Y' OR ( $P{isShowZERO} = 'N' AND ( PAR.isSummary = 'N' AND bal.openbalance<> 0 or bal.amtacctcr<> 0 or bal.amtacctdr <>0 or bal.closebalance <> 0  ) ) THEN 1=1  ELSE 1=0 END
 ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo6 ASC, codigo7 ASC, codigo8 ASC,  codigo9 ASC, codigo ASC, org_value ASC
-

@@ -1,3 +1,9 @@
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Español](./README_ES.md)  
+
+</div>
+
 # <b>COMMUNITY PLUGINS</b>
 
 <a name="readme-top"></a>
@@ -12,11 +18,13 @@ Special considerations and notes for LVE, LPY and LES localization.
 <div style="padding-left: 20px;">
 
 - [Install Idempiere](./org.amerpsoft.com.stuff/iDempiere/InstallIdempiere/README.md)
+- [Postgres SQL](./org.amerpsoft.com.stuff/PostgreSQL/PostgreSQL.md)
 - [Editor - Location Extended](./org.amerpsoft.com.idempiere.editors-com/README.md)
+- [ZK_Themes](./org.amerpsoft.com.idempiere.zk_themes/README.md)
 - [Language Pack](./org.amerpsoft.com.idempiere.languages/README.md)
 - [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 - [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
-- [Payroll](./org.amerpsoft.com.idempiere.personnelpayroll/README.md)
+- [Payroll (Release-12)](./org.amerpsoft.com.idempiere.personnelpayroll/README.md)
 
 </div>
 

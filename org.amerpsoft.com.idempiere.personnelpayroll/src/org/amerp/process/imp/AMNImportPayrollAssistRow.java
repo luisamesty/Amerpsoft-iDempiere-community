@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,11 +41,11 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     List<PayrollAssistRowImport> payrollassistrowRejected = new ArrayList<>();
     int recMAMN_Payroll_Assist_Row_ID = 0;
     Map<String, Integer> pinToEmployeeMap = new HashMap<>();
+    private String paramMsg = "";
     
 	@Override
     protected void prepare() {
-	    // TODO Auto-generated method stub
-    	//log.warning("...........Toma de Parametros...................");
+	    // Toma de Parametros
     	ProcessInfoParameter[] paras = getParameter();
 		for (ProcessInfoParameter para : paras)
 		{
@@ -65,8 +66,26 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-		//log.warning("...........Parametros...................");
-		
+		// Si RefDateIni es null → primer día del mes actual a las 00:00
+		if (p_RefDateIni == null) {
+			LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+			p_RefDateIni = Timestamp.valueOf(firstDayOfMonth.atStartOfDay());
+			paramMsg = ">>> RefDateIni no recibido. Se asigna primer día del mes actual: " + p_RefDateIni +"\r\n";
+		}
+
+		// Si RefDateEnd es null → hoy sin hora
+		if (p_RefDateEnd == null) {
+			LocalDate today = LocalDate.now();
+			p_RefDateEnd = Timestamp.valueOf(today.atStartOfDay());
+			paramMsg = paramMsg + ">>> RefDateEnd no recibido. Se asigna fecha actual sin hora: " + p_RefDateEnd +"\r\n";
+		}
+		// Parametros
+		paramMsg = paramMsg + "Parámetros enviados: AD_Client_ID=" + p_AD_Client_ID 
+				+ " | AD_Org_ID=" + p_AD_Org_ID 
+				+ " | DateIni=" + p_RefDateIni 
+				+ " | DateEnd=" + p_RefDateEnd
+				+ " | Schedule=" + p_IsScheduled+"\r\n";
+		log.warning(paramMsg);
     }
 
     @Override
@@ -197,7 +216,9 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
 		                    	// If return false Add to array to show at end of process
 		                    	PayrollAssistRowImport foundUnit = PayrollAssistRowImport.searchByPin(payrollassistrowRejected, row.getPIN());
 		                        if (foundUnit == null) {
-		                        	MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),get_TrxName() );
+		                     		// Constructor setea AD_Client_ID
+		                    		MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, p_AD_Client_ID, p_AD_Org_ID ,trxName );
+		                    		amnunit.setAMN_Payroll_Assist_Unit_ID(row.getAMN_Payroll_Assist_Unit_ID());
 		                        	PayrollAssistRowImport newPRR = new PayrollAssistRowImport(row.getPIN(), amnunit.getName(), 1 );
 		                        	payrollassistrowRejected.add(newPRR);
 		                        } else {
@@ -268,7 +289,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     	// Final Message PINs Rejected
     	// HEADER
     	messagetoShow="";
-    	messagetoNotify = Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
+    	messagetoNotify = paramMsg + Msg.getElement(ctx, "PIN")+"(s) "+Msg.translate(ctx, "NotFound");
     	addLogIFNotScheduled(messagetoNotify);
     	// rowsUpdated rowsUpdated
     	messagetoShow=Msg.translate(ctx, "Row")+"(s) "+Msg.translate(ctx, "Updated")+"(s) = "+
@@ -291,7 +312,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         }
         // Send Notification
         sendNotification(ctx, "N", messagetoNotify);
-        log.warning("Notification:\r\n"+ messagetoNotify);
+        log.warning("AMNImportPayrollAssistRow - Notification:\r\n"+ messagetoNotify);
         // return Msg.getMsg(ctx, "ProcessOK");
         return "@Processed@ " + rowCount + " - @Updated@ " + rowsUpdated;
 
@@ -321,23 +342,27 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         // If Null Creates New
         if (amnemployee != null && row != null) {
            description = amnemployee.getValue()+"-"+amnemployee.getName().trim();
-        	if (UnitID != 0) {
-        		MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(),trxName );
-	        	description = "U"+amnunit.getName().trim()+" "+description;            
+           if (UnitID != 0) {
+        	    MAMN_Payroll_Assist_Unit amnunit = new MAMN_Payroll_Assist_Unit(ctx, row.getAMN_Payroll_Assist_Unit_ID(), trxName);
+        	    String unitName = amnunit.getName();
+        	    if (unitName != null) {
+        	        description = "U" + unitName.trim() + " " + description;
+        	    } else {
+        	        description = "U? " + description;  
+        	    }
         	}
         	// Verificar si el registro existe para ese trabajador y fecha
             MAMN_Payroll_Assist amnpayrollassist = MAMN_Payroll_Assist.findByEmployeeAndDateTime(ctx, amnemployee.getAMN_Employee_ID(), row.getAMN_DateTime(), trxName);
         	if (amnpayrollassist == null  ) {
-	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, 0 , trxName);
+	           	// Nuevo constructor que setea AD_Client_ID
+	           	amnpayrollassist = new MAMN_Payroll_Assist(ctx, p_AD_Client_ID, p_AD_Org_ID, trxName);
 				amnpayrollassist.setAD_Org_ID(p_AD_Org_ID);
 				amnpayrollassist.setIsActive(true);
 	        } 
         	amnpayrollassist.setAMN_Payroll_Assist_Row_ID(row.getAMN_Payroll_Assist_Row_ID());
         	amn_assistrecord = MAMN_Payroll_Assist.getPayrollAssist_DayofWeek(row.getAMN_DateTime()) + "-"+
             		MAMN_Payroll_Assist.getPayrollAssist_DayofWeekName(row.getAMN_DateTime())+ "-"+
-            		row.getAMN_DateTime().toString();
-//			log.warning("AMN_Payroll_Assist_Row_ID:"+row.getAMN_Payroll_Assist_Row_ID()+
-//					"  amn_assistrecord:"+amn_assistrecord+"  description:"+description);	    
+            		row.getAMN_DateTime().toString();	    
 			amnpayrollassist.setDescription(description);
 			amnpayrollassist.setAMN_Employee_ID(amnemployee.getAMN_Employee_ID());
 			amnpayrollassist.setAMN_Shift_ID(amnemployee.getAMN_Shift_ID()); // ID del turno

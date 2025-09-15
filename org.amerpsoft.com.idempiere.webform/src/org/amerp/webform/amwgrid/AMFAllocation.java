@@ -1192,16 +1192,23 @@ log.warning("m_AMN_Employee_ID="+m_AMN_Employee_ID);
 	}
 	
 	
-	// Método para obtener el valor predeterminado de AMN_Process_ID
-    public int getDefaultAMNProcessID() {
-        MAMN_Process process = new Query(Env.getCtx(), MAMN_Process.Table_Name, 
-                "IsActive='Y' AND AMN_Process_Value='NN' AND AD_Client_ID=?", null)
-                .setParameters(Env.getAD_Client_ID(Env.getCtx()))
-                .setOrderBy("AMN_Process_ID")
-                .first();
+	public int getDefaultAMNProcessID() {
+	    // Obtener solo el ID usando Query para que sea más eficiente
+	    Integer processID = new Query(Env.getCtx(), MAMN_Process.Table_Name, 
+	            "IsActive='Y' AND AMN_Process_Value='NN' AND AD_Client_ID=?", null)
+	            .setParameters(Env.getAD_Client_ID(Env.getCtx()))
+	            .setOrderBy("AMN_Process_ID")
+	            .setOnlyActiveRecords(true)
+	            .firstId();
 
-            return process != null ? process.getAMN_Process_ID() : 0;
-    }
+	    if (processID != null && processID > 0) {
+	        // Cargar el registro completo si es necesario en otro lugar
+	        MAMN_Process process = new MAMN_Process(Env.getCtx(), processID, null);
+	        return process.getAMN_Process_ID(); // O simplemente `return processID;`
+	    }
+
+	    return 0;
+	}
 
     protected List<KeyNamePair> getValidProcesses() {
 	    List<KeyNamePair> processList = new ArrayList<>();

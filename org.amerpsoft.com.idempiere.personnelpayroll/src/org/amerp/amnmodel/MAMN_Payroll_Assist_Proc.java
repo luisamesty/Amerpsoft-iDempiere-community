@@ -14,7 +14,9 @@ package org.amerp.amnmodel;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -40,13 +42,27 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 	private static CCache<Integer,MAMN_Payroll_Assist_Proc> s_cache = new CCache<Integer,MAMN_Payroll_Assist_Proc>(Table_Name, 10);
 
 	/**
+	 * Constructor para setear AD_Client_ID y AD_Org_ID
+	 * @param ctx
+	 * @param AD_Client_ID
+	 * @param AD_Org_ID
+	 * @param trxName
+	 */
+	public MAMN_Payroll_Assist_Proc(Properties ctx, int AD_Client_ID, int AD_Org_ID, String trxName) {
+		this(ctx, 0, trxName); // ⬅️ Esto ejecuta tu constructor personalizado, con inicialización incluida
+	    setAD_Client_ID(AD_Client_ID);  // ← solo visible dentro del modelo
+	    setAD_Org_ID(AD_Org_ID);
+	    setIsActive(true);
+	}
+
+	/**
 	 * @param p_ctx
 	 * @param AMN_Payroll_Assist_Proc_ID
 	 * @param p_trxName
 	 */
     public MAMN_Payroll_Assist_Proc(Properties p_ctx, int AMN_Payroll_Assist_Proc_ID, String p_trxName) {
 	    super(p_ctx, AMN_Payroll_Assist_Proc_ID, p_trxName);
-	 // Inicializar todos los campos en cero o valores por defecto
+	    // Inicializar todos los campos en cero o valores por defecto
         if (AMN_Payroll_Assist_Proc_ID == 0) {
             setAD_Client_ID(Env.getAD_Client_ID(p_ctx));
             setAD_Org_ID(0);
@@ -86,7 +102,22 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
         }
     }
     
- // Método para obtener un Timestamp con la hora en cero (00:00:00)
+    /**
+	 * @param p_ctx
+	 * @param p_rs
+	 * @param p_trxName
+	 */
+	public MAMN_Payroll_Assist_Proc(Properties p_ctx, ResultSet p_rs, String p_trxName) {
+	    super(p_ctx, p_rs, p_trxName);
+	    // 
+	}
+
+	// Constructor adicional para crear una instancia sin ID (nuevo registro)
+	public MAMN_Payroll_Assist_Proc(Properties ctx, String trxName) {
+	    this(ctx, 0, trxName);
+	}
+
+	// Método para obtener un Timestamp con la hora en cero (00:00:00)
     private Timestamp getTimestampWithZeroTime() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0); // Hora en 00
@@ -96,21 +127,6 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
         return new Timestamp(calendar.getTimeInMillis());
     }
 
-	/**
-	 * @param p_ctx
-	 * @param p_rs
-	 * @param p_trxName
-	 */
-    public MAMN_Payroll_Assist_Proc(Properties p_ctx, ResultSet p_rs, String p_trxName) {
-	    super(p_ctx, p_rs, p_trxName);
-	    // TODO Auto-generated constructor stub
-    }
-
-    // Constructor adicional para crear una instancia sin ID (nuevo registro)
-    public MAMN_Payroll_Assist_Proc(Properties ctx, String trxName) {
-        this(ctx, 0, trxName);
-    }
-    
 	/**
 	 * Get Payroll_Assist_Proc from Cache
 	 * @param ctx context
@@ -304,4 +320,53 @@ public class MAMN_Payroll_Assist_Proc extends X_AMN_Payroll_Assist_Proc {
 		return true;
 		
 	}	//	AMN_Payroll_Assist
+	
+	/**
+	 * getEmployeeAllowedShifts: 
+	 * Returns Shift from AMN_Employee table and AMN_Employee_Shift table
+	 * @param ctx
+	 * @param AMN_Employee_ID
+	 * @return
+	 */
+	public static List<Integer> getEmployeeAllowedShifts(Properties ctx, int AMN_Employee_ID) {
+	    List<Integer> allowedShiftIds = new ArrayList<>();
+	    if (AMN_Employee_ID <= 0)
+	        return allowedShiftIds;
+
+	    MAMN_Employee employee = new MAMN_Employee(ctx, AMN_Employee_ID, null);
+
+	    // Turno por defecto
+	    int defaultShiftId = employee.getAMN_Shift_ID();
+	    if (defaultShiftId > 0)
+	        allowedShiftIds.add(defaultShiftId);
+
+	    // Turnos de AMN_Employee_Shift
+	    List<MAMN_Employee_Shift> empShifts = new Query(ctx, MAMN_Employee_Shift.Table_Name,
+	            "AMN_Employee_ID=?", null)
+	            .setParameters(AMN_Employee_ID)
+	            .setOnlyActiveRecords(true)
+	            .list();
+
+	    for (MAMN_Employee_Shift es : empShifts) {
+	        allowedShiftIds.add(es.getAMN_Shift_ID());
+	    }
+
+	    return allowedShiftIds;
+	}
+	
+	/**
+	 * Cuenta cuántas marcaciones (Shift_In1/Out1/In2/Out2) no son nulas en el objeto de asistencia.
+	 * Devuelve un valor entre 0 y 4.
+	 */
+	public int countMarks() {
+
+	    int count = 0;
+	    // usamos get_Value para evitar depender de nombres concretos de getters
+	    if (this.get_Value(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In1) != null)  count++;
+	    if (this.get_Value(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out1) != null) count++;
+	    if (this.get_Value(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In2) != null)  count++;
+	    if (this.get_Value(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2) != null) count++;
+	    return count;
+	}
+
 }

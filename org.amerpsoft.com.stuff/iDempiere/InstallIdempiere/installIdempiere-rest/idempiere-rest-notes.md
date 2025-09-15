@@ -9,6 +9,12 @@
 
 <a name="readme-top"></a>
 
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Versión en Español](es/idempiere-rest-notes.md)
+
+</div>
+
 # IDEMPIERE-REST
 
 The iDempiere REST API is a plugin that allows developers to communicate with an iDempiere server via a RESTful API. This information is delivered via HTTP using JSON.

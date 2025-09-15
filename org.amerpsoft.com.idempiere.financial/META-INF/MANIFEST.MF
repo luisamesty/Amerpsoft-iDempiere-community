@@ -3,15 +3,23 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Financial
 Bundle-SymbolicName: org.amerpsoft.com.idempiere.financial;singleton:=true
 Bundle-Version: 12.0.0.qualifier
-Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
+Bundle-Activator: org.amerp.amfinancial.Activator
 Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  org.adempiere.plugin.utils;bundle-version="0.0.0",
  org.adempiere.report.jasper;bundle-version="0.0.0",
- org.adempiere.base.process;bundle-version="0.0.0"
+ org.adempiere.base.process;bundle-version="0.0.0",
+ org.adempiere.base.process;bundle-version="0.0.0",
+ org.adempiere.ui.zk,
+ net.sf.jasperreports.engine
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: net.sf.jasperreports.engine,
+Import-Package: groovy.lang,
+ groovy.util,
+ net.sf.jasperreports.engine,
  org.adempiere.webui.window,
+ org.codehaus.groovy.runtime,
+ org.compiere.print,
  org.osgi.framework;version="1.3.0"
+Export-Package: org.amerp.reports.AccountElements_Tree 
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Amerpsoft

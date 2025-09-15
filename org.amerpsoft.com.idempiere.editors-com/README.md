@@ -1,3 +1,10 @@
+&lArr;[AMERPSOFT-COM PLUGINS](../README.md) | [Home](../README.md)
+
+<div>
+    🇬🇧 English | 🇪🇸 <a href="README_ES.md">Español</a>
+</div>
+
+
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 
 <a name="readme-top"></a>

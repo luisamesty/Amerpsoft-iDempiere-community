@@ -1,3 +1,9 @@
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Español](./README_ES.md)  
+
+</div>
+
 &lArr;[COMMUNITY PLUGINS](../../../README.md) | [Home](../../../README.md)
 
 <div style="padding-left: 20px;">

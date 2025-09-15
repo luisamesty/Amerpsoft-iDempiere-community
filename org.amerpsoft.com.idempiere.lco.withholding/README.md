@@ -1,4 +1,8 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+  <div>
+    🇬🇧 English | 🇪🇸 <a href="README_ES.md">Español</a>
+  </div>
+  
 # <b>LCO - Withholding</b>
 
 <a name="readme-top"></a>

@@ -2,6 +2,12 @@
 
 <a name="readme-top"></a>
 
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Versión en Español](es/README_installCentOS.md)
+
+</div>
+
 ## Install Idempiere in CentOS
 
 Install Procedures for CentOS using PostgreSQL database.
@@ -424,22 +430,23 @@ Changes will be updated in idempiere.properties and idempiereEnv.properties.
 
 ##### UPDATE DATABASE idempiereSeed11
 In order to keep the database synchronized with the code it is required to run the following script:
-````
+
+```bash
 su - idempiere  # not necessary if you're already as user idempiere
 cd /opt/idempiere-server/utils
 sh RUN_SyncDB.sh
-````
+```
 
-##### UPDATE DATABASE idempiereSeed11
 ##### Register version code in database
-````
+
 In order to sign the database with the version code running on the server it is advised (or required depending on configuration)
 to run the following script:
+
+```bash
 su - idempiere  # not necessary if you're already as user idempiere
 cd /opt/idempiere-server
 sh sign-database-build-alt.sh
-````
-
+```
 
 <a href="#top">Back to top</a>
 

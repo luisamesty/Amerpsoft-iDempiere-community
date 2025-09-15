@@ -724,4 +724,62 @@ public class MAMN_NonBusinessDay extends X_C_NonBusinessDay {
 		return BigDecimal.valueOf(difftmp);
 	}
 	
+	/*************************************************************************
+	 *  sqlGetHolidaysBetween
+	 *  Description: Return number of holidays (from C_NonBusinessDay table)
+	 *               between two dates, considering Client/Org scope.
+	 *  @param Timestamp startDate
+	 *  @param Timestamp endDate
+	 *  @param int p_AD_Client_ID
+	 *  @param int p_AD_Org_ID
+	 *  @return BigDecimal number of holidays
+	 *************************************************************************/
+	public static BigDecimal sqlGetHolidaysBetween(Timestamp p_StartDate,
+	        Timestamp p_EndDate, int p_AD_Client_ID, int p_AD_Org_ID) 
+	{
+	    BigDecimal holidays = BigDecimal.ZERO;
+
+	    String sql = "SELECT COUNT(*) " +
+	                 "FROM c_nonbusinessday " +
+	                 "WHERE date1 BETWEEN ? AND ? " +
+	                 "AND ad_client_id IN (0, ?) " +
+	                 "AND ad_org_id IN (0, ?) " +
+	                 "AND IsActive = 'Y'";
+
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        pstmt.setTimestamp(1, p_StartDate);
+	        pstmt.setTimestamp(2, p_EndDate);
+	        pstmt.setInt(3, p_AD_Client_ID);
+	        pstmt.setInt(4, p_AD_Org_ID);
+	        rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            holidays = rs.getBigDecimal(1);
+	        }
+	    } catch (Exception e) {
+	        log.log(Level.SEVERE, "sqlGetHolidaysBetween", e);
+	    } finally {
+	        DB.close(rs, pstmt);
+	        rs = null;
+	        pstmt = null;
+	    }
+
+	    if (holidays == null) {
+	        holidays = BigDecimal.ZERO;
+	    }
+
+	    return holidays;
+	}
+
+	/**
+	 * isHoliday
+	 * Verifica si una fecha es feriado según la tabla C_NonBusinessDay
+	 */
+	public static boolean isHoliday(Timestamp reviewDate, int p_AD_Client_ID, int p_AD_Org_ID) {
+	    // Si hay al menos 1 feriado en ese día → true
+	    return sqlGetHolidaysBetween(reviewDate, reviewDate, p_AD_Client_ID, p_AD_Org_ID)
+	            .compareTo(BigDecimal.ZERO) > 0;
+	}
 }

@@ -1,4 +1,11 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Español](./README_ES.md)  
+
+</div>
+
+
 <br />
 <div align="center">
   <a href="AMERPSOFT_logo">

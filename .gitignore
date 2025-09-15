@@ -1,3 +1,28 @@
+# Archivos compilados de Java
+*.class
+
+# Carpetas de salida comunes
+/bin/
+/build/
+/target/
+/out/
+
+# Archivos de configuración de Eclipse (generalmente no deben versionarse)
+.classpath
+.project
+.settings/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales y de respaldo
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
 .DS_Store
 **/logs/
 **/target/
@@ -17,3 +42,4 @@
 /runtime-*.app/
 org.idempiere.maven.to.p2/org.idempiere.webservice.client/.settings/
 **/org.eclipse.jdt.core.prefs
+/build.plugins/
