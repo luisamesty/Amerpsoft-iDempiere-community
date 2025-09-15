@@ -35,7 +35,7 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250311L;
+	private static final long serialVersionUID = 20250829L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Proc (Properties ctx, int AMN_Payroll_Assist_Proc_ID, String trxName)
@@ -45,7 +45,6 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
         {
 			setAMN_Payroll_Assist_Proc_ID (0);
 			setAMN_Shift_ID (0);
-			setdayofweek (null);
 			setDescanso (false);
 // N
 			setExcused (false);
@@ -55,6 +54,7 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 			setName (null);
 			setProtected (false);
 // N
+			setdayofweek (null);
         } */
     }
 
@@ -66,7 +66,6 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
         {
 			setAMN_Payroll_Assist_Proc_ID (0);
 			setAMN_Shift_ID (0);
-			setdayofweek (null);
 			setDescanso (false);
 // N
 			setExcused (false);
@@ -76,6 +75,7 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 			setName (null);
 			setProtected (false);
 // N
+			setdayofweek (null);
         } */
     }
 
@@ -87,7 +87,6 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
         {
 			setAMN_Payroll_Assist_Proc_ID (0);
 			setAMN_Shift_ID (0);
-			setdayofweek (null);
 			setDescanso (false);
 // N
 			setExcused (false);
@@ -97,6 +96,7 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 			setName (null);
 			setProtected (false);
 // N
+			setdayofweek (null);
         } */
     }
 
@@ -108,7 +108,6 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
         {
 			setAMN_Payroll_Assist_Proc_ID (0);
 			setAMN_Shift_ID (0);
-			setdayofweek (null);
 			setDescanso (false);
 // N
 			setExcused (false);
@@ -118,6 +117,7 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 			setName (null);
 			setProtected (false);
 // N
+			setdayofweek (null);
         } */
     }
 
@@ -241,36 +241,6 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 	public String getBioCode()
 	{
 		return (String)get_Value(COLUMNNAME_BioCode);
-	}
-
-	/** Sunday = 1 */
-	public static final String DAYOFWEEK_Sunday = "1";
-	/** Monday = 2 */
-	public static final String DAYOFWEEK_Monday = "2";
-	/** Tuesday = 3 */
-	public static final String DAYOFWEEK_Tuesday = "3";
-	/** Wednesday = 4 */
-	public static final String DAYOFWEEK_Wednesday = "4";
-	/** Thursday = 5 */
-	public static final String DAYOFWEEK_Thursday = "5";
-	/** Friday = 6 */
-	public static final String DAYOFWEEK_Friday = "6";
-	/** Saturday = 7 */
-	public static final String DAYOFWEEK_Saturday = "7";
-	/** Set dayofweek.
-		@param dayofweek dayofweek
-	*/
-	public void setdayofweek (String dayofweek)
-	{
-
-		set_Value (COLUMNNAME_dayofweek, dayofweek);
-	}
-
-	/** Get dayofweek.
-		@return dayofweek	  */
-	public String getdayofweek()
-	{
-		return (String)get_Value(COLUMNNAME_dayofweek);
 	}
 
 	/** Set Descanso.
@@ -494,6 +464,25 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 		return bd;
 	}
 
+	/** Set HEA.
+		@param Shift_HEA Shift_HEA  Authorized Extra Clock Hours
+	*/
+	public void setShift_HEA (BigDecimal Shift_HEA)
+	{
+		set_Value (COLUMNNAME_Shift_HEA, Shift_HEA);
+	}
+
+	/** Get HEA.
+		@return Shift_HEA  Authorized Extra Clock Hours
+	  */
+	public BigDecimal getShift_HEA()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Shift_HEA);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set HED.
 		@param Shift_HED Extra Daytime Hours
 	*/
@@ -646,6 +635,25 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 		return bd;
 	}
 
+	/** Set HNO Night Hours after 20:00.
+		@param Shift_HNO Shift_HNO  Night Extra Clock Hours after 20:00
+	*/
+	public void setShift_HNO (BigDecimal Shift_HNO)
+	{
+		set_Value (COLUMNNAME_Shift_HNO, Shift_HNO);
+	}
+
+	/** Get HNO Night Hours after 20:00.
+		@return Shift_HNO  Night Extra Clock Hours after 20:00
+	  */
+	public BigDecimal getShift_HNO()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Shift_HNO);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set HT.
 		@param Shift_HT Shift_HT Total Work Hours	
 	*/
@@ -765,5 +773,35 @@ public class X_AMN_Payroll_Assist_Proc extends PO implements I_AMN_Payroll_Assis
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Sunday = 1 */
+	public static final String DAYOFWEEK_Sunday = "1";
+	/** Monday = 2 */
+	public static final String DAYOFWEEK_Monday = "2";
+	/** Tuesday = 3 */
+	public static final String DAYOFWEEK_Tuesday = "3";
+	/** Wednesday = 4 */
+	public static final String DAYOFWEEK_Wednesday = "4";
+	/** Thursday = 5 */
+	public static final String DAYOFWEEK_Thursday = "5";
+	/** Friday = 6 */
+	public static final String DAYOFWEEK_Friday = "6";
+	/** Saturday = 7 */
+	public static final String DAYOFWEEK_Saturday = "7";
+	/** Set dayofweek.
+		@param dayofweek dayofweek
+	*/
+	public void setdayofweek (String dayofweek)
+	{
+
+		set_Value (COLUMNNAME_dayofweek, dayofweek);
+	}
+
+	/** Get dayofweek.
+		@return dayofweek	  */
+	public String getdayofweek()
+	{
+		return (String)get_Value(COLUMNNAME_dayofweek);
 	}
 }

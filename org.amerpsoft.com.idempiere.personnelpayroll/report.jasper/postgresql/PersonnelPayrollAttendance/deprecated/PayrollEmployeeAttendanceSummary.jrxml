@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollEmployeeLeavesAttendance" pageWidth="1730" pageHeight="595" orientation="Landscape" columnWidth="1690" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollEmployeeLeaves" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollEmployeeAttendanceSummary" pageWidth="1730" pageHeight="595" orientation="Landscape" columnWidth="1690" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollEmployeeLeaves" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="297"/>
@@ -2541,7 +2541,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 					<textFieldExpression><![CDATA[$V{v_hnd}.compareTo( BigDecimal.ZERO ) != 0 ? $V{v_hnd} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1300" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cc0567a3-4f5a-40f4-9f2c-e8c58bb0eb21">
+					<reportElement mode="Transparent" x="1300" y="0" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" forecolor="#000000" backcolor="#FFFFFF" uuid="cc0567a3-4f5a-40f4-9f2c-e8c58bb0eb21">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
@@ -2554,7 +2554,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 					<textFieldExpression><![CDATA[$V{v_hed}.compareTo( BigDecimal.ZERO ) != 0 ? $V{v_hed} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1340" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0996ea0b-07a9-4edb-b365-b6ee885f0baf">
+					<reportElement mode="Transparent" x="1340" y="0" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" forecolor="#000000" backcolor="#FFFFFF" uuid="0996ea0b-07a9-4edb-b365-b6ee885f0baf">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
@@ -2567,7 +2567,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 					<textFieldExpression><![CDATA[$V{v_hen}.compareTo( BigDecimal.ZERO ) != 0 ? $V{v_hen} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1380" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c587d586-8c1c-484f-b2b2-da9b60cb490d">
+					<reportElement mode="Transparent" x="1380" y="0" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" forecolor="#000000" backcolor="#FFFFFF" uuid="c587d586-8c1c-484f-b2b2-da9b60cb490d">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
@@ -2580,7 +2580,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 					<textFieldExpression><![CDATA[$V{v_bono_asist}.compareTo( BigDecimal.ZERO ) != 0 ? $V{v_bono_asist} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1420" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d2a0608a-8a9c-4f16-ad4b-9de34eda4008">
+					<reportElement mode="Transparent" x="1420" y="0" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" forecolor="#000000" backcolor="#FFFFFF" uuid="d2a0608a-8a9c-4f16-ad4b-9de34eda4008">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
@@ -2633,7 +2633,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 					<text><![CDATA[TA]]></text>
 				</staticText>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1260" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="11aa5cee-53c2-47ad-a8ca-76f0911177f7">
+					<reportElement mode="Transparent" x="1260" y="0" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" forecolor="#000000" backcolor="#FFFFFF" uuid="a84fb110-bb52-4287-8a1d-4b71eae07b72">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
@@ -2919,7 +2919,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 					<textFieldExpression><![CDATA[$V{v_bono_asistpuntual}.compareTo( BigDecimal.ZERO ) != 0 ?$V{v_bono_asistpuntual} : ""]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
-					<reportElement mode="Transparent" x="1260" y="0" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="27282cf1-330a-4585-9c14-8e337b64651a">
+					<reportElement mode="Transparent" x="1260" y="0" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" forecolor="#000000" backcolor="#FFFFFF" uuid="227f2705-fb8c-43fd-ad6c-0fb1adfb9f91">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase( "Y" )==0]]></printWhenExpression>
@@ -3011,7 +3011,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Reporte de Asistencia y Justificaciones/Ausencias de Trabajadores"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Resumen de Días Trabajados y Justificaciones / Ausencias de Trabajadores"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="0" y="28" width="1690" height="12" uuid="649ee3e3-1a2f-48a0-aabb-e36f7664aeb1">
@@ -3048,7 +3048,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="17" splitType="Stretch">
+		<band height="19" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<line>
 				<reportElement x="0" y="0" width="1690" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
@@ -3232,42 +3232,42 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 				<textFieldExpression><![CDATA["HND"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1260" y="3" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="e316e928-26a2-4a26-bc0f-3c4d2620f178"/>
+				<reportElement x="1300" y="3" width="40" height="12" uuid="e316e928-26a2-4a26-bc0f-3c4d2620f178"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["HNN"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["HED"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1340" y="3" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="ca3f4a65-66af-4835-b184-88ff8019b48c"/>
+				<reportElement x="1340" y="3" width="40" height="12" uuid="ca3f4a65-66af-4835-b184-88ff8019b48c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["HEN"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1380" y="3" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="a8523a5d-1c76-4cf9-9b56-90868b2de810"/>
+				<reportElement x="1380" y="3" width="40" height="12" uuid="a8523a5d-1c76-4cf9-9b56-90868b2de810"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Bono"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1420" y="3" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="5e6a4967-5592-4f59-9803-a9f7eac3413e"/>
+				<reportElement x="1420" y="3" width="40" height="12" uuid="5e6a4967-5592-4f59-9803-a9f7eac3413e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Bono"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1460" y="3" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="ede8f29a-de8f-4f8f-80de-5b080116efae"/>
+				<reportElement x="1460" y="3" width="40" height="12" uuid="ede8f29a-de8f-4f8f-80de-5b080116efae"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["D.T."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1500" y="3" width="190" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="028ec59c-188c-49b3-8dad-17839ec05df9">
+				<reportElement x="1500" y="3" width="190" height="12" uuid="028ec59c-188c-49b3-8dad-17839ec05df9">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -3277,11 +3277,11 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 				<textFieldExpression><![CDATA["Resumen"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1300" y="3" width="40" height="12" printWhenGroupChanges="Group_porEmpleado" uuid="d121b67f-ace3-4162-867b-84370a206745"/>
+				<reportElement x="1260" y="3" width="40" height="12" uuid="0bd381cd-66ae-45ca-8a0e-bf695775b0f4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["HED"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["HNN"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -3295,7 +3295,7 @@ ORDER BY  leaves.emp_org_value, leaves.c_value, leaves.workforce_name, leaves.lo
 				</graphicElement>
 			</rectangle>
 			<textField textAdjust="StretchHeight">
-				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" mode="Transparent" x="90" y="0" width="80" height="12" uuid="a78ffdbd-d42b-4a83-b499-7d11134c95fd">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="90" y="0" width="80" height="12" uuid="a78ffdbd-d42b-4a83-b499-7d11134c95fd">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsSummary}.compareToIgnoreCase("N" )==0]]></printWhenExpression>
@@ -3606,7 +3606,7 @@ new SimpleDateFormat("EEEE", java.util.Locale.getDefault()).format($F{report_dat
 				<textFieldExpression><![CDATA[($F{hen}.compareTo( BigDecimal.ZERO )!= 0 ? $F{hen} : null)]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1380" y="0" width="35" height="12" isRemoveLineWhenBlank="true" uuid="6b86b73c-697e-43fe-8387-9d93b953d95f">
+				<reportElement style="colorDiaSemana" stretchType="RelativeToTallestObject" x="1380" y="0" width="40" height="12" isRemoveLineWhenBlank="true" uuid="6b86b73c-697e-43fe-8387-9d93b953d95f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
