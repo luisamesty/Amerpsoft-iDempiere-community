@@ -25,7 +25,7 @@ Consideraciones y notas especiales para la localización de LVE, en particular l
 - [Paquete de idiomas](./org.amerpsoft.lve.idempiere.languages/README_ES.md)
 - [Finanzas - Básico](./org.amerpsoft.lve.idempiere.financial/README_ES.md)
 - [Retenciones de LCO](./org.amerpsoft.lve.idempiere.lco.withholding/README_ES.md)
-- [Nómina (Versión 12)](./org.amerpsoft.lve.idempiere.personnelpayroll/README.md)
+- [Nómina (Versión 12)](./org.amerpsoft.lve.idempiere.personnelpayroll/README_ES.md)
 
 </div>
 ## <b>Wiki Idempiere</b>
