@@ -210,6 +210,8 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 		// TableRef: amn_payroll_assist_proc
 		// *********************************
 		if (tableName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.Table_Name)) {
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID))
+				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_In1))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out1))
@@ -218,7 +220,9 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Shift_Out2))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
-			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID))
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_Event_Date))
+				list.add(new AMN_Payroll_Assist_Proc_callout());
+			if (columnName.equalsIgnoreCase(MAMN_Payroll_Assist_Proc.COLUMNNAME_dayofweek))
 				list.add(new AMN_Payroll_Assist_Proc_callout());
 		}
 		
@@ -301,10 +305,38 @@ public class AMNCalloutFactory implements IColumnCalloutFactory {
 	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_DaysTo)) {
 	    		list.add(new AMN_Leaves_callout());
 	    	}
-//	    	if (columnName.equalsIgnoreCase(MAMN_Leaves.COLUMNNAME_Note)) {
-//		 		list.add(new AMN_Leaves_callout());
-//	    	}
+
 		}
+
+		// *********************************
+		// TableRef: MAMN_Location
+		// *********************************
+		if (tableName.equalsIgnoreCase(MAMN_Location.Table_Name)) {
+			
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_AD_OrgTo_ID) ) {
+		 		list.add(new AMN_Location_callout());
+		 	}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_C_Location_SS_ID)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_SocialSecurityID)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_SocialSecurityMTESS)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_BusinessActivity)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_Name)) {
+				list.add(new AMN_Location_callout());
+			}
+			if (columnName.equalsIgnoreCase(MAMN_Location.COLUMNNAME_TaxID)) {
+				list.add(new AMN_Location_callout());
+			}
+			
+		}
+			
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 

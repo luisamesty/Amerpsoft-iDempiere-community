@@ -27,6 +27,7 @@ import org.amerp.amnutilities.PayrollVariables;
 import org.amerp.amnutilities.ScriptResult;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
+import org.compiere.model.MSysConfig;
 import org.compiere.util.*;
 
 /**
@@ -152,8 +153,10 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 			Process_Value=amnprocess.getValue().trim();
 			// Rules and DV_
 			boolean forceRulesInit=false;
-//			if (amnprocess.getAMN_Process_Value().compareToIgnoreCase("PL")== 0)
-//				forceRulesInit=true;
+			int AD_Client_ID = (int) p_mTab.getValue(MAMN_Payroll_Detail.COLUMNNAME_AD_Client_ID);
+			String apra = MSysConfig.getValue("AMERP_Payroll_Rules_Apply","N",AD_Client_ID);
+			if (apra.compareToIgnoreCase("Y")==0)
+				forceRulesInit=true;
 			boolean forceDVInit=true;
 			// ******************************
 			// Set field's Values: 
