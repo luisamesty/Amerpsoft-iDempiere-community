@@ -3,6 +3,7 @@ package org.amerp.amnmodel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.compiere.util.CLogger;
@@ -17,12 +18,12 @@ public class MAMN_Charge extends X_AMN_Charge{
 	
 	public MAMN_Charge(Properties ctx, int AMN_Charge_ID, String trxName) {
 		super(ctx, AMN_Charge_ID, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	public MAMN_Charge(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 	/**
@@ -33,10 +34,9 @@ public class MAMN_Charge extends X_AMN_Charge{
 	 * @param workForce
 	 * @return
 	 */
-	public int findC_Charge_ID(Properties ctx, int AMN_Process_ID, String workForce) {
+	public int findC_Charge_ID(Properties ctx, MAMN_Charge mch , String workForce) {
 		
 		int retValue = 0;
-		MAMN_Charge mch = findAMNCharge(ctx, AMN_Process_ID);
 		// Administrative Workforce
 		if (workForce.compareToIgnoreCase("A") == 0  ) { 
 			retValue = mch.getC_Charge_AW_ID();
@@ -103,4 +103,47 @@ public class MAMN_Charge extends X_AMN_Charge{
 		return retValue;
 	}
 
+	static public MAMN_Charge[] getAMNCharges(Properties ctx, int AD_Client_ID, int AMN_Process_ID) {
+
+	    ArrayList<MAMN_Charge> list = new ArrayList<MAMN_Charge>();
+	    MAMN_Charge[] retValue = null;
+	    
+	    // Consulta SQL para seleccionar los cargos filtrados por cliente y proceso
+	    String sql = "SELECT AMN_Charge_ID "
+	            + " FROM AMN_Charge "
+	            + " WHERE AD_Client_ID = ? "
+	            + " AND AMN_Process_ID = ? "
+	            + " AND IsActive='Y' ";
+
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        
+	        // Asignar los valores a los parámetros de la consulta
+	        pstmt.setInt(1, AD_Client_ID);
+	        pstmt.setInt(2, AMN_Process_ID);
+
+	        rs = pstmt.executeQuery();
+	        
+	        // Iterar sobre cada resultado para crear un objeto MAMN_Charge
+	        while (rs.next()) {
+	            MAMN_Charge amncharge = new MAMN_Charge(ctx, rs.getInt(1), null);
+	            list.add(amncharge);
+	        }
+	    } catch (SQLException e) {
+	        // Manejo de errores
+	        e.printStackTrace(); 
+	    } finally {
+	        DB.close(rs, pstmt);
+	        rs = null;
+	        pstmt = null;
+	    }
+
+	    // Convertir el ArrayList en un arreglo de MAMN_Charge
+	    retValue = new MAMN_Charge[list.size()];
+	    list.toArray(retValue);
+	    return retValue;
+	}
 }
