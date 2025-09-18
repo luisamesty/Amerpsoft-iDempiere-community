@@ -21,9 +21,9 @@ import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 
-public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
+public class AMNPayrollDeleteOneDoc extends SvrProcess {
 
-	static CLogger log = CLogger.getCLogger(AMNPayrollDeleteOnePeriod.class);
+	static CLogger log = CLogger.getCLogger(AMNPayrollDeleteOneDoc.class);
 	private int p_AMN_Process_ID = 0;
 	private int p_AMN_Contract_ID = 0;
 	private int p_AMN_Period_ID = 0;
@@ -61,15 +61,17 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 				p_AMN_Contract_ID =  para.getParameterAsInt();
 			else if (paraName.equals("AMN_Period_ID"))
 				p_AMN_Period_ID = para.getParameterAsInt();
+			else if (paraName.equals("AMN_Payroll_ID"))
+				p_AMN_Payroll_ID = para.getParameterAsInt();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
 	}
 
+
 	@Override
 	protected String doIt() throws Exception {
-
-
+		
 	    String Msg_Value="";
 	    String MessagetoShow="";
 	    boolean okReceipts = false;
@@ -100,12 +102,11 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 	    	Msg_Error="";
 	    	okReceipts = AMNPayrollDeleteDocs.amnPayrollDeleteReceiptsGeneratePayrollArrays(getCtx(), amnperiod, p_AMN_Payroll_ID, 
 	    			ReceiptsGenList, ReceiptConcepts, Msg_Error, get_TrxName());
-
 	    } else {
 	    	Msg_Value = (Msg.getMsg(getCtx(), "Process")+":"+AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n");
 	    }
-	    //
-	    if ( okReceipts ) {
+	    // UN SOLO RECIBO
+	    if ( okReceipts && ReceiptsGenList.size() == 1 ) {
 	    	
 			if( Msg_Error.isEmpty() ) {
 				
@@ -122,7 +123,7 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 			    		Msg.getElement(getCtx(), "Qty")+
 			    		" ("+ReceiptConcepts.size()+") :";
 			    addLog(Msg_Value);	
-			    // DELETE LINES
+			    // DELETE AMN_Payroll_Detail LINES
 			    NoRecsLines = ReceiptConcepts.size();
 			    if(NoRecsLines > 0) {
 				    AMN_Payroll_ID = ReceiptConcepts.get(0).getAMN_Payroll_ID();
@@ -150,12 +151,12 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 							processMonitor.statusUpdate(MessagetoShow);
 						}
 						// DELETE Receipt Lines
-						AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneLine(getCtx(), amnp, ReceiptConcepts.get(i).getAMN_Payroll_Detail_ID(),  get_TrxName());
+						Msg_Value = Msg_Value + AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneLine(getCtx(), amnp, ReceiptConcepts.get(i).getAMN_Payroll_Detail_ID(),  get_TrxName());
 						log.warning("Updating Final Message"+Msg_Value);
 					}
 			    }
 			    Percent = 0;
-			    NoRecs = ReceiptsGenList.size();	
+			    NoRecs = ReceiptsGenList.size();
 			    // DELETE PAYROLL DOCS
 			    if (NoRecs > 0) {
 				    for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
@@ -179,7 +180,7 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 				       }
 			        }
 			    }
-			    // FOR all Rreceipt Headeres
+			    // DELETE AMN_Payroll Header
 			    if (NoRecs > 0) {
 				    for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
 				    	// Check if same AMN_Payroll_ID
@@ -201,11 +202,11 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 							processMonitor.statusUpdate(MessagetoShow);
 						}
 						// DELETE Receipt Header
-						Msg_Value = Msg_Value + AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneHeader(getCtx(), amnp, get_TrxName());
+						AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneHeader(getCtx(), amnp,  get_TrxName());
 						log.warning("Updating Final Message"+Msg_Value);
 					}
 			    }
-				Msg_Value = "OK";
+				Msg_Value = Msg_Value + "OK";
 				
 			} else {
 				Msg_Value = Msg_Value + Msg.getMsg(getCtx(), "Errors")+":  \r\n";
