@@ -71,6 +71,7 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 
 
 	    String Msg_Value="";
+	    String msg_Value0="";
 	    String MessagetoShow="";
 	    boolean okReceipts = false;
 	    int AMN_Payroll_ID = 0;
@@ -149,9 +150,16 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 						if (processMonitor != null) {
 							processMonitor.statusUpdate(MessagetoShow);
 						}
-						// DELETE Receipt Lines
-						AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneLine(getCtx(), amnp, ReceiptConcepts.get(i).getAMN_Payroll_Detail_ID(),  get_TrxName());
-						log.warning("Updating Final Message"+Msg_Value);
+						// Verifica NO Contabilizado
+						if (!amnp.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
+							// DELETE Receipt Lines
+							Msg_Value = Msg_Value + AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneLine(getCtx(), amnp, ReceiptConcepts.get(i).getAMN_Payroll_Detail_ID(),  get_TrxName());
+						} else {
+							msg_Value0="*** ADVERTENCIA "+Msg.getMsg(Env.getCtx(),"completed")+" *** \r\n";
+							addLog(msg_Value0);
+							Msg_Value=Msg_Value+msg_Value0;	
+							break;
+						}
 					}
 			    }
 			    Percent = 0;
@@ -163,20 +171,22 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 						AMN_Payroll_ID = ReceiptsGenList.get(i).getAMN_Payroll_ID();
 						amnp = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, get_TrxName());
 						emp = new MAMN_Employee(getCtx(), amnp.getAMN_Employee_ID(), get_TrxName());
-				        // Busca Documentos en AMN_Payroll_Docs
-				        List<MAMN_Payroll_Docs> amnpdocs = MAMN_Payroll_Docs.getByPayrollID(getCtx(), AMN_Payroll_ID, get_TrxName());
-				        if (!amnpdocs.isEmpty()) {
-					        for (MAMN_Payroll_Docs doc : amnpdocs) {
-					            MInvoice invoice = new MInvoice(getCtx(),doc.getC_Invoice_ID(),get_TrxName());
-					            if (invoice != null && !invoice.isPaid()) {
-					            	amnp.deleteInvoiceLines(getCtx(), invoice, DocumentNo);
-					            	doc.delete(true);
-					            	invoice.delete(true);
-					            } else {
-					            	log.warning("Factura procesada o con asignaciones.");
-					            }
-					        }
-				       }
+						if (!amnp.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
+					        // Busca Documentos en AMN_Payroll_Docs
+					        List<MAMN_Payroll_Docs> amnpdocs = MAMN_Payroll_Docs.getByPayrollID(getCtx(), AMN_Payroll_ID, get_TrxName());
+					        if (!amnpdocs.isEmpty()) {
+						        for (MAMN_Payroll_Docs doc : amnpdocs) {
+						            MInvoice invoice = new MInvoice(getCtx(),doc.getC_Invoice_ID(),get_TrxName());
+						            if (invoice != null && !invoice.isPaid()) {
+						            	amnp.deleteInvoiceLines(getCtx(), invoice, DocumentNo);
+						            	doc.delete(true);
+						            	invoice.delete(true);
+						            } else {
+						            	log.warning("Factura procesada o con asignaciones.");
+						            }
+						        }
+					       }
+						}
 			        }
 			    }
 			    // FOR all Rreceipt Headeres
@@ -200,8 +210,11 @@ public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
 						if (processMonitor != null) {
 							processMonitor.statusUpdate(MessagetoShow);
 						}
-						// DELETE Receipt Header
-						Msg_Value = Msg_Value + AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneHeader(getCtx(), amnp, get_TrxName());
+						// Verifica NO Contabilizado
+						if (!amnp.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
+							// DELETE Receipt Header
+							AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneHeader(getCtx(), amnp,  get_TrxName());
+						}
 						log.warning("Updating Final Message"+Msg_Value);
 					}
 			    }
