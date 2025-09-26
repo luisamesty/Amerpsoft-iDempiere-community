@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinancialBalance_TreeOrg_FunCTSR" pageWidth="710" pageHeight="100" orientation="Landscape" columnWidth="710" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5039cd15-3c54-4447-9126-0b86f48c7db5">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="AD_Client_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_OrgParent_ID" class="java.lang.Integer"/>
+	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
+	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PostingType" class="java.lang.String">
+		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_Period_ID" class="java.lang.Integer"/>
+	<parameter name="SR_ElementValue_ID" class="java.lang.Integer"/>
+	<parameter name="PositiveBalance" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isForExport" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[-- StateFinancialBalance_TreeOrg_FunCTSR
+-- SUBREPORT 
+-- AD_Clien_ID =1000000
+-- AD_Org_ID = 0  (1000004)
+-- AD_OrgParent_ID (1000000)
+-- C_AcctSchema_ID = 10000000
+-- C_Period_ID = 1000072
+-- PostingType = 'A'
+-- C_ElementValue_ID = 10000000
+-- DateFrom '2025-01-01'
+-- DateTo '2025-01-31'
+SELECT bal1.ad_org_id AS ad_org_id, 
+	org1.org_value AS org_value,
+	org1.org_name  AS org_name,
+	eve1.c_elementvalue_id,
+	eve1.codigo, eve1.name, 
+	eve1.issummary, eve1.accounttype,
+    COALESCE(openbalance,0) AS openbalance, 
+	COALESCE(amtacctdr,0) AS amtacctdr, 
+	COALESCE(amtacctcr,0) AS amtacctcr, 
+	COALESCE(closebalance,0) AS closebalance, 
+	COALESCE(amtacctsa,0) AS amtacctsa
+FROM amf_element_value_tree_basic($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
+INNER JOIN adempiere.amf_balance_account_org_flex_orgparent(
+	$P{AD_Client_ID}, $P{AD_OrgParent_ID} , $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, 
+	$P{PostingType}, $P{SR_ElementValue_ID}, null, null) AS bal1 ON bal1.bal_C_ElementValue_ID = eve1.C_ElementValue_ID
+INNER JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_org_id = bal1.ad_org_id
+WHERE CASE WHEN ( $P{SR_ElementValue_ID} IS NULL OR $P{SR_ElementValue_ID} = 0 OR eve1.c_elementvalue_id= $P{SR_ElementValue_ID} ) THEN 1=1 ELSE 1=0 END 
+ORDER BY eve1.codigo, bal1.ad_org_id ;]]>
+	</queryString>
+	<field name="ad_org_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
+	</field>
+	<field name="org_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_value"/>
+	</field>
+	<field name="org_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="org_name"/>
+	</field>
+	<field name="c_elementvalue_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_elementvalue_id"/>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+	</field>
+	<field name="issummary" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
+		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
+	</field>
+	<field name="accounttype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accounttype"/>
+		<property name="com.jaspersoft.studio.field.label" value="accounttype"/>
+	</field>
+	<field name="openbalance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="openbalance"/>
+		<property name="com.jaspersoft.studio.field.label" value="openbalance"/>
+	</field>
+	<field name="amtacctdr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amtacctdr"/>
+		<property name="com.jaspersoft.studio.field.label" value="amtacctdr"/>
+	</field>
+	<field name="amtacctcr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amtacctcr"/>
+		<property name="com.jaspersoft.studio.field.label" value="amtacctcr"/>
+	</field>
+	<field name="closebalance" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="closebalance"/>
+		<property name="com.jaspersoft.studio.field.label" value="closebalance"/>
+	</field>
+	<field name="amtacctsa" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amtacctsa"/>
+		<property name="com.jaspersoft.studio.field.label" value="amtacctsa"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="14">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="14" uuid="9211e979-fef4-43d9-ab78-94849a3f360c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="300" height="14" uuid="b539de26-68d1-4d97-a6c6-f1919f21e6d3">
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<reportElement x="490" y="0" width="170" height="14" uuid="af32674f-19b5-4aaa-a477-2f9ff72d165f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
+    ? ( 
+        ($F{accounttype}.equals("A") || $F{accounttype}.equals("E"))
+            ? (
+                $F{closebalance}.doubleValue() == 0.00
+                    ? 0.00
+                    : $F{closebalance}.doubleValue()
+              )
+            : (
+                (-1 * $F{closebalance}.doubleValue()) == 0.00
+                    ? 0.00
+                    : (-1 * $F{closebalance}.doubleValue())
+              )
+      )
+    : (
+        $F{closebalance}.doubleValue() == 0.00
+            ? 0.00
+            : $F{closebalance}.doubleValue()
+      )]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="0" width="90" height="14" uuid="1ec84cca-ad41-47fd-a112-715894810be5">
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org_value}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

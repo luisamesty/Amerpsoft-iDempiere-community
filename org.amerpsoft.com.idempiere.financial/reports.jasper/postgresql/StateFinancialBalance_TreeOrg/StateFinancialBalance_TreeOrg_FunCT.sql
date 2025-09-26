@@ -1,4 +1,4 @@
--- StateFInancialBalance_TreeOrg_Fun V2 usando Funciones (isShowOrganization)
+-- StateFInancialBalance_TreeOrg_FunCT V2 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
