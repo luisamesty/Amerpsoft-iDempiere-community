@@ -34,7 +34,6 @@ Service-Component: OSGI-INF/ModelFactory.xml,
  OSGI-INF/EditorFactory.xml,
  OSGI-INF/DisplayTypeFactory.xml,
  OSGI-INF/EventFactory.xml
-Export-Package: org.amerp.amxeditor.model
 Import-Package: net.sf.jasperreports.engine,
  org.compiere.model,
  org.osgi.framework;version="[1.10.0,2.0.0)",
