@@ -3,11 +3,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-		<groupId>org.idempiere</groupId>
- 		<artifactId>org.idempiere.parent</artifactId>
-		<version>12.0.0-SNAPSHOT</version>
-		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
-  </parent>  
+  		<groupId>org.amerpsoft.com.idempiere</groupId>
+        <artifactId>org.amerpsoft.com.idempiere.parent</artifactId>
+ 		<version>12.0.0-SNAPSHOT</version>
+        <relativePath>org.amerpsoft.idempiere.com.parent/pom.xml</relativePath>
+  </parent>
  <artifactId>org.amerpsoft.com.idempiere.personnelpayroll</artifactId>
   <packaging>eclipse-plugin</packaging>
     <build>
@@ -58,6 +58,11 @@
 		  <groupId>org.osgi</groupId>
 		  <artifactId>org.osgi.service.event</artifactId>
 		  <version>1.3.1</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.bouncycastle</groupId>
+		  <artifactId>bcprov-jdk18on</artifactId>
+		  <version>1.81</version>
 		</dependency>
     </dependencies>
 </project>

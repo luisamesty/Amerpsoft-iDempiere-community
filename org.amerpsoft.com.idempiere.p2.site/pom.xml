@@ -3,20 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>org.amerpsoft.com.idempiere.p2.site</artifactId>
   <parent>
-		<groupId>org.idempiere</groupId>
-		<artifactId>org.idempiere.parent</artifactId>
-		<version>12.0.0-SNAPSHOT</version>
-		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
+  		<groupId>org.amerpsoft.com.idempiere</groupId>
+        <artifactId>org.amerpsoft.com.idempiere.parent</artifactId>
+ 		<version>12.0.0-SNAPSHOT</version>
+        <relativePath>org.amerpsoft.idempiere.com.parent/pom.xml</relativePath>
   </parent>
   <packaging>eclipse-repository</packaging>
-  <dependencies>
-	  <dependency>
-	    <groupId>org.amerpsoft.com.idempiere</groupId>
-	    <artifactId>org.amerpsoft.com.idempiere.feature</artifactId>
-	    <version>12.0.0-SNAPSHOT</version>
-	    <type>eclipse-feature</type>
-	  </dependency>
-  </dependencies>
   <build>
 		<plugins>
 			<plugin>
