@@ -1,22 +1,19 @@
+<!-- login-mo.css.dsp -->
+/* ✅ Estás usando login-mo.css.dsp MO */
 .login-window {
 	background-color: #E5E5E5;
 }
 
 .login-window .z-window-content {
-    background-color: #E5E5E5;
-    background-image: url(../images_mo/background-mo.png) !important;
+	background-color: #E5E5E5;
+	background-image: url(../images_mo/background-mo.png) !important;
     background-position: center;
-    background-repeat: no-repeat;
+	background-repeat: no-repeat;
 }
 
-
-/* Puedes añadir más estilos CSS aquí */
-.login-window .z-window-header {
-    background-color: transparent !important; /* Ejemplo adicional */
-    border-bottom: none !important;
+.login-window .z-window-content {
+	background-color: #c7e8ff;
 }
-
-
 .login-box-body {
 	width: 580px;
     background: rgba(234,240,256,0.5);
