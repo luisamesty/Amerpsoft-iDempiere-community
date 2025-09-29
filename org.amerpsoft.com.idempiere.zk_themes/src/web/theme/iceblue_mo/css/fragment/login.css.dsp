@@ -1,14 +1,32 @@
 .login-window {
 	background-color: #E5E5E5;
 }
+<%@ page import="org.compiere.util.SystemConfig" %>
+
+<%
+   // Si ZK_LOGIN_BACKGROUND no existe o está vacío, usará la imagen predeterminada
+   String loginBg = SystemConfig.getValue("ZK_LOGIN_BACKGROUND", "../images/background-world-moderm.png");
+
+   // Asegurarse que no venga nulo ni cadena vacía
+   if (loginBg == null || loginBg.trim().isEmpty()) {
+       loginBg = "../images/background-world-moderm.png";
+   }
+%>
 
 .login-window .z-window-content {
-    background-color: #E5E5E5;
-    background-image: url(../images/background-mo.png) !important;
-    background-position: center;
-    background-repeat: no-repeat;
+     background-image: url(<%= loginBg %>) !important;
+     background-position: center;
+     background-repeat: no-repeat;
 }
 
+/*
+.login-window .z-window-content {
+     background-image: url(../images/background-world-moderm.png) !important;
+     background-position: center;
+	 /*background-attachment: scroll;*/
+	 background-repeat: no-repeat;
+}
+*/
 
 /* Puedes añadir más estilos CSS aquí */
 .login-window .z-window-header {
