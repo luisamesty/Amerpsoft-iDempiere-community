@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<themes>
+    <theme id="iceblue_am" extends="iceblue_c">
+        <label>AM Iceblue Theme</label>
+        <description>Customized AM Iceblue theme for Customers.</description>
+        <version>1.0.0</version>
+        <author>Amerpsoft</author>
+        <files>
+            <file>css/am_custom_styles.css</file>
+            <file>css/am_override_zkex.css</file>
+            </files>
+    </theme>
+</themes>

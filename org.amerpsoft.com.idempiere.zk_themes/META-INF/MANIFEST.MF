@@ -7,3 +7,7 @@ Fragment-Host: org.adempiere.ui.zk
 Automatic-Module-Name: org.amerpsoft.com.idempiere.zk.themes
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: Amerpsoft
+Bundle-ClassPath: .,
+ web.theme.iceblue_c,
+ web.theme.iceblue_mo,
+ web.theme.iceblue_am
