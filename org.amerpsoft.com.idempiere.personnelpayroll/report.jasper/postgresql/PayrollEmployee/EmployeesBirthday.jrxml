@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeesBirthday" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e2bceec0-f6cf-444c-b5b5-332e682f2a3e">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -113,14 +113,21 @@ LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_i
 INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
-WHERE emp.isactive= 'Y' 
+WHERE emp.isactive= 'Y'
+    AND (
+        CASE 
+            WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN TRUE
+            WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN TRUE
+            WHEN ($P{AMN_Status_R} = 'Y' AND emp.status='R') THEN TRUE
+            WHEN ($P{AMN_Status_S} = 'Y' AND emp.status='S') THEN TRUE
+            ELSE FALSE 
+        END
+    )
 	AND EXTRACT(MONTH FROM emp.Birthday) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR l.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY localidad_nombre, EXTRACT(DAY FROM emp.Birthday)
-
-]]>
+ORDER BY localidad_nombre, EXTRACT(DAY FROM emp.Birthday)]]>
 	</queryString>
 	<field name="rep_taxid" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="rep_taxid"/>
@@ -261,7 +268,7 @@ ORDER BY localidad_nombre, EXTRACT(DAY FROM emp.Birthday)
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="45" y="0" width="335" height="14" isRemoveLineWhenBlank="true" uuid="2279f3e0-0a4a-4095-a841-c7b8130704d9">
@@ -301,10 +308,15 @@ ORDER BY localidad_nombre, EXTRACT(DAY FROM emp.Birthday)
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Estados: " + 
+(( $P{AMN_Status_A}.compareToIgnoreCase( "Y")==0 ? "A- " : "" ) +
+ ( $P{AMN_Status_S}.compareToIgnoreCase( "Y" )==0 ? "S- " : "" ) +
+ ( $P{AMN_Status_V}.compareToIgnoreCase( "Y")==0 ? "V- " : "" ) +
+ ( $P{AMN_Status_R}.compareToIgnoreCase( "Y")==0 ? "R- " : "" )).replaceAll("- $", "")]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="45" y="14" width="335" height="14" isRemoveLineWhenBlank="true" uuid="c1282753-4624-4108-b6f2-62ed0ac1272e">

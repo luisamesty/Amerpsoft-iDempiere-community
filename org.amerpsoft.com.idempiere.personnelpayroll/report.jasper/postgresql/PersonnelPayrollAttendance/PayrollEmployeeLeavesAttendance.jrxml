@@ -59,7 +59,7 @@
 -- Payroll Employee Leaves and Attendance (BOTH)
 -- Summary Late Entries, Early Leaves, Late Leaves
 -- ORDERED BY and Filtered  WorkForce
--- 
+-- Version 3 Eliminados los retirados
 WITH date_series AS (
     -- Generamos todas las fechas dentro del período dado
     SELECT generate_series(
@@ -313,8 +313,9 @@ SELECT * FROM
 		AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR $P{AMN_Location_ID} = 0 OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 		AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR $P{AMN_Contract_ID} = 0  OR amc.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
 		AND ( CASE WHEN ( $P{Workforce} IS NULL OR jtt.Workforce= $P{Workforce} ) THEN 1=1 ELSE 1=0 END )
-		AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR $P{AMN_Employee_ID} = 0 OR emp2.amn_employee_id= $P{AMN_Employee_ID} ) THEN  1=1 ELSE 1=0 END )
-	) as leaves ON (1= 0)
+		AND ( CASE WHEN ( $P{AMN_Employee_ID} IS NOT NULL AND $P{AMN_Employee_ID} != 0 ) THEN (emp2.amn_employee_id = $P{AMN_Employee_ID}) ELSE 1=1 END )
+        AND ( CASE WHEN ( $P{AMN_Employee_ID} IS NULL OR $P{AMN_Employee_ID} = 0 ) THEN emp2.status != 'R' ELSE 1=1 END )
+) as leaves ON (1= 0)
 WHERE (imp_header = 1) OR 
 	(leaves.ad_client_id= $P{AD_Client_ID} 
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR leaves.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )

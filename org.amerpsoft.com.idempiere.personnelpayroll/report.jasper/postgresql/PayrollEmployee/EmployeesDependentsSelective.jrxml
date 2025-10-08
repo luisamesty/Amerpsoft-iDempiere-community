@@ -110,6 +110,15 @@ INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
 WHERE emp.isactive= 'Y' 
+    AND (
+        CASE 
+            WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN TRUE
+            WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN TRUE
+            WHEN ($P{AMN_Status_R} = 'Y' AND emp.status='R') THEN TRUE
+            WHEN ($P{AMN_Status_S} = 'Y' AND emp.status='S') THEN TRUE
+            ELSE FALSE 
+        END
+    )
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND emp.sex = $P{sex}
 	AND adt.AMN_Dependent_Type_ID = ANY(string_to_array($P{AMN_Dependent_Type_ID}, ',')::int[])
@@ -329,7 +338,7 @@ ORDER BY localidad_nombre, codigo]]>
 				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="50" y="14" width="615" height="14" isRemoveLineWhenBlank="true" uuid="c1282753-4624-4108-b6f2-62ed0ac1272e">
+				<reportElement x="50" y="14" width="780" height="14" isRemoveLineWhenBlank="true" uuid="c1282753-4624-4108-b6f2-62ed0ac1272e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -340,6 +349,22 @@ ORDER BY localidad_nombre, codigo]]>
 				<textFieldExpression><![CDATA["Reporte de Trabajadores - Sexo: " + $P{sex} + 
 " - Dependientes: " + 
 ($P{AMN_Dependent_Type_ID} == null ? "Todos" :$F{dependent_type_names})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="" x="830" y="14" width="150" height="14" uuid="4079bdbe-db3a-46cf-8fc2-3f080a4586bc">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Estados: " + 
+(( $P{AMN_Status_A}.compareToIgnoreCase( "Y")==0 ? "A- " : "" ) +
+ ( $P{AMN_Status_S}.compareToIgnoreCase( "Y" )==0 ? "S- " : "" ) +
+ ( $P{AMN_Status_V}.compareToIgnoreCase( "Y")==0 ? "V- " : "" ) +
+ ( $P{AMN_Status_R}.compareToIgnoreCase( "Y")==0 ? "R- " : "" )).replaceAll("- $", "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -358,7 +383,7 @@ ORDER BY localidad_nombre, codigo]]>
 				<text><![CDATA[Ficha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="0" width="180" height="14" uuid="9de9b328-21d7-46e1-acc4-6ce4db9fe2e4">
+				<reportElement x="50" y="0" width="200" height="14" uuid="9de9b328-21d7-46e1-acc4-6ce4db9fe2e4">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -480,7 +505,7 @@ ORDER BY localidad_nombre, codigo]]>
 				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement isPrintRepeatedValues="false" x="50" y="0" width="180" height="14" uuid="1ff51bb4-3e0d-4309-a9b6-894c05706b04">
+				<reportElement isPrintRepeatedValues="false" x="50" y="0" width="200" height="14" uuid="1ff51bb4-3e0d-4309-a9b6-894c05706b04">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
