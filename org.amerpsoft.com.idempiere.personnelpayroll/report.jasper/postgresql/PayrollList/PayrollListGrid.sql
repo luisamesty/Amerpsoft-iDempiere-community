@@ -2,6 +2,7 @@
 -- Used for  reports and individual print
 -- Currency Rate Added and Conversion reviewed
 -- ONE PERIOD
+-- VERSION 2 (Agregado Concepto IPS DE Auditoria)
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -13,6 +14,7 @@ WITH Conceptos AS (
 		ARRAY [ACTP.value::text]  AS valueparent,
 		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
 		TRN1.Node_ID as Star_An,
+		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
@@ -34,6 +36,7 @@ WITH Conceptos AS (
 		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
 		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
 		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
+		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
@@ -64,6 +67,7 @@ WITH Conceptos AS (
 		trial.amn_concept_types_id, 
 		trial.calcorder,
 		trial.optmode, 
+		trial.defaultvalue,
 		trial.isshow,
 		trial.concept_value,
 		trial.concept_name,
@@ -87,6 +91,7 @@ WITH Conceptos AS (
 			CNT.AMN_Concept_Types_ID,
 			CNT.calcorder,
 			CNT.optmode, 
+			CNT.defaultvalue,
 			CNT.isshow,
 			CNT.concept_value,
 			CNT.concept_name,
@@ -103,6 +108,7 @@ WITH Conceptos AS (
 			amnct.description as concept_description,
 			amnct.calcorder,
 			amnct.optmode, 
+			amnct.defaultvalue,
 			amnct.isshow,
 			tree.AD_Tree_ID, 
 			tree.name as tree_name
@@ -156,6 +162,16 @@ SELECT
 	iso_code2,
 	cursymbol1,currname1,
 	cursymbol2,currname2, 
+	concept_value,
+	optmode,
+	    CASE
+        -- Si contiene el símbolo '/', realiza la división
+        WHEN ips_tasa LIKE '%/%' THEN
+            (SPLIT_PART(ips_tasa, '/', 1)::NUMERIC / SPLIT_PART(ips_tasa, '/', 2)::NUMERIC)
+        -- Si es un número entero (incluyendo "0"), conviértelo directamente
+        ELSE
+            ips_tasa::NUMERIC
+    END AS ips_tasa_numerica,
 	cantidad,
 	amountallocated,
 	amountdeducted,
@@ -192,7 +208,10 @@ SELECT
 		iso_code1,
 		iso_code2,
 		cursymbol1,currname1,
-		cursymbol2,currname2, 
+		cursymbol2,currname2,
+		concept_value,
+		optmode,
+		ips_tasa,
 		SUM(cantidad) AS cantidad,
 		SUM(amountallocated) AS amountallocated,
 		SUM(amountdeducted) AS amountdeducted, 
@@ -213,11 +232,12 @@ SELECT
 			-- PERIOD
 			prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend,
 			-- TIPO DE CONCEPTO
-			cty.amn_concept_types_id, 
+			cty.amn_concept_types_id,
 			cty.optmode, 
 			cty.calcorder, 
 			cty.isshow, 
-			cty.concept_value as cty_value, 
+			cty.concept_value, 
+			CASE WHEN cty.optmode ='W' THEN CAST(cty.defaultvalue AS text) ELSE '0' END AS ips_tasa,
 			COALESCE(cty.concept_name, cty.concept_description) as concept_type,
 			-- TIPO DE CONCEPTO (PROCESO)
 			ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
@@ -294,6 +314,6 @@ SELECT
 	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
 	departamento, amn_employee_id, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
 	amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
-	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate
+	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate, optmode, ips_tasa, concept_value
 	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 ) AS recibocur

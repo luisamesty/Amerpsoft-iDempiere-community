@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListGrid" pageWidth="1320" pageHeight="595" orientation="Landscape" columnWidth="1280" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollList" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListGrid" pageWidth="1400" pageHeight="595" orientation="Landscape" columnWidth="1360" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollList" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="297"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="696"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="StyleObservaciones">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100)).subtract($V{ips}).abs().compareTo(BigDecimal.ONE) < 0 ]]></conditionExpression>
+			<style mode="Transparent" forecolor="#F01411" isBold="true"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -48,6 +63,7 @@
 -- Used for  reports and individual print
 -- Currency Rate Added and Conversion reviewed
 -- ONE PERIOD
+-- VERSION 2 (Agregado Concepto IPS DE Auditoria)
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -59,6 +75,7 @@ WITH Conceptos AS (
 		ARRAY [ACTP.value::text]  AS valueparent,
 		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
 		TRN1.Node_ID as Star_An,
+		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
@@ -80,6 +97,7 @@ WITH Conceptos AS (
 		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
 		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
 		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
+		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
@@ -110,6 +128,7 @@ WITH Conceptos AS (
 		trial.amn_concept_types_id, 
 		trial.calcorder,
 		trial.optmode, 
+		trial.defaultvalue,
 		trial.isshow,
 		trial.concept_value,
 		trial.concept_name,
@@ -133,6 +152,7 @@ WITH Conceptos AS (
 			CNT.AMN_Concept_Types_ID,
 			CNT.calcorder,
 			CNT.optmode, 
+			CNT.defaultvalue,
 			CNT.isshow,
 			CNT.concept_value,
 			CNT.concept_name,
@@ -149,6 +169,7 @@ WITH Conceptos AS (
 			amnct.description as concept_description,
 			amnct.calcorder,
 			amnct.optmode, 
+			amnct.defaultvalue,
 			amnct.isshow,
 			tree.AD_Tree_ID, 
 			tree.name as tree_name
@@ -202,6 +223,16 @@ SELECT
 	iso_code2,
 	cursymbol1,currname1,
 	cursymbol2,currname2, 
+	concept_value,
+	optmode,
+	    CASE
+        -- Si contiene el símbolo '/', realiza la división
+        WHEN ips_tasa LIKE '%/%' THEN
+            (SPLIT_PART(ips_tasa, '/', 1)::NUMERIC / SPLIT_PART(ips_tasa, '/', 2)::NUMERIC)
+        -- Si es un número entero (incluyendo "0"), conviértelo directamente
+        ELSE
+            ips_tasa::NUMERIC
+    END AS ips_tasa_numerica,
 	cantidad,
 	amountallocated,
 	amountdeducted,
@@ -238,7 +269,10 @@ SELECT
 		iso_code1,
 		iso_code2,
 		cursymbol1,currname1,
-		cursymbol2,currname2, 
+		cursymbol2,currname2,
+		concept_value,
+		optmode,
+		ips_tasa,
 		SUM(cantidad) AS cantidad,
 		SUM(amountallocated) AS amountallocated,
 		SUM(amountdeducted) AS amountdeducted, 
@@ -259,11 +293,12 @@ SELECT
 			-- PERIOD
 			prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend,
 			-- TIPO DE CONCEPTO
-			cty.amn_concept_types_id, 
+			cty.amn_concept_types_id,
 			cty.optmode, 
 			cty.calcorder, 
 			cty.isshow, 
-			cty.concept_value as cty_value, 
+			cty.concept_value, 
+			CASE WHEN cty.optmode ='W' THEN CAST(cty.defaultvalue AS text) ELSE '0' END AS ips_tasa,
 			COALESCE(cty.concept_name, cty.concept_description) as concept_type,
 			-- TIPO DE CONCEPTO (PROCESO)
 			ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
@@ -340,9 +375,10 @@ SELECT
 	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
 	departamento, amn_employee_id, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
 	amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
-	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate
+	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate, optmode, ips_tasa, concept_value
 	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
-) AS recibocur]]>
+) AS recibocur
+]]>
 	</queryString>
 	<field name="org_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
@@ -514,6 +550,20 @@ SELECT
 	<field name="currname2" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="currname2"/>
 		<property name="com.jaspersoft.studio.field.label" value="currname2"/>
+	</field>
+	<field name="concept_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="concept_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="concept_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
+	</field>
+	<field name="optmode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="optmode"/>
+		<property name="com.jaspersoft.studio.field.label" value="optmode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
+	</field>
+	<field name="ips_tasa_numerica" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ips_tasa_numerica"/>
+		<property name="com.jaspersoft.studio.field.label" value="ips_tasa_numerica"/>
 	</field>
 	<field name="cantidad" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
@@ -816,6 +866,22 @@ SELECT
 	</variable>
 	<variable name="ips_t" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ips_audit" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[$V{v_asignaciones}.subtract($V{bonificacion})]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ips_tasa_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{concept_value}.compareToIgnoreCase( "IPS_T" )==0  && $F{optmode}.compareToIgnoreCase( "W" )==0  && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{ips_tasa_numerica} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ips_tasa_recibo" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{concept_value}.compareToIgnoreCase( "IPS_T" )==0  && $F{optmode}.compareToIgnoreCase( "W" )==0  && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ips_audit_diff" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[($V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100))).subtract($V{ips_t})]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
@@ -1650,6 +1716,28 @@ SELECT
 					<textFieldExpression><![CDATA[$V{otros_ingresos}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement style="StyleObservaciones" stretchType="RelativeToTallestObject" x="1250" y="0" width="110" height="12" uuid="3c6c92c8-befa-4824-8894-8ee1e8b3a071">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) == 0 || $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) == 0
+    ? "IPS Tasa Cero" 
+    : ($V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) != 0
+        ? "IPS % con:" + $V{ips_tasa_concepto} + " " + " rec:" + $V{ips_tasa_recibo}  :
+          ($V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100)).subtract($V{ips}).abs().compareTo(BigDecimal.ONE) < 0 
+              ? "" 
+              : "IPS Diff.: " + $V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100)).subtract($V{ips}).abs()
+          )  )   ) 
+]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
@@ -1850,13 +1938,24 @@ SELECT
 				</textElement>
 				<textFieldExpression><![CDATA["Otros Ing."]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="1250" y="0" width="110" height="12" uuid="50816218-6793-42b0-a737-17d4704e8326">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Observaciones"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="42" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowHeader}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="1180" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
+				<reportElement key="" x="1250" y="0" width="110" height="14" printWhenGroupChanges="GroupbyOrg" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1868,7 +1967,7 @@ SELECT
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement key="" x="1180" y="14" width="70" height="14" printWhenGroupChanges="GroupbyOrg" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
+				<reportElement key="" x="1250" y="14" width="110" height="14" printWhenGroupChanges="GroupbyOrg" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1910,7 +2009,7 @@ SELECT
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement key="" x="1110" y="14" width="70" height="14" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
+				<reportElement key="" x="1180" y="14" width="70" height="14" uuid="baa9e7f7-a243-4c0b-90a8-b9353ca7a12c">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1921,7 +2020,7 @@ SELECT
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement key="" x="990" y="28" width="120" height="14" uuid="d6a39ccf-9ce9-44f3-820b-72162d5266a6">
+				<reportElement key="" x="1050" y="28" width="130" height="14" uuid="d6a39ccf-9ce9-44f3-820b-72162d5266a6">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1933,7 +2032,7 @@ SELECT
 				<textFieldExpression><![CDATA[$R{report.currency}+ ": "+($F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2})]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement key="" x="1110" y="28" width="140" height="14" printWhenGroupChanges="GroupbyOrg" uuid="6e10d617-9a42-415f-87ed-6c4de6ed1208">
+				<reportElement key="" x="1180" y="28" width="180" height="14" printWhenGroupChanges="GroupbyOrg" uuid="6e10d617-9a42-415f-87ed-6c4de6ed1208">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1977,7 +2076,7 @@ SELECT
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<line>
-				<reportElement x="0" y="0" width="1250" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
+				<reportElement x="0" y="0" width="1360" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1985,7 +2084,7 @@ SELECT
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="1" width="1250" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
+				<reportElement x="0" y="1" width="1360" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1993,14 +2092,14 @@ SELECT
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="14" width="1250" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
+				<reportElement x="0" y="14" width="1360" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="15" width="1250" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
+				<reportElement x="0" y="15" width="1360" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2194,6 +2293,17 @@ SELECT
 					<font fontName="Arial" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Otros Ing."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1250" y="0" width="110" height="16" uuid="03918105-6fc9-4b23-9dc7-dc30fb2b8759">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Observaciones"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
