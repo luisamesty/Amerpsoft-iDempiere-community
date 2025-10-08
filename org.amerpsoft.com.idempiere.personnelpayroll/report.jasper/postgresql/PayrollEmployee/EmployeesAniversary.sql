@@ -77,7 +77,16 @@ LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_i
 INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
-WHERE emp.isactive= 'Y' 
+WHERE emp.isactive= 'Y'
+    AND (
+        CASE 
+            WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN TRUE
+            WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN TRUE
+            WHEN ($P{AMN_Status_R} = 'Y' AND emp.status='R') THEN TRUE
+            WHEN ($P{AMN_Status_S} = 'Y' AND emp.status='S') THEN TRUE
+            ELSE FALSE 
+        END
+    )
 	AND EXTRACT(MONTH FROM emp.incomedate) = EXTRACT(MONTH FROM TO_DATE($P{DateTo}, 'YYYY-MM-DD'))
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )

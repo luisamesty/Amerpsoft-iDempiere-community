@@ -110,6 +110,15 @@ INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
 WHERE emp.isactive= 'Y' 
+    AND (
+        CASE 
+            WHEN ($P{AMN_Status_A} = 'Y' AND emp.status='A') THEN TRUE
+            WHEN ($P{AMN_Status_V} = 'Y' AND emp.status='V') THEN TRUE
+            WHEN ($P{AMN_Status_R} = 'Y' AND emp.status='R') THEN TRUE
+            WHEN ($P{AMN_Status_S} = 'Y' AND emp.status='S') THEN TRUE
+            ELSE FALSE 
+        END
+    )
 	AND  emp.ad_client_id =  $P{AD_Client_ID} 
 	AND emp.sex = $P{sex}
 	AND adt.AMN_Dependent_Type_ID = ANY(string_to_array($P{AMN_Dependent_Type_ID}, ',')::int[])
