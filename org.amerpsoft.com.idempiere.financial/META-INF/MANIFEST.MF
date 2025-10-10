@@ -18,8 +18,15 @@ Import-Package: groovy.lang,
  org.adempiere.webui.window,
  org.codehaus.groovy.runtime,
  org.compiere.print,
- org.osgi.framework;version="1.3.0"
-Export-Package: org.amerp.reports.AccountElements_Tree 
+ org.osgi.framework;version="1.3.0",
+ org.apache.poi.ss.usermodel,
+ org.apache.poi.xssf.usermodel
+Export-Package: org.amerp.reports.jasper.AccountElements_Tree 
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Amerpsoft
+Bundle-ClassPath: .,\
+ src/lib/poi-4.1.2.jar,\
+ src/lib/poi-ooxml-4.1.2.jar,\
+ src/lib/poi-ooxml-schemas-4.1.2.jar,\
+ src/lib/xmlbeans-3.1.0.jar

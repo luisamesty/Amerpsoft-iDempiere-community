@@ -1,4 +1,4 @@
-package org.amerp.reports.AccountElements_Tree;
+package org.amerp.reports;
 
 import java.sql.PreparedStatement; 
 import java.sql.ResultSet;

@@ -69,12 +69,16 @@ public class AMFProcessfactory implements IProcessFactory{
     	// AMFRebuildANewClientSchema
     	if(p_className.equals("org.amerp.process.AMFRebuildANewClientSchema"))
     		return new org.amerp.process.AMFRebuildANewClientSchema();
-    	// REPORTS 
+    	// REPORTS JASPER
     	// AccountElements_Tree 
-        if (p_className.equals("org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Std"))
-            return new org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Std();
-        if (p_className.equals("org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Pojo"))
-            return new org.amerp.reports.AccountElements_Tree.AccountElements_Tree_Pojo();
-    	return process;
+        if (p_className.equals("org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Std"))
+            return new org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Std();
+        if (p_className.equals("org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Pojo"))
+            return new org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Pojo();
+    	// REPORTS XLS/XLSX
+    	// AccountElements_Tree XLSX
+        if (p_className.equals("org.amerp.reports.xlsx.AccountElements_Tree.AccountElements_Tree_xlsx"))
+            return new org.amerp.reports.xlsx.AccountElements_Tree.AccountElements_Tree_xlsx();
+        return process;
     }
 }

@@ -2,37 +2,16 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <groupId>org.amerpsoft.idempiere.com</groupId>
+  <artifactId>org.amerpsoft.com.idempiere.amabase</artifactId>
+  <version>11.0.0-SNAPSHOT</version>
   <parent>
 		<groupId>org.idempiere</groupId>
 		<artifactId>org.idempiere.parent</artifactId>
 		<version>11.0.0-SNAPSHOT</version>
 		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
-  </parent>  
-  <artifactId>org.amerpsoft.com.idempiere.financial</artifactId>
+  </parent>
   <packaging>eclipse-plugin</packaging>
-  <dependencies>
-	  <!-- Apache POI dependencies for Excel generation (.xlsx) -->
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>4.1.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>4.1.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>4.1.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.xmlbeans</groupId>
-		    <artifactId>xmlbeans</artifactId>
-		    <version>3.1.0</version>
-		</dependency>
-	</dependencies>
     <build>
         <plugins>
             <plugin>
@@ -42,5 +21,5 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>  
+    </build>
 </project>

@@ -1,0 +1,12 @@
+Bundle-ManifestVersion: 2
+Bundle-Name: AMERPSoft iDempiere Base Libraries
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.amabase
+Bundle-Version: 11.0.0.qualifier
+Bundle-Vendor: AMERPSoft
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ClassPath: .,
+ src/lib/poi-4.1.2.jar,
+ src/lib/poi-ooxml-4.1.2.jar,
+ src/lib/poi-ooxml-schemas-4.1.2.jar,
+ src/lib/xmlbeans-3.1.0.jar
+
