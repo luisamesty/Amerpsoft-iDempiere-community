@@ -12,6 +12,29 @@
 		<relativePath>../../idempiere/org.idempiere.parent/pom.xml</relativePath>
   </parent>
   <packaging>eclipse-plugin</packaging>
+  <dependencies>
+	  <!-- Apache POI dependencies for Excel generation (.xlsx) -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>4.1.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>4.1.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml-schemas</artifactId>
+		    <version>4.1.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlbeans</groupId>
+		    <artifactId>xmlbeans</artifactId>
+		    <version>3.1.0</version>
+		</dependency>
+	</dependencies>
     <build>
         <plugins>
             <plugin>

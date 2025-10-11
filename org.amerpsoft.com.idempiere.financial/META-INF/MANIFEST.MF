@@ -9,18 +9,36 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  org.adempiere.report.jasper;bundle-version="0.0.0",
  org.adempiere.base.process;bundle-version="0.0.0",
  org.eclipse.osgi.services;bundle-version="0.0.0",
- org.adempiere.ui.zk,
- net.sf.jasperreports.engine
+ org.adempiere.ui;bundle-version="0.0.0",
+ org.adempiere.ui.zk;bundle-version="0.0.0",
+ org.adempiere.ui;bundle-version="0.0.0",
+ org.idempiere.zk.extra;bundle-version="0.0.0",
+ zcommon;bundle-version="0.0.0",
+ zel;bundle-version="0.0.0",
+ zhtml;bundle-version="0.0.0",
+ zk;bundle-version="0.0.0",
+ zkbind;bundle-version="0.0.0",
+ zkplus;bundle-version="0.0.0",
+ zul;bundle-version="0.0.0",
+ zweb;bundle-version="0.0.0",
+ net.sf.jasperreports.engine,
+ assertj-core;bundle-version="3.22.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: groovy.lang,
  groovy.util,
  net.sf.jasperreports.engine,
  org.adempiere.webui.window,
+ org.apache.poi.ss.usermodel,
+ org.apache.poi.xssf.usermodel,
+ org.apache.poi.xssf.streaming,
+ org.apache.poi.xssf,
+ org.apache.poi.util,
+ org.apache.poi.ss.util;version="[5.2,6)",
  org.codehaus.groovy.runtime,
  org.compiere.print,
  org.osgi.framework;version="1.3.0",
- org.apache.poi.ss.usermodel,
- org.apache.poi.xssf.usermodel
+ org.zkoss.zhtml;version="[9.6.0,10.0.0)",
+ org.zkoss.zul;version="[9.6.0,10.0.0)"
 Export-Package: org.amerp.reports.jasper.AccountElements_Tree 
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy

@@ -15,24 +15,49 @@
 		<dependency>
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi</artifactId>
-		    <version>4.1.2</version>
+		    <version>5.2.5</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi-ooxml</artifactId>
-		    <version>4.1.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>4.1.2</version>
+		    <version>5.2.5</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.xmlbeans</groupId>
 		    <artifactId>xmlbeans</artifactId>
 		    <version>3.1.0</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.idempiere.keikai</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.ui.zk</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.report.jasper.library</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.ui</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.base</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.install</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+  </dependencies>
     <build>
         <plugins>
             <plugin>

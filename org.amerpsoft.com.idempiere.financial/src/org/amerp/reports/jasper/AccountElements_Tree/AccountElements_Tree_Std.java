@@ -87,7 +87,7 @@ public class AccountElements_Tree_Std extends SvrProcess implements ProcessCall,
         String tmpFolder = jasperUtils.getTempFolder();
         // Lista de recursos a copiar
         String[] resourcesToCopy = new String[]{
-            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree.jrxml",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_Std.jrxml",
             "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree.properties",
             "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_es.properties",
             "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_fr.properties"
@@ -100,13 +100,13 @@ public class AccountElements_Tree_Std extends SvrProcess implements ProcessCall,
         }
         
         // Prueba que el archivo ahora existe físicamente
-        File jrxmlFile = new File(tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml");
+        File jrxmlFile = new File(tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Std.jrxml");
         if (!jrxmlFile.exists()) {
             throw new Exception("No existe el archivo jrxml en tmp: " + jrxmlFile.getAbsolutePath());
         }
 
         // Ahora puedes usar la ruta física para compilar el reporte
-        String jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml";
+        String jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Std.jrxml";
         
         
         try (InputStream reportStream = new FileInputStream(jrxmlPath)) {
