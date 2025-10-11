@@ -1,17 +1,279 @@
 package org.amerp.reports;
 
+import java.math.BigDecimal;
+import java.sql.Array;
 import java.sql.PreparedStatement; 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.compiere.model.MClient;
+import org.compiere.model.MClientInfo;
+import org.compiere.model.MImage;
 import org.compiere.util.CLogger;
 
 public class DataPopulator {
 
     private static final CLogger log = CLogger.getCLogger(DataPopulator.class);
+
+    /**
+     * Obtiene la lista jerárquica de cuentas contables desde la función
+     * adempiere.amf_element_value_tree_basic
+     *
+     * @param adClientId ID del Grupo Empresarial (AD_Client_ID)
+     * @param cAcctSchemaId ID del Esquema Contable (C_AcctSchema_ID)
+     * @return Lista de objetos AccountElementBasic
+     * Ejecuta Function SQL amf_element_value_tree_basic
+     * Es necesario agregar los campos adicionales para mantener la compatibilidad con el 
+     * Modelo de AccountElements_Tree_Pojo.java
+     *     	private String cliname;
+     *		private String clidescription;
+     * 		private byte[] cli_logo;
+     * 		private Integer ad_org_id;
+     *		private String value_parent;
+     */
+    public static List<AccountElementBasic> getAccountElementBasicList(int adClientId, int cAcctSchemaId) {
+        List<AccountElementBasic> accountElements = new ArrayList<>();
+
+        // --- 1️⃣ Leer constantes globales antes del bucle
+        String cliName = "";
+        String cliDescription = "";
+        byte[] cliLogo = null;
+        MClient mclient = new MClient(Env.getCtx(),adClientId,null);
+        if (mclient != null ) {
+        	cliName = mclient.getName();
+        	cliDescription = mclient.getDescription() != null ? mclient.getDescription() : mclient.getName();
+        	 // --- 2️⃣ Obtener información del cliente (AD_ClientInfo)
+            MClientInfo ci = MClientInfo.get(Env.getCtx(), adClientId);
+            if (ci != null && ci.getLogoReport_ID() > 0) {
+                // --- 3️⃣ Obtener el logo (AD_Image)
+                MImage img = new MImage(Env.getCtx(), ci.getLogoReport_ID(), null);
+                if (img != null && img.getBinaryData() != null) {
+                    cliLogo = img.getBinaryData();
+                }
+            }	
+        }
+        // Query amf_element_value_tree_basic
+        String sql = """
+            SELECT 
+                pathel,
+                ancestry,
+                level,
+                node_id,
+                parent_id,
+                c_element_id,
+                c_elementvalue_id,
+                ad_client_id,
+                isactive,
+                codigo,
+                name,
+                description,
+                length,
+                accounttype,
+                accountsign,
+                isdoccontrolled,
+                element_c_element_id,
+                issummary,
+                acctparent
+            FROM adempiere.amf_element_value_tree_basic(?, ?)
+        """;
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setInt(1, adClientId);
+            pstmt.setInt(2, cAcctSchemaId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    AccountElementBasic bean = new AccountElementBasic();
+
+                    bean.setPathel(rs.getString("pathel"));
+
+                    Array ancestryArray = rs.getArray("ancestry");
+                    if (ancestryArray != null)
+                        bean.setAncestry((BigDecimal[]) ancestryArray.getArray());
+
+                    bean.setLevel(rs.getInt("level"));
+                    bean.setNodeId(rs.getBigDecimal("node_id"));
+                    bean.setParentId(rs.getBigDecimal("parent_id"));
+                    bean.setCElementId(rs.getBigDecimal("c_element_id"));
+                    bean.setCElementValueId(rs.getBigDecimal("c_elementvalue_id"));
+                    bean.setAdClientId(rs.getBigDecimal("ad_client_id"));
+                    bean.setIsActive(rs.getString("isactive"));
+                    bean.setCodigo(rs.getString("codigo"));
+                    bean.setName(rs.getString("name"));
+                    bean.setDescription(rs.getString("description"));
+                    bean.setLength(rs.getInt("length"));
+                    bean.setAccountType(rs.getString("accounttype"));
+                    bean.setAccountSign(rs.getString("accountsign"));
+                    bean.setIsDocControlled(rs.getString("isdoccontrolled"));
+                    bean.setElementCElementId(rs.getBigDecimal("element_c_element_id"));
+                    bean.setIsSummary(rs.getString("issummary"));
+                    Array acctParentArray = rs.getArray("acctparent");
+                    if (acctParentArray != null) {
+                    	String[] acctParent = (String[]) acctParentArray.getArray();
+                        bean.setAcctParent((String[]) acctParentArray.getArray());
+                        if (acctParent.length > 0) {
+                            // El último valor es el del padre inmediato
+                            String valueParent = acctParent[acctParent.length - 1];
+                            bean.setValue_parent(valueParent);
+                        }
+                    }
+
+                    // ---  Asignar los valores constantes
+                    bean.setCliname(cliName);
+                    bean.setClidescription(cliDescription);
+                    bean.setCli_logo(cliLogo);
+
+                    // Puedes también establecer ad_org_id o value_parent si son constantes:
+                    bean.setAd_org_id(null);
+    
+                    
+                    accountElements.add(bean);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accountElements;
+    }
+
+    public static List<AccountElementExtended> getAccountElementExtendedList(int adClientId, int cAcctSchemaId) {
+        List<AccountElementExtended> accountElements = new ArrayList<>();
+
+        String sql = """
+            SELECT 
+                level,
+                node_id,
+                parent_id,
+                c_element_id,
+                c_elementvalue_id,
+                ad_client_id,
+                isactive,
+                codigo,
+                name,
+                description,
+                length,
+                accounttype,
+                accountsign,
+                isdoccontrolled,
+                issummary,
+                acctparent,
+                pathel,
+                ancestry,
+                codigo0, name0, description0, issummary0,
+                codigo1, name1, description1, issummary1,
+                codigo2, name2, description2, issummary2,
+                codigo3, name3, description3, issummary3,
+                codigo4, name4, description4, issummary4,
+                codigo5, name5, description5, issummary5,
+                codigo6, name6, description6, issummary6,
+                codigo7, name7, description7, issummary7,
+                codigo8, name8, description8, issummary8,
+                codigo9, name9, description9, issummary9
+            FROM adempiere.amf_element_value_tree_extended(?, ?)
+        """;
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setInt(1, adClientId);
+            pstmt.setInt(2, cAcctSchemaId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    AccountElementExtended bean = new AccountElementExtended();
+
+                    bean.setLevel(rs.getInt("level"));
+                    bean.setNodeId(rs.getInt("node_id"));
+                    bean.setParentId(rs.getInt("parent_id"));
+                    bean.setcElementId(rs.getInt("c_element_id"));
+                    bean.setcElementValueId(rs.getInt("c_elementvalue_id"));
+                    bean.setAdClientId(rs.getInt("ad_client_id"));
+                    bean.setIsActive(rs.getString("isactive"));
+                    bean.setCodigo(rs.getString("codigo"));
+                    bean.setName(rs.getString("name"));
+                    bean.setDescription(rs.getString("description"));
+                    bean.setLength(rs.getInt("length"));
+                    bean.setAccountType(rs.getString("accounttype"));
+                    bean.setAccountSign(rs.getString("accountsign"));
+                    bean.setIsDocControlled(rs.getString("isdoccontrolled"));
+                    bean.setIsSummary(rs.getString("issummary"));
+
+                    Array acctParentArray = rs.getArray("acctparent");
+                    if (acctParentArray != null)
+                        bean.setAcctParent((String[]) acctParentArray.getArray());
+
+                    bean.setPathEl(rs.getString("pathel"));
+
+                    Array ancestryArray = rs.getArray("ancestry");
+                    if (ancestryArray != null)
+                        bean.setAncestry((Integer[]) ancestryArray.getArray());
+
+                    // Campos jerárquicos niveles 0-9
+                    bean.setCodigo0(rs.getString("codigo0"));
+                    bean.setName0(rs.getString("name0"));
+                    bean.setDescription0(rs.getString("description0"));
+                    bean.setIsSummary0(rs.getString("issummary0"));
+
+                    bean.setCodigo1(rs.getString("codigo1"));
+                    bean.setName1(rs.getString("name1"));
+                    bean.setDescription1(rs.getString("description1"));
+                    bean.setIsSummary1(rs.getString("issummary1"));
+
+                    bean.setCodigo2(rs.getString("codigo2"));
+                    bean.setName2(rs.getString("name2"));
+                    bean.setDescription2(rs.getString("description2"));
+                    bean.setIsSummary2(rs.getString("issummary2"));
+
+                    bean.setCodigo3(rs.getString("codigo3"));
+                    bean.setName3(rs.getString("name3"));
+                    bean.setDescription3(rs.getString("description3"));
+                    bean.setIsSummary3(rs.getString("issummary3"));
+
+                    bean.setCodigo4(rs.getString("codigo4"));
+                    bean.setName4(rs.getString("name4"));
+                    bean.setDescription4(rs.getString("description4"));
+                    bean.setIsSummary4(rs.getString("issummary4"));
+
+                    bean.setCodigo5(rs.getString("codigo5"));
+                    bean.setName5(rs.getString("name5"));
+                    bean.setDescription5(rs.getString("description5"));
+                    bean.setIsSummary5(rs.getString("issummary5"));
+
+                    bean.setCodigo6(rs.getString("codigo6"));
+                    bean.setName6(rs.getString("name6"));
+                    bean.setDescription6(rs.getString("description6"));
+                    bean.setIsSummary6(rs.getString("issummary6"));
+
+                    bean.setCodigo7(rs.getString("codigo7"));
+                    bean.setName7(rs.getString("name7"));
+                    bean.setDescription7(rs.getString("description7"));
+                    bean.setIsSummary7(rs.getString("issummary7"));
+
+                    bean.setCodigo8(rs.getString("codigo8"));
+                    bean.setName8(rs.getString("name8"));
+                    bean.setDescription8(rs.getString("description8"));
+                    bean.setIsSummary8(rs.getString("issummary8"));
+
+                    bean.setCodigo9(rs.getString("codigo9"));
+                    bean.setName9(rs.getString("name9"));
+                    bean.setDescription9(rs.getString("description9"));
+                    bean.setIsSummary9(rs.getString("issummary9"));
+
+                    accountElements.add(bean);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accountElements;
+    }
 
     /**
      * Obtiene una lista de objetos AccountElement llenados con datos de la base de datos
@@ -209,4 +471,47 @@ public class DataPopulator {
         }
         return accountElements;
     }
+    
+
+    /**
+     * 
+     */
+
+    public static List<OrgTree> getOrgTreeList(int adClientId, int adOrgId, int adOrgParentId) {
+        List<OrgTree> list = new ArrayList<>();
+
+        String sql = """
+            SELECT * 
+            FROM adempiere.amf_org_tree(?, ?, ?)
+        """;
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setInt(1, adClientId);
+            pstmt.setInt(2, adOrgId);
+            pstmt.setInt(3, adOrgParentId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    OrgTree bean = new OrgTree();
+                    bean.setAdClientId(rs.getBigDecimal("org_ad_client_id"));
+                    bean.setAdOrgId(rs.getBigDecimal("org_ad_org_id"));
+                    bean.setAdOrgParentId(rs.getBigDecimal("org_ad_orgparent_id"));
+                    bean.setIsSummary(rs.getString("issummary"));
+                    bean.setOrgValue(rs.getString("org_value"));
+                    bean.setOrgDescription(rs.getString("org_description"));
+                    bean.setOrgName(rs.getString("org_name"));
+                    bean.setAllOrgs(rs.getString("all_orgs"));
+                    bean.setOrgTaxId(rs.getString("org_taxid"));
+                    bean.setOrgLogo(rs.getBytes("org_logo"));
+                    list.add(bean);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+   
 }

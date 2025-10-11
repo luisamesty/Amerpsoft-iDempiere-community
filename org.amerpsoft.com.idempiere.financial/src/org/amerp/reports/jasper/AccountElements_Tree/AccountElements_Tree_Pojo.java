@@ -77,7 +77,7 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
         
         // Lista de recursos a copiar
         String[] resourcesToCopy = new String[]{
-            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree.jrxml",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_Pojo.jrxml",
             "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree.properties",
             "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_es.properties",
             "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_fr.properties"
@@ -89,7 +89,7 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
         	jasperUtils.copyResourceToTmp(resource, tmpFolder);
         }
         // Prueba que el archivo ahora existe físicamente
-        jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml";
+        jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Pojo.jrxml";
         File jrxmlFile = new File(jrxmlPath);
         if (!jrxmlFile.exists()) {
             throw new Exception("No existe el archivo jrxml en tmp: " + jrxmlFile.getAbsolutePath());
@@ -107,7 +107,7 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
 
         // --- PASO 2: Compilar y Cargar el archivo .jasper 
         // Se usa la ruta física para compilar el reporte
-        String jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml";
+        String jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Pojo.jrxml";
 
         try (InputStream reportStream = new FileInputStream(jrxmlPath)) {
             jasperReport = JasperCompileManager.compileReport(reportStream);    
