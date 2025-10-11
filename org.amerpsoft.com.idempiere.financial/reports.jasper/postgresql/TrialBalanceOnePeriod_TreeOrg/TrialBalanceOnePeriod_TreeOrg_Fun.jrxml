@@ -2351,7 +2351,7 @@ ORDER BY
 					</graphicElement>
 				</rectangle>
 				<textField evaluationTime="Group" evaluationGroup="Group_Org">
-					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="100" height="14" uuid="78aa1fbe-47a6-4cb1-9ba4-c4b0e2582975">
+					<reportElement x="0" y="0" width="100" height="14" uuid="78aa1fbe-47a6-4cb1-9ba4-c4b0e2582975">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2695,20 +2695,6 @@ ORDER BY
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement x="0" y="0" width="100" height="14" uuid="da0c6f00-e2fe-4884-b040-aa62062e9290">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[]]></printWhenExpression>
-				</reportElement>
-				<box leftPadding="2"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="340" y="0" width="100" height="14" uuid="a2babc23-9461-4e8b-a254-5a24bd7c0f1b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -2793,6 +2779,20 @@ ORDER BY
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{name}.trim()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="100" height="14" uuid="e7a7ef54-2baf-4f1d-869d-0cfd10ed6b92">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
