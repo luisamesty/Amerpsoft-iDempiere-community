@@ -981,7 +981,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 						<pen lineColor="#CCCCCC"/>
 					</graphicElement>
 				</rectangle>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="100" height="18" isRemoveLineWhenBlank="true" uuid="8388a358-0d06-4560-9810-d0b2642b4d66">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -993,7 +993,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo0}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="360" height="18" isRemoveLineWhenBlank="true" uuid="7715a03e-7b5c-4357-943c-8bc0c0d3249b">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1005,7 +1005,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name0}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)">
 					<reportElement x="440" y="0" width="180" height="18" isRemoveLineWhenBlank="true" uuid="7e6d473e-51cf-479a-8cac-3cfca4dcc096">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -1016,7 +1016,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="180" height="18" isRemoveLineWhenBlank="true" uuid="8899865c-4794-4981-9c77-00434d4bc5e6">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1028,7 +1028,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[( $V{amtacctdr0} == 0.00  ? "-"  : $V{amtacctdr0} )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="800" y="0" width="180" height="18" isRemoveLineWhenBlank="true" uuid="99371601-f20b-4d90-8234-6f386fd8b237">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1040,7 +1040,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[( $V{amtacctcr0}== 0.00  ? "-"  : $V{amtacctcr0} )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="980" y="0" width="180" height="18" isRemoveLineWhenBlank="true" uuid="34e741f4-6d96-4f8b-b784-7cb8be3d0d02">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -1051,7 +1051,7 @@ ORDER BY codigo0 ASC, codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo
 					<textFieldExpression><![CDATA[( ($V{amtacctdr0} -$V{amtacctcr0}) == 0.00  ? 0.00  : ($V{amtacctdr0} -$V{amtacctcr0}) )]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1160" y="0" width="180" height="18" isRemoveLineWhenBlank="true" uuid="4ed85e2d-d821-4f9b-ad94-cca9213eb9e2">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
