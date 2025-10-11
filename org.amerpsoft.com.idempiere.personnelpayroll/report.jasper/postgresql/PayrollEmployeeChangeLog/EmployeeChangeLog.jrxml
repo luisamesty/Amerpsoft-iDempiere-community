@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeeChangeLog" pageWidth="1100" pageHeight="595" orientation="Landscape" columnWidth="1060" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8882f436-599e-4adb-b6f7-4da924b91948">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeeChangeLog" pageWidth="1300" pageHeight="595" orientation="Landscape" columnWidth="1260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8882f436-599e-4adb-b6f7-4da924b91948">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
@@ -13,11 +13,24 @@
 	<parameter name="AD_Table_ID" class="java.lang.String"/>
 	<parameter name="AMN_Process_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
+	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<parameter name="DateFrom" class="java.sql.Timestamp"/>
 	<parameter name="DateTo" class="java.sql.Timestamp"/>
+	<parameter name="isShowInsert" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowUpdate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowDelete" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[-- EmployeeChangeLog
 -- Changes on Employees
+-- Version V3  Agregada tabala AMN_payroll_detail
+-- Agregados registros de creacion
+-- Seleccion INS, UPT, DEL
 SELECT * FROM
 (
 	-- REPORT HEADER
@@ -43,8 +56,8 @@ SELECT * FROM
 ) as header_info
 FULL JOIN
 (
-	SELECT * 
-	FROM (
+	SELECT * FROM (
+	-- Bloque 1: Cambios en AMN_Employee (UPDATE)
 	  SELECT 
 	    chl.ad_client_id AS client_id,
 	    chl.ad_org_id AS org_id,
@@ -57,8 +70,8 @@ FULL JOIN
 	    CAST(chl.created AS Timestamp) AS created,
 	    CASE 
 	      WHEN chl.oldvalue IS NULL AND chl.newvalue IS NOT NULL THEN 'INS'
-	      WHEN chl.oldvalue IS NOT NULL AND chl.newvalue IS NOT NULL THEN 'MOD'
-	      ELSE 'OTRO'
+	      WHEN chl.oldvalue IS NOT NULL AND chl.newvalue IS NOT NULL THEN 'UPD'
+	      ELSE 'OTR'
 	    END AS cambio_tipo,
 	    emp.amn_employee_id,
 	    emp.value AS employee_value,
@@ -67,6 +80,7 @@ FULL JOIN
 	    'NN' AS process_value,
 	    contract.amn_contract_id,
 	    COALESCE(contract.value, '???') || ' - ' || COALESCE(contract.name, '') AS contract_display,
+	    chl.ad_changelog_id,
 	    chl.record_id,
 	    chl.ad_table_id
 	  FROM adempiere.AD_Changelog chl
@@ -78,7 +92,43 @@ FULL JOIN
 	  LEFT JOIN adempiere.AMN_Employee emp ON emp.AMN_Employee_ID = chl.Record_ID
 	  LEFT JOIN adempiere.AMN_Contract contract ON contract.AMN_Contract_ID = emp.AMN_Contract_ID
 	  WHERE tbl.tablename = 'AMN_Employee'
+		  AND chl.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
 	UNION ALL
+	-- INICIO DE NUEVO BLOQUE: CREACIÓN DE AMN_Employee (INSERT)
+	  SELECT
+	    emp.ad_client_id AS client_id,
+	    emp.ad_org_id AS org_id,
+	    usr.name AS user_value,
+	    usr.description AS user_name,
+	    'AMN_Employee - Tabla de Trabajadores' AS tablename,
+	    COALESCE(clm_t.name, clm.columnname, '') AS columnname, 
+	    NULL AS oldvalue,
+	    'Registro Creado' AS newvalue,  
+	    CAST(emp.created AS Timestamp) AS created,
+	    'INS' AS cambio_tipo,         
+	    emp.amn_employee_id,
+	    emp.value AS employee_value,
+	    emp.name AS employee_name,
+	    (SELECT DISTINCT amn_process_id FROM amn_process WHERE amn_process_value='NN' AND ad_client_id = $P{AD_Client_ID}) AS amn_process_id,
+	    'NN' AS process_value,
+	    contract.amn_contract_id,
+	    COALESCE(contract.value, '???') || ' - ' || COALESCE(contract.name, '') AS contract_display,
+	    NULL AS ad_changelog_id,       
+	    emp.AMN_Employee_ID AS record_id,
+	    (SELECT ad_table_id FROM ad_table WHERE tablename = 'AMN_Employee') AS ad_table_id
+	  FROM adempiere.AMN_Employee emp
+	  JOIN adempiere.ad_user usr ON usr.ad_user_id = emp.createdby
+  	  JOIN adempiere.ad_table tbl ON tbl.tablename = 'AMN_Employee'
+	  -- Filtra solo las columnas con registro activo, generando una fila por cada columna rastreada
+	  JOIN adempiere.ad_column clm ON clm.ad_table_id = tbl.ad_table_id AND clm.isallowlogging = 'Y' 
+	  LEFT JOIN adempiere.ad_column_trl clm_t ON clm_t.ad_column_id = clm.ad_column_id 
+	    AND clm_t.ad_language = (SELECT AD_Language FROM adempiere.AD_Client WHERE AD_Client_ID = emp.ad_client_id)
+	  LEFT JOIN adempiere.AMN_Contract contract ON contract.AMN_Contract_ID = emp.AMN_Contract_ID
+	  WHERE 
+	      emp.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
+	      AND emp.isactive = 'Y' 
+	UNION ALL
+	-- Bloque 3: Cambios en AMN_Payroll (UPDATE)
 	  SELECT 
 	    chl.ad_client_id AS client_id,
 	    chl.ad_org_id AS org_id,
@@ -91,8 +141,8 @@ FULL JOIN
 	    CAST(chl.created AS Timestamp) AS created,
 	    CASE 
 	      WHEN chl.oldvalue IS NULL AND chl.newvalue IS NOT NULL THEN 'INS'
-	      WHEN chl.oldvalue IS NOT NULL AND chl.newvalue IS NOT NULL THEN 'MOD'
-	      ELSE 'OTRO'
+	      WHEN chl.oldvalue IS NOT NULL AND chl.newvalue IS NOT NULL THEN 'UPD'
+	      ELSE 'OTR'
 	    END AS cambio_tipo,
    	    emp.amn_employee_id,
 	    emp.value AS employee_value,
@@ -101,6 +151,7 @@ FULL JOIN
 	    COALESCE(proc.value, 'SIN PROCESO') AS process_value,
 	    contract.amn_contract_id,
 	    COALESCE(contract.value, '???') || ' - ' || COALESCE(contract.name, '') AS contract_display,
+	    chl.ad_changelog_id,
 	    chl.record_id,
 	    chl.ad_table_id
 	  FROM adempiere.AD_Changelog chl
@@ -114,16 +165,138 @@ FULL JOIN
 	  LEFT JOIN adempiere.AMN_Process proc ON proc.AMN_Process_ID = pay.AMN_Process_ID
 	  LEFT JOIN adempiere.AMN_Contract contract ON contract.AMN_Contract_ID = pay.AMN_Contract_ID
 	  WHERE tbl.tablename = 'AMN_Payroll'
+		  AND chl.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
+	UNION ALL
+	-- INICIO DE NUEVO BLOQUE: CREACIÓN DE AMN_Payroll (INSERT)
+	  SELECT
+	    pay.ad_client_id AS client_id,
+	    pay.ad_org_id AS org_id,
+	    usr.name AS user_value,
+	    usr.description AS user_name,
+	    'AMN_Payroll - Tabla de recibos de Nómina' AS tablename,
+	    COALESCE(clm_t.name, clm.columnname, '') AS columnname,
+	    NULL AS oldvalue,
+	    'Registro Creado' AS newvalue,  
+	    CAST(pay.created AS Timestamp) AS created,
+	    'INS' AS cambio_tipo,         
+	    emp.amn_employee_id,
+	    emp.value AS employee_value,
+	    emp.name AS employee_name,
+	    proc.amn_process_id,
+	    COALESCE(proc.value, 'SIN PROCESO') AS process_value,
+	    contract.amn_contract_id,
+	    COALESCE(contract.value, '???') || ' - ' || COALESCE(contract.name, '') AS contract_display,
+	    NULL AS ad_changelog_id,       
+	    pay.AMN_Payroll_ID AS record_id,
+	    (SELECT ad_table_id FROM ad_table WHERE tablename = 'AMN_Payroll') AS ad_table_id
+	  FROM adempiere.AMN_Payroll pay
+	  JOIN adempiere.ad_user usr ON usr.ad_user_id = pay.createdby 
+  	  JOIN adempiere.ad_table tbl ON tbl.tablename = 'AMN_Payroll'
+	  JOIN adempiere.ad_column clm ON clm.ad_table_id = tbl.ad_table_id AND clm.isallowlogging = 'Y' -- Filtra solo las columnas con registro activo
+	  LEFT JOIN adempiere.ad_column_trl clm_t ON clm_t.ad_column_id = clm.ad_column_id 
+	    AND clm_t.ad_language = (SELECT AD_Language FROM adempiere.AD_Client WHERE AD_Client_ID = pay.ad_client_id)
+	  LEFT JOIN adempiere.AMN_Employee emp ON emp.AMN_Employee_ID = pay.AMN_Employee_ID
+	  LEFT JOIN adempiere.AMN_Process proc ON proc.AMN_Process_ID = pay.AMN_Process_ID
+	  LEFT JOIN adempiere.AMN_Contract contract ON contract.AMN_Contract_ID = pay.AMN_Contract_ID
+	  WHERE 
+	      pay.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
+	      AND pay.isactive = 'Y' 
+	UNION ALL
+	-- Bloque 5: Cambios en AMN_Payroll_Detail (UPDATE)
+	  SELECT 
+	    chl.ad_client_id AS client_id,
+	    chl.ad_org_id AS org_id,
+	    usr.name AS user_value,
+	    usr.description AS user_name,
+	    'AMN_Payroll_Detail - Tabla de detalle de recibos de Nómina' AS tablename,
+	    COALESCE(clm_t.name, clm.columnname, '') AS columnname,
+	    chl.oldvalue,
+	    chl.newvalue,
+	    CAST(chl.created AS Timestamp) AS created,
+	    CASE 
+	      WHEN chl.oldvalue IS NULL AND chl.newvalue IS NOT NULL THEN 'INS'
+	      WHEN chl.oldvalue IS NOT NULL AND chl.newvalue IS NOT NULL THEN 'UPD'
+	      ELSE 'OTR'
+	    END AS cambio_tipo,
+   	    emp.amn_employee_id,
+	    emp.value AS employee_value,
+	    emp.name AS employee_name,
+   	    proc.amn_process_id,
+	    COALESCE(proc.value, 'SIN PROCESO') AS process_value,
+	    contract.amn_contract_id,
+	    COALESCE(contract.value, '???') || ' - ' || COALESCE(contract.name, '') AS contract_display,
+	    chl.ad_changelog_id,
+	    chl.record_id,
+	    chl.ad_table_id
+	  FROM adempiere.AD_Changelog chl
+	  JOIN adempiere.ad_user usr ON usr.ad_user_id = chl.createdby
+	  JOIN adempiere.ad_table tbl ON tbl.ad_table_id = chl.ad_table_id
+	  JOIN adempiere.ad_column clm ON clm.ad_column_id = chl.ad_column_id
+	  LEFT JOIN adempiere.ad_column_trl clm_t ON clm_t.ad_column_id = clm.ad_column_id 
+	    AND clm_t.ad_language = (SELECT AD_Language FROM adempiere.AD_Client WHERE AD_Client_ID = chl.ad_client_id)
+	  LEFT JOIN adempiere.AMN_Payroll_detail payd ON payd.AMN_Payroll_Detail_ID = chl.Record_ID
+	  LEFT JOIN adempiere.AMN_Payroll pay ON pay.AMN_Payroll_ID = payd.AMN_Payroll_ID
+	  LEFT JOIN adempiere.AMN_Employee emp ON emp.AMN_Employee_ID = pay.AMN_Employee_ID
+	  LEFT JOIN adempiere.AMN_Process proc ON proc.AMN_Process_ID = pay.AMN_Process_ID
+	  LEFT JOIN adempiere.AMN_Contract contract ON contract.AMN_Contract_ID = pay.AMN_Contract_ID
+	  WHERE tbl.tablename = 'AMN_Payroll_Detail'	
+	  	AND chl.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
+	UNION ALL
+	-- INICIO DE NUEVO BLOQUE: CREACIÓN DE AMN_Payroll_Detail (INSERT)
+	  SELECT
+	    payd.ad_client_id AS client_id,
+	    payd.ad_org_id AS org_id,
+	    usr.name AS user_value,
+	    usr.description AS user_name,
+	    'AMN_Payroll_Detail - Tabla de detalle de recibos de Nómina' AS tablename,
+	    COALESCE(clm_t.name, clm.columnname, '') AS columnname, 
+	    NULL AS oldvalue,
+	    'Registro Creado' AS newvalue,  -- Valor fijo para indicar creación
+	    CAST(payd.created AS Timestamp) AS created,
+	    'INS' AS cambio_tipo,          -- Indicador de CREACIÓN
+	    emp.amn_employee_id,
+	    emp.value AS employee_value,
+	    emp.name AS employee_name,
+	    proc.amn_process_id,
+	    COALESCE(proc.value, 'SIN PROCESO') AS process_value,
+	    contract.amn_contract_id,
+	    COALESCE(contract.value, '???') || ' - ' || COALESCE(contract.name, '') AS contract_display,
+	    NULL AS ad_changelog_id,       -- No hay ID de ChangeLog
+	    payd.AMN_Payroll_Detail_ID AS record_id,
+	    (SELECT ad_table_id FROM ad_table WHERE tablename = 'AMN_Payroll_Detail') AS ad_table_id
+	  FROM adempiere.AMN_Payroll_detail payd
+	  JOIN adempiere.ad_user usr ON usr.ad_user_id = payd.createdby -- Usamos createdby para saber quién creó
+	  JOIN adempiere.ad_table tbl ON tbl.tablename = 'AMN_Payroll_Detail'
+	  JOIN adempiere.ad_column clm ON clm.ad_table_id = tbl.ad_table_id AND clm.IsAllowLogging = 'Y'
+	  LEFT JOIN adempiere.ad_column_trl clm_t ON clm_t.ad_column_id = clm.ad_column_id 
+		    AND clm_t.ad_language = (SELECT AD_Language FROM adempiere.AD_Client WHERE AD_Client_ID = payd.ad_client_id)
+	  LEFT JOIN adempiere.AMN_Payroll pay ON pay.AMN_Payroll_ID = payd.AMN_Payroll_ID
+	  LEFT JOIN adempiere.AMN_Employee emp ON emp.AMN_Employee_ID = pay.AMN_Employee_ID
+	  LEFT JOIN adempiere.AMN_Process proc ON proc.AMN_Process_ID = pay.AMN_Process_ID
+	  LEFT JOIN adempiere.AMN_Contract contract ON contract.AMN_Contract_ID = pay.AMN_Contract_ID
+	  WHERE 
+	      payd.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
+	      AND payd.isactive = 'Y' 
+	-- FIN DE NUEVO BLOQUE
 	) auditoria
-	WHERE auditoria.created BETWEEN CAST($P{DateFrom} AS Timestamp) AND CAST($P{DateTo} AS Timestamp)
-	  AND auditoria.columnname NOT LIKE '%\_UU' ESCAPE '\'
+	WHERE auditoria.columnname NOT LIKE '%\_UU' ESCAPE '\'
 	  AND auditoria.ad_table_id IN ($P!{AD_Table_ID})
+	  AND (
+        CASE 
+            WHEN ($P{isShowInsert} = 'Y' AND auditoria.cambio_tipo='INS') THEN TRUE
+            WHEN ($P{isShowUpdate} = 'Y' AND auditoria.cambio_tipo='UPD') THEN TRUE
+            WHEN ($P{isShowDelete} = 'Y' AND auditoria.cambio_tipo='DEL') THEN TRUE
+            WHEN (auditoria.cambio_tipo='OTR') THEN TRUE
+            ELSE FALSE 
+        END
+    )
 ) AS empchglog ON (1=0)
 WHERE (imp_header= 1) OR (client_id= $P{AD_Client_ID}
 	AND ( CASE WHEN ( $P{AD_Org_ID}  IS NULL OR $P{AD_Org_ID} = 0 OR org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) )
 	AND	( CASE WHEN ( $P{AMN_Process_ID}  IS NULL OR empchglog.amn_process_id= $P{AMN_Process_ID} ) THEN 1=1 ELSE 1=0 END )
 	AND ( CASE WHEN ( $P{AMN_Contract_ID}  IS NULL OR empchglog.amn_contract_id= $P{AMN_Contract_ID} ) THEN 1=1 ELSE 1=0 END )
-ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_display, empchglog.employee_value, empchglog.columnname
+	AND ( CASE WHEN ( $P{AMN_Employee_ID}  IS NULL OR empchglog.amn_employee_id= $P{AMN_Employee_ID} ) THEN 1=1 ELSE 1=0 END )
+ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_display, empchglog.employee_value, empchglog.created, empchglog.columnname
 ]]>
 	</queryString>
 	<field name="rep_client_id" class="java.math.BigDecimal">
@@ -223,6 +396,10 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 		<property name="com.jaspersoft.studio.field.name" value="contract_display"/>
 		<property name="com.jaspersoft.studio.field.label" value="contract_display"/>
 	</field>
+	<field name="ad_changelog_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ad_changelog_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_changelog_id"/>
+	</field>
 	<field name="record_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="record_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="record_id"/>
@@ -241,7 +418,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 			<band height="16">
 				<printWhenExpression><![CDATA[$F{ad_table_id}!=null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_byTable">
-					<reportElement x="0" y="0" width="1060" height="16" uuid="cc33187c-f2d4-4642-85ee-59246ad0f602">
+					<reportElement x="0" y="0" width="1260" height="16" uuid="cc33187c-f2d4-4642-85ee-59246ad0f602">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
@@ -252,7 +429,9 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="50"/>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_byProcess" isReprintHeaderOnEachPage="true">
@@ -261,18 +440,20 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 			<band height="14">
 				<printWhenExpression><![CDATA[$F{amn_process_id}!=null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_byProcess">
-					<reportElement x="0" y="0" width="1060" height="14" isRemoveLineWhenBlank="true" uuid="1b5cedd2-891f-4ef9-b767-6c0e7a0cd448">
+					<reportElement x="0" y="0" width="1260" height="14" isRemoveLineWhenBlank="true" uuid="1b5cedd2-891f-4ef9-b767-6c0e7a0cd448">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement>
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{process_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Proceso: "+$F{process_value}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="50"/>
+			<band height="14">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_byContract" isReprintHeaderOnEachPage="true">
@@ -281,7 +462,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 			<band height="14">
 				<printWhenExpression><![CDATA[$F{amn_contract_id}!=null]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_byContract">
-					<reportElement x="0" y="0" width="1060" height="14" uuid="0d8924e3-91e6-4ac8-8a5b-2ceaab990f54">
+					<reportElement x="0" y="0" width="1260" height="14" uuid="0d8924e3-91e6-4ac8-8a5b-2ceaab990f54">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
@@ -289,7 +470,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 					<textElement>
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{contract_display}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Contrato: "+$F{contract_display}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -303,7 +484,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 	<pageHeader>
 		<band height="28">
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="860" y="0" width="200" height="14" uuid="924a6157-3657-4ded-8689-0798acfb43ea">
+				<reportElement key="" x="1060" y="0" width="200" height="14" uuid="924a6157-3657-4ded-8689-0798acfb43ea">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -314,7 +495,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="" x="970" y="14" width="90" height="14" uuid="871a683b-bb7c-419e-9847-f5b91ec19880">
+				<reportElement key="" x="1170" y="14" width="90" height="14" uuid="871a683b-bb7c-419e-9847-f5b91ec19880">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -354,7 +535,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement key="" x="860" y="14" width="110" height="14" uuid="67b3f4f1-51ed-4f25-b1ff-5846930aaabf">
+				<reportElement key="" x="1060" y="14" width="110" height="14" uuid="67b3f4f1-51ed-4f25-b1ff-5846930aaabf">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -366,7 +547,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="50" y="14" width="810" height="14" isRemoveLineWhenBlank="true" uuid="a5c98598-b9b8-40cc-bcb9-bdeb0d2b713e">
+				<reportElement x="50" y="14" width="970" height="14" isRemoveLineWhenBlank="true" uuid="a5c98598-b9b8-40cc-bcb9-bdeb0d2b713e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -381,34 +562,34 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement x="480" y="0" width="180" height="14" uuid="077438b3-e237-4ecb-bad5-4d9e7baaa63a">
+				<reportElement x="660" y="0" width="200" height="14" uuid="077438b3-e237-4ecb-bad5-4d9e7baaa63a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="721de673-b9d0-4a3f-bad9-759ac06b9625"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Columna]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="660" y="0" width="200" height="14" uuid="ba80f8cc-38b7-485a-8334-a2add5a48b5d">
+				<reportElement x="860" y="0" width="200" height="14" uuid="ba80f8cc-38b7-485a-8334-a2add5a48b5d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c5f3c49e-3fe6-45e4-b2fd-6df6ec29ea6c"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Valor Anterior]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="860" y="0" width="200" height="14" uuid="a994cfe2-dab6-4c92-ba68-d0658242f518">
+				<reportElement x="1060" y="0" width="200" height="14" uuid="a994cfe2-dab6-4c92-ba68-d0658242f518">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="046d53d4-e2c0-4d4d-babc-22049deaa740"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nuevo Valor]]></text>
@@ -418,7 +599,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b427c6eb-564a-4b40-a676-13a951706516"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Ficha]]></text>
@@ -428,18 +609,18 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="28d7f5a7-2d09-4cf9-a174-9083134c8dea"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Trabajador]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="440" y="0" width="40" height="14" uuid="c34031a6-8bf7-4b70-aa8f-5e62265e0c5b">
+				<reportElement x="520" y="0" width="40" height="14" uuid="c34031a6-8bf7-4b70-aa8f-5e62265e0c5b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tipo]]></text>
@@ -449,7 +630,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Usuario]]></text>
@@ -459,10 +640,33 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
 				</reportElement>
 				<box leftPadding="5"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="0" width="100" height="14" uuid="05096e00-eeb4-4869-867e-8c2896c1f138">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AD_Changelog_ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="80" height="14" uuid="95f55a34-8e50-4083-a0c2-71e939165607">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -470,7 +674,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 		<band height="14" splitType="Stretch">
 			<printWhenExpression><![CDATA[$F{amn_employee_id}!=null]]></printWhenExpression>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1060" height="14" forecolor="#CCCCCC" backcolor="#DCDCDC" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
+				<reportElement mode="Opaque" x="0" y="0" width="1260" height="14" forecolor="#CCCCCC" backcolor="#DCDCDC" uuid="1f532516-09ef-431b-8b86-f248ecfc2833">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -482,12 +686,12 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1060" height="14" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="24ff5628-feb7-4a9b-bf1e-0059c293f0a2">
+				<reportElement mode="Opaque" x="0" y="0" width="1260" height="14" forecolor="#CCCCCC" backcolor="#F0F0F0" uuid="24ff5628-feb7-4a9b-bf1e-0059c293f0a2">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$V{EmployeeGroupCounter} % 2 != 0]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -495,7 +699,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				</graphicElement>
 			</rectangle>
 			<textField>
-				<reportElement x="480" y="0" width="180" height="14" uuid="3140a437-feae-47da-93c6-d79a4db91898">
+				<reportElement x="660" y="0" width="200" height="14" uuid="3140a437-feae-47da-93c6-d79a4db91898">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="721de673-b9d0-4a3f-bad9-759ac06b9625"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -505,17 +709,17 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				<textFieldExpression><![CDATA[$F{columnname}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="660" y="0" width="200" height="14" uuid="e07232e3-9ae3-4f9f-a93d-e189fae9c014">
+				<reportElement x="860" y="0" width="200" height="14" uuid="e07232e3-9ae3-4f9f-a93d-e189fae9c014">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c5f3c49e-3fe6-45e4-b2fd-6df6ec29ea6c"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{oldvalue}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{oldvalue}!= null ? $F{oldvalue} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="860" y="0" width="200" height="14" uuid="0daea300-8b20-4d96-abd3-9fd33d498edd">
+				<reportElement x="1060" y="0" width="200" height="14" uuid="0daea300-8b20-4d96-abd3-9fd33d498edd">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="046d53d4-e2c0-4d4d-babc-22049deaa740"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -539,7 +743,7 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				<textFieldExpression><![CDATA[$V{EmployeeGroupCounter}+"-"+$V{Group_byEmployee_COUNT}+" "+$F{employee_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="440" y="0" width="40" height="14" uuid="cff1c6cd-e03d-4abf-bcfc-a8587dfa9818">
+				<reportElement x="520" y="0" width="40" height="14" uuid="cff1c6cd-e03d-4abf-bcfc-a8587dfa9818">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -559,6 +763,22 @@ ORDER BY empchglog.tablename, empchglog.process_value, empchglog.contract_displa
 				</reportElement>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{created})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="0" width="100" height="14" uuid="647546ea-40e8-44b3-9c40-32e4b0b27841">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9069d51e-f139-47cc-acff-5313715bd300"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ad_changelog_id}!=null ? $F{ad_changelog_id} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="0" width="80" height="14" uuid="0a09ff29-e1f8-406b-81a0-060ce9d4713c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba9e654a-2d17-4b8b-ae42-c218b8d3abdb"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("HH:mm:ss.SSS").format($F{created})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
