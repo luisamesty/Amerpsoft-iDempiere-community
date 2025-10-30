@@ -19,7 +19,6 @@ import org.amerp.process.AMFCurrencyConversionRateCopy;
 import org.amerp.process.AMFDocumentAcctProcessor;
 import org.amerp.process.AMFFactAcctReset;
 import org.amerp.process.AMFGLJournalAnnualClosing;
-import org.amerp.process.AMFRebuildANewClientSchema;
 import org.compiere.process.ProcessCall;
 
 
@@ -75,10 +74,6 @@ public class AMFProcessfactory implements IProcessFactory{
             return new org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Std();
         if (p_className.equals("org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Pojo"))
             return new org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Pojo();
-    	// REPORTS XLS/XLSX
-    	// AccountElements_Tree XLSX
-        if (p_className.equals("org.amerp.reports.xlsx.AccountElements_Tree_xlsx"))
-            return new org.amerp.reports.xlsx.AccountElements_Tree_xlsx();
         return process;
     }
 }

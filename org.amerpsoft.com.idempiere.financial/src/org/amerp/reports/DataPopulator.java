@@ -5,16 +5,19 @@ import java.sql.Array;
 import java.sql.PreparedStatement; 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.amerp.reports.xlsx.generator.ReportGeneratorQuerys;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MImage;
 import org.compiere.util.CLogger;
+
 
 public class DataPopulator {
 
@@ -513,5 +516,117 @@ public class DataPopulator {
         return list;
     }
 
-   
+
+    /**
+     *  getTrialBalanceData
+	 * Obtiene los datos del balance de comprobación con estructura jerárquica.
+     * @param AD_Client_ID
+     * @param C_AcctSchema_ID
+     * @param AD_Org_ID
+     * @param AD_OrgParent_ID
+     * @param C_Period_ID
+     * @param PostingType
+     * @param C_ElementValue_ID
+     * @param DateFrom
+     * @param DateTo
+     * @param isShowZERO
+     * @param trxName
+     * @return
+     */
+	public static List<TrialBalanceLine> getTrialBalanceData(
+			int AD_Client_ID, int C_AcctSchema_ID, int AD_Org_ID, int AD_OrgParent_ID, int C_Period_ID, 
+			String PostingType, Integer C_ElementValue_ID, Timestamp DateFrom, Timestamp DateTo, 
+			String isShowZERO, String trxName) {
+	        
+        List<TrialBalanceLine> list = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = DB.prepareStatement(ReportGeneratorQuerys.SQL_TRIAL_BALANCE_DATA, trxName);
+            int index = 1;
+            
+         // ==========================================================
+            // ASIGNACIÓN DE PARÁMETROS (24 Parámetros)
+            // ==========================================================
+
+            // 1. Accounts CTE (2 Parámetros)
+            pstmt.setInt(index++, AD_Client_ID);     // 1
+            pstmt.setInt(index++, C_AcctSchema_ID);  // 2
+            
+            // 2. Balances CTE
+            // 2.1 amf_element_value_tree_extended (2 Parámetros)
+            pstmt.setInt(index++, AD_Client_ID);     // 3
+            pstmt.setInt(index++, C_AcctSchema_ID);  // 4
+            
+            // 2.2 amf_org_tree (3 Parámetros)
+            pstmt.setInt(index++, AD_Client_ID);     // 5
+            pstmt.setInt(index++, AD_Org_ID);        // 6
+            pstmt.setInt(index++, AD_OrgParent_ID);  // 7
+            
+            // 2.3 amf_balance_account_org_flex_orgparent (9 Parámetros)
+            pstmt.setInt(index++, AD_Client_ID);        // 8
+            pstmt.setInt(index++, AD_OrgParent_ID);     // 9
+            pstmt.setInt(index++, AD_Org_ID);           // 10
+            pstmt.setInt(index++, C_AcctSchema_ID);     // 11
+            pstmt.setInt(index++, C_Period_ID);         // 12
+            pstmt.setString(index++, PostingType);      // 13
+            
+            // C_ElementValue_ID (Puede ser NULL)
+            if (C_ElementValue_ID == null || C_ElementValue_ID == 0) {
+                 pstmt.setObject(index++, null, java.sql.Types.INTEGER); // 14
+            } else {
+                 pstmt.setInt(index++, C_ElementValue_ID);               // 14
+            }
+            pstmt.setTimestamp(index++, DateFrom);      // 15
+            pstmt.setTimestamp(index++, DateTo);        // 16
+
+            // 2.4 Filtro isShowZERO en Balances CTE (2 Parámetros)
+            pstmt.setString(index++, isShowZERO); // 17: isShowZERO = 'Y'
+            pstmt.setString(index++, isShowZERO); // 18: isShowZERO = 'N'
+            
+            // 3. BalancesDetailAll CTE (4 Parámetros de Filtro)
+            // Filtro '50' (Detalle por Org)
+            pstmt.setString(index++, isShowZERO); // 19: isShowZERO = 'Y'
+            pstmt.setString(index++, isShowZERO); // 20: isShowZERO = 'N'
+            // Filtro '60' (Total Cuenta)
+            pstmt.setString(index++, isShowZERO); // 21: isShowZERO = 'Y'
+            pstmt.setString(index++, isShowZERO); // 22: isShowZERO = 'N'
+
+            // 4. SELECT FINAL (2 Parámetros de Filtro para Resumen 'R')
+            pstmt.setString(index++, isShowZERO); // 23: isShowZERO = 'Y'
+            pstmt.setString(index++, isShowZERO); // 24: isShowZERO = 'N'
+            
+            // ==========================================================
+            
+            rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                TrialBalanceLine line = new TrialBalanceLine();
+                
+                // Mapeo de columnas
+                line.setCodigo(rs.getString("codigo"));
+                line.setNombre(rs.getString("nombre"));
+                line.setOrgValue(rs.getString("org_value"));
+                
+                line.setOpenBalance(rs.getBigDecimal("openbalance"));
+                line.setAmtAcctDr(rs.getBigDecimal("debitos"));
+                line.setAmtAcctCr(rs.getBigDecimal("creditos"));
+                line.setBalancePeriodo(rs.getBigDecimal("balance_periodo"));
+                line.setCloseBalance(rs.getBigDecimal("closebalance"));
+                
+                line.setTipoRegistro(rs.getString("tipo_registro")); // R, 60, 50
+                line.setLevel(rs.getInt("level"));
+                // pathel_order se usa solo para el ORDER BY
+                
+                list.add(line);
+            }
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Fallo al obtener los datos del Balance de Comprobación.", e);
+        } finally {
+            DB.close(rs, pstmt);
+        }
+
+        return list;
+    }
 }

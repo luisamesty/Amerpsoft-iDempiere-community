@@ -18,11 +18,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/lib/poi-4.1.2.jar"/>
-	<classpathentry kind="lib" path="src/lib/poi-ooxml-4.1.2.jar"/>
-	<classpathentry kind="lib" path="src/lib/poi-ooxml-schemas-4.1.2.jar"/>
-	<classpathentry kind="lib" path="src/lib/xmlbeans-3.1.0.jar"/>
-	<classpathentry kind="lib" path="src/lib/keikai-model-oss.jar"/>
-	<classpathentry kind="lib" path="src/lib/keikai-oss.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
