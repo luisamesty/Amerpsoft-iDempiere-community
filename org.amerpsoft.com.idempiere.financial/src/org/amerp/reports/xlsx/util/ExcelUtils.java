@@ -2,6 +2,7 @@ package org.amerp.reports.xlsx.util;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Utilidades para creación de estilos y celdas en reportes Excel.
