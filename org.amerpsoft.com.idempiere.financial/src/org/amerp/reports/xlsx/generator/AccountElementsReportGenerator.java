@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.ss.usermodel.Cell;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
@@ -67,7 +68,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
                 // --- Reservar espacio para el logo
                 sheet.setColumnWidth(0, 20 * 256);  // Aumenta ancho columna A
                 for (int i = 0; i < 4; i++) {       // 4 filas de alto
-                    SXSSFRow row = sheet.getRow(i);
+                    XSSFRow row = sheet.getRow(i);
                     if (row == null)
                         row = sheet.createRow(i);
                     row.setHeightInPoints(25);       // alto de fila visible
@@ -89,7 +90,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
             }
         }
         // Titulo del Reporte
-        SXSSFRow titleRow = sheet.createRow(1);
+        XSSFRow titleRow = sheet.createRow(1);
         Cell cellTitle = titleRow.createCell(1); 
         cellTitle.setCellValue("Account Elements Catalog");
         CellStyle titleStyle = workbook.createCellStyle();
@@ -101,7 +102,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
         cellTitle.setCellStyle(titleStyle);
         
         // --- Nombre de la empresa
-        SXSSFRow nameRow = sheet.createRow(2); 
+        XSSFRow nameRow = sheet.createRow(2); 
         Cell cellName = nameRow.createCell(0); 
         cellName.setCellValue(cliName);
         CellStyle nameStyle = workbook.createCellStyle();
@@ -113,7 +114,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
         cellName.setCellStyle(nameStyle);
 
         // --- Descripción de la empresa
-        SXSSFRow descRow = sheet.createRow(3); // fila 1
+        XSSFRow descRow = sheet.createRow(3); // fila 1
         Cell cellDesc = descRow.createCell(0);
         cellDesc.setCellValue(cliDescription);
         CellStyle descStyle = workbook.createCellStyle();
@@ -152,11 +153,11 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
     	    sheet.setColumnWidth(col, maxLen[col] * 256);
     	}
         // ESCRITURA DE LA CABECERA (usando la variable de INSTANCIA headerRows)
-        SXSSFRow headerRow = sheet.createRow(headerRows); // Usa la variable de INSTANCIA 'headerRows = 4'
+        XSSFRow headerRow = sheet.createRow(headerRows); // Usa la variable de INSTANCIA 'headerRows = 4'
         headerRow.setHeightInPoints(15.0f); // Altura mínima
 
         for (int i = 0; i < this.headers.length; i++) {
-            String translated = Msg.getElement(Env.getCtx(), this.headers[i]); 
+            String translated = Msg.translate(Env.getCtx(), this.headers[i]); 
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(translated);
             cell.setCellStyle(headerStyle);
@@ -188,7 +189,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
 
         for (int i = 0; i < total; i++) {
             AccountElementBasic e = reportData.get(i);
-            SXSSFRow row = sheet.createRow(rowNum++);
+            XSSFRow row = sheet.createRow(rowNum++);
 
             Integer level = e.getLevel() != null ? e.getLevel() : 0;
             String v1 = ExcelUtils.safeString(e.getCodigo());
@@ -229,21 +230,9 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
                 log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
                 		Msg.getMsg(Env.getCtx(), "of")+" "+total +
                 		Msg.getMsg(Env.getCtx(), "Records"));
-                
-                try {
-					this.sheet.flushRows(batchSize);
-				} catch (IOException e1) {
-					// 
-					e1.printStackTrace();
-				}
+      
             }
         }
-
-        try {
-			this.sheet.flushRows();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
         for (int col = 0; col < headers.length; col++) {
             int chars = Math.min(100, Math.max(10, maxLen[col] + 2));

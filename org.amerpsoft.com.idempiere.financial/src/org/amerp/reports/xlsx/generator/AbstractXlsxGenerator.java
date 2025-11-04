@@ -9,15 +9,13 @@ import java.util.Properties;
 import org.amerp.reports.xlsx.util.ExcelUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 
 public abstract class AbstractXlsxGenerator implements IReportGenerator {
 
     // Variables protegidas para acceso desde las subclases
-	protected SXSSFWorkbook workbook; // <--- ¡DEBE SER SXSSFWorkbook!
-	protected SXSSFSheet sheet;
+	protected XSSFWorkbook workbook;
+	protected XSSFSheet sheet;
 	protected XSSFCellStyle styleHeader; 
     protected Properties ctx;
     protected int windowNo;
@@ -29,10 +27,9 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
         this.ctx = ctx;
         this.windowNo = windowNo;
         this.parameters = parameters;
-        // Inicializar el libro de Excel como SXSSFWorkbook, que es la única que soporta SXSSFSheet
-        this.workbook = new SXSSFWorkbook(100); // 100 filas en memoria antes de escribir a disco
-        this.workbook.setCompressTempFiles(true); // BUENA PRÁCTICA DE SXSSF
-        
+        // Inicializar el libro de Excel como XSSFWorkbook, que es la única que soporta SXSSFSheet
+        this.workbook = new XSSFWorkbook(); 
+       
         // Configurar estilos y hoja inicial
         setupStyles();
         
@@ -66,52 +63,84 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
         font.setBold(true);
         styleHeader.setFont(font);
         this.styleMap = new java.util.HashMap<>();
+        // Función auxiliar para aplicar LEFT
+        java.util.function.Consumer<String> setLeft = (key) -> {
+            CellStyle s = styleMap.get(key);
+            if (s != null) {
+                s.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
+            }
+        };
         // --- Lógica de Estilos de Niveles L1-L9 ---
         styleMap.put("L1", ExcelUtils.createStyle(this.workbook, 14, false));
+        setLeft.accept("L1");
         styleMap.put("L2", ExcelUtils.createStyle(this.workbook, 14, false));
-        styleMap.put("L3", ExcelUtils.createStyle(this.workbook, 12, false));
+        setLeft.accept("L2");
+        styleMap.put("L2", ExcelUtils.createStyle(this.workbook, 12, false));
+        setLeft.accept("L3");
         styleMap.put("L4", ExcelUtils.createStyle(this.workbook, 12, false));
+        setLeft.accept("L4");
         styleMap.put("L5", ExcelUtils.createStyle(this.workbook, 10, false));
+        setLeft.accept("L5");
         styleMap.put("L6", ExcelUtils.createStyle(this.workbook, 10, false));
+        setLeft.accept("L6");
         styleMap.put("L7", ExcelUtils.createStyle(this.workbook, 10, false));
+        setLeft.accept("L7");
         styleMap.put("L8", ExcelUtils.createStyle(this.workbook, 10, false));
+        setLeft.accept("L8");
         styleMap.put("L9", ExcelUtils.createStyle(this.workbook, 10, false));
-
+        setLeft.accept("L9");
+        
         // Versiones en negrita (isSummary = 'Y')
         styleMap.put("L1B", ExcelUtils.createStyle(this.workbook, 14, true));
+        setLeft.accept("L1B");
         styleMap.put("L2B", ExcelUtils.createStyle(this.workbook, 14, true));
+        setLeft.accept("L2B");
         styleMap.put("L3B", ExcelUtils.createStyle(this.workbook, 12, true));
+        setLeft.accept("L3B");
         styleMap.put("L4B", ExcelUtils.createStyle(this.workbook, 12, true));
+        setLeft.accept("L4B");
         styleMap.put("L5B", ExcelUtils.createStyle(this.workbook, 10, true));
+        setLeft.accept("L5B");
         styleMap.put("L6B", ExcelUtils.createStyle(this.workbook, 10, true));
+        setLeft.accept("L6B");
         styleMap.put("L7B", ExcelUtils.createStyle(this.workbook, 10, true));
+        setLeft.accept("L7B");
         styleMap.put("L8B", ExcelUtils.createStyle(this.workbook, 10, true));
+        setLeft.accept("L8B");
         styleMap.put("L9B", ExcelUtils.createStyle(this.workbook, 10, true));
+        setLeft.accept("L9B");
         
         // 1. Crear el DataFormat (necesario para formatos numéricos)
         org.apache.poi.ss.usermodel.DataFormat format = workbook.createDataFormat();
         // Formato: Separador de miles, 2 decimales, y negativos en rojo
         String numericFormat = "#,##0.00;[RED]-#,##0.00"; 
+        // 🚨 ESTILO DE NUMERICO Normal (NUM_N)
         // 2. Crear el estilo Base Numérico Estándar
         CellStyle numberStyle = workbook.createCellStyle();
         // 3. Aplicar el formato de datos y alineación
         numberStyle.setDataFormat(format.getFormat(numericFormat)); 
         numberStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.RIGHT);
         // 4. Almacenar el estilo estándar
-        styleMap.put("N_STANDARD", numberStyle); 
-        // Opcional: Crear el estilo Numérico Estándar Negrita
+        styleMap.put("NUM_N", numberStyle); 
+        // 🚨 ESTILO DE NUMERICO BOLD (NUM_B)
         CellStyle numberStyleBold = workbook.createCellStyle();
         numberStyleBold.setDataFormat(format.getFormat(numericFormat));
         numberStyleBold.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.RIGHT);
         Font boldFont = workbook.createFont();
         boldFont.setBold(true);
         numberStyleBold.setFont(boldFont);
-        styleMap.put("BN", numberStyleBold); // Usado para R/60 (bold = true, tipo N)
-        // 
+        styleMap.put("NUM_B", numberStyleBold); // Usado para R/60 (bold = true, tipo N)
+        // 🚨 ESTILO DE TEXTO NORMAL (N)
         CellStyle textStyle = workbook.createCellStyle();
         textStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
-        styleMap.put("N", textStyle);
-        styleMap.put("L1",  textStyle);
+        styleMap.put("TEXT_N", textStyle);
+        // 🚨 ESTILO DE TEXTO NEGRITA (BN) 
+        // Si usted creó un estilo BN manualmente y no usó ExcelUtils.createStyle(..., true):
+        CellStyle boldTextStyle = workbook.createCellStyle();
+        boldTextStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
+        boldTextStyle.setFont(boldFont);
+        styleMap.put("TEXT_B", boldTextStyle);
+        
     }
     
 
@@ -121,7 +150,7 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
     protected final void writeClientHeader(int AD_Client_ID) {
         
         // 1. Obtiene la hoja y el contexto (Lógica de infraestructura)
-        this.sheet = (SXSSFSheet) this.workbook.createSheet(getReportName());
+        this.sheet = this.workbook.createSheet(getReportName());
         
         // 2. Ejecuta la lógica Específica (Delegado a las subclases)
         writeReportSpecificHeader(AD_Client_ID);
@@ -167,10 +196,6 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
         } finally {
         	// 🚨 Cierre del libro (libera recursos escritos)
             workbook.close();
-            // 💡 CRÍTICO: Elimina los archivos temporales creados por el SXSSFWorkbook
-            if (workbook != null) {
-                workbook.dispose(); 
-            }
         }
         return tempFile;
     }

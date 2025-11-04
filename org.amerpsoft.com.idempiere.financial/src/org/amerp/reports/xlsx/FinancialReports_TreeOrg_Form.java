@@ -66,6 +66,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.North;
@@ -97,13 +98,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     }
    
     private String fullPath = "";
-    
 	private Borderlayout mainLayout = new Borderlayout();
 	// Áreas
     private North north = new North();   // Filtros
     private Center center = new Center(); // 
     private South south = new South();   // 
-
     // Controles y Filtros
     private Label fReportTypeLabel = new Label();
     private WTableDirEditor fReportType;
@@ -134,7 +133,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private Label centerLabel = new Label();
 	private Label lblStatus = new Label();
 	private Textbox textStatus = new Textbox();
-
 	// Botones
 	private Button refreshButton = new Button();
 	private Button cancelButton = new Button();
@@ -152,7 +150,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	 * Configuración de la Sesión:Acceder al contexto (Env.getCtx()) R
 	 * Realizar preparaciones a nivel de datos que no dependen de la UI
      */
-
     protected void initForm() {
     	
         // Layout general
@@ -200,7 +197,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	 * Adición de Componentes, Agregar los wrappers (fClient.getComponent(), fPeriod.getComponent()) a las filas (row.appendChild(...)).
 	 * Estructura de *Layout* , Definir la disposición visual y el tamaño de los contenedores principales. 
 	 */
-    
     private void zkInit() {
 
 		// =======================================================
@@ -623,14 +619,14 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // =======================================================
         // ======= isShowOrganization  =======
         // =======================================================
-        isShowOrganization.setValue(true);
+//        isShowOrganization.setValue(true);
         isShowOrganization.setChecked(true);
         isShowOrganization.addActionListener(this);
 
         // =======================================================
         // ======= isShowZERO  =======
         // =======================================================
-        isShowZERO.setValue(false);
+//        isShowZERO.setValue(false);
         isShowZERO.setChecked(false);
         isShowZERO.addActionListener(this);
         
@@ -1031,8 +1027,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	  
 	private ReportMetadata runServerProcessForm() {
 		String errorMsg = "";
-		String fullPath="";
-//		File xlsxFile = null;
 		ReportMetadata reportMetadata = null;
 		int AD_Client_ID = fClient.getValue() != null ? ((Integer) fClient.getValue()) : Env.getAD_Client_ID(Env.getCtx());
 		int C_AcctSchema_ID = fAcctSchema.getValue() != null ? ((Integer) fAcctSchema.getValue()) : 0;
@@ -1061,11 +1055,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         	C_Period_ID = (Integer) objC_Period_ID;
         }
         // Obtener el valor booleano (true/false)
-        Boolean showZero = (Boolean) isShowZERO.getValue();
-        Boolean showOrg = (Boolean) isShowOrganization.getValue();
-        // Conversión usando el operador ternario (forma más concisa)
-        String isShowZERO_String = showZero ? "Y" : "N";
-        String isShowOrganization_String = showOrg ? "Y" : "N";
+        Boolean showZero = isShowZERO.isChecked();
+        Boolean showOrg = isShowOrganization.isChecked();
+        String isShowZERO_String = (showZero != null && showZero) ? "Y" : "N";
+        String isShowOrganization_String = (showOrg != null && showOrg) ? "Y" : "N";
         // Parámetros Requeridos
         parameters.put("AD_Client_ID", AD_Client_ID);
         parameters.put("AD_OrgParent_ID", AD_OrgParent_ID);
@@ -1107,15 +1100,23 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		return reportMetadata;
 	}
 
-    private void previewReportWeb(String fullPath, String[] headers, int[] widths, int headerRowCount, int maxVisibleRow) throws FileNotFoundException {
+    private void previewReportWeb(String fullPath, String[] headers, int[] widths, int headerRowCount, int maxVisibleRow) throws Exception {
         
     	log.warning("El archivo en Form:"+fullPath);
         // Limpio el centro
         center.getChildren().clear();
-        ExcelViewerPanel viewer = new ExcelViewerPanel(fullPath, headers, widths, headerRowCount, maxVisibleRows);
-		center.appendChild(viewer);
+//        ExcelViewerPanel viewer = new ExcelViewerPanel(fullPath, headers, widths, headerRowCount, maxVisibleRows);
+//		center.appendChild(viewer);
+        // Usar la Fábrica para obtener el visor
+        // CONVERSIÓN DE STRING A FILE
+        File reportFile = new File(fullPath);
+        Div viewer = ExcelViewerFactory.createViewer(reportFile, headers, widths, headerRowCount, maxVisibleRow);
+        
+        // Mostrar el visor en el centro
+        center.appendChild(viewer);
 		lblStatus.setText(Msg.getMsg(Env.getCtx(), "FileXLSX"));
 		textStatus.setText(fullPath);
+
     }
     
     

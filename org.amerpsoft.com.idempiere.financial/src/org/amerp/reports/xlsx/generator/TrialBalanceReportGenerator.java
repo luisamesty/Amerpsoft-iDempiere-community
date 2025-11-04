@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MImage;
@@ -32,7 +33,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
 	// Cabeceras, incluyendo saldos y organización
     private final String[] headers = { 
         "value", "name", "AD_Org_ID", 
-        "SI", "dr", "cr", "per", "Balanace" 
+        "BeginningBalance", "AmtAcctDr", "AmtAcctCr", "C_Period_ID", "Balance" 
     };
     //Anchos proporcionales para las  columnas
     private int[] maxLen = { 15, 30, 10, 15, 15, 15, 15, 15 };
@@ -73,7 +74,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
                 // --- Reservar espacio para el logo
                 sheet.setColumnWidth(0, 20 * 256);  // Aumenta ancho columna A
                 for (int i = 0; i < 4; i++) {       // 4 filas de alto
-                    SXSSFRow row = sheet.getRow(i);
+                    XSSFRow row = sheet.getRow(i);
                     if (row == null)
                         row = sheet.createRow(i);
                     row.setHeightInPoints(25);       // alto de fila visible
@@ -95,7 +96,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             }
         }
         // Titulo del Reporte
-        SXSSFRow titleRow = sheet.createRow(1); 
+        XSSFRow titleRow = sheet.createRow(1); 
         Cell cellTitle = titleRow.createCell(1); 
         cellTitle.setCellValue("Trial Balance Report");
         CellStyle titleStyle = workbook.createCellStyle();
@@ -107,7 +108,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         cellTitle.setCellStyle(titleStyle);
         
         // --- Nombre de la empresa
-        SXSSFRow nameRow = sheet.createRow(2);
+        XSSFRow nameRow = sheet.createRow(2);
         Cell cellName = nameRow.createCell(0); 
         cellName.setCellValue(cliName);
         CellStyle nameStyle = workbook.createCellStyle();
@@ -119,7 +120,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         cellName.setCellStyle(nameStyle);
 
         // --- Descripción de la empresa
-        SXSSFRow descRow = sheet.createRow(3); // fila 1
+        XSSFRow descRow = sheet.createRow(3); // fila 1
         Cell cellDesc = descRow.createCell(0);
         cellDesc.setCellValue(cliDescription);
         CellStyle descStyle = workbook.createCellStyle();
@@ -160,11 +161,11 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         headerStyle.setFont(headerFont);
         
         // Escribir la cabecera en la fila 4
-    	SXSSFRow headerRow = sheet.createRow(headerRows);
+    	XSSFRow headerRow = sheet.createRow(headerRows);
     	// Establecer una altura mínima  (ej. 15 puntos)
     	headerRow.setHeightInPoints(15.0f);
     	for (int i = 0; i < headers.length; i++) {
-    	    String translated = Msg.getMsg(Env.getCtx(), headers[i]); 
+    	    String translated = Msg.translate(Env.getCtx(), headers[i]); 
     	    Cell cell = headerRow.createCell(i);
     	    cell.setCellValue(translated);
     	    cell.setCellStyle(headerStyle);
@@ -209,34 +210,39 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         // --- 4. Iterar y escribir el contenido
         for (int i = 0; i < total; i++) {
             TrialBalanceLine e = reportData.get(i);
-            SXSSFRow row = sheet.createRow(rowNum++);
-
             // --- Determinar Estilos y Contenido
             int level = e.getLevel();
             String tipoRegistro = e.getTipoRegistro(); // R, 60, 50
 
+            // FILTRADO Organizacion
+            boolean skipOrganization = "N".equalsIgnoreCase(isShowOrganization) && "50".equals(tipoRegistro);
+            if (skipOrganization) {
+                // Si isShowOrganization es 'N' y la línea es de tipo '50' (Organización), saltar esta iteración.
+                continue; 
+            }
+            // Nueva Fila
+            XSSFRow row = sheet.createRow(rowNum++);
             // Formatear la cuenta con sangría (Indentación)
             String paddedName = ExcelUtils.padLeft(e.getNombre(), level);
             String orgValue = e.getOrgValue() != null ? e.getOrgValue() : "";
 
-            // Determinar estilo (Negrita para totales/resumen, cursiva para detalle org)
+            // Determinar estilo
             boolean bold = "R".equals(tipoRegistro) || "60".equals(tipoRegistro);
-            String key = (bold ? "B" : "") + ("50".equals(tipoRegistro) ? "I" : "N"); // B = Bold, I = Italic, N = Normal
-            CellStyle style = styleMap.getOrDefault(key, styleMap.get("N")); 
+            String textBaseKey = bold ? "TEXT_B" : "TEXT_N";
+            CellStyle textStyle = styleMap.getOrDefault(textBaseKey, styleMap.get("TEXT_N"));
+            String numBaseKey = bold ? "NUM_B" : "NUM_N"; 
+            CellStyle numberStyle = styleMap.getOrDefault(numBaseKey, styleMap.get("NUM_N"));
 
-            // Estilos para números (requiere crear NumberStyles con formato)
-            //CellStyle numberStyle = styleMap.getOrDefault(key + "N", styleMap.get("N_NUM"));
-            CellStyle numberStyle = styleMap.getOrDefault(key + "N", styleMap.get("N_STANDARD"));
             // --- Columna 0: Cód. Cuenta (con sangría)
-            ExcelUtils.createStyledCell(row, 0, e.getCodigo(), style);
+            ExcelUtils.createStyledCell(row, 0, e.getCodigo(), textStyle);
             ExcelUtils.updateMaxLen(maxLen, 0, e.getCodigo());
 
             // --- Columna 1: Nombre Cuenta
-            ExcelUtils.createStyledCell(row, 1, paddedName, style);
+            ExcelUtils.createStyledCell(row, 1, paddedName, textStyle);
             ExcelUtils.updateMaxLen(maxLen, 1, paddedName);
 
             // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
-            ExcelUtils.createStyledCell(row, 2, orgValue, style);
+            ExcelUtils.createStyledCell(row, 2, orgValue, textStyle);
             ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
             // --- Columnas 3-7: Saldos (BigDecimals)
             int col = 3;
@@ -246,31 +252,30 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             ExcelUtils.createStyledCell(row, col++, e.getBalancePeriodo(), numberStyle);
             ExcelUtils.createStyledCell(row, col++, e.getCloseBalance(), numberStyle);
             
-            // Note: Las columnas de saldo no necesitan updateMaxLen si se usa formato de número fijo
-
             if ((i + 1) % batchSize == 0) {
                 log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
                 		Msg.getMsg(Env.getCtx(), "of")+" "+total +
                 		Msg.getMsg(Env.getCtx(), "Records"));
-                
-                try {
-					this.sheet.flushRows(batchSize);
-				} catch (IOException e1) {
-					log.severe("Error flushing rows: " + e1.getMessage());
-				}
             }
         }
 
-        try {
-			this.sheet.flushRows();
-		} catch (IOException e) {
-			log.severe("Error final flushing rows: " + e.getMessage());
-		}
-
-        // Ajuste de ancho de columna final (Solo aplica a las columnas de texto)
-        for (int col = 0; col < 3; col++) { // Solo las primeras 3 columnas (Código, Nombre, Org)
-            int chars = Math.min(100, Math.max(10, maxLen[col] + 2));
-            sheet.setColumnWidth(col, chars * 256);
+        // Ajuste de ancho de columna final (Aplicar a todas)
+        for (int col = 0; col < maxLen.length; col++) { 
+            
+            // Obtener el ancho deseado: Máximo de 100 caracteres, mínimo de 10, y añadir 2 de padding base.
+            int chars = Math.min(100, Math.max(10, maxLen[col] + 2)); 
+            
+            // 1. Unidades base POI: Caracteres * 256
+            int desiredWidthUnits = chars * 256; 
+            
+            // 2. Aplicar HOLGURA EXTRA (PADDING)
+            // Aumentamos el 512 (equivalente a 2 caracteres) a un valor más alto.
+            // Use 1024 o 1536 para más espacio.
+            int extraPadding = 1024; // 1024 unidades POI son aproximadamente 4 caracteres extra.
+            
+            if (desiredWidthUnits > 0) {
+                this.sheet.setColumnWidth(col, desiredWidthUnits + extraPadding); 
+            }
         }
     }
     

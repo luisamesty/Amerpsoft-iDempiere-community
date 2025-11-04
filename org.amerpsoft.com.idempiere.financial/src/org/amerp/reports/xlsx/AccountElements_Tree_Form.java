@@ -44,7 +44,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MColumn;
@@ -505,9 +507,9 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
         File tempFile = new File(tempDir, this.getClass().getName() + "_" + System.currentTimeMillis() + ".xlsx");
         fullPath = tempFile.getAbsolutePath();
 
-        try (SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
-            workbook.setCompressTempFiles(true);
-            SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet("Account Elements");
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+
+            XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Account Elements");
 
             // --- Header con logo y nombre
             // --- Insertar logo en la parte superior izquierda
@@ -520,7 +522,7 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
                     // --- Reservar espacio para el logo
                     sheet.setColumnWidth(0, 20 * 256);  // Aumenta ancho columna A
                     for (int i = 0; i < 4; i++) {       // 4 filas de alto
-                        SXSSFRow row = sheet.getRow(i);
+                        XSSFRow row = sheet.getRow(i);
                         if (row == null)
                             row = sheet.createRow(i);
                         row.setHeightInPoints(25);       // alto de fila visible
@@ -544,7 +546,7 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
             }
             
             // --- Nombre de la empresa
-            SXSSFRow nameRow = sheet.createRow(2); // fila 0
+            XSSFRow nameRow = sheet.createRow(2); // fila 0
             Cell cellName = nameRow.createCell(0); // columna 1 (junto al logo)
             cellName.setCellValue(cliName);
             CellStyle nameStyle = workbook.createCellStyle();
@@ -556,7 +558,7 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
             cellName.setCellStyle(nameStyle);
 
             // --- Descripción de la empresa
-            SXSSFRow descRow = sheet.createRow(3); // fila 1
+            XSSFRow descRow = sheet.createRow(3); // fila 1
             Cell cellDesc = descRow.createCell(0);
             cellDesc.setCellValue(cliDescription);
             CellStyle descStyle = workbook.createCellStyle();
@@ -582,7 +584,7 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
         	    sheet.setColumnWidth(col, maxLen[col] * 256);
         	}
 
-        	SXSSFRow headerRow = sheet.createRow(headerRows);
+        	XSSFRow headerRow = sheet.createRow(headerRows);
         	for (int i = 0; i < headers.length; i++) {
         	    String translated = Msg.getElement(Env.getCtx(), headers[i]); 	//Traducciones
         	    Cell cell = headerRow.createCell(i);
@@ -620,7 +622,7 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
 
             for (int i = 0; i < total; i++) {
                 AccountElementBasic e = reportData.get(i);
-                SXSSFRow row = sheet.createRow(rowNum++);
+                XSSFRow row = sheet.createRow(rowNum++);
 
                 Integer level = e.getLevel() != null ? e.getLevel() : 0;
                 String v1 = ExcelUtils.safeString(e.getCodigo());
@@ -661,12 +663,9 @@ public class AccountElements_Tree_Form implements IFormController, EventListener
                     log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
                     		Msg.getMsg(Env.getCtx(), "of")+" "+total +
                     		Msg.getMsg(Env.getCtx(), "Records"));
-                    
-                    sheet.flushRows(batchSize);
                 }
             }
 
-            sheet.flushRows();
 
             for (int col = 0; col < headers.length; col++) {
                 int chars = Math.min(100, Math.max(10, maxLen[col] + 2));

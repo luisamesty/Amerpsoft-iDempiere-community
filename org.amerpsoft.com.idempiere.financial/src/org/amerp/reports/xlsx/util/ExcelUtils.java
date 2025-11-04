@@ -13,13 +13,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelUtils {
 
     // --- Crear estilo de celda con tamaño y negrita opcional
-    public static CellStyle createStyle(SXSSFWorkbook workbook, int fontSize, boolean bold) {
+    public static CellStyle createStyle(XSSFWorkbook workbook, int fontSize, boolean bold) {
         Font font = workbook.createFont();
         font.setFontHeightInPoints((short) fontSize);
         font.setBold(bold);
 
         CellStyle style = workbook.createCellStyle();
         style.setFont(font);
+        style.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
         style.setVerticalAlignment(VerticalAlignment.TOP);
         style.setWrapText(true);
         return style;
