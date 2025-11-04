@@ -66,6 +66,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.North;
@@ -83,6 +84,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	// Variable para guardar valores seleccionado por el usuario.
     private String m_postingType_value = "A"; // valor por defecto
     private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+    private ProcessInfo m_Pi = null;
     private int maxVisibleRows =5000;
     /** Default constructor */
     public FinancialReports_TreeOrg_Form() {
@@ -97,13 +99,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     }
    
     private String fullPath = "";
-    
 	private Borderlayout mainLayout = new Borderlayout();
 	// Áreas
     private North north = new North();   // Filtros
     private Center center = new Center(); // 
     private South south = new South();   // 
-
     // Controles y Filtros
     private Label fReportTypeLabel = new Label();
     private WTableDirEditor fReportType;
@@ -134,7 +134,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private Label centerLabel = new Label();
 	private Label lblStatus = new Label();
 	private Textbox textStatus = new Textbox();
-
 	// Botones
 	private Button refreshButton = new Button();
 	private Button cancelButton = new Button();
@@ -152,7 +151,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	 * Configuración de la Sesión:Acceder al contexto (Env.getCtx()) R
 	 * Realizar preparaciones a nivel de datos que no dependen de la UI
      */
-
     protected void initForm() {
     	
         // Layout general
@@ -200,7 +198,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	 * Adición de Componentes, Agregar los wrappers (fClient.getComponent(), fPeriod.getComponent()) a las filas (row.appendChild(...)).
 	 * Estructura de *Layout* , Definir la disposición visual y el tamaño de los contenedores principales. 
 	 */
-    
     private void zkInit() {
 
 		// =======================================================
@@ -623,14 +620,14 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // =======================================================
         // ======= isShowOrganization  =======
         // =======================================================
-        isShowOrganization.setValue(true);
+//        isShowOrganization.setValue(true);
         isShowOrganization.setChecked(true);
         isShowOrganization.addActionListener(this);
 
         // =======================================================
         // ======= isShowZERO  =======
         // =======================================================
-        isShowZERO.setValue(false);
+//        isShowZERO.setValue(false);
         isShowZERO.setChecked(false);
         isShowZERO.addActionListener(this);
         
@@ -694,6 +691,15 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         } else if (source == processButton) {
         	ReportMetadata metadata  = runServerProcessForm();
         	// Acceder a las variables para pasarlas al viewer
+        	if (metadata == null) {
+                if (m_Pi != null && m_Pi.isError()) {
+                	Dialog.warn(form.getWindowNo(), "No se generó el archivo. \n\r"+m_Pi.getSummary());
+                    return;
+                } else {
+                    Dialog.warn(form.getWindowNo(), "No se generó el archivo.");
+                    return;
+                }
+        	}
         	fullPath = metadata.getFullPath();
         	String[] headers = metadata.getHeaders();
         	int[] widths = metadata.getWidths();
@@ -1031,8 +1037,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	  
 	private ReportMetadata runServerProcessForm() {
 		String errorMsg = "";
-		String fullPath="";
-//		File xlsxFile = null;
 		ReportMetadata reportMetadata = null;
 		int AD_Client_ID = fClient.getValue() != null ? ((Integer) fClient.getValue()) : Env.getAD_Client_ID(Env.getCtx());
 		int C_AcctSchema_ID = fAcctSchema.getValue() != null ? ((Integer) fAcctSchema.getValue()) : 0;
@@ -1040,6 +1044,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		int AD_OrgParent_ID = fOrgParent.getValue() !=null ? ((Integer) fOrgParent.getValue()) : 0;
 		// Crear un ProcessInfo simulado para lockUI/unlockUI
 	    ProcessInfo pi = new ProcessInfo(Msg.getMsg(Env.getCtx(), "Processing"), 0);
+	    this.m_Pi = pi;
 		// Recolección de Parámetros del Formulario
         Map<String, Object> parameters = new HashMap<>();
         // Report Type
@@ -1061,11 +1066,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         	C_Period_ID = (Integer) objC_Period_ID;
         }
         // Obtener el valor booleano (true/false)
-        Boolean showZero = (Boolean) isShowZERO.getValue();
-        Boolean showOrg = (Boolean) isShowOrganization.getValue();
-        // Conversión usando el operador ternario (forma más concisa)
-        String isShowZERO_String = showZero ? "Y" : "N";
-        String isShowOrganization_String = showOrg ? "Y" : "N";
+        Boolean showZero = isShowZERO.isChecked();
+        Boolean showOrg = isShowOrganization.isChecked();
+        String isShowZERO_String = (showZero != null && showZero) ? "Y" : "N";
+        String isShowOrganization_String = (showOrg != null && showOrg) ? "Y" : "N";
         // Parámetros Requeridos
         parameters.put("AD_Client_ID", AD_Client_ID);
         parameters.put("AD_OrgParent_ID", AD_OrgParent_ID);
@@ -1090,9 +1094,18 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		try {
 			// 🔒 Bloquear la UI y deshabilitar campos
 	        lockUI(pi);
+	        // 1️⃣ Validar parámetros ANTES de generar el reporte
+	        String validationMsg = validateReportParameters(reportTypeKey, parameters);
+	        if (validationMsg != null) {
+	        	//Dialog.error(form.getWindowNo(), validationMsg);
+	        	pi.setError(true);
+	            pi.setSummary(validationMsg); 
+	        	unlockUI(pi);
+	        	return null;
+	        } 
+	        // 2️⃣ Si todo está bien, generar el reporte
 	        // Llama al método generate(), que internamente llama a generateReportContent()
 	        reportMetadata = generador.generate(Env.getCtx(), form.getWindowNo(), parameters);
-	        
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Fallo al generar el archivo XLSX.", e);
             Dialog.error(form.getWindowNo(), "Error de E/S al generar el reporte.");
@@ -1107,15 +1120,23 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		return reportMetadata;
 	}
 
-    private void previewReportWeb(String fullPath, String[] headers, int[] widths, int headerRowCount, int maxVisibleRow) throws FileNotFoundException {
+    private void previewReportWeb(String fullPath, String[] headers, int[] widths, int headerRowCount, int maxVisibleRow) throws Exception {
         
     	log.warning("El archivo en Form:"+fullPath);
         // Limpio el centro
         center.getChildren().clear();
-        ExcelViewerPanel viewer = new ExcelViewerPanel(fullPath, headers, widths, headerRowCount, maxVisibleRows);
-		center.appendChild(viewer);
+//        ExcelViewerPanel viewer = new ExcelViewerPanel(fullPath, headers, widths, headerRowCount, maxVisibleRows);
+//		center.appendChild(viewer);
+        // Usar la Fábrica para obtener el visor
+        // CONVERSIÓN DE STRING A FILE
+        File reportFile = new File(fullPath);
+        Div viewer = ExcelViewerFactory.createViewer(reportFile, headers, widths, headerRowCount, maxVisibleRow);
+        
+        // Mostrar el visor en el centro
+        center.appendChild(viewer);
 		lblStatus.setText(Msg.getMsg(Env.getCtx(), "FileXLSX"));
 		textStatus.setText(fullPath);
+
     }
     
     
@@ -1290,6 +1311,101 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
     }
     
+    /**
+     * Valida los parámetros requeridos según el tipo de reporte.
+     * 
+     * @param reportTypeKey  Clave del tipo de reporte (TRB, TRD, BAL, etc.)
+     * @param parameters     Mapa con los parámetros suministrados
+     * @return               null si todo OK, o String con los errores encontrados
+     */
+    public String validateReportParameters(String reportTypeKey, Map<String, Object> parameters) {
+        List<String> missingParams = new ArrayList<>();
+
+        // Parámetros comunes a todos los reportes
+        validate(parameters, missingParams, "AD_Client_ID");
+        validate(parameters, missingParams, "C_AcctSchema_ID");
+
+        // Valido campos básicos si el reporte necesita organización
+        if (!reportTypeKey.equals(FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS)) {
+            validate(parameters, missingParams, "AD_Org_ID");
+            validate(parameters, missingParams, "AD_OrgParent_ID");
+
+            // ✅ Aquí va la regla especial:
+            String orgValidation = validateOrgAndOrgParent(parameters);
+            if (orgValidation != null) {
+                return orgValidation; // Retorna error específico de organización
+            }
+        }
+
+        // Validación específica según tipo de reporte
+        switch (reportTypeKey) {
+            case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD: // TRB
+                validate(parameters, missingParams, "C_Period_ID");
+                validate(parameters, missingParams, "PostingType");
+                break;
+
+            case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: // TRD
+                validate(parameters, missingParams, "DateFrom");
+                validate(parameters, missingParams, "DateTo");
+                validate(parameters, missingParams, "PostingType");
+                break;
+
+            case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE: // BAL
+                validate(parameters, missingParams, "DateTo");
+                break;
+
+            case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS: // GOP
+                validate(parameters, missingParams, "DateFrom");
+                validate(parameters, missingParams, "DateTo");
+                break;
+
+            case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE: // ANB
+                validate(parameters, missingParams, "C_Period_ID");
+                validate(parameters, missingParams, "AD_OrgParent_ID");
+                break;
+
+            case FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS: // ACE
+                // Por ejemplo, puede necesitar solo cliente y esquema contable
+                break;
+
+            default:
+                return "Tipo de reporte desconocido: " + reportTypeKey;
+        }
+
+        // Si faltan parámetros, devolver el mensaje
+        if (!missingParams.isEmpty()) {
+            return "Faltan los siguientes parámetros: " + String.join(", ", missingParams);
+        }
+
+        return null; // Todo OK
+    }
+
+    /**
+     * Helper: Verifica si un parámetro existe y no es null.
+     */
+    private void validate(Map<String, Object> params, List<String> errors, String key) {
+        if (!params.containsKey(key) || params.get(key) == null) {
+            errors.add(key);
+        }
+    }
+    private String validateOrgAndOrgParent(Map<String, Object> parameters) {
+        Integer org = getInt(parameters.get("AD_Org_ID"));
+        Integer orgParent = getInt(parameters.get("AD_OrgParent_ID"));
+
+        // Si ambos son 0 -> error
+        if ((org == null || org == 0) && (orgParent == null || orgParent == 0)) {
+            return "Debe seleccionar al menos una Organización (AD_Org_ID o AD_OrgParent_ID).";
+        }
+        return null; // OK
+    }
+
+    private Integer getInt(Object value) {
+        if (value == null) return 0;
+        if (value instanceof Integer) return (Integer) value;
+        try { return Integer.parseInt(value.toString()); }
+        catch (Exception e) { return 0; }
+    }
+
     /**
      * Consulta la base de datos para obtener las fechas de inicio y fin
      * de un C_Period_ID dado y las asigna a dateFrom y dateTo.

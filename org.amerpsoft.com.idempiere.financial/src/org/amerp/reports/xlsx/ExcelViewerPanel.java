@@ -98,13 +98,27 @@ public class ExcelViewerPanel extends Div {
             // --- Columnas (para ambos grids)
             Columns topColumns = new Columns();
             Columns bodyColumns = new Columns();
+            // Factor de conversión de Caracteres a Ancho ZK (em)
+            // 0.85 a 0.90 es un buen rango para fuentes monospace/proporcionales.
+            final double CHAR_TO_EM_FACTOR = 1.05; 
+            // PADDING FIJO: Caracteres de holgura que se añaden a TODAS las columnas.
+            final int PADDING_CHARS = 5;
             for (int i = 0; i < maxLen.length; i++) {
+                // Obtener el ancho de caracteres deseado (ej. 15, 30, 10...)
+                int desiredChars = maxLen[i];
+                // Calcular el ancho base (caracteres reales + padding)
+                double baseWidth = desiredChars + PADDING_CHARS; 
+                // Aplicar el factor de escala, y asegurar un MINIMO (ej. 6 caracteres)
+                double emWidth = Math.max(6.0, baseWidth) * CHAR_TO_EM_FACTOR; 
+                // Formatear la cadena con dos decimales para ZK
+                String width = String.format("%.2f", emWidth) + "em";
+
                 Column colTop = new Column();
-                colTop.setWidth(maxLen[i] + "em");
+                colTop.setWidth(width);
                 topColumns.appendChild(colTop);
 
                 Column colBody = new Column();
-                colBody.setWidth(maxLen[i] + "em");
+                colBody.setWidth(width);
                 bodyColumns.appendChild(colBody);
             }
             topGrid.appendChild(topColumns);
@@ -238,6 +252,8 @@ public class ExcelViewerPanel extends Div {
     private String buildCellStyle(Cell cell, XSSFWorkbook workbook, boolean isHeader, boolean isTitle) {
     	// Reducir padding al mínimo
         StringBuilder css = new StringBuilder("padding:0px 4px;"); 
+        // Forzar el Label a ser un bloque completo
+        css.append("display:block;");
         // Forzar la altura de línea a un valor pequeño (ej. 1.0)
         css.append("line-height:1.0;");
         css.append("height:12px !important;");
@@ -245,23 +261,29 @@ public class ExcelViewerPanel extends Div {
         else if (isTitle) css.append("font-weight:bold; background-color:#f0f0f0;");
 
         XSSFCellStyle style = (XSSFCellStyle) cell.getCellStyle();
+        // Determinar el tipo de contenido de la celda
+        boolean isNumeric = cell.getCellType() == CellType.NUMERIC;
+        // Obtener el valor de texto para la verificación secundaria
+        String cellValue = getCellValue(cell, new DataFormatter());
+        
+        // Lógica de Alineación
         switch (style.getAlignment()) {
 	        case RIGHT:
-	        case FILL: // Fill se comporta como alineado a derecha/izquierda en números
+	        case FILL: 
 	        case DISTRIBUTED:
-	            css.append("text-align:right;");
+	            css.append("text-align:right !important;"); 
 	            break;
-	        case CENTER:
-	        case CENTER_SELECTION:
-	            css.append("text-align:center;");
-	            break;
-	        case LEFT:
-	        case JUSTIFY:
+	        // ... (otros casos con !important) ...
+	        case GENERAL:
 	        default:
-	            css.append("text-align:left;");
+	            if (isNumeric) {
+	                // Forzamos la alineación a la DERECHA
+	                css.append("text-align:right !important;"); 
+	            } else {
+	                css.append("text-align:left !important;");
+	            }
 	            break;
 	    }
-   
         XSSFFont font = style.getFont();
         if (font != null) {
             css.append("font-family:").append(font.getFontName()).append(";");
@@ -282,5 +304,25 @@ public class ExcelViewerPanel extends Div {
         }
 
         return css.toString();
+    }
+    
+    /**
+     * Verifica si una cadena de texto tiene formato de número (ej: 12,345.67 o 2024-01-01).
+     * Esta es una verificación simplificada para nuestro propósito.
+     */
+    private boolean isLikelyNumber(String s) {
+        if (s == null || s.isEmpty()) return false;
+        
+        // Elimina caracteres de formato comunes que no son dígitos (separadores de miles)
+        String cleanS = s.replaceAll("[^0-9\\.,\\-]", ""); 
+        
+        // Verifica si es un número válido. Usamos try-catch para ser robustos.
+        try {
+            // Se puede usar Double.parseDouble o verificar si cumple con un patrón numérico
+            // Aquí, buscamos un patrón simple: contiene al menos un dígito
+            return cleanS.matches(".*[0-9].*"); 
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

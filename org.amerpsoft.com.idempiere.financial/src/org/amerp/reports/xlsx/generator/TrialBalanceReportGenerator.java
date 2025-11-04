@@ -1,8 +1,9 @@
 package org.amerp.reports.xlsx.generator;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.Row;
 import org.amerp.reports.DataPopulator;
 import org.amerp.reports.TrialBalanceLine;
 import org.amerp.reports.xlsx.util.ExcelUtils;
@@ -12,11 +13,8 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MImage;
@@ -32,10 +30,10 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
 	// Cabeceras, incluyendo saldos y organización
     private final String[] headers = { 
         "value", "name", "AD_Org_ID", 
-        "SI", "dr", "cr", "per", "Balanace" 
+        "BeginningBalance", "AmtAcctDr", "AmtAcctCr", "C_Period_ID", "Balance" 
     };
     //Anchos proporcionales para las  columnas
-    private int[] maxLen = { 15, 30, 10, 15, 15, 15, 15, 15 };
+    private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16, 16 };
     @Override
     public String getReportName() {
         return "TrialBalanceReport"; // Nombre del archivo y de la hoja
@@ -46,6 +44,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
     protected void writeReportSpecificHeader(int AD_Client_ID) {
 
     	// --- 1️⃣ Leer constantes globales antes del bucle
+    	Row row;
         String cliName = "";
         String cliDescription = "";
         byte[] cliLogo = null;
@@ -70,105 +69,70 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
                 CreationHelper helper = workbook.getCreationHelper();
                 Drawing<?> drawing = sheet.createDrawingPatriarch();
 
-                // --- Reservar espacio para el logo
-                sheet.setColumnWidth(0, 20 * 256);  // Aumenta ancho columna A
-                for (int i = 0; i < 4; i++) {       // 4 filas de alto
-                    SXSSFRow row = sheet.getRow(i);
-                    if (row == null)
-                        row = sheet.createRow(i);
-                    row.setHeightInPoints(25);       // alto de fila visible
-                }
-
-                // --- Definir posición y tamaño exacto
                 ClientAnchor anchor = helper.createClientAnchor();
-                anchor.setCol1(0); // columna inicial
-                anchor.setRow1(0); // fila inicial
-                anchor.setDx1(0);
-                anchor.setDy1(0);
-                anchor.setDx2(ExcelUtils.pixelToEMU(120)); 	// ancho 120
-                anchor.setDy2(ExcelUtils.pixelToEMU(34));		// alto 34:x
+                anchor.setCol1(0);
+                anchor.setRow1(0);
+                anchor.setCol2(1);
+                anchor.setRow2(4);
 
-                Picture pict = drawing.createPicture(anchor, pictureIdx);
-
+                drawing.createPicture(anchor, pictureIdx);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning("Error insertando logo: " + e.getMessage());
             }
         }
-        // Titulo del Reporte
-        SXSSFRow titleRow = sheet.createRow(1); 
-        Cell cellTitle = titleRow.createCell(1); 
+        // --- TÍTULO DEL INFORME
+        row = sheet.createRow(1);
+        Cell cellTitle = row.createCell(1);
         cellTitle.setCellValue("Trial Balance Report");
-        CellStyle titleStyle = workbook.createCellStyle();
-        Font titleFont = workbook.createFont();
-        titleFont.setFontHeightInPoints((short) 14);
-        titleFont.setBold(true);
-        titleStyle.setFont(titleFont);
-        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        CellStyle titleStyle = styleMap.get("L3B"); 
         cellTitle.setCellStyle(titleStyle);
-        
-        // --- Nombre de la empresa
-        SXSSFRow nameRow = sheet.createRow(2);
-        Cell cellName = nameRow.createCell(0); 
+
+        // --- NOMBRE CLIENTE
+        row = sheet.createRow(2);
+        Cell cellName = row.createCell(0);
         cellName.setCellValue(cliName);
-        CellStyle nameStyle = workbook.createCellStyle();
-        Font nameFont = workbook.createFont();
-        nameFont.setFontHeightInPoints((short) 14);
-        nameFont.setBold(true);
-        nameStyle.setFont(nameFont);
-        nameStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellName.setCellStyle(nameStyle);
+        cellName.setCellStyle(styleMap.get("L3B"));
 
-        // --- Descripción de la empresa
-        SXSSFRow descRow = sheet.createRow(3); // fila 1
-        Cell cellDesc = descRow.createCell(0);
+        // --- DESCRIPCIÓN
+        row = sheet.createRow(3);
+        Cell cellDesc = row.createCell(0);
         cellDesc.setCellValue(cliDescription);
-        CellStyle descStyle = workbook.createCellStyle();
-        Font descFont = workbook.createFont();
-        descFont.setFontHeightInPoints((short) 12);
-        descStyle.setFont(descFont);
-        cellDesc.setCellStyle(descStyle);
-
-        // --- Opcional: hacer merge de celdas para nombre y descripción
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, 5)); // fila 0, columnas 1 a 5
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 5)); // fila 1, columnas 1 a 5
-        
-
-        // Escribir la cabecera de las columnas (Name, Description, Total, etc.)
-        // --- Crear estilo para encabezados
-        CellStyle headerStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setFontHeightInPoints((short) 14);
-        headerFont.setBold(true);
-        headerStyle.setFont(headerFont);
+        cellDesc.setCellStyle(styleMap.get("L3B"));
         
     }
 
     @Override
     protected void writeColumnHeader() {
-        // La variable headerRows es 4 (fila 5 del Excel)
-    	
+        
         // Reajustar el ancho de las columnas
     	for (int col = 0; col < maxLen.length; col++) {
     	    sheet.setColumnWidth(col, maxLen[col] * 256);
     	}
 
-        // Crear estilo para encabezados
-        CellStyle headerStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setFontHeightInPoints((short) 10); // Tamaño más pequeño para más columnas
-        headerFont.setBold(true);
-        headerStyle.setFont(headerFont);
+        // Crear la fila del encabezado (fila 4 si headerRows = 4)
+        Row headerRow = sheet.createRow(headerRows);
+        headerRow.setHeightInPoints(15f); // Altura fija o mínima
         
-        // Escribir la cabecera en la fila 4
-    	SXSSFRow headerRow = sheet.createRow(headerRows);
-    	// Establecer una altura mínima  (ej. 15 puntos)
-    	headerRow.setHeightInPoints(15.0f);
-    	for (int i = 0; i < headers.length; i++) {
-    	    String translated = Msg.getMsg(Env.getCtx(), headers[i]); 
-    	    Cell cell = headerRow.createCell(i);
-    	    cell.setCellValue(translated);
-    	    cell.setCellStyle(headerStyle);
-    	}
+        // Usamos estilo común ya definido o creamos uno solo (no por celda)
+        CellStyle headerStyle = styleMap.get("HEADER");
+        if (headerStyle == null) {
+            headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            font.setFontHeightInPoints((short) 12);
+            headerStyle.setFont(font);
+            headerStyle.setAlignment(HorizontalAlignment.LEFT);
+            styleMap.put("HEADER", headerStyle);
+        }
+ 
+        // Escribir cabeceras traducidas
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            String translated = Msg.translate(Env.getCtx(), headers[i]);
+
+            cell.setCellValue(translated != null ? translated : headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
     }
     
     @Override
@@ -188,6 +152,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         String isShowOrganization = (String) parameters.get("isShowOrganization");
         String trxName = (String) parameters.get("AD_PInstance_ID"); // Usar PInstance como trxName
         
+        // Obtener Datos
         List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceData(
                 AD_Client_ID, C_AcctSchema_ID, AD_Org_ID, AD_OrgParent_ID, 
                 C_Period_ID, PostingType, C_ElementValue_ID, 
@@ -198,79 +163,84 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             return;
         }
 
-        // --- 3. Escribir Cabeceras
+        // Crear hoja y encabezados generales ---
         writeClientHeader(AD_Client_ID); // Escribe Logo, Título y Nombre
-//        writeColumnHeader();             // Escribe las cabeceras de columna (fila 4)
 
         int total = reportData.size();
         int batchSize = 100;
-        int rowNum = headerRows + 1; // La data comienza en la fila 5
+        int rowNum = headerRows + 1;
 
-        // --- 4. Iterar y escribir el contenido
+        // Reusar estilos desde styleMap
+        CellStyle textNormal = styleMap.get("TEXT_N");
+        CellStyle textBold   = styleMap.get("TEXT_B");
+        CellStyle numNormal  = styleMap.get("NUM_N");
+        CellStyle numBold    = styleMap.get("NUM_B");
+        
+        //  Escribir filas del reporte
         for (int i = 0; i < total; i++) {
             TrialBalanceLine e = reportData.get(i);
-            SXSSFRow row = sheet.createRow(rowNum++);
-
-            // --- Determinar Estilos y Contenido
+            //
             int level = e.getLevel();
-            String tipoRegistro = e.getTipoRegistro(); // R, 60, 50
+            String tipoRegistro = e.getTipoRegistro(); 
 
+            // FILTRADO Organizacion
+            boolean skipOrganization = "N".equalsIgnoreCase(isShowOrganization) && "50".equals(tipoRegistro);
+            if (skipOrganization) {
+                // Si isShowOrganization es 'N' y la línea es de tipo '50' (Organización), saltar esta iteración.
+                continue; 
+            }
+            // Nueva Fila
+            Row row = sheet.createRow(rowNum++);
             // Formatear la cuenta con sangría (Indentación)
             String paddedName = ExcelUtils.padLeft(e.getNombre(), level);
             String orgValue = e.getOrgValue() != null ? e.getOrgValue() : "";
 
-            // Determinar estilo (Negrita para totales/resumen, cursiva para detalle org)
+            // Determinar estilo
             boolean bold = "R".equals(tipoRegistro) || "60".equals(tipoRegistro);
-            String key = (bold ? "B" : "") + ("50".equals(tipoRegistro) ? "I" : "N"); // B = Bold, I = Italic, N = Normal
-            CellStyle style = styleMap.getOrDefault(key, styleMap.get("N")); 
+            CellStyle tStyle = bold ? textBold : textNormal;
+            CellStyle nStyle = bold ? numBold : numNormal;
 
-            // Estilos para números (requiere crear NumberStyles con formato)
-            //CellStyle numberStyle = styleMap.getOrDefault(key + "N", styleMap.get("N_NUM"));
-            CellStyle numberStyle = styleMap.getOrDefault(key + "N", styleMap.get("N_STANDARD"));
             // --- Columna 0: Cód. Cuenta (con sangría)
-            ExcelUtils.createStyledCell(row, 0, e.getCodigo(), style);
+            ExcelUtils.createStyledCell(row, 0, e.getCodigo(), tStyle);
             ExcelUtils.updateMaxLen(maxLen, 0, e.getCodigo());
 
             // --- Columna 1: Nombre Cuenta
-            ExcelUtils.createStyledCell(row, 1, paddedName, style);
+            ExcelUtils.createStyledCell(row, 1, paddedName, tStyle);
             ExcelUtils.updateMaxLen(maxLen, 1, paddedName);
 
             // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
-            ExcelUtils.createStyledCell(row, 2, orgValue, style);
+            ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
             ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
             // --- Columnas 3-7: Saldos (BigDecimals)
             int col = 3;
-            ExcelUtils.createStyledCell(row, col++, e.getOpenBalance(), numberStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getAmtAcctDr(), numberStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getAmtAcctCr(), numberStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getBalancePeriodo(), numberStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getCloseBalance(), numberStyle);
+            ExcelUtils.createStyledCell(row, col++, e.getOpenBalance(), nStyle);
+            ExcelUtils.createStyledCell(row, col++, e.getAmtAcctDr(), nStyle);
+            ExcelUtils.createStyledCell(row, col++, e.getAmtAcctCr(), nStyle);
+            ExcelUtils.createStyledCell(row, col++, e.getBalancePeriodo(), nStyle);
+            ExcelUtils.createStyledCell(row, col++, e.getCloseBalance(), nStyle);
             
-            // Note: Las columnas de saldo no necesitan updateMaxLen si se usa formato de número fijo
-
             if ((i + 1) % batchSize == 0) {
                 log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
                 		Msg.getMsg(Env.getCtx(), "of")+" "+total +
                 		Msg.getMsg(Env.getCtx(), "Records"));
-                
-                try {
-					this.sheet.flushRows(batchSize);
-				} catch (IOException e1) {
-					log.severe("Error flushing rows: " + e1.getMessage());
-				}
             }
         }
 
-        try {
-			this.sheet.flushRows();
-		} catch (IOException e) {
-			log.severe("Error final flushing rows: " + e.getMessage());
-		}
-
-        // Ajuste de ancho de columna final (Solo aplica a las columnas de texto)
-        for (int col = 0; col < 3; col++) { // Solo las primeras 3 columnas (Código, Nombre, Org)
-            int chars = Math.min(100, Math.max(10, maxLen[col] + 2));
-            sheet.setColumnWidth(col, chars * 256);
+        // Ajuste de ancho de columna final (Aplicar a todas)
+        for (int col = 0; col < maxLen.length; col++) { 
+            
+            // Obtener el ancho deseado: Máximo de 100 caracteres, mínimo de 10, y añadir 2 de padding base.
+            int chars = Math.min(100, Math.max(10, maxLen[col] + 2)); 
+            
+            // Unidades base POI: Caracteres * 256
+            int desiredWidthUnits = chars * 256; 
+            
+            // Aplicar HOLGURA EXTRA (PADDING)
+            int extraPadding = 1024; // 1024 unidades POI son aproximadamente 4 caracteres extra.
+            
+            if (desiredWidthUnits > 0) {
+                this.sheet.setColumnWidth(col, desiredWidthUnits + extraPadding); 
+            }
         }
     }
     

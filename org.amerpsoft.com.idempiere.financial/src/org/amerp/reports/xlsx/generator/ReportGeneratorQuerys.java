@@ -40,7 +40,7 @@ public class ReportGeneratorQuerys {
         "        '60' AS blk, dborg.nivel, dborg.c_elementvalue_id, dborg.codigo, dborg.cuenta_nombre, dborg.description, dborg.accounttype, dborg.accountsign, dborg.issummary,\n" +
         "		dborg.codigo0, dborg.codigo1, dborg.codigo2, dborg.codigo3, dborg.codigo4, dborg.codigo5, dborg.codigo6, dborg.codigo7, dborg.codigo8, dborg.codigo9,\n" +
         "		0 AS ad_org_id, NULL AS org_value,  NULL AS org_name, dborg.all_orgs, \n" +
-        "        SUM(openbalance) AS openbalance, SUM(amtacctdr) AS amtacctdr, SUM(amtacctcr) AS amtacctcr, SUM(closebalance) AS closebalance, SUM(amtacctsa) AS amtacctsa\n" +
+        "        SUM(openbalance) AS openbalance, SUM(amtacctdr) AS amtacctdr, SUM(amtacctcr) AS amtacctcr, SUM(amtacctsa) AS amtacctsa, SUM(closebalance) AS closebalance\n" +
         "    FROM BalancesDetailOrg dborg\n" +
         "    GROUP BY \n" +
         "        blk, dborg.nivel, dborg.c_elementvalue_id, dborg.codigo, dborg.cuenta_nombre, dborg.description, dborg.codigo0, dborg.codigo1, dborg.codigo2, dborg.codigo3, \n" +

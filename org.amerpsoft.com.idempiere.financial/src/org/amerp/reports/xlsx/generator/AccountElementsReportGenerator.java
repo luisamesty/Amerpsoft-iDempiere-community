@@ -1,6 +1,5 @@
 package org.amerp.reports.xlsx.generator;
 
-import java.io.IOException;
 import java.util.List;
 import org.amerp.reports.AccountElementBasic;
 import org.amerp.reports.DataPopulator;
@@ -10,11 +9,10 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.ss.usermodel.Cell;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
@@ -40,6 +38,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
     protected void writeReportSpecificHeader(int AD_Client_ID) {
 
     	// --- 1️⃣ Leer constantes globales antes del bucle
+    	Row row;
         String cliName = "";
         String cliDescription = "";
         byte[] cliLogo = null;
@@ -64,100 +63,66 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
                 CreationHelper helper = workbook.getCreationHelper();
                 Drawing<?> drawing = sheet.createDrawingPatriarch();
 
-                // --- Reservar espacio para el logo
-                sheet.setColumnWidth(0, 20 * 256);  // Aumenta ancho columna A
-                for (int i = 0; i < 4; i++) {       // 4 filas de alto
-                    SXSSFRow row = sheet.getRow(i);
-                    if (row == null)
-                        row = sheet.createRow(i);
-                    row.setHeightInPoints(25);       // alto de fila visible
-                }
-
-                // --- Definir posición y tamaño exacto
                 ClientAnchor anchor = helper.createClientAnchor();
-                anchor.setCol1(0); // columna inicial
-                anchor.setRow1(0); // fila inicial
-                anchor.setDx1(0);
-                anchor.setDy1(0);
-                anchor.setDx2(ExcelUtils.pixelToEMU(120)); 	// ancho 120
-                anchor.setDy2(ExcelUtils.pixelToEMU(34));		// alto 34:x
+                anchor.setCol1(0);
+                anchor.setRow1(0);
+                anchor.setCol2(1);
+                anchor.setRow2(4);
 
-                Picture pict = drawing.createPicture(anchor, pictureIdx);
-
+                drawing.createPicture(anchor, pictureIdx);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warning("Error insertando logo: " + e.getMessage());
             }
         }
-        // Titulo del Reporte
-        SXSSFRow titleRow = sheet.createRow(1);
-        Cell cellTitle = titleRow.createCell(1); 
+        // --- TÍTULO DEL INFORME
+        row = sheet.createRow(1);
+        Cell cellTitle = row.createCell(1);
         cellTitle.setCellValue("Account Elements Catalog");
-        CellStyle titleStyle = workbook.createCellStyle();
-        Font titleFont = workbook.createFont();
-        titleFont.setFontHeightInPoints((short) 14);
-        titleFont.setBold(true);
-        titleStyle.setFont(titleFont);
-        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        CellStyle titleStyle = styleMap.get("L3B"); 
         cellTitle.setCellStyle(titleStyle);
-        
-        // --- Nombre de la empresa
-        SXSSFRow nameRow = sheet.createRow(2); 
-        Cell cellName = nameRow.createCell(0); 
+
+        // --- NOMBRE CLIENTE
+        row = sheet.createRow(2);
+        Cell cellName = row.createCell(0);
         cellName.setCellValue(cliName);
-        CellStyle nameStyle = workbook.createCellStyle();
-        Font nameFont = workbook.createFont();
-        nameFont.setFontHeightInPoints((short) 14);
-        nameFont.setBold(true);
-        nameStyle.setFont(nameFont);
-        nameStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellName.setCellStyle(nameStyle);
+        cellName.setCellStyle(styleMap.get("L3B"));
 
-        // --- Descripción de la empresa
-        SXSSFRow descRow = sheet.createRow(3); // fila 1
-        Cell cellDesc = descRow.createCell(0);
+        // --- DESCRIPCIÓN
+        row = sheet.createRow(3);
+        Cell cellDesc = row.createCell(0);
         cellDesc.setCellValue(cliDescription);
-        CellStyle descStyle = workbook.createCellStyle();
-        Font descFont = workbook.createFont();
-        descFont.setFontHeightInPoints((short) 12);
-        descStyle.setFont(descFont);
-        cellDesc.setCellStyle(descStyle);
-
-        // --- Opcional: hacer merge de celdas para nombre y descripción
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, 5)); // fila 0, columnas 1 a 5
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 5)); // fila 1, columnas 1 a 5
+        cellDesc.setCellStyle(styleMap.get("L3B"));
         
-
-        // Escribir la cabecera de las columnas (Name, Description, Total, etc.)
-        // --- Crear estilo para encabezados
-        CellStyle headerStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setFontHeightInPoints((short) 14);
-        headerFont.setBold(true);
-        headerStyle.setFont(headerFont);
         
     }
 
     @Override
     protected void writeColumnHeader() {
 
-    	 // Escribir la cabecera de las columnas (Name, Description, Total, etc.)
-        // --- Crear estilo para encabezados
-        CellStyle headerStyle = workbook.createCellStyle();
-        Font headerFont = workbook.createFont();
-        headerFont.setFontHeightInPoints((short) 12);
-        headerFont.setBold(true);
-        headerStyle.setFont(headerFont);
-        // Ancho columnas
+        // Reajustar el ancho de las columnas
     	for (int col = 0; col < maxLen.length; col++) {
     	    sheet.setColumnWidth(col, maxLen[col] * 256);
     	}
-        // ESCRITURA DE LA CABECERA (usando la variable de INSTANCIA headerRows)
-        SXSSFRow headerRow = sheet.createRow(headerRows); // Usa la variable de INSTANCIA 'headerRows = 4'
-        headerRow.setHeightInPoints(15.0f); // Altura mínima
-
+        // Crear la fila del encabezado (fila 4 si headerRows = 4)
+        Row headerRow = sheet.createRow(headerRows);
+        headerRow.setHeightInPoints(15f); // Altura fija o mínima
+        
+        // Usamos estilo común ya definido o creamos uno solo (no por celda)
+        CellStyle headerStyle = styleMap.get("HEADER");
+        if (headerStyle == null) {
+            headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            font.setFontHeightInPoints((short) 12);
+            headerStyle.setFont(font);
+            headerStyle.setAlignment(HorizontalAlignment.LEFT);
+            styleMap.put("HEADER", headerStyle);
+        }
+        
         for (int i = 0; i < this.headers.length; i++) {
-            String translated = Msg.getElement(Env.getCtx(), this.headers[i]); 
             Cell cell = headerRow.createCell(i);
+            String translated = Msg.translate(Env.getCtx(), this.headers[i]); 
+            
             cell.setCellValue(translated);
             cell.setCellStyle(headerStyle);
         }
@@ -167,11 +132,11 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
     @Override
     protected void generateReportContent() {
 
-    	// Obtener parámetros necesarios
+    	// Obtener parámetros necesarios para la Query
         Integer AD_Client_ID = (Integer) parameters.get("AD_Client_ID");
         Integer C_AcctSchema_ID = (Integer) parameters.get("C_AcctSchema_ID");
         
-        // Lógica Específica del Balance de Comprobación:
+        // Obtener Datos
         List<AccountElementBasic> reportData = DataPopulator.getAccountElementBasicList(
                 AD_Client_ID, C_AcctSchema_ID);
         if (reportData == null || reportData.isEmpty()) {
@@ -179,7 +144,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
             return;
         }
 
-        // Escribir Cabecera Común (Implementado en AbstractXlsxGenerator)
+        // Crear hoja y encabezados generales 
         writeClientHeader(AD_Client_ID);
 
         int total = reportData.size();
@@ -188,20 +153,19 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
 
         for (int i = 0; i < total; i++) {
             AccountElementBasic e = reportData.get(i);
-            SXSSFRow row = sheet.createRow(rowNum++);
+            XSSFRow row = sheet.createRow(rowNum++);
 
             Integer level = e.getLevel() != null ? e.getLevel() : 0;
             String v1 = ExcelUtils.safeString(e.getCodigo());
-            String v2 = ExcelUtils.safeString(e.getDescription()); // o e.getName() si Description no existe
+            String v2 = ExcelUtils.safeString(e.getDescription());
             String v3 = ExcelUtils.safeString(e.getAccountType());
-            String v4 = ExcelUtils.safeString(e.getAccountSign()); // si no existe el método, usa un placeholder
+            String v4 = ExcelUtils.safeString(e.getAccountSign());
             String v5 = ExcelUtils.safeString(e.getIsDocControlled());
             String v6 = ExcelUtils.safeString(e.getIsSummary());
             String v7 = "";
             String[] acctParent = e.getAcctParent();
             if (acctParent != null && acctParent.length > 1)
                 v7 = acctParent[acctParent.length - 2];
-
 
             // --- Determinar estilo
             boolean bold = "Y".equalsIgnoreCase(v6);
@@ -229,21 +193,9 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
                 log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
                 		Msg.getMsg(Env.getCtx(), "of")+" "+total +
                 		Msg.getMsg(Env.getCtx(), "Records"));
-                
-                try {
-					this.sheet.flushRows(batchSize);
-				} catch (IOException e1) {
-					// 
-					e1.printStackTrace();
-				}
+      
             }
         }
-
-        try {
-			this.sheet.flushRows();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
         for (int col = 0; col < headers.length; col++) {
             int chars = Math.min(100, Math.max(10, maxLen[col] + 2));
