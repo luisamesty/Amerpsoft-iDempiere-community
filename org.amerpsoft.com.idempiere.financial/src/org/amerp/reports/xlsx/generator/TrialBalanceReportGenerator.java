@@ -1,10 +1,14 @@
 package org.amerp.reports.xlsx.generator;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.amerp.reports.DataPopulator;
+import org.amerp.reports.OrgTree;
 import org.amerp.reports.TrialBalanceLine;
 import org.amerp.reports.xlsx.util.ExcelUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,6 +19,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
 import org.compiere.model.MImage;
@@ -34,14 +39,31 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
     };
     //Anchos proporcionales para las  columnas
     private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16, 16 };
+    
     @Override
     public String getReportName() {
         return "TrialBalanceReport"; // Nombre del archivo y de la hoja
     }
 
+	// ===================================================================
+    // 📢 TÍTULOS (Usando parámetros)
+    // ===================================================================
 
     @Override
-    protected void writeReportSpecificHeader(int AD_Client_ID) {
+    protected String getReportTitle(Map<String, Object> parameters) {
+    	// Lee el valor traducido de los parámetros
+        String title = (String) parameters.get("ReportTitle");
+        return title != null ? title : "Trial Balance Report"; 
+    }
+
+    @Override
+    protected String getReportSubTitle(Map<String, Object> parameters) {
+        // En este caso, no hay subtítulo dinámico, devolvemos una cadena vacía o informativa
+        return "";
+    }
+    
+    @Override
+    protected void writeReportSpecificHeader(int AD_Client_ID,  Map<String, Object> parameters) {
 
     	// --- 1️⃣ Leer constantes globales antes del bucle
     	Row row;
@@ -61,6 +83,34 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
                     cliLogo = img.getBinaryData();
                 }
             }	
+        }
+        // Organizaciones Seleccionadas
+        Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
+        Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
+        List<OrgTree> orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
+        if (orgs.size() == 1) {
+        	// Si solo hay una organización, usa el elemento en el índice 0.
+            OrgTree singleOrg = orgs.get(0);
+            // Concatenar orgValue y orgName
+            cliDescription = singleOrg.getOrgValue() + " - " + singleOrg.getOrgName();
+        } else if (orgs.size() > 1) {
+        	// Si hay múltiples organizaciones, usa el valor de 'allOrgs' del primer elemento.
+            cliDescription = orgs.get(0).getAllOrgs();
+        } else {
+        	cliDescription = Msg.translate(Env.getCtx(), "NoOrgSelected");
+        }
+        // OBTENER Y FORMATEAR FECHAS DE PARÁMETROS
+        String dateRange = "";
+        Timestamp dateFromTimestamp = (Timestamp) parameters.get("DateFrom");
+        Timestamp dateToTimestamp = (Timestamp) parameters.get("DateTo");
+        // Formato de fecha legible (DD/MM/YYYY o similar
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        if (dateFromTimestamp != null && dateToTimestamp != null) {
+            dateRange = Msg.translate(Env.getCtx(), "C_Period_ID")+ " " +
+            		Msg.translate(Env.getCtx(), "from")+ ": " +
+            		dateFormat.format(dateFromTimestamp)+ " " + 
+            		Msg.getMsg(Env.getCtx(), "to")+ ": " +
+            		dateFormat.format(dateToTimestamp);
         }
         // Escribir el nombre del reporte y el nombre del cliente en las primeras filas
         if (cliLogo != null && cliLogo.length > 0) {
@@ -83,7 +133,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         // --- TÍTULO DEL INFORME
         row = sheet.createRow(1);
         Cell cellTitle = row.createCell(1);
-        cellTitle.setCellValue("Trial Balance Report");
+        cellTitle.setCellValue(getReportTitle(parameters));
         CellStyle titleStyle = styleMap.get("L3B"); 
         cellTitle.setCellStyle(titleStyle);
 
@@ -92,17 +142,25 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         Cell cellName = row.createCell(0);
         cellName.setCellValue(cliName);
         cellName.setCellStyle(styleMap.get("L3B"));
-
+        // --- RANGO DE PERÍODO (Fila 2 - Columna 1)
+        Cell cellPeriod = row.createCell(1);
+        cellPeriod.setCellValue(dateRange);
+        cellPeriod.setCellStyle(styleMap.get("TEXT_N")); 
+        // 🏆 COMBINAR CELDAS DEL PERÍODO (Fila 2, Columnas 1 a 3)
+		sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 3));
         // --- DESCRIPCIÓN
         row = sheet.createRow(3);
         Cell cellDesc = row.createCell(0);
         cellDesc.setCellValue(cliDescription);
-        cellDesc.setCellStyle(styleMap.get("L3B"));
+        cellDesc.setCellStyle(styleMap.get("TEXT_B_WRAP"));
+        // 🏆 (Columna 0 hasta Columna 3 en la Fila 3)
+        // CellRangeAddress(firstRow, lastRow, firstCol, lastCol)
+		sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 3));
         
     }
 
     @Override
-    protected void writeColumnHeader() {
+    protected void writeColumnHeader(Map<String, Object> parameters) {
         
         // Reajustar el ancho de las columnas
     	for (int col = 0; col < maxLen.length; col++) {
@@ -151,6 +209,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         String isShowZERO = (String) parameters.get("isShowZERO");
         String isShowOrganization = (String) parameters.get("isShowOrganization");
         String trxName = (String) parameters.get("AD_PInstance_ID"); // Usar PInstance como trxName
+        String ReportTitle = (String) parameters.get("ReportTitle");
         
         // Obtener Datos
         List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceData(
@@ -162,9 +221,6 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             log.warning("No se encontraron datos para el Balance de Comprobación.");
             return;
         }
-
-        // Crear hoja y encabezados generales ---
-        writeClientHeader(AD_Client_ID); // Escribe Logo, Título y Nombre
 
         int total = reportData.size();
         int batchSize = 100;
@@ -244,20 +300,20 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         }
     }
     
+    
     @Override
-    protected String[] getColumnHeaders() {
+    protected String[] getColumnHeaders(Map<String, Object> parameters) {
         return this.headers;
     }
 
     @Override
-    protected int[] getColumnWidths() {
+    protected int[] getColumnWidths(Map<String, Object> parameters) {
         // Nota: El viewer utiliza maxLen para widths
         return this.maxLen; 
     }
 
     @Override
-    protected int getHeaderRowCount() {
+    protected int getHeaderRowCount(Map<String, Object> parameters) {
         return headerRows;
     }
-
 }

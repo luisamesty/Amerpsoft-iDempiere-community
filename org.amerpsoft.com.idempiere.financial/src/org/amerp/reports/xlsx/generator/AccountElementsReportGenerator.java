@@ -1,6 +1,8 @@
 package org.amerp.reports.xlsx.generator;
 
 import java.util.List;
+import java.util.Map;
+
 import org.amerp.reports.AccountElementBasic;
 import org.amerp.reports.DataPopulator;
 import org.amerp.reports.xlsx.util.ExcelUtils;
@@ -28,6 +30,23 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
 	int[] maxLen = { 15, 20, 10, 10, 10, 10, 15 }; // ancho aproximado proporcional
 	private String[] headers = { "value", "description", "AccountType", "AccountSign", "IsDocControlled", "IsSummary", "Parent_ID" };
 
+	// ===================================================================
+    // 📢 TÍTULOS (Usando parámetros)
+    // ===================================================================
+
+    @Override
+    protected String getReportTitle(Map<String, Object> parameters) {
+    	// Lee el valor traducido de los parámetros
+        String title = (String) parameters.get("ReportTitle");
+        return title != null ? title : "AccountElementsCatalog"; 
+    }
+
+    @Override
+    protected String getReportSubTitle(Map<String, Object> parameters) {
+        // En este caso, no hay subtítulo dinámico, devolvemos una cadena vacía o informativa
+        return "";
+    }
+    
     @Override
     public String getReportName() {
         return "AccountElementsReport"; // Nombre del archivo y de la hoja
@@ -35,7 +54,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
 
 
     @Override
-    protected void writeReportSpecificHeader(int AD_Client_ID) {
+    protected void writeReportSpecificHeader(int AD_Client_ID, Map<String, Object> parameters) {
 
     	// --- 1️⃣ Leer constantes globales antes del bucle
     	Row row;
@@ -77,7 +96,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
         // --- TÍTULO DEL INFORME
         row = sheet.createRow(1);
         Cell cellTitle = row.createCell(1);
-        cellTitle.setCellValue("Account Elements Catalog");
+        cellTitle.setCellValue(getReportTitle(parameters));
         CellStyle titleStyle = styleMap.get("L3B"); 
         cellTitle.setCellStyle(titleStyle);
 
@@ -97,7 +116,7 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
     }
 
     @Override
-    protected void writeColumnHeader() {
+    protected void writeColumnHeader(Map<String, Object> parameters) {
 
         // Reajustar el ancho de las columnas
     	for (int col = 0; col < maxLen.length; col++) {
@@ -143,9 +162,6 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
             log.warning("No se encontraron datos para el informe.");
             return;
         }
-
-        // Crear hoja y encabezados generales 
-        writeClientHeader(AD_Client_ID);
 
         int total = reportData.size();
         int batchSize = 100;
@@ -205,18 +221,19 @@ public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
     }
     
     @Override
-    protected String[] getColumnHeaders() {
+    protected String[] getColumnHeaders(Map<String, Object> parameters) {
         return this.headers;
     }
 
     @Override
-    protected int[] getColumnWidths() {
+    protected int[] getColumnWidths(Map<String, Object> parameters) {
         // Nota: El viewer utiliza maxLen para widths
         return this.maxLen; 
     }
 
     @Override
-    protected int getHeaderRowCount() {
+    protected int getHeaderRowCount(Map<String, Object> parameters) {
         return headerRows;
     }
+
 }

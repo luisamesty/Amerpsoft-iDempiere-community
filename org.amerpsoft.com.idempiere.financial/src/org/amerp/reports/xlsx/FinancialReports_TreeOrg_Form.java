@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +36,7 @@ import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
+import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.window.Dialog;
 import org.amerp.reports.xlsx.constants.FinancialReportConstants;
 import org.amerp.reports.xlsx.generator.IReportGenerator;
@@ -84,6 +86,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	// Variable para guardar valores seleccionado por el usuario.
     private String m_postingType_value = "A"; // valor por defecto
     private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+    private String m_reportType_name = "Trial Balance Report";
     private ProcessInfo m_Pi = null;
     private int maxVisibleRows =5000;
     /** Default constructor */
@@ -753,8 +756,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        // Setear el valor de referencia
 	        if (newValue instanceof String) {
                 m_reportType_value = (String) newValue;
+                m_reportType_name = (String) newValue;
             } else if (newValue instanceof ValueNamePair) {
                 m_reportType_value = ((ValueNamePair) newValue).getValue();
+                m_reportType_name = ((ValueNamePair) newValue).getName();
             }
 	        // ========================================================
 	        // === OBTENER NOMBRE Y DESCRIPCIÓN TRADUCIDOS (Limpio) ===
@@ -1001,24 +1006,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        @Override
 	        public void onCallback(Boolean result) {
 	            if (Boolean.TRUE.equals(result)) {
-	                
-	                // 1. Clean up internal resources (best practice)
-	                form.dispose(); 
-	                
-	                // 2. 🚀 FINAL FIX: Get the component that is two levels up.
-	                // This is often the actual ZK Window or Tab Panel container.
-	                org.zkoss.zk.ui.Component target = form.getParent();
-	                
-	                if (target != null && target.getParent() != null) {
-	                    // Try detaching the grandparent, which is likely the Tab Content.
-	                    target.getParent().detach();
-	                } else if (target != null) {
-	                    // Fallback to detaching the immediate parent.
-	                    target.detach();
-	                } else {
-	                    // Fallback to detaching the form itself.
-	                    form.detach(); 
-	                }
+
+	                dispose(); 
+
 	            }
 	        }
 	    });
@@ -1038,10 +1028,32 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private ReportMetadata runServerProcessForm() {
 		String errorMsg = "";
 		ReportMetadata reportMetadata = null;
-		int AD_Client_ID = fClient.getValue() != null ? ((Integer) fClient.getValue()) : Env.getAD_Client_ID(Env.getCtx());
-		int C_AcctSchema_ID = fAcctSchema.getValue() != null ? ((Integer) fAcctSchema.getValue()) : 0;
-		int AD_Org_ID = fOrg.getValue() !=null ? ((Integer) fOrg.getValue()) : 0;
-		int AD_OrgParent_ID = fOrgParent.getValue() !=null ? ((Integer) fOrgParent.getValue()) : 0;
+		int AD_Client_ID = (fClient.getValue() instanceof KeyNamePair) 
+                ? ((KeyNamePair) fClient.getValue()).getKey()
+                : (fClient.getValue() != null && fClient.getValue() instanceof Integer)
+                    ? (Integer) fClient.getValue()
+                    : Env.getAD_Client_ID(Env.getCtx());
+		// Obtener el ID del Esquema Contable (C_AcctSchema_ID)
+		int C_AcctSchema_ID = 0;
+		if (fAcctSchema.getValue() instanceof KeyNamePair) {
+		    C_AcctSchema_ID = ((KeyNamePair) fAcctSchema.getValue()).getKey();
+		} else if (fAcctSchema.getValue() instanceof Integer) {
+		    C_AcctSchema_ID = (Integer) fAcctSchema.getValue();
+		} 
+		// AD_Org_ID 
+		int AD_Org_ID = 0;
+		if (fOrg.getValue() instanceof KeyNamePair) {
+		    AD_Org_ID = ((KeyNamePair) fOrg.getValue()).getKey();
+		} else if (fOrg.getValue() instanceof Integer) {
+		    AD_Org_ID = (Integer) fOrg.getValue();
+		} 
+		// OrgParent_ID 
+		int AD_OrgParent_ID = 0;
+		if (fOrgParent.getValue() instanceof KeyNamePair) {
+		    AD_OrgParent_ID = ((KeyNamePair) fOrgParent.getValue()).getKey();
+		} else if (fOrgParent.getValue() instanceof Integer) {
+		    AD_OrgParent_ID = (Integer) fOrgParent.getValue();
+		}
 		// Crear un ProcessInfo simulado para lockUI/unlockUI
 	    ProcessInfo pi = new ProcessInfo(Msg.getMsg(Env.getCtx(), "Processing"), 0);
 	    this.m_Pi = pi;
@@ -1081,6 +1093,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         parameters.put("DateTo", (Timestamp) dateTo.getValue());
         parameters.put("isShowZERO", (String) isShowZERO_String);
         parameters.put("isShowOrganization", (String) isShowOrganization_String);
+        parameters.put("ReportTitle", (String) m_reportType_name);
         // Resto de parametros
         // Selección de la Estrategia (Generador)
         IReportGenerator generador = ReportGeneratorFactory.getGenerator(reportTypeKey);
@@ -1192,37 +1205,23 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      */
     private void initReportTypeCombo() {
         if (fReportType == null) return;
-        
-        // 1. Cargar la Lista de Valores
-        final int AD_REFERENCE_ID_REPORT = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE; 
-        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID_REPORT, false);
-        List<ValueNamePair> reportTypes = new ArrayList<>(java.util.Arrays.asList(reportTypesArray));
-        
-        // 2. Ordenar Alfabéticamente
-        Collections.sort(reportTypes, new Comparator<ValueNamePair>() {
-             public int compare(ValueNamePair p1, ValueNamePair p2) {
-                 return p1.getName().compareToIgnoreCase(p2.getName()); // Se ordena por Nombre, no por Valor.
-             }
-        });
 
-        // 3. Determinar el valor a establecer (usa la variable persistida)
-        String valueToSet = m_reportType_value;
-        String defaultReportValue = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
-
-        // Fallback si la variable está nula
-        if (valueToSet == null || valueToSet.isEmpty()) {
-            valueToSet = defaultReportValue;
-        }
+        // 1. Obtener lista ya ordenada desde el nuevo método
+        List<ValueNamePair> reportTypes = getSortedReportTypes();
         
-        // 4. Asignar la lista al Combobox ZK y forzar el valor
+        // 2. Determinar valor anterior o valor por defecto
+        String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            : m_reportType_value;
+        
         try {
             org.zkoss.zul.Combobox comboboxReport = (org.zkoss.zul.Combobox) fReportType.getComponent();
             
-            // REASIGNAR EL MODELO: CRÍTICO para que no se pierda.
+            // Asignar lista al modelo del combobox
             org.zkoss.zul.ListModelList<ValueNamePair> modelReport = new org.zkoss.zul.ListModelList<>(reportTypes);
             comboboxReport.setModel(modelReport);
             
-            // 5. Buscar el VNP y establecer el valor visible e interno.
+            // Seleccionar el item correspondiente
             ValueNamePair selectedVNP = null;
             for (ValueNamePair vnp : reportTypes) {
                 if (vnp.getValue().equals(valueToSet)) {
@@ -1230,22 +1229,72 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                     break;
                 }
             }
-            
+
             if (selectedVNP != null) {
-                // Establecer la clave interna (el valor real, ej: "TRB")
-                fReportType.setValue(valueToSet);
-                // Forzar la visualización del label en el combo ZK (ej: "Balance de Comprobación")
+                fReportType.setValue(valueToSet);         
                 comboboxReport.setValue(selectedVNP.getName());
+                m_reportType_value = selectedVNP.getValue();
+                m_reportType_name  = selectedVNP.getName();
             } else {
-                // Si el valor guardado (m_reportType_value) no se encuentra, 
-                // establecemos la clave interna sin forzar el texto visible (puede quedar vacío)
                 fReportType.setValue(valueToSet);
+                m_reportType_value = valueToSet;
+                m_reportType_name = Msg.getMsg(Env.getCtx(), "Trial Balance Report");
             }
 
         } catch (Exception e) {
             CLogger.getCLogger(getClass()).log(Level.SEVERE, "Fallo al inicializar/restaurar fReportType.", e);
         }
     }
+
+
+    
+    /**
+     * Genera y devuelve una lista ordenada alfabéticamente de ValueNamePair
+     * para el tipo de reporte.
+     * A partir de AD_Reference
+     */
+    private List<ValueNamePair> getSortedReportTypes() {
+        final int AD_REFERENCE_ID_REPORT = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
+        
+        // Obtener lista desde MRefList
+        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID_REPORT, false);
+        List<ValueNamePair> reportTypes = new ArrayList<>(Arrays.asList(reportTypesArray));
+        
+        // Ordenar alfabéticamente por nombre
+        Collections.sort(reportTypes, new Comparator<ValueNamePair>() {
+            public int compare(ValueNamePair p1, ValueNamePair p2) {
+                return p1.getName().compareToIgnoreCase(p2.getName());
+            }
+        });
+        
+        return reportTypes;
+    }
+    
+    public static ValueNamePair getReportTypeByValue(String value) {
+        final int AD_REFERENCE_ID = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
+        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID, false);
+
+        if (reportTypesArray != null) {
+            for (ValueNamePair vnp : reportTypesArray) {
+                if (vnp.getValue().equals(value)) {
+                    return vnp;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    private String getReportNameByValue(String value) {
+        List<ValueNamePair> reportTypes = getSortedReportTypes(); // ya lo tienes creado antes
+        for (ValueNamePair vnp : reportTypes) {
+            if (vnp.getValue().equals(value)) {
+                return vnp.getName();
+            }
+        }
+        return value; // fallback: devuelve el código si no encuentra el nombre
+    }
+    
     /**
      * Inicializa o restaura el componente fPostingType cargando el modelo ZK
      * y forzando el valor seleccionado (usa 'A' como predeterminado).
@@ -1448,6 +1497,12 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 dateTo.addValueChangeListener(listener);
             }
         }
+    }
+    
+    public void dispose() {
+    	
+    	SessionManager.getAppDesktop().closeActiveWindow();
+    	
     }
     
     @Override
