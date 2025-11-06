@@ -11,6 +11,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
+import org.compiere.util.Env;
+import org.compiere.util.Msg;
 
 public abstract class AbstractXlsxGenerator implements IReportGenerator {
 
@@ -28,27 +30,65 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
         this.ctx = ctx;
         this.windowNo = windowNo;
         this.parameters = parameters;
-        // Inicializar el libro de Excel como XSSFWorkbook, que es la única que soporta SXSSFSheet
+        // 🏆 Inicializar el libro de Excel AQUI
         this.workbook = new XSSFWorkbook(); 
        
-        // Configurar estilos y hoja inicial
+        // Configurar estilos (que usan el workbook)
         setupStyles();
         
-        // Ejecutar el método abstracto (la lógica específica de cada reporte)
-        generateReportContent();
+        // 1. Inicializa la hoja (Nuevo método)
+        initializeSheet();
         
+        // 2. 🚨 EJECUTA LÓGICA ESPECÍFICA (Ahora llamada directamente)
+        int AD_Client_ID = Env.getAD_Client_ID(ctx);
+        writeReportSpecificHeader(AD_Client_ID, this.parameters);
+        
+        // 3. Escribe las cabeceras de columna (Llamada directa)
+        writeColumnHeader(this.parameters);
+        
+        // 4. Ejecutar el método abstracto (la lógica específica de cada reporte)
+        generateReportContent();
         // Escribir el archivo
         File tempFile = writeWorkbookToFile();
         // Crear y devolver el objeto ReportMetadata
         return new ReportMetadata(
             tempFile, 
-            getColumnHeaders(), 
-            getColumnWidths(), 
-            getHeaderRowCount()
+            getColumnHeaders(parameters), 
+            getColumnWidths(parameters), 
+            getHeaderRowCount(parameters)
         );
 
     }
 
+    /**
+     * Inicializa la hoja de cálculo para el reporte.
+     */
+    protected final void initializeSheet() {
+    	// Obtener el título usando el método abstracto (que debería leer el parámetro)
+        String sheetName = getReportTitle(this.parameters);
+        //  Manejar Null/Empty. Si el método abstracto no devuelve nada (porque el parámetro falta)
+        if (sheetName == null || sheetName.trim().isEmpty()) {
+            // Fallback robusto: Usar un nombre de hoja por defecto, traducido si es posible.
+            // "Reporte" o "Sheet1" es un nombre seguro.
+            sheetName = Msg.getMsg(Env.getCtx(), "ReporteGenerado", true); 
+            
+            // Si la traducción falla o es vacía, usar el valor literal.
+            if (sheetName == null || sheetName.trim().isEmpty()) {
+                sheetName = "Reporte"; 
+            }
+        }
+        // Esto podría dejar la cadena vacía si el título original eran solo caracteres inválidos.
+        sheetName = sheetName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+        // Segundo Fallback y límite de 31 caracteres
+        if (sheetName.length() == 0) {
+            sheetName = "Reporte";
+        } else if (sheetName.length() > 31) {
+            sheetName = sheetName.substring(0, 31);
+        }
+        // Crea la hoja
+        this.sheet = this.workbook.createSheet(sheetName); 
+    }
+    
     /**
      * Define la lógica de generación del contenido: creación de la hoja, 
      * obtención de datos y escritura de filas. (Implementación obligatoria)
@@ -59,21 +99,32 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
      * Método Abstracto: Contiene la lógica única del logo, nombre, fechas, etc.
      * CADA SUBCLASE DEBE IMPLEMENTAR ESTE MÉTODO.
      */
-    protected abstract void writeReportSpecificHeader(int AD_Client_ID);
+    protected abstract void writeColumnHeader(Map<String, Object> parameters);
+    
+    
+    /**
+     * Devuelve el título principal del reporte.
+     */
+    protected abstract String getReportTitle(Map<String, Object> parameters);
 
     /**
-     * Método Abstracto: Contiene la lógica de las cabeceras de columna (Value, Name, etc.)
-     * CADA SUBCLASE DEBE IMPLEMENTAR ESTE MÉTODO.
+     * Devuelve el subtítulo o descripción del reporte.
      */
-    protected abstract void writeColumnHeader();
+    protected abstract String getReportSubTitle(Map<String, Object> parameters);
+    
+    /**
+     *  MÉTODO DE ENCABEZADO ESPECÍFICO (Control total para la subclase)
+     * @param AD_Client_ID
+     * @param parameters
+     */
+    protected abstract void writeReportSpecificHeader(int AD_Client_ID, Map<String, Object> parameters);
     
     // Métodos abstractos para obtener los metadatos de las subclases
-	protected abstract String[] getColumnHeaders();
+ 	protected abstract String[] getColumnHeaders(Map<String, Object> parameters);
 
-	protected abstract int[] getColumnWidths();
+ 	protected abstract int[] getColumnWidths(Map<String, Object> parameters);
 
-	protected abstract int getHeaderRowCount();
-	
+ 	protected abstract int getHeaderRowCount(Map<String, Object> parameters);
     /**
      * Crea un método para configurar los estilos comunes del reporte.
      */
@@ -161,7 +212,16 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
         boldTextStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
         boldTextStyle.setFont(boldFont);
         styleMap.put("TEXT_B", boldTextStyle);
-        
+        // ESTILO DE TEXTO NORMAL CON WRAP (TEXT_N_WRAP)
+        CellStyle textStyleWrap = workbook.createCellStyle();
+        textStyleWrap.cloneStyleFrom(styleMap.get("TEXT_N")); 
+        textStyleWrap.setWrapText(true);
+        styleMap.put("TEXT_N_WRAP", textStyleWrap);
+        // ESTILO DE TEXTO NEGRITA CON WRAP (TEXT_B_WRAP)
+        CellStyle boldTextStyleWrap = workbook.createCellStyle();
+        boldTextStyleWrap.cloneStyleFrom(styleMap.get("TEXT_B")); 
+        boldTextStyleWrap.setWrapText(true);
+        styleMap.put("TEXT_B_WRAP", boldTextStyleWrap);
         // Crear estilo para encabezados
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle = workbook.createCellStyle();
@@ -172,21 +232,6 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
         styleMap.put("HEADER", headerStyle);
     }
     
-
-    /**
-     * Método de Plantilla que coordina la escritura del encabezado.
-     */
-    protected final void writeClientHeader(int AD_Client_ID) {
-        
-        // Obtiene la hoja y el contexto (Lógica de infraestructura)
-        this.sheet = this.workbook.createSheet(getReportName());
-        
-        // Ejecuta la lógica Específica (Delegado a las subclases)
-        writeReportSpecificHeader(AD_Client_ID);
-        
-        // Escribe las cabeceras de columna (Esto es común o se puede delegar)
-        writeColumnHeader();
-    }
 
     /**
      * Escribe el workbook a un archivo temporal y lo cierra.
@@ -212,6 +257,14 @@ public abstract class AbstractXlsxGenerator implements IReportGenerator {
             workbook.close();
         }
         return tempFile;
+    }
+    
+    /**
+     * Devuelve el nombre base del reporte para el archivo temporal.
+     */
+    public String getReportName() {
+        // Usa getReportTitle() para el nombre base, asegurando que se obtenga con los parámetros
+        return getReportTitle(this.parameters).replaceAll("[^a-zA-Z0-9\\.\\-]", "_"); 
     }
 
 }

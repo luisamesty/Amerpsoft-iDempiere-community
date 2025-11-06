@@ -1,10 +1,14 @@
 package org.amerp.reports.xlsx.generator;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.amerp.reports.DataPopulator;
+import org.amerp.reports.OrgTree;
 import org.amerp.reports.TrialBalanceLine;
 import org.amerp.reports.xlsx.util.ExcelUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,10 +19,14 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MClientInfo;
+import org.compiere.model.MCurrency;
 import org.compiere.model.MImage;
 import org.compiere.util.CLogger;
+import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 
@@ -34,20 +42,39 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
     };
     //Anchos proporcionales para las  columnas
     private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16, 16 };
+    
     @Override
     public String getReportName() {
         return "TrialBalanceReport"; // Nombre del archivo y de la hoja
     }
 
+	// ===================================================================
+    // 📢 TÍTULOS (Usando parámetros)
+    // ===================================================================
 
     @Override
-    protected void writeReportSpecificHeader(int AD_Client_ID) {
+    protected String getReportTitle(Map<String, Object> parameters) {
+    	// Lee el valor traducido de los parámetros
+        String title = (String) parameters.get("ReportTitle");
+        return title != null ? title : "Trial Balance Report"; 
+    }
+
+    @Override
+    protected String getReportSubTitle(Map<String, Object> parameters) {
+        // En este caso, no hay subtítulo dinámico, devolvemos una cadena vacía o informativa
+        return "";
+    }
+    
+    @Override
+    protected void writeReportSpecificHeader(int AD_Client_ID,  Map<String, Object> parameters) {
 
     	// --- 1️⃣ Leer constantes globales antes del bucle
     	Row row;
         String cliName = "";
         String cliDescription = "";
         byte[] cliLogo = null;
+        int C_Currency_ID = 0;
+        String currencyName="";
         MClient mclient = new MClient(Env.getCtx(),AD_Client_ID, null);
         if (mclient != null ) {
         	cliName = mclient.getName();
@@ -60,7 +87,46 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
                 if (img != null && img.getBinaryData() != null) {
                     cliLogo = img.getBinaryData();
                 }
-            }	
+            }
+            // Esquema Contable y Moneda
+            Integer C_AcctSchema_ID = (Integer) parameters.get("C_AcctSchema_ID");
+            if (C_AcctSchema_ID != null) {
+            	MAcctSchema as = MAcctSchema.get (Env.getCtx(), C_AcctSchema_ID, null);
+    			C_Currency_ID = as.getC_Currency_ID();
+            }
+            if (C_Currency_ID > 0) {
+            	MCurrency currency = new MCurrency(ctx, C_Currency_ID, null);
+            	currencyName = currency.getISO_Code() + " - " + currency.getDescription();
+            }
+        }
+        // Organizaciones Seleccionadas
+        Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
+        Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
+        List<OrgTree> orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
+        cliDescription = Msg.translate(Env.getCtx(),"AD_org_ID")+": ";
+        if (orgs.size() == 1) {
+        	// Si solo hay una organización, usa el elemento en el índice 0.
+            OrgTree singleOrg = orgs.get(0);
+            // Concatenar orgValue y orgName
+            cliDescription = cliDescription + singleOrg.getOrgValue() + " - " + singleOrg.getOrgName();
+        } else if (orgs.size() > 1) {
+        	// Si hay múltiples organizaciones, usa el valor de 'allOrgs' del primer elemento.
+            cliDescription = cliDescription+orgs.get(0).getAllOrgs();
+        } else {
+        	cliDescription = cliDescription+ Msg.translate(Env.getCtx(), "NoOrgSelected");
+        }
+        // OBTENER Y FORMATEAR FECHAS DE PARÁMETROS
+        String dateRange = "";
+        Timestamp dateFromTimestamp = (Timestamp) parameters.get("DateFrom");
+        Timestamp dateToTimestamp = (Timestamp) parameters.get("DateTo");
+        // Formato de fecha legible (DD/MM/YYYY o similar
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        if (dateFromTimestamp != null && dateToTimestamp != null) {
+            dateRange = Msg.translate(Env.getCtx(), "C_Period_ID")+ " " +
+            		Msg.translate(Env.getCtx(), "from")+ ": " +
+            		dateFormat.format(dateFromTimestamp)+ " " + 
+            		Msg.getMsg(Env.getCtx(), "to")+ ": " +
+            		dateFormat.format(dateToTimestamp);
         }
         // Escribir el nombre del reporte y el nombre del cliente en las primeras filas
         if (cliLogo != null && cliLogo.length > 0) {
@@ -83,26 +149,61 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         // --- TÍTULO DEL INFORME
         row = sheet.createRow(1);
         Cell cellTitle = row.createCell(1);
-        cellTitle.setCellValue("Trial Balance Report");
+        cellTitle.setCellValue(getReportTitle(parameters));
         CellStyle titleStyle = styleMap.get("L3B"); 
         cellTitle.setCellStyle(titleStyle);
 
+        // --- 📅 ETIQUETA DE FECHA (Fila 1 - Columna 4)
+        Cell cellDateLabel = row.createCell(4); 
+        cellDateLabel.setCellValue(Msg.translate(Env.getCtx(), "Date"));
+        cellDateLabel.setCellStyle(styleMap.get("TEXT_B")); 
+        // --- 🗓️ VALOR DE LA FECHA DEL REPORTE (Fila 1 - Columna 5)
+        Cell cellDateValue = row.createCell(5);
+        // Obtener la fecha del contexto de ejecución del reporte
+        java.util.Date reportDate = Env.getContextAsDate(Env.getCtx(), "ReportDate"); 
+        if (reportDate != null) {
+            // Formatear la fecha al estilo de iDempiere
+            String formattedDate = DisplayType.getDateFormat(DisplayType.Date).format(reportDate);
+            cellDateValue.setCellValue(formattedDate);
+        } else {
+            cellDateValue.setCellValue("N/A");
+        }
+        cellDateValue.setCellStyle(styleMap.get("TEXT_N"));
         // --- NOMBRE CLIENTE
         row = sheet.createRow(2);
         Cell cellName = row.createCell(0);
         cellName.setCellValue(cliName);
         cellName.setCellStyle(styleMap.get("L3B"));
+        // --- RANGO DE PERÍODO (Fila 2 - Columna 1)
+        Cell cellPeriod = row.createCell(1);
+        cellPeriod.setCellValue(dateRange);
+        cellPeriod.setCellStyle(styleMap.get("TEXT_N")); 
+        // 🏆 COMBINAR CELDAS DEL PERÍODO (Fila 2, Columnas 1 a 3)
+		sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 3));
+		// --- 💰 ETIQUETA DE MONEDA (Fila 2 - Columna 4)
+		Cell cellCurrencyLabel = row.createCell(4); // Creamos en Columna 4
+		// Obtener el nombre traducido del campo "C_Currency_ID"
+		String currencyLabel = Msg.translate(Env.getCtx(), "C_Currency_ID");
+		cellCurrencyLabel.setCellValue(currencyLabel + ":"); 
+		cellCurrencyLabel.setCellStyle(styleMap.get("TEXT_B")); 
 
+		// --- VALOR DE MONEDA (Fila 2 - Columna 5)
+		Cell cellCurrencyValue = row.createCell(5); 
+		cellCurrencyValue.setCellValue(currencyName); 
+		cellCurrencyValue.setCellStyle(styleMap.get("TEXT_N")); 
         // --- DESCRIPCIÓN
         row = sheet.createRow(3);
         Cell cellDesc = row.createCell(0);
         cellDesc.setCellValue(cliDescription);
-        cellDesc.setCellStyle(styleMap.get("L3B"));
+        cellDesc.setCellStyle(styleMap.get("TEXT_B_WRAP"));
+        // 🏆 (Columna 0 hasta Columna 3 en la Fila 3)
+        // CellRangeAddress(firstRow, lastRow, firstCol, lastCol)
+		sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 3));
         
     }
 
     @Override
-    protected void writeColumnHeader() {
+    protected void writeColumnHeader(Map<String, Object> parameters) {
         
         // Reajustar el ancho de las columnas
     	for (int col = 0; col < maxLen.length; col++) {
@@ -151,20 +252,18 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         String isShowZERO = (String) parameters.get("isShowZERO");
         String isShowOrganization = (String) parameters.get("isShowOrganization");
         String trxName = (String) parameters.get("AD_PInstance_ID"); // Usar PInstance como trxName
+        String ReportTitle = (String) parameters.get("ReportTitle");
         
-        // Obtener Datos
+        // Obtener Datos  (C_ElementValue_ID = null para TrialBalance) 
         List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceData(
                 AD_Client_ID, C_AcctSchema_ID, AD_Org_ID, AD_OrgParent_ID, 
-                C_Period_ID, PostingType, C_ElementValue_ID, 
+                C_Period_ID, PostingType, null, 
                 DateFrom, DateTo, isShowZERO, trxName);
         
         if (reportData == null || reportData.isEmpty()) {
             log.warning("No se encontraron datos para el Balance de Comprobación.");
             return;
         }
-
-        // Crear hoja y encabezados generales ---
-        writeClientHeader(AD_Client_ID); // Escribe Logo, Título y Nombre
 
         int total = reportData.size();
         int batchSize = 100;
@@ -244,20 +343,20 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         }
     }
     
+    
     @Override
-    protected String[] getColumnHeaders() {
+    protected String[] getColumnHeaders(Map<String, Object> parameters) {
         return this.headers;
     }
 
     @Override
-    protected int[] getColumnWidths() {
+    protected int[] getColumnWidths(Map<String, Object> parameters) {
         // Nota: El viewer utiliza maxLen para widths
         return this.maxLen; 
     }
 
     @Override
-    protected int getHeaderRowCount() {
+    protected int getHeaderRowCount(Map<String, Object> parameters) {
         return headerRows;
     }
-
 }

@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +26,8 @@ import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Textbox;
+import org.adempiere.webui.event.ActionEvent;
+import org.adempiere.webui.event.ActionListener;
 import org.adempiere.webui.event.ValueChangeEvent;
 import org.adempiere.webui.event.ValueChangeListener;
 import org.adempiere.webui.editor.WDateEditor;
@@ -35,6 +38,7 @@ import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
+import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.window.Dialog;
 import org.amerp.reports.xlsx.constants.FinancialReportConstants;
 import org.amerp.reports.xlsx.generator.IReportGenerator;
@@ -73,7 +77,7 @@ import org.zkoss.zul.North;
 import org.zkoss.zul.South;
 
 
-public class FinancialReports_TreeOrg_Form  implements IFormController, EventListener<Event>, IProcessUI , ValueChangeListener{
+public class FinancialReports_TreeOrg_Form  implements IFormController, EventListener<Event>, IProcessUI , ValueChangeListener, ActionListener{
 
 	private static final CLogger log = CLogger.getCLogger(FinancialReports_TreeOrg_Form.class);
 
@@ -84,6 +88,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	// Variable para guardar valores seleccionado por el usuario.
     private String m_postingType_value = "A"; // valor por defecto
     private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+    private String m_reportType_name = "Trial Balance Report";
     private ProcessInfo m_Pi = null;
     private int maxVisibleRows =5000;
     /** Default constructor */
@@ -126,6 +131,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     private Label fAccountLabel = new Label();
     private WSearchEditor fAccount;
     private Checkbox isShowOrganization = new Checkbox();
+    private Checkbox isShowCrosstab = new Checkbox();
     private Checkbox isShowZERO = new Checkbox();
     private Label isBatchLabel = new Label();
     private Checkbox isBatch = new Checkbox(); 
@@ -221,7 +227,8 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		int AD_Column_ID_Client = MColumn.getColumn_ID("AD_Client", COLUMN_NAME_CLIENT);
 		MLookup lookupClient = MLookupFactory.get(Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID_Client, DisplayType.TableDir);
 		fClient = new WTableDirEditor(COLUMN_NAME_CLIENT, true, false, true, lookupClient);
-
+        fClient.addValueChangeListener(this);
+        
         // fOrgParent
 		// =======================================================
 		// === Campo AD_OrgParent_ID (Organizaciones Resumen) ===
@@ -250,7 +257,8 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	         e.printStackTrace();
 		}
 		fOrgParent = new WTableDirEditor("AD_OrgParent_ID", true, false, true, lookupOrgParent);
-	     
+        fOrgParent.addValueChangeListener(this);
+        
 		// ===============================================================
 		// === Campo AD_Org_ID (Organizaciones Hijas - Instanciación) ===
 		// ===============================================================
@@ -277,14 +285,16 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		}
 		// Inicializar el editor WTableDirEditor
 		fOrg = new WTableDirEditor("AD_Org_ID", true, false, true, lookupOrg);
-
-		// ============================================================
+        fOrg.addValueChangeListener(this);
+		
+        // ============================================================
         // fAcctSchema
 		// ============================================================
         int AD_Column_ID_AcctSchema = MColumn.getColumn_ID("C_AcctSchema", "C_AcctSchema_ID");
         MLookup lookupAcctSchema = MLookupFactory.get(Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID_AcctSchema, DisplayType.TableDir);
         fAcctSchema = new WTableDirEditor("C_AcctSchema_ID", true, false, true, lookupAcctSchema);
-
+        fAcctSchema.addValueChangeListener(this);
+        
         // ============================================================
         // fPostingType
         // ============================================================
@@ -292,20 +302,24 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         fPostingType = new WTableDirEditor("PostingType", true, false, true, lookupPostingType);
         // LLAMA AL MÉTODO PARA CARGAR Y RESTAURAR EL COMBO
         initPostingTypeCombo(); 
-        
         //. REGISTRA EL LISTENER (Solo una vez)
         fPostingType.addValueChangeListener(this);
+        
         // ============================================================
         // fPeriod
         // ============================================================
         int AD_Column_ID_Period = MColumn.getColumn_ID("C_Period", "C_Period_ID");
         MLookup lookupPeriod = MLookupFactory.get(Env.getCtx(), form.getWindowNo(), 0, AD_Column_ID_Period, DisplayType.TableDir);
         fPeriod = new WTableDirEditor("C_Period_ID", true, false, true, lookupPeriod);
-        
+        fPeriod.addValueChangeListener(this);
+
         // =======================================================
         // === INSTANCIACIÓN DE DATEFROM Y DATETO  ===
         // =======================================================
 		// ======= DateFrom DateTo =======
+        // Añadir listeners para que reaccionen a cambios posteriores
+        if (dateFrom != null) dateFrom.addValueChangeListener(this);
+        if (dateTo != null) dateTo.addValueChangeListener(this);
 
 		
 		// =======================================================
@@ -333,10 +347,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         dateFromLabel.setText(Msg.translate(Env.getCtx(), "DateFrom"));
         dateToLabel.setText(Msg.translate(Env.getCtx(), "DateTo"));
         dateToLabel.setText(Msg.translate(Env.getCtx(),"DateTo"));
-        // Cuenta de Resultado
         String IncomeSummary_Acct_Element_Name = "IncomeSummary_Acct";
         fAccountLabel.setText(Msg.getElement(Env.getCtx(), IncomeSummary_Acct_Element_Name));
         isShowOrganization.setText(Msg.translate(Env.getCtx(), "isShowOrganization"));
+        isShowCrosstab.setText(Msg.translate(Env.getCtx(), "isShowCrosstab"));
         isShowZERO.setText(Msg.translate(Env.getCtx(), "isShowZERO"));
         isBatch.setText(Msg.translate(Env.getCtx(), "BackgroundJob"));
         isBatchLabel.setText(Msg.translate(Env.getCtx(), "BackgroundJob"));
@@ -421,6 +435,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // Checkboxes
         row = new Row();
         row.appendCellChild(isShowOrganization,1);	
+        row.appendCellChild(isShowCrosstab,1);
         rows.appendChild(row);
         
         row = new Row();
@@ -458,7 +473,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         final String COLUMN_NAME_CLIENT = "AD_Client_ID";
         // MLookup y fClient ya están instanciados en zkInit()
         fClient.setValue(Env.getAD_Client_ID(Env.getCtx()));
-        fClient.addValueChangeListener(this);
+//        fClient.addValueChangeListener(this);
         // Obtener la descripción usando la utilidad con el nombre de la columna.
         String tooltipText = MsgUtils.getElementFullDescription(COLUMN_NAME_CLIENT);
         if (tooltipText == null || tooltipText.isEmpty()) {
@@ -477,7 +492,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	     // =======================================================
 	     // fOrgParent ya está instanciado en zkInit()
 	     fOrgParent.setValue(Env.getContextAsInt(Env.getCtx(), "$AD_OrgParent_ID"));
-	     fOrgParent.addValueChangeListener(this);
+//	     fOrgParent.addValueChangeListener(this);
 	     // tooltip simple
 	     ((org.zkoss.zul.Combobox) fOrgParent.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription("AD_OrgParent_ID"));
 	     
@@ -487,7 +502,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		 // ** ¡ATENCIÓN! Se elimina toda la duplicación de MLookupFactory y la re-instanciación de fOrg. **
 		 // Se usa el fOrg ya creado en zkInit().
 		 fOrg.setValue(Env.getContextAsInt(Env.getCtx(), "$AD_Org_ID"));
-		 fOrg.addValueChangeListener(this);
+//		 fOrg.addValueChangeListener(this);
 		 ((org.zkoss.zul.Combobox) fOrg.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription("AD_Org_ID"));
         
         // =======================================================
@@ -495,7 +510,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // =======================================================
         // MLookup y fAcctSchema ya están instanciados en zkInit()
         fAcctSchema.setValue(Env.getContextAsInt(Env.getCtx(), "$C_AcctSchema_ID"));
-        fAcctSchema.addValueChangeListener(this);
+//        fAcctSchema.addValueChangeListener(this);
         ((org.zkoss.zul.Combobox) fAcctSchema.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription("C_AcctSchema_ID"));
         
         // =======================================================
@@ -551,7 +566,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             CLogger.getCLogger(getClass()).log(Level.SEVERE, 
                 "Fallo al forzar el setModel() o la selección para fPeriod. El componente podría no ser un Combobox.", e);
         }
-        fPeriod.addValueChangeListener(this);
+  //      fPeriod.addValueChangeListener(this);
         ((org.zkoss.zul.Combobox) fPeriod.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription(COLUMN_NAME_PERIOD));
 
 
@@ -586,9 +601,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 dateTo.setValue(m_DateTo);
             }
         }
-        // Añadir listeners para que reaccionen a cambios posteriores
-        if (dateFrom != null) dateFrom.addValueChangeListener(this);
-        if (dateTo != null) dateTo.addValueChangeListener(this);
+//        // Añadir listeners para que reaccionen a cambios posteriores
+//        if (dateFrom != null) dateFrom.addValueChangeListener(this);
+//        if (dateTo != null) dateTo.addValueChangeListener(this);
         
         // =======================================================
         // === Cuenta Contable (fAccount) ===
@@ -620,14 +635,18 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // =======================================================
         // ======= isShowOrganization  =======
         // =======================================================
-//        isShowOrganization.setValue(true);
         isShowOrganization.setChecked(true);
         isShowOrganization.addActionListener(this);
 
         // =======================================================
+        // ======= isShowCrosstab  =======
+        // =======================================================
+        isShowCrosstab.setChecked(true);
+        isShowCrosstab.addActionListener(this);
+
+        // =======================================================
         // ======= isShowZERO  =======
         // =======================================================
-//        isShowZERO.setValue(false);
         isShowZERO.setChecked(false);
         isShowZERO.addActionListener(this);
         
@@ -679,10 +698,18 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         previewButton.addEventListener("onClick", this);
     }
 
+	@Override
+	public ADForm getForm() {
+		return form;
+	}
+
 	/** Evento de botones */
     @Override
     public void onEvent(Event event) throws Exception {
-        Object source = event.getTarget();
+    	
+    	log.warning("onEvent="+event.getName()+" Target="+ event.getTarget());
+    	
+    	Object source = event.getTarget();
 
         if (source == resetButton) {
         	resetReportForm();
@@ -706,8 +733,22 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         	int headerRows = metadata.getHeaderRows();
         	previewReportWeb(fullPath, headers, widths, headerRows, maxVisibleRows);
         } else if (source == cancelButton) {
+        	// Cerrar Formulario
         	closeReportForm(); 
-        }
+        
+        } else if (source == isShowOrganization ) {
+
+        	Boolean showOrg = isShowOrganization.isChecked();
+        	if (showOrg) {
+	            // Habilitar y marcar Crosstab por defecto.
+	        	isShowCrosstab.setDisabled(false);  // Habilitar
+	            isShowCrosstab.setChecked(true);    // Marcar por defecto
+	        } else {
+	            // Deshabilitar (opaco) y desmarcar Crosstab.
+	            isShowCrosstab.setChecked(false);  // Desmarcar
+	            isShowCrosstab.setDisabled(true);  // Deshabilitar (opaco)
+	        }
+	    }
         // Dowload Button
         if (fullPath != null && !fullPath.trim().isEmpty()) {
         	downloadButton.setEnabled(true);
@@ -716,14 +757,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             downloadButton.setEnabled(false);
             north.setOpen(true);
         }
-        
+        initReportTypeCombo();
     }
 
-	
-	@Override
-	public ADForm getForm() {
-		return form;
-	}
 	
 	@Override
 	public void valueChange(ValueChangeEvent event) {
@@ -753,8 +789,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        // Setear el valor de referencia
 	        if (newValue instanceof String) {
                 m_reportType_value = (String) newValue;
+                m_reportType_name = (String) newValue;
             } else if (newValue instanceof ValueNamePair) {
                 m_reportType_value = ((ValueNamePair) newValue).getValue();
+                m_reportType_name = ((ValueNamePair) newValue).getName();
             }
 	        // ========================================================
 	        // === OBTENER NOMBRE Y DESCRIPCIÓN TRADUCIDOS (Limpio) ===
@@ -992,8 +1030,43 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        } else if (newValue instanceof ValueNamePair) {
 	            m_postingType_value = ((ValueNamePair) newValue).getValue();
 	        }
-	    }
+	    } 
 	    
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		log.warning("actionPerformed="+e.getEventName());
+	    Boolean showZero = isShowZERO.isChecked();
+        Boolean showOrg = isShowOrganization.isChecked();
+        Boolean showCrosstab = isShowCrosstab.isChecked();
+
+		// Aquí puedes redirigir la lógica
+	    if (e.getSource() == isShowOrganization) {
+	       
+	        // Asumimos que 'isShowCrosstab' es una variable de instancia (VCheck o similar)
+	        
+	        if (showOrg) {
+	            // Caso: isShowOrganization está MARCADO (Mostrar Org en fila)
+	            // Deshabilitar (opaco) y desmarcar Crosstab.
+	            
+	            // 2. Control del Checkbox isShowCrosstab
+	            isShowCrosstab.setChecked(false);  // Desmarcar
+	            isShowCrosstab.setDisabled(true);  // Deshabilitar (opaco)
+	            
+	        } else {
+	            // Caso: isShowOrganization está DESMARCADO
+	            // Habilitar y marcar Crosstab por defecto.
+	            
+	        	isShowCrosstab.setDisabled(false);  // Habilitar
+	            isShowCrosstab.setChecked(true);    // Marcar por defecto
+	        }
+	    	
+	    	
+	    	
+	    } 
+	    // ... lógica para otros checks ...
+		
 	}
 
 	private void closeReportForm() {
@@ -1001,24 +1074,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        @Override
 	        public void onCallback(Boolean result) {
 	            if (Boolean.TRUE.equals(result)) {
-	                
-	                // 1. Clean up internal resources (best practice)
-	                form.dispose(); 
-	                
-	                // 2. 🚀 FINAL FIX: Get the component that is two levels up.
-	                // This is often the actual ZK Window or Tab Panel container.
-	                org.zkoss.zk.ui.Component target = form.getParent();
-	                
-	                if (target != null && target.getParent() != null) {
-	                    // Try detaching the grandparent, which is likely the Tab Content.
-	                    target.getParent().detach();
-	                } else if (target != null) {
-	                    // Fallback to detaching the immediate parent.
-	                    target.detach();
-	                } else {
-	                    // Fallback to detaching the form itself.
-	                    form.detach(); 
-	                }
+
+	                dispose(); 
+
 	            }
 	        }
 	    });
@@ -1038,10 +1096,32 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private ReportMetadata runServerProcessForm() {
 		String errorMsg = "";
 		ReportMetadata reportMetadata = null;
-		int AD_Client_ID = fClient.getValue() != null ? ((Integer) fClient.getValue()) : Env.getAD_Client_ID(Env.getCtx());
-		int C_AcctSchema_ID = fAcctSchema.getValue() != null ? ((Integer) fAcctSchema.getValue()) : 0;
-		int AD_Org_ID = fOrg.getValue() !=null ? ((Integer) fOrg.getValue()) : 0;
-		int AD_OrgParent_ID = fOrgParent.getValue() !=null ? ((Integer) fOrgParent.getValue()) : 0;
+		int AD_Client_ID = (fClient.getValue() instanceof KeyNamePair) 
+                ? ((KeyNamePair) fClient.getValue()).getKey()
+                : (fClient.getValue() != null && fClient.getValue() instanceof Integer)
+                    ? (Integer) fClient.getValue()
+                    : Env.getAD_Client_ID(Env.getCtx());
+		// Obtener el ID del Esquema Contable (C_AcctSchema_ID)
+		int C_AcctSchema_ID = 0;
+		if (fAcctSchema.getValue() instanceof KeyNamePair) {
+		    C_AcctSchema_ID = ((KeyNamePair) fAcctSchema.getValue()).getKey();
+		} else if (fAcctSchema.getValue() instanceof Integer) {
+		    C_AcctSchema_ID = (Integer) fAcctSchema.getValue();
+		} 
+		// AD_Org_ID 
+		int AD_Org_ID = 0;
+		if (fOrg.getValue() instanceof KeyNamePair) {
+		    AD_Org_ID = ((KeyNamePair) fOrg.getValue()).getKey();
+		} else if (fOrg.getValue() instanceof Integer) {
+		    AD_Org_ID = (Integer) fOrg.getValue();
+		} 
+		// OrgParent_ID 
+		int AD_OrgParent_ID = 0;
+		if (fOrgParent.getValue() instanceof KeyNamePair) {
+		    AD_OrgParent_ID = ((KeyNamePair) fOrgParent.getValue()).getKey();
+		} else if (fOrgParent.getValue() instanceof Integer) {
+		    AD_OrgParent_ID = (Integer) fOrgParent.getValue();
+		}
 		// Crear un ProcessInfo simulado para lockUI/unlockUI
 	    ProcessInfo pi = new ProcessInfo(Msg.getMsg(Env.getCtx(), "Processing"), 0);
 	    this.m_Pi = pi;
@@ -1065,28 +1145,43 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             // Si ya es un Integer (caso de un campo DynInt simple o valor ya procesado)
         	C_Period_ID = (Integer) objC_Period_ID;
         }
+        // C_ElementValue_ID
+        int C_ElementValue_ID = 0; // Inicializar a 0 (o un valor seguro)
+        Object accountValue = fAccount.getValue();
+        if (accountValue != null) {
+            if (accountValue instanceof KeyNamePair) {
+                C_ElementValue_ID = ((KeyNamePair) accountValue).getKey();
+            } else if (accountValue instanceof Integer) {
+                C_ElementValue_ID = (Integer) accountValue;
+            }
+        }
         // Obtener el valor booleano (true/false)
         Boolean showZero = isShowZERO.isChecked();
         Boolean showOrg = isShowOrganization.isChecked();
+        Boolean showCrosstab = isShowCrosstab.isChecked();
         String isShowZERO_String = (showZero != null && showZero) ? "Y" : "N";
         String isShowOrganization_String = (showOrg != null && showOrg) ? "Y" : "N";
+        String isShowCrosstab_String = (showCrosstab != null && showCrosstab) ? "Y" : "N";
         // Parámetros Requeridos
         parameters.put("AD_Client_ID", AD_Client_ID);
         parameters.put("AD_OrgParent_ID", AD_OrgParent_ID);
         parameters.put("AD_Org_ID", AD_Org_ID);
         parameters.put("C_AcctSchema_ID", C_AcctSchema_ID);
+        parameters.put("C_ElementValue_ID", C_ElementValue_ID);
         parameters.put("PostingType", (String) PostingType);
         parameters.put("C_Period_ID", C_Period_ID);
         parameters.put("DateFrom", (Timestamp) dateFrom.getValue());
         parameters.put("DateTo", (Timestamp) dateTo.getValue());
         parameters.put("isShowZERO", (String) isShowZERO_String);
         parameters.put("isShowOrganization", (String) isShowOrganization_String);
+        parameters.put("isShowCrosstab", (String) isShowCrosstab_String);
+        parameters.put("ReportTitle", (String) m_reportType_name);
         // Resto de parametros
         // Selección de la Estrategia (Generador)
         IReportGenerator generador = ReportGeneratorFactory.getGenerator(reportTypeKey);
         
         if (generador == null) {
-        	errorMsg = "Tipo de reporte no soportado.";
+        	errorMsg = "Tipo de reporte no soportado.\r\n"+m_reportType_name;
             Dialog.error(form.getWindowNo(), errorMsg);
             return reportMetadata;
         }
@@ -1192,37 +1287,23 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      */
     private void initReportTypeCombo() {
         if (fReportType == null) return;
-        
-        // 1. Cargar la Lista de Valores
-        final int AD_REFERENCE_ID_REPORT = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE; 
-        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID_REPORT, false);
-        List<ValueNamePair> reportTypes = new ArrayList<>(java.util.Arrays.asList(reportTypesArray));
-        
-        // 2. Ordenar Alfabéticamente
-        Collections.sort(reportTypes, new Comparator<ValueNamePair>() {
-             public int compare(ValueNamePair p1, ValueNamePair p2) {
-                 return p1.getName().compareToIgnoreCase(p2.getName()); // Se ordena por Nombre, no por Valor.
-             }
-        });
 
-        // 3. Determinar el valor a establecer (usa la variable persistida)
-        String valueToSet = m_reportType_value;
-        String defaultReportValue = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
-
-        // Fallback si la variable está nula
-        if (valueToSet == null || valueToSet.isEmpty()) {
-            valueToSet = defaultReportValue;
-        }
+        // 1. Obtener lista ya ordenada desde el nuevo método
+        List<ValueNamePair> reportTypes = getSortedReportTypes();
         
-        // 4. Asignar la lista al Combobox ZK y forzar el valor
+        // 2. Determinar valor anterior o valor por defecto
+        String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            : m_reportType_value;
+        
         try {
             org.zkoss.zul.Combobox comboboxReport = (org.zkoss.zul.Combobox) fReportType.getComponent();
             
-            // REASIGNAR EL MODELO: CRÍTICO para que no se pierda.
+            // Asignar lista al modelo del combobox
             org.zkoss.zul.ListModelList<ValueNamePair> modelReport = new org.zkoss.zul.ListModelList<>(reportTypes);
             comboboxReport.setModel(modelReport);
             
-            // 5. Buscar el VNP y establecer el valor visible e interno.
+            // Seleccionar el item correspondiente
             ValueNamePair selectedVNP = null;
             for (ValueNamePair vnp : reportTypes) {
                 if (vnp.getValue().equals(valueToSet)) {
@@ -1230,22 +1311,72 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                     break;
                 }
             }
-            
+
             if (selectedVNP != null) {
-                // Establecer la clave interna (el valor real, ej: "TRB")
-                fReportType.setValue(valueToSet);
-                // Forzar la visualización del label en el combo ZK (ej: "Balance de Comprobación")
+                fReportType.setValue(valueToSet);         
                 comboboxReport.setValue(selectedVNP.getName());
+                m_reportType_value = selectedVNP.getValue();
+                m_reportType_name  = selectedVNP.getName();
             } else {
-                // Si el valor guardado (m_reportType_value) no se encuentra, 
-                // establecemos la clave interna sin forzar el texto visible (puede quedar vacío)
                 fReportType.setValue(valueToSet);
+                m_reportType_value = valueToSet;
+                m_reportType_name = Msg.getMsg(Env.getCtx(), "Trial Balance Report");
             }
 
         } catch (Exception e) {
             CLogger.getCLogger(getClass()).log(Level.SEVERE, "Fallo al inicializar/restaurar fReportType.", e);
         }
     }
+
+
+    
+    /**
+     * Genera y devuelve una lista ordenada alfabéticamente de ValueNamePair
+     * para el tipo de reporte.
+     * A partir de AD_Reference
+     */
+    private List<ValueNamePair> getSortedReportTypes() {
+        final int AD_REFERENCE_ID_REPORT = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
+        
+        // Obtener lista desde MRefList
+        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID_REPORT, false);
+        List<ValueNamePair> reportTypes = new ArrayList<>(Arrays.asList(reportTypesArray));
+        
+        // Ordenar alfabéticamente por nombre
+        Collections.sort(reportTypes, new Comparator<ValueNamePair>() {
+            public int compare(ValueNamePair p1, ValueNamePair p2) {
+                return p1.getName().compareToIgnoreCase(p2.getName());
+            }
+        });
+        
+        return reportTypes;
+    }
+    
+    public static ValueNamePair getReportTypeByValue(String value) {
+        final int AD_REFERENCE_ID = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
+        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID, false);
+
+        if (reportTypesArray != null) {
+            for (ValueNamePair vnp : reportTypesArray) {
+                if (vnp.getValue().equals(value)) {
+                    return vnp;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    private String getReportNameByValue(String value) {
+        List<ValueNamePair> reportTypes = getSortedReportTypes(); // ya lo tienes creado antes
+        for (ValueNamePair vnp : reportTypes) {
+            if (vnp.getValue().equals(value)) {
+                return vnp.getName();
+            }
+        }
+        return value; // fallback: devuelve el código si no encuentra el nombre
+    }
+    
     /**
      * Inicializa o restaura el componente fPostingType cargando el modelo ZK
      * y forzando el valor seleccionado (usa 'A' como predeterminado).
@@ -1448,6 +1579,12 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 dateTo.addValueChangeListener(listener);
             }
         }
+    }
+    
+    public void dispose() {
+    	
+    	SessionManager.getAppDesktop().closeActiveWindow();
+    	
     }
     
     @Override
