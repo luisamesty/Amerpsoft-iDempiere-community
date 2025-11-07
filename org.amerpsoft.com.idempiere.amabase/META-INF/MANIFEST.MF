@@ -1,0 +1,21 @@
+Bundle-ManifestVersion: 2
+Bundle-Name: AMERPSoft iDempiere Base Libraries
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.amabase
+Bundle-Version: 12.0.0.qualifier
+Bundle-Vendor: AMERPSoft
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: groovy.lang,
+ groovy.util,
+ net.sf.jasperreports.engine,
+ org.adempiere.webui.window,
+ org.codehaus.groovy.runtime,
+ org.compiere.print,
+ org.osgi.framework;version="1.3.0",
+ org.apache.poi.ss.usermodel,
+ org.apache.poi.xssf.usermodel
+Bundle-ClassPath: .,\
+ src/lib/poi-4.1.2.jar,\
+ src/lib/poi-ooxml-4.1.2.jar,\
+ src/lib/poi-ooxml-schemas-4.1.2.jar,\
+ src/lib/xmlbeans-3.1.0.jar
+

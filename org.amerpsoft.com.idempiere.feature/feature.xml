@@ -17,6 +17,10 @@
    </license>
 
    <plugin
+         id="org.amerpsoft.com.idempiere.amabase"
+         version="0.0.0"/>
+         
+   <plugin
          id="org.amerpsoft.com.idempiere.editors-com"
          version="12.0.0.qualifier"/>
 
