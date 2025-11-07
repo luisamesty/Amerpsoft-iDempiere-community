@@ -1,8 +1,10 @@
 package org.amerp.reports.xlsx.generator;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +104,11 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         // Organizaciones Seleccionadas
         Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
         Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        List<OrgTree> orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
+        List<OrgTree> orgs  = null;
+        if (AD_Org_ID==0 || AD_Org_ID == null)
+        	orgs  = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
+        else
+        	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
         cliDescription = Msg.translate(Env.getCtx(),"AD_org_ID")+": ";
         if (orgs.size() == 1) {
         	// Si solo hay una organización, usa el elemento en el índice 0.
@@ -226,6 +232,29 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             styleMap.put("HEADER", headerStyle);
         }
  
+        // Escribir cabeceras traducidas Columnas fijas
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            String translated = Msg.translate(Env.getCtx(), headers[i]);
+
+            cell.setCellValue(translated != null ? translated : headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+        
+        
+        String isShowCrosstab = (String) parameters.get("isShowCrosstab");
+        Integer AD_Client_ID = (Integer) parameters.get("AD_Client_ID");
+        Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
+        Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
+        List<OrgTree> orgs  = null;
+        if (AD_Org_ID==0 || AD_Org_ID == null)
+        	orgs  = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
+        else
+        	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
+        // Obtener los nombres de las organizaciones (debe estar disponible)
+        List<Integer> selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
+        Map<Integer, String> orgNames = DataPopulator.getOrgNames(orgs);      
+        
         // Escribir cabeceras traducidas
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -234,6 +263,20 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             cell.setCellValue(translated != null ? translated : headers[i]);
             cell.setCellStyle(headerStyle);
         }
+        
+        if (isShowCrosstab != null && isShowCrosstab.compareToIgnoreCase("Y")==0) {
+        	int colIndex = headers.length; // Columna inicial
+            // 2. MODO CROSSTAB: Saldos Finales Dinámicos por Organización
+            for (Integer orgID : selectedOrgIDs) {
+                String orgName = orgNames.get(orgID);
+                String headerText =  orgName ;
+                
+                Cell cell = headerRow.createCell(colIndex++);
+                cell.setCellValue(headerText);
+                cell.setCellStyle(headerStyle);
+            }
+
+        } 
     }
     
     @Override
@@ -251,6 +294,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         Timestamp DateTo = (Timestamp) parameters.get("DateTo");
         String isShowZERO = (String) parameters.get("isShowZERO");
         String isShowOrganization = (String) parameters.get("isShowOrganization");
+        String isShowCrosstab = (String) parameters.get("isShowCrosstab");
         String trxName = (String) parameters.get("AD_PInstance_ID"); // Usar PInstance como trxName
         String ReportTitle = (String) parameters.get("ReportTitle");
         
@@ -264,7 +308,24 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             log.warning("No se encontraron datos para el Balance de Comprobación.");
             return;
         }
-
+        // Obtener los IDs de las organizaciones (debe ser un campo de la clase)
+        List<OrgTree> orgs  = null;
+        if (AD_Org_ID==0 || AD_Org_ID == null)
+        	orgs  = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
+        else
+        	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
+        // Obtener los nombres de las organizaciones (debe estar disponible)
+        List<Integer> selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
+        Map<Integer, String> orgNames = DataPopulator.getOrgNames(orgs);     
+        Boolean isCrosstab = isShowCrosstab.compareToIgnoreCase("Y")==0;
+        // La columna donde comienza el Crosstab (después de Saldo Final Consolidado)
+        final int CROSSTAB_START_COLUMN = headers.length; 
+        // Crear el mapa OrgID -> Índice de Columna
+        Map<Integer, Integer> orgColumnMap = new HashMap<>();
+        int currentColIndex = CROSSTAB_START_COLUMN;
+        for (Integer orgID : selectedOrgIDs) {
+            orgColumnMap.put(orgID, currentColIndex++);
+        }
         int total = reportData.size();
         int batchSize = 100;
         int rowNum = headerRows + 1;
@@ -277,47 +338,84 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         
         //  Escribir filas del reporte
         for (int i = 0; i < total; i++) {
-            TrialBalanceLine e = reportData.get(i);
+            TrialBalanceLine tbl = reportData.get(i);
             //
-            int level = e.getLevel();
-            String tipoRegistro = e.getTipoRegistro(); 
+            int level = tbl.getLevel();
+            String tipoRegistro = tbl.getTipoRegistro(); 
 
-            // FILTRADO Organizacion
-            boolean skipOrganization = "N".equalsIgnoreCase(isShowOrganization) && "50".equals(tipoRegistro);
-            if (skipOrganization) {
-                // Si isShowOrganization es 'N' y la línea es de tipo '50' (Organización), saltar esta iteración.
-                continue; 
-            }
-            // Nueva Fila
-            Row row = sheet.createRow(rowNum++);
-            // Formatear la cuenta con sangría (Indentación)
-            String paddedName = ExcelUtils.padLeft(e.getNombre(), level);
-            String orgValue = e.getOrgValue() != null ? e.getOrgValue() : "";
-
+//            // FILTRADO Organizacion
+//            boolean skipOrganization = "N".equalsIgnoreCase(isShowOrganization) && "50".equals(tipoRegistro);
+//            if (skipOrganization) {
+//                // Si isShowOrganization es 'N' y la línea es de tipo '50' (Organización), saltar esta iteración.
+//                continue; 
+//            }
+       
             // Determinar estilo
-            boolean bold = "R".equals(tipoRegistro) || "60".equals(tipoRegistro);
+            boolean bold = "10".equals(tipoRegistro) || "50".equals(tipoRegistro);
             CellStyle tStyle = bold ? textBold : textNormal;
             CellStyle nStyle = bold ? numBold : numNormal;
+            // Si la línea NO es un detalle de Org (ej., es R o 60), escríbela como la línea principal
+            if ("10".equals(tipoRegistro) || "50".equals(tipoRegistro)) {       
+                // Nueva Fila
+                Row row = sheet.createRow(rowNum++);
+                // Formatear la cuenta con sangría (Indentación)
+                String paddedName = ExcelUtils.padLeft(tbl.getNombre(), level);
+                String orgValue = tbl.getOrgValue() != null ? tbl.getOrgValue() : "";
 
-            // --- Columna 0: Cód. Cuenta (con sangría)
-            ExcelUtils.createStyledCell(row, 0, e.getCodigo(), tStyle);
-            ExcelUtils.updateMaxLen(maxLen, 0, e.getCodigo());
 
-            // --- Columna 1: Nombre Cuenta
-            ExcelUtils.createStyledCell(row, 1, paddedName, tStyle);
-            ExcelUtils.updateMaxLen(maxLen, 1, paddedName);
 
-            // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
-            ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
-            ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
-            // --- Columnas 3-7: Saldos (BigDecimals)
-            int col = 3;
-            ExcelUtils.createStyledCell(row, col++, e.getOpenBalance(), nStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getAmtAcctDr(), nStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getAmtAcctCr(), nStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getBalancePeriodo(), nStyle);
-            ExcelUtils.createStyledCell(row, col++, e.getCloseBalance(), nStyle);
+                // --- Columna 0: Cód. Cuenta (con sangría)
+                ExcelUtils.createStyledCell(row, 0, tbl.getCodigo(), tStyle);
+                ExcelUtils.updateMaxLen(maxLen, 0, tbl.getCodigo());
+
+                // --- Columna 1: Nombre Cuenta
+                ExcelUtils.createStyledCell(row, 1, paddedName, tStyle);
+                ExcelUtils.updateMaxLen(maxLen, 1, paddedName);
+
+                // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
+                ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
+                ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
+                // --- Columnas 3-7: Saldos (BigDecimals)
+                int col = 3;
+                ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getBalancePeriodo(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getCloseBalance(), nStyle);
+                
+                // ⚠️ Nota: Para las líneas consolidadas, las columnas Crosstab (a partir de la 8) 
+                // deben quedar vacías o puedes añadir una lógica de totales.
+                
+            } else if ("60".equals(tipoRegistro) && isCrosstab) { 
+                // --- LÓGICA CROSSTAB: Escribir el Saldo de Organización ---
+
+                int currentOrgID = tbl.getAD_org_ID(); // Asumimos que tienes este campo en TrialBalanceLine
+                BigDecimal orgBalance = tbl.getCloseBalance(); // El saldo final de esta Org/línea
+
+                // 1. Encontrar la Fila (Row) correcta para esta cuenta
+                // Asumimos que tu query garantiza que la línea consolidada de esta cuenta
+                // fue la inmediatamente anterior y está en la fila (rowNum - 1).
+                Row targetRow = sheet.getRow(rowNum - 1); 
+                
+                if (targetRow != null && orgColumnMap.containsKey(currentOrgID)) {
+                    
+                    // 2. Obtener la columna de destino
+                    int targetCol = orgColumnMap.get(currentOrgID);
+                    
+                    // 3. Escribir el saldo en la columna de Crosstab
+                    ExcelUtils.createStyledCell(targetRow, targetCol, orgBalance, nStyle);
+                    // ExcelUtils.updateMaxLen(maxLen, targetCol, String.valueOf(orgBalance.doubleValue())); // Opcional
+                }
+                
+                // ⚠️ IMPORTANTE: No avanzar el rowNum aquí, ya que estamos modificando la fila anterior.
+                
+            } else {
+            	 continue; 
+            }
             
+            
+  
+
             if ((i + 1) % batchSize == 0) {
                 log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
                 		Msg.getMsg(Env.getCtx(), "of")+" "+total +

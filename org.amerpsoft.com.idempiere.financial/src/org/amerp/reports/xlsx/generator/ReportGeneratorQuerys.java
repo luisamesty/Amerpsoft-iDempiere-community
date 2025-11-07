@@ -27,7 +27,7 @@ public class ReportGeneratorQuerys {
         ")\n" +
         ",BalancesDetailOrg AS (\n" +
         "	SELECT \n" +
-        "		'50' AS blk, accts.nivel, accts.c_elementvalue_id, accts.codigo, accts.cuenta_nombre, accts.description, accts.accounttype, accts.accountsign, accts.issummary,\n" +
+        "		'60' AS blk, accts.nivel, accts.c_elementvalue_id, accts.codigo, accts.cuenta_nombre, accts.description, accts.accounttype, accts.accountsign, accts.issummary,\n" +
         "		accts.codigo0, accts.codigo1, accts.codigo2, accts.codigo3, accts.codigo4, accts.codigo5, accts.codigo6, accts.codigo7, accts.codigo8, accts.codigo9, \n" +
         "		bals.ad_org_id, bals.org_value, bals.org_name, bals.all_orgs, \n" +
         "		COALESCE(bals.openbalance, 0) AS openbalance, COALESCE(bals.amtacctdr, 0) AS amtacctdr, COALESCE(bals.amtacctcr, 0) AS amtacctcr, COALESCE(bals.amtacctsa, 0) AS amtacctsa, COALESCE(bals.closebalance, 0) AS closebalance\n" +
@@ -37,7 +37,7 @@ public class ReportGeneratorQuerys {
         ")\n" +
         ",BalancesDetailAcct AS (\n" +
         "    SELECT \n" +
-        "        '60' AS blk, dborg.nivel, dborg.c_elementvalue_id, dborg.codigo, dborg.cuenta_nombre, dborg.description, dborg.accounttype, dborg.accountsign, dborg.issummary,\n" +
+        "        '50' AS blk, dborg.nivel, dborg.c_elementvalue_id, dborg.codigo, dborg.cuenta_nombre, dborg.description, dborg.accounttype, dborg.accountsign, dborg.issummary,\n" +
         "		dborg.codigo0, dborg.codigo1, dborg.codigo2, dborg.codigo3, dborg.codigo4, dborg.codigo5, dborg.codigo6, dborg.codigo7, dborg.codigo8, dborg.codigo9,\n" +
         "		0 AS ad_org_id, NULL AS org_value,  NULL AS org_name, dborg.all_orgs, \n" +
         "        SUM(openbalance) AS openbalance, SUM(amtacctdr) AS amtacctdr, SUM(amtacctcr) AS amtacctcr, SUM(amtacctsa) AS amtacctsa, SUM(closebalance) AS closebalance\n" +
@@ -80,9 +80,10 @@ public class ReportGeneratorQuerys {
         "SELECT\n" +
         "    accts.codigo,\n" +
         "    accts.cuenta_nombre AS nombre,\n" +
+        "    NULL AS ad_org_id,\n" +
         "    NULL AS org_value,\n" +
         "    agg.openbalance, agg.amtacctdr AS debitos, agg.amtacctcr AS creditos, agg.amtacctsa AS balance_periodo, agg.closebalance,\n" +
-        "    'R' AS tipo_registro,\n" +
+        "    '10' AS tipo_registro,\n" +
         "    accts.nivel AS level,\n" +
         "    accts.pathel AS pathel_order\n" +
         "FROM \n" +
@@ -96,6 +97,7 @@ public class ReportGeneratorQuerys {
         "SELECT\n" +
         "    db.codigo,\n" +
         "    db.cuenta_nombre AS nombre,\n" +
+        "    db.ad_org_id AS ad_org_id,\n" +
         "    db.org_value,\n" +
         "    db.openbalance, db.amtacctdr AS debitos, db.amtacctcr AS creditos, db.amtacctsa AS balance_periodo, db.closebalance,\n" +
         "    db.blk AS tipo_registro, \n" +
@@ -104,5 +106,5 @@ public class ReportGeneratorQuerys {
         "FROM\n" +
         "    BalancesDetailAll db\n" +
         "ORDER BY\n" +
-        "    pathel_order, tipo_registro DESC, org_value;\n";
+        "    pathel_order, tipo_registro, org_value;\n";
 }

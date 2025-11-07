@@ -7,8 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -492,7 +496,40 @@ public class DataPopulator {
             pstmt.setInt(1, adClientId);
             pstmt.setInt(2, adOrgId);
             pstmt.setInt(3, adOrgParentId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    OrgTree bean = new OrgTree();
+                    bean.setAdClientId(rs.getBigDecimal("org_ad_client_id"));
+                    bean.setAdOrgId(rs.getBigDecimal("org_ad_org_id"));
+                    bean.setAdOrgParentId(rs.getBigDecimal("org_ad_orgparent_id"));
+                    bean.setIsSummary(rs.getString("issummary"));
+                    bean.setOrgValue(rs.getString("org_value"));
+                    bean.setOrgDescription(rs.getString("org_description"));
+                    bean.setOrgName(rs.getString("org_name"));
+                    bean.setAllOrgs(rs.getString("all_orgs"));
+                    bean.setOrgTaxId(rs.getString("org_taxid"));
+                    bean.setOrgLogo(rs.getBytes("org_logo"));
+                    list.add(bean);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        return list;
+    }
+
+    public static List<OrgTree> getOrgTreeListfromParent(int adClientId,  int adOrgParentId) {
+        List<OrgTree> list = new ArrayList<>();
+
+        String sql = """
+            SELECT * 
+            FROM adempiere.amf_org_tree(?, null, ?)
+        """;
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setInt(1, adClientId);
+            pstmt.setInt(2, adOrgParentId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     OrgTree bean = new OrgTree();
@@ -608,7 +645,7 @@ public class DataPopulator {
                 line.setCodigo(rs.getString("codigo"));
                 line.setNombre(rs.getString("nombre"));
                 line.setOrgValue(rs.getString("org_value"));
-                
+                line.setAD_Org_ID(rs.getInt("ad_org_id"));
                 line.setOpenBalance(rs.getBigDecimal("openbalance"));
                 line.setAmtAcctDr(rs.getBigDecimal("debitos"));
                 line.setAmtAcctCr(rs.getBigDecimal("creditos"));
@@ -629,4 +666,60 @@ public class DataPopulator {
 
         return list;
     }
+	
+	/**
+	 * getSelectedOrgIDs Devuelve una lista de AD_Org_IDs
+	 * @param orgs
+	 * @return
+	 */
+	public static List<Integer> getSelectedOrgIDs(List<OrgTree> orgs) {
+	    if (orgs == null || orgs.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+	    
+	    // Usar Streams (Java 8+) para mapear y recolectar los IDs
+	    return orgs.stream()
+	               .map(org -> org.getAdOrgId().intValue()) // Convertir BigDecimal a int
+	               .collect(Collectors.toList());
+	}
+	
+	// Implementar en la clase del generador de reporte (o un lugar accesible)
+	/**
+	 * getOrgNames
+	 * Devuelve una Lista Map de Nombres
+	 * @param orgs
+	 * @return
+	 */
+	public static Map<Integer, String> getOrgNames(List<OrgTree> orgs) {
+	    if (orgs == null || orgs.isEmpty()) {
+	        return Collections.emptyMap();
+	    }
+	    Map<Integer, String> orgMap = new HashMap<>(orgs.size());
+	    for (OrgTree org : orgs) {
+	        
+	        int adOrgId = org.getAdOrgId() != null ? org.getAdOrgId().intValue() : -1;
+	        String orgValue = org.getOrgValue();
+	        String orgName = org.getOrgName();
+	        String orgDescription = org.getOrgDescription();
+	       
+	        log.warning(String.format(
+	            "Org ID: %d, Value: %s, Name: %s, Description: %s",
+	            adOrgId,
+	            orgValue,
+	            orgName,
+	            orgDescription
+	        ));
+
+	        // Agregar al mapa, usando la Descripción para las cabeceras (como decidimos)
+	        // Puedes cambiar OrgTree::getOrgDescription por el campo que necesites en el reporte final
+	        orgMap.put(adOrgId, orgName); 
+	    }
+	    return orgMap;
+	    // Usar Streams para mapear ID -> Nombre de la organización
+//	    return orgs.stream()
+//	               .collect(Collectors.toMap(
+//	                   org -> org.getAdOrgId().intValue(),      // Key: ID
+//	                   OrgTree::getOrgName                     // Value: Nombre
+//	               ));
+	}
 }

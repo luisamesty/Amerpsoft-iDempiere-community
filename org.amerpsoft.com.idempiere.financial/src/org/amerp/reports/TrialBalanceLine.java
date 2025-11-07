@@ -7,6 +7,7 @@ public class TrialBalanceLine {
     // CAMPOS DE JERARQUÍA Y CÓDIGO
     private String codigo;
     private String nombre;
+    private Integer ad_org_id;
     private String orgValue;      // Valor de la Organización (NULL para R y 60)
     private String tipoRegistro;  // 'R', '60', '50'
     private int level;            // Nivel jerárquico
@@ -46,6 +47,8 @@ public class TrialBalanceLine {
     public BigDecimal getCloseBalance() { return closeBalance; }
     public void setCloseBalance(BigDecimal closeBalance) { this.closeBalance = closeBalance; }
 
+    public Integer getAD_org_ID() { return ad_org_id; }
+    public void setAD_Org_ID(Integer ad_org_id) { this.ad_org_id = ad_org_id; }
     // Metadata
     public String getOrgValue() { return orgValue; }
     public void setOrgValue(String orgValue) { this.orgValue = orgValue; }
