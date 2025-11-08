@@ -21,8 +21,7 @@ Require-Bundle: org.adempiere.base;bundle-version="0.0.0",
  zkplus;bundle-version="0.0.0",
  zul;bundle-version="0.0.0",
  zweb;bundle-version="0.0.0",
- net.sf.jasperreports.engine,
- assertj-core;bundle-version="3.22.0"
+ net.sf.jasperreports.engine
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: groovy.lang,
  groovy.util,

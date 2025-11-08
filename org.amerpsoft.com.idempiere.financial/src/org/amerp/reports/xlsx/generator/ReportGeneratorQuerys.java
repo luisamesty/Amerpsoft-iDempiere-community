@@ -80,6 +80,9 @@ public class ReportGeneratorQuerys {
         "SELECT\n" +
         "    accts.codigo,\n" +
         "    accts.cuenta_nombre AS nombre,\n" +
+        "    accts.accounttype AS accounttype,\n" +
+        "    accts.accountsign AS accountsign,\n" +
+        "    accts.issummary AS issummary,\n" +
         "    NULL AS ad_org_id,\n" +
         "    NULL AS org_value,\n" +
         "    agg.openbalance, agg.amtacctdr AS debitos, agg.amtacctcr AS creditos, agg.amtacctsa AS balance_periodo, agg.closebalance,\n" +
@@ -97,6 +100,9 @@ public class ReportGeneratorQuerys {
         "SELECT\n" +
         "    db.codigo,\n" +
         "    db.cuenta_nombre AS nombre,\n" +
+        "    db.accounttype AS accounttype,\n" +
+        "    db.accountsign AS accountsign,\n" +
+        "    db.issummary AS issummary,\n" +
         "    db.ad_org_id AS ad_org_id,\n" +
         "    db.org_value,\n" +
         "    db.openbalance, db.amtacctdr AS debitos, db.amtacctcr AS creditos, db.amtacctsa AS balance_periodo, db.closebalance,\n" +

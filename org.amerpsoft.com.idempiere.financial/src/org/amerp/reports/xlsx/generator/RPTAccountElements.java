@@ -23,9 +23,9 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.CLogger;
 
-public class AccountElementsReportGenerator extends AbstractXlsxGenerator {
+public class RPTAccountElements extends AbstractXlsxGenerator {
 
-	private static final CLogger log = CLogger.getCLogger(AccountElementsReportGenerator.class);
+	private static final CLogger log = CLogger.getCLogger(RPTAccountElements.class);
 	private static final int headerRows = 4;
 	int[] maxLen = { 15, 20, 10, 10, 10, 10, 15 }; // ancho aproximado proporcional
 	private String[] headers = { "value", "description", "AccountType", "AccountSign", "IsDocControlled", "IsSummary", "Parent_ID" };

@@ -5,10 +5,14 @@ import java.util.Properties;
 import org.compiere.model.MReference;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Msg;
 import org.compiere.util.CLogger;
 import java.util.logging.Level;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+import org.compiere.model.MRefList;
+import org.compiere.util.ValueNamePair;
 
 public final class FinancialReportConstants {
 
@@ -214,4 +218,44 @@ public final class FinancialReportConstants {
         }
         return translatedValue;
     }
+    
+    private static final int ACCOUNT_TYPE_REFERENCE_ID = 117;
+    
+    /**
+     * Obtiene la lista estática de Tipos de Cuenta (AD_Reference_ID=117)
+     * como una lista de ValueNamePair.
+     * * @param ctx El contexto (Properties) que define el idioma de la traducción.
+     * @return Una lista de ValueNamePair, donde Value es el código (A, L, O, R, E) 
+     * y Name es la clave de traducción (Ej: Asset).
+     */
+    public static ValueNamePair[]  getAccountTypeReferenceList(Properties ctx) {
+    	
+    	ValueNamePair[] accountTypesArray = null;
+    	accountTypesArray = MRefList.getList(Env.getCtx(), ACCOUNT_TYPE_REFERENCE_ID, false);
+    	return accountTypesArray;
+    }
+    
+    /**
+     * Busca el código del Tipo de Cuenta en la lista y devuelve su nombre traducido.
+     * * @param ctx El contexto que define el idioma de la traducción.
+     * @param accountTypeCode El código del Tipo de Cuenta (Ej: "A", "L", "E").
+     * @return El nombre traducido (Ej: "Activo"), o una cadena vacía si no se encuentra.
+     */
+    public static String getAccountTypeName(Properties ctx, String accountTypeCode) {
+        if (accountTypeCode == null || accountTypeCode.trim().isEmpty()) {
+            return "";
+        }
+        
+        ValueNamePair[] accountTypesArray = getAccountTypeReferenceList(ctx);
+        for (ValueNamePair type : accountTypesArray) {
+
+            if (accountTypeCode.equalsIgnoreCase(type.getValue())) {
+                String claveMensaje = type.getName();
+                String nombreTraducido = Msg.getMsg(ctx, claveMensaje);
+                return nombreTraducido;
+            }
+        }
+        return  Msg.translate(ctx,"account.type")+" "+Msg.translate(ctx,"invalid");
+    }
+    
 }

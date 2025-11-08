@@ -8,8 +8,12 @@ public class TrialBalanceLine {
     private String codigo;
     private String nombre;
     private Integer ad_org_id;
-    private String orgValue;      // Valor de la Organización (NULL para R y 60)
-    private String tipoRegistro;  // 'R', '60', '50'
+    private String orgValue;      
+    private String tipoRegistro;  // '10', '60', '50'
+    private String accounttype;
+    private String accountsign;
+    private String issummary;
+    
     private int level;            // Nivel jerárquico
 
     // CAMPOS DE SALDO
@@ -47,9 +51,15 @@ public class TrialBalanceLine {
     public BigDecimal getCloseBalance() { return closeBalance; }
     public void setCloseBalance(BigDecimal closeBalance) { this.closeBalance = closeBalance; }
 
-    public Integer getAD_org_ID() { return ad_org_id; }
+    public Integer getAD_Org_ID() { return ad_org_id; }
     public void setAD_Org_ID(Integer ad_org_id) { this.ad_org_id = ad_org_id; }
-    // Metadata
+
+    public String getAccountType() { return accounttype; }
+    public void setAccountType(String accounttype) { this.accounttype = accounttype; }
+    public String getAccountSign() { return accountsign; }
+    public void setAccountSign(String accountsign) { this.accountsign = accountsign; }
+    public String getIsSummary() { return issummary; }
+    public void setIsSummary(String issummary) { this.issummary = issummary; }
     public String getOrgValue() { return orgValue; }
     public void setOrgValue(String orgValue) { this.orgValue = orgValue; }
 

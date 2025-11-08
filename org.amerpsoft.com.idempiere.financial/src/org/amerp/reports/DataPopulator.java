@@ -644,6 +644,9 @@ public class DataPopulator {
                 // Mapeo de columnas
                 line.setCodigo(rs.getString("codigo"));
                 line.setNombre(rs.getString("nombre"));
+                line.setAccountType(rs.getString("accounttype"));
+                line.setAccountSign(rs.getString("accountsign"));
+                line.setIsSummary(rs.getString("issummary"));
                 line.setOrgValue(rs.getString("org_value"));
                 line.setAD_Org_ID(rs.getInt("ad_org_id"));
                 line.setOpenBalance(rs.getBigDecimal("openbalance"));
@@ -720,8 +723,6 @@ public class DataPopulator {
 	        
 	        int adOrgId = org.getAdOrgId() != null ? org.getAdOrgId().intValue() : -1;
 	        String orgValue = org.getOrgValue();
-	        String orgName = org.getOrgName();
-	        String orgDescription = org.getOrgDescription();
 	        // Agregar al mapa
 	        orgMap.put(adOrgId, orgValue); 
 	    }
