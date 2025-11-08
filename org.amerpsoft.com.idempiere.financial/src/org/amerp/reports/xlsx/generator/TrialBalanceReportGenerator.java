@@ -44,7 +44,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
     };
     //Anchos proporcionales para las  columnas
     private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16, 16 };
-    
+    private int orgColNameLen = 16;
     @Override
     public String getReportName() {
         return "TrialBalanceReport"; // Nombre del archivo y de la hoja
@@ -253,7 +253,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
         // Obtener los nombres de las organizaciones (debe estar disponible)
         List<Integer> selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
-        Map<Integer, String> orgNames = DataPopulator.getOrgNames(orgs);      
+        Map<Integer, String> orgValues = DataPopulator.getOrgValues(orgs);      
         
         // Escribir cabeceras traducidas
         for (int i = 0; i < headers.length; i++) {
@@ -263,13 +263,13 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             cell.setCellValue(translated != null ? translated : headers[i]);
             cell.setCellStyle(headerStyle);
         }
-        
+        // Escribir cabeceras Organizaciones
         if (isShowCrosstab != null && isShowCrosstab.compareToIgnoreCase("Y")==0) {
         	int colIndex = headers.length; // Columna inicial
             // 2. MODO CROSSTAB: Saldos Finales Dinámicos por Organización
             for (Integer orgID : selectedOrgIDs) {
-                String orgName = orgNames.get(orgID);
-                String headerText =  orgName ;
+                String orgValue = orgValues.get(orgID);
+                String headerText =  orgValue ;
                 
                 Cell cell = headerRow.createCell(colIndex++);
                 cell.setCellValue(headerText);
@@ -316,7 +316,6 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
         // Obtener los nombres de las organizaciones (debe estar disponible)
         List<Integer> selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
-        Map<Integer, String> orgNames = DataPopulator.getOrgNames(orgs);     
         Boolean isCrosstab = isShowCrosstab.compareToIgnoreCase("Y")==0;
         // La columna donde comienza el Crosstab (después de Saldo Final Consolidado)
         final int CROSSTAB_START_COLUMN = headers.length; 
@@ -342,13 +341,6 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             //
             int level = tbl.getLevel();
             String tipoRegistro = tbl.getTipoRegistro(); 
-
-//            // FILTRADO Organizacion
-//            boolean skipOrganization = "N".equalsIgnoreCase(isShowOrganization) && "50".equals(tipoRegistro);
-//            if (skipOrganization) {
-//                // Si isShowOrganization es 'N' y la línea es de tipo '50' (Organización), saltar esta iteración.
-//                continue; 
-//            }
        
             // Determinar estilo
             boolean bold = "10".equals(tipoRegistro) || "50".equals(tipoRegistro);
@@ -388,33 +380,20 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
                 
             } else if ("60".equals(tipoRegistro) && isCrosstab) { 
                 // --- LÓGICA CROSSTAB: Escribir el Saldo de Organización ---
-
                 int currentOrgID = tbl.getAD_org_ID(); // Asumimos que tienes este campo en TrialBalanceLine
                 BigDecimal orgBalance = tbl.getCloseBalance(); // El saldo final de esta Org/línea
-
                 // 1. Encontrar la Fila (Row) correcta para esta cuenta
-                // Asumimos que tu query garantiza que la línea consolidada de esta cuenta
-                // fue la inmediatamente anterior y está en la fila (rowNum - 1).
                 Row targetRow = sheet.getRow(rowNum - 1); 
-                
                 if (targetRow != null && orgColumnMap.containsKey(currentOrgID)) {
-                    
                     // 2. Obtener la columna de destino
                     int targetCol = orgColumnMap.get(currentOrgID);
-                    
                     // 3. Escribir el saldo en la columna de Crosstab
                     ExcelUtils.createStyledCell(targetRow, targetCol, orgBalance, nStyle);
-                    // ExcelUtils.updateMaxLen(maxLen, targetCol, String.valueOf(orgBalance.doubleValue())); // Opcional
                 }
-                
-                // ⚠️ IMPORTANTE: No avanzar el rowNum aquí, ya que estamos modificando la fila anterior.
                 
             } else {
             	 continue; 
             }
-            
-            
-  
 
             if ((i + 1) % batchSize == 0) {
                 log.warning(Msg.getMsg(Env.getCtx(), "Processing")+": "+ (i + 1) + 
@@ -425,18 +404,29 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
 
         // Ajuste de ancho de columna final (Aplicar a todas)
         for (int col = 0; col < maxLen.length; col++) { 
-            
             // Obtener el ancho deseado: Máximo de 100 caracteres, mínimo de 10, y añadir 2 de padding base.
             int chars = Math.min(100, Math.max(10, maxLen[col] + 2)); 
-            
             // Unidades base POI: Caracteres * 256
             int desiredWidthUnits = chars * 256; 
-            
             // Aplicar HOLGURA EXTRA (PADDING)
             int extraPadding = 1024; // 1024 unidades POI son aproximadamente 4 caracteres extra.
-            
             if (desiredWidthUnits > 0) {
                 this.sheet.setColumnWidth(col, desiredWidthUnits + extraPadding); 
+            }
+        }
+        // Ajuste de ancho de columna Organizaciones
+        if (isCrosstab) {
+        	// Ancho Columnas Organizaciones
+            for (int col = 0; col < orgColumnMap.size(); col++) { 
+            	// Obtener el ancho deseado: Máximo de 100 caracteres, mínimo de 10, y añadir 2 de padding base.
+                int chars = Math.min(100, Math.max(10, orgColNameLen + 2)); 
+                // Unidades base POI: Caracteres * 256
+                int desiredWidthUnits = chars * 256; 
+                // Aplicar HOLGURA EXTRA (PADDING)
+                int extraPadding = 1024; // 1024 unidades POI son aproximadamente 4 caracteres extra.
+                if (desiredWidthUnits > 0) {
+                    this.sheet.setColumnWidth(col+maxLen.length, desiredWidthUnits + extraPadding); 
+                }
             }
         }
     }

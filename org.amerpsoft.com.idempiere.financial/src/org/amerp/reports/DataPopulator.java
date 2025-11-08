@@ -698,28 +698,33 @@ public class DataPopulator {
 	    for (OrgTree org : orgs) {
 	        
 	        int adOrgId = org.getAdOrgId() != null ? org.getAdOrgId().intValue() : -1;
-	        String orgValue = org.getOrgValue();
 	        String orgName = org.getOrgName();
-	        String orgDescription = org.getOrgDescription();
-	       
-	        log.warning(String.format(
-	            "Org ID: %d, Value: %s, Name: %s, Description: %s",
-	            adOrgId,
-	            orgValue,
-	            orgName,
-	            orgDescription
-	        ));
-
-	        // Agregar al mapa, usando la Descripción para las cabeceras (como decidimos)
-	        // Puedes cambiar OrgTree::getOrgDescription por el campo que necesites en el reporte final
+	        // Agregar al mapa
 	        orgMap.put(adOrgId, orgName); 
 	    }
 	    return orgMap;
-	    // Usar Streams para mapear ID -> Nombre de la organización
-//	    return orgs.stream()
-//	               .collect(Collectors.toMap(
-//	                   org -> org.getAdOrgId().intValue(),      // Key: ID
-//	                   OrgTree::getOrgName                     // Value: Nombre
-//	               ));
+
+	}
+	
+	/**
+	 * getOrgValues
+	 * @param orgs
+	 * @return
+	 */
+	public static Map<Integer, String> getOrgValues(List<OrgTree> orgs) {
+	    if (orgs == null || orgs.isEmpty()) {
+	        return Collections.emptyMap();
+	    }
+	    Map<Integer, String> orgMap = new HashMap<>(orgs.size());
+	    for (OrgTree org : orgs) {
+	        
+	        int adOrgId = org.getAdOrgId() != null ? org.getAdOrgId().intValue() : -1;
+	        String orgValue = org.getOrgValue();
+	        String orgName = org.getOrgName();
+	        String orgDescription = org.getOrgDescription();
+	        // Agregar al mapa
+	        orgMap.put(adOrgId, orgValue); 
+	    }
+	    return orgMap;
 	}
 }
