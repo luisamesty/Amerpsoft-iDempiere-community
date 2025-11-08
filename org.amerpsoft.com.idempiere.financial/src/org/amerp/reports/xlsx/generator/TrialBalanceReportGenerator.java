@@ -45,6 +45,11 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
     //Anchos proporcionales para las  columnas
     private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16, 16 };
     private int orgColNameLen = 16;
+    // Organizaciones seleccionadas
+    List<OrgTree> orgs  = null;
+    List<Integer> selectedOrgIDs = null;
+    Map<Integer, String> orgValues = null;
+    
     @Override
     public String getReportName() {
         return "TrialBalanceReport"; // Nombre del archivo y de la hoja
@@ -101,15 +106,23 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             	currencyName = currency.getISO_Code() + " - " + currency.getDescription();
             }
         }
-        // Organizaciones Seleccionadas
-        Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
-        Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        List<OrgTree> orgs  = null;
-        if (AD_Org_ID==0 || AD_Org_ID == null)
-        	orgs  = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
-        else
-        	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
-        cliDescription = Msg.translate(Env.getCtx(),"AD_org_ID")+": ";
+        // 🏆 INICIALIZACIÓN DE LA LISTA DE ORGANIZACIONES (Solo se ejecuta si es nula)
+        if (this.orgs == null) {
+            
+            Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
+            Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
+            
+            // Ejecutar y almacenar en la variable de instancia
+            if (AD_Org_ID == 0 || AD_Org_ID == null) {
+                this.orgs = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
+            } else {
+                this.orgs = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
+            }
+            
+            // Poner la lista en el mapa de parámetros para que otros métodos puedan acceder a ella
+            this.parameters.put("OrgTreeList", this.orgs);
+        }
+        // Organizaciones Seleccionadas this.orgs Ya está disponible
         if (orgs.size() == 1) {
         	// Si solo hay una organización, usa el elemento en el índice 0.
             OrgTree singleOrg = orgs.get(0);
@@ -121,6 +134,9 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         } else {
         	cliDescription = cliDescription+ Msg.translate(Env.getCtx(), "NoOrgSelected");
         }
+        // Obtener los nombres de las organizaciones (debe estar disponible)
+        selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
+        orgValues = DataPopulator.getOrgValues(orgs);     
         // OBTENER Y FORMATEAR FECHAS DE PARÁMETROS
         String dateRange = "";
         Timestamp dateFromTimestamp = (Timestamp) parameters.get("DateFrom");
@@ -242,18 +258,7 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
         }
         
         
-        String isShowCrosstab = (String) parameters.get("isShowCrosstab");
-        Integer AD_Client_ID = (Integer) parameters.get("AD_Client_ID");
-        Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
-        Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        List<OrgTree> orgs  = null;
-        if (AD_Org_ID==0 || AD_Org_ID == null)
-        	orgs  = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
-        else
-        	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
-        // Obtener los nombres de las organizaciones (debe estar disponible)
-        List<Integer> selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
-        Map<Integer, String> orgValues = DataPopulator.getOrgValues(orgs);      
+        String isShowCrosstab = (String) parameters.get("isShowCrosstab");   
         
         // Escribir cabeceras traducidas
         for (int i = 0; i < headers.length; i++) {
@@ -308,14 +313,6 @@ public class TrialBalanceReportGenerator extends AbstractXlsxGenerator {
             log.warning("No se encontraron datos para el Balance de Comprobación.");
             return;
         }
-        // Obtener los IDs de las organizaciones (debe ser un campo de la clase)
-        List<OrgTree> orgs  = null;
-        if (AD_Org_ID==0 || AD_Org_ID == null)
-        	orgs  = DataPopulator.getOrgTreeListfromParent(AD_Client_ID, AD_OrgParent_ID);
-        else
-        	orgs  = DataPopulator.getOrgTreeList(AD_Client_ID, AD_Org_ID, AD_OrgParent_ID);
-        // Obtener los nombres de las organizaciones (debe estar disponible)
-        List<Integer> selectedOrgIDs = DataPopulator.getSelectedOrgIDs(orgs);
         Boolean isCrosstab = isShowCrosstab.compareToIgnoreCase("Y")==0;
         // La columna donde comienza el Crosstab (después de Saldo Final Consolidado)
         final int CROSSTAB_START_COLUMN = headers.length; 
