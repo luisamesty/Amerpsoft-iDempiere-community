@@ -142,7 +142,7 @@
 			    </repository>
 			    <repository>
 				    <id>Central</id>
-				    <url>http://central.maven.org/maven2</url>
+				    <url>https://repo.maven.apache.org/maven2</url>
 			    </repository>
 			    <repository>
 				    <id>zkoss</id>

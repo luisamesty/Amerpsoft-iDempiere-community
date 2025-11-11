@@ -12,6 +12,7 @@
         <relativePath>org.amerpsoft.idempiere.com.parent/pom.xml</relativePath>
   </parent>
   <modules>
+    <module>org.amerpsoft.com.idempiere.amabase</module> 
    	<module>org.amerpsoft.com.idempiere.feature</module> 	
   	<module>org.amerpsoft.com.idempiere.editors-com</module>
   	<module>org.amerpsoft.com.idempiere.zk_themes</module>
