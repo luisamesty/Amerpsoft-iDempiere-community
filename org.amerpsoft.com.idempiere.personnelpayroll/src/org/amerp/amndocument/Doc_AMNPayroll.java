@@ -49,8 +49,6 @@ public class Doc_AMNPayroll extends Doc {
 	protected String loadDocumentDetails() {
 		MAMN_Payroll amnpayroll = (MAMN_Payroll)getPO();
 		// Set Doc Date 
-		log.warning("AMN_Payroll_ID:"+amnpayroll.getAMN_Payroll_ID()+
-				" AcctSchema:"+getAcctSchema());
 		setDateDoc(amnpayroll.getDateAcct());
 		// Default Local Currency for Client
 		m_defaultCurrency_ID = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
@@ -67,8 +65,7 @@ public class Doc_AMNPayroll extends Doc {
 	 */
 	private MAMN_Docline[] loadLines(MAMN_Payroll p_amnpayroll)
 	{
-		log.warning("AMN_Payroll_ID:"+p_amnpayroll.getAMN_Payroll_ID()+
-				" AcctSchema:"+getAcctSchema());
+
 		// Decimal Values
 		MAMN_Docline linea = (null);
 		MAMN_Concept_Types amnct = null ;
@@ -141,7 +138,7 @@ public class Doc_AMNPayroll extends Doc {
 	    } else {
 	    	defMASTERAccountCR = new MAccount(Env.getCtx(), amnas.getAMN_P_Liability_Salary(),null);
 	    }
-	    log.warning("AMN_Process_Value:"+AMN_Process_Value+"  defMASTERAccountCR="+defMASTERAccountCR);
+
 	    // Payroll Detail Lines
 		ArrayList<MAMN_Docline> list = new ArrayList<MAMN_Docline>();
 		ArrayList<MAMN_Docline> listres = new ArrayList<MAMN_Docline>();
@@ -151,7 +148,6 @@ public class Doc_AMNPayroll extends Doc {
 		// Verify  ZERO Receipt No Lines with Values Allocated
 		// -----------------------------------------------------
 		// Get Firts Reference Line
-		//log.warning("Std lines size:"+lines.length);
 		if(lines.length == 0) {
 			linesref= p_amnpayroll.getFirstReferenceLine(false);
 			if (linesref.length==0) {
@@ -379,7 +375,6 @@ public class Doc_AMNPayroll extends Doc {
 			lineares.setC_ConversionType_ID(C_ConversionType_ID);
 			lineares.setC_Currency_ID_to(m_Currency_ID);
 			lineares.setCurrencyRate(CurrencyRate);
-			log.warning("loadLines: CurrencyRate="+CurrencyRate+"  C_ConversionType_ID="+C_ConversionType_ID);
 			// ADD lineares
 			listres.add(lineares);
 		} else {
