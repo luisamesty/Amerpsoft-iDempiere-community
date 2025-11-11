@@ -10,7 +10,6 @@ import org.compiere.util.CLogger;
 import java.util.logging.Level;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import org.compiere.model.MRefList;
 import org.compiere.util.ValueNamePair;
 
@@ -21,7 +20,10 @@ public final class FinancialReportConstants {
     private static final CLogger log = CLogger.getCLogger(FinancialReportConstants.class);
     
     // ID de la Referencia
-    public static final int AD_REFERENCE_REPORT_TYPE = 1000152;
+    //public static final int AD_REFERENCE_REPORT_TYPE = 1000152;
+    
+    public static final String AD_REFERENCE_REPORT_TYPE_VALUE = "FinancialReportType";
+    
     public static final String AD_REFERENCE_REPORT_TYPE_UU = "0b14e05d-d39e-4757-a410-154f73b261d1";
     // Claves de la Lista de Tipos de Reporte
     // Clave: Trial Balance One Period (TRB)
@@ -115,7 +117,7 @@ public final class FinancialReportConstants {
      */
     private static String getReferenceProperty(Properties ctx, String columnName) {
         String value = "";
-        final int referenceID = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE; 
+        int referenceID = getReferenceIDByUU(ctx, AD_REFERENCE_REPORT_TYPE_UU); 
         
         // Obtener el lenguaje actual del contexto para la traducción
         String AD_Language = Env.getAD_Language(ctx); 
@@ -188,6 +190,7 @@ public final class FinancialReportConstants {
     private static String getTranslatedProperty(Properties ctx, String columnName, String reportType) {
         String translatedValue = "";
         String AD_Language = Env.getAD_Language(ctx); 
+        int referenceID = getReferenceIDByUU(ctx, AD_REFERENCE_REPORT_TYPE_UU); 
         
         // Query para obtener el valor traducido (COALESCE usa el valor base si no hay traducción)
         String sql = 
@@ -199,7 +202,7 @@ public final class FinancialReportConstants {
         try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
             // Parámetros: AD_Language, AD_Reference_ID, Clave (Value)
             pstmt.setString(1, AD_Language);
-            pstmt.setInt(2, AD_REFERENCE_REPORT_TYPE);
+            pstmt.setInt(2, referenceID);
             pstmt.setString(3, reportType);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -258,4 +261,69 @@ public final class FinancialReportConstants {
         return  Msg.translate(ctx,"account.type")+" "+Msg.translate(ctx,"invalid");
     }
     
+    /**
+     * Devuelve el AD_Reference_ID a partir del AD_Reference_UU.
+     * Compatible con cualquier versión y pack.
+     */
+    public static int getReferenceIDByUU(Properties ctx, String referenceUU) {
+        if (referenceUU == null || referenceUU.isEmpty()) {
+            return -1;
+        }
+        int referenceID = -1;
+        String sql = "SELECT AD_Reference_ID FROM AD_Reference WHERE AD_Reference_UU = ?";
+        try {
+            referenceID = DB.getSQLValueEx(null, sql, referenceUU);
+        } catch (Exception e) {
+            CLogger.getCLogger("FinancialReportUtils").log(Level.SEVERE,
+                "Error al obtener AD_Reference_ID para UUID: " + referenceUU, e);
+        }
+        return referenceID;
+    }
+    
+    /**
+     * Devuelve un ValueNamePair a partir del AD_Reference_UU y el Value de la lista.
+     * Compatible con iDempiere 11 y 12.
+     */
+    public static ValueNamePair getValueNamePairByUU(Properties ctx, String referenceUU, String value) {
+        if (referenceUU == null || referenceUU.isEmpty() || value == null || value.isEmpty()) {
+            return null;
+        }
+
+        ValueNamePair result = null;
+
+        // Obtener el AD_Reference_ID a partir del UUID
+        int AD_Reference_ID = getReferenceIDByUU(ctx, referenceUU);
+        if (AD_Reference_ID <= 0) {
+            return null;
+        }
+
+        // Query para obtener Name y Description de la lista
+        String sql = 
+            "SELECT COALESCE(trl.Name, list.Name), COALESCE(trl.Description, list.Description) " +
+            "FROM AD_Ref_List list " +
+            "LEFT JOIN AD_Ref_List_Trl trl ON (list.AD_Ref_List_ID = trl.AD_Ref_List_ID AND trl.AD_Language = ?) " +
+            "WHERE list.AD_Reference_ID = ? AND list.Value = ?";
+
+        String AD_Language = Env.getAD_Language(ctx);
+
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
+            pstmt.setString(1, AD_Language);
+            pstmt.setInt(2, AD_Reference_ID);
+            pstmt.setString(3, value);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String name = rs.getString(1);
+                    String description = rs.getString(2);
+                    result = new ValueNamePair(value, name != null ? name : description);
+                }
+            }
+        } catch (Exception e) {
+            CLogger.getCLogger("FinancialReportUtils").log(Level.SEVERE,
+                "Error al obtener ValueNamePair para UUID: " + referenceUU + " y Value: " + value, e);
+        }
+
+        return result;
+    }
+
 }

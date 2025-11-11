@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.util.Callback;
@@ -75,6 +76,8 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.ListModelList;
 
 
 public class FinancialReports_TreeOrg_Form  implements IFormController, EventListener<Event>, IProcessUI , ValueChangeListener, ActionListener{
@@ -85,6 +88,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private CustomForm form = new CustomForm();
 	// Column Names Valid AD Names
 	private int m_WindowNo = 0;
+	private static int AD_Reference_ID_ReportType=0;
 	// Variable para guardar valores seleccionado por el usuario.
     private String m_postingType_value = "A"; // valor por defecto
     private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
@@ -111,7 +115,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     private South south = new South();   // 
     // Controles y Filtros
     private Label fReportTypeLabel = new Label();
-    private WTableDirEditor fReportType;
+    private Combobox fReportType;
     private Label fClientLabel = new Label();
     private WTableDirEditor fClient;
     private Label fOrgParentLabel = new Label();
@@ -209,17 +213,40 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		// =======================================================
 		// FinancialReportType Type of report ====================
 		// =======================================================
-		final int AD_Reference_ID_ReportType = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE; 
-		MLookup lookupReportType = MLookupFactory.get(Env.getCtx(), form.getWindowNo(), 0, AD_Reference_ID_ReportType,
-				DisplayType.List);
-		fReportType = new WTableDirEditor("ReportType", true, false, true, lookupReportType);
-		// Inicialización de fReportType: Carga modelo y establece el valor inicial ("TRB")
-	    initReportTypeCombo(); 
-	    // Agregar Listener (Sólo una vez)
-	    fReportType.addValueChangeListener(this);
-	    // ... (Resto de la lógica, incluyendo PostingType y Tooltip) ...
-	    ((org.zkoss.zul.Combobox) fReportType.getComponent()).setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
-		
+    	AD_Reference_ID_ReportType = FinancialReportConstants.getReferenceIDByUU(Env.getCtx(), FinancialReportConstants.AD_REFERENCE_REPORT_TYPE_UU); 
+        fReportType = new Combobox();
+        List<ValueNamePair> reportTypes = getSortedReportTypes();
+        fReportType.setModel(new ListModelList<>(reportTypes));
+        fReportType.setItemRenderer((item, data, index) -> {
+            ValueNamePair vnp = (ValueNamePair) data; // <-- cast necesario
+            item.setLabel(vnp.getName());
+            item.setValue(vnp); 
+        });
+        // Seleccionar valor inicial
+        String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            : m_reportType_value;
+        for (ValueNamePair vnp : reportTypes) {
+            if (vnp.getValue().equals(valueToSet)) {
+                fReportType.setValue(vnp.getName());
+                m_reportType_value = vnp.getValue();
+                m_reportType_name  = vnp.getName();
+                break;
+            }
+        }
+        // Tooltip
+        fReportType.setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
+        // Listener
+        fReportType.addEventListener("onChange", event -> {
+            if (fReportType.getSelectedItem() != null) {
+                ValueNamePair selected = (ValueNamePair) fReportType.getSelectedItem().getValue();
+                m_reportType_value = selected.getValue();
+                m_reportType_name = selected.getName();
+            }
+        });
+        // Establecer Tooltip usando la referencia
+        fReportType.setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
+
 	    // =======================================================
 		// === Campo AD_Client_ID fClient ======
 		// =======================================================
@@ -369,9 +396,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         Rows rows = new Rows();
         
         Row row = new Row();
-        fReportType.getComponent().setWidth("400px");
+        fReportType.setWidth("400px");
         row.appendChild(fReportTypeLabel);
-        row.appendChild(fReportType.getComponent());
+        row.appendChild(fReportType);
         rows.appendChild(row);
 
         row = new Row();
@@ -452,7 +479,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         filterGrid.appendChild(rows);
         north.appendChild(filterGrid);
     }
-
+    
     /**
      * dynInit()
      * Datos, Lógica, Lookups y Valores por Defecto.
@@ -465,7 +492,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     	// Inicialización de fReportType: Carga modelo y establece el valor inicial ("TRB")
         initReportTypeCombo(); 
         // ... (Resto de la lógica, incluyendo PostingType y Tooltip) ...
-        ((org.zkoss.zul.Combobox) fReportType.getComponent()).setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
+        ((org.zkoss.zul.Combobox) fReportType).setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
 	     
         // =======================================================
         // === Campo AD_Client_ID ===
@@ -1297,7 +1324,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                             : m_reportType_value;
         
         try {
-            org.zkoss.zul.Combobox comboboxReport = (org.zkoss.zul.Combobox) fReportType.getComponent();
+            org.zkoss.zul.Combobox comboboxReport = (org.zkoss.zul.Combobox) fReportType;
             
             // Asignar lista al modelo del combobox
             org.zkoss.zul.ListModelList<ValueNamePair> modelReport = new org.zkoss.zul.ListModelList<>(reportTypes);
@@ -1336,10 +1363,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      * A partir de AD_Reference
      */
     private List<ValueNamePair> getSortedReportTypes() {
-        final int AD_REFERENCE_ID_REPORT = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
         
         // Obtener lista desde MRefList
-        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID_REPORT, false);
+        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_Reference_ID_ReportType, false);
         List<ValueNamePair> reportTypes = new ArrayList<>(Arrays.asList(reportTypesArray));
         
         // Ordenar alfabéticamente por nombre
@@ -1353,8 +1379,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     }
     
     public static ValueNamePair getReportTypeByValue(String value) {
-        final int AD_REFERENCE_ID = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
-        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID, false);
+        
+    	//final int AD_REFERENCE_ID = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
+        
+        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_Reference_ID_ReportType, false);
 
         if (reportTypesArray != null) {
             for (ValueNamePair vnp : reportTypesArray) {
