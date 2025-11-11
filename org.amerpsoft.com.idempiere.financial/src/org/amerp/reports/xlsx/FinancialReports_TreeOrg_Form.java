@@ -15,7 +15,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 
 import org.adempiere.util.Callback;
@@ -68,6 +67,7 @@ import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Center;
@@ -234,6 +234,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 break;
             }
         }
+        Events.postEvent(new Event("onChange", fReportType));
         // Tooltip
         fReportType.setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
         // Listener
@@ -242,10 +243,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 ValueNamePair selected = (ValueNamePair) fReportType.getSelectedItem().getValue();
                 m_reportType_value = selected.getValue();
                 m_reportType_name = selected.getName();
+                // 2. 🛑 LLAMADA AL MÉTODO DE LÓGICA 🛑
+                reportTypeChanged(m_reportType_value);
             }
         });
-        // Establecer Tooltip usando la referencia
-        fReportType.setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
 
 	    // =======================================================
 		// === Campo AD_Client_ID fClient ======
@@ -500,7 +501,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         final String COLUMN_NAME_CLIENT = "AD_Client_ID";
         // MLookup y fClient ya están instanciados en zkInit()
         fClient.setValue(Env.getAD_Client_ID(Env.getCtx()));
-//        fClient.addValueChangeListener(this);
         // Obtener la descripción usando la utilidad con el nombre de la columna.
         String tooltipText = MsgUtils.getElementFullDescription(COLUMN_NAME_CLIENT);
         if (tooltipText == null || tooltipText.isEmpty()) {
@@ -519,7 +519,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	     // =======================================================
 	     // fOrgParent ya está instanciado en zkInit()
 	     fOrgParent.setValue(Env.getContextAsInt(Env.getCtx(), "$AD_OrgParent_ID"));
-//	     fOrgParent.addValueChangeListener(this);
 	     // tooltip simple
 	     ((org.zkoss.zul.Combobox) fOrgParent.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription("AD_OrgParent_ID"));
 	     
@@ -529,7 +528,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		 // ** ¡ATENCIÓN! Se elimina toda la duplicación de MLookupFactory y la re-instanciación de fOrg. **
 		 // Se usa el fOrg ya creado en zkInit().
 		 fOrg.setValue(Env.getContextAsInt(Env.getCtx(), "$AD_Org_ID"));
-//		 fOrg.addValueChangeListener(this);
 		 ((org.zkoss.zul.Combobox) fOrg.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription("AD_Org_ID"));
         
         // =======================================================
@@ -537,7 +535,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // =======================================================
         // MLookup y fAcctSchema ya están instanciados en zkInit()
         fAcctSchema.setValue(Env.getContextAsInt(Env.getCtx(), "$C_AcctSchema_ID"));
-//        fAcctSchema.addValueChangeListener(this);
         ((org.zkoss.zul.Combobox) fAcctSchema.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription("C_AcctSchema_ID"));
         
         // =======================================================
@@ -784,7 +781,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             downloadButton.setEnabled(false);
             north.setOpen(true);
         }
-        initReportTypeCombo();
+        //initReportTypeCombo();
     }
 
 	
@@ -795,63 +792,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    Object oldValue = event.getOldValue();
 	    log.warning("Value changed: " + event.getPropertyName()+" New Value="+newValue+"  Old Value="+oldValue);
 	    
-	    if (event.getPropertyName().equals("ReportType")) {
-		    // ========================================================
-			// === ReportType (FinancialReportType) ===
-			// ========================================================
-		    String reportType = null;
-	        // Verificar el tipo de objeto devuelto
-	        if (newValue instanceof org.compiere.util.ValueNamePair) {
-	            // Si el valor es un ValueNamePair (común con modelos ZK forzados), 
-	            // extraemos la clave (String) que contiene "TRB", "BAL", etc.
-	            reportType = ((org.compiere.util.ValueNamePair) newValue).getValue();
-	        } else if (newValue instanceof String) {
-	            // Si el valor es un String (común si la sincronización del wrapper funcionó, o si el valor es nulo)
-	            reportType = (String) newValue;   
-	        }
-	        // Nos aseguramos de tener una clave válida para continuar
-	        if (reportType == null || reportType.isEmpty()) {
-	            return;
-	        }
-	        // Setear el valor de referencia
-	        if (newValue instanceof String) {
-                m_reportType_value = (String) newValue;
-                m_reportType_name = (String) newValue;
-            } else if (newValue instanceof ValueNamePair) {
-                m_reportType_value = ((ValueNamePair) newValue).getValue();
-                m_reportType_name = ((ValueNamePair) newValue).getName();
-            }
-	        // ========================================================
-	        // === OBTENER NOMBRE Y DESCRIPCIÓN TRADUCIDOS (Limpio) ===
-	        // ========================================================
-	        // No se muestra la cuenta
-	        fAccount.setMandatory(false);
-	        fAccount.setVisible(false);
-	        fAccountLabel.setVisible(false);
-	        // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
-	        if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
-	            // Lógica específica para Balance de Comprobación de un período
-	            // Ocultar el campo DateTo o activar DateFrom
-	            log.warning(reportType);
-	        } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
-	            // Lógica específica para Balance de Comprobación entre dos fechas
-	            // Asegurar que los campos DateFrom y DateTo estén visibles/activos
-
-	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
-		        // SI se muestra la cuenta
-		        fAccount.setMandatory(true);
-		        fAccount.setVisible(true);
-		        fAccountLabel.setVisible(true);
-
-	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
-
-	        } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
-
-	        } else if (FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS.equals(reportType)) {
-
-	        }
-	        
-	    } else if (event.getPropertyName().equals("AD_OrgParent_ID")) {
+	    if ( event.getPropertyName().equals("AD_OrgParent_ID")) {
 		    // ========================================================
 			// === AD_OrgParent_ID (Organizacion Padre) ===
 			// ========================================================
@@ -923,7 +864,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        }
 	        // LLAMA AL MÉTODO PARA CARGAR Y RESTAURAR EL COMBO PostingType y reportType
 	        initPostingTypeCombo();
-	        initReportTypeCombo();
+	        //initReportTypeCombo();
 	    } else if (event.getPropertyName().equals("C_Period_ID")) {
 		    // ========================================================
 			// === C_Period_ID (Período) para Fechas ===
@@ -1064,9 +1005,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		log.warning("actionPerformed="+e.getEventName());
-	    Boolean showZero = isShowZERO.isChecked();
         Boolean showOrg = isShowOrganization.isChecked();
-        Boolean showCrosstab = isShowCrosstab.isChecked();
 
 		// Aquí puedes redirigir la lógica
 	    if (e.getSource() == isShowOrganization) {
@@ -1088,12 +1027,109 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        	isShowCrosstab.setDisabled(false);  // Habilitar
 	            isShowCrosstab.setChecked(true);    // Marcar por defecto
 	        }
-	    	
-	    	
-	    	
+
 	    } 
-	    // ... lógica para otros checks ...
 		
+	}
+
+	/**
+	 * Lógica a ejecutar cuando el Tipo de Reporte cambia.
+	 * @param reportType El valor del nuevo tipo de reporte seleccionado.
+	 */
+	private void reportTypeChanged(String reportType) {
+	    log.warning(reportType);
+		// Setting por defecto
+	    // OrgParent - Org
+	    fOrgParentLabel.setVisible(true);
+	    fOrgParent.setVisible(true);
+	    fOrgParent.setMandatory(true);
+	    fOrgLabel.setVisible(true);
+	    fOrg.setVisible(true);
+	    fOrg.setMandatory(true);
+	    // AcctSchema
+	    fAcctSchemaLabel.setVisible(true);
+	    fAcctSchema.setVisible(true);
+	    // Posting Type
+	    fPostingTypeLabel.setVisible(true);
+	    fPostingType.setVisible(true);
+	    fPostingType.setMandatory(true);
+	    // Period Date
+	    fPeriodLabel.setVisible(true);
+	    fPeriod.setVisible(true);
+	    fPeriod.setMandatory(true);
+	    dateFromLabel.setVisible(true);
+	    dateFrom.setVisible(true);
+	    dateFrom.setReadWrite(false);
+	    dateFrom.setMandatory(false);
+	    dateToLabel.setVisible(true);
+	    dateTo.setVisible(true);
+	    dateTo.setMandatory(false);
+	    dateTo.setReadWrite(false);
+	    // Account
+	    fAccount.setMandatory(false);
+	    fAccount.setVisible(false);
+	    fAccountLabel.setVisible(false);
+	    // Checks
+	    isShowOrganization.setVisible(true);
+	    isShowCrosstab.setVisible(true);
+	    isShowZERO.setVisible(true);
+	    
+	    // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
+	    if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
+	        // Lógica específica para Balance de Comprobación de un período
+	        // Ocultar el campo DateTo o activar DateFrom
+
+	        
+	    } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
+	        // Lógica específica para Balance de Comprobación entre dos fechas
+	        // Asegurar que los campos DateFrom y DateTo estén visibles/activos
+	    	// Period Date
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(true);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(true);
+	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
+	        // SI se muestra la cuenta
+	        fAccountLabel.setVisible(true);
+	    	fAccount.setMandatory(true);
+	        fAccount.setVisible(true);
+
+	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
+
+	    } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
+
+
+	    } else if (FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS.equals(reportType)) {
+	        
+	        // OrgParent - Org
+	        fOrgParentLabel.setVisible(false);
+	        fOrgParent.setVisible(false);
+	        fOrgParent.setMandatory(false);
+	        fOrgLabel.setVisible(false);
+	        fOrg.setVisible(false);
+	        fOrg.setMandatory(false);
+	        // Posting Type
+	        fPostingTypeLabel.setVisible(false);
+	        fPostingType.setVisible(false);
+	        fPostingType.setMandatory(false);
+	        // Period Date
+	        fPeriodLabel.setVisible(false);
+	        fPeriod.setVisible(false);
+	        fPeriod.setMandatory(false);
+	        dateFromLabel.setVisible(false);
+	        dateFrom.setVisible(false);
+	        dateFrom.setReadWrite(false);
+	        dateFrom.setMandatory(false);
+	        dateToLabel.setVisible(false);
+	        dateTo.setVisible(false);
+	        dateTo.setMandatory(false);
+	        dateTo.setReadWrite(false);
+	        // Checks
+	        isShowOrganization.setVisible(false);
+	        isShowCrosstab.setVisible(false);
+	        isShowZERO.setVisible(false);
+	    }
+	
 	}
 
 	private void closeReportForm() {
@@ -1117,6 +1153,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    center.getChildren().clear();
         lblStatus.setText(Msg.getMsg(Env.getCtx(), "FileXLSX"));
         textStatus.setText(fullPath);
+        m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+        initReportTypeCombo();
+        initPostingTypeCombo();
+        reportTypeChanged(m_reportType_value);
         dynInit();
 	}
 	  
@@ -1156,7 +1196,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         Map<String, Object> parameters = new HashMap<>();
         // Report Type
         String reportTypeKey = m_reportType_value;
-        initReportTypeCombo();
+        //initReportTypeCombo();
         // Object PostingType =
         // Restaurar el modelo ZK (usa m_postingType_value para re-seleccionar)
         initPostingTypeCombo(); 
@@ -1209,8 +1249,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         
         if (generador == null) {
         	errorMsg = "Tipo de reporte no soportado.\r\n"+m_reportType_name;
-            Dialog.error(form.getWindowNo(), errorMsg);
-            return reportMetadata;
+            //Dialog.error(form.getWindowNo(), errorMsg);
+        	pi.setError(true);
+            pi.setSummary(errorMsg); 
+        	unlockUI(pi);
+        	return reportMetadata;
         }
         // Generar Reporte
 		try {
@@ -1230,7 +1273,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        reportMetadata = generador.generate(Env.getCtx(), form.getWindowNo(), parameters);
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Fallo al generar el archivo XLSX.", e);
-            Dialog.error(form.getWindowNo(), "Error de E/S al generar el reporte.");
+            //Dialog.error(form.getWindowNo(), "Error de E/S al generar el reporte.");
 			pi.setSummary(Msg.getMsg(Env.getCtx(), "Error") + 
 					Msg.getMsg(Env.getCtx(), "FileXLSX") +" "+  
 					e.getMessage());
@@ -1354,10 +1397,73 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             CLogger.getCLogger(getClass()).log(Level.SEVERE, "Fallo al inicializar/restaurar fReportType.", e);
         }
     }
-
-
     
     /**
+	 * Inicializa o restaura el componente fPostingType cargando el modelo ZK
+	 * y forzando el valor seleccionado (usa 'A' como predeterminado).
+	 */
+	private void initPostingTypeCombo() {
+	    // 1. Cargar la Lista de Valores
+	    final int AD_REFERENCE_ID = X_Fact_Acct.POSTINGTYPE_AD_Reference_ID; // 125
+	    ValueNamePair[] postingTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID, false);
+	    List<ValueNamePair> postingTypes = java.util.Arrays.asList(postingTypesArray);
+	
+	    // 2. Determinar el valor a establecer (actual o por defecto)
+	    String defaultValue = Env.getContext(Env.getCtx(), "$PostingType");
+	    if (defaultValue == null || defaultValue.isEmpty()) {
+	        defaultValue = "A"; 
+	    }
+	    
+	    // Obtener el valor actualmente seleccionado (si existe)
+	    // Cuando se llama desde ValueChange, fPostingType.getValue() tiene el valor.
+	    Object currentValueObj = fPostingType.getValue();
+	    String valueToSet = defaultValue; // Inicializar con el valor por defecto
+	
+	    if (currentValueObj != null) {
+	        if (currentValueObj instanceof String) {
+	            // Caso común: el valor interno es una String (ej: antes de la primera selección)
+	            valueToSet = (String) currentValueObj;
+	        } else if (currentValueObj instanceof ValueNamePair) {
+	            // Caso de Lookup: después de la selección, devuelve el objeto completo
+	            valueToSet = ((ValueNamePair) currentValueObj).getValue(); // <-- Extracción correcta del ID (Value)
+	        } else {
+	            // Fallback: si devuelve otro tipo inesperado, usamos el valor por defecto.
+	            valueToSet = defaultValue;
+	        }
+	    }
+	
+	    // 3. Asignar la lista al Combobox ZK y forzar el valor
+	    try {
+	        org.zkoss.zul.Combobox combobox = (org.zkoss.zul.Combobox) fPostingType.getComponent();
+	        
+	        // REASIGNAR EL MODELO: CRÍTICO para que no se pierda.
+	        org.zkoss.zul.ListModelList<ValueNamePair> model = new org.zkoss.zul.ListModelList<>(postingTypes);
+	        combobox.setModel(model);
+	        
+	        // 4. Buscar el label y establecer el valor visible e interno.
+	        String displayLabel = valueToSet; 
+	        for (ValueNamePair vnp : postingTypes) {
+	            if (vnp.getValue().equals(valueToSet)) {
+	                displayLabel = vnp.getName(); 
+	                break;
+	            }
+	        }
+	
+	        // Establecer la clave interna (el valor real)
+	        fPostingType.setValue(valueToSet);
+	        
+	        // Forzar la visualización del label en el combo ZK
+	        combobox.setValue(displayLabel);
+	        
+	    } catch (Exception e) {
+	        CLogger.getCLogger(getClass()).log(Level.SEVERE, "Fallo al inicializar/restaurar fPostingType.", e);
+	    }
+	    // Tooltip
+	    ((org.zkoss.zul.Combobox) fPostingType.getComponent()).setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
+	
+	}
+
+	/**
      * Genera y devuelve una lista ordenada alfabéticamente de ValueNamePair
      * para el tipo de reporte.
      * A partir de AD_Reference
@@ -1406,71 +1512,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     }
     
     /**
-     * Inicializa o restaura el componente fPostingType cargando el modelo ZK
-     * y forzando el valor seleccionado (usa 'A' como predeterminado).
-     */
-    private void initPostingTypeCombo() {
-        // 1. Cargar la Lista de Valores
-        final int AD_REFERENCE_ID = X_Fact_Acct.POSTINGTYPE_AD_Reference_ID; // 125
-        ValueNamePair[] postingTypesArray = MRefList.getList(Env.getCtx(), AD_REFERENCE_ID, false);
-        List<ValueNamePair> postingTypes = java.util.Arrays.asList(postingTypesArray);
-
-        // 2. Determinar el valor a establecer (actual o por defecto)
-        String defaultValue = Env.getContext(Env.getCtx(), "$PostingType");
-        if (defaultValue == null || defaultValue.isEmpty()) {
-            defaultValue = "A"; 
-        }
-        
-        // Obtener el valor actualmente seleccionado (si existe)
-        // Cuando se llama desde ValueChange, fPostingType.getValue() tiene el valor.
-        Object currentValueObj = fPostingType.getValue();
-        String valueToSet = defaultValue; // Inicializar con el valor por defecto
-
-        if (currentValueObj != null) {
-            if (currentValueObj instanceof String) {
-                // Caso común: el valor interno es una String (ej: antes de la primera selección)
-                valueToSet = (String) currentValueObj;
-            } else if (currentValueObj instanceof ValueNamePair) {
-                // Caso de Lookup: después de la selección, devuelve el objeto completo
-                valueToSet = ((ValueNamePair) currentValueObj).getValue(); // <-- Extracción correcta del ID (Value)
-            } else {
-                // Fallback: si devuelve otro tipo inesperado, usamos el valor por defecto.
-                valueToSet = defaultValue;
-            }
-        }
-
-        // 3. Asignar la lista al Combobox ZK y forzar el valor
-        try {
-            org.zkoss.zul.Combobox combobox = (org.zkoss.zul.Combobox) fPostingType.getComponent();
-            
-            // REASIGNAR EL MODELO: CRÍTICO para que no se pierda.
-            org.zkoss.zul.ListModelList<ValueNamePair> model = new org.zkoss.zul.ListModelList<>(postingTypes);
-            combobox.setModel(model);
-            
-            // 4. Buscar el label y establecer el valor visible e interno.
-            String displayLabel = valueToSet; 
-            for (ValueNamePair vnp : postingTypes) {
-                if (vnp.getValue().equals(valueToSet)) {
-                    displayLabel = vnp.getName(); 
-                    break;
-                }
-            }
-
-            // Establecer la clave interna (el valor real)
-            fPostingType.setValue(valueToSet);
-            
-            // Forzar la visualización del label en el combo ZK
-            combobox.setValue(displayLabel);
-            
-        } catch (Exception e) {
-            CLogger.getCLogger(getClass()).log(Level.SEVERE, "Fallo al inicializar/restaurar fPostingType.", e);
-        }
-        // Tooltip
-        ((org.zkoss.zul.Combobox) fPostingType.getComponent()).setTooltiptext(FinancialReportConstants.getReferenceToolTip(Env.getCtx()));
-
-    }
-    
-    /**
      * Valida los parámetros requeridos según el tipo de reporte.
      * 
      * @param reportTypeKey  Clave del tipo de reporte (TRB, TRD, BAL, etc.)
@@ -1504,28 +1545,27 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: // TRD
+            	validate(parameters, missingParams, "C_Period_ID");
                 validate(parameters, missingParams, "DateFrom");
                 validate(parameters, missingParams, "DateTo");
                 validate(parameters, missingParams, "PostingType");
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE: // BAL
-                validate(parameters, missingParams, "DateTo");
+            	validate(parameters, missingParams, "C_Period_ID");
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS: // GOP
-                validate(parameters, missingParams, "DateFrom");
-                validate(parameters, missingParams, "DateTo");
+            	validate(parameters, missingParams, "C_Period_ID");
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE: // ANB
                 validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "AD_OrgParent_ID");
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS: // ACE
-                // Por ejemplo, puede necesitar solo cliente y esquema contable
-                break;
+
+            	break;
 
             default:
                 return "Tipo de reporte desconocido: " + reportTypeKey;

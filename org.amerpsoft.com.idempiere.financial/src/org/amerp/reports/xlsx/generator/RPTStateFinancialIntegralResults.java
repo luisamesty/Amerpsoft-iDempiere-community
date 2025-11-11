@@ -1,7 +1,6 @@
 package org.amerp.reports.xlsx.generator;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
-import org.compiere.util.ValueNamePair;
 
 public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
 

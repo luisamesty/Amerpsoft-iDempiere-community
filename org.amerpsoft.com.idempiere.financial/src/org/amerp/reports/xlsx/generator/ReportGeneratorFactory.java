@@ -12,8 +12,8 @@ public class ReportGeneratorFactory {
 		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD: 
 			return new RPTTrialBalance();
      	// Trial Balance
-//		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: 
-//			return new RPTTrialBalanceTwoDates();
+		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: 
+			return new RPTTrialBalance();
 		// State Financial Balance
 		case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE: 
 			return new RPTStateFinancialBalance();

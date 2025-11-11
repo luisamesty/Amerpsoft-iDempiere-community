@@ -1,4 +1,4 @@
--- EmployeesShort V3.jrxml
+-- EmployeesShort V4_SinFincion.jrxml
 -- Employees Selective
 -- HISTORIC VALUES Fro SALARIES, COMISSION OTHER INCOME
 WITH DateRange AS (
@@ -9,24 +9,160 @@ WITH DateRange AS (
         EXTRACT(YEAR FROM AGE(DATE($P{DateEnd}) + INTERVAL '1 day', DATE($P{DateIni}))) * 12 +
         EXTRACT(MONTH FROM AGE(DATE($P{DateEnd}) + INTERVAL '1 day', DATE($P{DateIni}))) AS NoMeses
 ),
+Conceptos AS (
+	WITH RECURSIVE Nodos AS (
+	    SELECT 
+	    TRN1.AD_Tree_ID,
+	    TRN1.Node_ID, 
+	    0 as level, 
+	    TRN1.Parent_ID, 
+		ARRAY [TRN1.Node_ID::text]  AS ancestry, 
+		ARRAY [ACTP.value::text]  AS valueparent,
+		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		TRN1.Node_ID as Star_An,
+		ACT.issummary
+		FROM ad_treenode TRN1 
+		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
+		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
+		WHERE TRN1.AD_tree_ID=(
+			SELECT DISTINCT tree.AD_Tree_ID
+				FROM AD_Client adcli
+				LEFT JOIN AMN_Concept amnc ON adcli.AD_Client_ID = amnc.AD_Client_ID
+				LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= amnc.AD_Tree_ID
+				WHERE adcli.AD_client_ID=$P{AD_Client_ID}	) 
+		AND TRN1.isActive='Y' AND TRN1.Parent_ID = 0		
+		UNION ALL
+		SELECT 
+		TRN1.AD_Tree_ID, 
+		TRN1.Node_ID, 
+		TRN2.level+1 as level,
+		TRN1.Parent_ID, 
+		TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
+		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
+		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
+		ACT.issummary
+		FROM ad_treenode TRN1 
+		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
+		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
+		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
+		WHERE TRN1.AD_tree_ID=(
+			SELECT DISTINCT tree.AD_Tree_ID
+				FROM AD_Client adcli
+				LEFT JOIN AMN_Concept amnc ON adcli.AD_Client_ID = amnc.AD_Client_ID
+				LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= amnc.AD_Tree_ID
+				WHERE adcli.AD_client_ID=$P{AD_Client_ID}
+		)  AND TRN1.isActive='Y' 		
+	) 
+	-- MAIN SELECT
+	-- AMN_Concept_types for Level reports
+	SELECT DISTINCT ON (trial.calcorder, trial.ancestry)
+		trial.Level,
+		trial.Node_ID, 
+		trial.value1 as value1,
+		ACTN1.name AS name1,
+		ACTN1.calcorder AS calcorder1,
+		trial.value2 as value2,
+		COALESCE(ACTN2.name,ACTN2.description)  AS name2,
+		ACTN2.calcorder AS calcorder2,
+		trial.value3 as value3,
+		ACTN3.name AS name3,
+		ACTN3.calcorder AS calcorder3,
+		trial.amn_concept_types_id, 
+		trial.calcorder,
+		trial.optmode, 
+		trial.isshow,
+		trial.concept_value,
+		trial.concept_name,
+		trial.concept_name_indent,
+		trial.concept_description
+	FROM (
+		SELECT 
+			PAR.Level,
+			PAR.issummary,
+			PAR.AD_Tree_ID,
+			CNT.tree_name,
+			PAR.Node_ID, 
+			PAR.Parent_ID ,
+			PAR.ancestry,
+			PAR.valueparent,
+			COALESCE(valueparent[2],'') as Value1,
+			COALESCE(valueparent[3],'') as Value2,
+			COALESCE(valueparent[4],'') as Value3,
+			CNT.AD_client_ID,
+			CNT.AD_Org_ID,
+			CNT.AMN_Concept_Types_ID,
+			CNT.calcorder,
+			CNT.optmode, 
+			CNT.isshow,
+			CNT.concept_value,
+			CNT.concept_name,
+			LPAD('', LEVEL ,' ') || COALESCE(CNT.concept_name,CNT.concept_description) as concept_name_indent,
+			CNT.concept_description
+		FROM Nodos PAR
+		INNER JOIN (
+			SELECT 
+			adcli.AD_Client_ID, 
+			amnc.AD_Org_ID,
+			amnct.AMN_Concept_Types_ID, 
+			amnct.value as concept_value,
+			amnct.name as concept_name,
+			amnct.description as concept_description,
+			amnct.calcorder,
+			amnct.optmode, 
+			amnct.isshow,
+			tree.AD_Tree_ID, 
+			tree.name as tree_name
+			FROM AD_Client adcli
+			LEFT JOIN amn_concept amnc ON amnc.ad_client_id = adcli.ad_client_id 
+			LEFT JOIN amn_concept_types amnct ON amnct.amn_concept_id = amnc.amn_concept_id  
+			LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= amnc.AD_Tree_ID
+			WHERE adcli.AD_client_ID=$P{AD_Client_ID}
+			ORDER BY amnct.calcorder
+		) as CNT ON CNT.AMN_Concept_types_ID = PAR.Node_ID
+		WHERE PAR.issummary='N'
+	) trial
+	LEFT JOIN amn_concept_types as ACTN1 ON (ACTN1.Value = trial.Value1 AND ACTN1.AD_Client_ID= trial.AD_Client_ID)
+	LEFT JOIN amn_concept_types as ACTN2 ON (ACTN2.Value = trial.Value2 AND ACTN2.AD_Client_ID= trial.AD_Client_ID)
+	LEFT JOIN amn_concept_types as ACTN3 ON (ACTN3.Value = trial.Value3 AND ACTN3.AD_Client_ID= trial.AD_Client_ID)
+	WHERE trial.ad_client_id = $P{AD_Client_ID}
+	 AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR trial.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
+	ORDER BY trial.calcorder, trial.ancestry
+),
 EmployeeMonths AS (
-    -- 2. Identifica los meses en los que cada empleado tuvo actividad de nómina
+    -- 2. IDENTIFICA LOS MESES POR EMPLEADO Y GRUPO DE CONCEPTO (value2)
     SELECT
         pyr.amn_employee_id,
+        cty.value2, -- CLAVE: Agregar el grupo de concepto
         DATE_TRUNC('month', pyr.dateacct) AS payroll_month,
         MAX(CASE WHEN pyr_d.amountcalculated > 0 THEN 1 ELSE 0 END) AS has_income
     FROM adempiere.amn_payroll pyr
     INNER JOIN adempiere.amn_payroll_detail pyr_d ON pyr_d.amn_payroll_id = pyr.amn_payroll_id
-    WHERE pyr.dateacct BETWEEN (SELECT DateIni FROM DateRange) AND (SELECT DateEnd FROM DateRange)
-    GROUP BY 1, 2
+    
+    -- UNIR A CONCEPTOS PARA OBTENER value2
+    INNER JOIN adempiere.amn_concept_types_proc AS ctp ON ctp.amn_concept_types_proc_id = pyr_d.amn_concept_types_proc_id
+    INNER JOIN Conceptos AS cty ON cty.amn_concept_types_id = ctp.amn_concept_types_id
+    
+    CROSS JOIN DateRange dr 
+    WHERE 
+        -- Filtros de Concepto para coincidir con PayrollDetails
+        cty.calcorder1 = 100000 
+        AND cty.optmode = 'A'
+        -- Filtro de Fechas Simple
+        AND pyr.dateacct >= dr.DateIni 
+        AND pyr.dateacct <= dr.DateEnd
+        
+    -- AGRUPACIÓN CLAVE: Empleado, Grupo de Concepto, Mes
+    GROUP BY 1, 2, 3
 ),
 MonthlyCounts AS (
-    -- 3. Cuenta el número total de meses devengados por empleado en el rango (NoMesesDev)
+    -- 3. CUENTA EL NÚMERO DE MESES DEVENGADOS POR EMPLEADO Y GRUPO DE CONCEPTO
     SELECT
         amn_employee_id,
-        COUNT(payroll_month) FILTER (WHERE has_income = 1) AS NoMesesDev
+        value2,
+        COUNT(payroll_month) FILTER (WHERE has_income = 1)::NUMERIC AS NoMesesDev
     FROM EmployeeMonths
-    GROUP BY amn_employee_id
+    GROUP BY amn_employee_id, value2 -- AGRUPACIÓN CLAVE: Empleado y Grupo de Concepto
 ),
 PayrollDetails AS (
     -- 4. TU CONSULTA BASE (con los cálculos de meses unidos)
@@ -35,7 +171,7 @@ PayrollDetails AS (
         emp.value,
         cty.value2,
         (SELECT NoMeses FROM DateRange) AS NoMeses,             -- <-- Columna NoMeses
-        COALESCE(mc.NoMesesDev, 0) AS NoMesesDev,               -- <-- Columna NoMesesDev
+        mc.NoMesesDev AS NoMesesDev,               -- <-- Columna NoMesesDev
         COALESCE(currt0.description,curr0.iso_code,curr0.cursymbol,'') AS currname,
         SUM(pyr_d.amountallocated) AS amountallocated ,  
         SUM(pyr_d.amountdeducted) AS amountdeducted  , 
@@ -47,8 +183,8 @@ PayrollDetails AS (
         AND currt0.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID}) 
     INNER JOIN adempiere.amn_payroll_detail AS pyr_d ON pyr_d.amn_payroll_id = pyr.amn_payroll_id
     INNER JOIN adempiere.amn_concept_types_proc AS ctp 	 ON ctp.amn_concept_types_proc_id = pyr_d.amn_concept_types_proc_id
-    INNER JOIN amp_concept_tree($P{AD_Client_ID}, 0) AS cty 	 ON cty.amn_concept_types_id = ctp.amn_concept_types_id
-    LEFT JOIN MonthlyCounts mc ON mc.amn_employee_id = emp.amn_employee_id 
+    INNER JOIN Conceptos AS cty ON cty.amn_concept_types_id = ctp.amn_concept_types_id  
+    LEFT JOIN MonthlyCounts mc ON mc.amn_employee_id = emp.amn_employee_id AND mc.value2 = cty.value2
     LEFT JOIN DateRange dr ON 1=1 -- Join para usar el rango de fechas en el filtro
     WHERE 
         emp.isactive = 'Y' 
@@ -56,7 +192,8 @@ PayrollDetails AS (
         AND cty.optmode = 'A' 
         AND emp.ad_client_id = $P{AD_Client_ID} 
         AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
-        AND pyr.dateacct BETWEEN dr.DateIni AND dr.DateEnd -- Usar CTE DateRange
+        AND pyr.dateacct >= dr.DateIni 
+        AND pyr.dateacct <= dr.DateEnd
     GROUP BY 
         emp.amn_employee_id, 
         emp.value, 
@@ -217,7 +354,7 @@ FROM (
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) trab
-WHERE trab.imprimir_status=1 AND trab.imprimir_con=1
+WHERE trab.imprimir_emp =1 AND trab.imprimir_status=1 AND trab.imprimir_con=1
 	AND trab.imprimir_loc=1 AND trab.imprimir_org = 1
 ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.codigo
  
