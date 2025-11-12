@@ -13,12 +13,6 @@
 package org.amerp.fin.factories;
 
 import org.adempiere.base.IProcessFactory;
-import org.amerp.process.AMFAccountingClientSetup;
-import org.amerp.process.AMFClientAcctProcessor;
-import org.amerp.process.AMFCurrencyConversionRateCopy;
-import org.amerp.process.AMFDocumentAcctProcessor;
-import org.amerp.process.AMFFactAcctReset;
-import org.amerp.process.AMFGLJournalAnnualClosing;
 import org.compiere.process.ProcessCall;
 
 
@@ -37,34 +31,22 @@ public class AMFProcessfactory implements IProcessFactory{
     	ProcessCall process = null;
 		// AMFFactAcctReset;
     	if(p_className.equals("org.amerp.process.AMFFactAcctReset"))
-    		try {
-    			process =   (ProcessCall) AMFFactAcctReset.class.newInstance();
-    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFFactAcctReset();
     	// AMFClientAcctProcessor
     	if(p_className.equals("org.amerp.process.AMFClientAcctProcessor"))
-    		try {
-    			process =   (ProcessCall) AMFClientAcctProcessor.class.newInstance();
-    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFClientAcctProcessor();
     	// AMFGLJournalAnnualClosing
     	if(p_className.equals("org.amerp.process.AMFGLJournalAnnualClosing"))
-    		try {
-    			process =   (ProcessCall) AMFGLJournalAnnualClosing.class.newInstance();
-    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFGLJournalAnnualClosing();
     	// AMFAccountingClientSetup
     	if(p_className.equals("org.amerp.process.AMFAccountingClientSetup"))
-    		try {
-    			process =   (ProcessCall) AMFAccountingClientSetup.class.newInstance();
-    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFAccountingClientSetup();
     	// AMFCurrencyCoversionRateCopy
     	if(p_className.equals("org.amerp.process.AMFCurrencyConversionRateCopy"))
-    		try {
-    			process =   (ProcessCall) AMFCurrencyConversionRateCopy.class.newInstance();
-    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFCurrencyConversionRateCopy();
     	// AMFDocumentAcctProcessor
     	if(p_className.equals("org.amerp.process.AMFDocumentAcctProcessor"))
-    		try {
-    			process =   (ProcessCall) AMFDocumentAcctProcessor.class.newInstance();
-    		} catch (Exception e) {}
+    		return new org.amerp.process.AMFDocumentAcctProcessor();
     	// AMFRebuildANewClientSchema
     	if(p_className.equals("org.amerp.process.AMFRebuildANewClientSchema"))
     		return new org.amerp.process.AMFRebuildANewClientSchema();
@@ -74,6 +56,9 @@ public class AMFProcessfactory implements IProcessFactory{
             return new org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Std();
         if (p_className.equals("org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Pojo"))
             return new org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Pojo();
+        // 
+        if (p_className.equals("org.amerp.reports.xlsx.AccountElements_Tree_ProcXlsx"))
+            return new org.amerp.reports.xlsx.AccountElements_Tree_ProcXlsx();
         return process;
     }
 }
