@@ -26,6 +26,7 @@ import org.compiere.process.SvrProcess;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Language;
 
 import net.sf.jasperreports.engine.JRException; // Importar si no está
 import net.sf.jasperreports.engine.JRParameter;
@@ -34,6 +35,8 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import java.util.Arrays;
+
 
 public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall, ClientProcess{
 	
@@ -125,13 +128,23 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
 
         // --- PASO 4: Preparar los parámetros del informe (si los tienes) ---
         // Estos parámetros son los que defines en el .jrxml y no son parte de los campos de detalle.
+        Language currentLanguage = Env.getLanguage(Env.getCtx());
+        Locale reportLocale = currentLanguage.getLocale(); 
+        // Obtener solo el código de idioma (ej. "en", "fr")
+        String languageCode = reportLocale.getLanguage(); // Debería dar "en" o "fr"
+        Locale simpleLocale = new Locale(languageCode); // Crea un Locale sin el código de país (ej. "en" en lugar de "en_US")
+        ClassLoader classLoader = getClass().getClassLoader();
+        ResourceBundle bundle = ResourceBundle.getBundle(
+        	    "org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree",
+        	    simpleLocale,
+        	    classLoader
+        	);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("AD_Client_ID", p_AD_Client_ID);
         parameters.put("C_AcctSchema_ID",p_C_AcctSchema_ID);
-        parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle.getBundle(
-        	    "org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree",
-        	    Locale.getDefault()
-        	));
+        parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
+        parameters.put(JRParameter.REPORT_LOCALE, simpleLocale);
+
         // Puedes añadir más parámetros, como el logo de la compañía (si no viene del POJO)
         // o información del usuario, etc.
         log.info("Parámetros del informe preparados.");
