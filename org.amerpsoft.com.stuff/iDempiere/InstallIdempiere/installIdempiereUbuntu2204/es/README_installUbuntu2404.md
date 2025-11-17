@@ -3,13 +3,13 @@
 
 <div style="text-align: right;">
 
-🇬🇧 [English Version](../README_installUbuntu2204.md) | 🇪🇸 Español
+🇬🇧 [English Version](../README_installUbuntu2404.md) | 🇪🇸 Español
 
 </div>
 
-## Instalar Idempiere en Ubuntu 22.04
+## Instalar Idempiere en Ubuntu 24.04
 
-Procedimientos de instalación para Ubuntu 22.04 con base de datos PosgreSQL.
+Procedimientos de instalación para Ubuntu 24.04 con base de datos PosgreSQL.
 
 Este procedimiento se aplica a una instalación en dos equipos diferentes.
 
@@ -22,14 +22,14 @@ Este procedimiento incluye información extraída de [Instalación de iDempiere]
 
 | Pasos | Enlace | Dónde | Comentarios |
 | ----: | ---------------------------------------------- | ----------------- | --------------------------------------------------------------- |
-| 1 | [Instalar PostgreSQL 15](#step1) | Máquina de base de datos | Instalar PostgreSQL desde la distribución de Ubuntu. Actualizar el repositorio. |
-| 2 | [Configurar PostgreSQL 15](#step2) | Máquina de base de datos | Editar los archivos pg_hba.conf / postgresql.conf |
+| 1 | [Instalar PostgreSQL 17](#step1) | Máquina de base de datos | Instalar PostgreSQL desde la distribución de Ubuntu. Actualizar el repositorio. |
+| 2 | [Configurar PostgreSQL 17](#step2) | Máquina de base de datos | Editar los archivos pg_hba.conf / postgresql.conf |
 | 3 | [Instalar JAVA OpenJDK17](#step3) | Máquina de Idempiere | Descargar e instalar Java 17 |
 | 4 | [Descargar instaladores](#step4) | Máquina de Idempiere | Descargar instaladores del repositorio de iDempiere |
 | 5 | [Instalar idempiere12 desde instaladores](#step5) | Máquina de Idempiere | Descomprimir y copiar los instaladores en el directorio /opt |
 | 6 | [Ejecutar idempiere12](#step6) | Máquina de Idempiere | Ejecutar | Configurar ejecución automática de idempiere |
 
-### <a name="step1"></a>1-⭐️Instalar PostgreSQL 15
+### <a name="step1"></a>1-⭐️Instalar PostgreSQL 17
 
 #### **MÁQUINA DE BASE DE DATOS**
 
@@ -53,8 +53,8 @@ $ sudo apt-get update
 #### Instalar PostgreSQL
 
 ````
-# Instalar la versión 15 de PostgreSQL.
-$ sudo apt-get -y install postgresql-15
+# Instalar la versión 17 de PostgreSQL.
+$ sudo apt-get -y install postgresql-17
 o
 # Para la versión 16
 $ sudo apt-get -y install postgresql
@@ -63,19 +63,19 @@ $ sudo apt-get -y install postgresql
 #### Opcionalmente, inicialice la base de datos y habilite el inicio automático:
 
 ````
-sudo systemctl enable postgresql-15
-sudo systemctl start postgresql-15
+sudo systemctl enable postgresql-17
+sudo systemctl start postgresql-17
 ````
 
 <p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 
-### <a name="step2"></a>2-⭐️Configurar PostgreSQL 15
+### <a name="step2"></a>2-⭐️Configurar PostgreSQL 17
 
 #### Modificar el archivo ***ph_hba.conf***
 
 Después de instalar PostgreSQL, debe verificar la configuración correcta de:
 
-*/etc/postgresql/15/main/pg_hba.conf*
+*/etc/postgresql/17/main/pg_hba.conf*
 
 La siguiente línea requiere cambiar el método de autenticación:
 
@@ -99,7 +99,7 @@ Para desarrollo, abrir la dirección de escucha '*'; para producción, localhost
 
 Puerto 5432/5433.
 
-Editar: '/etc/postgresql/15/main/postgresql.conf'
+Editar: '/etc/postgresql/17/main/postgresql.conf'
 
 ```
 #------------------------------------------------------------------------------
@@ -191,8 +191,8 @@ Restaurar desde la copia de seguridad de Seed o Producción, ejecutar en Linux:
 # Adempiere_pg.jar en el directorio idempiere/org.adempiere.server-feature/data/seed/
 # Descomprimir en dmp
 $ jar -xvf Adempiere_pg.jar
-# PostgreSQL en Linux Ubuntu, ubicado en /usr/lib/postgresql/15/bin
-$ /usr/lib/postgresql/15/bin/psql -p 5432 -d idempiereSeed12 -f Adempiere_pg.dmp
+# PostgreSQL en Linux Ubuntu, ubicado en /usr/lib/postgresql/17/bin
+$ /usr/lib/postgresql/17/bin/psql -p 5432 -d idempiereSeed12 -f Adempiere_pg.dmp
 ```
 
 #### SALIR de Postgres
@@ -231,7 +231,7 @@ OpenJDK 17 JRE
 $ sudo apt install -y openjdk-17-jre
 ```
 
-#### Instalar Oracle JDK 17 en Ubuntu 22.04
+#### Instalar Oracle JDK 17 en Ubuntu 24.04
 
 Esto no es necesario para idempiere, solo es informativo.
 
@@ -340,7 +340,7 @@ Gráfico. Se puede ejecutar en Linux:
 $ sh setup.sh
 ```
 
-![1714558912245](images/README_installUbuntu2204/1714558912245.png)
+![1714558912245](images/README_installUbuntu2404/1714558912245.png)
 
 O Comando: ejecutar en Linux
 

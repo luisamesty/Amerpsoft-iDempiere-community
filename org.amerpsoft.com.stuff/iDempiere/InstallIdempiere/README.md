@@ -27,10 +27,10 @@ Install procedures for Idempiere, in different operating systems.
 </div>
 
 ### Install Idempiere in Ubuntu using PostgreSQL database
-Install Procedures for Ubuntu 22.04
+Install Procedures for Ubuntu 24.04
 <div style="padding-left: 40px;">
 
-[Install Procedures for Ubuntu](./installIdempiereUbuntu2204/README_installUbuntu2204.md) # 
+[Install Procedures for Ubuntu](./installIdempiereUbuntu2404/README_installUbuntu2404.md) # 
 
 </div>
 
