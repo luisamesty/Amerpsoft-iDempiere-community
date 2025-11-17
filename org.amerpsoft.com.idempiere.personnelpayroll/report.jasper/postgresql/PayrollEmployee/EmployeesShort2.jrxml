@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeesShort" pageWidth="1430" pageHeight="612" orientation="Landscape" columnWidth="1390" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a8631c3-b807-49b4-bd24-2bb8ccf7fd46">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeesShort" pageWidth="1400" pageHeight="612" orientation="Landscape" columnWidth="1360" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a8631c3-b807-49b4-bd24-2bb8ccf7fd46">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -45,11 +52,8 @@
 	<parameter name="isShowColumns" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="isForExport" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- EmployeesShort V4_SinFincion.jrxml
+		<![CDATA[-- EmployeesShort V3_SinFincion.jrxml
 -- Employees Selective
 -- HISTORIC VALUES Fro SALARIES, COMISSION OTHER INCOME
 WITH DateRange AS (
@@ -59,6 +63,25 @@ WITH DateRange AS (
         DATE($P{DateEnd}) AS DateEnd,
         EXTRACT(YEAR FROM AGE(DATE($P{DateEnd}) + INTERVAL '1 day', DATE($P{DateIni}))) * 12 +
         EXTRACT(MONTH FROM AGE(DATE($P{DateEnd}) + INTERVAL '1 day', DATE($P{DateIni}))) AS NoMeses
+),
+EmployeeMonths AS (
+    -- 2. Identifica los meses en los que cada empleado tuvo actividad de nómina
+    SELECT
+        pyr.amn_employee_id,
+        DATE_TRUNC('month', pyr.dateacct) AS payroll_month,
+        MAX(CASE WHEN pyr_d.amountcalculated > 0 THEN 1 ELSE 0 END) AS has_income
+    FROM adempiere.amn_payroll pyr
+    INNER JOIN adempiere.amn_payroll_detail pyr_d ON pyr_d.amn_payroll_id = pyr.amn_payroll_id
+    WHERE pyr.dateacct BETWEEN (SELECT DateIni FROM DateRange) AND (SELECT DateEnd FROM DateRange)
+    GROUP BY 1, 2
+),
+MonthlyCounts AS (
+    -- 3. Cuenta el número total de meses devengados por empleado en el rango (NoMesesDev)
+    SELECT
+        amn_employee_id,
+        COUNT(payroll_month) FILTER (WHERE has_income = 1) AS NoMesesDev
+    FROM EmployeeMonths
+    GROUP BY amn_employee_id
 ),
 Conceptos AS (
 	WITH RECURSIVE Nodos AS (
@@ -180,41 +203,6 @@ Conceptos AS (
 	 AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR trial.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	ORDER BY trial.calcorder, trial.ancestry
 ),
-EmployeeMonths AS (
-    -- 2. IDENTIFICA LOS MESES POR EMPLEADO Y GRUPO DE CONCEPTO (value2)
-    SELECT
-        pyr.amn_employee_id,
-        cty.value2, -- CLAVE: Agregar el grupo de concepto
-        DATE_TRUNC('month', pyr.dateacct) AS payroll_month,
-        MAX(CASE WHEN pyr_d.amountcalculated > 0 THEN 1 ELSE 0 END) AS has_income
-    FROM adempiere.amn_payroll pyr
-    INNER JOIN adempiere.amn_payroll_detail pyr_d ON pyr_d.amn_payroll_id = pyr.amn_payroll_id
-    
-    -- UNIR A CONCEPTOS PARA OBTENER value2
-    INNER JOIN adempiere.amn_concept_types_proc AS ctp ON ctp.amn_concept_types_proc_id = pyr_d.amn_concept_types_proc_id
-    INNER JOIN Conceptos AS cty ON cty.amn_concept_types_id = ctp.amn_concept_types_id
-    
-    CROSS JOIN DateRange dr 
-    WHERE 
-        -- Filtros de Concepto para coincidir con PayrollDetails
-        cty.calcorder1 = 100000 
-        AND cty.optmode = 'A'
-        -- Filtro de Fechas Simple
-        AND pyr.dateacct >= dr.DateIni 
-        AND pyr.dateacct <= dr.DateEnd
-        
-    -- AGRUPACIÓN CLAVE: Empleado, Grupo de Concepto, Mes
-    GROUP BY 1, 2, 3
-),
-MonthlyCounts AS (
-    -- 3. CUENTA EL NÚMERO DE MESES DEVENGADOS POR EMPLEADO Y GRUPO DE CONCEPTO
-    SELECT
-        amn_employee_id,
-        value2,
-        COUNT(payroll_month) FILTER (WHERE has_income = 1)::NUMERIC AS NoMesesDev
-    FROM EmployeeMonths
-    GROUP BY amn_employee_id, value2 -- AGRUPACIÓN CLAVE: Empleado y Grupo de Concepto
-),
 PayrollDetails AS (
     -- 4. TU CONSULTA BASE (con los cálculos de meses unidos)
     SELECT 
@@ -222,7 +210,7 @@ PayrollDetails AS (
         emp.value,
         cty.value2,
         (SELECT NoMeses FROM DateRange) AS NoMeses,             -- <-- Columna NoMeses
-        mc.NoMesesDev AS NoMesesDev,               -- <-- Columna NoMesesDev
+        COALESCE(mc.NoMesesDev, 0) AS NoMesesDev,               -- <-- Columna NoMesesDev
         COALESCE(currt0.description,curr0.iso_code,curr0.cursymbol,'') AS currname,
         SUM(pyr_d.amountallocated) AS amountallocated ,  
         SUM(pyr_d.amountdeducted) AS amountdeducted  , 
@@ -234,8 +222,8 @@ PayrollDetails AS (
         AND currt0.ad_language = (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID}) 
     INNER JOIN adempiere.amn_payroll_detail AS pyr_d ON pyr_d.amn_payroll_id = pyr.amn_payroll_id
     INNER JOIN adempiere.amn_concept_types_proc AS ctp 	 ON ctp.amn_concept_types_proc_id = pyr_d.amn_concept_types_proc_id
-    INNER JOIN Conceptos AS cty ON cty.amn_concept_types_id = ctp.amn_concept_types_id  
-    LEFT JOIN MonthlyCounts mc ON mc.amn_employee_id = emp.amn_employee_id AND mc.value2 = cty.value2
+    INNER JOIN Conceptos AS cty 	 ON cty.amn_concept_types_id = ctp.amn_concept_types_id
+    LEFT JOIN MonthlyCounts mc ON mc.amn_employee_id = emp.amn_employee_id 
     LEFT JOIN DateRange dr ON 1=1 -- Join para usar el rango de fechas en el filtro
     WHERE 
         emp.isactive = 'Y' 
@@ -243,8 +231,7 @@ PayrollDetails AS (
         AND cty.optmode = 'A' 
         AND emp.ad_client_id = $P{AD_Client_ID} 
         AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
-        AND pyr.dateacct >= dr.DateIni 
-        AND pyr.dateacct <= dr.DateEnd
+        AND pyr.dateacct BETWEEN dr.DateIni AND dr.DateEnd -- Usar CTE DateRange
     GROUP BY 
         emp.amn_employee_id, 
         emp.value, 
@@ -405,7 +392,7 @@ FROM (
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) trab
-WHERE trab.imprimir_emp =1 AND trab.imprimir_status=1 AND trab.imprimir_con=1
+WHERE trab.imprimir_status=1 AND trab.imprimir_con=1
 	AND trab.imprimir_loc=1 AND trab.imprimir_org = 1
 ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.codigo]]>
 	</queryString>
@@ -614,7 +601,7 @@ ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.codigo]]>
 		<property name="com.jaspersoft.studio.field.name" value="nomeses"/>
 		<property name="com.jaspersoft.studio.field.label" value="nomeses"/>
 	</field>
-	<field name="nomesesdev" class="java.math.BigDecimal">
+	<field name="nomesesdev" class="java.lang.Long">
 		<property name="com.jaspersoft.studio.field.name" value="nomesesdev"/>
 		<property name="com.jaspersoft.studio.field.label" value="nomesesdev"/>
 	</field>
@@ -644,23 +631,48 @@ ORDER BY  org_value, contrato_tipo, trab.localidad_codigo, trab.codigo]]>
 		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="salario_nomeses" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{nomesesdev}: $V{salario_nomeses}]]></variableExpression>
+	<variable name="horas_extras_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "HORASEXTRAS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="salario_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated}: BigDecimal.ZERO]]></variableExpression>
-		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
-	</variable>
-	<variable name="comision_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "COMISIONES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "SALARIOIMPORTE" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="otros_ingresos" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
-		<variableExpression><![CDATA[($F{value2}.compareToIgnoreCase( "OTROSINGRESOS" )==0 ||
-$F{value2}.compareToIgnoreCase( "HORASEXTRAS" )==0 ||
-$F{value2}.compareToIgnoreCase( "BONIFICACIONES" )==0 ||
-$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ) ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSINGRESOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="comision" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "COMISIONES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="bonificacion" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "BONIFICACIONES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="loans" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "PRESTAMOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="vales" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "VALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="otros_descuentos" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "OTROSDESCUENTOS" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="ips" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="descuentos_judiciales" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "DESCUENTOSJUDICIALES" )==0 ? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="feriados_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porTrabajador" calculation="Sum">
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ? $F{amountcalculated}  : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<group name="Group_byOrg" isReprintHeaderOnEachPage="true">
@@ -669,12 +681,12 @@ $F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ) ? $F{amountcalculated}  : BigD
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1390" height="16" isRemoveLineWhenBlank="true" uuid="b67a1217-2de3-43e3-9727-b70338dd558e">
+					<reportElement x="0" y="0" width="1360" height="16" isRemoveLineWhenBlank="true" uuid="b67a1217-2de3-43e3-9727-b70338dd558e">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitheight" value="pixel"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Organización: " + ($F{org_value}!= null ? $F{org_value}.trim() : "N/A") +
  ($F{org_name}!= null ? "-"+$F{org_name}.trim() : "")]]></textFieldExpression>
@@ -692,13 +704,13 @@ $F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ) ? $F{amountcalculated}  : BigD
 		<groupHeader>
 			<band height="14">
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1390" height="14" isRemoveLineWhenBlank="true" uuid="3b816b18-6cb0-465a-bda8-eff6be628b0c">
+					<reportElement x="0" y="0" width="1360" height="14" isRemoveLineWhenBlank="true" uuid="3b816b18-6cb0-465a-bda8-eff6be628b0c">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box leftPadding="6"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Contrato: " + ($F{contrato_tipo}!= null ? $F{contrato_tipo}.trim() : "N/A") +
  ($F{contrato_nombre}!= null ? "-"+$F{contrato_nombre}.trim() : "")]]></textFieldExpression>
@@ -718,13 +730,13 @@ $F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ) ? $F{amountcalculated}  : BigD
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1390" height="14" isRemoveLineWhenBlank="true" uuid="1c8d80a2-bfbc-4f8c-af4e-9f8f859cd551">
+					<reportElement x="0" y="0" width="1360" height="14" isRemoveLineWhenBlank="true" uuid="1c8d80a2-bfbc-4f8c-af4e-9f8f859cd551">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box leftPadding="12"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Localidad: " + ($F{localidad_codigo}!= null ? $F{localidad_codigo}.trim() : "N/A") +
  ($F{localidad_nombre}!= null ? "-"+$F{localidad_nombre}.trim() : "")]]></textFieldExpression>
@@ -742,7 +754,7 @@ $F{value2}.compareToIgnoreCase( "FERIADOS" )==0 ) ? $F{amountcalculated}  : BigD
 					</reportElement>
 					<box leftPadding="10"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+						<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Total Trabajadores Localidad: " + ($F{localidad_codigo}!= null ? $F{localidad_codigo}.trim() : "N/A") +
  ($F{localidad_nombre}!= null ? "-"+$F{localidad_nombre}.trim() : "  ")+"  ("+
@@ -754,7 +766,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 	<group name="Group_porTrabajador">
 		<groupExpression><![CDATA[$F{amn_employee_id}]]></groupExpression>
 		<groupHeader>
-			<band height="14">
+			<band height="19">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="75" height="14" isRemoveLineWhenBlank="true" uuid="78693909-033a-449d-b02c-26f05dbbb0ce">
@@ -765,7 +777,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 				</textField>
@@ -778,7 +790,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nombre}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -790,7 +802,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cedula}]]></textFieldExpression>
 				</textField>
@@ -799,7 +811,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
 				</textField>
@@ -811,7 +823,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{contrato_condicion}]]></textFieldExpression>
 				</textField>
@@ -824,7 +836,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 						<paragraph lineSpacing="Single" lineSpacingSize="1.5" spacingBefore="0" spacingAfter="0"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{contrato_tipo}]]></textFieldExpression>
@@ -836,23 +848,31 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="860" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="8eaafefa-49a0-4fbc-9a6e-57c1ea4c2a87">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="895" y="0" width="95" height="14" isRemoveLineWhenBlank="true" uuid="8eaafefa-49a0-4fbc-9a6e-57c1ea4c2a87">
 						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{salario}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="990" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="b6ee81ba-579a-48d0-bc38-76e5226b63e3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salario_fecha}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" isBlankWhenNull="true">
 					<reportElement stretchType="RelativeToTallestObject" x="590" y="0" width="200" height="14" isRemoveLineWhenBlank="true" uuid="9ca9fbef-8415-4b34-a4f3-765a40459cfe">
@@ -862,7 +882,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box leftPadding="4"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="false"/>
+						<font fontName="Arial" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{jobtitle_name}.trim()]]></textFieldExpression>
 				</textField>
@@ -871,24 +891,25 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha_nacimiento}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.##" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="860" y="0" width="90" height="14" isRemoveLineWhenBlank="true" uuid="4d39738c-487f-43e5-bbbb-00c618af74e6">
+					<reportElement stretchType="RelativeToTallestObject" x="895" y="0" width="95" height="14" isRemoveLineWhenBlank="true" uuid="4d39738c-487f-43e5-bbbb-00c618af74e6">
 						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["********"]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="1290" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="f2e0b66b-6d36-4d78-82a0-602408b205c3">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="1060" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="f2e0b66b-6d36-4d78-82a0-602408b205c3">
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -896,77 +917,70 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					</reportElement>
 					<box rightPadding="3"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{salario_nomeses}.compareTo(BigDecimal.ZERO) == 0 
-        ? BigDecimal.ZERO 
-        : ($V{salario_importe}.add($V{comision_importe}).add($V{otros_ingresos})).divide($V{salario_nomeses}, 2, RoundingMode.HALF_UP)
-      )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="1090" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="2b9bda63-8f47-4242-9ee8-65219219bee0">
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-					</reportElement>
-					<box rightPadding="3"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{comision_importe}.compareTo(BigDecimal.ZERO) == 0    ? null  : ($V{salario_nomeses}.compareTo(BigDecimal.ZERO) == 0   ? BigDecimal.ZERO  : $V{comision_importe}.divide($V{salario_nomeses}, 2, RoundingMode.HALF_UP)    )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="1190" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="4e569251-f5d7-40e5-a0cd-2ea9620931c8">
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-					</reportElement>
-					<box rightPadding="3"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{otros_ingresos}.compareTo(BigDecimal.ZERO) == 0 
+					<textFieldExpression><![CDATA[$V{salario_importe}.compareTo(BigDecimal.ZERO) == 0 
     ? null 
-    : ($V{salario_nomeses}.compareTo(BigDecimal.ZERO) == 0 
+    : ($F{nomeses}.compareTo(BigDecimal.ZERO) == 0 
         ? BigDecimal.ZERO 
-        : $V{otros_ingresos}.divide($V{salario_nomeses}, 2, RoundingMode.HALF_UP)
-      )
-]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+        : $V{salario_importe}.divide($F{nomeses}, 2, RoundingMode.HALF_UP)
+      )]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="1160" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="2b9bda63-8f47-4242-9ee8-65219219bee0">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{comision}.compareTo(BigDecimal.ZERO) == 0 
+    ? null 
+    : ($F{nomeses}.compareTo(BigDecimal.ZERO) == 0 
+        ? BigDecimal.ZERO 
+        : $V{comision}.divide($F{nomeses}, 2, RoundingMode.HALF_UP)
+      )]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="1260" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="4e569251-f5d7-40e5-a0cd-2ea9620931c8">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[// 1. Calcula la suma total de los ingresos
+($V{otros_ingresos}.add($V{bonificacion}).add($V{feriados_importe}).add($V{horas_extras_importe}))
+    
+    // 2. Comprueba si el TOTAL es cero (Supresión de cero)
+    .compareTo(BigDecimal.ZERO) == 0 
+        ? null // Si el total es cero, no mostrar nada
+        
+        // 3. Si el total NO es cero, verifica si el divisor es cero (División Segura)
+        : ($F{nomeses}.compareTo(BigDecimal.ZERO) == 0 
+            ? BigDecimal.ZERO // Si el divisor es cero, devuelve 0 (o lanza una excepción si lo prefieres)
+            
+            // 4. Si es seguro, realiza la división
+            : ($V{otros_ingresos}.add($V{bonificacion}).add($V{feriados_importe}).add($V{horas_extras_importe}))
+                .divide($F{nomeses}, 2, RoundingMode.HALF_UP)
+          )]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="950" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="d6c75bc4-d78a-4837-bd58-b353da75f1dc">
+					<reportElement stretchType="RelativeToTallestObject" x="860" y="0" width="35" height="14" isRemoveLineWhenBlank="true" uuid="d6c75bc4-d78a-4837-bd58-b353da75f1dc">
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{salario_nomeses}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porTrabajador" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="990" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="6d9972e5-f773-4a1b-87f8-fde3fb6ded36">
-						<property name="local_mesure_unitwidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<printWhenExpression><![CDATA[$F{ok_salary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-					</reportElement>
-					<box rightPadding="3"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{salario_importe}.compareTo(BigDecimal.ZERO) == 0 
-    ? null 
-    : ($V{salario_nomeses}.compareTo(BigDecimal.ZERO) == 0 
-        ? BigDecimal.ZERO 
-        : $V{salario_importe}.divide($V{salario_nomeses}, 2, RoundingMode.HALF_UP)
-      )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
+					<textFieldExpression><![CDATA[$F{nomesesdev}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -978,12 +992,12 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 		<band height="45" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowHeader}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<textField pattern="dd/MM/yy">
-				<reportElement x="1190" y="0" width="200" height="15" uuid="cd98b8bb-c602-4475-a957-3d93ce023f44">
+				<reportElement x="1159" y="0" width="201" height="15" uuid="cd98b8bb-c602-4475-a957-3d93ce023f44">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -999,7 +1013,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					<font fontName="Arial" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
 			</textField>
@@ -1013,7 +1027,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					<font fontName="Arial" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
@@ -1036,7 +1050,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="315" y="0" width="875" height="30" backcolor="#C24A48" uuid="b1ffab59-482a-4c92-bc25-6d67f3cc253d">
+				<reportElement x="315" y="0" width="844" height="30" backcolor="#C24A48" uuid="b1ffab59-482a-4c92-bc25-6d67f3cc253d">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1044,38 +1058,38 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans" size="16" isBold="true"/>
+					<font fontName="Arial" size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Reporte de Trabajadores]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement x="1300" y="15" width="90" height="15" uuid="b31083f3-28be-4dc0-994f-9fc4b5e713bf">
+				<reportElement x="1290" y="15" width="70" height="15" uuid="b31083f3-28be-4dc0-994f-9fc4b5e713bf">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" de "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1190" y="15" width="100" height="15" uuid="d35106da-cb07-435f-94fd-89aecd91295f">
+				<reportElement x="1159" y="15" width="130" height="15" uuid="d35106da-cb07-435f-94fd-89aecd91295f">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9"/>
+					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="315" y="30" width="635" height="15" isRemoveLineWhenBlank="true" uuid="76caf7a3-6196-4a7f-991a-a017ae69de65">
+				<reportElement x="315" y="30" width="675" height="15" isRemoveLineWhenBlank="true" uuid="76caf7a3-6196-4a7f-991a-a017ae69de65">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="Arial" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Condición "+ 
 ($P{AMN_Status_A}.compareToIgnoreCase( "Y" )== 0 ? "Activos/" : "")+
@@ -1098,28 +1112,28 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+					<font fontName="Arial" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Moneda: "+$F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="950" y="30" width="440" height="15" isRemoveLineWhenBlank="true" uuid="204321ed-a5ab-42bb-937f-f01b11981d20">
+				<reportElement x="990" y="30" width="370" height="15" isRemoveLineWhenBlank="true" uuid="204321ed-a5ab-42bb-937f-f01b11981d20">
 					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Período Histórico : "+$F{nomeses} +" Meses  - Desde " + new SimpleDateFormat("dd/MM/yyyy").format($P{DateIni}) + "  hasta  "+ new SimpleDateFormat("dd/MM/yyyy").format($P{DateEnd})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="26" splitType="Stretch">
+		<band height="28" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<line>
-				<reportElement x="0" y="2" width="1390" height="1" uuid="69f43c09-0a33-4693-912d-7a0bdd2a469c">
+				<reportElement x="0" y="2" width="1360" height="1" uuid="69f43c09-0a33-4693-912d-7a0bdd2a469c">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1127,7 +1141,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="0" width="1390" height="1" uuid="2539f63e-2080-4e79-b28b-a5fc4f349091">
+				<reportElement x="0" y="0" width="1360" height="1" uuid="2539f63e-2080-4e79-b28b-a5fc4f349091">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1143,9 +1157,9 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 				<box topPadding="0" leftPadding="0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Código]]></text>
+				<text><![CDATA[CÓDIGO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="830" y="3" width="30" height="20" uuid="382c8803-2bbf-4315-82e8-695360de2ec8">
@@ -1153,34 +1167,34 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Edo.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="990" y="3" width="100" height="20" uuid="e6d0de72-e062-4140-b144-b863291b68af">
+				<reportElement x="990" y="3" width="70" height="20" uuid="e6d0de72-e062-4140-b144-b863291b68af">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Promedio Salario]]></text>
+				<text><![CDATA[F. SALARIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="860" y="3" width="90" height="20" uuid="a446de9b-a30d-4199-a827-5ea82abdb5fd">
+				<reportElement x="895" y="3" width="95" height="20" uuid="a446de9b-a30d-4199-a827-5ea82abdb5fd">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Salario Actual]]></text>
+				<text><![CDATA[SALARIO MENSUAL]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="475" y="3" width="70" height="20" uuid="639c7cb4-301e-4ec1-8342-57a006ea234e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F. Ingreso]]></text>
 			</staticText>
@@ -1190,7 +1204,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cond.]]></text>
 			</staticText>
@@ -1200,9 +1214,9 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Cédula]]></text>
+				<text><![CDATA[CEDULA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="75" y="3" width="240" height="20" uuid="e542dd78-316a-4ef7-b0f0-f3b3911409d0">
@@ -1210,22 +1224,24 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Nombre]]></text>
+				<text><![CDATA[NOMBRE]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="25" width="1390" height="1" uuid="86860efd-7c0a-4c0b-ab1d-b7f26f5b37bc">
+				<reportElement x="0" y="25" width="1360" height="1" uuid="86860efd-7c0a-4c0b-ab1d-b7f26f5b37bc">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="23" width="1390" height="1" uuid="f1912a56-953e-45a8-a15c-a411c477939b">
+				<reportElement x="0" y="23" width="1360" height="1" uuid="f1912a56-953e-45a8-a15c-a411c477939b">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<staticText>
@@ -1235,56 +1251,56 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 				<box leftPadding="5"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Tipo Contrato             Cargo]]></text>
+				<text><![CDATA[Tipo Contrato                   Cargo]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="405" y="3" width="70" height="20" uuid="569778e6-2fd9-4c1d-aae8-7105b8b1b039"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[F. Nacim.]]></text>
+				<text><![CDATA[F. Nacimiento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1290" y="3" width="100" height="20" uuid="2c38af70-8644-434f-a0ce-a1770bb66d43">
+				<reportElement x="1060" y="3" width="100" height="20" uuid="2c38af70-8644-434f-a0ce-a1770bb66d43">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Promedio Total]]></text>
+				<text><![CDATA[PROM. SALARIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1090" y="3" width="100" height="20" uuid="0b2eaf62-3799-4b38-8c42-370b008d1e34">
+				<reportElement x="1160" y="3" width="100" height="20" uuid="0b2eaf62-3799-4b38-8c42-370b008d1e34">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Promedio Comisión]]></text>
+				<text><![CDATA[PROM.COMISIONES]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1190" y="3" width="100" height="20" uuid="817e274e-bfde-465b-aaee-948d7ea5cdc0">
+				<reportElement x="1260" y="3" width="100" height="20" uuid="817e274e-bfde-465b-aaee-948d7ea5cdc0">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Promedio Otros]]></text>
+				<text><![CDATA[PROMEDIO OTROS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="950" y="3" width="40" height="20" uuid="96787e42-4c0f-4667-a691-84cb16f8186c">
+				<reportElement x="860" y="3" width="35" height="20" uuid="96787e42-4c0f-4667-a691-84cb16f8186c">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[NoPer]]></text>
+				<text><![CDATA[Meses]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -1302,7 +1318,7 @@ $V{v_employee_count_loc}+")"]]></textFieldExpression>
 				</reportElement>
 				<box leftPadding="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Total Trabajadores: ("+$V{v_employee_count}+")" +"  "+
 ($P{AMN_Status_A}.compareToIgnoreCase( "Y" )== 0 ? "Activos="+ $V{v_employee_count_A}: "")+"  "+
