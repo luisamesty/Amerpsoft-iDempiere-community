@@ -21,7 +21,10 @@ import javax.script.*;
 import org.adempiere.base.IColumnCallout;
 import org.amerp.amnmodel.*;
 import org.amerp.amnutilities.AmerpPayrollCalc;
-import org.amerp.amnutilities.AmerpPayrollCalc.scriptResult;
+import org.amerp.amnutilities.AmerpPayrollCalcArray;
+import org.amerp.amnutilities.PayrollScriptEngine;
+import org.amerp.amnutilities.PayrollVariables;
+import org.amerp.amnutilities.ScriptResult;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.MSysConfig;
@@ -34,6 +37,10 @@ import org.compiere.util.*;
 public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 
 	CLogger log = CLogger.getCLogger(AMN_Payroll_Detail_Qty_callout.class);
+	PayrollVariables pyVars;
+	AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+	AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
+	PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
 	// Concept Local Variables
 	int contador=0;
 	int Concept_CalcOrder=0;
@@ -61,7 +68,7 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 	int Employee_ID,Payroll_ID,Contract_ID= 0;
 	String formula,script;
 	String ErrorMessage="OK";
-	scriptResult RetVal = new scriptResult();
+	ScriptResult RetVal = new ScriptResult();
 	/* (non-Javadoc)
 	 * @see org.adempiere.base.IColumnCallout#start(java.util.Properties, int, org.compiere.model.GridTab, org.compiere.model.GridField, java.lang.Object, java.lang.Object)
 	 */
@@ -203,18 +210,18 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 					// *******************************************************
 					// Calculate Concepts VARIABLES
 					// *******************************************************
-					AmerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder,forceRulesInit, forceDVInit, false);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder,forceRulesInit, forceDVInit, false);
 
 					// IF script is not Empty or formula equals ("script")
 					if (formula.trim().equalsIgnoreCase("script") || ((!script.isEmpty() && script!=null))) {
-						RetVal = AmerpPayrollCalc.FormulaEvaluationScript(
-								Payroll_ID, Concept_Value, script, qtyRead, va_SB, workdaysDT,Concept_OptMode, false);
+						RetVal = pyScriptEngine.FormulaEvaluationScript(
+								Payroll_ID, pyVars, Concept_Value, script, qtyRead, va_SB, workdaysDT,Concept_OptMode, false);
 						ErrorMessage = RetVal.getErrorMessage();
 						calcAmnt = RetVal.getBDCalcAmnt();
 						// 
 					} else { 	       				
-						RetVal = AmerpPayrollCalc.FormulaEvaluationScript(
-								Payroll_ID, Concept_Value, formula, qtyRead, va_SB, workdaysDT,Concept_OptMode, false);
+						RetVal = pyScriptEngine.FormulaEvaluationScript(
+								Payroll_ID, pyVars, Concept_Value, formula, qtyRead, va_SB, workdaysDT,Concept_OptMode, false);
 						ErrorMessage = RetVal.getErrorMessage();
 						calcAmnt = RetVal.getBDCalcAmnt();
 					}
@@ -287,7 +294,7 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 			try {
 //log.warning("........AMN_Payroll_Detail_callout-Payroll_ID:"+Payroll_ID+"  qtyRead:"+qtyRead+"  calcAmnt"+calcAmnt);
 				//AmerpPayrollCalc.PayrollEvaluationArrayCalculate(p_ctx, Payroll_ID);
-				AmerpPayrollCalc.PayrollEvaluationArrayCalculate(p_ctx, Payroll_ID);
+				amerpPayrollCalcArray.PayrollEvaluationArrayCalculate(p_ctx, Payroll_ID);
 				// Refresh Grid
 				p_mTab.dataRefreshAll();
 				p_mTab.refreshParentTabs();

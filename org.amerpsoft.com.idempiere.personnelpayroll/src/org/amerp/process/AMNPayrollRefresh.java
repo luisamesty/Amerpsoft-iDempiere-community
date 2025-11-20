@@ -33,6 +33,8 @@ import org.amerp.amnmodel.MAMN_Payroll_Historic;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
 import org.amerp.amnutilities.AmerpPayrollCalc;
+import org.amerp.amnutilities.AmerpPayrollCalcArray;
+import org.amerp.amnutilities.PayrollScriptEngine;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.*;
@@ -87,7 +89,9 @@ public class AMNPayrollRefresh extends SvrProcess {
 	 */
     @Override
     protected  String doIt() throws Exception {
-	    // TODO Auto-generated method stub
+	    // 
+		AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+		AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
 	    MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, null); 
     	MAMN_Process amnprocess = new MAMN_Process(getCtx(), amnpayroll.getAMN_Process_ID(), null);
     	AMN_Payroll_Value = amnpayroll.getValue().trim(); 
@@ -127,7 +131,7 @@ public class AMNPayrollRefresh extends SvrProcess {
 			}
 			// Calculate receipt
 			//log.warning("---Antes PayrollEvaluationArrayCalculate AMN_Payroll_ID:"+p_AMN_Payroll_ID);
-			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), p_AMN_Payroll_ID);
+			amerpPayrollCalcArray.PayrollEvaluationArrayCalculate(getCtx(), p_AMN_Payroll_ID);
 			//log.warning("---Despues PayrollEvaluationArrayCalculate AMN_Payroll_ID:"+p_AMN_Payroll_ID);
 			// SALARY HISTORIC
 	    	MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(getCtx(), 0, null);
@@ -631,7 +635,6 @@ public class AMNPayrollRefresh extends SvrProcess {
 	    }
 
 	}
-	// OJO
 	
 	/*******************************************************************************************
    	// Payroll UPDATE PayrollUpdateUTILIDDEV 

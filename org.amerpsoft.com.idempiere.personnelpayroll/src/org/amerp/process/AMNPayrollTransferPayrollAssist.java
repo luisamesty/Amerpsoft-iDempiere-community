@@ -27,7 +27,7 @@ import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Payroll_Detail;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
-import org.amerp.amnutilities.AmerpPayrollCalc;
+import org.amerp.amnutilities.AmerpPayrollCalcArray;
 import org.amerp.amnutilities.AttendanceHours;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CLogger;
@@ -61,6 +61,8 @@ public class AMNPayrollTransferPayrollAssist {
 		Properties ctx, int p_AMN_Contract_ID, int p_AMN_Period_ID, int p_AMN_Employee_ID , 
 		Timestamp p_RefDateIni, Timestamp p_RefDateEnd, String trxName) {
 		
+		// AmerpPayrollCalcArray
+		AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
 		// LOCAL VARS
 		BigDecimal BDZero = BigDecimal.valueOf(0);
 		BigDecimal Tr_HED, Tr_HEN, Tr_HND, Tr_HNN;
@@ -203,7 +205,7 @@ public class AMNPayrollTransferPayrollAssist {
 	            }
 	    		if (!amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
 	    		{	
-	    	    	AmerpPayrollCalc.PayrollEvaluationArrayCalculate(Env.getCtx(), AMN_Payroll_ID);
+	    	    	amerpPayrollCalcArray.PayrollEvaluationArrayCalculate(Env.getCtx(), AMN_Payroll_ID);
 	    		} else {
 	    			locMsg_Value = locMsg_Value +" ** ALREADY PROCESSED - CAN'T BE RECALCULATED ** "+
 	    					Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+amnpayroll.getName()+":"+" \r\n";

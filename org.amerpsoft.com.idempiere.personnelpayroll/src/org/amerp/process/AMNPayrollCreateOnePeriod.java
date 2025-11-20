@@ -31,6 +31,7 @@ import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
 import org.amerp.amnutilities.AmerpMsg;
 import org.amerp.amnutilities.AmerpPayrollCalc;
+import org.amerp.amnutilities.AmerpPayrollCalcArray;
 import org.amerp.amnutilities.AmerpUtilities;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClientInfo;
@@ -301,6 +302,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, 
     		String trxName) {
 	    
+    	AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+    	AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
     	String Msg_Header="";
     	String Msg_Lines="";
 	    String Msg_Updates="";
@@ -454,19 +457,12 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 				processMonitor.statusUpdate(MessagetoShow);
 			}
 			if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-				//Msg_Lines=  AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
-				Msg_Lines=  AMNPayrollCreateDocs.CreatePayrollOneDocumentLinesFromArray(ctx, ReceiptConcepts, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
-				//trx.commit(); // Guarda los cambios
-				try {
-					AmerpPayrollCalc.PayrollEvaluationArrayCalculate(ctx, ReceiptsGenList.get(i).getAMN_Payroll_ID());
-					//trx.commit(); // Guarda los cambios
-				} catch (ScriptException e) {
-					// TODO Auto-generated catch block
-					Msg_Lines = Msg_Lines + "** ERROR ** PayrollEvaluationArrayCalculate ";
-					//e.printStackTrace();
-				} finally {
-					//trx.close(); 
-				}
+				// CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
+				Msg_Lines=AMNPayrollCreateDocs.CreatePayrollOneDocDetailLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
+				trx.commit(); // Guarda los cambios
+				// Calculate Document
+				Msg_Lines= Msg_Lines + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
+				trx.commit(); // Guarda los cambios
 			}
 		}
 		// log.warning("...Lines Completed....");
@@ -600,6 +596,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
 				Percent = 100 * (i / NoRecs);
 				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
+				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
+				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
 				NextPPDateIni = null;
 				NextPPDateEnd = null;
 				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
@@ -614,6 +612,10 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 						" ";
 				if (processMonitor != null) {
 					processMonitor.statusUpdate(MessagetoShow);
+				}
+				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
+					Msg_Updates=  AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
+					trx.commit(); // Guarda los cambios
 				}
 				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
 					if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {

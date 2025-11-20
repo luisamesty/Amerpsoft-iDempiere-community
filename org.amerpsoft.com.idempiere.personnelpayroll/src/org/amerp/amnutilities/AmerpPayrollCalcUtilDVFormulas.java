@@ -25,9 +25,6 @@ import org.compiere.model.MCurrency;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.compiere.util.TimeUtil;
-
-import java.lang.System.Logger.Level;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
@@ -469,8 +466,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		" AND pa.AMN_Contract_ID= "+ p_AMN_Contract_ID +
 		" AND emp.AMN_Employee_ID= "+ AMN_Employee_ID +
 		" ORDER BY  cty.AMN_Concept_Types_ID, pa.InvDateEnd DESC ";
-		//log.warning("sql="+sql);
-		
+
 		PreparedStatement pstmt = null;
 		ResultSet rspc = null;		
 		try
@@ -585,6 +581,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		retValue = list.get(2);
 		return BigDecimal.valueOf(retValue);
 	}
+	
 	/**
 	 *  processDefaultValue: DV_HOURS
 	 * 	Description: Payroll Period in HOURS Efective (LaborDAYS * 8).
@@ -692,6 +689,7 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			// Return BigDecimal Value
 			return BigDecimal.valueOf(NONLABORDAYS-HOLLIDAYS);
 	}
+	
 	/**
 	 *  processDefaultValue: DV_HOLLIDAYS
 	 * 	Description: Hollidays Calculated depending on Attendance days
@@ -795,7 +793,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			retValue = Historic_Salary;
 		return retValue;
 	}
-	
 
 	/**
 	 *  processDefaultValue: DV_VACACION
@@ -1141,7 +1138,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// VERIFY IF PERIOD IS ON MONTHS: JUL-OCT-ENE-APR
 		if (EmployeeIncomeDate.before(Timestamp.valueOf("1997-06-18 00:00:00"))) {
 			if (InvDateMonth == 0 || InvDateMonth == 3 || InvDateMonth == 6 | InvDateMonth == 9) {
-//			if (InvDateMonth == 1 || InvDateMonth == 4 || InvDateMonth == 7 | InvDateMonth == 10) {
 				retValue = 15;
 			}
 		} else {
@@ -1149,7 +1145,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			// VERIFY IF PERIOD IS ON MONTHS: JUL-OCT-ENE-APR
 			if (EmployeeIncomeDate.before(Timestamp.valueOf("2012-05-04 00:00:00"))) {
 				if (InvDateMonth == 0 || InvDateMonth == 3 || InvDateMonth == 6 | InvDateMonth == 9) {
-	//			if (InvDateMonth == 1 || InvDateMonth == 4 || InvDateMonth == 7 | InvDateMonth == 10) {
 					retValue = 15;
 				}			
 			}
@@ -1161,7 +1156,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				// Get Employee Income Month where trimester apply
 				refcal.setTime(EmployeeIncomeDate);
 				// Next Month
-	//				refcal.add(Calendar.MONTH, 1);
 				EmpMonth1=refcal.get(Calendar.MONTH);
 				refcal.add(Calendar.MONTH, 3);
 				EmpMonth2=refcal.get(Calendar.MONTH);
@@ -1208,7 +1202,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// Get 'salary_base' from amp_salary_hist_calc function
     	String sql = "select amp_salary_hist_calc('salary_socialbenefits' , ? , ? , ? , ? , ? ) / 12 ";
 		PreparedStatement pstmt = null;
-//log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 		ResultSet rspc = null;		
 		try
 		{
@@ -1235,15 +1228,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			rspc = null; pstmt = null;
 		}
 		// Compare to Salary on Employee Table
-		//log.warning("NP Employee_Salary:"+Employee_Salary+"  Historic_Salary:"+Historic_Salary);
-//log.warning("Historic_Salary:"+Historic_Salary);
 		if (Historic_Salary==null)
 			Historic_Salary = BigDecimal.ZERO;
 		retValue = Historic_Salary;
-//		if (Historic_Salary.compareTo(Employee_Salary) < 0 ) 
-//			retValue = Employee_Salary;
-//		else
-//			retValue = Historic_Salary;
 		return retValue;
 	}
 	
@@ -1324,10 +1311,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				Message="AFTER 2012-05-04-EmployeeIncomeDate:"+EmployeeIncomeDate+"InvDateEnd:"+InvDateEnd+"   retValue:"+retValue;	
 			}
 		}
-		
-		
-		
-		
 		// Calculates Employe Years 
 		if (retValue > 30)
 			retValue = 30;
@@ -1395,7 +1378,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				if (retValue192A < 15) {
 					// Calculates Employe Years FROM LOTT2
 					list =  AmerpDateUtils.getYearsMonthDaysElapsedBetween(DateLOTT2, InvDateEnd);
-// OJO +1
 					retValue192A = retValue192A + list.get(0)+1;
 					if (retValue192A > 15)
 						retValue192A = 15;
@@ -1409,7 +1391,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				// Calculates Employe Years
 				list =  AmerpDateUtils.getYearsMonthDaysElapsedBetween(EmployeeIncomeDate, InvDateEnd);
 				retValue192A = list.get(0);
-// OJO +1
 				// 
 				if (retValue192A > 15)
 					retValue192A = 15;
@@ -1428,7 +1409,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// Calculates Years  -  Additional Days according to Labor Law Art. 192A
 		return BigDecimal.valueOf(retValue);
 	}
-	
 	
 	// ********************************************************
 	// ********************************************************
@@ -1466,19 +1446,15 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// Calculates Employe Years 
 		list =  AmerpDateUtils.getYearsMonthDaysElapsedBetween(EmployeeIncomeDate, InvDateIni);
 		NYears = list.get(0);
-//OJO
 		int AMN_Concept_Types_Proc_ID = MAMN_Concept_Types.sqlGetAMNConceptTypesABONOPS(amnpayroll.getAD_Client_ID());
-//OJO
 		MAMN_Employee_Salary amnemployeesal = null;
 		amnemployeesal = MAMN_Employee_Salary.findAMN_Employee_Salary_byConceptTypeProcID(
 				amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID(), amnpayroll.getC_Currency_ID(), 
 				amnemployee.getAMN_Employee_ID(), AMN_Concept_Types_Proc_ID);
 		// TO BE CALCULATED ON FUTURE
-//log.warning("Employee:"+amnemployee.getValue().trim()+"-"+amnemployee.getName().trim()+"  InvDateMonth:"+InvDateMonth+"  EmpMonthofYear:"+EmpMonthofYear);
 		if (NYears >= 1) {
 			// Get Interest Accumulated 
 				retValue = 0;
-
 		}
 		return BigDecimal.valueOf(retValue);
 	}
@@ -1488,7 +1464,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	// PROCESSES SOCIAL BENEFITS   PR Social Benefit Anticipate
 	// ********************************************************
 	// ********************************************************
-
 	/**
 	 *  processDefaultValue: DV_ACUMPRESTAC
 	 * 	Description: Amount Accumulated  Prestaciones Sociales 
@@ -1521,12 +1496,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		// Get Employee Income Month where trimester apply
 		refcal.setTime(EmployeeIncomeDate);
 		refcal.get(Calendar.MONTH);	
-//log.warning("Employee:"+amnemployee.getValue().trim()+"-"+amnemployee.getName().trim()+"  InvDateIni:"+InvDateIni+"  InvDateEnd:"+InvDateEnd);
 		// Get 'salary_base' from amp_salary_hist_calc function
 		// OLD QUERY
 		String sql1 = " SELECT "+
-//    		" sum((((salario/30) + incbv + incu) * abono_dias) )  - sum(adelanto) + sum(ajuste) as acumulado "+
-//       		" COALESCE(sum((((salario/30) + incbv + incu) * abono_dias) ) - sum(adelanto) + sum(ajuste),0) as acumulado "+
        		" sum((((salario/30) + incbv + incu) * abono_dias) ) - sum(adelanto) + sum(ajuste) as acumulado "+
        		" FROM "+
     		" ( SELECT DISTINCT "+
@@ -1548,7 +1520,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
     		"WHERE emp.amn_employee_id = ? and emp_sal.validto <= ? "+
     		" )  as salary "
      		;
-//log.warning("....SQL:"+sql1+"  AMN_Employee_ID():"+amnemployee.getAMN_Employee_ID()+"  InvDateIni:"+InvDateIni);
        	// Currency Conversion SQL Query
 		String sql2 = " SELECT "+
            	" COALESCE(sum((((salario/30) + incbv + incu) * abono_dias) ) - sum(adelanto) + sum(ajuste),0) as acumulado "+
@@ -1581,8 +1552,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
     		;
 		//	Currency Conversion date	
 		if (InvDateAcct.before(ts) )  {
-//log.warning("..DV_ACUMPRESTAC..SQL sql1:"+sql1);
-//log.warning("AMN_Employee_ID():"+amnemployee.getAMN_Employee_ID()+"  InvDateAcct:"+InvDateAcct);
 	    	PreparedStatement pstmt = null;
 			// log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 			ResultSet rspc = null;		
@@ -1595,7 +1564,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				if (rspc.next())
 				{
 					AcumPrestac = rspc.getBigDecimal(1);
-//log.warning("Historic_Salary Query Result sql1:"+AcumPrestac);
 				}				
 			}
 		    catch (SQLException e)
@@ -1608,8 +1576,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				rspc = null; pstmt = null;
 			}
 		} else {
-//log.warning("..DV_ACUMPRESTAC..SQL sql2:"+sql2);
-//log.warning("AMN_Employee_ID():"+amnemployee.getAMN_Employee_ID()+"  InvDateAcct:"+InvDateAcct+" Currency="+amnpayroll.getC_Currency_ID());
 			PreparedStatement pstmt = null;
 			// log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 			ResultSet rspc = null;		
@@ -1633,7 +1599,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				if (rspc.next())
 				{
 					AcumPrestac = rspc.getBigDecimal(1);
-//log.warning("Historic_Salary Query Result sql2:"+AcumPrestac);
 				}				
 			}
 		    catch (SQLException e)
@@ -1647,7 +1612,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			}
 		}
 		// Compare to Salary on Employee Table
-//log.warning("Historic_Salary function result:"+AcumPrestac);
 		retValue = AcumPrestac;
 		if (retValue==null)
 			retValue=BigDecimal.ZERO;
@@ -1693,8 +1657,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		refcal.get(Calendar.MONTH);	
 		// Calculates Employe Years 
 		list =  AmerpDateUtils.getYearsMonthDaysElapsedBetween(EmployeeIncomeDate, InvDateIni);
-//log.warning("Employee:"+amnemployee.getValue().trim()+"-"+amnemployee.getName().trim()+
-//		" Ref:"+amnpayroll.getValue()+"  InvDateIni:"+InvDateIni+"  InvDateEnd:"+InvDateEnd);
 		// Get 'salary_base' from amp_salary_hist_calc function
     	// OLD QUERY
 		String sql1 = " SELECT "+
@@ -1719,7 +1681,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
     		"WHERE emp.amn_employee_id = ? and emp_sal.validto <= ? "+
     		" )  as salary "
      		;
-//log.warning("....SQL:"+sql+"  AMN_Employee_ID():"+amnemployee.getAMN_Employee_ID()+"  InvDateIni:"+InvDateIni);
        	// Currency Conversion SQL Query
 		String sql2 = " SELECT "+
     		" sum(adelanto)  as acumulado "+
@@ -1735,8 +1696,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
     		;
 		//	Currency Conversion date	
 		if (InvDateAcct.before(ts) )  {
-//log.warning("..DV_ACUANTPRESTAC..SQL sql1:"+sql1);
-//log.warning("AMN_Employee_ID():"+amnemployee.getAMN_Employee_ID()+"  InvDateAcct:"+InvDateAcct);
 		   	PreparedStatement pstmt = null;
 			// log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 			ResultSet rspc = null;		
@@ -1749,7 +1708,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				if (rspc.next())
 				{
 					AcumAnticPrestac = rspc.getBigDecimal(1);
-//log.warning("Historic_Salary Query Result sql1:"+AcumAnticPrestac);	
 				}				
 			}
 		    catch (SQLException e)
@@ -1763,8 +1721,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			}
 		
 		} else {
-//log.warning("..DV_ACUANTPRESTAC..SQL sql2:"+sql2);
-//log.warning("AMN_Employee_ID():"+amnemployee.getAMN_Employee_ID()+"  InvDateAcct:"+InvDateAcct+" Currency="+amnpayroll.getC_Currency_ID());
 	    	PreparedStatement pstmt = null;
 			// log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 			ResultSet rspc = null;		
@@ -1778,7 +1734,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 				if (rspc.next())
 				{
 					AcumAnticPrestac = rspc.getBigDecimal(1);
-//log.warning("Historic_Salary Query Result sql2:"+AcumAnticPrestac);				
 				}				
 			}
 		    catch (SQLException e)
@@ -1792,7 +1747,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			}
 		}
 		// Compare to Salary on Employee Table
-//log.warning("Historic_Salary  function result:"+AcumAnticPrestac);
 		retValue = AcumAnticPrestac;
 		if (retValue==null)
 			retValue=BigDecimal.ZERO;
@@ -1956,7 +1910,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			rspc = null; pstmt = null;
 		}
 		// Compare to Salary on Employee Table
-		//log.warning("Historic_Salary:"+Historic_Salary);
 		if (Historic_Salary==null)
 			Historic_Salary=BigDecimal.ZERO;
 		retValue = Historic_Salary;
@@ -2173,11 +2126,8 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
 		// Get 'salary_base' from amp_salary_hist_calc function
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', 1000016, '2019-01-01', '2019-12-31', 1000000, 1000002 ) as salario,
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', ?, ?, ?, ?, ? ) as salario,
     	String sql = "select amp_special_wh_hist_calc( 'salario', 'allocated','NN', ?, ?, ?, ?, ? ) ";
 		PreparedStatement pstmt = null;
-//log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 		ResultSet rspc = null;		
 		try
 		{
@@ -2204,8 +2154,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			rspc = null; pstmt = null;
 		}
 		// Compare to Salary on Employee Table
-		//log.warning("NP Employee_Salary:"+Employee_Salary+"  Historic_Salary:"+Historic_Salary);
-		//log.warning("Historic_Salary:"+Historic_Salary);
 		if (YTD_Salary==null)
 			YTD_Salary = BigDecimal.ZERO;
 		retValue = YTD_Salary;
@@ -2245,11 +2193,8 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
 		// Get 'salary_base' from amp_salary_hist_calc function
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', 1000016, '2019-01-01', '2019-12-31', 1000000, 1000002 ) as salario,
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', ?, ?, ?, ?, ? ) as salario,
     	String sql = "select amp_special_wh_hist_calc( 'arc', 'allocated','NN', ?, ?, ?, ?, ? ) ";
 		PreparedStatement pstmt = null;
-//log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 		ResultSet rspc = null;		
 		try
 		{
@@ -2276,8 +2221,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			rspc = null; pstmt = null;
 		}
 		// Compare to Salary on Employee Table
-		//log.warning("NP Employee_Salary:"+Employee_Salary+"  Historic_Salary:"+Historic_Salary);
-		//log.warning("Historic_Salary:"+Historic_Salary);
 		if (YTD_Salary==null)
 			YTD_Salary = BigDecimal.ZERO;
 		retValue = YTD_Salary;
@@ -2316,11 +2259,8 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
 		// Get 'salary_base' from amp_salary_hist_calc function
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', 1000016, '2019-01-01', '2019-12-31', 1000000, 1000002 ) as salario,
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', ?, ?, ?, ?, ? ) as salario,
     	String sql = "select amp_special_wh_hist_calc( 'arc', 'deducted','NN', ?, ?, ?, ?, ? ) ";
 		PreparedStatement pstmt = null;
-//log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 		ResultSet rspc = null;		
 		try
 		{
@@ -2387,11 +2327,8 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		Timestamp StartDate = new Timestamp(cal.getTimeInMillis());
 		// Get 'salary_base' from amp_salary_hist_calc function
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', 1000016, '2019-01-01', '2019-12-31', 1000000, 1000002 ) as salario,
-//		amp_special_wh_hist_calc( 'salario', 'allocated','NN', ?, ?, ?, ?, ? ) as salario,
     	String sql = "select amp_special_wh_hist_calc( 'sso', 'deducted','NN', ?, ?, ?, ?, ? ) ";
 		PreparedStatement pstmt = null;
-//log.warning("Dates:"+StartDate+" - "+EndDate+"  sql:"+sql);
 		ResultSet rspc = null;		
 		try
 		{
@@ -2418,8 +2355,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			rspc = null; pstmt = null;
 		}
 		// Compare to Salary on Employee Table
-		//log.warning("NP Employee_Salary:"+Employee_Salary+"  Historic_Salary:"+Historic_Salary);
-		//log.warning("Historic_Salary:"+Historic_Salary);
 		if (YTD_Salary==null)
 			YTD_Salary = BigDecimal.ZERO;
 		retValue = YTD_Salary;
@@ -2464,7 +2399,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 	// RULES VALUES REPLACED RV_ with DV_
 	// ********************************************************
 	// ********************************************************
-
 	/**
 	 *  processDefaultValue: DV_FSALARY6M
 	 * 	Description: Return Salary Amount Base to calc Social Benefits 
@@ -2527,8 +2461,6 @@ public class AmerpPayrollCalcUtilDVFormulas {
 			rspc = null; pstmt = null;
 		}
 		// Compare to Salary on Employee Table
-		//log.warning("NP Employee_Salary:"+Employee_Salary+"  Historic_Salary:"+Historic_Salary);
-		//log.warning("Historic_Salary:"+Historic_Salary);
 		if (Historic_Salary==null)
 			Historic_Salary = BigDecimal.ZERO;
 		retValue = Historic_Salary;
@@ -3109,7 +3041,5 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		return BDdaysService;
 
 	}
-	
-
 	
 }

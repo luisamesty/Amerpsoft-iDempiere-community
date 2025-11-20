@@ -65,4 +65,22 @@ If it is required you must create an appropiated CSV file, or enter manually tax
 ** It is important this Step to follow with Withholding plugin.
 
  
+ 
+### <b>5-Import AMERPSOFT Financial Reports. </b>
+ 
+Update Packs - IN.
+
+See : https://docs.amerpsoft.com/
+
+    • AMERPSOFT Financial Test Reports. 
+    Financial Test report for learning how to make reports using different techniques.
+    See Blog: https://docs.amerpsoft.com/blog/reports-idempiere.
+    
+    • AMERPSOFT Financial Reports Xlsx.
+    Special Form for Financial reports using Apache POIs classes to export into Xlsx 
+    compatible formats.
+    
+    • AMERPSOFT Financial Rpt OrgParent. 
+    Financial reports with Organization Tree cases. For clients with many organizations.
+    Remove Attach from process ‘Amfin Account Elements Jasper’, before apply it.
 
