@@ -1,0 +1,28 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,500,V,,,,,,,,,ALL,,,,,,,,,,,AMN_Shift_ID fron Employee,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,800,MSG,,,,,,,,,ALL,,,,,,,,,,,,ProtectedRecordNoEdit,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,810,MSG,,,,,,,,,ALL,,,,,,,,,,,,ShiftMarks,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,1010,T,,,,,,,,Employee Shift list ID,ALL,,,,,,,,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,1020,T,,,,,,,,AMN_Payroll_Assist_Proc_ID,ALL,,,,,,,,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,1030,T,,,,,,,,Payroll Location,ALL,,,,,,,,,,,,,,,LPY-52 / LPY 53,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,1040,T,,,,,,,,Payroll Assist Unit,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,4010,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Employee Master,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,4020,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Attendance Registry by Employees,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,4030,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Location,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,4040,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Attendance Unit,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,4200,W,,,,,,,,,ALL,,,,,,,Personnel and Payroll Shift,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5010,P,,,,,,,,,ALL,,,,,AmperRepPersonnelPayrollLeavesAttendance,,,,,,,,,,"LPY-51
+report for Leaves and Attendance
+Deprecated Similar Amper Personnel Payroll Leaves and Attendance Summary ",,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5020,P,,,,,,,,,ALL,,,,,AmperRepPersonnelPayrollAttendance,,,,,,,,,,"LPY-51
+report for Leaves and Attendance
+Deprecated Similar Amper Personnel Payroll Leaves and Attendance Summary ",,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5030,P,,,,,,,,,ALL,,,,,AmperRepPayrollListSocialSecurityMTESS,,,,,,,,,,"LPY-53
+Report Social Security MTESS",,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5110,P,,,,,,,,,ALL,,,,,AmperRepPayrollHistoric,,,,,,,,,,LPY-55,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,5120,P,,,,,,,,,ALL,,,,,AmperRepPayrollHistoricNU,,,,,,,,,,LPY-55,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,6010,X,,,,,,,,,ALL,,,,Personnel and Payroll Attendance Form,,,,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,8010,M,,Personnel and Payroll Attendance Form,,,,,,,ALL,,,,,,,,,,,,,,,LPY-51,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,8020,M,,Personnel and Payroll Attendance Processes,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,8030,M,,Amper Payroll List Report Social Security MTESS,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Personnel and Payroll R11 LPY-51 Attendance,10000,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='ce49859d-d1a6-4808-a501-647c0e2824ac';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
