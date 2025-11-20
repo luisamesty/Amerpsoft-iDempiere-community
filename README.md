@@ -1,3 +1,9 @@
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Español](./README_ES.md)  
+
+</div>
+
 # <b>COMMUNITY PLUGINS</b>
 
 <a name="readme-top"></a>
@@ -17,7 +23,7 @@ Special considerations and notes for LVE, LPY and LES localization.
 - [Language Pack](./org.amerpsoft.com.idempiere.languages/README.md)
 - [Financial - Basic Financial](./org.amerpsoft.com.idempiere.financial/README.md)
 - [LCO Withholding](./org.amerpsoft.com.idempiere.lco.withholding/README.md)
-- [Payroll (Release-11, under test)](./org.amerpsoft.com.idempiere.personnelpayroll/README.md)
+- [Payroll (Release-11)](./org.amerpsoft.com.idempiere.personnelpayroll/README.md)
 
 </div>
 

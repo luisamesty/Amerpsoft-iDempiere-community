@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import org.amerp.amnmodel.*;
 import org.compiere.acct.*;
 import org.compiere.model.*;
+import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
@@ -34,6 +35,7 @@ public class Doc_AMNPayroll extends Doc {
 	BigDecimal CurrencyRate = BigDecimal.ZERO;
 	private boolean IsOverrideCurrencyRate;
 	int C_ConversionType_ID = 0;
+	static CLogger log = CLogger.getCLogger(Doc_AMNPayroll.class);
 	
 	public Doc_AMNPayroll (MAcctSchema as, ResultSet rs, String trxName)
 	{
@@ -47,8 +49,6 @@ public class Doc_AMNPayroll extends Doc {
 	protected String loadDocumentDetails() {
 		MAMN_Payroll amnpayroll = (MAMN_Payroll)getPO();
 		// Set Doc Date 
-//		log.warning("====== loadDocumentDetails ============== AMN_Payroll_ID:"+amnpayroll.getAMN_Payroll_ID()+
-//				" AcctSchema:"+getAcctSchema());
 		setDateDoc(amnpayroll.getDateAcct());
 		// Default Local Currency for Client
 		m_defaultCurrency_ID = Env.getContextAsInt(Env.getCtx(), "$C_Currency_ID");
@@ -65,8 +65,7 @@ public class Doc_AMNPayroll extends Doc {
 	 */
 	private MAMN_Docline[] loadLines(MAMN_Payroll p_amnpayroll)
 	{
-//		log.warning("====loadLines===== AMN_Payroll_ID:"+p_amnpayroll.getAMN_Payroll_ID()+
-//				" AcctSchema:"+getAcctSchema());
+
 		// Decimal Values
 		MAMN_Docline linea = (null);
 		MAMN_Concept_Types amnct = null ;
@@ -139,7 +138,7 @@ public class Doc_AMNPayroll extends Doc {
 	    } else {
 	    	defMASTERAccountCR = new MAccount(Env.getCtx(), amnas.getAMN_P_Liability_Salary(),null);
 	    }
-//log.warning("====loadLines===== AMN_Process_Value:"+AMN_Process_Value+"  defMASTERAccountCR="+defMASTERAccountCR);
+
 	    // Payroll Detail Lines
 		ArrayList<MAMN_Docline> list = new ArrayList<MAMN_Docline>();
 		ArrayList<MAMN_Docline> listres = new ArrayList<MAMN_Docline>();
@@ -149,7 +148,6 @@ public class Doc_AMNPayroll extends Doc {
 		// Verify  ZERO Receipt No Lines with Values Allocated
 		// -----------------------------------------------------
 		// Get Firts Reference Line
-		//log.warning("Std lines size:"+lines.length);
 		if(lines.length == 0) {
 			linesref= p_amnpayroll.getFirstReferenceLine(false);
 			if (linesref.length==0) {
@@ -377,7 +375,6 @@ public class Doc_AMNPayroll extends Doc {
 			lineares.setC_ConversionType_ID(C_ConversionType_ID);
 			lineares.setC_Currency_ID_to(m_Currency_ID);
 			lineares.setCurrencyRate(CurrencyRate);
-			log.warning("loadLines: CurrencyRate="+CurrencyRate+"  C_ConversionType_ID="+C_ConversionType_ID);
 			// ADD lineares
 			listres.add(lineares);
 		} else {
@@ -406,7 +403,7 @@ public class Doc_AMNPayroll extends Doc {
 		sb.append("]");
 		//
 		if (log.isLoggable(Level.FINE)) log.fine(toString() + " Balance=" + retValue + sb.toString());
-		//log.warning("========== Balance=" + retValue + sb.toString());
+		log.warning("Balance=" + retValue + sb.toString());
 		//		return retValue;
 		return Env.ZERO;
 		
@@ -460,12 +457,12 @@ public class Doc_AMNPayroll extends Doc {
 				}
 				p_lines[i].setConvertedAmt(as.getC_AcctSchema_ID(), amtAcctDr, amtAcctCr);
 			}
-//			log.warning(" AmtDr:"+p_lines[i].getAmtAcctDr().toString()+
-//						" AmtCr:"+p_lines[i].getAmtAcctCr().toString()+
-//						" Currency:"+m_Currency_ID+
-//						" AS="+p_lines[i].getC_AcctSchema_ID () +
-//						" AmtSourceDr:"+p_lines[i].getAmtSourceDr().toString()+
-//						" AmtSourceCr:"+p_lines[i].getAmtSourceCr().toString()	);
+			log.warning(" AmtDr:"+p_lines[i].getAmtAcctDr().toString()+
+						" AmtCr:"+p_lines[i].getAmtAcctCr().toString()+
+						" Currency:"+m_Currency_ID+
+						" AS="+p_lines[i].getC_AcctSchema_ID () +
+						" AmtSourceDr:"+p_lines[i].getAmtSourceDr().toString()+
+						" AmtSourceCr:"+p_lines[i].getAmtSourceCr().toString()	);
 			@SuppressWarnings("unused")
 			// 
 			FactLine line =	fact.createLine (p_lines[i],

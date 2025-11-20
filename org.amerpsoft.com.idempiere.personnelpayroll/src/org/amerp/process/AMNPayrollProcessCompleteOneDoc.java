@@ -11,7 +11,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,    *
  ******************************************************************************/
 package org.amerp.process;
-import java.util.Properties;
 /** AMNPayrollProcessOneDoc
  * Description: Procedure called from iDempiere AD
  * 			Process and Accounts Payroll Receipt for One Employee
@@ -26,13 +25,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import org.amerp.amnmodel.MAMN_Payroll;
-import org.amerp.amnmodel.MAMN_Payroll_Historic;
-import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
-import org.compiere.model.MClient;
-import org.compiere.model.MInvoice;
-import org.compiere.model.MOrg;
-import org.compiere.process.DocAction;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.*;
@@ -58,7 +51,7 @@ public class AMNPayrollProcessCompleteOneDoc extends SvrProcess{
 	 */
     @Override
     protected void prepare() {
-	    // TODO Auto-generated method stub
+	    // Parameters
     	ProcessInfoParameter[] paras = getParameter();
 		for (ProcessInfoParameter para : paras)
 		{
@@ -76,7 +69,6 @@ public class AMNPayrollProcessCompleteOneDoc extends SvrProcess{
     @Override
     protected String doIt() throws Exception {
 	    // Get Payroll Attributes
-
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, get_TrxName()); 
 		MAMN_Process amnprocess = new MAMN_Process(getCtx(), amnpayroll.getAMN_Process_ID(), get_TrxName());
 		AMN_Payroll_Value = amnpayroll.getValue();
@@ -84,7 +76,7 @@ public class AMNPayrollProcessCompleteOneDoc extends SvrProcess{
 		Msg_Value0=Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+AMN_Payroll_Name.trim()+" \r\n";
 		addLog(Msg_Value0);
 		Msg_Value=Msg_Value+Msg_Value0;
-		//  PROCESS MAMN_Payroll (DOCUMENT HEADER)
+		//  PROCESS MAMN_Payroll (DOCUMENT HEADER) AND associated Documents
 		if (!amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)
 				&& MAMN_Payroll.sqlGetAMNPayrollDetailNoLines(p_AMN_Payroll_ID, get_TrxName()) > 0) {
 			// Process AMN_Payroll and Invoice if apply

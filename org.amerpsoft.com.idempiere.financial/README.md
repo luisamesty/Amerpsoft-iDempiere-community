@@ -6,6 +6,12 @@
   </a>
 </div>
 
+<div style="text-align: right;">
+
+🇬🇧 English | 🇪🇸 [Español](./README_ES.md)  
+
+</div>
+
 <a name="readme-top"></a>
 
 # Financial Plugin

@@ -31,7 +31,7 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250129L;
+	private static final long serialVersionUID = 20250829L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Unit (Properties ctx, int AMN_Payroll_Assist_Unit_ID, String trxName)
@@ -220,6 +220,28 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 		return ii.intValue();
 	}
 
+	/** Set Address.
+		@param C_Location_ID Location or Address. Organization OrgInfo address.
+	*/
+	public void setC_Location_ID (int C_Location_ID)
+	{
+		if (C_Location_ID < 1)
+			set_Value (COLUMNNAME_C_Location_ID, null);
+		else
+			set_Value (COLUMNNAME_C_Location_ID, Integer.valueOf(C_Location_ID));
+	}
+
+	/** Get Address.
+		@return Location or Address. Organization OrgInfo address.
+	  */
+	public int getC_Location_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Location_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -266,5 +288,37 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	public String getWorkCode()
 	{
 		return (String)get_Value(COLUMNNAME_WorkCode);
+	}
+
+	/** Set Latitude.
+		@param lat Latitude Degrees
+	*/
+	public void setlat (String lat)
+	{
+		set_Value (COLUMNNAME_lat, lat);
+	}
+
+	/** Get Latitude.
+		@return Latitude Degrees
+	  */
+	public String getlat()
+	{
+		return (String)get_Value(COLUMNNAME_lat);
+	}
+
+	/** Set Longitude.
+		@param lng Longitude in degrees
+	*/
+	public void setlng (String lng)
+	{
+		set_Value (COLUMNNAME_lng, lng);
+	}
+
+	/** Get Longitude.
+		@return Longitude in degrees
+	  */
+	public String getlng()
+	{
+		return (String)get_Value(COLUMNNAME_lng);
 	}
 }

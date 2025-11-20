@@ -10,6 +10,66 @@
   </parent>  
   <artifactId>org.amerpsoft.com.idempiere.financial</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <dependencies>
+	  <!-- Apache POI dependencies for Excel generation (.xlsx) -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>5.2.5</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>5.2.5</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xmlbeans</groupId>
+		    <artifactId>xmlbeans</artifactId>
+		    <version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.idempiere.keikai</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.ui.zk</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.report.jasper.library</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.ui</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.base</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.idempiere</groupId>
+			<artifactId>org.adempiere.install</artifactId>
+			<version>11.0.0-SNAPSHOT</version>
+		</dependency>
+	 	<dependency>
+	 		<groupId>org.idempiere</groupId>
+	 		<artifactId>org.adempiere.base</artifactId>
+	 		<version>11.0.0-SNAPSHOT</version>
+	 	</dependency>
+	 	<dependency>
+	 		<groupId>org.idempiere</groupId>
+	 		<artifactId>
+	 			org.amerpsoft.com.idempiere.report.jasper
+	 		</artifactId>
+	 		<version>11.0.0-SNAPSHOT</version>
+	 	</dependency>
+  </dependencies>
     <build>
 		<resources>
 		    <resource>
@@ -41,18 +101,4 @@
 	      <url>https://repo.idempiere.org/snapshots/</url>
 	    </repository>
 	 </repositories>
-	 <dependencies>
-	 	<dependency>
-	 		<groupId>org.idempiere</groupId>
-	 		<artifactId>org.adempiere.base</artifactId>
-	 		<version>11.0.0-SNAPSHOT</version>
-	 	</dependency>
-	 	<dependency>
-	 		<groupId>org.idempiere</groupId>
-	 		<artifactId>
-	 			org.amerpsoft.com.idempiere.report.jasper
-	 		</artifactId>
-	 		<version>11.0.0-SNAPSHOT</version>
-	 	</dependency>
-	 </dependencies>
 </project>

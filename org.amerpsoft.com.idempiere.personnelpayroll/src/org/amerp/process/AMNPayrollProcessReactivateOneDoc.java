@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.amerp.process;
 
-import java.util.Properties;
 /** AMNPayrollProcessReactivateOneDoc
  * Description: Procedure called from iDempiere AD
  * 			Process and Accounts Payroll Receipt for One Employee
@@ -28,7 +27,6 @@ import java.util.logging.Level;
 
 import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Process;
-import org.compiere.model.MInvoice;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.*;
@@ -79,9 +77,7 @@ public class AMNPayrollProcessReactivateOneDoc extends SvrProcess {
 	    // TODO Auto-generated method stub
 		// Message Value Init
     	// Determines Process Value to see if NN
-		int C_Invoice_ID = 0;
 
-    	MInvoice invoice = null;
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, get_TrxName()); 
 		MAMN_Process amnprocess = new MAMN_Process(getCtx(), amnpayroll.getAMN_Process_ID(), get_TrxName());
 		AMN_Payroll_Value = amnpayroll.getValue();
@@ -90,12 +86,11 @@ public class AMNPayrollProcessReactivateOneDoc extends SvrProcess {
 		
 		Msg_Value=Msg_Value+ Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+AMN_Payroll_Name.trim()+" \r\n";
 		addLog(Msg_Value);
-		C_Invoice_ID = amnpayroll.getC_Invoice_ID();
 		
 		Msg_Value0=Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+AMN_Payroll_Name.trim()+" \r\n";
 		addLog(amnpayroll.getSummary());
 		Msg_Value=Msg_Value+Msg_Value0;
-		// Reactivate document
+		// Reactivate MAMN_Payroll (DOCUMENT HEADER) AND associated Documents
 		Msg_Value0 = amnpayroll.reactivateAMN_Payroll(getCtx(), amnpayroll, amnprocess, get_TrxName());
 		Msg_Value=Msg_Value+Msg_Value0;
 		addLog(Msg_Value);
