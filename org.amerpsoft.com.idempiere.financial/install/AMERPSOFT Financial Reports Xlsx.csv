@@ -1,0 +1,13 @@
+AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],AD_Menu_ID[Name],FileName,File_Directory,Target_Directory,Destination_FileName,Destination_Directory,AD_Table_ID[Name],DBType,SQLStatement,AD_Package_Code_Old,AD_Package_Code_New,AD_Form_ID[Name],AD_Process_ID[Value],AD_Workflow_ID[Value],AD_Window_ID[Name],AD_Role_ID[Name],AD_ReportView_ID[Name],AD_ImpFormat_ID[Name],AD_Val_Rule_ID[Name],AD_Message_ID[Value],AD_PrintFormat_ID[Name],ReleaseNo,Description,AD_Reference_ID[Name],AD_ModelValidator_ID[Name],AD_InfoWindow_ID[Name],ExecCode
+*,AMERPSOFT Financial Reports Xlsx,1000,MSG,,,,,,,,,ALL,,,,,,,,,,,,AccountSummaryNotAllowed,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,1010,MSG,,,,,,,,,ALL,,,,,,,,,,,,download.file,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,2000,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,FinancialReportType,,,
+*,AMERPSOFT Financial Reports Xlsx,2010,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AccountTreeLevel,,,
+*,AMERPSOFT Financial Reports Xlsx,8000,P,,,,,,,,,ALL,,,,,AmfinDummyJasper,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,8010,P,,,,,,,,,ALL,,,,,AmfinAccountElementsJasperJavaClassPo,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,8020,P,,,,,,,,,ALL,,,,,AmfinAccountElementsJasperJavaClassStd,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,8030,P,,,,,,,,,ALL,,,,,AmfinAccountElementsJavaProcXlsx,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,8040,X,,,,,,,,,ALL,,,,Amfin Form Account Elements for Xlsx,AmfinAccountElementsJavaProcXlsx,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,8050,X,,,,,,,,,ALL,,,,Amfin Form Financial Reports for Xlsx,AmfinAccountElementsJavaProcXlsx,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,9000,M,,AMERPSOFT Finantial Reports Reports Xlsx,,,,,,,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,10000,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='8bc9a6e0-6074-4199-a1b9-a305ff42d49f';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
