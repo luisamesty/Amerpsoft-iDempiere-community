@@ -28,10 +28,10 @@ Procedimientos de instalación de Idempiere en diferentes sistemas operativos.
 </div>
 
 ### Instalar Idempiere en Ubuntu usando la base de datos PostgreSQL
-Procedimientos de instalación para Ubuntu 22.04
+Procedimientos de instalación para Ubuntu 24.04
 <div style="padding-left: 40px;">
 
-[Procedimientos de instalación para Ubuntu](./installIdempiereUbuntu2204/es/README_installUbuntu2204.md)
+[Procedimientos de instalación para Ubuntu](./installIdempiereUbuntu2404/es/README_installUbuntu2404.md)
 
 </div>
 
