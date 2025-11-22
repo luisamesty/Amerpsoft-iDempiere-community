@@ -28,6 +28,7 @@ Este procedimiento incluye información extraída de [Instalación de iDempiere]
 | 4 | [Descargar instaladores](#step4) | Máquina de Idempiere | Descargar instaladores del repositorio de iDempiere |
 | 5 | [Instalar idempiere12 desde instaladores](#step5) | Máquina de Idempiere | Descomprimir y copiar los instaladores en el directorio /opt |
 | 6 | [Ejecutar idempiere12](#step6) | Máquina de Idempiere | Ejecutar | Configurar ejecución automática de idempiere |
+| 7 | [Ejecutar idempiere12](#step7) | Máquina de Idempiere | Ejecutar | Post Instalación de idempiere |
 
 ### <a name="step1"></a>1-⭐️Instalar PostgreSQL 17
 
@@ -417,3 +418,31 @@ Una vez registrado iDempiere como servicio, se iniciará automáticamente en el 
 
 <p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 
+### <a name="step7"></a>7-⭐️Post-Instalación de idempiere12
+
+¡Claro\! Aquí tienes la traducción del bloque de texto Markdown y los comandos de Bash a español, con el formato original.
+
+-----
+
+#### 💻 Mantenimiento y Actualización
+
+La mayor parte del tiempo, puedes mantener tu iDempiere actualizado con tres sencillas instrucciones.
+
+**🚨 Advertencia:** Antes de comenzar, haz una **copia de seguridad (backup) de la carpeta de instalación de iDempiere**. Esto es útil en caso de que el proceso de actualización encuentre problemas y te evitará una reinstalación completa.
+
+También es importante hacer una copia de seguridad de la base de datos. El proceso **`RUN_SyncDB`** al final **no se puede deshacer (rollback)**.
+
+```bash
+# Detener el servidor
+cd $IDEMPIERE_HOME   # Cambia a la carpeta donde está instalado tu iDempiere, generalmente se recomienda /opt/idempiere-server
+bash update.sh https://jenkins.idempiere.org/job/iDempiere12/ws/org.idempiere.p2/target/repository/
+# esta URL es para la versión 12 - si quieres mantenerte actualizado con master (también conocido como 13 Development Build) usa:
+# bash update.sh https://jenkins.idempiere.org/job/iDempiere/ws/org.idempiere.p2/target/repository/
+bash sign-database-build-alt.sh
+cd utils
+bash RUN_SyncDB.sh
+# en caso de errores, corrígelos y vuelve a ejecutar RUN_SyncDB.sh hasta que no se muestre ningún error
+# al final, inicia el servidor nuevamente
+```
+
+<p align="left">(<a href="#readme-top">volver arriba</a>)</p>
