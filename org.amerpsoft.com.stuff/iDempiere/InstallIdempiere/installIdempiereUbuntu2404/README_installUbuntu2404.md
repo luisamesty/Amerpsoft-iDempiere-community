@@ -3,14 +3,14 @@
 
 <div style="text-align: right;">
 
-🇬🇧 English | 🇪🇸 [Versión en Español](es/README_installUbuntu2204.md)
+🇬🇧 English | 🇪🇸 [Versión en Español](es/README_installUbuntu2404.md)
 
 </div>
 
-## Install Idempiere in Ubuntu 22.04
+## Install Idempiere in Ubuntu 24.04
 
 
-Install Procedures for Ubuntu 22.04 with PosgreSQL Database.
+Install Procedures for Ubuntu 24.04 with PosgreSQL Database.
 
 This procedure is applied for an installation on two different machines.
 
@@ -23,14 +23,14 @@ This procedure includes information taken from  [Installing iDempiere](https://w
 
 | Steps | Link                                           | Where             | Comments                                                        |
 | ----: | ---------------------------------------------- | ----------------- | --------------------------------------------------------------- |
-|     1 | [Install PostgreSQL 15](#step1)                | Dabase machine    | Install postgresql from Ubuntu distribution. Update repository. |
-|     2 | [Config PostgreSQL 15 ](#step2)                | Database machine  | Edit pg_hba.conf / postgresql.conf files                        |
+|     1 | [Install PostgreSQL 17](#step1)                | Dabase machine    | Install postgresql from Ubuntu distribution. Update repository. |
+|     2 | [Config PostgreSQL 17 ](#step2)                | Database machine  | Edit pg_hba.conf / postgresql.conf files                        |
 |     3 | [Install JAVA OpenJDK17 ](#step3)              | Idempiere machine | Download and install Java 17                                    |
 |     4 | [Download Installers ](#step4)                 | Idempiere machine | Download installers from iDempiere repository                   |
 |     5 | [Install idempiere11 from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory                     |
 |     6 | [Running idempiere11 ](#step6)                 | Idempiere machine | Run Configure auto execute idempiere                            |
 
-### <a name="step1"></a>1-⭐️Install PostgreSQL 15
+### <a name="step1"></a>1-⭐️Install PostgreSQL 17
 
 #### **DATABASE MACHINE**
 
@@ -55,29 +55,29 @@ $ sudo apt-get update
 #### Install PostgreSQL
 
 ````
-# Install the version 15 of PostgreSQL.
-$ sudo apt-get -y install postgresql-15
+# Install the version 17 of PostgreSQL.
+$ sudo apt-get -y install postgresql-17
 or
-# For last version 16
+# For last version 17
 $ sudo apt-get -y install postgresql
 ````
 
 #### Optionally initialize the database and enable automatic start:
 
 ````
-sudo systemctl enable postgresql-15
-sudo systemctl start postgresql-15
+sudo systemctl enable postgresql-17
+sudo systemctl start postgresql-17
 ````
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
-### <a name="step2"></a>2-⭐️Configure PostgreSQL 15
+### <a name="step2"></a>2-⭐️Configure PostgreSQL 17
 
 #### Modify ***ph_hba.conf*** file
 
 Afterinstalling postgres you must check the correct configuration of:
 
-*/etc/postgresql/15/main/pg_hba.conf*
+*/etc/postgresql/17/main/pg_hba.conf*
 
 Thefollowing line requires change of the authentication method:
 
@@ -101,7 +101,7 @@ For development open Listen address ‘*’ , for production localhost.
 
 Port 5432/5433.
 
-Edit: ‘/etc/postgresql/15/main/postgresql.conf'
+Edit: ‘/etc/postgresql/17/main/postgresql.conf'
 
 ```
 #------------------------------------------------------------------------------
@@ -196,8 +196,8 @@ Restore from Seed or Production Backup, execute ON LINUX:
 # Adempiere_pg.jar on directory idempiere/org.adempiere.server-feature/data/seed/
 # Unzip to dmp
 $ jar -xvf Adempiere_pg.jar 
-# PostgreSQL on Linux Ubuntu located on /usr/lib/postgresql/15/bin
-$ /usr/lib/postgresql/15/bin/psql -p 5432 -d idempiereSeed12 -f Adempiere_pg.dmp
+# PostgreSQL on Linux Ubuntu located on /usr/lib/postgresql/17/bin
+$ /usr/lib/postgresql/17/bin/psql -p 5432 -d idempiereSeed12 -f Adempiere_pg.dmp
 ```
 
 #### EXIT Postgres
@@ -235,7 +235,7 @@ OpenJDK 17 JRE
 $ sudo apt install -y openjdk-17-jre
 ```
 
-#### Install Oracle JDK 17 On Ubuntu 22.04
+#### Install Oracle JDK 17 On Ubuntu 24.04
 
 This is not needed for idempiere , just for information.
 
@@ -341,7 +341,7 @@ Graphical You can run ON LINUX:
 $ sh setup.sh
 ```
 
-![1714558912245](images/README_installUbuntu2204/1714558912245.png)
+![1714558912245](images/README_installUbuntu2404/1714558912245.png)
 
 or Command run ON LINUX
 
