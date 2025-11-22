@@ -29,6 +29,9 @@ This procedure includes information taken from  [Installing iDempiere](https://w
 |     4 | [Download Installers ](#step4)                 | Idempiere machine | Download installers from iDempiere repository                   |
 |     5 | [Install idempiere12 from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory                     |
 |     6 | [Running idempiere12 ](#step6)                 | Idempiere machine | Run Configure auto execute idempiere                            |
+|     7 | [Post Install idempiere12](#step7)                 | Idempiere machine | Post Install idempiere12 settings                            |
+
+
 
 ### <a name="step1"></a>1-⭐️Install PostgreSQL 17
 
@@ -406,7 +409,7 @@ $ sh idempiere-server.sh
 
 or
 
-```
+```bash
 $ idempiere
 ```
 
@@ -420,7 +423,7 @@ $ nohup sh idempiere-server.sh >> idempiere-server.log 2>&1 &
 
 iDempiere can be registered as a service in linux, in order to do that you can copy the provided scripts to /etc/init.d folder like this:
 
-```
+```bash
 $ sudo su -    # this must be executed as root
 # cp /opt/idempiere-server/utils/unix/idempiere_Debian.sh /etc/init.d/idempiere
 # systemctl daemon-reload
@@ -429,7 +432,7 @@ $ sudo su -    # this must be executed as root
 
 After iDempiere is registered as a service, it will be started automatically on server reboots, also it can be started / stopped / restarted / checked as usual with:
 
-```
+```bash
 # systemctl status idempiere     # to check the status of the app
 # systemctl restart idempiere    # to restart the iDempiere app
 # systemctl stop idempiere       # to stop the iDempiere app
@@ -438,3 +441,31 @@ After iDempiere is registered as a service, it will be started automatically on 
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
+
+
+### <a name="step7"></a>7-⭐️Post Install idempiere12
+
+#### Keeping up to date
+
+Most of the time you can keep your iDempiere up to date with three simple instructions.
+
+Please take a backup of iDempiere installation folder before starting, this is useful in case the update process find problems to avoid a full reinstall.
+
+It's also important to take a backup of the database. The RUN_SyncDB process at the end cannot be rolled back.
+
+
+```bash
+# Stop the server
+cd $IDEMPIERE_HOME   # change to the folder where your iDempiere is installed, usually recommended /opt/idempiere-server
+bash update.sh https://jenkins.idempiere.org/job/iDempiere12/ws/org.idempiere.p2/target/repository/
+# this URL is for 12 - if you want to keep up to date with master (a.k.a 13 Development Build) then use:
+# bash update.sh https://jenkins.idempiere.org/job/iDempiere/ws/org.idempiere.p2/target/repository/
+bash sign-database-build-alt.sh
+cd utils
+bash RUN_SyncDB.sh
+# in case of errors, fix the error and execute RUN_SyncDB.sh again until no errors are shown
+# at the end start again the server
+
+```
+
+<p align="left">(<a href="#readme-top">back to top</a>)</p>
