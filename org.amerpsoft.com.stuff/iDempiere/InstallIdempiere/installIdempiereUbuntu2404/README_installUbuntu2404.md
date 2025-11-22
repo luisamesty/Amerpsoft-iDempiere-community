@@ -27,8 +27,8 @@ This procedure includes information taken from  [Installing iDempiere](https://w
 |     2 | [Config PostgreSQL 17 ](#step2)                | Database machine  | Edit pg_hba.conf / postgresql.conf files                        |
 |     3 | [Install JAVA OpenJDK17 ](#step3)              | Idempiere machine | Download and install Java 17                                    |
 |     4 | [Download Installers ](#step4)                 | Idempiere machine | Download installers from iDempiere repository                   |
-|     5 | [Install idempiere11 from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory                     |
-|     6 | [Running idempiere11 ](#step6)                 | Idempiere machine | Run Configure auto execute idempiere                            |
+|     5 | [Install idempiere12 from Installers ](#step5) | Idempiere machine | Unzip and copy Installers in /opt directory                     |
+|     6 | [Running idempiere12 ](#step6)                 | Idempiere machine | Run Configure auto execute idempiere                            |
 
 ### <a name="step1"></a>1-⭐️Install PostgreSQL 17
 
@@ -160,7 +160,7 @@ And then reload the configuration ON LINUX:
 $ sudo service postgresql reload
 ```
 
-Create Database idempiereSeed11 and Production
+Create Database idempiereSeed12 and Production
 
 Execute Postgres ON LINUX  Port 5432 - 5433 or 5434
 
@@ -183,10 +183,10 @@ On PostgreSQL Command lines:
 
 ```
 -- DROP IF NECESSARY ONLY
-# DROP DATABASE "idempiereSeed11";
-# CREATE DATABASE "idempiereSeed11"
+# DROP DATABASE "idempiereSeed12";
+# CREATE DATABASE "idempiereSeed12"
   WITH OWNER = adempiere  ENCODING = 'UTF8' TABLESPACE = pg_default  CONNECTION LIMIT = -1;
-# ALTER DATABASE "idempiereSeed11"     SET search_path TO adempiere;
+# ALTER DATABASE "idempiereSeed12"     SET search_path TO adempiere;
 ```
 
 Restore from Seed or Production Backup, execute ON LINUX:
@@ -284,23 +284,23 @@ Java HotSpot(TM) 64-Bit Server VM (build 17.0.3+8-LTS-111, mixed mode, sharing)
 
 ### <a name="step4"></a>4-⭐️Download Installers
 
-iDempiere version 11 is maintained and stable. This is the recommended version to install for implementation and production purposes.
+iDempiere version 12 is maintained and stable. This is the recommended version to install for implementation and production purposes.
 
 You can find daily installers for this version at:
 
-https://sourceforge.net/projects/idempiere/files/v11/daily-server/
+https://sourceforge.net/projects/idempiere/files/v12/daily-server/
 
 Download the latest with these commands ON LINUX:
 
 ```
-$ wget https://sourceforge.net/projects/idempiere/files/v11/daily-server/idempiereServer11Daily.gtk.linux.x86_64.zip
-$ wget https://sourceforge.net/projects/idempiere/files/v11/daily-server/idempiereServer11Daily.gtk.linux.x86_64.zip.MD5
-$ md5sum -c idempiereServer11Daily.gtk.linux.x86_64.zip.MD5
+$ wget https://sourceforge.net/projects/idempiere/files/v12/daily-server/idempiereServer12Daily.gtk.linux.x86_64.zip
+$ wget https://sourceforge.net/projects/idempiere/files/v12/daily-server/idempiereServer12Daily.gtk.linux.x86_64.zip.MD5
+$ md5sum -c idempiereServer12Daily.gtk.linux.x86_64.zip.MD5
 ```
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
-### <a name="step5"></a>5-⭐️Install idempiere11 from Installers
+### <a name="step5"></a>5-⭐️Install idempiere12 from Installers
 
 #### Create user
 
@@ -317,7 +317,7 @@ Install Server
 Unzip the server installer you downloaded or created, for example:
 
 ```
-$ jar xvf idempiereServer11Daily.gtk.linux.x86_64.zip
+$ jar xvf idempiereServer12Daily.gtk.linux.x86_64.zip
 ```
 
 Move the folder to /opt
@@ -362,7 +362,7 @@ Application Server Web Port [8080]:
 Application Server SSL Port[8443]:
 Web Port / SSL: be careful to not use a port that is already used by another application, in linux ports below 1000 cannot be used by non-root users. For example port 8080 is used by Oracle-XE
 DB Already Exists: if database was created during postgres install check this otherwise the database will be created later
-Database Name: here we fill with the name of the database you created (idempiereSeed11) or you want to create later
+Database Name: here we fill with the name of the database you created (idempiereSeed12) or you want to create later
 Database Server Port: Usually 5432
 DB Admin Password: must be filled with the postgres password you set up in the postgresql install
 Database User: this is a user to be created, it is recommended you keep it as the default adempiere
@@ -392,7 +392,7 @@ sh sign-database-build-alt.sh
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
-### <a name="step6"></a>6-⭐️Running idempiere11
+### <a name="step6"></a>6-⭐️Running idempiere12
 
 #### Manual running
 
