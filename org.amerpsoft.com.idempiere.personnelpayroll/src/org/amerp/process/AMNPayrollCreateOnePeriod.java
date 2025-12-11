@@ -604,6 +604,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 				NextPPDateEnd = null;
 				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
 				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
+				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
+				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
 				Percent = 100 * (i / ReceiptsGenList.size());
 				// Percentage Monitor
 				MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
