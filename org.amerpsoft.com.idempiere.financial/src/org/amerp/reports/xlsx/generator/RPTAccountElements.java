@@ -97,7 +97,7 @@ public class RPTAccountElements extends AbstractXlsxGenerator {
         row = sheet.createRow(1);
         Cell cellTitle = row.createCell(1);
         cellTitle.setCellValue(getReportTitle(parameters));
-        CellStyle titleStyle = styleMap.get("L3B"); 
+        CellStyle titleStyle = styleMap.get("L1B"); 
         cellTitle.setCellStyle(titleStyle);
 
         // --- NOMBRE CLIENTE

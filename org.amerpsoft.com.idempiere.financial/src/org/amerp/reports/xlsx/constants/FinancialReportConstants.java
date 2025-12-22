@@ -1,7 +1,6 @@
 package org.amerp.reports.xlsx.constants;
 
 import java.util.Properties;
-
 import org.compiere.model.MReference;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -19,31 +18,21 @@ public final class FinancialReportConstants {
 
     private static final CLogger log = CLogger.getCLogger(FinancialReportConstants.class);
     
-    // ID de la Referencia
-    //public static final int AD_REFERENCE_REPORT_TYPE = 1000152;
-    
     public static final String AD_REFERENCE_REPORT_TYPE_VALUE = "FinancialReportType";
-    
     public static final String AD_REFERENCE_REPORT_TYPE_UU = "0b14e05d-d39e-4757-a410-154f73b261d1";
     // Claves de la Lista de Tipos de Reporte
     // Clave: Trial Balance One Period (TRB)
     public static final String REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD = "TRB";
-
     // Clave: Trial Balance between two dates (TRD)
     public static final String REPORT_TYPE_TRIAL_BALANCE_TWO_DATES = "TRD";
-
     // Clave: State Financial Balance (BAL)
     public static final String REPORT_TYPE_STATE_FINANCIAL_BALANCE = "BAL";
-
     // Clave: State Financial Integral Results (GOP)
     public static final String REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS = "GOP";
-
     // Clave: Analitic Financial State (ANB)
     public static final String REPORT_TYPE_ANALITIC_FINANCIAL_STATE = "ANB";
-    
     // Clave: Account Elements (ACE)
     public static final String REPORT_TYPE_ACCOUNT_ELEMENTS = "ACE";
-    
     // Clave: Income Result Accout for State Finanacial Balanace.
     public static final String IncomeSummary_Acct_Element_Name = "IncomeSummary_Acct";
     
