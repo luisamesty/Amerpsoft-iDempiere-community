@@ -1,6 +1,10 @@
 package org.amerp.reports.xlsx.util;
 
 import org.compiere.util.DB;
+
+import java.sql.Timestamp;
+import java.util.Properties;
+
 import org.compiere.util.CLogger;
 
 public final class AccountUtils {
@@ -53,4 +57,37 @@ public final class AccountUtils {
                    
         return DB.getSQLValue(null, sql, C_AcctSchema_ID);
     }
+    
+    /**
+     * getFiscalYearStart
+     * @param ctx
+     * @param cYearId
+     * @param trxName
+     * @return
+     */
+    public static Timestamp getFiscalYearStart(Properties ctx, int cYearId, String trxName) {
+
+        return DB.getSQLValueTS(
+            trxName,
+            "SELECT MIN(StartDate) FROM C_Period WHERE C_Year_ID=?",
+            cYearId
+        );
+    }
+
+    /**
+     * getFiscalYearEnd
+     * @param ctx
+     * @param cYearId
+     * @param trxName
+     * @return
+     */
+    public static Timestamp getFiscalYearEnd(Properties ctx, int cYearId, String trxName) {
+
+        return DB.getSQLValueTS(
+            trxName,
+            "SELECT MAX(EndDate) FROM C_Period WHERE C_Year_ID=?",
+            cYearId
+        );
+    }
+
 }
