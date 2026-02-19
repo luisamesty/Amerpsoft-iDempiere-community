@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Employees" pageWidth="2320" pageHeight="612" orientation="Landscape" columnWidth="2280" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2a8631c3-b807-49b4-bd24-2bb8ccf7fd46">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-prd MONALISA"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="371"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="623"/>
@@ -18,18 +18,6 @@
 	</parameter>
 	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
 	<parameter name="AD_Role_ID" class="java.lang.Integer"/>
-	<parameter name="AMN_Status_A" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="AMN_Status_V" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="AMN_Status_S" class="java.lang.String">
-		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="AMN_Status_R" class="java.lang.String">
-		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
-	</parameter>
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Jobstation_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Contract_ID" class="java.lang.Integer"/>
@@ -43,33 +31,21 @@
 	<parameter name="isShowColumns" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="isShowOrganization" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="isShowContract" class="java.lang.String">
-		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
 	<parameter name="isShowLocation" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="isShowSector" class="java.lang.String">
-		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[-- Employees.jrxml
 -- Employees Report
--- Condicon agregada de Localidad Sector etc.
--- Status agregado
-SELECT  *
-FROM (
-	SELECT DISTINCT
-	-- REPORT HEADER
+SELECT DISTINCT *
+FROM (SELECT DISTINCT 
+-- REPORT HEADER
 	CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN '' ELSE COALESCE(orginfo.taxid,'') END as rep_taxid,
 	CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
     CASE WHEN ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) THEN concat(COALESCE(cli.name,cli.value),' - Consolidado') ELSE coalesce(org.name,org.value,'') END as rep_name,
-	-- CLIENT
+-- CLIENT
 	emp.ad_client_id,
-	-- ORGANIZATION
+-- ORGANIZATION
 	emp.ad_orgto_id,
     coalesce(org.value,'') as org_value,
     coalesce(org.name,org.value,'') as org_name,
@@ -79,7 +55,6 @@ FROM (
 -- BPARTNER
 	 COALESCE(cbp.taxid, cbp.amerp_rifseniat) as rif,
 -- EMPLOYEE 
-	emp.amn_employee_id,
     emp.name as nombre,
     COALESCE(emp.lastname1,'') AS apellido1,
     COALESCE(emp.lastname2,'') AS apellido2,
@@ -98,51 +73,62 @@ FROM (
          ELSE (DATE_PART('year', current_date::date) - DATE_PART('year', emp.birthday::date))
     END as edad, 
     emp.bloodtype as tipo_sangre, emp.bloodrh as tipo_rh, emp.birthplace as lugar_nacimiento, 
-    emp.sex as sexo,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_sex' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.sex) as sexol,
+		 WHERE rfr.name = 'amn_sex' AND rlt.ad_language= 'es_VE' and rfl.value= emp.sex) as sexo,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_civilstatus' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.civilstatus) as estado_civil, 
+		 WHERE rfr.name = 'amn_civilstatus' AND rlt.ad_language= 'es_VE' and rfl.value= emp.civilstatus) as estado_civil, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_spouse' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.spouse) as conyuge,
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.spouse) as conyuge,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_handuse' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.handuse) as mano_dominante, 
-    emp.isstudying as estudia, 
-    emp.ismedicated as usa_medicamentos,
-    emp.uselenses as lentes, 
+		 WHERE rfr.name = 'amn_handuse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.handuse) as mano_dominante, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_educationalgrade' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.educationgrade) as grado_instruccion, 
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.isstudying) as estudia, 
+    (SELECT rlt.name
+		 FROM adempiere.ad_reference as rfr
+		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
+		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.ismedicated) as usa_medicamentos,
+    (SELECT rlt.name
+		 FROM adempiere.ad_reference as rfr
+		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
+		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
+		 WHERE rfr.name = 'amn_spouse' AND rlt.ad_language= 'es_VE' and rfl.value= emp.uselenses) as lentes, 
+    (SELECT rlt.name
+		 FROM adempiere.ad_reference as rfr
+		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
+		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
+		 WHERE rfr.name = 'amn_educationalgrade' AND rlt.ad_language= 'es_VE' and rfl.value= emp.educationgrade) as grado_instruccion, 
     emp.educationlevel as nivel_instruccion, emp.profession as profesion,
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_jobcondition' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.jobcondition) as condicion_trabajo, 
+		 WHERE rfr.name = 'amn_jobcondition' AND rlt.ad_language= 'es_VE' and rfl.value= emp.jobcondition) as condicion_trabajo, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_paymenttype' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.paymenttype) as tipo_pago, 
+		 WHERE rfr.name = 'amn_paymenttype' AND rlt.ad_language= 'es_VE' and rfl.value= emp.paymenttype) as tipo_pago, 
     (SELECT rlt.name
 		 FROM adempiere.ad_reference as rfr
 		 INNER JOIN adempiere.ad_ref_list as rfl ON (rfl.ad_reference_id = rfr.ad_reference_id)
 		 INNER JOIN adempiere.ad_ref_list_trl as rlt ON (rlt.ad_ref_list_id = rfl.ad_ref_list_id)
-		 WHERE LOWER(rfr.name) = 'amn_payrollmode' AND rlt.ad_language= (SELECT AD_Language FROM AD_Client WHERE AD_Client_ID = $P{AD_Client_ID})  and rfl.value= emp.payrollmode) as tipo_nomina, 
+		 WHERE rfr.name = 'amn_payrollmode' AND rlt.ad_language= 'es_VE' and rfl.value= emp.payrollmode) as tipo_nomina, 
     cok.OK_salary, emp.salary as sueldo, emp.incomedate as fecha_ingreso, emp.Birthday as fecha_nacimiento,
     date_part('year',age(current_date, emp.incomedate)) a_servicio, 
     date_part('month',age(current_date, emp.incomedate)) m_servicio, 
@@ -184,22 +170,10 @@ FROM (
     loc_n.value AS loc_value ,
     COALESCE(loc_n.name, loc_n.description)  AS loc_name,
  -- SECTOR (NOMINA)
-    COALESCE(sector.value,'N/D') AS sector_value ,
-    COALESCE(sector.name, sector.description,'N/D') AS sector_name,
+    sector.value AS sector_value ,
+    COALESCE(sector.name, sector.description) AS sector_name,
  -- DEPENDENT (CORREO E)
-    usr.email as correoe,
-        emp.status, 
-    CASE
-		WHEN ($P{AMN_Status_A} = 'Y'
-		AND emp.status = 'A') THEN 1
-		WHEN ($P{AMN_Status_V} = 'Y'
-		AND emp.status = 'V') THEN 1
-		WHEN ($P{AMN_Status_R} = 'Y'
-		AND emp.status = 'R') THEN 1
-		WHEN ($P{AMN_Status_S} = 'Y'
-		AND emp.status = 'S') THEN 1
-		ELSE 0
-	END AS imprimir_status
+    usr.email as correoe
 FROM adempiere.amn_employee as emp
 INNER JOIN adempiere.c_bpartner as cbp ON cbp.c_bpartner_id = emp.c_bpartner_id 
 INNER JOIN adempiere.ad_client as cli ON (cbp.ad_client_id = cli.ad_client_id)
@@ -234,21 +208,15 @@ INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id
  INNER JOIN adempiere.amn_jobtitle as job ON (job.amn_jobtitle_id= emp.amn_jobtitle_id)
  LEFT JOIN adempiere.amn_jobstation as job_s ON (job_s.amn_jobstation_id= job.amn_jobstation_id)
  INNER JOIN adempiere.amn_location as loc_n ON (loc_n.amn_location_id= emp.amn_location_id)
- LEFT JOIN adempiere.amn_sector as sector ON sector.amn_sector_id = emp.amn_sector_id
+ INNER JOIN adempiere.amn_sector as sector ON sector.amn_sector_id = emp.amn_sector_id
  LEFT JOIN adempiere.amn_dependent as dep ON (dep.amn_employee_id= emp.amn_employee_id)
  WHERE emp.isactive= 'Y' AND
        emp.ad_client_id=  $P{AD_Client_ID} 
        AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR emp.ad_orgto_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 ) as trabajadores
-WHERE imprimir_status = 1 AND imprimir_nom= 1 AND imprimir_emp= 1
+WHERE imprimir_nom= 1 AND imprimir_emp= 1
 AND imprimir_org=1 AND ad_client_id = $P{AD_Client_ID}
---ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
-ORDER BY
-    CASE WHEN $P{isShowOrganization} = 'Y' 	THEN org_value 		ELSE NULL END,
-    CASE WHEN $P{isShowContract} = 'Y' 		THEN tipo_contrato 	ELSE NULL END,
-    CASE WHEN $P{isShowLocation} = 'Y' 		THEN loc_value      ELSE NULL END,
-    CASE WHEN $P{isShowSector} = 'Y' 		THEN sector_value   ELSE NULL END,
-    codigo, nombre
+ORDER BY org_value, tipo_contrato, loc_value, sector_value, codigo, nombre ASC
 ]]>
 	</queryString>
 	<field name="rep_taxid" class="java.lang.String">
@@ -292,11 +260,6 @@ ORDER BY
 	<field name="rif" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="rif"/>
 		<property name="com.jaspersoft.studio.field.label" value="rif"/>
-	</field>
-	<field name="amn_employee_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="amn_employee_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="amn_employee_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
 	<field name="nombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
@@ -359,11 +322,6 @@ ORDER BY
 	<field name="sexo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="sexo"/>
 		<property name="com.jaspersoft.studio.field.label" value="sexo"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
-	</field>
-	<field name="sexol" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="sexol"/>
-		<property name="com.jaspersoft.studio.field.label" value="sexol"/>
 	</field>
 	<field name="estado_civil" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="estado_civil"/>
@@ -380,17 +338,14 @@ ORDER BY
 	<field name="estudia" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="estudia"/>
 		<property name="com.jaspersoft.studio.field.label" value="estudia"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
 	<field name="usa_medicamentos" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="usa_medicamentos"/>
 		<property name="com.jaspersoft.studio.field.label" value="usa_medicamentos"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
 	<field name="lentes" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="lentes"/>
 		<property name="com.jaspersoft.studio.field.label" value="lentes"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
 	<field name="grado_instruccion" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="grado_instruccion"/>
@@ -432,7 +387,7 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.label" value="fecha_ingreso"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
 	</field>
-	<field name="COLUMN_42" class="java.sql.Timestamp">
+	<field name="COLUMN_40" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="fecha_nacimiento"/>
 		<property name="com.jaspersoft.studio.field.label" value="fecha_nacimiento"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
@@ -642,49 +597,17 @@ ORDER BY
 		<property name="com.jaspersoft.studio.field.label" value="correoe"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
 	</field>
-	<field name="status" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="status"/>
-		<property name="com.jaspersoft.studio.field.label" value="status"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="amn_employee"/>
-	</field>
-	<field name="imprimir_status" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="imprimir_status"/>
-		<property name="com.jaspersoft.studio.field.label" value="imprimir_status"/>
-	</field>
-	<variable name="v_emp_count" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 ? 1 : 0 )]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
-	</variable>
-	<variable name="v_emp_count_A" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[(($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 && $F{status}.compareToIgnoreCase( "A" ) == 0) ? 1 : 0 )]]></variableExpression>
-	</variable>
-	<variable name="v_emp_count_V" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[(($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 && $F{status}.compareToIgnoreCase( "V" ) == 0) ? 1 : 0 )]]></variableExpression>
-	</variable>
-	<variable name="v_emp_count_R" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[(($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 && $F{status}.compareToIgnoreCase( "R" ) == 0) ? 1 : 0 )]]></variableExpression>
-	</variable>
-	<variable name="v_emp_count_S" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[(($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0 && $F{status}.compareToIgnoreCase( "S" ) == 0) ? 1 : 0 )]]></variableExpression>
-	</variable>
-	<variable name="v_emp_count_F" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0  && $F{sexo}.compareToIgnoreCase( "F" )==0 ? 1 : 0 ) ]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
-	</variable>
-	<variable name="v_emp_count_M" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[($F{amn_employee_id}.compareTo( BigDecimal.ZERO )!= 0  && $F{sexo}.compareToIgnoreCase( "M" )==0 ? 1 : 0 ) ]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
-	</variable>
 	<group name="Group_byOrg" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{org_name}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="2160" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="699a01d6-ef6d-4e46-b702-a21a36f07e27">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="local_mesure_unitheight" value="pixel"/>
+						<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="14" isBold="true"/>
@@ -704,11 +627,12 @@ ORDER BY
 		<groupExpression><![CDATA[$F{tipo_contrato}]]></groupExpression>
 		<groupHeader>
 			<band height="16">
-				<printWhenExpression><![CDATA[$P{isShowContract}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="2160" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="610e8524-42bd-4f99-8509-196c98f400b4">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<box topPadding="0" leftPadding="6" bottomPadding="0" rightPadding="0"/>
 					<textElement verticalAlignment="Middle">
@@ -723,36 +647,18 @@ ORDER BY
 		<groupExpression><![CDATA[$F{loc_value}]]></groupExpression>
 		<groupHeader>
 			<band height="16">
-				<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{isShowLocation}.compareToIgnoreCase( "Y" ) == 0 && $P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="1880" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="b87c3848-499b-4a9c-959c-87d4c73ef8d4">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 					</reportElement>
 					<box topPadding="0" leftPadding="16" bottomPadding="0" rightPadding="0"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Unidad de Trabajo - Localidad: " + $F{loc_value}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="Group_porSector">
-		<groupExpression><![CDATA[$F{sector_value}]]></groupExpression>
-		<groupHeader>
-			<band height="16">
-				<printWhenExpression><![CDATA[$P{isShowSector}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="1880" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="01e74b51-ea10-46fc-b2be-ff661b6fff0e">
-						<property name="local_mesure_unitheight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box topPadding="0" leftPadding="16" bottomPadding="0" rightPadding="0"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Sector: " + $F{sector_name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -841,13 +747,12 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[F. NACIM.]]></text>
+				<text><![CDATA[F. NAC.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="600" y="0" width="30" height="16" uuid="a7934b78-b1ab-4d15-94dd-a2aff1cf1915">
+				<reportElement x="600" y="0" width="40" height="16" uuid="a7934b78-b1ab-4d15-94dd-a2aff1cf1915">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
@@ -855,7 +760,7 @@ ORDER BY
 				<text><![CDATA[EDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="660" y="0" width="50" height="16" uuid="03a9fcc3-b75b-481a-b86b-4b16b00bb1bf">
+				<reportElement x="640" y="0" width="70" height="16" uuid="03a9fcc3-b75b-481a-b86b-4b16b00bb1bf">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -863,7 +768,7 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[E. CIVIL]]></text>
+				<text><![CDATA[EDO. CIVIL]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="2090" y="0" width="90" height="16" uuid="8cf33025-1061-4c5b-8005-34c2a0d133c7">
@@ -1004,7 +909,7 @@ ORDER BY
 				<text><![CDATA[NOMBRE2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="350" y="0" width="90" height="16" uuid="a8d7809d-5d47-485d-9c18-4de5a015cc94">
+				<reportElement x="360" y="0" width="90" height="16" uuid="a8d7809d-5d47-485d-9c18-4de5a015cc94">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
@@ -1016,7 +921,7 @@ ORDER BY
 				<text><![CDATA[APELLIDO1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="440" y="0" width="90" height="16" uuid="cf4ff895-1f49-4aca-8094-eb256a15d1d5">
+				<reportElement x="450" y="0" width="90" height="16" uuid="cf4ff895-1f49-4aca-8094-eb256a15d1d5">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{IsDetailedNames}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
@@ -1027,21 +932,10 @@ ORDER BY
 				</textElement>
 				<text><![CDATA[APELLIDO2]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="630" y="0" width="30" height="16" uuid="a22d6a8f-1f03-4e03-b125-b89b22b290bc">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[SEXO]]></text>
-			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="45" splitType="Stretch">
+		<band height="50" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowHeader}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<textField pattern="dd/MM/yy">
 				<reportElement x="2152" y="0" width="128" height="15" uuid="cd98b8bb-c602-4475-a957-3d93ce023f44">
@@ -1055,7 +949,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="15" width="580" height="15" uuid="3f026d08-a8ee-42ac-a04f-028f3a826277">
+				<reportElement x="80" y="15" width="577" height="15" uuid="3f026d08-a8ee-42ac-a04f-028f3a826277">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -1070,7 +964,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{rep_taxid}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="0" width="580" height="15" uuid="7a711e30-c465-4329-bead-76fde1d84ca4">
+				<reportElement x="80" y="0" width="577" height="15" uuid="7a711e30-c465-4329-bead-76fde1d84ca4">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -1082,7 +976,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<image onErrorType="Blank">
-				<reportElement x="0" y="0" width="80" height="45" uuid="504a3aa6-312e-4c03-acbf-424063d58919">
+				<reportElement x="0" y="0" width="80" height="50" uuid="504a3aa6-312e-4c03-acbf-424063d58919">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1100,7 +994,7 @@ ORDER BY
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="660" y="0" width="550" height="30" backcolor="#C24A48" uuid="b1ffab59-482a-4c92-bc25-6d67f3cc253d">
+				<reportElement x="657" y="30" width="553" height="20" backcolor="#C24A48" uuid="b1ffab59-482a-4c92-bc25-6d67f3cc253d">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1133,29 +1027,10 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="80" y="30" width="580" height="15" uuid="bd70b26c-b880-4da7-b842-788665890b67">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="local_mesure_unitx" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="local_mesure_unity" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box leftPadding="10"/>
-				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Condición "+ 
-($P{AMN_Status_A}.compareToIgnoreCase( "Y" )== 0 ? "Activos/" : "")+
-($P{AMN_Status_V}.compareToIgnoreCase( "Y" )== 0 ? "Vacaciones" : "")+
-($P{AMN_Status_R}.compareToIgnoreCase( "Y" )== 0 ? "Retirados" : "")+
-($P{AMN_Status_S}.compareToIgnoreCase( "Y" )== 0 ? "Suspendidos" : "")]]></textFieldExpression>
-			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="28" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<line>
 				<reportElement x="0" y="24" width="2280" height="1" uuid="f1912a56-953e-45a8-a15c-a411c477939b">
@@ -1255,19 +1130,19 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[F. NACIM.]]></text>
+				<text><![CDATA[F. NAC.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="600" y="4" width="30" height="20" uuid="6c02c9a4-ab88-4337-ab2c-9d5f5a33ded2">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
+				<reportElement x="600" y="4" width="40" height="20" uuid="6c02c9a4-ab88-4337-ab2c-9d5f5a33ded2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[EDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="660" y="4" width="50" height="20" uuid="6da5b693-15fd-465c-b2a3-0c39d0c10b4e"/>
+				<reportElement x="640" y="4" width="70" height="20" uuid="6da5b693-15fd-465c-b2a3-0c39d0c10b4e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
@@ -1397,7 +1272,7 @@ ORDER BY
 				<text><![CDATA[NOMBRE2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="350" y="4" width="90" height="20" uuid="f64e778f-2ff7-4a8f-a8c1-31aef9bdf3f0">
+				<reportElement x="360" y="4" width="90" height="20" uuid="f64e778f-2ff7-4a8f-a8c1-31aef9bdf3f0">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -1410,7 +1285,7 @@ ORDER BY
 				<text><![CDATA[APELLIDO1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="440" y="4" width="90" height="20" uuid="a35d3d2a-1864-41b5-a17b-c2a8c547f723">
+				<reportElement x="450" y="4" width="90" height="20" uuid="a35d3d2a-1864-41b5-a17b-c2a8c547f723">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -1421,15 +1296,6 @@ ORDER BY
 					<font fontName="Arial" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[APELLIDO2]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="630" y="4" width="30" height="20" uuid="f1adf341-797d-47ad-a17a-e726e7a61004">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[SEXO]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -1476,9 +1342,8 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{fecha_nacimiento}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="600" y="0" width="30" height="14" isRemoveLineWhenBlank="true" uuid="f53acc22-77eb-4c5a-a4bb-cbea0a782745">
+				<reportElement stretchType="RelativeToTallestObject" x="600" y="0" width="40" height="14" isRemoveLineWhenBlank="true" uuid="f53acc22-77eb-4c5a-a4bb-cbea0a782745">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="11"/>
@@ -1496,7 +1361,8 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="660" y="0" width="50" height="14" isRemoveLineWhenBlank="true" uuid="c27ba8a5-f1da-44cd-a266-ceb536b40aea">
+				<reportElement stretchType="RelativeToTallestObject" x="640" y="0" width="70" height="14" isRemoveLineWhenBlank="true" uuid="c27ba8a5-f1da-44cd-a266-ceb536b40aea">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1690,48 +1556,6 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[$F{apellido2}.toUpperCase()]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="#" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="630" y="0" width="30" height="14" isRemoveLineWhenBlank="true" uuid="f08ef0f8-0ac7-42a1-be79-52ae8a850f28">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{sexo}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
-	<summary>
-		<band height="28">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField>
-				<reportElement mode="Transparent" x="0" y="0" width="790" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0ee64198-1374-4837-be16-7afe23d2f78f">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box leftPadding="20"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Total Trabajadores: ("+$V{v_emp_count}+")" +"  "+
-($P{AMN_Status_A}.compareToIgnoreCase( "Y" )== 0 ? "Activos="+ $V{v_emp_count_A}: "")+"  "+
-($P{AMN_Status_V}.compareToIgnoreCase( "Y" )== 0 ? "Vacaciones="+ $V{v_emp_count_V} : "")+"  "+
-($P{AMN_Status_R}.compareToIgnoreCase( "Y" )== 0 ? "Retirados="+ $V{v_emp_count_R} : "")+"  "+
-($P{AMN_Status_S}.compareToIgnoreCase( "Y" )== 0 ? "Suspendidos="+ $V{v_emp_count_S} : "")]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Transparent" x="0" y="14" width="790" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="bf8afc26-7f3a-4faa-9786-ece6acda0b63">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box leftPadding="20"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Hombres: ("+$V{v_emp_count_M}+")" +"  Mujeres: ("+$V{v_emp_count_F}+")"
-]]></textFieldExpression>
-			</textField>
-		</band>
-	</summary>
 </jasperReport>

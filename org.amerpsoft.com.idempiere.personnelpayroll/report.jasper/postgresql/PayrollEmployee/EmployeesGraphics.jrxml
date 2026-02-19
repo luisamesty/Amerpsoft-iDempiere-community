@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EmployeesGraphics" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e2bceec0-f6cf-444c-b5b5-332e682f2a3e">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-DEMO_LPY"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-prd MONALISA"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -112,9 +112,22 @@ WHERE emp.isactive= 'Y'
 	<parameter name="IsSummary" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="AMN_Status_A" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Status_V" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Status_S" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AMN_Status_R" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[-- EmployeeGraphics
 -- Employee Graphics V2
+-- Agregados Status
 SELECT
 	-- REPORT HEADER
 	img1.binarydata as rep_logo,
@@ -129,7 +142,17 @@ SELECT
     SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 36 AND 45 THEN 1 ELSE 0 END) AS edad3,
     SUM(CASE WHEN date_part('year', age(emp.Birthday)) BETWEEN 46 AND 60 THEN 1 ELSE 0 END) AS edad4,
     SUM(CASE WHEN date_part('year', age(emp.Birthday)) > 60 THEN 1 ELSE 0 END) AS edad5
-FROM AMN_Employee emp
+FROM (
+	SELECT DISTINCT amn_employee_id, ad_client_id, ad_orgto_id, sex, Birthday,  AMN_Location_ID, isactive, status
+	FROM AMN_Employee emp1
+	WHERE emp1.ad_client_id = $P{AD_Client_ID}  AND
+	CASE
+		WHEN ($P{AMN_Status_A} = 'Y' AND emp1.status = 'A') THEN true
+		WHEN ($P{AMN_Status_V} = 'Y' AND emp1.status = 'V') THEN true
+		WHEN ($P{AMN_Status_R} = 'Y' AND emp1.status = 'R') THEN true
+		WHEN ($P{AMN_Status_S} = 'Y' AND emp1.status = 'S') THEN true
+		ELSE false END
+) emp
 LEFT JOIN AMN_Location loc ON loc.AMN_Location_ID = emp.AMN_Location_ID
 INNER JOIN adempiere.ad_client as cli ON (emp.ad_client_id = cli.ad_client_id)
 INNER JOIN adempiere.ad_clientinfo as cliinfo ON (cli.ad_client_id = cliinfo.ad_client_id)
@@ -137,8 +160,7 @@ LEFT JOIN adempiere.ad_image as img1 ON (cliinfo.logoreport_id = img1.ad_image_i
 INNER JOIN adempiere.ad_org as org ON (emp.ad_orgto_id = org.ad_org_id)
 INNER JOIN adempiere.ad_orginfo as orginfo ON (org.ad_org_id = orginfo.ad_org_id)
 LEFT JOIN adempiere.ad_image as img2 ON (orginfo.logo_id = img2.ad_image_id)
-WHERE emp.isactive= 'Y'  AND emp.status IN ('A','V','S')
-	AND  emp.ad_client_id =  $P{AD_Client_ID} 
+WHERE emp.isactive= 'Y'  AND  emp.ad_client_id =  $P{AD_Client_ID} 
 GROUP BY rep_logo, rep_name, loc.orgname, emp.sex
 ORDER BY loc.orgname, Empresa, Sex]]>
 	</queryString>
@@ -452,7 +474,8 @@ ORDER BY loc.orgname, Empresa, Sex]]>
 		</groupFooter>
 	</group>
 	<pageHeader>
-		<band height="28">
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField pattern="dd/MM/yy">
 				<reportElement key="" x="395" y="0" width="158" height="14" uuid="924a6157-3657-4ded-8689-0798acfb43ea">
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -528,6 +551,25 @@ ORDER BY loc.orgname, Empresa, Sex]]>
 					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Reporte de Trabajadores por Sexo y Rango de Edad"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="28" width="394" height="12" uuid="2e1d93cb-ba98-4935-9174-3b0e707d6eb8">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Condición "+ 
+($P{AMN_Status_A}.compareToIgnoreCase( "Y" )== 0 ? "Activos/" : "")+
+($P{AMN_Status_V}.compareToIgnoreCase( "Y" )== 0 ? "Vacaciones" : "")+
+($P{AMN_Status_R}.compareToIgnoreCase( "Y" )== 0 ? "Retirados" : "")+
+($P{AMN_Status_S}.compareToIgnoreCase( "Y" )== 0 ? "Suspendidos" : "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -909,8 +951,7 @@ ORDER BY loc.orgname, Empresa, Sex]]>
 				<chart evaluationTime="Report">
 					<reportElement x="305" y="28" width="200" height="200" uuid="10876f24-d2c0-4f29-b7d4-0ba1c745b603"/>
 					<chartTitle>
-						<titleExpression><![CDATA["Trabajadores según Edad"
-]]></titleExpression>
+						<titleExpression><![CDATA["Trabajadores según Edad"]]></titleExpression>
 					</chartTitle>
 					<chartSubtitle/>
 					<chartLegend/>
