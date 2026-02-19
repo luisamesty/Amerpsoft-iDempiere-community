@@ -20,6 +20,12 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xlsx.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.pattern" value="#,##0.00"/>
+	<property name="net.sf.jasperreports.export.xlsx.pattern" value="#,##0.00"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -757,7 +763,6 @@ ORDER BY
             : ($V{amtacctcr0}.doubleValue() - $V{amtacctdr0}.doubleValue())
       )
     : ($V{amtacctdr0}.doubleValue() - $V{amtacctcr0}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="18" uuid="fe6a1b70-9b73-4a7f-a6d6-b429d81007e0">
@@ -785,7 +790,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance0}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -815,7 +819,6 @@ ORDER BY
             : ($V{amtacctcr0}.doubleValue() - $V{amtacctdr0}.doubleValue())
       )
     : ($V{amtacctdr0}.doubleValue() - $V{amtacctcr0}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="18" uuid="d10be7cd-23a2-43a9-a657-7717e0564b6e">
@@ -843,7 +846,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance0}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -885,7 +887,6 @@ ORDER BY
             : ($V{amtacctcr1}.doubleValue() - $V{amtacctdr1}.doubleValue())
       )
     : ($V{amtacctdr1}.doubleValue() - $V{amtacctcr1}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="18" uuid="1f034fa6-80de-45d6-bd37-c9dbd091bd1c">
@@ -913,7 +914,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance1}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -944,7 +944,6 @@ ORDER BY
             : ($V{amtacctcr1}.doubleValue() - $V{amtacctdr1}.doubleValue())
       )
     : ($V{amtacctdr1}.doubleValue() - $V{amtacctcr1}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="18" uuid="87ea71aa-072d-461c-90e5-fe2c51548610">
@@ -972,7 +971,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance1}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1013,7 +1011,6 @@ ORDER BY
             : ($V{amtacctcr2}.doubleValue() - $V{amtacctdr2}.doubleValue())
       )
     : ($V{amtacctdr2}.doubleValue() - $V{amtacctcr2}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="4561e507-64dc-4418-8632-35721dcbb429">
@@ -1041,7 +1038,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance2}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1071,7 +1067,6 @@ ORDER BY
             : ($V{amtacctcr2}.doubleValue() - $V{amtacctdr2}.doubleValue())
       )
     : ($V{amtacctdr2}.doubleValue() - $V{amtacctcr2}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="bcb048be-43b8-49b8-858b-493b65b0467c">
@@ -1099,7 +1094,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance2}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1139,7 +1133,6 @@ ORDER BY
             : ($V{amtacctcr3}.doubleValue() - $V{amtacctdr3}.doubleValue())
       )
     : ($V{amtacctdr3}.doubleValue() - $V{amtacctcr3}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="97cb64ee-c929-42a9-8c2e-358d137a1dd5">
@@ -1167,7 +1160,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance3}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1197,7 +1189,6 @@ ORDER BY
             : ($V{amtacctcr3}.doubleValue() - $V{amtacctdr3}.doubleValue())
       )
     : ($V{amtacctdr3}.doubleValue() - $V{amtacctcr3}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="7f1e8d4a-96c1-4b5e-a0f9-bcee73a03fbb">
@@ -1225,7 +1216,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance3}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1265,7 +1255,6 @@ ORDER BY
             : ($V{amtacctcr4}.doubleValue() - $V{amtacctdr4}.doubleValue())
       )
     : ($V{amtacctdr4}.doubleValue() - $V{amtacctcr4}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="481d24a8-585d-4751-a630-fd37242e8d01">
@@ -1293,7 +1282,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance4}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1323,7 +1311,6 @@ ORDER BY
             : ($V{amtacctcr4}.doubleValue() - $V{amtacctdr4}.doubleValue())
       )
     : ($V{amtacctdr4}.doubleValue() - $V{amtacctcr4}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="e020d39e-5a04-48e2-b6a4-6f635de8e478">
@@ -1351,7 +1338,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance4}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1391,7 +1377,6 @@ ORDER BY
             : ($V{amtacctcr5}.doubleValue() - $V{amtacctdr5}.doubleValue())
       )
     : ($V{amtacctdr5}.doubleValue() - $V{amtacctcr5}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="c5439fee-d642-401b-95e9-c47e5c138040">
@@ -1419,7 +1404,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance5}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1448,7 +1432,6 @@ ORDER BY
             : ($V{amtacctcr5}.doubleValue() - $V{amtacctdr5}.doubleValue())
       )
     : ($V{amtacctdr5}.doubleValue() - $V{amtacctcr5}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="4d9c4329-2c02-460b-9f05-48fec9376ef7">
@@ -1476,7 +1459,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance5}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1516,7 +1498,6 @@ ORDER BY
             : ($V{amtacctcr6}.doubleValue() - $V{amtacctdr6}.doubleValue())
       )
     : ($V{amtacctdr6}.doubleValue() - $V{amtacctcr6}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="a3b6dd58-af2a-47af-9e6a-ebb4cc9dd1e8">
@@ -1544,7 +1525,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance6}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1573,7 +1553,6 @@ ORDER BY
             : ($V{amtacctcr6}.doubleValue() - $V{amtacctdr6}.doubleValue())
       )
     : ($V{amtacctdr6}.doubleValue() - $V{amtacctcr6}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="da02b9cd-9929-489d-89c9-c86959dd210d">
@@ -1601,7 +1580,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance6}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1641,7 +1619,6 @@ ORDER BY
             : ($V{amtacctcr7}.doubleValue() - $V{amtacctdr7}.doubleValue())
       )
     : ($V{amtacctdr7}.doubleValue() - $V{amtacctcr7}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="690486c5-8cfc-4681-9034-cecc6cf1dc0e">
@@ -1669,7 +1646,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance7}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1698,7 +1674,6 @@ ORDER BY
             : ($V{amtacctcr7}.doubleValue() - $V{amtacctdr7}.doubleValue())
       )
     : ($V{amtacctdr7}.doubleValue() - $V{amtacctcr7}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="4bd677e9-ae81-4d91-808c-e2a49f00c800">
@@ -1726,7 +1701,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance7}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1766,7 +1740,6 @@ ORDER BY
             : ($V{amtacctcr8}.doubleValue() - $V{amtacctdr8}.doubleValue())
       )
     : ($V{amtacctdr8}.doubleValue() - $V{amtacctcr8}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="f19a74d6-1a5c-467f-9dbc-93c65571c5dd">
@@ -1794,7 +1767,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance8}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1823,7 +1795,6 @@ ORDER BY
             : ($V{amtacctcr8}.doubleValue() - $V{amtacctdr8}.doubleValue())
       )
     : ($V{amtacctdr8}.doubleValue() - $V{amtacctcr8}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="2222b0e4-f831-42a4-ad68-e439f44ea9aa">
@@ -1851,7 +1822,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance8}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1918,7 +1888,6 @@ ORDER BY
             : ($V{amtacctcrOrg}.doubleValue() - $V{amtacctdrOrg}.doubleValue())
       )
     : ($V{amtacctdrOrg}.doubleValue() - $V{amtacctcrOrg}.doubleValue())]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" isBlankWhenNull="false">
 					<reportElement x="600" y="0" width="180" height="14" uuid="6f48ca7b-7b31-4b74-9171-ff866f621a77">
@@ -1947,7 +1916,6 @@ ORDER BY
             ? 0.00
             : $V{closebalanceOrg}.doubleValue()
       )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -2184,7 +2152,6 @@ ORDER BY
             : ($F{amtacctcr}.doubleValue() - $F{amtacctdr}.doubleValue())
       )
     : ($F{amtacctdr}.doubleValue() - $F{amtacctcr}.doubleValue())]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="600" y="0" width="180" height="14" uuid="455310d9-43f8-4f71-b193-a8f2a40eb85f">
@@ -2199,7 +2166,6 @@ ORDER BY
         ($F{accounttype}.equals("M") || $F{accounttype}.equals("E"))
             ? $F{closebalance}  : -$F{closebalance}  )
     : $F{closebalance}  )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 		</band>
 	</detail>
@@ -2278,7 +2244,6 @@ ORDER BY
             ? 0.00
             : ($V{amtacctdr_tot}.doubleValue() - $V{amtacctcr_tot}.doubleValue())
       )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="600" y="0" width="180" height="18" uuid="43968795-845d-4154-aaf1-f2c01662627f">
@@ -2298,7 +2263,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance_tot}.doubleValue()
       )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

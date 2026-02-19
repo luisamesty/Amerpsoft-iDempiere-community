@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AnaliticFinancialState_Tree" language="groovy" pageWidth="1225" pageHeight="612" orientation="Landscape" columnWidth="1185" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" resourceBundle="AnaliticFinancialState_Tree" uuid="25135b22-f727-40d2-a00f-31a48f954dd5">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -15,6 +15,12 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xlsx.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.pattern" value="#,##0.00"/>
+	<property name="net.sf.jasperreports.export.xlsx.pattern" value="#,##0.00"/>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -847,7 +853,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="2b5dc908-f686-492b-8ac7-c89693eeae34">
@@ -858,7 +863,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr1} == 0.00  ? "-"  : $V{amtacctdr1} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="9b18708a-163e-4749-9e83-675b402f9a8a">
@@ -869,7 +873,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr1}== 0.00  ? "-"  : $V{amtacctcr1} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="a2c566f4-525a-428c-bb07-4b0d26350dbe">
@@ -880,7 +883,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr1} -$V{amtacctcr1}) == 0.00  ? 0.00  : ($V{amtacctdr1} -$V{amtacctcr1}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="d23a92c3-3093-47b3-b530-d16dd5c93fb5">
@@ -891,7 +893,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -924,7 +925,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="6f525809-bb3e-4854-80f6-e606e23cc7d4">
@@ -935,7 +935,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr1} == 0.00  ? "-"  : $V{amtacctdr1} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="7b3c499c-7cae-4cf1-b084-02ac428ab5b4">
@@ -946,7 +945,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr1}== 0.00  ? "-"  : $V{amtacctcr1} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="b82e2c95-7bbd-4367-9118-7ba77147b3a5">
@@ -957,7 +955,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr1} -$V{amtacctcr1}) == 0.00  ? 0.00  : ($V{amtacctdr1} -$V{amtacctcr1}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="3f2f2018-3f66-4e9c-8e81-23f11ed05fa9">
@@ -968,7 +965,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1023,7 +1019,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="95ea29a0-24fa-4955-ba30-68aaf416d76f">
@@ -1034,7 +1029,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr2} == 0.00  ? "-"  : $V{amtacctdr2} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="d718a6d1-83e9-4d53-9572-c82b353d6f2e">
@@ -1045,7 +1039,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr2}== 0.00  ? "-"  : $V{amtacctcr2} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="8a06084c-8220-42f7-b8df-7a4379597938">
@@ -1056,7 +1049,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr2} -$V{amtacctcr2}) == 0.00  ? 0.00  : ($V{amtacctdr2} -$V{amtacctcr2}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="1608cd3f-a165-4e41-92d3-88c3cdd1fdea">
@@ -1067,7 +1059,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1102,7 +1093,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="378786e5-03c7-4bf5-ba1a-75109602f121">
@@ -1113,7 +1103,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr2} == 0.00  ? "-"  : $V{amtacctdr2} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="7447efe0-8132-4f48-9a3b-9d8bb6e0801e">
@@ -1124,7 +1113,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr2}== 0.00  ? "-"  : $V{amtacctcr2} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="43ad9e07-50d8-4eb0-a340-121e9da846ff">
@@ -1135,7 +1123,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr2} -$V{amtacctcr2}) == 0.00  ? 0.00  : ($V{amtacctdr2} -$V{amtacctcr2}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="585ce407-bcc6-4823-b297-80bc4a133e85">
@@ -1146,7 +1133,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1200,7 +1186,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="83062e86-91a6-421c-ae1f-097846886c4e">
@@ -1211,7 +1196,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr3} == 0.00  ? "-"  : $V{amtacctdr3} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="0c3257e9-8951-4ca2-80ec-abd866cb05fb">
@@ -1222,7 +1206,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr3}== 0.00  ? "-"  : $V{amtacctcr3} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="313930d2-916f-4606-a3ec-ec190f691a23">
@@ -1233,7 +1216,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr3} -$V{amtacctcr3}) == 0.00  ? 0.00  : ($V{amtacctdr3} -$V{amtacctcr3}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="635bd299-ac0a-4f77-ba18-0f08c402fffb">
@@ -1244,7 +1226,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1279,7 +1260,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="38dedbd1-2ccf-4df5-bdf1-0811ed8766c4">
@@ -1290,7 +1270,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr3} == 0.00  ? "-"  : $V{amtacctdr3} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="2365350a-2e49-45e8-bc44-a6ed6685db06">
@@ -1301,7 +1280,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr3}== 0.00  ? "-"  : $V{amtacctcr3} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="28c7890f-baec-485b-bb1c-dbce53a1f032">
@@ -1312,7 +1290,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr3} -$V{amtacctcr3}) == 0.00  ? 0.00  : ($V{amtacctdr3} -$V{amtacctcr3}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="b42c90d0-673c-4d82-8c27-c04c984723f7">
@@ -1323,7 +1300,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1377,7 +1353,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="47681ff1-c298-449d-b9ba-03eafa8c20e4">
@@ -1388,7 +1363,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr4} == 0.00  ? "-"  : $V{amtacctdr4} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="3047ea14-16bd-4201-844f-0a7855a46594">
@@ -1399,7 +1373,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr4}== 0.00  ? "-"  : $V{amtacctcr4} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="d588322f-8297-4eed-ad2d-0d4965afdace">
@@ -1410,7 +1383,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr4} -$V{amtacctcr4}) == 0.00  ? 0.00  : ($V{amtacctdr4} -$V{amtacctcr4}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="53a77557-7288-4680-b244-a0f460bd2f0f">
@@ -1421,7 +1393,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1456,7 +1427,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="c7f60840-3fc2-4c66-b345-54a688e81e0d">
@@ -1467,7 +1437,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr4} == 0.00  ? "-"  : $V{amtacctdr4} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="2c0537e5-4994-406f-82c8-eee61242912d">
@@ -1478,7 +1447,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr4}== 0.00  ? "-"  : $V{amtacctcr4} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="00dd76b7-b320-49cf-b1dc-5d572bc1c153">
@@ -1489,7 +1457,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr4} -$V{amtacctcr4}) == 0.00  ? 0.00  : ($V{amtacctdr4} -$V{amtacctcr4}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="100c1c24-bc89-4dbc-929d-9ecfdd7beb87">
@@ -1500,7 +1467,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1553,7 +1519,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="3bc4b18a-71c4-410a-9ace-d9f7b7ac4941">
@@ -1564,7 +1529,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr5} == 0.00  ? "-"  : $V{amtacctdr5} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="31deafca-ac46-4e57-b50f-ee3ff7878bed">
@@ -1575,7 +1539,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr5}== 0.00  ? "-"  : $V{amtacctcr5} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="f09e80a6-6f6d-4576-a1c2-737a83d77317">
@@ -1586,7 +1549,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr5} -$V{amtacctcr5}) == 0.00  ? 0.00  : ($V{amtacctdr5} -$V{amtacctcr5}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="169aa0d9-1850-4814-a8a1-add588c5195f">
@@ -1597,7 +1559,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance5}== 0.00  ? 0.00  : $V{closebalance5} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1631,7 +1592,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="1f2b7a81-3216-4ced-85af-c4bd43af29ce">
@@ -1642,7 +1602,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr5} == 0.00  ? "-"  : $V{amtacctdr5} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="a2b691f9-f093-4c25-afac-e95b3688b40f">
@@ -1653,7 +1612,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr5}== 0.00  ? "-"  : $V{amtacctcr5} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="47efd95b-2178-4270-b29b-16a2fd2b17be">
@@ -1664,7 +1622,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr5} -$V{amtacctcr5}) == 0.00  ? 0.00  : ($V{amtacctdr5} -$V{amtacctcr5}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="a291881a-e21e-4e42-864b-3b6ba06b1413">
@@ -1675,7 +1632,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance5}== 0.00  ? 0.00  : $V{closebalance5} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1741,7 +1697,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance_codigo}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Codigo" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="545" y="0" width="160" height="14" uuid="b09dd848-154b-4800-964f-e58828cc393d">
@@ -1753,7 +1708,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr_codigo} == 0.00  ? "-"  : $V{amtacctdr_codigo} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Codigo" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" uuid="a4c1b56f-44ba-4164-a9e1-e4d67d445431">
@@ -1765,7 +1719,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr_codigo}== 0.00  ? "-"  : $V{amtacctcr_codigo} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Codigo" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" uuid="e0c58c0b-f966-457a-8812-f1426fa2754a">
@@ -1777,7 +1730,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( ($V{amtacctdr_codigo} -$V{amtacctcr_codigo}) == 0.00  ? 0.00  : ($V{amtacctdr_codigo} -$V{amtacctcr_codigo}) )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Codigo" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" uuid="7f408271-fb84-4c9f-afac-e03bea31a990">
@@ -1789,7 +1741,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance_codigo}== 0.00  ? 0.00  : $V{closebalance_codigo} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1810,7 +1761,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr_codigo} == 0.00  ? $V{amtacctdr_codigo}  : $V{amtacctdr_codigo} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Codigo" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" uuid="65da1719-f79a-43fc-a55f-5009746be774">
@@ -1821,7 +1771,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr_codigo} == 0.00  ? $V{amtacctcr_codigo}  : $V{amtacctcr_codigo} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Codigo" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" uuid="7ede0e8e-6764-4645-9f65-f599d85d613e">
@@ -1833,7 +1782,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{amtacctsa_codigo}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Codigo">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="545" height="14" isRemoveLineWhenBlank="true" uuid="490af74d-337d-4198-9e97-1a7a0e20df1f">
@@ -1856,7 +1804,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance_codigo}== 0.00  ? 0.00  : $V{closebalance_codigo} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1915,7 +1862,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{openbalance_activity}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1947,7 +1893,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctdr_activity} == 0.00  ? $V{amtacctdr_activity}  : $V{amtacctdr_activity} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Actividad" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="705" y="0" width="160" height="14" uuid="ebade009-314b-4d32-aa63-b04a01388bf6">
@@ -1958,7 +1903,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{amtacctcr_activity} == 0.00  ? $V{amtacctcr_activity}  : $V{amtacctcr_activity} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Actividad" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="865" y="0" width="160" height="14" uuid="c5436ea7-6f4e-44a0-8b82-45a040b7f888">
@@ -1970,7 +1914,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{amtacctsa_activity}]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Actividad" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1025" y="0" width="160" height="14" uuid="3960c3fb-b8c7-4191-9e53-c553219f6960">
@@ -1982,7 +1925,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 						<paragraph lineSpacing="Single"/>
 					</textElement>
 					<textFieldExpression><![CDATA[( $V{closebalance_activity}== 0.00  ? 0.00  : $V{closebalance_activity} )]]></textFieldExpression>
-					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -2233,7 +2175,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $F{amtacctcr_mov}== 0.00  ? "-"  : $F{amtacctcr_mov} )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="545" y="0" width="160" height="14" uuid="a035c6e9-627e-4948-9fee-074bad04bff0">
@@ -2245,7 +2186,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $F{amtacctdr_mov} == 0.00  ? "-"  : $F{amtacctdr_mov} )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="865" y="0" width="160" height="14" uuid="3728742d-8769-4403-abb7-7276b11afd1f">
@@ -2257,7 +2197,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{amtacctsa_mov}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 		</band>
 	</detail>
@@ -2327,7 +2266,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{openbalance_tot}]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="545" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="465228c9-c7cd-4895-829b-f20665385f6d">
@@ -2338,7 +2276,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $V{amtacctdr_tot} == 0.00  ? "-"  : $V{amtacctdr_tot} )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="705" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="3b15b0a8-89aa-4583-8ec0-3db9e21eb9d0">
@@ -2350,7 +2287,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $V{amtacctcr_tot}== 0.00  ? "-"  : $V{amtacctcr_tot} )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="865" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="2cfddf55-35f9-490e-aeeb-521d99a1c324">
@@ -2362,7 +2298,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( ($V{amtacctdr_tot} -$V{amtacctcr_tot}) == 0.00  ? 0.00  : ($V{amtacctdr_tot} -$V{amtacctcr_tot}) )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="1025" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="142b790d-c167-4ee5-9f0f-33af8299f8e3">
@@ -2373,7 +2308,6 @@ ORDER BY codigo1 ASC, codigo2 ASC, codigo3 ASC, codigo4 ASC, codigo5 ASC, codigo
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $V{closebalance_tot}== 0.00  ? 0.00  : $V{closebalance_tot} )]]></textFieldExpression>
-				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
