@@ -54,6 +54,12 @@
 	<parameter name="isForExport" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="isShowSummaryElements" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowSubTotal" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false"/>
 	<queryString language="SQL">
 		<![CDATA[-- StateFinancialIntegralResults_TreeOrg_Fun V2 usando Funciones (isShowOrganization)
@@ -731,7 +737,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary0}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="100" height="18" uuid="3f7b2e57-1910-446c-86f6-42f9e69bcb1c">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -795,7 +801,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary0}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="420" height="18" uuid="da7a483e-ebf6-44f4-87e7-fb833720e659">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -855,7 +861,7 @@ ORDER BY
 		<groupHeader>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary1}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="100" height="18" uuid="4161298a-6502-4761-9f39-3490e71b1c2d">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -920,7 +926,7 @@ ORDER BY
 		<groupFooter>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary1}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="420" height="18" uuid="168ca40e-57a9-4904-ae63-c9c474818838">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -980,7 +986,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary2}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="100" height="14" uuid="e08557b3-13d0-4128-a9c3-c6c9b7d7f601">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1044,7 +1050,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary2}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="420" height="14" uuid="86451308-f7b2-4884-8460-310a111eec41">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1102,7 +1108,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo3}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary3}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
 					<reportElement x="0" y="0" width="100" height="14" uuid="f695ccbe-3cb1-4576-bda5-75fb39186a52">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1166,7 +1172,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary3}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
 					<reportElement x="0" y="0" width="420" height="14" uuid="2768ca8d-2cfd-42ec-bc3e-a62dcff1c346">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1224,7 +1230,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo4}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary4}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
 					<reportElement x="0" y="0" width="100" height="14" uuid="2f44cf03-1aae-404c-8653-2f7186f6b47f">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1288,7 +1294,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary4}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
 					<reportElement x="0" y="0" width="420" height="14" uuid="0924d8e5-732d-4d73-9c03-9bd9b2903047">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1346,7 +1352,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo5}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary5}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
 					<reportElement x="0" y="0" width="100" height="14" uuid="9186abe1-7276-4f42-9a1b-0352f3570ac1">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1409,7 +1415,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
 					<reportElement x="0" y="0" width="420" height="14" uuid="b74ecf74-0186-402a-9754-c6865a9e5464">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1467,7 +1473,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo6}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
 					<reportElement x="0" y="0" width="100" height="14" uuid="3efbca53-2a74-4d53-a31d-648794b348c7">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1530,7 +1536,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
 					<reportElement x="0" y="0" width="420" height="14" uuid="fe03bb50-7a50-4c36-b153-f068fae16147">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1588,7 +1594,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo7}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary7}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="100" height="14" uuid="27557e30-c1ef-42df-8eea-720c4b23ed7d">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1651,7 +1657,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary7}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="420" height="14" uuid="e4aa279c-113c-40fe-9cdf-d195cada768a">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1709,7 +1715,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo8}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary8}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="100" height="14" uuid="be31d51f-9d6e-4723-9b9c-e515d452f24c">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -1772,7 +1778,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary8}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="420" height="14" uuid="2af9a601-08e0-42fa-8f3f-7c9bc7ba5d44">
 						<property name="local_mesure_unitheight" value="pixel"/>

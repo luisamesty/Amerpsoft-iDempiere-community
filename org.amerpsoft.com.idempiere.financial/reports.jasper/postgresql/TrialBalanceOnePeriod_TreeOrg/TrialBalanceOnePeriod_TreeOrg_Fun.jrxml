@@ -44,6 +44,12 @@
 	<parameter name="isShowOrganization" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="isShowSummaryElements" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowSubTotal" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[-- TrialBalance_Tree V10 usando Funciones (isShowOrganization)
 -- OrgTree Version4
@@ -706,7 +712,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo0}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary0}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="18" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CACACA" uuid="6c44f28c-02c5-483d-82dc-9246a33fdc09">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -799,7 +805,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo0}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary0}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="1340" height="1" uuid="8fe6bce9-3b7a-4593-b2fa-73811fa820d8">
 						<property name="local_mesure_unitwidth" value="pixel"/>
@@ -879,7 +885,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo1}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary1}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="18" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="033c0903-c6dd-4e27-ad05-234208233471">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -973,7 +979,7 @@ ORDER BY
 		<groupFooter>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary1}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="1340" height="1" uuid="e973799e-2c56-43fb-abcc-8404bcb3c5e4">
 						<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1054,7 +1060,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary2}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="5c826a2a-c636-4c5e-a589-04f5dec9ac9f">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -1149,7 +1155,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary2}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="1340" height="1" uuid="00717385-0587-436c-b043-d0b2043eca3c">
 						<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1232,7 +1238,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary3}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="2a5b402a-4219-4988-a927-fd02e668d082">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -1326,7 +1332,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary3}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="1340" height="1" uuid="c1fa85ff-701e-4088-ae99-696345f45b84">
 						<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1409,7 +1415,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary4}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="6a4425ba-f9d3-4728-9aca-458adf91c43c">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -1503,7 +1509,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary4}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="1340" height="1" uuid="ea576a96-ea8d-461b-99bf-f9701a20a6f5">
 						<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1584,7 +1590,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo5}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary5}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="0c03d851-2b0a-4241-8126-9d751314964d">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -1677,7 +1683,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary5}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="1340" height="1" uuid="3813b8c8-8c04-4fb9-be15-df4487821bcd">
 						<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1754,7 +1760,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo6}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<rectangle>
 					<reportElement mode="Opaque" x="0" y="0" width="1340" height="14" isRemoveLineWhenBlank="true" forecolor="#CCCCCC" backcolor="#CCCCCC" uuid="98b6cb5a-1cff-4180-8f03-d378f8f82a7e">
 						<property name="local_mesure_unitx" value="pixel"/>
@@ -1847,7 +1853,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="440" height="14" isRemoveLineWhenBlank="true" uuid="f4648da4-78a8-4f6c-a49a-a4dad5499876">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1924,7 +1930,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo7}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary7}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="81a7cfbd-51b6-47bd-b26e-ea325b3e9010">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -2006,7 +2012,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="15">
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false   && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary7}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="440" height="14" isRemoveLineWhenBlank="true" uuid="ccebb23b-8c77-496f-9b66-838c731be3cd">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2083,7 +2089,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo8}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary8}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="100" height="14" isRemoveLineWhenBlank="true" uuid="ca068c56-c84b-4bea-a32b-fcd32483b8c9">
 						<property name="local_mesure_unitheight" value="pixel"/>
@@ -2165,7 +2171,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary8}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="440" height="14" isRemoveLineWhenBlank="true" uuid="237a70f3-78f8-4c2f-9976-e5400ddda395">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>

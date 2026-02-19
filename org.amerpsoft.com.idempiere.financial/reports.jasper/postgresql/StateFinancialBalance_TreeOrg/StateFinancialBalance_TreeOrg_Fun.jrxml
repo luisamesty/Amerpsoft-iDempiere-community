@@ -43,6 +43,12 @@
 	<parameter name="isForExport" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="isShowSummaryElements" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isShowSubTotal" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -751,7 +757,7 @@ ORDER BY
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary0}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="100" height="18" uuid="be522a27-8e5b-431e-ad84-0053e8fdba76">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -802,7 +808,7 @@ ORDER BY
 		</groupHeader>
 		<groupFooter>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary0}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="490" height="18" uuid="f7199a52-4116-4bb5-bada-19421e67fd29"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -846,7 +852,7 @@ ORDER BY
 		<groupHeader>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary1}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="100" height="18" uuid="0bd46f61-7da3-45ac-890b-9a1c67ea5758">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -898,7 +904,7 @@ ORDER BY
 		<groupFooter>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary1}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
 					<reportElement x="0" y="0" width="660" height="1" uuid="442c7a06-7a9e-4939-b6a1-d77de4be6a23">
 						<printWhenExpression><![CDATA[false]]></printWhenExpression>
@@ -947,7 +953,7 @@ ORDER BY
 		<groupHeader>
 			<band height="15">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary2}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="100" height="15" uuid="c1163605-e931-45e3-8eb8-8cc142348667">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -999,7 +1005,7 @@ ORDER BY
 		<groupFooter>
 			<band height="15">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary2}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="490" height="15" uuid="f44a1814-629c-49ba-b0d0-b9c2760244e7"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1049,7 +1055,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)  && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary3}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
 					<reportElement x="0" y="0" width="100" height="14" uuid="464afd3e-ee87-430f-82fa-a85eec4cfd46">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1100,7 +1106,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary3}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
 					<reportElement x="0" y="0" width="490" height="14" uuid="bc7c9b12-fe8f-44af-be9c-5eda85d19e91"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1150,7 +1156,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary4}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
 					<reportElement x="0" y="0" width="100" height="14" uuid="f9ba4fa8-8692-4d6e-95d0-37aaa09cf2da">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1201,7 +1207,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary4}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
 					<reportElement x="0" y="0" width="490" height="14" uuid="0de0addf-56fb-48b2-bbd3-c76440542db2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1251,7 +1257,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary5}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="490" y="0" width="170" height="14" uuid="a265959b-c839-4a9e-a589-6d13f414eb19">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -1302,7 +1308,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary5}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
 					<reportElement x="0" y="0" width="490" height="14" uuid="18685da0-f108-42a3-b15a-cd5b92be874c"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1352,7 +1358,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="0" y="0" width="100" height="14" uuid="a6071d7a-ce52-4085-baf2-89633c51e510">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1403,7 +1409,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary6}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="0" y="0" width="490" height="14" uuid="14423afc-e4d5-4cb6-9276-afad71df871f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1453,7 +1459,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary7}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="100" height="14" uuid="8aea0a1a-9c4c-4de5-adc8-1ac41a0b7c0c">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1504,7 +1510,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary7}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="490" height="14" uuid="dc3eb70b-6fd4-439b-96d8-dd5fd4367672"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1554,7 +1560,7 @@ ORDER BY
 		<groupHeader>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary8}.compareToIgnoreCase( "N" ) == 0)]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="100" height="14" uuid="0e0490d6-6167-4a52-8c4d-a0cfd925a357">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1605,7 +1611,7 @@ ORDER BY
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && ($P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ||  $F{issummary8}.compareToIgnoreCase( "N" ) == 0) && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="490" height="14" uuid="bbc17225-31aa-429f-bf9d-a0a3e68715a4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
