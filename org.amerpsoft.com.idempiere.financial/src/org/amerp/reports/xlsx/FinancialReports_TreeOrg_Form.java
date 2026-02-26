@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.adempiere.util.Callback;
@@ -56,7 +57,6 @@ import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPeriod;
 import org.compiere.model.MRefList;
-import org.compiere.model.MYear;
 import org.compiere.model.X_C_ElementValue;
 import org.compiere.model.X_Fact_Acct;
 import org.compiere.process.ProcessInfo;
@@ -144,6 +144,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     private WSearchEditor fAccount;
     private Checkbox isShowOrganization = new Checkbox();
     private Checkbox isShowCrosstab = new Checkbox();
+    private Checkbox isShowSummaryElements = new Checkbox();
+    private Checkbox isShowSubTotal = new Checkbox();
+    private Checkbox isPositiveBalance = new Checkbox();
+    private Checkbox isShowMovementsAmounts = new Checkbox();
     private Checkbox isShowZERO = new Checkbox();
     private Label isBatchLabel = new Label();
     private Checkbox isBatch = new Checkbox(); 
@@ -397,7 +401,17 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         String IncomeSummary_Acct_Element_Name = "IncomeSummary_Acct";
         fAccountLabel.setText(Msg.getElement(Env.getCtx(), IncomeSummary_Acct_Element_Name));
         isShowOrganization.setText(Msg.translate(Env.getCtx(), "isShowOrganization"));
+        isShowOrganization.setTooltiptext(MsgUtils.getElementFullDescription("isShowOrganization"));
         isShowCrosstab.setText(Msg.translate(Env.getCtx(), "isShowCrosstab"));
+        isShowCrosstab.setTooltiptext(MsgUtils.getElementFullDescription("isShowCrosstab"));
+        isShowSummaryElements.setText(Msg.translate(Env.getCtx(),"isShowSummaryElements"));
+        isShowSummaryElements.setTooltiptext(MsgUtils.getElementFullDescription("isShowSummaryElements"));
+        isShowSubTotal.setText(Msg.translate(Env.getCtx(),"isShowSubTotal"));
+        isShowSubTotal.setTooltiptext(MsgUtils.getElementFullDescription("isShowSubTotal"));
+        isPositiveBalance.setText(MsgUtils.getElementName("PositiveBalance"));
+        isPositiveBalance.setTooltiptext(MsgUtils.getElementFullDescription("PositiveBalance"));
+        isShowMovementsAmounts.setText(Msg.translate(Env.getCtx(),"isShowMovementsAmounts"));
+        isShowMovementsAmounts.setTooltiptext(MsgUtils.getElementFullDescription("isShowMovementsAmounts"));
         isShowZERO.setText(Msg.translate(Env.getCtx(), "isShowZERO"));
         isBatch.setText(Msg.translate(Env.getCtx(), "BackgroundJob"));
         isBatchLabel.setText(Msg.translate(Env.getCtx(), "BackgroundJob"));
@@ -524,10 +538,16 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         
         // Checkboxes
         row = new Row();
-        row.appendCellChild(isShowOrganization,1);	
-        row.appendCellChild(isShowCrosstab,1);
+        row.appendCellChild(isShowSummaryElements,1);	
+        row.appendCellChild(isPositiveBalance,2);
         rows.appendChild(row);
-        
+
+	    row = new Row();
+        row.appendChild(isShowOrganization);	
+        row.appendChild(isShowCrosstab);
+        row.appendChild(isShowMovementsAmounts);
+        rows.appendChild(row);
+
         row = new Row();
         row.appendCellChild(isShowZERO,1);	
         rows.appendChild(row);
@@ -657,12 +677,30 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             org.zkoss.zul.ListModelList<KeyNamePair> model = new org.zkoss.zul.ListModelList<>(yearList);
             combobox.setModel(model);          
             // 5. Establecer el valor por defecto: Contexto o el período más reciente (Primer elemento)
-            Integer contextYearID = Env.getContextAsInt(Env.getCtx(), "$C_Year_ID");
+            Timestamp contextDate = Env.getContextAsDate(Env.getCtx(), "#Date");
+            if (contextDate == null) {
+                contextDate = new Timestamp(System.currentTimeMillis());
+            }
+//            Integer contextYearID = Env.getContextAsInt(Env.getCtx(), "$C_Year_ID");
+            // 2. Buscar el C_Year_ID correspondiente a esa fecha
+            Integer contextYearID = DB.getSQLValue(
+            	    null,
+            	    """
+            	    SELECT y.C_Year_ID
+            	    FROM C_Year y
+            	    JOIN C_Period p ON p.C_Year_ID = y.C_Year_ID
+            	    WHERE y.AD_Client_ID = ?
+            	      AND y.C_Calendar_ID = ?
+            	      AND ? BETWEEN p.StartDate AND p.EndDate
+            	    FETCH FIRST 1 ROWS ONLY
+            	    """,
+            	    Env.getAD_Client_ID(Env.getCtx()),
+            	    C_Calendar_ID,
+            	    contextDate
+            	);
             if (contextYearID != null && contextYearID.intValue() > 0) {
-                // Usar Contexto si existe
                 fYear.setValue(contextYearID); 
             } else {
-                // Usar el período más reciente (Primer elemento de la lista)
                 fYear.setValue(defaultYearID); 
             }
         } catch (Exception e) {
@@ -718,14 +756,21 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             // Crear y asignar el modelo ZK (ListModelList)
             org.zkoss.zul.ListModelList<KeyNamePair> model = new org.zkoss.zul.ListModelList<>(periodList);
             combobox.setModel(model);          
-            // 5. Establecer el valor por defecto: Contexto o el período más reciente (Primer elemento)
-            Integer contextPeriodID = Env.getContextAsInt(Env.getCtx(), "$C_Period_ID");
-            if (contextPeriodID != null && contextPeriodID.intValue() > 0) {
-                // Usar Contexto si existe
-                fPeriod.setValue(contextPeriodID); 
+            // 5. Establecer el valor por defecto: Período según la fecha de contexto
+            Timestamp contextDate = Env.getContextAsDate(Env.getCtx(), "#Date");
+            if (contextDate == null) {
+                contextDate = new Timestamp(System.currentTimeMillis());
+            }
+            // Obtener el período según calendario y fecha
+            int contextPeriodID = MPeriod.getC_Period_ID(
+                    Env.getCtx(),
+                    contextDate,
+                    Env.getAD_Org_ID(Env.getCtx())
+            );
+            if (contextPeriodID > 0) {
+                fPeriod.setValue(contextPeriodID);
             } else {
-                // Usar el período más reciente (Primer elemento de la lista)
-                fPeriod.setValue(defaultPeriodID); 
+                fPeriod.setValue(defaultPeriodID);
             }
         } catch (Exception e) {
             CLogger.getCLogger(getClass()).log(Level.SEVERE, 
@@ -766,9 +811,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
                 dateTo.setValue(m_DateTo);
             }
         }
-//        // Añadir listeners para que reaccionen a cambios posteriores
-//        if (dateFrom != null) dateFrom.addValueChangeListener(this);
-//        if (dateTo != null) dateTo.addValueChangeListener(this);
         
         // =======================================================
         // === Cuenta Contable (fAccount) ===
@@ -797,6 +839,13 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             }
         }
         
+        
+        // =======================================================================
+        // ======= isShowSummaryElements, isPositiveBalance =======
+        // =======================================================================
+        isShowSummaryElements.setChecked(true);
+        isPositiveBalance.setChecked(true);
+        
         // =======================================================
         // ======= isShowOrganization  =======
         // =======================================================
@@ -807,6 +856,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // ======= isShowCrosstab  =======
         // =======================================================
         isShowCrosstab.setChecked(true);
+        isShowMovementsAmounts.setChecked(false);
         isShowCrosstab.addActionListener(this);
 
         // =======================================================
@@ -908,10 +958,13 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	            // Habilitar y marcar Crosstab por defecto.
 	        	isShowCrosstab.setDisabled(false);  // Habilitar
 	            isShowCrosstab.setChecked(true);    // Marcar por defecto
+	            isShowMovementsAmounts.setDisabled(false); 
+	            isShowMovementsAmounts.setChecked(false);
 	        } else {
 	            // Deshabilitar (opaco) y desmarcar Crosstab.
 	            isShowCrosstab.setChecked(false);  // Desmarcar
 	            isShowCrosstab.setDisabled(true);  // Deshabilitar (opaco)
+	            isShowMovementsAmounts.setDisabled(true);
 	        }
 	    }
         // Dowload Button
@@ -1086,9 +1139,18 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        // ----------------------------------------------------
 	        // B. Validación: Fechas  
 	        // ----------------------------------------------------
-	    	switch (m_reportType_value) {
-	    		// Trial Balance ONE PERIOD
-				case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD: 
+			Set<String> periodValidationTypes = Set.of(
+					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD,
+					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE,
+					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS,
+					FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE
+			);
+			Set<String> fiscalYearValidationTypes = Set.of(
+					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES
+			// , FinancialReportConstants.OTRO
+			);
+	        	if (periodValidationTypes.contains(m_reportType_value) || !fiscalYearValidationTypes.contains(m_reportType_value)) {
+
 			        // ----------------------------------------------------
 			        // B.1. Validación: Fechas dentro del Periodo Contable
 			        // ----------------------------------------------------
@@ -1118,9 +1180,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 			                return;
 			            }
 			        }
-				
-			    // Trial Balance TWO_DATES
-				case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: 
+
+
+	        	}
+	        	else if (fiscalYearValidationTypes.contains(m_reportType_value)) {
+
 			        // ----------------------------------------------------
 			        // B.1. Validación: Fechas dentro del Periodo Fiscal
 			        // ----------------------------------------------------
@@ -1128,7 +1192,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 			            // Obtener el Periodo Contable
 			            MPeriod period = new MPeriod(Env.getCtx(), cPeriod.intValue(), null);
 			            // Obtener el Año Fiscal
-			            MYear year = new MYear(Env.getCtx(), period.getC_Year_ID(), null);
 			            // Fechas del año fiscal
 			            Timestamp fiscalStart = AccountUtils.getFiscalYearStart(Env.getCtx(), period.getC_Year_ID(), null);
 			            Timestamp fiscalEnd   = AccountUtils.getFiscalYearEnd(Env.getCtx(), period.getC_Year_ID(), null);
@@ -1157,8 +1220,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 			                return;
 			            }
 			        }
-					
-		    	}
+	
+
+	        	}
+	        
 
 	    } else if (event.getPropertyName().equals(X_C_ElementValue.COLUMNNAME_C_ElementValue_ID)) {
 		    // ========================================================
@@ -1223,13 +1288,14 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	            // 2. Control del Checkbox isShowCrosstab
 	            isShowCrosstab.setChecked(false);  // Desmarcar
 	            isShowCrosstab.setDisabled(true);  // Deshabilitar (opaco)
-	            
+	            isShowMovementsAmounts.setDisabled(false);
 	        } else {
 	            // Caso: isShowOrganization está DESMARCADO
 	            // Habilitar y marcar Crosstab por defecto.
 	            
 	        	isShowCrosstab.setDisabled(false);  // Habilitar
 	            isShowCrosstab.setChecked(true);    // Marcar por defecto
+	            isShowMovementsAmounts.setDisabled(false);
 	        }
 
 	    } 
@@ -1258,6 +1324,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    fPostingType.setVisible(true);
 	    fPostingType.setMandatory(true);
 	    // Period Date
+	    dateRangeLabel.setVisible(true);
+	    fYearLabel.setVisible(true);
+	    fYear.setVisible(true);
 	    fPeriodLabel.setVisible(true);
 	    fPeriod.setVisible(true);
 	    fPeriod.setMandatory(true);
@@ -1274,9 +1343,15 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    fAccount.setVisible(false);
 	    fAccountLabel.setVisible(false);
 	    // Checks
+        isShowSummaryElements.setChecked(true);
+        isShowSummaryElements.setVisible(true);
+        isPositiveBalance.setVisible(false);
+        isPositiveBalance.setChecked(false);
 	    isShowOrganization.setVisible(true);
 	    isShowCrosstab.setVisible(true);
 	    isShowZERO.setVisible(true);
+	    isShowMovementsAmounts.setChecked(false);
+	    isShowMovementsAmounts.setVisible(true);
 	    
 	    // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
 	    if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
@@ -1294,13 +1369,18 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        dateFrom.setReadWrite(true);
 	        dateTo.setMandatory(true);
 	        dateTo.setReadWrite(true);
+	    
 	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
 	        // SI se muestra la cuenta
 	        fAccountLabel.setVisible(true);
 	    	fAccount.setMandatory(true);
 	        fAccount.setVisible(true);
-
+	    	isPositiveBalance.setVisible(true);
+	    	isPositiveBalance.setChecked(true);
+	    
 	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
+	    	isPositiveBalance.setVisible(true);
+	    	isPositiveBalance.setChecked(true);
 
 	    } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
 
@@ -1319,9 +1399,12 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        fPostingType.setVisible(false);
 	        fPostingType.setMandatory(false);
 	        // Period Date
+	        fYearLabel.setVisible(false);
+		    fYear.setVisible(false);
 	        fPeriodLabel.setVisible(false);
 	        fPeriod.setVisible(false);
 	        fPeriod.setMandatory(false);
+	        dateRangeLabel.setVisible(false);
 	        dateFromLabel.setVisible(false);
 	        dateFrom.setVisible(false);
 	        dateFrom.setReadWrite(false);
@@ -1331,9 +1414,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        dateTo.setMandatory(false);
 	        dateTo.setReadWrite(false);
 	        // Checks
+	        isShowSummaryElements.setVisible(false);
 	        isShowOrganization.setVisible(false);
 	        isShowCrosstab.setVisible(false);
 	        isShowZERO.setVisible(false);
+	        isShowMovementsAmounts.setVisible(false);
 	    }
 	
 	}
@@ -1432,9 +1517,18 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         Boolean showZero = isShowZERO.isChecked();
         Boolean showOrg = isShowOrganization.isChecked();
         Boolean showCrosstab = isShowCrosstab.isChecked();
+        Boolean ShowMovementsAmounts = isShowMovementsAmounts.isChecked();
+        Boolean ShowSummaryElements = isShowSummaryElements.isChecked();
+        Boolean ShowSubTotal = isShowSubTotal.isChecked();
+        Boolean PositiveBalance = isPositiveBalance.isChecked();
+        // Strings
         String isShowZERO_String = (showZero != null && showZero) ? "Y" : "N";
         String isShowOrganization_String = (showOrg != null && showOrg) ? "Y" : "N";
         String isShowCrosstab_String = (showCrosstab != null && showCrosstab) ? "Y" : "N";
+        String isShowMovementsAmounts_String = (ShowMovementsAmounts != null && ShowMovementsAmounts) ? "Y" : "N";
+        String isShowSummaryElements_String  = (ShowSummaryElements != null && ShowSummaryElements) ? "Y" : "N";
+        String isShowSubTotal_String 		= (ShowSubTotal != null && ShowSubTotal) ? "Y" : "N";
+        String isPositiveBalance_String 	= (PositiveBalance != null && PositiveBalance) ? "Y" : "N";
         // Parámetros Requeridos
         parameters.put("AD_Client_ID", AD_Client_ID);
         parameters.put("AD_OrgParent_ID", AD_OrgParent_ID);
@@ -1448,6 +1542,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         parameters.put("isShowZERO", (String) isShowZERO_String);
         parameters.put("isShowOrganization", (String) isShowOrganization_String);
         parameters.put("isShowCrosstab", (String) isShowCrosstab_String);
+        parameters.put("isShowMovementsAmounts", (String) isShowMovementsAmounts_String);
+        parameters.put("isShowSummaryElements", (String) isShowSummaryElements_String);
+        parameters.put("isShowSubTotal", (String) isShowSubTotal_String);
+        parameters.put("isPositiveBalance", (String) isPositiveBalance_String);
         parameters.put("ReportTitle", (String) m_reportType_name);
         // Resto de parametros
         // Selección de la Estrategia (Generador)
@@ -1674,21 +1772,30 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      * para el tipo de reporte.
      * A partir de AD_Reference
      */
-    private List<ValueNamePair> getSortedReportTypes() {
-        
-        // Obtener lista desde MRefList
-        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_Reference_ID_ReportType, false);
-        List<ValueNamePair> reportTypes = new ArrayList<>(Arrays.asList(reportTypesArray));
-        
-        // Ordenar alfabéticamente por nombre
-        Collections.sort(reportTypes, new Comparator<ValueNamePair>() {
-            public int compare(ValueNamePair p1, ValueNamePair p2) {
-                return p1.getName().compareToIgnoreCase(p2.getName());
-            }
-        });
-        
-        return reportTypes;
-    }
+	private List<ValueNamePair> getSortedReportTypes() {
+
+	    // Obtener lista desde MRefList
+	    ValueNamePair[] reportTypesArray =
+	        MRefList.getList(Env.getCtx(), AD_Reference_ID_ReportType, false);
+	    List<ValueNamePair> reportTypes = new ArrayList<>(Arrays.asList(reportTypesArray));
+
+	    // Map de prioridad para los valores conocidos
+	    Map<String, Integer> priority = Map.of(
+	        "TRB", 1, // Trial Balance One Period
+	        "TRD", 2, // Trial Balance between two dates
+	        "BAL", 3, // State Financial Balance
+	        "GOP", 4, // State Financial Integral Results
+	        "ANB", 5, // Analitic Financial State
+	        "ACE", 98  // Account Elements catalog
+	    );
+
+	    // Ordenar según prioridad, los desconocidos van al final
+	    reportTypes.sort(Comparator.comparingInt(v ->
+	        priority.getOrDefault(v.getValue(), 99)
+	    ));
+
+	    return reportTypes;
+	}
     
     public static ValueNamePair getReportTypeByValue(String value) {
         
@@ -1858,11 +1965,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             if (defaultPeriodID != null) {
                 fPeriod.setValue(defaultPeriodID);
             }
-            // Opcional: actualizar contexto
-            Integer contextPeriodID = Env.getContextAsInt(Env.getCtx(), "$C_Period_ID");
-            if (defaultPeriodID != null) {
-                Env.setContext(Env.getCtx(),"$C_Period_ID",defaultPeriodID);
-            }
             // Refresh Dates
             setDatesFromPeriod(defaultPeriodID);
         }
@@ -1875,6 +1977,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
     
     /**
+     * setDatesFromPeriod:
      * Consulta la base de datos para obtener las fechas de inicio y fin
      * de un C_Period_ID dado y las asigna a dateFrom y dateTo.
      * @param periodID El ID del período seleccionado.
@@ -1917,6 +2020,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         }
     }
     
+
     public void dispose() {
     	
     	SessionManager.getAppDesktop().closeActiveWindow();
