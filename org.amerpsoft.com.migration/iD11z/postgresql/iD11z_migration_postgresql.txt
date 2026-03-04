@@ -1,0 +1,5 @@
+iD11
+Migration Scripts Updated during migration
+Error and duplicities
+From version 8.2 to 11
+New changes on Application Dictionary

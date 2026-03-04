@@ -4,7 +4,7 @@
  * @author luisamesty
  *
  */
-package org.amerp.reports.AccountElements_Tree;
+package org.amerp.reports.jasper.AccountElements_Tree;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +28,9 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.compiere.util.Language;
+
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -87,10 +90,10 @@ public class AccountElements_Tree_Std extends SvrProcess implements ProcessCall,
         String tmpFolder = jasperUtils.getTempFolder();
         // Lista de recursos a copiar
         String[] resourcesToCopy = new String[]{
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree.jrxml",
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree.properties",
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree_es.properties",
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree_fr.properties"
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_Std.jrxml",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree.properties",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_es.properties",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_fr.properties"
             // Si hay imágenes o subreports, añádelos aquí
         };
 
@@ -100,27 +103,30 @@ public class AccountElements_Tree_Std extends SvrProcess implements ProcessCall,
         }
         
         // Prueba que el archivo ahora existe físicamente
-        File jrxmlFile = new File(tmpFolder + "org_amerp_reports_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml");
+        File jrxmlFile = new File(tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Std.jrxml");
         if (!jrxmlFile.exists()) {
             throw new Exception("No existe el archivo jrxml en tmp: " + jrxmlFile.getAbsolutePath());
         }
 
         // Ahora puedes usar la ruta física para compilar el reporte
-        String jrxmlPath = tmpFolder + "org_amerp_reports_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml";
+        String jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Std.jrxml";
         
         
         try (InputStream reportStream = new FileInputStream(jrxmlPath)) {
             JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
 
+            Language currentLanguage = Env.getLanguage(Env.getCtx());
+            Locale reportLocale = currentLanguage.getLocale(); 
             // Parámetros, conexión, etc.
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("AD_Client_ID", p_AD_Client_ID);
             parameters.put("C_AcctSchema_ID",p_C_AcctSchema_ID);
             parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle.getBundle(
-            	    "org.amerp.reports.AccountElements_Tree.AccountElements_Tree",
-            	    Locale.getDefault()
+            	    "org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree",
+            	    reportLocale
             	));
-
+            parameters.put(JRParameter.REPORT_LOCALE, reportLocale);
+            
             try (Connection conn = DB.getConnectionRO()) {
                     jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
                     // export to viewer

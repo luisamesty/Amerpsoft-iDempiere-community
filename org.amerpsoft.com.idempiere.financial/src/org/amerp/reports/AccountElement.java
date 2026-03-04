@@ -1,4 +1,4 @@
-package org.amerp.reports.AccountElements_Tree;
+package org.amerp.reports;
 
 import java.math.BigDecimal; // Importa BigDecimal si no lo tienes ya
 

@@ -622,7 +622,7 @@ public class MAMN_Payroll extends X_AMN_Payroll implements DocAction, DocOptions
 	    // ** PROCESS AMN_PAYROLL DOCUMENT 			**
         returnMsg =Msg.translate(ctx, "Process")+" "+
         		Msg.getElement(ctx, MAMN_Payroll.COLUMNNAME_AMN_Payroll_ID)+"\r\n";
-	    if (!amnprocess.isDocControlled() || ( amnprocess.isDocControlled() && okinvoice && okcreditmemo)) {
+	    if (!amnprocess.isDocControlled() || ( amnprocess.isDocControlled() && (okinvoice || okcreditmemo))) {
 	        try {
 	            if ("NN".equalsIgnoreCase(amnprocess.getAMN_Process_Value())) {
 	                msgBuilder.append(updateSalaryHistoric(ctx, amnpayroll, trxName));

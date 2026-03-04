@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.amerp.reports.AnaliticFinancialState;
+package org.amerp.reports.jasper.AnaliticFinancialState;
 
 /**
  * @author luisamesty

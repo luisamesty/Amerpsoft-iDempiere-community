@@ -1,4 +1,4 @@
-package org.amerp.reports.AccountElements_Tree;
+package org.amerp.reports.jasper.AccountElements_Tree;
 
 
 import java.io.File;
@@ -14,6 +14,8 @@ import java.util.logging.Level;
 
 import org.adempiere.base.Service;
 import org.adempiere.report.jasper.JRViewerProvider;
+import org.amerp.reports.AccountElement;
+import org.amerp.reports.DataPopulator;
 import org.amerp.reports.JasperUtils;
 import org.compiere.model.PrintInfo;
 import org.compiere.process.ClientProcess;
@@ -24,6 +26,7 @@ import org.compiere.process.SvrProcess;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Language;
 
 import net.sf.jasperreports.engine.JRException; // Importar si no está
 import net.sf.jasperreports.engine.JRParameter;
@@ -32,7 +35,8 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.util.JRLoader; // Para cargar el .jasper
+import java.util.Arrays;
+
 
 public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall, ClientProcess{
 	
@@ -76,10 +80,10 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
         
         // Lista de recursos a copiar
         String[] resourcesToCopy = new String[]{
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree.jrxml",
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree.properties",
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree_es.properties",
-            "org/amerp/reports/AccountElements_Tree/AccountElements_Tree_fr.properties"
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_Pojo.jrxml",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree.properties",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_es.properties",
+            "org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_fr.properties"
             // Si hay imágenes o subreports, añádelos aquí
         };
 
@@ -88,7 +92,7 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
         	jasperUtils.copyResourceToTmp(resource, tmpFolder);
         }
         // Prueba que el archivo ahora existe físicamente
-        jrxmlPath = tmpFolder + "org_amerp_reports_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml";
+        jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Pojo.jrxml";
         File jrxmlFile = new File(jrxmlPath);
         if (!jrxmlFile.exists()) {
             throw new Exception("No existe el archivo jrxml en tmp: " + jrxmlFile.getAbsolutePath());
@@ -106,7 +110,7 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
 
         // --- PASO 2: Compilar y Cargar el archivo .jasper 
         // Se usa la ruta física para compilar el reporte
-        String jrxmlPath = tmpFolder + "org_amerp_reports_AccountElements_Tree" + File.separator + "AccountElements_Tree.jrxml";
+        String jrxmlPath = tmpFolder + "org_amerp_reports_jasper_AccountElements_Tree" + File.separator + "AccountElements_Tree_Pojo.jrxml";
 
         try (InputStream reportStream = new FileInputStream(jrxmlPath)) {
             jasperReport = JasperCompileManager.compileReport(reportStream);    
@@ -124,13 +128,23 @@ public class AccountElements_Tree_Pojo extends SvrProcess implements ProcessCall
 
         // --- PASO 4: Preparar los parámetros del informe (si los tienes) ---
         // Estos parámetros son los que defines en el .jrxml y no son parte de los campos de detalle.
+        Language currentLanguage = Env.getLanguage(Env.getCtx());
+        Locale reportLocale = currentLanguage.getLocale(); 
+        // Obtener solo el código de idioma (ej. "en", "fr")
+        String languageCode = reportLocale.getLanguage(); // Debería dar "en" o "fr"
+        Locale simpleLocale = new Locale(languageCode); // Crea un Locale sin el código de país (ej. "en" en lugar de "en_US")
+        ClassLoader classLoader = getClass().getClassLoader();
+        ResourceBundle bundle = ResourceBundle.getBundle(
+        	    "org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree",
+        	    simpleLocale,
+        	    classLoader
+        	);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("AD_Client_ID", p_AD_Client_ID);
         parameters.put("C_AcctSchema_ID",p_C_AcctSchema_ID);
-        parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle.getBundle(
-        	    "org.amerp.reports.AccountElements_Tree.AccountElements_Tree",
-        	    Locale.getDefault()
-        	));
+        parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
+        parameters.put(JRParameter.REPORT_LOCALE, simpleLocale);
+
         // Puedes añadir más parámetros, como el logo de la compañía (si no viene del POJO)
         // o información del usuario, etc.
         log.info("Parámetros del informe preparados.");

@@ -7,6 +7,8 @@ encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/StateF
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/StateFinancialIntegralResults_TreeOrg/StateFinancialIntegralResults_TreeOrg.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceOnePeriod_TreeOrg/TrialBalanceOnePeriod_TreeOrg.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.financial/reports.jasper/postgresql/TrialBalanceTwoDates_TreeOrg/TrialBalanceTwoDates_TreeOrg.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.financial/src/org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_Pojo.jrxml=UTF-8
+encoding//org.amerpsoft.com.idempiere.financial/src/org/amerp/reports/jasper/AccountElements_Tree/AccountElements_Tree_Std.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyBiometricPersonnelAttendance/DailyBiometricPersonnelAttendance.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/DailyPersonnelPayrollAttendance/DailyPersonnelPayrollAttendance.jrxml=UTF-8
 encoding//org.amerpsoft.com.idempiere.personnelpayroll/report.jasper/postgresql/PayrollAccounting/PayrollAccounting.jrxml=UTF-8

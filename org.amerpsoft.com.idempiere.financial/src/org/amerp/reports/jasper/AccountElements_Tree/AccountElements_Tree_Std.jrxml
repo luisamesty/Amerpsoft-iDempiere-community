@@ -26,133 +26,48 @@
 		<![CDATA[-- ACCOUNT ELEMENTS
 -- FROM DEfault AD_Tree FROM A GIVEN AD_Client_ID and C_AcctSchema_ID
 -- FOR NEW ACCOUNTING REPORTS
--- Version 3
-WITH ElementValueTree AS (
-    -- Lógica para la jerarquía de cuentas contables
-    WITH RECURSIVE AccountTreeBase AS (
-    -- Nodos raíz (con conversión explícita de tipos)
-    SELECT 
-        tn.AD_Tree_ID,
-        tn.Node_ID,
-        tn.Parent_ID,
-        tn.SeqNo,
-        0 AS level,
-        ev.Value::VARCHAR(2000) AS path,  -- Conversión explícita con longitud suficiente
-        ev.Value::VARCHAR(40) AS AccountValue,
-        ev.Name::VARCHAR(60) AS AccountName,
-        ev.AccountType::VARCHAR(40) AS AccountType,
-        ev.IsSummary,
-        t.Name::VARCHAR(60) AS TreeName,
-        ARRAY [tn.Node_ID::text] AS ancestry,
-        ARRAY [ev.value::text] AS acctparent
-    FROM AD_TreeNode tn
-    JOIN C_ElementValue ev ON tn.Node_ID = ev.C_ElementValue_ID
-    JOIN AD_Tree t ON tn.AD_Tree_ID = t.AD_Tree_ID
-    WHERE (tn.Parent_ID IS NULL OR tn.Parent_ID = 0)
-        AND tn.AD_Client_ID = $P{AD_Client_ID}
-        AND tn.IsActive = 'Y'
-        AND ev.IsActive = 'Y'
-        AND tn.AD_tree_ID = (
-            SELECT tree.AD_Tree_ID
-            FROM AD_Client adcli
-            LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
-            LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
-            LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
-            LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID = accel.AD_Tree_ID
-            WHERE accee.ElementType = 'AC' 
-            AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID} 
-            AND adcli.AD_client_ID = $P{AD_Client_ID}
-        )
-    UNION ALL
-    -- Nodos hijos (manteniendo los mismos tipos)
-    SELECT 
-        child.AD_Tree_ID,
-        child.Node_ID,
-        child.Parent_ID,
-        child.SeqNo,
-        parent.level + 1,
-        (parent.path || '->' || child_ev.Value)::VARCHAR(2000) AS path,
-        child_ev.Value::VARCHAR(40) AS AccountValue,
-        child_ev.Name::VARCHAR(60) AS AccountName,
-        child_ev.AccountType::VARCHAR(40) AS AccountType,
-        child_ev.IsSummary,
-        parent.TreeName,
-        parent.ancestry || ARRAY[child.Node_ID::text] AS ancestry,
-        parent.acctparent || ARRAY[child_ev.value::text] AS acctparent
-    FROM AD_TreeNode child
-    JOIN C_ElementValue child_ev ON child.Node_ID = child_ev.C_ElementValue_ID
-    JOIN AccountTreeBase parent ON child.Parent_ID = parent.Node_ID
-    WHERE child.IsActive = 'Y'
-        AND child_ev.IsActive = 'Y'
-	)
-	SELECT * FROM AccountTreeBase
-)
--- VAriables FOR REPORT
-SELECT DISTINCT ON (ELV.Value)
-	PAR.Level,
-	PAR.Node_ID, 
-	PAR.Parent_ID ,
-	CLI.value as clivalue,
-	CLI.name as cliname,
-	coalesce(CLI.description,CLI.name,'') as clidescription,
-	IMG.binarydata as cli_logo,
-	ELE.c_element_id,
-	ELV.c_elementvalue_id,
-	ELV.ad_client_id,
-	ELV.ad_org_id,
-	ELV.isactive,
-	ELV."value",
-	COALESCE(ELV.name,'') as name,
-	LPAD('', char_length(ELV.value),' ') || COALESCE(ELV.description,ELV.name) as description,
-	char_length(ELV.value) as length,
-	ELV.accounttype,
-	ELV.accountsign,
-	ELV.isdoccontrolled,
-	ELV.c_element_id,
-	ELV.issummary,
-	COALESCE(ELVP.value,'') as value_parent,
-	COALESCE(PAR.acctparent[2],'') as Value1,
-	COALESCE(PAR.acctparent[3],'') as Value2,
-	COALESCE(PAR.acctparent[4],'') as Value3,
-	COALESCE(PAR.acctparent[5],'') as Value4,
-	COALESCE(PAR.acctparent[6],'') as Value5,	
-	COALESCE(PAR.acctparent[7],'') as Value6,
-	COALESCE(PAR.acctparent[8],'') as Value7,
-	COALESCE(PAR.acctparent[9],'') as Value8,
-	COALESCE(PAR.acctparent[10],'') as Value9
-FROM ElementValueTree PAR
-INNER JOIN (
-	SELECT adcli.AD_Client_ID, accsh.C_AcctSchema_ID, accee.C_Element_ID, accel.name as element_name, tree.AD_Tree_ID, tree.name as tree_name
-	FROM AD_Client adcli
-	LEFT JOIN C_AcctSchema accsh ON adcli.AD_Client_ID = accsh.AD_Client_ID
-	LEFT JOIN C_AcctSchema_Element accee ON accee.C_AcctSchema_ID = accsh.C_AcctSchema_ID 
-	LEFT JOIN C_Element accel ON accel.C_Element_ID = accee.C_Element_ID
-	LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= accel.AD_Tree_ID
-	WHERE accee.ElementType='AC' AND accsh.C_AcctSchema_ID = $P{C_AcctSchema_ID}
-) as ELE ON ELE.AD_Tree_ID = PAR.AD_Tree_ID
-LEFT JOIN ad_client AS CLI ON (CLI.ad_client_id = ELE.ad_client_id)
-LEFT JOIN ad_clientinfo AS CLF ON (CLI.ad_client_id = CLF.ad_client_id)
-LEFT JOIN ad_image AS IMG ON (CLF.logoreport_id = IMG.ad_image_id)
-LEFT JOIN C_elementValue ELV ON ELV.C_ElementValue_ID = PAR.NODE_ID
-LEFT JOIN C_elementValue ELVP ON ELVP.C_ElementValue_ID = PAR.Parent_ID
-ORDER BY ELV.Value, PAR.ANCESTRY]]>
+-- Version 4 simplificada con funcion amf_element_value_tree_basic
+-- 
+SELECT DISTINCT ON (EVB.codigo)
+    EVB.level,
+    EVB.node_id AS "nodeId",
+    EVB.parent_id AS "parentId",
+    CLI.name AS cliname,
+    COALESCE(CLI.description, CLI.name, '') AS clidescription,
+    IMG.binarydata AS cli_logo,
+    EVB.c_element_id AS "cElementId",
+    EVB. c_elementvalue_id AS "cElementValueId",
+    EVB.ad_client_id AS "adClientId",
+    NULL AS ad_org_id,
+    EVB.isactive AS "isActive",
+    EVB.codigo,
+    EVB.name,
+    EVB.description,
+    EVB.length,
+    EVB.accounttype AS "accountType",
+    EVB.accountsign AS "accountSign",
+    EVB.isdoccontrolled AS "isDocControlled",
+    EVB. element_c_element_id AS "elementCElementId",
+    EVB.issummary AS "isSummary",
+    COALESCE(ELVP.value, '') AS value_parent
+FROM adempiere.amf_element_value_tree_basic($P{AD_Client_ID}, $P{C_AcctSchema_ID}) EVB
+LEFT JOIN AD_Client CLI ON CLI.ad_client_id = EVB.ad_client_id
+LEFT JOIN AD_ClientInfo CLF ON CLI.ad_client_id = CLF.ad_client_id
+LEFT JOIN AD_Image IMG ON CLF.logoreport_id = IMG.ad_image_id
+LEFT JOIN C_ElementValue ELVP ON ELVP.C_ElementValue_ID = EVB.parent_id
+ORDER BY EVB.codigo, EVB.ancestry;]]>
 	</queryString>
 	<field name="level" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="level"/>
 		<property name="com.jaspersoft.studio.field.label" value="level"/>
 	</field>
-	<field name="node_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="node_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="node_id"/>
+	<field name="nodeId" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="nodeId"/>
+		<property name="com.jaspersoft.studio.field.label" value="nodeId"/>
 	</field>
-	<field name="parent_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="parent_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="parent_id"/>
-	</field>
-	<field name="clivalue" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="clivalue"/>
-		<property name="com.jaspersoft.studio.field.label" value="clivalue"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="ad_client"/>
+	<field name="parentId" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="parentId"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentId"/>
 	</field>
 	<field name="cliname" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="cliname"/>
@@ -168,35 +83,30 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 		<property name="com.jaspersoft.studio.field.label" value="cli_logo"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="ad_image"/>
 	</field>
-	<field name="c_element_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="c_element_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_element_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_acctschema_element"/>
+	<field name="cElementId" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cElementId"/>
+		<property name="com.jaspersoft.studio.field.label" value="cElementId"/>
 	</field>
-	<field name="c_elementvalue_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_elementvalue_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="cElementValueId" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cElementValueId"/>
+		<property name="com.jaspersoft.studio.field.label" value="cElementValueId"/>
 	</field>
-	<field name="ad_client_id" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="adClientId" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="adClientId"/>
+		<property name="com.jaspersoft.studio.field.label" value="adClientId"/>
 	</field>
-	<field name="ad_org_id" class="java.math.BigDecimal">
+	<field name="ad_org_id" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="ad_org_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="ad_org_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
 	</field>
-	<field name="isactive" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="isactive"/>
-		<property name="com.jaspersoft.studio.field.label" value="isactive"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="isActive" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isActive"/>
+		<property name="com.jaspersoft.studio.field.label" value="isActive"/>
 	</field>
-	<field name="value" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value"/>
-		<property name="com.jaspersoft.studio.field.label" value="value"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="codigo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
 	</field>
 	<field name="name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="name"/>
@@ -210,70 +120,29 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 		<property name="com.jaspersoft.studio.field.name" value="length"/>
 		<property name="com.jaspersoft.studio.field.label" value="length"/>
 	</field>
-	<field name="accounttype" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="accounttype"/>
-		<property name="com.jaspersoft.studio.field.label" value="accounttype"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="accountType" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountType"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountType"/>
 	</field>
-	<field name="accountsign" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="accountsign"/>
-		<property name="com.jaspersoft.studio.field.label" value="accountsign"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="accountSign" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountSign"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountSign"/>
 	</field>
-	<field name="isdoccontrolled" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="isdoccontrolled"/>
-		<property name="com.jaspersoft.studio.field.label" value="isdoccontrolled"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="isDocControlled" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isDocControlled"/>
+		<property name="com.jaspersoft.studio.field.label" value="isDocControlled"/>
 	</field>
-	<field name="COLUMN_20" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="c_element_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="c_element_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="elementCElementId" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="elementCElementId"/>
+		<property name="com.jaspersoft.studio.field.label" value="elementCElementId"/>
 	</field>
-	<field name="issummary" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="issummary"/>
-		<property name="com.jaspersoft.studio.field.label" value="issummary"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="c_elementvalue"/>
+	<field name="isSummary" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="isSummary"/>
+		<property name="com.jaspersoft.studio.field.label" value="isSummary"/>
 	</field>
 	<field name="value_parent" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="value_parent"/>
 		<property name="com.jaspersoft.studio.field.label" value="value_parent"/>
-	</field>
-	<field name="value1" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value1"/>
-		<property name="com.jaspersoft.studio.field.label" value="value1"/>
-	</field>
-	<field name="value2" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value2"/>
-		<property name="com.jaspersoft.studio.field.label" value="value2"/>
-	</field>
-	<field name="value3" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value3"/>
-		<property name="com.jaspersoft.studio.field.label" value="value3"/>
-	</field>
-	<field name="value4" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value4"/>
-		<property name="com.jaspersoft.studio.field.label" value="value4"/>
-	</field>
-	<field name="value5" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value5"/>
-		<property name="com.jaspersoft.studio.field.label" value="value5"/>
-	</field>
-	<field name="value6" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value6"/>
-		<property name="com.jaspersoft.studio.field.label" value="value6"/>
-	</field>
-	<field name="value7" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value7"/>
-		<property name="com.jaspersoft.studio.field.label" value="value7"/>
-	</field>
-	<field name="value8" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value8"/>
-		<property name="com.jaspersoft.studio.field.label" value="value8"/>
-	</field>
-	<field name="value9" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="value9"/>
-		<property name="com.jaspersoft.studio.field.label" value="value9"/>
 	</field>
 	<variable name="variable1" class="java.lang.String"/>
 	<variable name="isProperty" class="java.lang.String">
@@ -312,7 +181,7 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.title}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.title} + " -  ST"]]></textFieldExpression>
 			</textField>
 			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
 				<reportElement key="" x="0" y="1" width="120" height="34" uuid="8163aefc-79d6-42ef-b329-741f60fea7a2">
@@ -444,33 +313,33 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 				<reportElement x="0" y="0" width="120" height="16" uuid="02753b24-2742-4a73-8752-68cf2d5de60b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="120" height="16" uuid="f23a5db0-fd94-40aa-83e0-a2a776953a01">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="120" y="0" width="295" height="16" uuid="0a4af16b-a522-41de-9060-13017f2f217d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{isSummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -484,7 +353,7 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{isSummary}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -501,7 +370,7 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 					<font fontName="DejaVu Sans" size="12"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{accounttype}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{accountType}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="460" y="0" width="50" height="16" uuid="e4a3a47c-24f4-4c49-b001-755e5229ad43">
@@ -511,7 +380,7 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 					<font fontName="DejaVu Sans" size="12"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{accountsign}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{accountSign}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="510" y="0" width="60" height="16" uuid="0554cf14-7823-4c55-8273-65397c134de4">
@@ -521,7 +390,7 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 					<font fontName="DejaVu Sans" size="12"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{isdoccontrolled}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{isDocControlled}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="570" y="0" width="70" height="16" uuid="8fe490e7-c362-4815-af06-6a2f6d634953">
@@ -531,7 +400,7 @@ ORDER BY ELV.Value, PAR.ANCESTRY]]>
 					<font fontName="DejaVu Sans" size="12"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{issummary}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{isSummary}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="640" y="0" width="92" height="16" uuid="01864633-4ac9-4679-8ae9-df81373018e4">
