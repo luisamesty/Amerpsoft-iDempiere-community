@@ -575,10 +575,13 @@ public class DataPopulator {
 			String PostingType, Integer C_ElementValue_ID, Timestamp DateFrom, Timestamp DateTo, 
 			String isShowZERO, String trxName) {
 	        
+		Integer  parmC_Period_ID = C_Period_ID;
         List<TrialBalanceLine> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-
+        // Verifica si el Periodo es cero (Significa llamar a las Querys por fechas)
+        if (C_Period_ID == 0)	
+        	parmC_Period_ID = null;
         try {
             pstmt = DB.prepareStatement(ReportGeneratorQuerys.SQL_TRIAL_BALANCE_DATA, trxName);
             int index = 1;
@@ -606,9 +609,13 @@ public class DataPopulator {
             pstmt.setInt(index++, AD_OrgParent_ID);     // 9
             pstmt.setInt(index++, AD_Org_ID);           // 10
             pstmt.setInt(index++, C_AcctSchema_ID);     // 11
-            pstmt.setInt(index++, C_Period_ID);         // 12
+            // C_Period_ID Puede ser Nulo     			// 12
+            if (parmC_Period_ID == null || parmC_Period_ID == 0) {
+                pstmt.setObject(index++, null, java.sql.Types.INTEGER);
+            } else {
+                pstmt.setInt(index++, parmC_Period_ID);
+            }
             pstmt.setString(index++, PostingType);      // 13
-            
             // C_ElementValue_ID (Puede ser NULL)
             if (C_ElementValue_ID == null || C_ElementValue_ID == 0) {
                  pstmt.setObject(index++, null, java.sql.Types.INTEGER); // 14
@@ -670,6 +677,51 @@ public class DataPopulator {
         return list;
     }
 	
+	/**
+	 * getTrialBalanceDataByDates
+	 * Set C_Period_ID = 0 Means NULL and call getTrialBalanceData By Dates
+	 * @param AD_Client_ID
+	 * @param C_AcctSchema_ID
+	 * @param AD_Org_ID
+	 * @param AD_OrgParent_ID
+	 * @param PostingType
+	 * @param C_ElementValue_ID
+	 * @param DateFrom
+	 * @param DateTo
+	 * @param isShowZERO
+	 * @param trxName
+	 * @return
+	 */
+	public static List<TrialBalanceLine> getTrialBalanceDataByDates(
+		    int AD_Client_ID,
+		    int C_AcctSchema_ID,
+		    int AD_Org_ID,
+		    int AD_OrgParent_ID,
+		    int C_Period_ID,
+		    String PostingType,
+		    Integer C_ElementValue_ID,
+		    Timestamp DateFrom,
+		    Timestamp DateTo,
+		    String isShowZERO,
+		    String trxName
+		) {
+
+			Integer nullC_Period_ID = 0;
+		    return getTrialBalanceData(
+		        AD_Client_ID,
+		        C_AcctSchema_ID,
+		        AD_Org_ID,
+		        AD_OrgParent_ID,
+		        nullC_Period_ID,              // 👈 Periodo SIEMPRE nulo == 0
+		        PostingType,
+		        C_ElementValue_ID,
+		        DateFrom,
+		        DateTo,
+		        isShowZERO,
+		        trxName
+		    );
+		}
+
 	/**
 	 * getSelectedOrgIDs Devuelve una lista de AD_Org_IDs
 	 * @param orgs

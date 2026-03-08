@@ -13,227 +13,79 @@
 package org.amerp.pp.factories;
 
 import org.adempiere.base.IProcessFactory;
-import org.amerp.process.*;
-import org.amerp.process.imp.AMNImportDeleteRecords;
-import org.amerp.process.imp.AMNImportEmployee;
-import org.amerp.process.imp.AMNImportPayrollAssistRow;
-import org.amerp.process.imp.AMNImportSalarySocialBenefits;
 import org.compiere.process.ProcessCall;
 import org.compiere.util.CLogger;
 
-/**
- * @author luisamesty
- *
- */
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
+
+// Import all your Process classes
+import org.amerp.process.*;
+import org.amerp.process.imp.*;
+
 public class AMNProcessFactory implements IProcessFactory {
-	
-	static CLogger log = CLogger.getCLogger(AMNProcessFactory.class);
-	
-	/* (non-Javadoc)
-	 * @see org.adempiere.base.IProcessFactory#newProcessInstance(java.lang.String)
-	 */
+
+    private static final CLogger log = CLogger.getCLogger(AMNProcessFactory.class);
+    private static final Map<String, Class<? extends ProcessCall>> processClasses = new HashMap<>();
+
+    static {
+        // Map the class names to the actual Class objects
+        processClasses.put("org.amerp.process.AMNYearCreatePeriods", AMNYearCreatePeriods.class);
+        processClasses.put("org.amerp.process.AMNYearCreatePeriodsFromPeriod", AMNYearCreatePeriodsFromPeriod.class);
+        processClasses.put("org.amerp.process.AMNPayrollCreatePeriodAssistPeriods", AMNPayrollCreatePeriodAssistPeriods.class);
+        // ... add all other classes here
+        processClasses.put("org.amerp.process.AMNPayrollRefresh", AMNPayrollRefresh.class);
+        processClasses.put("org.amerp.process.AMNPayrollRefreshOnePeriod", AMNPayrollRefreshOnePeriod.class);
+        processClasses.put("org.amerp.process.AMNPayrollCreate", AMNPayrollCreateOnePeriod.class);
+        processClasses.put("org.amerp.process.AMNPayrollCreateOneLotHeaders", AMNPayrollCreateOneLotHeaders.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessCompleteDocs", AMNPayrollProcessCompleteDocs.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessCompleteOneDoc", AMNPayrollProcessCompleteOneDoc.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessReactivateDocs", AMNPayrollProcessReactivateDocs.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessReactivateOneDoc", AMNPayrollProcessReactivateOneDoc.class);
+        processClasses.put("org.amerp.process.AMNPayrollCreateOneDoc", AMNPayrollCreateOneDoc.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessPayrollAssistOneEmployee", AMNPayrollProcessPayrollAssistOneEmployee.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessPayrollAssistOnePeriod", AMNPayrollProcessPayrollAssistOnePeriod.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessPayrollAssistOneAttendanceDay", AMNPayrollProcessPayrollAssistOneAttendanceDay.class);
+        processClasses.put("org.amerp.process.AMNPayrollTransferPayrollAssistOneEmployee", AMNPayrollTransferPayrollAssistOneEmployee.class);
+        processClasses.put("org.amerp.process.AMNPayrollTransferPayrollAssistOnePeriod", AMNPayrollTransferPayrollAssistOnePeriod.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessPayrollDeferredOneEmployee", AMNPayrollProcessPayrollDeferredOneEmployee.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessHistoricSalaryOneDoc", AMNPayrollProcessHistoricSalaryOneDoc.class);
+        processClasses.put("org.amerp.process.AMNPayrollProcessHistoricSalaryOnePeriod", AMNPayrollProcessHistoricSalaryOnePeriod.class);
+        processClasses.put("org.amerp.process.AMNConceptTypesCopyAccounts", AMNConceptTypesCopyAccounts.class);
+        processClasses.put("org.amerp.process.AMNConceptTypesAcctCopyAccounts", AMNConceptTypesAcctCopyAccounts.class);
+        processClasses.put("org.amerp.process.AMNConceptTypesChargeCopyCharges", AMNConceptTypesChargeCopyCharges.class);
+        processClasses.put("org.amerp.process.AMNPayrollProvision", AMNPayrollProvision.class);
+        processClasses.put("org.amerp.process.AMNPayrollReconversion", AMNPayrollReconversion.class);
+        processClasses.put("org.amerp.process.AMNYearCreateSchedule", AMNYearCreateSchedule.class);
+        processClasses.put("org.amerp.process.AMNPayrollRefreshOnePeriodConcept", AMNPayrollRefreshOnePeriodConcept.class);
+        processClasses.put("org.amerp.process.AMNPayrollDeleteOnePeriod", AMNPayrollDeleteOnePeriod.class);
+        processClasses.put("org.amerp.process.AMNPayrollDeleteOneDoc", AMNPayrollDeleteOneDoc.class);
+        processClasses.put("org.amerp.process.AMNPayrolLeavesProcess", AMNPayrolLeavesProcess.class);
+        processClasses.put("org.amerp.process.AMNPayrolLeavesCreatesFromPayroll", AMNPayrolLeavesCreatesFromPayroll.class);
+        processClasses.put("org.amerp.process.AMNPayrollRefreshHistoric", AMNPayrollRefreshHistoric.class);
+        processClasses.put("org.amerp.process.SetClientAccountingMode", SetClientAccountingMode.class);
+        processClasses.put("org.amerp.process.imp.AMNImportDeleteRecords", AMNImportDeleteRecords.class);
+        processClasses.put("org.amerp.process.imp.AMNImportSalarySocialBenefits", AMNImportSalarySocialBenefits.class);
+        processClasses.put("org.amerp.process.imp.AMNImportEmployee", AMNImportEmployee.class);
+        processClasses.put("org.amerp.process.imp.AMNImportPayrollAssistRow", AMNImportPayrollAssistRow.class);
+    }
+
     @Override
     public ProcessCall newProcessInstance(String p_className) {
-        // **************************
-        // Operation Processes 
-        // **************************
-    	ProcessCall process = null;
-    	//log.warning(".......................................");
-    	if (p_className.equals("org.amerp.process.AMNYearCreatePeriods"))
-    		try {
-				process =   AMNYearCreatePeriods.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNYearCreatePeriods();
-    	if (p_className.equals("org.amerp.process.AMNYearCreatePeriodsFromPeriod"))
-    		try {
-				process =   AMNYearCreatePeriodsFromPeriod.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNYearCreatePeriodsFromPeriod();
-    	if (p_className.equals("org.amerp.process.AMNPayrollCreatePeriodAssistPeriods"))
-    		try {
-				process =   AMNPayrollCreatePeriodAssistPeriods.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollCreatePeriodAssistPeriods();
-    	if (p_className.equals("org.amerp.process.AMNPayrollRefresh"))
-    		try {
-				process =   AMNPayrollRefresh.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollRefresh();
-    	if (p_className.equals("org.amerp.process.AMNPayrollRefreshOnePeriod"))
-    		try {
-				process =   AMNPayrollRefreshOnePeriod.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollRefreshOnePeriod();   	
-    	if (p_className.equals("org.amerp.process.AMNPayrollCreate"))
-    		try {
-				process =   AMNPayrollCreateOnePeriod.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollCreate();
-    	if (p_className.equals("org.amerp.process.AMNPayrollCreateOneLotHeaders"))
-    		try {
-				process =   AMNPayrollCreateOneLotHeaders.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollCreateOneLotHeaders();
-    	if (p_className.equals("org.amerp.process.AMNPayrollProcessCompleteDocs"))
-    		try {
-				process =   AMNPayrollProcessCompleteDocs.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessCompleteDocs();
-    	if (p_className.equals("org.amerp.process.AMNPayrollProcessCompleteOneDoc"))	 
-    		try {
-				process =   AMNPayrollProcessCompleteOneDoc.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessCompleteOneDoc();
-    	if (p_className.equals("org.amerp.process.AMNPayrollProcessReactivateDocs"))	 
-    		try {
-				process =   AMNPayrollProcessReactivateDocs.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessReactivateDocs();
-    	if (p_className.equals("org.amerp.process.AMNPayrollProcessReactivateOneDoc"))	 
-    		try {
-				process =   AMNPayrollProcessReactivateOneDoc.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessReactivateOneDoc();
-       	if (p_className.equals("org.amerp.process.AMNPayrollCreateOneDoc"))
-    		try {
-				process =   AMNPayrollCreateOneDoc.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollCreate();
-      	if (p_className.equals("org.amerp.process.AMNPayrollProcessPayrollAssistOneEmployee"))
-    		try {
-				process =   AMNPayrollProcessPayrollAssistOneEmployee.class.newInstance();
-			} catch (Exception e) {}
-    		//return new PayrollProcessPayrollAssistOneEmployee();
-      	if (p_className.equals("org.amerp.process.AMNPayrollProcessPayrollAssistOnePeriod"))
-    		try {
-				process =   AMNPayrollProcessPayrollAssistOnePeriod.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessPayrollAssistOnePeriod();
-      	if (p_className.equals("org.amerp.process.AMNPayrollProcessPayrollAssistOneAttendanceDay"))
-    		try {
-				process =   AMNPayrollProcessPayrollAssistOneAttendanceDay.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessPayrollAssistOneAttendanceDay();
-      	if (p_className.equals("org.amerp.process.AMNPayrollTransferPayrollAssistOneEmployee"))
-    		try {
-				process =   AMNPayrollTransferPayrollAssistOneEmployee.class.newInstance();
-			} catch (Exception e) {}
-    		//return new PayrollProcessPayrollAssistOneEmployee();
-      	if (p_className.equals("org.amerp.process.AMNPayrollTransferPayrollAssistOnePeriod"))
-    		try {
-				process =   AMNPayrollTransferPayrollAssistOnePeriod.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollProcessPayrollAssistOnePeriod(); 
-      	if (p_className.equals("org.amerp.process.AMNPayrollProcessPayrollDeferredOneEmployee")) {
-//log.warning("AmperProcPayrollProcessPayrollDeferredOE........PAso");
-      		try {
-				process =   AMNPayrollProcessPayrollDeferredOneEmployee.class.newInstance();
-			} catch (Exception e) {}
-      	}
-    		//return new AMNPayrollProcessPayrollDeferredOneEmployee();
-        if (p_className.equals("org.amerp.process.AMNPayrollProcessHistoricSalaryOneDoc")) {
-//log.warning("AMNPayrollProcessHistoricSalaryOneDoc........PAso");
-          	try {
-    			process =   AMNPayrollProcessHistoricSalaryOneDoc.class.newInstance();
-    		} catch (Exception e) {}
+        Class<? extends ProcessCall> clazz = processClasses.get(p_className);
+        if (clazz == null) {
+            return null;
         }
-        		//return new AMNPayrollProcessHistoricSalaryOneDoc();
-        if (p_className.equals("org.amerp.process.AMNPayrollProcessHistoricSalaryOnePeriod")) 
-          	//log.warning("AMNPayrollProcessHistoricSalaryOnePeriod........PAso");
-          	try {
-    			process =   AMNPayrollProcessHistoricSalaryOnePeriod.class.newInstance();
-    		} catch (Exception e) {}
-        		//return new AMNPayrollProcessHistoricSalaryOnePeriod();     	
-        // return AMNConceptTypesCopyAccounts Deprecated 
-        if (p_className.equals("org.amerp.process.AMNConceptTypesCopyAccounts")) 
-          	//log.warning("AMNConceptTypesCopyAccounts........PAso");
-          	try {
-    			process =   AMNConceptTypesCopyAccounts.class.newInstance();
-    		} catch (Exception e) {}
-        		//return new AMNConceptTypesCopyAccounts();     	
-        // return AMNConceptTypesAcctCopyAccounts
-        if (p_className.equals("org.amerp.process.AMNConceptTypesAcctCopyAccounts")) 
-          	//log.warning("AMNConceptTypesAcctCopyAccounts........PAso");
-          	try {
-    			process =   AMNConceptTypesAcctCopyAccounts.class.newInstance();
-    		} catch (Exception e) {}
-        		//return new AMNConceptTypesCopyAccounts();   
-        // return AMNConceptTypesChargeCopyCharges
-        if (p_className.equals("org.amerp.process.AMNConceptTypesChargeCopyCharges")) 
-          	//log.warning("AMNConceptTypesChargeCopyCharges........PAso");
-          	try {
-    			process =   AMNConceptTypesChargeCopyCharges.class.newInstance();
-    		} catch (Exception e) {}
-        		//return new AMNConceptTypesChargeCopyCharges();    
-        //AMNPayrollProvision
-        if (p_className.equals("org.amerp.process.AMNPayrollProvision")) 
-          	//log.warning("AMNPayrollProvision........PAso");
-          	try {
-    			process =   AMNPayrollProvision.class.newInstance();
-    		} catch (Exception e) {}
-        // AMNPayrollReconversion
-        if (p_className.equals("org.amerp.process.AMNPayrollReconversion")) 
-          	//log.warning("AMNPayrollReconversion........PAso");
-          	try {
-    			process =   AMNPayrollReconversion.class.newInstance();
-    		} catch (Exception e) {}
-        // AMNYearCreateSchedule
-        if (p_className.equals("org.amerp.process.AMNYearCreateSchedule"))
-    		try {
-				process =   AMNYearCreateSchedule.class.newInstance();
-			} catch (Exception e) {}
-        // AMNPayrollRefreshOnePeriodConcept
-        if (p_className.equals("org.amerp.process.AMNPayrollRefreshOnePeriodConcept"))
-    		try {
-				process =   AMNPayrollRefreshOnePeriodConcept.class.newInstance();
-			} catch (Exception e) {}
-       	if (p_className.equals("org.amerp.process.AMNPayrollDeleteOnePeriod"))
-    		try {
-				process =   AMNPayrollDeleteOnePeriod.class.newInstance();
-			} catch (Exception e) {}
-    		//return new AMNPayrollDeleteOnePeriod();
-        // AMNPayrolLeavesProcess
-        if (p_className.equals("org.amerp.process.AMNPayrolLeavesProcess"))
-    		try {
-				process =   AMNPayrolLeavesProcess.class.newInstance();
-			} catch (Exception e) {}
-        // AMNPayrolLeavesCreatesFromPayroll
-        if (p_className.equals("org.amerp.process.AMNPayrolLeavesCreatesFromPayroll"))
-    		try {
-				process =   AMNPayrolLeavesCreatesFromPayroll.class.newInstance();
-			} catch (Exception e) {}
-        // AMNPayrollRefreshHistoric
-        if (p_className.equals("org.amerp.process.AMNPayrollRefreshHistoric"))
-    		try {
-				process =   AMNPayrollRefreshHistoric.class.newInstance();
-			} catch (Exception e) {}
-       	// **************************
-        // Import Processes 
-        // **************************
-        // AMNImportDeleteRecords
-        if (p_className.equals("org.amerp.process.imp.AMNImportDeleteRecords")) 
-          	//log.warning("AMNImportDeleteRecords........PAso");
-          	try {
-    			process =   AMNImportDeleteRecords.class.newInstance();
-    		} catch (Exception e) {}
-        // AMNImportSalarySocialBenefits
-        if (p_className.equals("org.amerp.process.imp.AMNImportSalarySocialBenefits")) 
-          	//log.warning("AMNImportSalarySocialBenefits........PAso");
-          	try {
-    			process =   AMNImportSalarySocialBenefits.class.newInstance();
-    		} catch (Exception e) {}
-        // AMNImportEmployee
-        if (p_className.equals("org.amerp.process.imp.AMNImportEmployee")) 
-          	//log.warning("AMNImportEmployee........PAso");
-          	try {
-    			process =   AMNImportEmployee.class.newInstance();
-    		} catch (Exception e) {}
-        // AMNImportPayrollAssistRow
-        if (p_className.equals("org.amerp.process.imp.AMNImportPayrollAssistRow")) 
-          	//log.warning("AMNImportPayrollAssistRow........PAso");
-          	try {
-    			process =   AMNImportPayrollAssistRow.class.newInstance();
-    		} catch (Exception e) {}
-        return process;
+
+        try {
+            Constructor<? extends ProcessCall> constructor = clazz.getDeclaredConstructor();
+            return constructor.newInstance();
+        } catch (Exception e) {
+            // Log the error for better debugging
+            log.warning("Could not instantiate process class " + p_className + ": " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 }

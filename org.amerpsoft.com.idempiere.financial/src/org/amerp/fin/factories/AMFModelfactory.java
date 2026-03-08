@@ -16,8 +16,6 @@ import java.sql.ResultSet;
 
 import org.adempiere.base.IModelFactory;
 import org.amerp.amfmodel.MAMF_ElementValue;
-import org.amerp.amfmodel.MAMTaxCategory;
-import org.compiere.model.MTaxCategory;
 import org.compiere.model.PO;
 import org.compiere.util.Env;
 
@@ -38,9 +36,6 @@ public class AMFModelfactory implements IModelFactory{
 		// MAMF_ElementValue
 		if(p_tableName.equalsIgnoreCase(MAMF_ElementValue.Table_Name))
 			return MAMF_ElementValue.class;
-		// MAMTaxCategory
-		if(p_tableName.equalsIgnoreCase(MTaxCategory.Table_Name))
-			return MAMTaxCategory.class;
     	return null;
     }
 
@@ -54,10 +49,7 @@ public class AMFModelfactory implements IModelFactory{
 		// MAMF_ElementValue
 		if(p_tableName.equalsIgnoreCase(MAMF_ElementValue.Table_Name))
 			return new MAMF_ElementValue(Env.getCtx(),Record_ID, p_trxName);
-		// MAMTaxCategory
-		if(p_tableName.equalsIgnoreCase(MTaxCategory.Table_Name))
-			return new MAMTaxCategory(Env.getCtx(),Record_ID, p_trxName);
-		return null;
+    	return null;
     }
 
 	/* (non-Javadoc)

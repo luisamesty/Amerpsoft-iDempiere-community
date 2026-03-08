@@ -18,11 +18,7 @@ public class AMFFormFactory implements IFormFactory {
 		// Lista de formularios a manejar por esta fábrica
 		String[] handledForms = {
 			"org.amerp.reports.xlsx.AccountElements_Tree_Form",
-			"org.amerp.reports.xlsx.FinancialReports_TreeOrg_Form",
-			"org.amerp.reports.xlsx.TrialBalanceOnePeriod_TreeOrg_Form",
-			"org.amerp.reports.xlsx.StateFinancialBalance_TreeOrg_Form",
-			"org.amerp.reports.xlsx.StateFinancialIntegralResults_TreeOrg_Form",
-			"org.amerp.reports.xlsx.AnaliticFinancialState_TreeOrg_Form"
+			"org.amerp.reports.xlsx.FinancialReports_TreeOrg_Form"
 		};
 		
 		// Comprobar si el formName solicitado está en la lista

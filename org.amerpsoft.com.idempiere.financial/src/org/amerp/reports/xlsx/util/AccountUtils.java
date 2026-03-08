@@ -1,11 +1,15 @@
 package org.amerp.reports.xlsx.util;
 
 import org.compiere.util.DB;
-import org.compiere.util.CLogger;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Properties;
+import java.util.Set;
+
+import org.compiere.model.X_C_ElementValue;
 
 public final class AccountUtils {
-
-    private static final CLogger log = CLogger.getCLogger(AccountUtils.class);
 
     private AccountUtils() {
         // Clase de utilidad
@@ -52,5 +56,60 @@ public final class AccountUtils {
                    + "ORDER BY ev.Value"; // No usamos LIMIT 1, confiando en getSQLValue
                    
         return DB.getSQLValue(null, sql, C_AcctSchema_ID);
+    }
+    
+    /**
+     * getFiscalYearStart
+     * @param ctx
+     * @param cYearId
+     * @param trxName
+     * @return
+     */
+    public static Timestamp getFiscalYearStart(Properties ctx, int cYearId, String trxName) {
+
+        return DB.getSQLValueTS(
+            trxName,
+            "SELECT MIN(StartDate) FROM C_Period WHERE C_Year_ID=?",
+            cYearId
+        );
+    }
+
+    /**
+     * getFiscalYearEnd
+     * @param ctx
+     * @param cYearId
+     * @param trxName
+     * @return
+     */
+    public static Timestamp getFiscalYearEnd(Properties ctx, int cYearId, String trxName) {
+
+        return DB.getSQLValueTS(
+            trxName,
+            "SELECT MAX(EndDate) FROM C_Period WHERE C_Year_ID=?",
+            cYearId
+        );
+    }
+
+    /**
+     * invertSignTypes
+     * Tipo a invertir el signo
+     */
+    private static final Set<String> invertSignTypes = Set.of(
+    		X_C_ElementValue.ACCOUNTTYPE_Liability,
+    		X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity,
+    		X_C_ElementValue.ACCOUNTTYPE_Revenue);
+
+    /**
+     * applyPositiveBalance
+     * Aplica Lógica de valor positivo segun tipo de cuenta
+     * @param accountType
+     * @param positiveBalance
+     * @param value
+     * @return
+     */
+    public static BigDecimal applyPositiveBalance(String accountType, boolean positiveBalance, BigDecimal value) {
+        if (value == null) return null;
+        if (!positiveBalance) return value;
+        return invertSignTypes.contains(accountType) ? value.negate() : value;
     }
 }

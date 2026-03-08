@@ -49,6 +49,6 @@ For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempie
 
 -  Updated for Idempiere release 8.1 - November 2020
 -  Updated for Idempiere release 11 - January 2024
--  Under Test - See release-11 branch.
+-  Updated for Idempiere release 12 - March 2025
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>

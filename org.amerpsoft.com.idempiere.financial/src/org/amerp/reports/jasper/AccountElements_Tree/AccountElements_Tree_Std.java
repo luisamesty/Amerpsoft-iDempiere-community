@@ -28,6 +28,9 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
+import org.compiere.util.Env;
+import org.compiere.util.Language;
+
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -112,15 +115,18 @@ public class AccountElements_Tree_Std extends SvrProcess implements ProcessCall,
         try (InputStream reportStream = new FileInputStream(jrxmlPath)) {
             JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
 
+            Language currentLanguage = Env.getLanguage(Env.getCtx());
+            Locale reportLocale = currentLanguage.getLocale(); 
             // Parámetros, conexión, etc.
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("AD_Client_ID", p_AD_Client_ID);
             parameters.put("C_AcctSchema_ID",p_C_AcctSchema_ID);
             parameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle.getBundle(
             	    "org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree",
-            	    Locale.getDefault()
+            	    reportLocale
             	));
-
+            parameters.put(JRParameter.REPORT_LOCALE, reportLocale);
+            
             try (Connection conn = DB.getConnectionRO()) {
                     jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
                     // export to viewer
