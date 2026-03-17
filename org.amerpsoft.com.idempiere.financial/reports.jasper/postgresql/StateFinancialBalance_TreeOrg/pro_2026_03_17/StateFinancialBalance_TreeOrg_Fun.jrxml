@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg_Fun" language="groovy" pageWidth="1310" pageHeight="790" columnWidth="1250" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="StateFinantialBalance_TreeOrg_Fun" language="groovy" pageWidth="710" pageHeight="790" columnWidth="650" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" resourceBundle="StateFinancialBalance_TreeOrg" uuid="ac3ea3d9-925a-4642-81a3-db1b7a31c536">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -59,14 +59,13 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[-- StateFInancialBalance_TreeOrg_Fun V3 usando Funciones (isShowOrganization)
+		<![CDATA[-- StateFInancialBalance_TreeOrg V2 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
 -- Removed Activity AND others
 -- Parámetro PositiveBalance
 -- isShowOrganization
--- El Período recibo se convierte a dos fechas (Inicio del Período Anual y Final del Período recibido como parametro)
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
@@ -153,30 +152,8 @@ FULL JOIN (
 		SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-			CROSS JOIN (
-			    SELECT
-			        (
-			            SELECT MIN(p2.startdate)
-			            FROM C_Period p2
-			            WHERE p2.C_Year_ID = p.C_Year_ID
-			        ) AS dateini_year,
-			        p.enddate AS dateend_period
-			    FROM C_Period p
-			    WHERE p.C_Period_ID = $P{C_Period_ID}
-			) period_range
-			LEFT JOIN amf_balance_account_org_flex_orgparent(
-			        $P{AD_Client_ID},
-			        $P{AD_OrgParent_ID},
-			        $P{AD_Org_ID},
-			        $P{C_AcctSchema_ID},
-			        NULL,
-			        $P{PostingType},
-			        NULL,
-			        period_range.dateini_year,
-			        period_range.dateend_period
-			) AS bal1
-			ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id
-			AND bal1.ad_org_id = org1.org_ad_org_id
+			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
+		    	AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
 			WHERE eve1.issummary = 'N' AND eve1.AccountType IN ('A','L','O') AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' AND (
 							COALESCE(bal1.openbalance, 0) <> 0
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
@@ -184,80 +161,32 @@ FULL JOIN (
 							OR COALESCE(bal1.closebalance, 0) <> 0 )))
 		-- Resultado del ejercicio AccountType IN ('R','E','M'))
 		UNION ALL				
-		SELECT *
-		FROM amf_element_value_tree_extended(
-		        $P{AD_Client_ID},
-		        $P{C_AcctSchema_ID}
-		) AS eve2
-		
-		LEFT JOIN amf_org_tree(
-		        $P{AD_Client_ID},
-		        $P{AD_Org_ID},
-		        $P{AD_OrgParent_ID}
-		) AS org2
-		ON org2.org_ad_client_id = eve2.ad_client_id
-		-- ✅ calcular fechas UNA vez
-		CROSS JOIN (
-		    SELECT
-		        (
-		            SELECT MIN(p2.startdate)
-		            FROM C_Period p2
-		            WHERE p2.C_Year_ID = p.C_Year_ID
-		        ) AS dateini_year,
-		        p.enddate AS dateend_period
-		    FROM C_Period p
-		    WHERE p.C_Period_ID = $P{C_Period_ID}
-		) pr
-		-- ✅ LATERAL (CLAVE)
-		LEFT JOIN LATERAL (
-		    SELECT
-		        $P{C_ElementValue_ID} AS bal_c_elementvalue_id,
-		        ceva.value AS account_code,
-		        ceva.name AS account_name,
-		        abcfo.ad_org_id,
-		        abcfo.dateini,
-		        abcfo.dateend,
-		        SUM(abcfo.openbalance) AS openbalance,
-		        SUM(abcfo.amtacctdr) AS amtacctdr,
-		        SUM(abcfo.amtacctcr) AS amtacctcr,
-		        SUM(abcfo.closebalance) AS closebalance,
-		        SUM(abcfo.amtacctdr) - SUM(abcfo.amtacctcr) AS amtacctsa
-		    FROM adempiere.amf_balance_account_org_flex_orgparent(
-		            $P{AD_Client_ID},
-		            $P{AD_OrgParent_ID},
-		            $P{AD_Org_ID},
-		            $P{C_AcctSchema_ID},
-		            NULL,
-		            $P{PostingType},
-		            NULL,
-		            pr.dateini_year,
-		            pr.dateend_period
-		    ) abcfo
-		    CROSS JOIN (
-		        SELECT c_elementvalue_id, value, name
-		        FROM C_ElementValue
-		        WHERE AD_Client_ID = $P{AD_Client_ID}
-		          AND C_ElementValue_ID = $P{C_ElementValue_ID}
-		    ) ceva
-		    WHERE abcfo.bal_c_elementvalue_id IN (
-		        SELECT c_elementvalue_id
-		        FROM C_ElementValue
-		        WHERE AD_Client_ID = $P{AD_Client_ID}
-		          AND AccountType IN ('R','E','M')
-		    )
-		    GROUP BY
-		        ceva.value,
-		        ceva.name,
-		        abcfo.ad_org_id,
-		        abcfo.dateini,
-		        abcfo.dateend
-		) bal2
-		ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id
-		AND bal2.ad_org_id = org2.org_ad_org_id
-		WHERE
-		    $P{C_ElementValue_ID} IS NOT NULL
-		AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id
-		AND eve2.issummary = 'N'
+		SELECT * 
+			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
+			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
+			LEFT JOIN (
+				SELECT
+				    $P{C_ElementValue_ID} AS bal_c_elementvalue_id,
+				    ceva.value AS account_code,
+				    ceva.name AS account_name,
+				    abcfo.ad_org_id,
+				    abcfo.dateini,
+				    abcfo.dateend,
+				    SUM(abcfo.openbalance) AS openbalance,
+				    SUM(abcfo.amtacctdr) AS amtacctdr,
+				    SUM(abcfo.amtacctcr) AS amtacctcr,
+				    SUM(abcfo.closebalance) AS closebalance,
+				    SUM(abcfo.amtacctdr) - SUM(abcfo.amtacctcr) AS amtacctsa
+				FROM (
+					SELECT * FROM adempiere.amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID} , $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL)
+					WHERE bal_c_elementvalue_id IN ( SELECT c_elementvalue_id FROM C_ElementValue WHERE AD_Client_ID = $P{AD_Client_ID} AND AccountType IN ('R','E','M'))
+				) AS abcfo
+				CROSS JOIN (SELECT c_elementvalue_id, value, name FROM C_ElementValue WHERE AD_Client_ID = $P{AD_Client_ID} AND C_ElementValue_ID = $P{C_ElementValue_ID} ) AS ceva
+				GROUP BY ceva.value,  ceva.name, abcfo.ad_org_id, abcfo.dateini, abcfo.dateend
+			) AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id					
+			WHERE 
+			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
+			AND eve2.issummary = 'N' 
 	) AS bal
 ) AS balances ON 1=0
 WHERE header_info.imp_header = 1 OR 
@@ -723,23 +652,23 @@ ORDER BY
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="openbalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev6" calculation="Sum">
+	<variable name="openbalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{openbalance}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="amtacctdr6" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev6" calculation="Sum">
+	<variable name="amtacctdr6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="amtacctcr6" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev6" calculation="Sum">
+	<variable name="amtacctcr6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="amtacctsa6" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev6" calculation="Sum">
+	<variable name="amtacctsa6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{amtacctsa}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="closebalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_Lev6" calculation="Sum">
+	<variable name="closebalance6" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupLev6" calculation="Sum">
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
@@ -807,9 +736,6 @@ ORDER BY
 		<variableExpression><![CDATA[$F{all_orgs}]]></variableExpression>
 		<initialValueExpression><![CDATA["Orgs.."]]></initialValueExpression>
 	</variable>
-	<variable name="dateini_v" class="java.lang.String" calculation="First">
-		<variableExpression><![CDATA[$F{dateini}]]></variableExpression>
-	</variable>
 	<variable name="dateend_v" class="java.lang.String" calculation="First">
 		<variableExpression><![CDATA[$F{dateend}]]></variableExpression>
 	</variable>
@@ -833,11 +759,11 @@ ORDER BY
 		<variableExpression><![CDATA[$F{closebalance}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<group name="Group_Lev0" isStartNewPage="true">
+	<group name="Group_Lev0">
 		<groupExpression><![CDATA[$F{codigo0}]]></groupExpression>
 		<groupHeader>
 			<band height="18">
-				<printWhenExpression><![CDATA[$F{codigo0}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)  && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo0}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0)  && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="100" height="18" uuid="be522a27-8e5b-431e-ad84-0053e8fdba76">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -845,25 +771,24 @@ ORDER BY
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo0}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="100" y="0" width="390" height="18" uuid="56b16e37-f6b8-4c5c-9cb5-a643901a577a"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name0}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="18" uuid="a68c1298-fd23-44b0-809b-d48af6b50368">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<reportElement x="490" y="0" width="170" height="18" uuid="a68c1298-fd23-44b0-809b-d48af6b50368">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
     ? ( 
@@ -884,58 +809,26 @@ ORDER BY
             ? 0.00
             : $V{closebalance0}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="62272e48-1938-4d91-be51-9e54ed8a16a6">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr0}== 0.00  ? "-"  : $V{amtacctcr0} )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="d015325d-24a1-4624-a2ec-0fc8551dc0ba">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="6befbbf7-7268-4924-a061-4cb3af1d4ca3">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr0} == 0.00  ? "-"  : $V{amtacctdr0} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="22">
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<band height="18">
 				<printWhenExpression><![CDATA[$F{codigo0}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 0) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0  && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0">
 					<reportElement x="0" y="0" width="490" height="18" uuid="f7199a52-4116-4bb5-bada-19421e67fd29"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["        Total "+$F{codigo0}+" "+$F{name0}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="18" uuid="70aac54b-d3cf-490b-8179-b6e59f3d13b4">
+					<reportElement x="490" y="0" width="170" height="18" uuid="70aac54b-d3cf-490b-8179-b6e59f3d13b4">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
     ? ( 
@@ -956,36 +849,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance0}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="b5093e2e-369a-4b7e-8992-77a8b7bd8d58">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="54fb65be-f989-46c1-8f6f-08549d10c8c5">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr0} == 0.00  ? "-"  : $V{amtacctdr0} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="61a9ad24-1d5a-4455-b3a2-27a30f87a2f6">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr0}== 0.00  ? "-"  : $V{amtacctcr0} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -995,35 +858,32 @@ ORDER BY
 		<groupHeader>
 			<band height="18">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="100" height="18" uuid="0bd46f61-7da3-45ac-890b-9a1c67ea5758">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
-					<reportElement x="100" y="0" width="390" height="18" uuid="64020a6c-2eb3-457d-91f7-2ab5c87018df">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement x="100" y="0" width="390" height="18" uuid="64020a6c-2eb3-457d-91f7-2ab5c87018df"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name1}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="18" uuid="c648e869-9749-4599-8956-21cedfda34ad">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<reportElement x="490" y="0" width="170" height="18" uuid="c648e869-9749-4599-8956-21cedfda34ad">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
     ? ( 
@@ -1044,36 +904,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance1}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="5bb653a0-58b0-4309-aab9-5ec46a85f655">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="855df803-ed4c-4bb9-a922-6ffcfc22f07f">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr1} == 0.00  ? "-"  : $V{amtacctdr1} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="39e14ea9-ff13-4435-a99f-f2d5f26dddb2">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr1}== 0.00  ? "-"  : $V{amtacctcr1} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1082,27 +912,24 @@ ORDER BY
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<printWhenExpression><![CDATA[$F{codigo1}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 1) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0  && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="442c7a06-7a9e-4939-b6a1-d77de4be6a23">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="442c7a06-7a9e-4939-b6a1-d77de4be6a23">
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
 					<reportElement x="0" y="0" width="490" height="18" uuid="e490fb02-0f5a-4a33-b6b3-2c8859644702"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["        Total "+$F{codigo1}+" "+$F{name1}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="18" uuid="9db7ccab-91da-4156-a74c-69cdf8d19c3f">
+					<reportElement x="490" y="0" width="170" height="18" uuid="9db7ccab-91da-4156-a74c-69cdf8d19c3f">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
+						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
     ? ( 
@@ -1123,36 +950,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance1}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="15eef225-5eb3-433c-8b7e-6e500d9aacd5">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="d90c7bbe-37d9-46a7-8d43-52fd727e1206">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr1} == 0.00  ? "-"  : $V{amtacctdr1} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="d292a0d4-ae75-4c3c-a0da-8b6f1ce5c25e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr1}== 0.00  ? "-"  : $V{amtacctcr1} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1162,7 +959,7 @@ ORDER BY
 		<groupHeader>
 			<band height="15">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo2}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 2) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="100" height="15" uuid="c1163605-e931-45e3-8eb8-8cc142348667">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1170,26 +967,24 @@ ORDER BY
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo2}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="100" y="0" width="390" height="15" uuid="3483c50e-2f1d-47f5-802f-c4e8f14b71c8"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name2}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="1d5e0068-031a-4e9c-81cb-132747508db3">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="15" uuid="1d5e0068-031a-4e9c-81cb-132747508db3">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
     ? ( 
@@ -1210,36 +1005,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance2}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="1a0f7c5b-01f0-4c02-96a3-0ab1e7135985">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="c5d88e20-7837-4d8d-a113-f6e2cfb8e12e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr2} == 0.00  ? "-"  : $V{amtacctdr2} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="bf6d9bdf-2fd4-4d69-b332-a5ed879d7031">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr2}== 0.00  ? "-"  : $V{amtacctcr2} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1250,18 +1015,17 @@ ORDER BY
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2">
 					<reportElement x="0" y="0" width="490" height="15" uuid="f44a1814-629c-49ba-b0d0-b9c2760244e7"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["        Total "+$F{codigo2}+" "+$F{name2}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="1a7704ad-33df-48b9-af72-c2f5476c8cc7">
+					<reportElement x="490" y="0" width="170" height="15" uuid="1a7704ad-33df-48b9-af72-c2f5476c8cc7">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y"))
     ? ( 
@@ -1284,53 +1048,22 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="8bb17033-6312-4bde-8fe3-546c71e63cf1">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="8bb17033-6312-4bde-8fe3-546c71e63cf1">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="eff4c2ee-371f-42c8-a83b-ccc3ef1c746c">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="756df039-5450-4967-bc4c-182af82b4e0b">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr2} == 0.00  ? "-"  : $V{amtacctdr2} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="697357ea-3dab-47b6-8a33-939bb3e23077">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="12" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr2}== 0.00  ? "-"  : $V{amtacctcr2} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_Lev3">
 		<groupExpression><![CDATA[$F{codigo3}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)  && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo3}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 3)  && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
-					<reportElement x="0" y="0" width="100" height="15" uuid="464afd3e-ee87-430f-82fa-a85eec4cfd46">
+					<reportElement x="0" y="0" width="100" height="14" uuid="464afd3e-ee87-430f-82fa-a85eec4cfd46">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<box leftPadding="2"/>
@@ -1340,17 +1073,15 @@ ORDER BY
 					<textFieldExpression><![CDATA[$F{codigo3}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3">
-					<reportElement x="100" y="0" width="390" height="15" uuid="29c07732-dd2c-4d59-8166-ee0a55ce91fb"/>
+					<reportElement x="100" y="0" width="390" height="14" uuid="29c07732-dd2c-4d59-8166-ee0a55ce91fb"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name3}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="b2b32381-5e32-4f05-a046-2c532b3f6f9b">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="14" uuid="b2b32381-5e32-4f05-a046-2c532b3f6f9b">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1375,36 +1106,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance3}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="1861f635-ab1a-4139-ae96-0126195ba5bf">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr3}== 0.00  ? "-"  : $V{amtacctcr3} )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="de4c1710-1f71-4898-bbdb-e4737144df0c">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr3} == 0.00  ? "-"  : $V{amtacctdr3} )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="4d8eb99f-1e7f-448b-ad8e-53fc05f0f100">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1420,10 +1121,9 @@ ORDER BY
 					<textFieldExpression><![CDATA["        Total "+$F{codigo3}+" "+$F{name3}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="32543084-6086-4800-ae46-7fab793dd56a">
+					<reportElement x="490" y="0" width="170" height="14" uuid="32543084-6086-4800-ae46-7fab793dd56a">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -1449,55 +1149,23 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="4d23d44e-7d8f-4cc7-92b3-8b20f96f61e7">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="4d23d44e-7d8f-4cc7-92b3-8b20f96f61e7">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="0cb14947-78ff-488a-bfc3-d879a2874f76">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="0ece4d08-2ba3-4edb-8308-a91a8ff3ecde">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr3} == 0.00  ? "-"  : $V{amtacctdr3} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="a658b787-1737-440e-a7c6-71d8e7dd47d4">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr3}== 0.00  ? "-"  : $V{amtacctcr3} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_Lev4">
 		<groupExpression><![CDATA[$F{codigo4}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo4}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 4) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
-					<reportElement x="0" y="0" width="100" height="15" uuid="f9ba4fa8-8692-4d6e-95d0-37aaa09cf2da">
+					<reportElement x="0" y="0" width="100" height="14" uuid="f9ba4fa8-8692-4d6e-95d0-37aaa09cf2da">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
@@ -1506,18 +1174,15 @@ ORDER BY
 					<textFieldExpression><![CDATA[$F{codigo4}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4">
-					<reportElement x="100" y="0" width="390" height="15" uuid="3b82fcca-b817-464a-863b-9da14618166b">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement x="100" y="0" width="390" height="14" uuid="3b82fcca-b817-464a-863b-9da14618166b"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name4}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="ca31e010-ee2a-4955-9307-18e067627cd6">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="14" uuid="ca31e010-ee2a-4955-9307-18e067627cd6">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1542,39 +1207,6 @@ ORDER BY
             ? 0.00
             : $V{closebalance4}.doubleValue()
       )]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="7586b606-8a54-4062-925a-6b1037e06c51">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="ee2f47da-f0aa-485a-b5a5-3254ecec840d">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr4} == 0.00  ? "-"  : $V{amtacctdr4} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="99c42d51-58e8-41c3-b9e6-1bc6d13b1fa2">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr4}== 0.00  ? "-"  : $V{amtacctcr4} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1590,10 +1222,9 @@ ORDER BY
 					<textFieldExpression><![CDATA["        Total "+$F{codigo4}+" "+$F{name4}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="6b12c1a0-7a29-4444-a555-e7ea2f5c164e">
+					<reportElement x="490" y="0" width="170" height="14" uuid="6b12c1a0-7a29-4444-a555-e7ea2f5c164e">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -1619,56 +1250,23 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="899cc294-7781-4518-9224-eb71b88bf133">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="899cc294-7781-4518-9224-eb71b88bf133">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="5a182a3c-232e-4b77-92f2-83f5dcfa805e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="55d1cb9b-e5e6-4ac9-816c-e178ded4b2a1">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr4} == 0.00  ? "-"  : $V{amtacctdr4} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="4162abbb-94ea-49df-bf43-feff951b6ab1">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr4}== 0.00  ? "-"  : $V{amtacctcr4} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_Lev5">
 		<groupExpression><![CDATA[$F{codigo5}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo5}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 5) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="a265959b-c839-4a9e-a589-6d13f414eb19">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="14" uuid="a265959b-c839-4a9e-a589-6d13f414eb19">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1695,9 +1293,8 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
-					<reportElement x="0" y="0" width="100" height="15" uuid="f92b656f-96da-463f-a643-d0e2ed78c846">
+					<reportElement x="0" y="0" width="100" height="14" uuid="f92b656f-96da-463f-a643-d0e2ed78c846">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
@@ -1706,46 +1303,11 @@ ORDER BY
 					<textFieldExpression><![CDATA[$F{codigo5}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5">
-					<reportElement x="100" y="0" width="390" height="15" uuid="0936a29a-4c75-4cd0-a0da-eaea1f348ea9">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
+					<reportElement x="100" y="0" width="390" height="14" uuid="0936a29a-4c75-4cd0-a0da-eaea1f348ea9"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name5}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="04489413-fcd7-441b-bf52-64bab75e876e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="66f1be67-2722-4a9f-8469-ab8aba25ffbe">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr5} == 0.00  ? "-"  : $V{amtacctdr5} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="bc035d4d-f014-4e3e-aa40-94da0cde1370">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr5}== 0.00  ? "-"  : $V{amtacctcr5} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1761,10 +1323,9 @@ ORDER BY
 					<textFieldExpression><![CDATA["        Total "+$F{codigo5}+" "+$F{name5}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="31d2b55b-4789-40c7-8f35-165e5e0c6029">
+					<reportElement x="490" y="0" width="170" height="14" uuid="31d2b55b-4789-40c7-8f35-165e5e0c6029">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -1790,52 +1351,21 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="0baf63b2-486b-4fee-b08c-1e6cd9c14537">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="0baf63b2-486b-4fee-b08c-1e6cd9c14537">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="a4f7e70d-0d6c-4cdd-9e3f-5d5ae7bca2d4">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="9b4a2571-7ae6-46be-bee7-9f074501bb53">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr5} == 0.00  ? "-"  : $V{amtacctdr5} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="e898b058-02b4-4dd6-b04e-5f90dcb7502e">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr5}== 0.00  ? "-"  : $V{amtacctcr5} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
-	<group name="Group_Lev6">
+	<group name="GroupLev6">
 		<groupExpression><![CDATA[$F{codigo6}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
+				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="0" y="0" width="100" height="14" uuid="a6071d7a-ce52-4085-baf2-89633c51e510">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
@@ -1845,18 +1375,16 @@ ORDER BY
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo6}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
+				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="100" y="0" width="390" height="14" uuid="2948194c-8cdb-40bc-9194-159b17189355"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{name6}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="8984bba2-a3ec-4001-93bd-e51dbd8c9dd6">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="GroupLev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="490" y="0" width="170" height="14" uuid="8984bba2-a3ec-4001-93bd-e51dbd8c9dd6">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1882,54 +1410,23 @@ ORDER BY
             : $V{closebalance6}.doubleValue()
       )]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="d7572433-0197-4a18-abe5-55634e35e57c">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance6}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="3e9a66c8-0ff4-4ec8-84f6-2db5a46224e4">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr6} == 0.00  ? "-"  : $V{amtacctdr6} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="456b54b2-2dbf-43be-ae8d-4cd80cc5b836">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr6}== 0.00  ? "-"  : $V{amtacctcr6} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{codigo6}.isEmpty() == false  && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0  && $P{isShowSubTotal}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6">
+				<textField evaluationTime="Group" evaluationGroup="GroupLev6">
 					<reportElement x="0" y="0" width="490" height="14" uuid="14423afc-e4d5-4cb6-9276-afad71df871f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["        Total "+$F{codigo6}+" "+$F{name6}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="044c3b4b-2dc1-4e94-b9f7-a9d75f7fe2e6">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="GroupLev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
+					<reportElement x="490" y="0" width="170" height="14" uuid="044c3b4b-2dc1-4e94-b9f7-a9d75f7fe2e6">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -1955,51 +1452,20 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="e3d064d9-e085-4f69-93fa-63a3cf5fcc1e">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="e3d064d9-e085-4f69-93fa-63a3cf5fcc1e">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="e9573979-7c07-411d-a5a4-92fb6047f8d9">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance6}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="31b7b34a-8924-4aa9-b1fc-0f48f5e94096">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr6} == 0.00  ? "-"  : $V{amtacctdr6} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="fc4f22da-9c59-4c55-b04d-3f376bc6c768">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr6}== 0.00  ? "-"  : $V{amtacctcr6} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_Lev7">
 		<groupExpression><![CDATA[$F{codigo7}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo7}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7">
 					<reportElement x="0" y="0" width="100" height="14" uuid="8aea0a1a-9c4c-4de5-adc8-1ac41a0b7c0c">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2018,10 +1484,8 @@ ORDER BY
 					<textFieldExpression><![CDATA[$F{name7}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="b724b8f8-8144-413e-93d6-4313d7a5082e">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="14" uuid="b724b8f8-8144-413e-93d6-4313d7a5082e">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -2047,36 +1511,6 @@ ORDER BY
             : $V{closebalance7}.doubleValue()
       )]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="ad6db531-8ee4-460e-a4e6-4ca0701fd916">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance7}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="24e7f47d-f8a4-4068-a688-b654b120ec7a">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr7} == 0.00  ? "-"  : $V{amtacctdr7} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="cacedb4a-046d-4278-8f57-f74dd31d21bb">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr7}== 0.00  ? "-"  : $V{amtacctcr7} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -2091,10 +1525,9 @@ ORDER BY
 					<textFieldExpression><![CDATA["        Total "+$F{codigo7}+" "+$F{name7}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="86aa0982-4b23-43d8-93d4-fc227b40094f">
+					<reportElement x="490" y="0" width="170" height="14" uuid="86aa0982-4b23-43d8-93d4-fc227b40094f">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -2120,51 +1553,20 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="325011c1-bbb5-47ab-9305-f4811ca49022">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+					<reportElement x="0" y="0" width="660" height="1" uuid="325011c1-bbb5-47ab-9305-f4811ca49022">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="63dda951-7d7e-4b94-b34c-f9d19cc4b20a">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance7}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="979afdc0-1842-4afa-b957-ec9ec50fb4ab">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr7} == 0.00  ? "-"  : $V{amtacctdr7} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="684b2613-734a-4162-89cf-bacd15403503">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr7}== 0.00  ? "-"  : $V{amtacctcr7} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<group name="Group_Lev8">
 		<groupExpression><![CDATA[$F{codigo8}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
+			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{codigo8}.isEmpty() == false && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8">
 					<reportElement x="0" y="0" width="100" height="14" uuid="0e0490d6-6167-4a52-8c4d-a0cfd925a357">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2183,10 +1585,8 @@ ORDER BY
 					<textFieldExpression><![CDATA[$F{name8}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="15" uuid="ea79d399-2a05-401d-af89-6bedd54cecae">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="14" uuid="ea79d399-2a05-401d-af89-6bedd54cecae">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -2212,36 +1612,6 @@ ORDER BY
             : $V{closebalance8}.doubleValue()
       )]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="a5e264c6-87b2-438e-91c6-ec5481c49ec0">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance8}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="d0cb926c-6391-476d-b8d2-c517371440b6">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr8} == 0.00  ? "-"  : $V{amtacctdr8} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="9b4addd0-6efe-4693-9265-81905909837d">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr8}== 0.00  ? "-"  : $V{amtacctcr8} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -2256,10 +1626,9 @@ ORDER BY
 					<textFieldExpression><![CDATA["        Total "+$F{codigo8}+" "+$F{name8}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="95a71113-2c4c-47ca-bbe5-62010765e838">
+					<reportElement x="490" y="0" width="170" height="14" uuid="95a71113-2c4c-47ca-bbe5-62010765e838">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
@@ -2285,43 +1654,11 @@ ORDER BY
       )]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="8da1327c-ddff-453d-bb25-1e8c17e962da">
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<reportElement x="0" y="0" width="660" height="1" uuid="8da1327c-ddff-453d-bb25-1e8c17e962da">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="490" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="56177751-8833-4afd-8547-7a839b02a223">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance8}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="3fab88f1-014e-4316-8d77-5f9b77f84f95">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdr8} == 0.00  ? "-"  : $V{amtacctdr8} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="870" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="74e22906-dd15-4464-860c-8acb3300a821">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcr8}== 0.00  ? "-"  : $V{amtacctcr8} )]]></textFieldExpression>
-				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -2329,34 +1666,30 @@ ORDER BY
 		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
 		<groupHeader>
 			<band height="14">
-				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" ) == 0  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "N" ) == 0  && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6) && $P{isShowSummaryElements}.compareToIgnoreCase( "Y" ) == 0 ]]></printWhenExpression>
 				<rectangle>
-					<reportElement mode="Opaque" x="0" y="0" width="1250" height="14" forecolor="#E0E0E0" backcolor="#E0E0E0" uuid="e1b993c9-4d98-4bc0-8568-3cccb016eaa4">
+					<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#E0E0E0" backcolor="#E0E0E0" uuid="e1b993c9-4d98-4bc0-8568-3cccb016eaa4">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
 						<pen lineColor="#E0E0E0"/>
 					</graphicElement>
 				</rectangle>
 				<rectangle>
-					<reportElement mode="Opaque" x="0" y="0" width="1250" height="14" forecolor="#F4F4F4" backcolor="#F4F4F4" uuid="7e099a29-b9b0-4a90-92b4-6109cb9afac1">
+					<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#F4F4F4" backcolor="#F4F4F4" uuid="7e099a29-b9b0-4a90-92b4-6109cb9afac1">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
 					</reportElement>
 					<graphicElement>
 						<pen lineColor="#F4F4F4"/>
 					</graphicElement>
 				</rectangle>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement x="1060" y="0" width="190" height="14" uuid="73a5846f-f9b7-4752-babb-229a290f8245">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<reportElement x="490" y="0" width="170" height="14" uuid="73a5846f-f9b7-4752-babb-229a290f8245">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 					</reportElement>
@@ -2385,7 +1718,6 @@ ORDER BY
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Org">
 					<reportElement x="100" y="0" width="390" height="14" uuid="eff16a1f-c58d-45ad-9f19-c2d68e5a863f">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="4"/>
@@ -2397,7 +1729,6 @@ ORDER BY
 				<textField evaluationTime="Group" evaluationGroup="Group_Org">
 					<reportElement x="0" y="0" width="100" height="14" uuid="3ead55f7-0c8e-471c-a0d9-0fa01933c8fe">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 					</reportElement>
 					<box leftPadding="4"/>
@@ -2405,36 +1736,6 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)">
-					<reportElement isPrintRepeatedValues="false" x="490" y="0" width="190" height="14" uuid="ec1eeb0f-1c8b-4afb-b89e-446cd84f41ff">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalanceOrg}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement isPrintRepeatedValues="false" x="680" y="0" width="190" height="14" uuid="1ec5fad0-318b-4f5c-ba00-a6baf4826a62">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctdrOrg}== 0.00  ? "-"  : $V{amtacctdrOrg} )]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-					<reportElement isPrintRepeatedValues="false" x="870" y="0" width="190" height="14" uuid="d7abbe0b-7ae3-424a-9d07-bcc2e57c1e94">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="DejaVu Sans" size="10" isBold="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[( $V{amtacctcrOrg}== 0.00  ? "-"  : $V{amtacctcrOrg} )]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -2447,7 +1748,7 @@ ORDER BY
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField evaluationTime="Report">
-				<reportElement x="100" y="18" width="960" height="15" uuid="1386bd50-d5fc-4e66-b0b0-83b1726c6689">
+				<reportElement x="100" y="18" width="390" height="15" uuid="1386bd50-d5fc-4e66-b0b0-83b1726c6689">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -2459,7 +1760,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{rep_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement mode="Transparent" x="1060" y="0" width="190" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="bff159ef-a854-4620-afdd-f5f8613ec6c8">
+				<reportElement mode="Transparent" x="490" y="0" width="170" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="bff159ef-a854-4620-afdd-f5f8613ec6c8">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -2472,7 +1773,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[(new java.text.SimpleDateFormat("dd/MM/yyyy ")).format(new Date())]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="100" y="33" width="960" height="20" uuid="4be5a388-ccb2-4a47-8599-710cd5803586">
+				<reportElement x="100" y="33" width="559" height="20" uuid="4be5a388-ccb2-4a47-8599-710cd5803586">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -2485,14 +1786,14 @@ ORDER BY
 + ($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"  -  "+$R{report.orgs}+": "+$V{all_orgs_v}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="100" y="0" width="960" height="18" uuid="e2d7399c-e548-4b89-b901-2cfbd0daec8e">
+				<reportElement x="100" y="0" width="390" height="18" uuid="e2d7399c-e548-4b89-b901-2cfbd0daec8e">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.title}+"   "+$R{report.from}+" "+$V{dateini_v}+"   "+$R{report.to}+" "+$V{dateend_v}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.title}+"   "+$R{report.at}+" "+$V{dateend_v}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
 				<reportElement key="" x="0" y="0" width="100" height="52" uuid="96130f37-8346-4bf1-9917-e947dca826ab">
@@ -2514,7 +1815,7 @@ ORDER BY
 				<imageExpression><![CDATA[$F{rep_logo}]]></imageExpression>
 			</image>
 			<textField evaluationTime="Report">
-				<reportElement x="1060" y="18" width="190" height="15" uuid="833fc71c-fdda-4f5a-a5c0-9aaf8dfe11c4">
+				<reportElement x="490" y="18" width="170" height="15" uuid="833fc71c-fdda-4f5a-a5c0-9aaf8dfe11c4">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -2524,25 +1825,10 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.currency}+": "+$F{moneda}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="1060" y="33" width="190" height="19" uuid="4c8063f0-3c19-4b13-a18f-c35bbfa3ab86">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$P{PositiveBalance}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{report.positivebalance}]]></textFieldExpression>
-			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="17" splitType="Stretch">
+		<band height="18" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="100" height="16" uuid="d848e408-7ad1-4afa-8108-4e2c31cf4f41">
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -2568,12 +1854,11 @@ ORDER BY
 				<textFieldExpression><![CDATA[$R{report.description}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1060" y="0" width="190" height="16" uuid="d3460cc8-2873-42e5-908f-5b84fe7ea430">
+				<reportElement x="490" y="0" width="170" height="16" uuid="d3460cc8-2873-42e5-908f-5b84fe7ea430">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
@@ -2582,11 +1867,9 @@ ORDER BY
 				<textFieldExpression><![CDATA[$R{report.balance}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="16" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="be36c5cb-2cad-4f86-b53e-8efc260af97c">
+				<reportElement x="0" y="17" width="660" height="1" uuid="be36c5cb-2cad-4f86-b53e-8efc260af97c">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
 					<pen lineWidth="2.0"/>
@@ -2599,52 +1882,11 @@ ORDER BY
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.org}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="490" y="0" width="190" height="16" uuid="3e5c5b8d-f78e-4578-a0e6-2ab245d3f15f">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{report.balanceinitial}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="680" y="0" width="190" height="16" uuid="45c95646-8e16-4ec4-9655-9f5ad755e4c5">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{report.deb}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="870" y="0" width="190" height="16" uuid="68e996be-8ab4-4587-9e83-7bb0c718a642">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{report.cre}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -2653,21 +1895,20 @@ ORDER BY
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<printWhenExpression><![CDATA[$P{isShowOrganization}.compareToIgnoreCase( "Y" ) == 0 && $F{codigo}!=null && ($P{AccountTreeLevel} == null || Integer.valueOf($P{AccountTreeLevel}) >= 6)]]></printWhenExpression>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1250" height="14" forecolor="#E0E0E0" backcolor="#E0E0E0" uuid="c249125a-4c61-49ca-9b58-bf0a74d235fe">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+				<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#E0E0E0" backcolor="#E0E0E0" uuid="c249125a-4c61-49ca-9b58-bf0a74d235fe">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
 					<pen lineColor="#E0E0E0"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement mode="Opaque" x="0" y="0" width="1250" height="14" forecolor="#F4F4F4" backcolor="#F4F4F4" uuid="7491e309-5d98-40b5-bc7e-90d37cff0853">
+				<reportElement mode="Opaque" x="0" y="0" width="660" height="14" forecolor="#F4F4F4" backcolor="#F4F4F4" uuid="7491e309-5d98-40b5-bc7e-90d37cff0853">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0 && $F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && ($V{REPORT_COUNT}.intValue() % 2 != 0)]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
 					<pen lineColor="#F4F4F4"/>
@@ -2676,7 +1917,6 @@ ORDER BY
 			<textField>
 				<reportElement x="0" y="0" width="100" height="14" uuid="62a4ad23-62a4-4a28-a988-4e7b7afd21b3">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="4"/>
@@ -2687,7 +1927,6 @@ ORDER BY
 			</textField>
 			<textField>
 				<reportElement x="100" y="0" width="300" height="14" uuid="50f63fa7-638b-4751-9c83-85ab53a2b691">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="4"/>
@@ -2697,10 +1936,8 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-				<reportElement x="1060" y="0" width="190" height="14" uuid="455310d9-43f8-4f71-b193-a8f2a40eb85f">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<reportElement x="490" y="0" width="170" height="14" uuid="455310d9-43f8-4f71-b193-a8f2a40eb85f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
@@ -2729,7 +1966,6 @@ ORDER BY
 			</textField>
 			<textField>
 				<reportElement x="400" y="0" width="90" height="14" uuid="6a84795b-b901-46ce-bfb6-a5c18f827a54">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0 && $F{codigo}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -2737,60 +1973,24 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[$F{org_value}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00;(-#,##0.00)">
-				<reportElement x="490" y="0" width="190" height="14" uuid="a988a2ad-8c36-490d-b885-436f85fbfde3">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{openbalance}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-				<reportElement x="680" y="0" width="190" height="14" uuid="5679e011-71b2-4a6e-ad43-ed159cc115c2">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{amtacctdr} == 0.00  ? "-"  : $F{amtacctdr} )]]></textFieldExpression>
-			</textField>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-				<reportElement x="870" y="0" width="190" height="14" uuid="ee06c5ac-13cb-465c-840f-e77091e751f3">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="false"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $F{amtacctcr}== 0.00  ? "-"  : $F{amtacctcr} )]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="14">
+		<band height="15">
 			<line>
-				<reportElement x="0" y="0" width="1250" height="1" printWhenGroupChanges="Group_Lev0" uuid="dcceae77-c070-4798-b3e9-7d43d0d6d772">
+				<reportElement x="0" y="0" width="660" height="1" uuid="dcceae77-c070-4798-b3e9-7d43d0d6d772">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 			</line>
 			<textField>
-				<reportElement x="1060" y="0" width="90" height="14" uuid="4815681c-b9f7-41ca-963a-230f2c124ea6">
+				<reportElement x="490" y="0" width="85" height="14" uuid="4815681c-b9f7-41ca-963a-230f2c124ea6">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
@@ -2798,11 +1998,10 @@ ORDER BY
 				<textFieldExpression><![CDATA[$R{report.page} +" "+ $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="1150" y="0" width="100" height="14" uuid="0e14748f-d242-4f99-aaca-cb5bb6250d02">
+				<reportElement x="575" y="0" width="85" height="14" uuid="0e14748f-d242-4f99-aaca-cb5bb6250d02">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
@@ -2812,67 +2011,32 @@ ORDER BY
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="19">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		<band height="18">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<printWhenExpression><![CDATA[$F{codigo}!=null]]></printWhenExpression>
 			<textField evaluationTime="Group" evaluationGroup="Group_Lev1">
-				<reportElement x="0" y="1" width="490" height="18" uuid="b74042d3-bb91-4eaf-b4c9-1c151e928b07">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<reportElement x="0" y="0" width="490" height="18" uuid="b74042d3-bb91-4eaf-b4c9-1c151e928b07">
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["        Total "]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-				<reportElement x="1060" y="0" width="190" height="18" uuid="b2a5d5df-4b2a-47b1-af34-8fa77595eaf9">
+				<reportElement x="490" y="0" width="170" height="18" uuid="b2a5d5df-4b2a-47b1-af34-8fa77595eaf9">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<printWhenExpression><![CDATA[$F{issummary}.compareToIgnoreCase( "N" ) == 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($V{closebalance_tot}.doubleValue() == 0.00 ? 0.00 : $V{closebalance_tot}.doubleValue())]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00;(-#,##0.00)">
-				<reportElement x="490" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="0f893877-9096-42f1-9733-046a49d56aeb">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{openbalance_tot}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-				<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="52078134-8c47-49bb-829f-65e38ac40332">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $V{amtacctdr_tot} == 0.00  ? "-"  : $V{amtacctdr_tot} )]]></textFieldExpression>
-			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
-				<reportElement x="870" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="39289741-7df6-4aa4-b808-4a4c49eaf46d">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-					<paragraph lineSpacing="Single"/>
-				</textElement>
-				<textFieldExpression><![CDATA[( $V{amtacctcr_tot}== 0.00  ? "-"  : $V{amtacctcr_tot} )]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
 	<summary>
-		<band height="18" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</band>
+		<band height="16" splitType="Stretch"/>
 	</summary>
 </jasperReport>

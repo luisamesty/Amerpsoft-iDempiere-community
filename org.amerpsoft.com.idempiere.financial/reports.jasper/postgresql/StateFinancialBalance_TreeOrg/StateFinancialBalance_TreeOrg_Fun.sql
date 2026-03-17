@@ -1,10 +1,11 @@
--- StateFInancialBalance_TreeOrg_Fun V2 usando Funciones (isShowOrganization)
+-- StateFInancialBalance_TreeOrg_Fun V3 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
 -- Removed Activity AND others
 -- Parámetro PositiveBalance
 -- isShowOrganization
+-- El Período recibo se convierte a dos fechas (Inicio del Período Anual y Final del Período recibido como parametro)
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
@@ -91,8 +92,30 @@ FULL JOIN (
 		SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
-		    	AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
+			CROSS JOIN (
+			    SELECT
+			        (
+			            SELECT MIN(p2.startdate)
+			            FROM C_Period p2
+			            WHERE p2.C_Year_ID = p.C_Year_ID
+			        ) AS dateini_year,
+			        p.enddate AS dateend_period
+			    FROM C_Period p
+			    WHERE p.C_Period_ID = $P{C_Period_ID}
+			) period_range
+			LEFT JOIN amf_balance_account_org_flex_orgparent(
+			        $P{AD_Client_ID},
+			        $P{AD_OrgParent_ID},
+			        $P{AD_Org_ID},
+			        $P{C_AcctSchema_ID},
+			        NULL,
+			        $P{PostingType},
+			        NULL,
+			        period_range.dateini_year,
+			        period_range.dateend_period
+			) AS bal1
+			ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id
+			AND bal1.ad_org_id = org1.org_ad_org_id
 			WHERE eve1.issummary = 'N' AND eve1.AccountType IN ('A','L','O') AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' AND (
 							COALESCE(bal1.openbalance, 0) <> 0
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
@@ -100,32 +123,80 @@ FULL JOIN (
 							OR COALESCE(bal1.closebalance, 0) <> 0 )))
 		-- Resultado del ejercicio AccountType IN ('R','E','M'))
 		UNION ALL				
-		SELECT * 
-			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve2
-			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org2 ON org2.org_ad_client_id = eve2.ad_client_id
-			LEFT JOIN (
-				SELECT
-				    $P{C_ElementValue_ID} AS bal_c_elementvalue_id,
-				    ceva.value AS account_code,
-				    ceva.name AS account_name,
-				    abcfo.ad_org_id,
-				    abcfo.dateini,
-				    abcfo.dateend,
-				    SUM(abcfo.openbalance) AS openbalance,
-				    SUM(abcfo.amtacctdr) AS amtacctdr,
-				    SUM(abcfo.amtacctcr) AS amtacctcr,
-				    SUM(abcfo.closebalance) AS closebalance,
-				    SUM(abcfo.amtacctdr) - SUM(abcfo.amtacctcr) AS amtacctsa
-				FROM (
-					SELECT * FROM adempiere.amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID} , $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL)
-					WHERE bal_c_elementvalue_id IN ( SELECT c_elementvalue_id FROM C_ElementValue WHERE AD_Client_ID = $P{AD_Client_ID} AND AccountType IN ('R','E','M'))
-				) AS abcfo
-				CROSS JOIN (SELECT c_elementvalue_id, value, name FROM C_ElementValue WHERE AD_Client_ID = $P{AD_Client_ID} AND C_ElementValue_ID = $P{C_ElementValue_ID} ) AS ceva
-				GROUP BY ceva.value,  ceva.name, abcfo.ad_org_id, abcfo.dateini, abcfo.dateend
-			) AS bal2 ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id AND bal2.ad_org_id = org2.org_ad_org_id					
-			WHERE 
-			CASE WHEN ($P{C_ElementValue_ID} IS NOT NULL AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id )  THEN 1=1 ELSE 1=0 END
-			AND eve2.issummary = 'N' 
+		SELECT *
+		FROM amf_element_value_tree_extended(
+		        $P{AD_Client_ID},
+		        $P{C_AcctSchema_ID}
+		) AS eve2
+		
+		LEFT JOIN amf_org_tree(
+		        $P{AD_Client_ID},
+		        $P{AD_Org_ID},
+		        $P{AD_OrgParent_ID}
+		) AS org2
+		ON org2.org_ad_client_id = eve2.ad_client_id
+		-- ✅ calcular fechas UNA vez
+		CROSS JOIN (
+		    SELECT
+		        (
+		            SELECT MIN(p2.startdate)
+		            FROM C_Period p2
+		            WHERE p2.C_Year_ID = p.C_Year_ID
+		        ) AS dateini_year,
+		        p.enddate AS dateend_period
+		    FROM C_Period p
+		    WHERE p.C_Period_ID = $P{C_Period_ID}
+		) pr
+		-- ✅ LATERAL (CLAVE)
+		LEFT JOIN LATERAL (
+		    SELECT
+		        $P{C_ElementValue_ID} AS bal_c_elementvalue_id,
+		        ceva.value AS account_code,
+		        ceva.name AS account_name,
+		        abcfo.ad_org_id,
+		        abcfo.dateini,
+		        abcfo.dateend,
+		        SUM(abcfo.openbalance) AS openbalance,
+		        SUM(abcfo.amtacctdr) AS amtacctdr,
+		        SUM(abcfo.amtacctcr) AS amtacctcr,
+		        SUM(abcfo.closebalance) AS closebalance,
+		        SUM(abcfo.amtacctdr) - SUM(abcfo.amtacctcr) AS amtacctsa
+		    FROM adempiere.amf_balance_account_org_flex_orgparent(
+		            $P{AD_Client_ID},
+		            $P{AD_OrgParent_ID},
+		            $P{AD_Org_ID},
+		            $P{C_AcctSchema_ID},
+		            NULL,
+		            $P{PostingType},
+		            NULL,
+		            pr.dateini_year,
+		            pr.dateend_period
+		    ) abcfo
+		    CROSS JOIN (
+		        SELECT c_elementvalue_id, value, name
+		        FROM C_ElementValue
+		        WHERE AD_Client_ID = $P{AD_Client_ID}
+		          AND C_ElementValue_ID = $P{C_ElementValue_ID}
+		    ) ceva
+		    WHERE abcfo.bal_c_elementvalue_id IN (
+		        SELECT c_elementvalue_id
+		        FROM C_ElementValue
+		        WHERE AD_Client_ID = $P{AD_Client_ID}
+		          AND AccountType IN ('R','E','M')
+		    )
+		    GROUP BY
+		        ceva.value,
+		        ceva.name,
+		        abcfo.ad_org_id,
+		        abcfo.dateini,
+		        abcfo.dateend
+		) bal2
+		ON bal2.bal_c_elementvalue_id = eve2.c_elementvalue_id
+		AND bal2.ad_org_id = org2.org_ad_org_id
+		WHERE
+		    $P{C_ElementValue_ID} IS NOT NULL
+		AND $P{C_ElementValue_ID} = eve2.c_elementvalue_id
+		AND eve2.issummary = 'N'
 	) AS bal
 ) AS balances ON 1=0
 WHERE header_info.imp_header = 1 OR 
