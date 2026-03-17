@@ -1,10 +1,11 @@
--- StateFinancialIntegralResults_TreeOrg_Fun V2 usando Funciones (isShowOrganization)
+-- StateFinancialIntegralResults_TreeOrg_Fun V3 usando Funciones (isShowOrganization)
 -- OrgTree Version4
 -- ORG_AccountElement_Tree_V5.sql
 -- OrgTreeMaster V5 con parámetros AD_OrgParent_ID y AD_Org_ID
 -- AccountType IN ('R','E','M')
 -- Parámetro PositiveBalance
 -- isShowOrganization
+-- El Período recibo se convierte a dos fechas (Inicio del Período Anual y Final del Período recibido como parametro)
 SELECT *
 FROM (
 	-- Encabezado del Reportes Contabilidad
@@ -90,8 +91,29 @@ FULL JOIN (
 		SELECT * 
 			FROM amf_element_value_tree_extended($P{AD_Client_ID}, $P{C_AcctSchema_ID}) AS eve1
 			LEFT JOIN amf_org_tree($P{AD_Client_ID}, $P{AD_Org_ID}, $P{AD_OrgParent_ID}) AS org1 ON org1.org_ad_client_id = eve1.ad_client_id
-			LEFT JOIN amf_balance_account_org_flex_orgparent($P{AD_Client_ID}, $P{AD_OrgParent_ID}, $P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_Period_ID}, $P{PostingType}, NULL, NULL, NULL )
-		    	AS bal1 ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
+			CROSS JOIN (
+			    SELECT
+			        (
+			            SELECT MIN(p2.startdate)
+			            FROM C_Period p2
+			            WHERE p2.C_Year_ID = p.C_Year_ID
+			        ) AS dateini_year,
+			        p.enddate AS dateend_period
+			    FROM C_Period p
+			    WHERE p.C_Period_ID = $P{C_Period_ID}
+			) period_range
+			LEFT JOIN amf_balance_account_org_flex_orgparent(
+			        $P{AD_Client_ID},
+			        $P{AD_OrgParent_ID},
+			        $P{AD_Org_ID},
+			        $P{C_AcctSchema_ID},
+			        NULL,
+			        $P{PostingType},
+			        NULL,
+			        period_range.dateini_year,
+			        period_range.dateend_period
+			) AS bal1 
+		    ON bal1.bal_c_elementvalue_id = eve1.c_elementvalue_id AND bal1.ad_org_id = org1.org_ad_org_id
 			WHERE eve1.issummary = 'N' AND eve1.AccountType IN ('R','E','M') AND ($P{isShowZERO} = 'Y' OR ($P{isShowZERO} = 'N' AND (
 							COALESCE(bal1.openbalance, 0) <> 0
 							OR COALESCE(bal1.amtacctdr, 0) <> 0
