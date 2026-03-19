@@ -197,9 +197,9 @@ FULL JOIN (
 				WHEN $P{SummaryType} = 'D' THEN fac.dateacct
 				ELSE fac.dateacct END AS dateacct_mov,
 			-- description
-			CASE 	WHEN $P{SummaryType} = 'T' THEN ''
-				WHEN $P{SummaryType} = 'N' THEN ''
-				WHEN $P{SummaryType} = 'D' THEN '' 
+			CASE 	WHEN $P{SummaryType} = 'T' THEN TRIM(fac.description)
+				WHEN $P{SummaryType} = 'N' THEN TRIM(fac.description)
+				WHEN $P{SummaryType} = 'D' THEN TRIM(fac.description) 
 				ELSE TRIM(fac.description) END AS description_mov,
 			-- BPartner
 			CASE 	WHEN $P{SummaryType} = 'T' THEN TRIM(fac.bpartner_value)
@@ -274,5 +274,13 @@ ORDER BY
 	balances.codigo0, balances.codigo1, balances.codigo2,
 	balances.codigo3, balances.codigo4, balances.codigo5,
 	balances.codigo6, balances.codigo7, balances.codigo8, balances.codigo9,
-	balances.codigo, balances.org_value, dateacct_order ASC
+	balances.codigo, balances.org_value, dateacct_order ASC,
+    -- Orden dinámico basado en el parámetro
+    CASE 
+        WHEN $P{SummaryType} = 'T' THEN documentno 
+        WHEN $P{SummaryType} = 'N' THEN documentno 
+        WHEN $P{SummaryType} = 'D' THEN documentno
+        WHEN $P{SummaryType} = 'X' THEN NULL
+        ELSE NULL 
+    END ASC;
 
