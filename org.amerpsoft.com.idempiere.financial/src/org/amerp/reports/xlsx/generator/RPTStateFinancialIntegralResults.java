@@ -45,10 +45,10 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
 	// Cabeceras, incluyendo saldos y organización
     private final String[] headers = { 
         "value", "name", "AD_Org_ID", 
-        "C_Period_ID", "Balance" 
+        "AmtAcctDr", "AmtAcctCr", "C_Period_ID", "Balance" 
     };
     //Anchos proporcionales para las  columnas
-    private int[] maxLen = { 15, 25, 10, 16, 16 };
+    private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16 };
     private int orgColNameLen = 16;
     // Organizaciones seleccionadas
     List<OrgTree> orgs  = null;
@@ -344,7 +344,7 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
         Boolean isPositive = isPositiveBalance.compareToIgnoreCase("Y")==0;
         
         // Obtener Datos  (C_ElementValue_ID = null para TrialBalance) 
-        List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceData(
+        List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceDataByDates(
                 AD_Client_ID, C_AcctSchema_ID, AD_Org_ID, AD_OrgParent_ID, 
                 C_Period_ID, PostingType, null, 
                 DateFrom, DateTo, isShowZERO, trxName);
@@ -365,9 +365,17 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
         
         // Bucle de clasificación (antes del bucle de escritura principal)
         BigDecimal totalRevenue = BigDecimal.ZERO; 
+        BigDecimal totalDrRevenue = BigDecimal.ZERO; 
+        BigDecimal totalCrRevenue = BigDecimal.ZERO; 
         BigDecimal totalExpense = BigDecimal.ZERO; 
+        BigDecimal totalDrExpense = BigDecimal.ZERO; 
+        BigDecimal totalCrExpense = BigDecimal.ZERO; 
         BigDecimal totalMemo = BigDecimal.ZERO; 
+        BigDecimal totalDrMemo = BigDecimal.ZERO; 
+        BigDecimal totalCrMemo = BigDecimal.ZERO; 
         BigDecimal totalReport = BigDecimal.ZERO; 
+        BigDecimal totalDrReport = BigDecimal.ZERO; 
+        BigDecimal totalCrReport = BigDecimal.ZERO; 
         BigDecimal totalPerRevenue = BigDecimal.ZERO; 
         BigDecimal totalPerExpense = BigDecimal.ZERO; 
         BigDecimal totalPerMemo = BigDecimal.ZERO; 
@@ -384,6 +392,8 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
                 if ("50".equals(tipoRegistro)) {
                     totalPerRevenue = totalPerRevenue.add(e.getBalancePeriodo());
                     totalRevenue = totalRevenue.add(e.getCloseBalance());
+                    totalDrRevenue = totalDrRevenue.add(e.getAmtAcctDr());
+                    totalCrRevenue = totalCrRevenue.add(e.getAmtAcctCr());
                 }
                 // Acumulación Crosstab (Usando el registro por Organización: "60")
                 if ("60".equals(tipoRegistro)) {
@@ -397,6 +407,8 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
                 if ("50".equals(tipoRegistro)) {
                     totalPerExpense = totalPerExpense.add(e.getBalancePeriodo());
                     totalExpense = totalExpense.add(e.getCloseBalance());
+                    totalDrExpense = totalDrExpense.add(e.getAmtAcctDr());
+                    totalCrExpense = totalCrExpense.add(e.getAmtAcctCr());
                 }
                 // Acumulación Crosstab (Usando el registro por Organización: "60")
                 if ("60".equals(tipoRegistro)) {
@@ -410,6 +422,8 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
                 if ("50".equals(tipoRegistro)) {
                     totalPerMemo = totalPerMemo.add(e.getBalancePeriodo());
                     totalMemo = totalMemo.add(e.getCloseBalance());
+                    totalDrMemo = totalDrMemo.add(e.getAmtAcctDr());
+                    totalCrMemo = totalCrMemo.add(e.getAmtAcctCr());
                 }
                 // Acumulación Crosstab (Usando el registro por Organización: "60")
                 if ("60".equals(tipoRegistro)) {
@@ -442,8 +456,10 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
         // Revenues Total
         Row row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Revenue) +") ==", textBold);
-        ExcelUtils.createStyledCell(row, 3, AccountUtils.applyPositiveBalance(accountType, isPositive, totalPerRevenue), numBold);
-        ExcelUtils.createStyledCell(row, 4, AccountUtils.applyPositiveBalance(accountType, isPositive, totalRevenue), numBold);
+        ExcelUtils.createStyledCell(row, 3, totalDrRevenue, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalCrRevenue, numBold);
+        ExcelUtils.createStyledCell(row, 5, AccountUtils.applyPositiveBalance(accountType, isPositive, totalPerRevenue), numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(accountType, isPositive, totalRevenue), numBold);
         rowNumGen++;
         
         // === Expenses
@@ -456,8 +472,10 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
         // Expenses Total
         row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Expense) +") ==", textBold);
-        ExcelUtils.createStyledCell(row, 3, AccountUtils.applyPositiveBalance(accountType, isPositive,totalPerExpense), numBold);
-        ExcelUtils.createStyledCell(row, 4, AccountUtils.applyPositiveBalance(accountType, isPositive,totalExpense), numBold);
+        ExcelUtils.createStyledCell(row, 3, totalDrExpense, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalCrExpense, numBold);
+        ExcelUtils.createStyledCell(row, 5, AccountUtils.applyPositiveBalance(accountType, isPositive,totalPerExpense), numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(accountType, isPositive,totalExpense), numBold);
         rowNumGen++;
         
         // Memo
@@ -470,17 +488,23 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
             // Memos Total
             row = sheet.createRow(rowNumGen++);
             ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Memo) +") ==", textBold);
-            ExcelUtils.createStyledCell(row, 3, AccountUtils.applyPositiveBalance(accountType, isPositive,totalPerMemo), numBold);
-            ExcelUtils.createStyledCell(row, 4, AccountUtils.applyPositiveBalance(accountType, isPositive,totalMemo), numBold);
+            ExcelUtils.createStyledCell(row, 3, totalDrMemo, numBold);
+            ExcelUtils.createStyledCell(row, 4, totalCrMemo, numBold);
+            ExcelUtils.createStyledCell(row, 5, AccountUtils.applyPositiveBalance(accountType, isPositive,totalPerMemo), numBold);
+            ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(accountType, isPositive,totalMemo), numBold);
         }
         // === Total
         totalReport = AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Revenue, isPositive,totalRevenue).add(AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Expense, isPositive,totalExpense));
         totalPerReport = AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Revenue, isPositive,totalPerRevenue).add(AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Expense, isPositive,totalPerExpense));
+        totalDrReport = totalDrRevenue.add(totalDrExpense).add(totalDrMemo);
+        totalCrReport = totalCrRevenue.add(totalCrExpense).add(totalCrMemo);
         // Report Total
         row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 1, "Total Reporte", textBold);
-        ExcelUtils.createStyledCell(row, 3, totalPerReport, numBold);
-        ExcelUtils.createStyledCell(row, 4, totalReport, numBold);
+        ExcelUtils.createStyledCell(row, 3, totalDrReport, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalCrReport, numBold);
+        ExcelUtils.createStyledCell(row, 5, totalPerReport, numBold);
+        ExcelUtils.createStyledCell(row, 6, totalReport, numBold);
         
         // === ESCRITURA DEL TOTAL REPORTE CROSSTAB ===
         if (isCrosstab) {
@@ -599,8 +623,10 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
 	                // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
 	                ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
 	                ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
-	                // --- Columnas 3-4: Periodo y Balanace (BigDecimals)
+	                // --- Columnas 3-4-5-6: dr-cr-Periodo y Balanace (BigDecimals)
 	                int col = 3;
+                    ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
+                    ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getCloseBalance()), nStyle);
             	}                
@@ -646,8 +672,10 @@ public class RPTStateFinancialIntegralResults extends AbstractXlsxGenerator {
                 ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
                 ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
                 
-                // --- Columnas 3-4: Periodo y Balanace de la Organización
+                // --- Columnas 3-4-5-6: dr-cr-Periodo y Balanace de la Organización
                 int col = 3;
+                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
                 ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
                 ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getCloseBalance()), nStyle);
             } else {

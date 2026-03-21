@@ -29,6 +29,8 @@ public final class FinancialReportConstants {
     public static final String REPORT_TYPE_STATE_FINANCIAL_BALANCE = "BAL";
     // Clave: State Financial Integral Results (GOP)
     public static final String REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS = "GOP";
+    // Clave: State Financial Integral Results (GOP)TWO_DATES
+    public static final String REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS = "G12";
     // Clave: Analitic Financial State (ANB)
     public static final String REPORT_TYPE_ANALITIC_FINANCIAL_STATE = "ANB";
     // Clave: Account Elements (ACE)
