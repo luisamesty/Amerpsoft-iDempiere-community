@@ -100,7 +100,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     private String m_reportType_name = "Trial Balance Report";
     private ProcessInfo m_Pi = null;
     private int maxVisibleRows =5000;
-    /** Default constructor */
+    List<KeyNamePair> m_periodList = new ArrayList<>();
+    Integer m_defaultPeriodID=0;
+    Integer m_yearID = 0;
+    
     public FinancialReports_TreeOrg_Form() {
     	this.m_WindowNo = form.getWindowNo();
         try {
@@ -699,9 +702,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             	    contextDate
             	);
             if (contextYearID != null && contextYearID.intValue() > 0) {
-                fYear.setValue(contextYearID); 
+                fYear.setValue(contextYearID);
+                m_yearID= contextYearID;
             } else {
                 fYear.setValue(defaultYearID); 
+                m_yearID= defaultYearID;
             }
         } catch (Exception e) {
             CLogger.getCLogger(getClass()).log(Level.SEVERE, 
@@ -776,6 +781,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             CLogger.getCLogger(getClass()).log(Level.SEVERE, 
                 "Fallo al forzar el setModel() o la selección para fPeriod. El componente podría no ser un Combobox.", e);
         }
+        m_defaultPeriodID = defaultPeriodID;
   //      fPeriod.addValueChangeListener(this);
         ((org.zkoss.zul.Combobox) fPeriod.getComponent()).setTooltiptext(MsgUtils.getElementFullDescription(COLUMN_NAME_PERIOD));
 
@@ -787,7 +793,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
         if (initialPeriodID != null && initialPeriodID.intValue() > 0) {
             // Si hay un período válido cargado inicialmente, usa SUS fechas.
-            setDatesFromPeriod(initialPeriodID);
+            setDatesFromPeriod(initialPeriodID, m_reportType_value , periodList);
         
         } else {
             // Si no hay período válido, usa la lógica de "Primer y Último Día del Mes".
@@ -1073,7 +1079,8 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		    log.info("C_Year_ID seleccionado: " + yearID);
 		    // Llama al método de servicio que consulta la DB y setea las fechas.
 
-		    setPeriodsFromYear(yearID);
+		    m_yearID = yearID;
+		    setPeriodsFromYear(m_yearID);
 
 	    } else if (event.getPropertyName().equals("C_Period_ID")) {
 		    // ========================================================
@@ -1088,7 +1095,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		    } 
 		    log.info("C_Period_ID seleccionado: " + periodID);
 		    // Llama al método de servicio que consulta la DB y setea las fechas.
-		    setDatesFromPeriod(periodID);
+		    setDatesFromPeriod(periodID, m_reportType_value , m_periodList);
 		    
 	    } else if (event.getPropertyName().equals("Date")) {
 		    // ========================================================
@@ -1377,11 +1384,17 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        fAccount.setVisible(true);
 	    	isPositiveBalance.setVisible(true);
 	    	isPositiveBalance.setChecked(true);
-	    
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(true);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(true);
 	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
 	    	isPositiveBalance.setVisible(true);
 	    	isPositiveBalance.setChecked(true);
-
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(true);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(true);
 	    } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
 
 
@@ -1420,7 +1433,14 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        isShowZERO.setVisible(false);
 	        isShowMovementsAmounts.setVisible(false);
 	    }
-	
+	    // 
+	    setPeriodsFromYear(m_yearID);
+	    // Set period and dates
+	    if (m_defaultPeriodID != null && m_defaultPeriodID.intValue() > 0 && !m_periodList.isEmpty()) {
+            // Si hay un período válido cargado inicialmente, usa SUS fechas.
+            setDatesFromPeriod(m_defaultPeriodID, m_reportType_value , m_periodList);
+        
+        }
 	}
 
 	private void closeReportForm() {
@@ -1908,7 +1928,12 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
     }
 
 
-    private void setPeriodsFromYear(Integer yearID)
+    /**
+     * getPeriodsFromYear
+     * @param yearID
+     * @return
+     */
+    private  List<KeyNamePair> getPeriodsFromYear(Integer yearID)
     {
         CLogger log = CLogger.getCLogger(getClass());
         log.info("setPeriodsFromYear - C_Year_ID=" + yearID);
@@ -1950,40 +1975,69 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         catch (Exception e)
         {
             log.log(Level.SEVERE, "Error cargando períodos para el año " + yearID, e);
-            return;
         }
-        // Actualizar Combobox ZK
-        try
-        {
-            org.zkoss.zul.Combobox combobox =
-                (org.zkoss.zul.Combobox) fPeriod.getComponent();
-            // Crear nuevo modelo
-            org.zkoss.zul.ListModelList<KeyNamePair> model =
-                new org.zkoss.zul.ListModelList<>(periodList);
-            combobox.setModel(model);
-            // Seleccionar primer período automáticamente
-            if (defaultPeriodID != null) {
-                fPeriod.setValue(defaultPeriodID);
-            }
-            // Refresh Dates
-            setDatesFromPeriod(defaultPeriodID);
-        }
-        catch (Exception e)
-        {
-            log.log(Level.SEVERE,
-                "Error actualizando Combobox de períodos", e);
+		return periodList;
+    }
+
+    /**
+     * setPeriodsFromYear
+     * @param yearID
+     */
+    private void setPeriodsFromYear(Integer yearID)
+    {
+        CLogger log = CLogger.getCLogger(getClass());
+        log.info("setPeriodsFromYear - C_Year_ID=" + yearID);
+        // Lista de períodos
+        List<KeyNamePair> periodList = new ArrayList<>();
+        periodList = getPeriodsFromYear(yearID);
+        Integer defaultPeriodID = null;
+        if (!periodList.isEmpty()) {
+        	// setea la variablr global
+        	m_periodList = periodList;
+            // 1. Obtienes el objeto KeyNamePair en la posición 0
+            // 2. Llamas al método que devuelve el Integer (ejemplo: getKey())
+            defaultPeriodID = periodList.get(0).getKey(); 
+	        // Actualizar Combobox ZK
+	        try
+	        {
+	            org.zkoss.zul.Combobox combobox =
+	                (org.zkoss.zul.Combobox) fPeriod.getComponent();
+	            // Crear nuevo modelo
+	            org.zkoss.zul.ListModelList<KeyNamePair> model =
+	                new org.zkoss.zul.ListModelList<>(periodList);
+	            combobox.setModel(model);
+	            // Seleccionar primer período automáticamente
+	            if (defaultPeriodID != null) {
+	                fPeriod.setValue(defaultPeriodID);
+	            }
+	            // Refresh Dates
+	            setDatesFromPeriod(defaultPeriodID, m_reportType_value , periodList);
+	        }
+	        catch (Exception e)
+	        {
+	            log.log(Level.SEVERE,
+	                "Error actualizando Combobox de períodos", e);
+	        }
+        } else {
+            // --- CASO LISTA VACÍA ---
+            log.warning("No se encontraron períodos para el año: " + yearID);
+            
         }
     }
 
     
+
     /**
      * setDatesFromPeriod:
      * Consulta la base de datos para obtener las fechas de inicio y fin
      * de un C_Period_ID dado y las asigna a dateFrom y dateTo.
      * @param periodID El ID del período seleccionado.
+     * @param reportType 
      */
-    private void setDatesFromPeriod(Integer periodID) {
+ 
+    private void setDatesFromPeriod(Integer periodID, String reportType, List<KeyNamePair> periodList) {
     	// Obtener el listener: Se refiere a la instancia de tu clase (ej., FinancialReports_TreeOrg_Form.this)
+
         final ValueChangeListener listener = this;
         // === DESHABILITAR LISTENERS DE FECHA ===
         if (dateFrom != null) {
@@ -1999,16 +2053,53 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	            if (dateTo != null) dateTo.setValue(null);
 	            return;
 	        }
-	        MPeriod period = new MPeriod(Env.getCtx(), periodID.intValue(), null);
-	        Timestamp dbDateFrom = period.getStartDate();
-	        Timestamp dbDateTo = period.getEndDate();
-	        // Asignar los valores a los componentes UI
-	        if (dbDateFrom != null && dateFrom != null) {
-	            dateFrom.setValue(dbDateFrom);
+	        // 1. Obtener datos del periodo seleccionado
+	        MPeriod periodSelected = new MPeriod(Env.getCtx(), periodID.intValue(), null);
+	        Timestamp dbDateFromSel = periodSelected.getStartDate();
+	        Timestamp dbDateToSel = periodSelected.getEndDate();
+	        // 2. Obtener el periodo de inicio fiscal 
+	        Timestamp dbDateFrom1 = null;
+	        Timestamp dbDateTo1 = null;
+	        if (periodList != null && !periodList.isEmpty()) {
+	        	// Obtenemos el último elemento de la lista (size - 1)
+	            KeyNamePair initPeriodKNP = periodList.get(periodList.size() - 1);
+	        	// El periodo inicial es el ultimo periodo porque estan en orden DESC
+	            MPeriod initPeriod = new MPeriod(Env.getCtx(), initPeriodKNP.getKey(), null);
+	            dbDateFrom1 = initPeriod.getStartDate();
+	            dbDateTo1 = initPeriod.getEndDate();
 	        }
-	        if (dbDateTo != null && dateTo != null) {
-	            dateTo.setValue(dbDateTo);
+	        // 3. Asignar los valores por defecto
+	        if (dbDateFromSel != null && dbDateFromSel != null) {
+	            dateFrom.setValue(dbDateFromSel);
+	            dateTo.setValue(dbDateToSel);
 	        }
+	        // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
+	        if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
+	            // Lógica específica para Balance de Comprobación de un período
+
+	        } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
+	            // Lógica específica para Balance de Comprobación entre dos fechas
+	        	dateFrom.setValue(dbDateFrom1);
+		        dateTo.setValue(dbDateToSel);
+	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
+	            // Lógica específica para Balance Financiero
+	        	dateFrom.setValue(dbDateFrom1);
+		        dateTo.setValue(dbDateToSel);
+	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
+	    	// Lógica específica para Estado de resultados integrales
+	        	dateFrom.setValue(dbDateFrom1);
+		        dateTo.setValue(dbDateToSel);
+	        } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
+	    	// Lógica específica para Estado de cuenta analíticos
+
+	        } else if (FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS.equals(reportType)) {
+
+	        }
+
+
+
+
+
         } finally {
         	// Asegura que los listeners se restablezcan incluso si hay una excepción.
             if (dateFrom != null) {

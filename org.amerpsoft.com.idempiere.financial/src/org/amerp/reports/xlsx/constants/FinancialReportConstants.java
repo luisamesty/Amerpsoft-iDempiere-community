@@ -27,8 +27,14 @@ public final class FinancialReportConstants {
     public static final String REPORT_TYPE_TRIAL_BALANCE_TWO_DATES = "TRD";
     // Clave: State Financial Balance (BAL)
     public static final String REPORT_TYPE_STATE_FINANCIAL_BALANCE = "BAL";
+    // Clave: State Financial Balance (BA2) TWO_DATES
+    public static final String REPORT_TYPE_STATE_FINANCIAL_BALANCE_TWO_DATES = "BA2";
     // Clave: State Financial Integral Results (GOP)
     public static final String REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS = "GOP";
+    // Clave: State Financial Integral Results (GOP)TWO_DATES
+    public static final String REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_TWO_DATES = "GO2";
+    // Clave: State Financial Integral Results (GOP)TWO_DATES
+    public static final String REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_PERIODS = "GO3";
     // Clave: Analitic Financial State (ANB)
     public static final String REPORT_TYPE_ANALITIC_FINANCIAL_STATE = "ANB";
     // Clave: Account Elements (ACE)
