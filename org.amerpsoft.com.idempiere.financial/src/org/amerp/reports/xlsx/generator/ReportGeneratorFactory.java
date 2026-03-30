@@ -20,6 +20,9 @@ public class ReportGeneratorFactory {
 		// State Financial Integral Results
 		case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS: 
 				return new RPTStateFinancialIntegralResults();
+		// State Financial Integral Results
+		case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS: 
+				return new RPTStateFinancialIntegralResults12();
 		// Analitic Financial State
 //		case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE: 
 //				return new RPTAnaliticFinancialState();

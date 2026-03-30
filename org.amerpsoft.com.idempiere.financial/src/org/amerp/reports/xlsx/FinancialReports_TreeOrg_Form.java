@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -1094,6 +1093,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		        periodID = (Integer) newValue;
 		    } 
 		    log.info("C_Period_ID seleccionado: " + periodID);
+		    m_defaultPeriodID = periodID;
 		    // Llama al método de servicio que consulta la DB y setea las fechas.
 		    setDatesFromPeriod(periodID, m_reportType_value , m_periodList);
 		    
@@ -1150,6 +1150,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS,
+					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS,
 					FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE
 			);
 			Set<String> fiscalYearValidationTypes = Set.of(
@@ -1336,6 +1337,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    fYear.setVisible(true);
 	    fPeriodLabel.setVisible(true);
 	    fPeriod.setVisible(true);
+	    fPeriod.setReadWrite(true);
 	    fPeriod.setMandatory(true);
 	    dateFromLabel.setVisible(true);
 	    dateFrom.setVisible(true);
@@ -1395,8 +1397,24 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        dateFrom.setReadWrite(true);
 	        dateTo.setMandatory(true);
 	        dateTo.setReadWrite(true);
-	    } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
 
+	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS.equals(reportType)) {
+	    	isPositiveBalance.setVisible(true);
+	    	isPositiveBalance.setChecked(true);
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(false);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(false);
+		    isShowCrosstab.setVisible(false);
+		    isShowCrosstab.setChecked(false);
+		    fPeriod.setReadWrite(false);
+		    setPeriodsFromYear(m_yearID);
+		    
+	    } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(true);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(true);
 
 	    } else if (FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS.equals(reportType)) {
 	        
@@ -1433,8 +1451,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        isShowZERO.setVisible(false);
 	        isShowMovementsAmounts.setVisible(false);
 	    }
-	    // 
-	    setPeriodsFromYear(m_yearID);
+
 	    // Set period and dates
 	    if (m_defaultPeriodID != null && m_defaultPeriodID.intValue() > 0 && !m_periodList.isEmpty()) {
             // Si hay un período válido cargado inicialmente, usa SUS fechas.
@@ -1513,6 +1530,16 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         initPostingTypeCombo(); 
         // Leer el valor persistido para el reporte
         String PostingType = m_postingType_value;
+        // C_Year_ID
+        Integer C_Year_ID = null;
+        Object objC_Year_ID = fYear.getValue();
+        if (objC_Year_ID instanceof KeyNamePair) {
+            // Si el valor es un KeyNamePair (caso más probable), extrae el Key (ID)
+        	C_Year_ID = ((KeyNamePair) objC_Year_ID).getKey();
+        } else if (objC_Year_ID instanceof Integer) {
+            // Si ya es un Integer (caso de un campo DynInt simple o valor ya procesado)
+        	C_Year_ID = (Integer) objC_Year_ID;
+        }
         // C_Period_ID
         Integer C_Period_ID = null;
         Object objC_Period_ID = fPeriod.getValue();
@@ -1556,6 +1583,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         parameters.put("C_AcctSchema_ID", C_AcctSchema_ID);
         parameters.put("C_ElementValue_ID", C_ElementValue_ID);
         parameters.put("PostingType", (String) PostingType);
+        parameters.put("C_Year_ID", C_Year_ID);
         parameters.put("C_Period_ID", C_Period_ID);
         parameters.put("DateFrom", (Timestamp) dateFrom.getValue());
         parameters.put("DateTo", (Timestamp) dateTo.getValue());
@@ -1805,7 +1833,8 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        "TRD", 2, // Trial Balance between two dates
 	        "BAL", 3, // State Financial Balance
 	        "GOP", 4, // State Financial Integral Results
-	        "ANB", 5, // Analitic Financial State
+	        "G12", 5, // State Financial Integral Results
+	        "ANB", 6, // Analitic Financial State
 	        "ACE", 98  // Account Elements catalog
 	    );
 
@@ -1817,21 +1846,6 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    return reportTypes;
 	}
     
-    public static ValueNamePair getReportTypeByValue(String value) {
-        
-    	//final int AD_REFERENCE_ID = FinancialReportConstants.AD_REFERENCE_REPORT_TYPE;
-        
-        ValueNamePair[] reportTypesArray = MRefList.getList(Env.getCtx(), AD_Reference_ID_ReportType, false);
-
-        if (reportTypesArray != null) {
-            for (ValueNamePair vnp : reportTypesArray) {
-                if (vnp.getValue().equals(value)) {
-                    return vnp;
-                }
-            }
-        }
-        return null;
-    }
     
     /**
      * Valida los parámetros requeridos según el tipo de reporte.
@@ -1840,7 +1854,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      * @param parameters     Mapa con los parámetros suministrados
      * @return               null si todo OK, o String con los errores encontrados
      */
-    public String validateReportParameters(String reportTypeKey, Map<String, Object> parameters) {
+    private String validateReportParameters(String reportTypeKey, Map<String, Object> parameters) {
         List<String> missingParams = new ArrayList<>();
 
         // Parámetros comunes a todos los reportes
@@ -1875,14 +1889,26 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
             case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE: // BAL
             	validate(parameters, missingParams, "C_Period_ID");
+                validate(parameters, missingParams, "DateFrom");
+                validate(parameters, missingParams, "DateTo");
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS: // GOP
             	validate(parameters, missingParams, "C_Period_ID");
+                validate(parameters, missingParams, "DateFrom");
+                validate(parameters, missingParams, "DateTo");
                 break;
 
+            case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS: // GOP
+            	validate(parameters, missingParams, "C_Period_ID");
+                validate(parameters, missingParams, "DateFrom");
+                validate(parameters, missingParams, "DateTo");
+                break;
+                
             case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE: // ANB
                 validate(parameters, missingParams, "C_Period_ID");
+                validate(parameters, missingParams, "DateFrom");
+                validate(parameters, missingParams, "DateTo");
                 break;
 
             case FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS: // ACE
@@ -1990,13 +2016,12 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // Lista de períodos
         List<KeyNamePair> periodList = new ArrayList<>();
         periodList = getPeriodsFromYear(yearID);
-        Integer defaultPeriodID = null;
         if (!periodList.isEmpty()) {
         	// setea la variablr global
         	m_periodList = periodList;
             // 1. Obtienes el objeto KeyNamePair en la posición 0
             // 2. Llamas al método que devuelve el Integer (ejemplo: getKey())
-            defaultPeriodID = periodList.get(0).getKey(); 
+        	m_defaultPeriodID = periodList.get(0).getKey(); 
 	        // Actualizar Combobox ZK
 	        try
 	        {
@@ -2007,11 +2032,11 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	                new org.zkoss.zul.ListModelList<>(periodList);
 	            combobox.setModel(model);
 	            // Seleccionar primer período automáticamente
-	            if (defaultPeriodID != null) {
-	                fPeriod.setValue(defaultPeriodID);
+	            if (m_defaultPeriodID != null) {
+	                fPeriod.setValue(m_defaultPeriodID);
 	            }
 	            // Refresh Dates
-	            setDatesFromPeriod(defaultPeriodID, m_reportType_value , periodList);
+	            setDatesFromPeriod(m_defaultPeriodID, m_reportType_value , periodList);
 	        }
 	        catch (Exception e)
 	        {
@@ -2076,17 +2101,22 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
 	        if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
 	            // Lógica específica para Balance de Comprobación de un período
-
+	        	dateFrom.setValue(dbDateFromSel);
+		        dateTo.setValue(dbDateToSel);
 	        } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
 	            // Lógica específica para Balance de Comprobación entre dos fechas
-	        	dateFrom.setValue(dbDateFrom1);
+	        	dateFrom.setValue(dbDateFromSel);
 		        dateTo.setValue(dbDateToSel);
 	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
 	            // Lógica específica para Balance Financiero
-	        	dateFrom.setValue(dbDateFrom1);
+	        	dateFrom.setValue(dbDateFromSel);
 		        dateTo.setValue(dbDateToSel);
 	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
 	    	// Lógica específica para Estado de resultados integrales
+	        	dateFrom.setValue(dbDateFromSel);
+		        dateTo.setValue(dbDateToSel);
+	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS.equals(reportType)) {
+	    	// Lógica específica para Estado de resultados integrales 12 periodos
 	        	dateFrom.setValue(dbDateFrom1);
 		        dateTo.setValue(dbDateToSel);
 	        } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
