@@ -320,7 +320,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         Integer C_AcctSchema_ID = (Integer) parameters.get("C_AcctSchema_ID");
         Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
         Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        Integer C_Period_ID = (Integer) parameters.get("C_Period_ID");
+        Integer periodObj = (Integer) parameters.get("C_Period_ID");
+        Integer C_Period_ID = (periodObj == null) ? 0 : periodObj;
         String PostingType = (String) parameters.get("PostingType");
         Integer C_ElementValue_ID = (Integer) parameters.get("C_ElementValue_ID");
         Timestamp DateFrom = (Timestamp) parameters.get("DateFrom");
@@ -466,8 +467,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Asset) +") ==", textBold);
         ExcelUtils.createStyledCell(row, 4, totalDrAssets, numBold);
         ExcelUtils.createStyledCell(row, 5, totalCrAssets, numBold);
-        ExcelUtils.createStyledCell(row, 6, totalPerAssets, numBold);
-        ExcelUtils.createStyledCell(row, 7, totalAssets, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, totalPerAssets), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, totalAssets), numBold);
         rowNumGen++;
         
         // === Liabilities
@@ -482,8 +483,9 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Liability) +") ==", textBold);
         ExcelUtils.createStyledCell(row, 4, totalDrLiabilities, numBold);
         ExcelUtils.createStyledCell(row, 5, totalCrLiabilities, numBold);
-        ExcelUtils.createStyledCell(row, 6, totalPerLiabilities, numBold);
-        ExcelUtils.createStyledCell(row, 7, totalLiabilities, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, totalPerLiabilities), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, totalLiabilities), numBold);
+
         rowNumGen++;
         
         // === Ownersequity
@@ -496,8 +498,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity) +") ==", textBold);
         ExcelUtils.createStyledCell(row, 4, totalDrOwnersequity, numBold);
         ExcelUtils.createStyledCell(row, 5, totalCrOwnersequity, numBold);
-        ExcelUtils.createStyledCell(row, 6, totalPerOwnersequity, numBold);
-        ExcelUtils.createStyledCell(row, 7, totalOwnersequity, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, totalPerOwnersequity), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, totalOwnersequity), numBold);
 
         // === Total
         rowNumGen++;
@@ -635,7 +637,7 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
 	                ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
 	                // --- Columnas 3-4-5-6-7: openbal-dr-cr- Periodo y Balanace (BigDecimals)
 	                int col = 3;
-	                ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getOpenBalance()), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
@@ -686,7 +688,7 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 
                 // --- Columnas 3-4-5-6-7: openbal-dr-cr- Periodo y Balanace de la Organización
                 int col = 3;
-                ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getOpenBalance()), nStyle);
                 ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
                 ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
                 ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
