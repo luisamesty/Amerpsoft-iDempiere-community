@@ -56,6 +56,7 @@ import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPeriod;
 import org.compiere.model.MRefList;
+import org.compiere.model.Query;
 import org.compiere.model.X_C_ElementValue;
 import org.compiere.model.X_Fact_Acct;
 import org.compiere.process.ProcessInfo;
@@ -95,8 +96,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private static int AD_Reference_ID_ReportType=0;
 	// Variable para guardar valores seleccionado por el usuario.
     private String m_postingType_value = "A"; // valor por defecto
-    private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+    private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE;
     private String m_reportType_name = "Trial Balance Report";
+    private String m_allyearPeriods = "--"+Msg.getMsg(Env.getCtx(), "AllPeriods").trim()+ "--";
     private ProcessInfo m_Pi = null;
     private int maxVisibleRows =5000;
     List<KeyNamePair> m_periodList = new ArrayList<>();
@@ -239,7 +241,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         });
         // Seleccionar valor inicial
         String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
-                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE
                             : m_reportType_value;
         for (ValueNamePair vnp : reportTypes) {
             if (vnp.getValue().equals(valueToSet)) {
@@ -721,6 +723,10 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // fPeriod ya está instanciado en zkInit() con el lookup base.
         // 2. Ejecutar consulta SQL para obtener la lista ordenada (Manualmente)
         List<KeyNamePair> periodList = new ArrayList<>();
+        // AGREGAR OPCIÓN "TODO EL AÑO" AL PRINCIPIO
+        // Usamos -1 para diferenciarlo de IDs reales de la DB
+        periodList.add(new KeyNamePair(-1, m_allyearPeriods));
+        //
         Integer defaultPeriodID = null; // Usaremos esto para el valor por defecto
         // Construir SQL dinámicamente
         StringBuilder sqlPeriods = new StringBuilder(
@@ -792,7 +798,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
         if (initialPeriodID != null && initialPeriodID.intValue() > 0) {
             // Si hay un período válido cargado inicialmente, usa SUS fechas.
-            setDatesFromPeriod(initialPeriodID, m_reportType_value , periodList);
+            setDatesFromPeriod(initialPeriodID, m_reportType_value ,  periodList,m_yearID);
         
         } else {
             // Si no hay período válido, usa la lógica de "Primer y Último Día del Mes".
@@ -1068,19 +1074,30 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		    // ========================================================
 			// === C_Year_ID (Año) para Períodos y Fechas ===
 			// ========================================================
-		    // Obtener el ID del Año seleccionado, manejando KeyNamePair/Integer
-		    Integer yearID = null;
-		    if (newValue instanceof org.compiere.util.KeyNamePair) {
-		        yearID = ((org.compiere.util.KeyNamePair) newValue).getKey();
-		    } else if (newValue instanceof Integer) {
-		        yearID = (Integer) newValue;
-		    } 
-		    log.info("C_Year_ID seleccionado: " + yearID);
-		    // Llama al método de servicio que consulta la DB y setea las fechas.
+	        // 1. Obtener el ID
+	        Integer yearID = null;
+	        if (newValue instanceof org.compiere.util.KeyNamePair) {
+	            yearID = ((org.compiere.util.KeyNamePair) newValue).getKey();
+	        } else if (newValue instanceof Integer) {
+	            yearID = (Integer) newValue;
+	        } 
+	        
+	        log.info("C_Year_ID seleccionado: " + yearID);
 
-		    m_yearID = yearID;
-		    setPeriodsFromYear(m_yearID);
+	        // 2. LIMPIEZA PREVENTIVA: 
+	        // Evita que el componente intente "recordar" el periodo del año anterior
+	        if (fPeriod != null) {
+	            fPeriod.setValue(null); // Limpia el valor interno de iDempiere
+	            if (fPeriod.getComponent() instanceof org.zkoss.zul.Combobox) {
+	                org.zkoss.zul.Combobox cb = (org.zkoss.zul.Combobox) fPeriod.getComponent();
+	                cb.setRawValue(null); // Limpia el texto visual de ZK
+	                cb.setSelectedItem(null);
+	            }
+	        }
 
+	        // 3. Actualizar estado y recargar
+	        this.m_yearID = yearID;
+	        setPeriodsFromYear(this.m_yearID);
 	    } else if (event.getPropertyName().equals("C_Period_ID")) {
 		    // ========================================================
 			// === C_Period_ID (Período) para Fechas ===
@@ -1095,7 +1112,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 		    log.info("C_Period_ID seleccionado: " + periodID);
 		    m_defaultPeriodID = periodID;
 		    // Llama al método de servicio que consulta la DB y setea las fechas.
-		    setDatesFromPeriod(periodID, m_reportType_value , m_periodList);
+		    setDatesFromPeriod(periodID, m_reportType_value , m_periodList, m_yearID);
 		    
 	    } else if (event.getPropertyName().equals("Date")) {
 		    // ========================================================
@@ -1147,7 +1164,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        // B. Validación: Fechas  
 	        // ----------------------------------------------------
 			Set<String> periodValidationTypes = Set.of(
-					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD,
+					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS,
@@ -1363,10 +1380,13 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    isShowMovementsAmounts.setVisible(true);
 	    
 	    // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
-	    if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
+	    if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE.equals(reportType)) {
 	        // Lógica específica para Balance de Comprobación de un período
 	        // Ocultar el campo DateTo o activar DateFrom
-
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(true);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(true);
 	        
 	    } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
 	        // Lógica específica para Balance de Comprobación entre dos fechas
@@ -1455,7 +1475,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    // Set period and dates
 	    if (m_defaultPeriodID != null && m_defaultPeriodID.intValue() > 0 && !m_periodList.isEmpty()) {
             // Si hay un período válido cargado inicialmente, usa SUS fechas.
-            setDatesFromPeriod(m_defaultPeriodID, m_reportType_value , m_periodList);
+            setDatesFromPeriod(m_defaultPeriodID, m_reportType_value , m_periodList, m_yearID);
         
         }
 	}
@@ -1481,7 +1501,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    center.getChildren().clear();
         lblStatus.setText(Msg.getMsg(Env.getCtx(), "FileXLSX"));
         textStatus.setText(fullPath);
-        m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+        m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE;
         initReportTypeCombo();
         initPostingTypeCombo();
         reportTypeChanged(m_reportType_value);
@@ -1715,7 +1735,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         
         // 2. Determinar valor anterior o valor por defecto
         String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
-                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE
                             : m_reportType_value;
         
         try {
@@ -1854,79 +1874,76 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      * @param parameters     Mapa con los parámetros suministrados
      * @return               null si todo OK, o String con los errores encontrados
      */
-    private String validateReportParameters(String reportTypeKey, Map<String, Object> parameters) {
-        List<String> missingParams = new ArrayList<>();
+	private String validateReportParameters(String reportTypeKey, Map<String, Object> parameters) {
+	    List<String> missingParams = new ArrayList<>();
 
-        // Parámetros comunes a todos los reportes
-        validate(parameters, missingParams, "AD_Client_ID");
-        validate(parameters, missingParams, "C_AcctSchema_ID");
+	    // 1. Parámetros básicos (Siempre obligatorios)
+	    validate(parameters, missingParams, "AD_Client_ID");
+	    validate(parameters, missingParams, "C_AcctSchema_ID");
 
-        // Valido campos básicos si el reporte necesita organización
-        if (!reportTypeKey.equals(FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS)) {
-            validate(parameters, missingParams, "AD_Org_ID");
-            validate(parameters, missingParams, "AD_OrgParent_ID");
+	    // 2. Extraer valores para lógica condicional
+	    Object periodObj = parameters.get("C_Period_ID");
+	    Object dateFromObj = parameters.get("DateFrom");
+	    Object dateToObj = parameters.get("DateTo");
 
-            // ✅ Aquí va la regla especial:
-            String orgValidation = validateOrgAndOrgParent(parameters);
-            if (orgValidation != null) {
-                return orgValidation; // Retorna error específico de organización
-            }
-        }
+	    // Consideramos que tiene periodo si es un Integer y no es 0
+	    // (Si es -1 lo tomamos como "tiene valor")
+	    boolean hasPeriod = (periodObj instanceof Integer && (Integer) periodObj != 0);
+	    boolean hasDates = (dateFromObj != null && dateToObj != null);
 
-        // Validación específica según tipo de reporte
-        switch (reportTypeKey) {
-            case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD: // TRB
-                validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "PostingType");
-                break;
+	    // 3. Validación de Organización
+	    if (!reportTypeKey.equals(FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS)) {
+	        validate(parameters, missingParams, "AD_Org_ID");
+	        validate(parameters, missingParams, "AD_OrgParent_ID");
+	        String orgValidation = validateOrgAndOrgParent(parameters);
+	        if (orgValidation != null) return orgValidation;
+	    }
 
-            case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: // TRD
-            	validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "DateFrom");
-                validate(parameters, missingParams, "DateTo");
-                validate(parameters, missingParams, "PostingType");
-                break;
+	    // 4. Lógica por tipo de Reporte
+	    switch (reportTypeKey) {
+	        case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE:
+	            // REGLA: Debe tener Periodo O tener Fechas (Caso "Todo el año")
+	            if (!hasPeriod && !hasDates) {
+	                missingParams.add("C_Period_ID o Rango de Fechas");
+	            }
+	            validate(parameters, missingParams, "PostingType");
+	            break;
 
-            case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE: // BAL
-            	validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "DateFrom");
-                validate(parameters, missingParams, "DateTo");
-                break;
+	        case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES:
+	        case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE:
+	        case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS:
+	        case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS:
+	        case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE:
+	            
+	            // En estos reportes las fechas son el motor principal.
+	            // Si no hay periodo Y no hay fechas, falta algo.
+	            if (!hasPeriod && !hasDates) {
+	                missingParams.add("C_Period_ID");
+	            }
+	            
+	            // Forzar validación de fechas (ya que estos reportes las requieren siempre)
+	            validate(parameters, missingParams, "DateFrom");
+	            validate(parameters, missingParams, "DateTo");
 
-            case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS: // GOP
-            	validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "DateFrom");
-                validate(parameters, missingParams, "DateTo");
-                break;
+	            if (reportTypeKey.equals(FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES)) {
+	                validate(parameters, missingParams, "PostingType");
+	            }
+	            break;
 
-            case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS: // GOP
-            	validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "DateFrom");
-                validate(parameters, missingParams, "DateTo");
-                break;
-                
-            case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE: // ANB
-                validate(parameters, missingParams, "C_Period_ID");
-                validate(parameters, missingParams, "DateFrom");
-                validate(parameters, missingParams, "DateTo");
-                break;
+	        case FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS:
+	            break;
 
-            case FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS: // ACE
+	        default:
+	            return "Tipo de reporte desconocido: " + reportTypeKey;
+	    }
 
-            	break;
+	    if (!missingParams.isEmpty()) {
+	        return "Faltan los siguientes parámetros: " + String.join(", ", missingParams);
+	    }
 
-            default:
-                return "Tipo de reporte desconocido: " + reportTypeKey;
-        }
-
-        // Si faltan parámetros, devolver el mensaje
-        if (!missingParams.isEmpty()) {
-            return "Faltan los siguientes parámetros: " + String.join(", ", missingParams);
-        }
-
-        return null; // Todo OK
-    }
-
+	    return null; 
+	}
+	
     /**
      * Helper: Verifica si un parámetro existe y no es null.
      */
@@ -1935,6 +1952,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
             errors.add(key);
         }
     }
+    
     private String validateOrgAndOrgParent(Map<String, Object> parameters) {
         Integer org = getInt(parameters.get("AD_Org_ID"));
         Integer orgParent = getInt(parameters.get("AD_OrgParent_ID"));
@@ -1965,92 +1983,81 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         log.info("setPeriodsFromYear - C_Year_ID=" + yearID);
         // Lista de períodos
         List<KeyNamePair> periodList = new ArrayList<>();
-        Integer defaultPeriodID = null;
-        // SQL dinámico
+        
+        // --- NUEVO: Opción "Todo el Año" ---
+        // Usamos -1 para identificarlo en los procesos posteriores
+        periodList.add(new KeyNamePair(-1, m_allyearPeriods));
+        
         StringBuilder sqlPeriods = new StringBuilder(
-              "SELECT C_Period_ID, Name "
-            + "FROM C_Period "
-            + "WHERE IsActive='Y' "
-            + "AND AD_Client_ID IN (0, ?) "
-        );
-        if (yearID != null) {
-            sqlPeriods.append("AND C_Year_ID = ? ");
-        }
-        sqlPeriods.append("ORDER BY StartDate DESC");
-        try (PreparedStatement pstmt = DB.prepareStatement(sqlPeriods.toString(), null))
-        {
-            int paramIndex = 1;
-            pstmt.setInt(paramIndex++, Env.getAD_Client_ID(Env.getCtx()));
-            if (yearID != null) {
-                pstmt.setInt(paramIndex++, yearID);
-            }
-            try (ResultSet rs = pstmt.executeQuery())
-            {
-                while (rs.next())
-                {
-                    int periodID = rs.getInt("C_Period_ID");
-                    String name = rs.getString("Name");
-                    periodList.add(new KeyNamePair(periodID, name));
-                    // primer elemento como default
-                    if (defaultPeriodID == null) {
-                        defaultPeriodID = periodID;
-                    }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            log.log(Level.SEVERE, "Error cargando períodos para el año " + yearID, e);
-        }
-		return periodList;
+                "SELECT C_Period_ID, Name "
+              + "FROM C_Period "
+              + "WHERE IsActive='Y' "
+              + "AND AD_Client_ID IN (0, ?) "
+          );
+          if (yearID != null) {
+              sqlPeriods.append("AND C_Year_ID = ? ");
+          }
+          sqlPeriods.append("ORDER BY StartDate DESC");
+
+          try (PreparedStatement pstmt = DB.prepareStatement(sqlPeriods.toString(), null)) {
+              int paramIndex = 1;
+              pstmt.setInt(paramIndex++, Env.getAD_Client_ID(Env.getCtx()));
+              if (yearID != null) {
+                  pstmt.setInt(paramIndex++, yearID);
+              }
+              try (ResultSet rs = pstmt.executeQuery()) {
+                  while (rs.next()) {
+                      periodList.add(new KeyNamePair(rs.getInt("C_Period_ID"), rs.getString("Name")));
+                  }
+              }
+          } catch (Exception e) {
+              log.log(Level.SEVERE, "Error cargando períodos", e);
+          }
+          return periodList;
     }
 
     /**
      * setPeriodsFromYear
      * @param yearID
      */
-    private void setPeriodsFromYear(Integer yearID)
-    {
-        CLogger log = CLogger.getCLogger(getClass());
-        log.info("setPeriodsFromYear - C_Year_ID=" + yearID);
-        // Lista de períodos
-        List<KeyNamePair> periodList = new ArrayList<>();
-        periodList = getPeriodsFromYear(yearID);
-        if (!periodList.isEmpty()) {
-        	// setea la variablr global
-        	m_periodList = periodList;
-            // 1. Obtienes el objeto KeyNamePair en la posición 0
-            // 2. Llamas al método que devuelve el Integer (ejemplo: getKey())
-        	m_defaultPeriodID = periodList.get(0).getKey(); 
-	        // Actualizar Combobox ZK
-	        try
-	        {
-	            org.zkoss.zul.Combobox combobox =
-	                (org.zkoss.zul.Combobox) fPeriod.getComponent();
-	            // Crear nuevo modelo
-	            org.zkoss.zul.ListModelList<KeyNamePair> model =
-	                new org.zkoss.zul.ListModelList<>(periodList);
-	            combobox.setModel(model);
-	            // Seleccionar primer período automáticamente
-	            if (m_defaultPeriodID != null) {
-	                fPeriod.setValue(m_defaultPeriodID);
-	            }
-	            // Refresh Dates
-	            setDatesFromPeriod(m_defaultPeriodID, m_reportType_value , periodList);
-	        }
-	        catch (Exception e)
-	        {
-	            log.log(Level.SEVERE,
-	                "Error actualizando Combobox de períodos", e);
-	        }
-        } else {
-            // --- CASO LISTA VACÍA ---
-            log.warning("No se encontraron períodos para el año: " + yearID);
+    private void setPeriodsFromYear(Integer yearID) {
+        List<KeyNamePair> periodList = getPeriodsFromYear(yearID);
+        
+        if (fPeriod.getComponent() instanceof org.zkoss.zul.Combobox) {
+            org.zkoss.zul.Combobox combobox = (org.zkoss.zul.Combobox) fPeriod.getComponent();
             
+            // 1. Limpieza total
+            combobox.setSelectedIndex(-1);
+            combobox.setValue(null);
+            
+            // 2. Crear y asignar el modelo
+            org.zkoss.zul.ListModelList<KeyNamePair> model = new org.zkoss.zul.ListModelList<>(periodList);
+            combobox.setModel(model);
+            
+            // 3. Trabajar sobre la lista de datos, no sobre el componente visual
+            if (periodList != null && !periodList.isEmpty()) {
+                KeyNamePair allYearKNP = periodList.get(0); // El ID -1
+                
+                // 4. Intentar selección visual (con manejo de error silencioso)
+                try {
+                    model.addToSelection(allYearKNP);
+                    combobox.setSelectedIndex(0);
+                    combobox.setValue(allYearKNP.getName());
+                } catch (Exception e) {
+                    // Si ZK aún no renderiza, al menos forzamos el texto
+                    combobox.setText(allYearKNP.getName());
+                }
+                
+                // 5. ACTUALIZACIÓN DE DATOS (Crucial para las fechas)
+                // Sincronizamos el valor interno de iDempiere
+                fPeriod.setValue(allYearKNP.getKey());
+                
+                // Llamamos SIEMPRE a setDates independientemente de si el combo visual respondió
+                log.info("Actualizando fechas para el año: " + yearID);
+                setDatesFromPeriod(allYearKNP.getKey(), m_reportType_value, periodList, yearID);
+            }
         }
     }
-
-    
 
     /**
      * setDatesFromPeriod:
@@ -2060,84 +2067,50 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
      * @param reportType 
      */
  
-    private void setDatesFromPeriod(Integer periodID, String reportType, List<KeyNamePair> periodList) {
-    	// Obtener el listener: Se refiere a la instancia de tu clase (ej., FinancialReports_TreeOrg_Form.this)
-
+    private void setDatesFromPeriod(Integer periodID, String reportType, List<KeyNamePair> periodList, Integer yearID) {
         final ValueChangeListener listener = this;
-        // === DESHABILITAR LISTENERS DE FECHA ===
-        if (dateFrom != null) {
-            dateFrom.removeValuechangeListener(listener);
-        }
-        if (dateTo != null) {
-            dateTo.removeValuechangeListener(listener);
-        }
+        if (dateFrom != null) dateFrom.removeValuechangeListener(listener);
+        if (dateTo != null) dateTo.removeValuechangeListener(listener);
+
         try {
-	        if (periodID == null || periodID.intValue() <= 0) {
-	            // Limpiar fechas si no hay período válido
-	            if (dateFrom != null) dateFrom.setValue(null);
-	            if (dateTo != null) dateTo.setValue(null);
-	            return;
-	        }
-	        // 1. Obtener datos del periodo seleccionado
-	        MPeriod periodSelected = new MPeriod(Env.getCtx(), periodID.intValue(), null);
-	        Timestamp dbDateFromSel = periodSelected.getStartDate();
-	        Timestamp dbDateToSel = periodSelected.getEndDate();
-	        // 2. Obtener el periodo de inicio fiscal 
-	        Timestamp dbDateFrom1 = null;
-	        Timestamp dbDateTo1 = null;
-	        if (periodList != null && !periodList.isEmpty()) {
-	        	// Obtenemos el último elemento de la lista (size - 1)
-	            KeyNamePair initPeriodKNP = periodList.get(periodList.size() - 1);
-	        	// El periodo inicial es el ultimo periodo porque estan en orden DESC
-	            MPeriod initPeriod = new MPeriod(Env.getCtx(), initPeriodKNP.getKey(), null);
-	            dbDateFrom1 = initPeriod.getStartDate();
-	            dbDateTo1 = initPeriod.getEndDate();
-	        }
-	        // 3. Asignar los valores por defecto
-	        if (dbDateFromSel != null && dbDateFromSel != null) {
-	            dateFrom.setValue(dbDateFromSel);
-	            dateTo.setValue(dbDateToSel);
-	        }
-	        // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
-	        if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
-	            // Lógica específica para Balance de Comprobación de un período
-	        	dateFrom.setValue(dbDateFromSel);
-		        dateTo.setValue(dbDateToSel);
-	        } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
-	            // Lógica específica para Balance de Comprobación entre dos fechas
-	        	dateFrom.setValue(dbDateFromSel);
-		        dateTo.setValue(dbDateToSel);
-	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
-	            // Lógica específica para Balance Financiero
-	        	dateFrom.setValue(dbDateFromSel);
-		        dateTo.setValue(dbDateToSel);
-	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS.equals(reportType)) {
-	    	// Lógica específica para Estado de resultados integrales
-	        	dateFrom.setValue(dbDateFromSel);
-		        dateTo.setValue(dbDateToSel);
-	        } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS.equals(reportType)) {
-	    	// Lógica específica para Estado de resultados integrales 12 periodos
-	        	dateFrom.setValue(dbDateFrom1);
-		        dateTo.setValue(dbDateToSel);
-	        } else if (FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE.equals(reportType)) {
-	    	// Lógica específica para Estado de cuenta analíticos
+            Timestamp dbDateFromSel = null;
+            Timestamp dbDateToSel = null;
 
-	        } else if (FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS.equals(reportType)) {
+            // CASO A: TODO EL AÑO (ID = -1)
+            if (periodID != null && periodID == -1) {
+                if (yearID != null && yearID > 0) {
+                    // Buscamos todos los periodos del año ordenados por fecha
+                    List<MPeriod> periods = new Query(Env.getCtx(), MPeriod.Table_Name, "C_Year_ID=? AND IsActive='Y'", null)
+                                                .setParameters(yearID)
+                                                .setOrderBy("StartDate ASC")
+                                                .list();
+                    
+                    if (periods != null && !periods.isEmpty()) {
+                        dbDateFromSel = periods.get(0).getStartDate();
+                        dbDateToSel = periods.get(periods.size() - 1).getEndDate();
+                    }
+                }
+            } 
+            // CASO B: PERÍODO ESPECÍFICO (ID > 0)
+            else if (periodID != null && periodID > 0) {
+                MPeriod per = new MPeriod(Env.getCtx(), periodID, null);
+                if (per.get_ID() > 0) {
+                    dbDateFromSel = per.getStartDate();
+                    dbDateToSel = per.getEndDate();
+                }
+            }
 
-	        }
+            // Asignación a los componentes de la interfaz
+            if (dbDateFromSel != null && dbDateToSel != null) {
+                dateFrom.setValue(dbDateFromSel);
+                dateTo.setValue(dbDateToSel);
+            }
 
-
-
-
-
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error seteando fechas", e);
         } finally {
-        	// Asegura que los listeners se restablezcan incluso si hay una excepción.
-            if (dateFrom != null) {
-                dateFrom.addValueChangeListener(listener);
-            }
-            if (dateTo != null) {
-                dateTo.addValueChangeListener(listener);
-            }
+            if (dateFrom != null) dateFrom.addValueChangeListener(listener);
+            if (dateTo != null) dateTo.addValueChangeListener(listener);
         }
     }
     
