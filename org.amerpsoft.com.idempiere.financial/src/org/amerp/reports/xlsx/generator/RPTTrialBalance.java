@@ -12,6 +12,7 @@ import org.amerp.reports.DataPopulator;
 import org.amerp.reports.OrgTree;
 import org.amerp.reports.TrialBalanceLine;
 import org.amerp.reports.xlsx.constants.FinancialReportConstants;
+import org.amerp.reports.xlsx.util.AccountUtils;
 import org.amerp.reports.xlsx.util.ExcelUtils;
 import org.amerp.reports.xlsx.util.MsgUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -72,7 +73,10 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
     protected String getReportSubTitle(Map<String, Object> parameters) {
     	String subTitle = "";
         String isShowSummaryElements = (String) parameters.get("isShowSummaryElements");
-        subTitle = MsgUtils.getTranslatedPrintName("isShowSummaryElements",Env.getAD_Language(Env.getCtx()))+
+        String isPositiveBalance = (String) parameters.get("isPositiveBalance");
+        subTitle = MsgUtils.getTranslatedPrintName("PositiveBalance",Env.getAD_Language(Env.getCtx()))+
+        		"("+MsgUtils.getTranslatedYesNo(isPositiveBalance)+")"+
+        		" - "+MsgUtils.getTranslatedPrintName("isShowSummaryElements",Env.getAD_Language(Env.getCtx()))+
         		"("+MsgUtils.getTranslatedYesNo(isShowSummaryElements)+")";
         return subTitle;
     }
@@ -341,6 +345,7 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
         Boolean isCrosstab = isShowCrosstab.compareToIgnoreCase("Y")==0;
         Boolean isOrganization = isShowOrganization.compareToIgnoreCase("Y")==0;
         Boolean isShowSummary = isShowSummaryElements.compareToIgnoreCase("Y")==0;
+        Boolean isPositive = isPositiveBalance.compareToIgnoreCase("Y")==0;
         
         // La columna donde comienza el Crosstab (después de Saldo Final Consolidado)
         final int CROSSTAB_START_COLUMN = headers.length; 
@@ -368,7 +373,8 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
             //
             int level = tbl.getLevel();
             String tipoRegistro = tbl.getTipoRegistro(); 
-       
+            String accountType = tbl.getAccountType();
+            
             // Determinar estilo
             boolean bold = "10".equals(tipoRegistro) || "50".equals(tipoRegistro);
             CellStyle tStyle = bold ? textBold : textNormal;
@@ -401,8 +407,8 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
 	                ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
-	                ExcelUtils.createStyledCell(row, col++, tbl.getBalancePeriodo(), nStyle);
-	                ExcelUtils.createStyledCell(row, col++, tbl.getCloseBalance(), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getCloseBalance()), nStyle);
             	}                
             // ⚠️ Nota: Para las líneas consolidadas, las columnas Crosstab (a partir de la 8) 
             // deben quedar vacías o puedes añadir una lógica de totales.
@@ -421,9 +427,9 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
                             int targetCol = orgColumnMap.get(currentOrgID);
                             // 3. Escribir el saldo en la columna de Crosstab
                             if (isShowMovementsAmounts.compareToIgnoreCase("Y")==0)
-                            	ExcelUtils.createStyledOrgCell(targetRow, targetCol, orgPeriodBalance, nStyle);
+                            	ExcelUtils.createStyledOrgCell(targetRow, targetCol, AccountUtils.applyPositiveBalance(accountType, isPositive, orgPeriodBalance), nStyle);
                             else
-                            	ExcelUtils.createStyledOrgCell(targetRow, targetCol, orgBalance, nStyle);
+                            	ExcelUtils.createStyledOrgCell(targetRow, targetCol, AccountUtils.applyPositiveBalance(accountType, isPositive, orgBalance), nStyle);
                         }
                     }
                     // =============================
@@ -448,8 +454,8 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
                         ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
                         ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
                         ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
-                        ExcelUtils.createStyledCell(row, col++, tbl.getBalancePeriodo(), nStyle);
-                        ExcelUtils.createStyledCell(row, col++, tbl.getCloseBalance(), nStyle);
+                        ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
+                        ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getCloseBalance()), nStyle);
                     }
 
                 } else {

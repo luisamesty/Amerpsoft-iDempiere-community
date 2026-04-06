@@ -467,8 +467,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Asset) +") ==", textBold);
         ExcelUtils.createStyledCell(row, 4, totalDrAssets, numBold);
         ExcelUtils.createStyledCell(row, 5, totalCrAssets, numBold);
-        ExcelUtils.createStyledCell(row, 6, totalPerAssets, numBold);
-        ExcelUtils.createStyledCell(row, 7, totalAssets, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, totalPerAssets), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, totalAssets), numBold);
         rowNumGen++;
         
         // === Liabilities
@@ -483,8 +483,9 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Liability) +") ==", textBold);
         ExcelUtils.createStyledCell(row, 4, totalDrLiabilities, numBold);
         ExcelUtils.createStyledCell(row, 5, totalCrLiabilities, numBold);
-        ExcelUtils.createStyledCell(row, 6, totalPerLiabilities, numBold);
-        ExcelUtils.createStyledCell(row, 7, totalLiabilities, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, totalPerLiabilities), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, totalLiabilities), numBold);
+
         rowNumGen++;
         
         // === Ownersequity
@@ -497,8 +498,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity) +") ==", textBold);
         ExcelUtils.createStyledCell(row, 4, totalDrOwnersequity, numBold);
         ExcelUtils.createStyledCell(row, 5, totalCrOwnersequity, numBold);
-        ExcelUtils.createStyledCell(row, 6, totalPerOwnersequity, numBold);
-        ExcelUtils.createStyledCell(row, 7, totalOwnersequity, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, totalPerOwnersequity), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, totalOwnersequity), numBold);
 
         // === Total
         rowNumGen++;

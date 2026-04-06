@@ -1387,6 +1387,8 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        dateFrom.setReadWrite(true);
 	        dateTo.setMandatory(true);
 	        dateTo.setReadWrite(true);
+	    	isPositiveBalance.setVisible(true);
+	    	isPositiveBalance.setChecked(true);
 	        
 	    } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
 	        // Lógica específica para Balance de Comprobación entre dos fechas
@@ -1398,7 +1400,9 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        dateFrom.setReadWrite(true);
 	        dateTo.setMandatory(true);
 	        dateTo.setReadWrite(true);
-	    
+	    	isPositiveBalance.setVisible(true);
+	    	isPositiveBalance.setChecked(true);
+	    	
 	    } else if (FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE.equals(reportType)) {
 	        // SI se muestra la cuenta
 	        fAccountLabel.setVisible(true);
