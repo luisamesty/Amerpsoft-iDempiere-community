@@ -312,7 +312,8 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
         Integer C_AcctSchema_ID = (Integer) parameters.get("C_AcctSchema_ID");
         Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
         Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        Integer C_Period_ID = (Integer) parameters.get("C_Period_ID");
+        Integer periodObj = (Integer) parameters.get("C_Period_ID");
+        Integer C_Period_ID = (periodObj == null) ? 0 : periodObj;
         String PostingType = (String) parameters.get("PostingType");
         Integer C_ElementValue_ID = (Integer) parameters.get("C_ElementValue_ID");
         Timestamp DateFrom = (Timestamp) parameters.get("DateFrom");
@@ -328,7 +329,7 @@ public class RPTTrialBalance extends AbstractXlsxGenerator {
         String ReportTitle = (String) parameters.get("ReportTitle");
         
         // Obtener Datos  (C_ElementValue_ID = null para TrialBalance) 
-        List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceData(
+        List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceDataByDates(
                 AD_Client_ID, C_AcctSchema_ID, AD_Org_ID, AD_OrgParent_ID, 
                 C_Period_ID, PostingType, null, 
                 DateFrom, DateTo, isShowZERO, trxName);

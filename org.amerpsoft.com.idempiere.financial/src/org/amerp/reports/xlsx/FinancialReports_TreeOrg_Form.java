@@ -96,7 +96,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private static int AD_Reference_ID_ReportType=0;
 	// Variable para guardar valores seleccionado por el usuario.
     private String m_postingType_value = "A"; // valor por defecto
-    private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+    private String m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE;
     private String m_reportType_name = "Trial Balance Report";
     private String m_allyearPeriods = "--"+Msg.getMsg(Env.getCtx(), "AllPeriods").trim()+ "--";
     private ProcessInfo m_Pi = null;
@@ -241,7 +241,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         });
         // Seleccionar valor inicial
         String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
-                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE
                             : m_reportType_value;
         for (ValueNamePair vnp : reportTypes) {
             if (vnp.getValue().equals(valueToSet)) {
@@ -1164,7 +1164,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        // B. Validación: Fechas  
 	        // ----------------------------------------------------
 			Set<String> periodValidationTypes = Set.of(
-					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD,
+					FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_BALANCE,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS,
 					FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS,
@@ -1380,10 +1380,13 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    isShowMovementsAmounts.setVisible(true);
 	    
 	    // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
-	    if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD.equals(reportType)) {
+	    if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE.equals(reportType)) {
 	        // Lógica específica para Balance de Comprobación de un período
 	        // Ocultar el campo DateTo o activar DateFrom
-
+	        dateFrom.setMandatory(true);
+	        dateFrom.setReadWrite(true);
+	        dateTo.setMandatory(true);
+	        dateTo.setReadWrite(true);
 	        
 	    } else if (FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES.equals(reportType)) {
 	        // Lógica específica para Balance de Comprobación entre dos fechas
@@ -1498,7 +1501,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    center.getChildren().clear();
         lblStatus.setText(Msg.getMsg(Env.getCtx(), "FileXLSX"));
         textStatus.setText(fullPath);
-        m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD;
+        m_reportType_value = FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE;
         initReportTypeCombo();
         initPostingTypeCombo();
         reportTypeChanged(m_reportType_value);
@@ -1732,7 +1735,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         
         // 2. Determinar valor anterior o valor por defecto
         String valueToSet = (m_reportType_value == null || m_reportType_value.isEmpty())
-                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD
+                            ? FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE
                             : m_reportType_value;
         
         try {
@@ -1874,17 +1877,21 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	private String validateReportParameters(String reportTypeKey, Map<String, Object> parameters) {
 	    List<String> missingParams = new ArrayList<>();
 
-	    // 1. Parámetros básicos
+	    // 1. Parámetros básicos (Siempre obligatorios)
 	    validate(parameters, missingParams, "AD_Client_ID");
 	    validate(parameters, missingParams, "C_AcctSchema_ID");
 
-	    // 2. Obtener el valor del periodo para lógica condicional
+	    // 2. Extraer valores para lógica condicional
 	    Object periodObj = parameters.get("C_Period_ID");
-	    // Consideramos "vacio" si es null o si no es un Integer
-	    boolean hasPeriod = (periodObj != null && periodObj instanceof Integer);
-	    int periodID = hasPeriod ? (Integer) periodObj : 0;
+	    Object dateFromObj = parameters.get("DateFrom");
+	    Object dateToObj = parameters.get("DateTo");
 
-	    // 3. Validación de Organización (si aplica)
+	    // Consideramos que tiene periodo si es un Integer y no es 0
+	    // (Si es -1 lo tomamos como "tiene valor")
+	    boolean hasPeriod = (periodObj instanceof Integer && (Integer) periodObj != 0);
+	    boolean hasDates = (dateFromObj != null && dateToObj != null);
+
+	    // 3. Validación de Organización
 	    if (!reportTypeKey.equals(FinancialReportConstants.REPORT_TYPE_ACCOUNT_ELEMENTS)) {
 	        validate(parameters, missingParams, "AD_Org_ID");
 	        validate(parameters, missingParams, "AD_OrgParent_ID");
@@ -1894,18 +1901,12 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
 	    // 4. Lógica por tipo de Reporte
 	    switch (reportTypeKey) {
-	        case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD:
-	            // Si no tiene periodo O es un ID inválido (0), reportar error
-	            if (!hasPeriod || periodID == 0) {
-	                missingParams.add("C_Period_ID");
+	        case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE:
+	            // REGLA: Debe tener Periodo O tener Fechas (Caso "Todo el año")
+	            if (!hasPeriod && !hasDates) {
+	                missingParams.add("C_Period_ID o Rango de Fechas");
 	            }
 	            validate(parameters, missingParams, "PostingType");
-	            
-	            // REGLA ORO: Si es "Todo el año", las fechas son obligatorias para el SQL
-	            if (periodID == -1) {
-	                validate(parameters, missingParams, "DateFrom");
-	                validate(parameters, missingParams, "DateTo");
-	            }
 	            break;
 
 	        case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES:
@@ -1914,12 +1915,13 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	        case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS:
 	        case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE:
 	            
-	            // Validar Periodo (acepta -1 como válido)
-	            if (!hasPeriod || periodID == 0) {
+	            // En estos reportes las fechas son el motor principal.
+	            // Si no hay periodo Y no hay fechas, falta algo.
+	            if (!hasPeriod && !hasDates) {
 	                missingParams.add("C_Period_ID");
 	            }
 	            
-	            // En estos reportes las fechas SIEMPRE son necesarias
+	            // Forzar validación de fechas (ya que estos reportes las requieren siempre)
 	            validate(parameters, missingParams, "DateFrom");
 	            validate(parameters, missingParams, "DateTo");
 
@@ -1941,7 +1943,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 
 	    return null; 
 	}
-
+	
     /**
      * Helper: Verifica si un parámetro existe y no es null.
      */
