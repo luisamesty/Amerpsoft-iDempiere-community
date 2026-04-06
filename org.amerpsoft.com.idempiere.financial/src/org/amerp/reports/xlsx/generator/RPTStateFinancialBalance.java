@@ -320,7 +320,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         Integer C_AcctSchema_ID = (Integer) parameters.get("C_AcctSchema_ID");
         Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
         Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        Integer C_Period_ID = (Integer) parameters.get("C_Period_ID");
+        Integer periodObj = (Integer) parameters.get("C_Period_ID");
+        Integer C_Period_ID = (periodObj == null) ? 0 : periodObj;
         String PostingType = (String) parameters.get("PostingType");
         Integer C_ElementValue_ID = (Integer) parameters.get("C_ElementValue_ID");
         Timestamp DateFrom = (Timestamp) parameters.get("DateFrom");

@@ -9,7 +9,7 @@ public class ReportGeneratorFactory {
 
 	switch (reportTypeKey) {
      	// Trial Balance
-		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD: 
+		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE: 
 			return new RPTTrialBalance();
      	// Trial Balance
 		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: 
