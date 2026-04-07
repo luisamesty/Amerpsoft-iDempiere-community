@@ -1376,7 +1376,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
 	    isShowOrganization.setVisible(true);
 	    isShowCrosstab.setVisible(true);
 	    isShowZERO.setVisible(true);
-	    isShowMovementsAmounts.setChecked(false);
+	    isShowMovementsAmounts.setChecked(true);
 	    isShowMovementsAmounts.setVisible(true);
 	    
 	    // === LÓGICA ESPECÍFICA POR TIPO DE REPORTE ===
