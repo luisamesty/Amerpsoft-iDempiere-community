@@ -637,7 +637,7 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
 	                ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
 	                // --- Columnas 3-4-5-6-7: openbal-dr-cr- Periodo y Balanace (BigDecimals)
 	                int col = 3;
-	                ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getOpenBalance()), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
 	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
@@ -688,7 +688,7 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 
                 // --- Columnas 3-4-5-6-7: openbal-dr-cr- Periodo y Balanace de la Organización
                 int col = 3;
-                ExcelUtils.createStyledCell(row, col++, tbl.getOpenBalance(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getOpenBalance()), nStyle);
                 ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
                 ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
                 ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
