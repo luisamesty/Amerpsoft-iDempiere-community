@@ -31,6 +31,9 @@
 	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
+	<parameter name="PositiveBalance" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="PostingType" class="java.lang.String">
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
 	</parameter>
@@ -760,7 +763,12 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance0} == null ? BigDecimal.ZERO :
+(
+    $P{PositiveBalance}.equals("Y") 
+    ? ("LRO".contains($F{accounttype}) ? $V{openbalance0}.negate() : $V{openbalance0})
+    : $V{openbalance0}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="d96d5658-734f-4203-8269-370b61071385">
@@ -790,7 +798,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr0} -$V{amtacctcr0}) == 0.00  ? 0.00  : ($V{amtacctdr0} -$V{amtacctcr0}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr0} - $V{amtacctcr0}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr0} - $V{amtacctcr0}) : ($V{amtacctdr0} - $V{amtacctcr0}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="8dbedae2-8e49-4160-ae8b-7a8591020781">
@@ -800,7 +808,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance0}== 0.00  ? 0.00  : $V{closebalance0} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance0} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance0} : $V{closebalance0})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -824,7 +832,12 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance0} == null ? BigDecimal.ZERO :
+(
+    $P{PositiveBalance}.equals("Y") 
+    ? ("LRO".contains($F{accounttype}) ? $V{openbalance0}.negate() : $V{openbalance0})
+    : $V{openbalance0}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="c07d8dff-7015-48ce-b707-7ca8f37ec170">
@@ -854,7 +867,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr0} -$V{amtacctcr0}) == 0.00  ? 0.00  : ($V{amtacctdr0} -$V{amtacctcr0}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr0} - $V{amtacctcr0}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr0} - $V{amtacctcr0}) : ($V{amtacctdr0} - $V{amtacctcr0}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="0e867bbe-b9cf-476b-b959-f8fcc6c9e3ac">
@@ -864,7 +877,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance0}== 0.00  ? 0.00  : $V{closebalance0} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance0} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance0} : $V{closebalance0})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -905,7 +918,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance1} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance1} : $V{openbalance1})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="2b5dc908-f686-492b-8ac7-c89693eeae34">
@@ -935,7 +948,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr1} -$V{amtacctcr1}) == 0.00  ? 0.00  : ($V{amtacctdr1} -$V{amtacctcr1}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr1} - $V{amtacctcr1}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr1} - $V{amtacctcr1}) : ($V{amtacctdr1} - $V{amtacctcr1}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="d23a92c3-3093-47b3-b530-d16dd5c93fb5">
@@ -945,7 +958,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance1} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance1} : $V{closebalance1})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -977,7 +990,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance1} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance1} : $V{openbalance1})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="6f525809-bb3e-4854-80f6-e606e23cc7d4">
@@ -1007,7 +1020,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr1} -$V{amtacctcr1}) == 0.00  ? 0.00  : ($V{amtacctdr1} -$V{amtacctcr1}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr1} - $V{amtacctcr1}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr1} - $V{amtacctcr1}) : ($V{amtacctdr1} - $V{amtacctcr1}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="18" isRemoveLineWhenBlank="true" uuid="3f2f2018-3f66-4e9c-8e81-23f11ed05fa9">
@@ -1017,7 +1030,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="14" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance1}== 0.00  ? 0.00  : $V{closebalance1} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance1} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance1} : $V{closebalance1})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1072,7 +1085,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance2} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance2} : $V{openbalance2})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="95ea29a0-24fa-4955-ba30-68aaf416d76f">
@@ -1102,7 +1115,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr2} -$V{amtacctcr2}) == 0.00  ? 0.00  : ($V{amtacctdr2} -$V{amtacctcr2}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr2} - $V{amtacctcr2}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr2} - $V{amtacctcr2}) : ($V{amtacctdr2} - $V{amtacctcr2}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="1608cd3f-a165-4e41-92d3-88c3cdd1fdea">
@@ -1112,7 +1125,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance2} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance2} : $V{closebalance2})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1146,7 +1159,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance2} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance2} : $V{openbalance2})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="378786e5-03c7-4bf5-ba1a-75109602f121">
@@ -1176,7 +1189,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr2} -$V{amtacctcr2}) == 0.00  ? 0.00  : ($V{amtacctdr2} -$V{amtacctcr2}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr2} - $V{amtacctcr2}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr2} - $V{amtacctcr2}) : ($V{amtacctdr2} - $V{amtacctcr2}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="585ce407-bcc6-4823-b297-80bc4a133e85">
@@ -1186,7 +1199,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance2}== 0.00  ? 0.00  : $V{closebalance2} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance2} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance2} : $V{closebalance2})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1240,7 +1253,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance3} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance3} : $V{openbalance3})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="83062e86-91a6-421c-ae1f-097846886c4e">
@@ -1270,7 +1283,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr3} -$V{amtacctcr3}) == 0.00  ? 0.00  : ($V{amtacctdr3} -$V{amtacctcr3}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr3} - $V{amtacctcr3}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr3} - $V{amtacctcr3}) : ($V{amtacctdr3} - $V{amtacctcr3}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="635bd299-ac0a-4f77-ba18-0f08c402fffb">
@@ -1280,7 +1293,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance3} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance3} : $V{closebalance3})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1314,7 +1327,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance3} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance3} : $V{openbalance3})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="38dedbd1-2ccf-4df5-bdf1-0811ed8766c4">
@@ -1344,7 +1357,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr3} -$V{amtacctcr3}) == 0.00  ? 0.00  : ($V{amtacctdr3} -$V{amtacctcr3}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr3} - $V{amtacctcr3}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr3} - $V{amtacctcr3}) : ($V{amtacctdr3} - $V{amtacctcr3}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="b42c90d0-673c-4d82-8c27-c04c984723f7">
@@ -1354,7 +1367,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance3}== 0.00  ? 0.00  : $V{closebalance3} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance3} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance3} : $V{closebalance3})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1408,7 +1421,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance4} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance4} : $V{openbalance4})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="47681ff1-c298-449d-b9ba-03eafa8c20e4">
@@ -1438,7 +1451,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr4} -$V{amtacctcr4}) == 0.00  ? 0.00  : ($V{amtacctdr4} -$V{amtacctcr4}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr4} - $V{amtacctcr4}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr4} - $V{amtacctcr4}) : ($V{amtacctdr4} - $V{amtacctcr4}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="53a77557-7288-4680-b244-a0f460bd2f0f">
@@ -1448,7 +1461,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance4} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance4} : $V{closebalance4})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1482,7 +1495,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance4} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance4} : $V{openbalance4})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="c7f60840-3fc2-4c66-b345-54a688e81e0d">
@@ -1512,7 +1525,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr4} -$V{amtacctcr4}) == 0.00  ? 0.00  : ($V{amtacctdr4} -$V{amtacctcr4}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr4} - $V{amtacctcr4}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr4} - $V{amtacctcr4}) : ($V{amtacctdr4} - $V{amtacctcr4}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="100c1c24-bc89-4dbc-929d-9ecfdd7beb87">
@@ -1522,7 +1535,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance4}== 0.00  ? 0.00  : $V{closebalance4} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance4} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance4} : $V{closebalance4})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1575,7 +1588,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance5} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance5} : $V{openbalance5})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="3bc4b18a-71c4-410a-9ace-d9f7b7ac4941">
@@ -1605,7 +1618,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr5} -$V{amtacctcr5}) == 0.00  ? 0.00  : ($V{amtacctdr5} -$V{amtacctcr5}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr5} - $V{amtacctcr5}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr5} - $V{amtacctcr5}) : ($V{amtacctdr5} - $V{amtacctcr5}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="169aa0d9-1850-4814-a8a1-add588c5195f">
@@ -1615,7 +1628,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance5}== 0.00  ? 0.00  : $V{closebalance5} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance5} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance5} : $V{closebalance5})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1648,7 +1661,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance5} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance5} : $V{openbalance5})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="1f2b7a81-3216-4ced-85af-c4bd43af29ce">
@@ -1678,7 +1691,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr5} -$V{amtacctcr5}) == 0.00  ? 0.00  : ($V{amtacctdr5} -$V{amtacctcr5}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr5} - $V{amtacctcr5}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr5} - $V{amtacctcr5}) : ($V{amtacctdr5} - $V{amtacctcr5}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="a291881a-e21e-4e42-864b-3b6ba06b1413">
@@ -1688,7 +1701,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance5}== 0.00  ? 0.00  : $V{closebalance5} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance5} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance5} : $V{closebalance5})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1741,7 +1754,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance6}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance6} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance6} : $V{openbalance6})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="768f6314-cf11-4d11-aee2-c0e2a44ea20e">
@@ -1771,7 +1784,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr6} -$V{amtacctcr6}) == 0.00  ? 0.00  : ($V{amtacctdr6} -$V{amtacctcr6}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr6} - $V{amtacctcr6}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr6} - $V{amtacctcr6}) : ($V{amtacctdr6} - $V{amtacctcr6}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="100d1334-65f5-47fa-b2ad-46665abdf6cf">
@@ -1781,7 +1794,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance6}== 0.00  ? 0.00  : $V{closebalance6} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance6} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance6} : $V{closebalance6})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1814,7 +1827,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance6}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance6} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance6} : $V{openbalance6})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="7d7dc7b6-23bc-480b-9fa1-ae889c719291">
@@ -1844,7 +1857,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr6} -$V{amtacctcr6}) == 0.00  ? 0.00  : ($V{amtacctdr6} -$V{amtacctcr6}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr6} - $V{amtacctcr6}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr6} - $V{amtacctcr6}) : ($V{amtacctdr6} - $V{amtacctcr6}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="74caef68-52f2-4a45-8cb1-935a30d192c6">
@@ -1854,7 +1867,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance6}== 0.00  ? 0.00  : $V{closebalance6} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance6} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance6} : $V{closebalance6})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1907,7 +1920,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance7}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance7} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance7} : $V{openbalance7})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="0b9939bc-4c21-4b18-94f2-55cd11ff46b9">
@@ -1937,7 +1950,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr7} -$V{amtacctcr7}) == 0.00  ? 0.00  : ($V{amtacctdr7} -$V{amtacctcr7}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr7} - $V{amtacctcr7}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr7} - $V{amtacctcr7}) : ($V{amtacctdr7} - $V{amtacctcr7}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="555ff743-074f-4c9b-b3d5-9c719ad19499">
@@ -1947,7 +1960,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance7}== 0.00  ? 0.00  : $V{closebalance7} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance7} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance7} : $V{closebalance7})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1980,7 +1993,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance7}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance7} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance7} : $V{openbalance7})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="70f69d6a-21be-43bb-9f10-0a88afcf037d">
@@ -2010,7 +2023,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr7} -$V{amtacctcr7}) == 0.00  ? 0.00  : ($V{amtacctdr7} -$V{amtacctcr7}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr7} - $V{amtacctcr7}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr7} - $V{amtacctcr7}) : ($V{amtacctdr7} - $V{amtacctcr7}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="f991a30f-4768-4ec8-9b84-2aa597895662">
@@ -2020,7 +2033,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance7}== 0.00  ? 0.00  : $V{closebalance7} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance7} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance7} : $V{closebalance7})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -2073,7 +2086,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance8}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance8} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance8} : $V{openbalance8})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="d84e0abe-a2e7-4360-ba4e-cfbc86ea0019">
@@ -2103,7 +2116,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr8} -$V{amtacctcr8}) == 0.00  ? 0.00  : ($V{amtacctdr8} -$V{amtacctcr8}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr8} - $V{amtacctcr8}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr8} - $V{amtacctcr8}) : ($V{amtacctdr8} - $V{amtacctcr8}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="08ef01d3-91b8-4181-a1c1-d3bca0c64a19">
@@ -2113,7 +2126,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance8}== 0.00  ? 0.00  : $V{closebalance8} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance8} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance8} : $V{closebalance8})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -2146,7 +2159,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance8}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance8} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance8} : $V{openbalance8})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="620" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="2c4616d6-c159-47c6-9c01-77881bec83b5">
@@ -2176,7 +2189,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdr8} -$V{amtacctcr8}) == 0.00  ? 0.00  : ($V{amtacctdr8} -$V{amtacctcr8}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdr8} - $V{amtacctcr8}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdr8} - $V{amtacctcr8}) : ($V{amtacctdr8} - $V{amtacctcr8}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="1100" y="0" width="160" height="14" isRemoveLineWhenBlank="true" uuid="755caaa1-6306-4233-8a23-7a55b5cdab17">
@@ -2186,7 +2199,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalance8}== 0.00  ? 0.00  : $V{closebalance8} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalance8} == null ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{closebalance8} : $V{closebalance8})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -2241,7 +2254,12 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalanceOrg}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalanceOrg} == null ? BigDecimal.ZERO : 
+(
+    $P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) 
+    ? -$V{openbalanceOrg} 
+    : $V{openbalanceOrg}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement isPrintRepeatedValues="false" x="620" y="0" width="160" height="14" uuid="cc4a366d-135f-4d2a-b77e-e45e71f2c1bc">
@@ -2271,7 +2289,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( ($V{amtacctdrOrg}-$V{amtacctcrOrg}) == 0.00  ? 0.00  : ($V{amtacctdrOrg} -$V{amtacctcrOrg}) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{amtacctdrOrg} - $V{amtacctcrOrg}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($V{amtacctdrOrg} - $V{amtacctcrOrg}) : ($V{amtacctdrOrg} - $V{amtacctcrOrg}))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement isPrintRepeatedValues="false" x="1100" y="0" width="160" height="14" uuid="dcd69a10-69a7-4327-8839-c9a46e6fef47">
@@ -2281,7 +2299,12 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[( $V{closebalanceOrg}== 0.00  ? 0.00  : $V{closebalanceOrg} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{closebalanceOrg} == null ? BigDecimal.ZERO : 
+(
+    $P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) 
+    ? -$V{closebalanceOrg} 
+    : $V{closebalanceOrg}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Org">
 					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="100" y="0" width="360" height="14" uuid="0ae7fbf8-1de3-4222-b517-f8f8f5812f96">
@@ -2394,11 +2417,12 @@ ORDER BY
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"       "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{PositiveBalance}.equals("Y") ? $R{report.positivebalance} +" - " : "")
++ ($P{PostingType}.equals( null ) ? "" : $R{report.postingtype}+": "+$F{postingtype_value}.trim()+"-"+$F{postingtype_name}.trim())+"       "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -2575,7 +2599,12 @@ ORDER BY
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{openbalance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{openbalance} == null ? BigDecimal.ZERO : 
+(
+    $P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) 
+    ? -$F{openbalance} 
+    : $F{openbalance}
+)]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="620" y="0" width="160" height="14" uuid="c40f7c5e-67ba-4a18-baa5-84ff69c76422">
@@ -2608,7 +2637,7 @@ ORDER BY
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[( ($F{amtacctdr} -$F{amtacctcr}) == 0.00  ? 0.00  : ($F{amtacctdr} -$F{amtacctcr}) )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{amtacctdr} - $F{amtacctcr}) == 0 ? 0 : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -($F{amtacctdr} - $F{amtacctcr}) : ($F{amtacctdr} - $F{amtacctcr}))]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="1100" y="0" width="160" height="14" uuid="e0fc8ff2-2812-465b-845f-765fe860a2ca">
@@ -2619,7 +2648,12 @@ ORDER BY
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[( $F{closebalance}== 0.00  ? 0.00  : $F{closebalance} )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{closebalance} == null ? BigDecimal.ZERO : 
+(
+    $P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) 
+    ? -$F{closebalance} 
+    : $F{closebalance}
+)]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="100" height="14" uuid="592e20d1-64d7-4100-8bc7-26a971eac72b">

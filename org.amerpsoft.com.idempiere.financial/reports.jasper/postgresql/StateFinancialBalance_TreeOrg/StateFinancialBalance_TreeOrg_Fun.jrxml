@@ -903,7 +903,12 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance0} == null ? BigDecimal.ZERO :
+(
+    $P{PositiveBalance}.equals("Y") 
+    ? ("LRO".contains($F{accounttype}) ? $V{openbalance0}.negate() : $V{openbalance0})
+    : $V{openbalance0}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="6befbbf7-7268-4924-a061-4cb3af1d4ca3">
@@ -965,7 +970,12 @@ ORDER BY
 						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance0}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance0} == null ? BigDecimal.ZERO :
+(
+    $P{PositiveBalance}.equals("Y") 
+    ? ("LRO".contains($F{accounttype}) ? $V{openbalance0}.negate() : $V{openbalance0})
+    : $V{openbalance0}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev0" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="54fb65be-f989-46c1-8f6f-08549d10c8c5">
@@ -1053,7 +1063,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance1} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance1} : $V{openbalance1})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="855df803-ed4c-4bb9-a922-6ffcfc22f07f">
@@ -1132,7 +1142,7 @@ ORDER BY
 						<font fontName="DejaVu Sans&#xA;" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance1} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance1} : $V{openbalance1})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev1" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="18" isRemoveLineWhenBlank="true" uuid="d90c7bbe-37d9-46a7-8d43-52fd727e1206">
@@ -1219,7 +1229,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="11" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance2} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance2} : $V{openbalance2})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="c5d88e20-7837-4d8d-a113-f6e2cfb8e12e">
@@ -1298,7 +1308,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="12" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance2}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance2} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance2} : $V{openbalance2})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev2" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="756df039-5450-4967-bc4c-182af82b4e0b">
@@ -1404,7 +1414,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance3} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance3} : $V{openbalance3})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1463,7 +1473,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance3}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance3} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance3} : $V{openbalance3})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev3" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="0ece4d08-2ba3-4edb-8308-a91a8ff3ecde">
@@ -1552,7 +1562,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance4} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance4} : $V{openbalance4})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="ee2f47da-f0aa-485a-b5a5-3254ecec840d">
@@ -1633,7 +1643,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance4}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance4} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance4} : $V{openbalance4})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev4" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="55d1cb9b-e5e6-4ac9-816c-e178ded4b2a1">
@@ -1723,7 +1733,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance5} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance5} : $V{openbalance5})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="15" isRemoveLineWhenBlank="true" uuid="66f1be67-2722-4a9f-8469-ab8aba25ffbe">
@@ -1804,7 +1814,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance5}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance5} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance5} : $V{openbalance5})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev5" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="9b4a2571-7ae6-46be-bee7-9f074501bb53">
@@ -1890,7 +1900,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance6}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance6} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance6} : $V{openbalance6})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="3e9a66c8-0ff4-4ec8-84f6-2db5a46224e4">
@@ -1969,7 +1979,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance6}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance6} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance6} : $V{openbalance6})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev6" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="31b7b34a-8924-4aa9-b1fc-0f48f5e94096">
@@ -2055,7 +2065,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance7}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance7} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance7} : $V{openbalance7})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="24e7f47d-f8a4-4068-a688-b654b120ec7a">
@@ -2134,7 +2144,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance7}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance7} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance7} : $V{openbalance7})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev7" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="979afdc0-1842-4afa-b957-ec9ec50fb4ab">
@@ -2220,7 +2230,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance8}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance8} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance8} : $V{openbalance8})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="1" width="190" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="Group_Lev0" uuid="d0cb926c-6391-476d-b8d2-c517371440b6">
@@ -2300,7 +2310,7 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="true"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalance8}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalance8} == null ? BigDecimal.ZERO : ($P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) ? -$V{openbalance8} : $V{openbalance8})]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Lev8" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement x="680" y="0" width="190" height="14" isRemoveLineWhenBlank="true" uuid="3fab88f1-014e-4316-8d77-5f9b77f84f95">
@@ -2414,7 +2424,12 @@ ORDER BY
 						<font fontName="DejaVu Sans" size="10" isBold="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{openbalanceOrg}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{openbalanceOrg} == null ? BigDecimal.ZERO : 
+(
+    $P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) 
+    ? -$V{openbalanceOrg} 
+    : $V{openbalanceOrg}
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_Org" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 					<reportElement isPrintRepeatedValues="false" x="680" y="0" width="190" height="14" uuid="1ec5fad0-318b-4f5c-ba00-a6baf4826a62">
@@ -2746,7 +2761,12 @@ ORDER BY
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{openbalance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{openbalance} == null ? BigDecimal.ZERO : 
+(
+    $P{PositiveBalance} == "Y" && "LRO".contains($F{accounttype}.trim()) 
+    ? -$F{openbalance} 
+    : $F{openbalance}
+)]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="false">
 				<reportElement x="680" y="0" width="190" height="14" uuid="5679e011-71b2-4a6e-ad43-ed159cc115c2">
