@@ -9,7 +9,7 @@ public class ReportGeneratorFactory {
 
 	switch (reportTypeKey) {
      	// Trial Balance
-		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_ONE_PERIOD: 
+		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE: 
 			return new RPTTrialBalance();
      	// Trial Balance
 		case FinancialReportConstants.REPORT_TYPE_TRIAL_BALANCE_TWO_DATES: 
@@ -20,6 +20,9 @@ public class ReportGeneratorFactory {
 		// State Financial Integral Results
 		case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS: 
 				return new RPTStateFinancialIntegralResults();
+		// State Financial Integral Results
+		case FinancialReportConstants.REPORT_TYPE_STATE_FINANCIAL_INTEGRAL_RESULTS_12PERIODS: 
+				return new RPTStateFinancialIntegralResults12();
 		// Analitic Financial State
 //		case FinancialReportConstants.REPORT_TYPE_ANALITIC_FINANCIAL_STATE: 
 //				return new RPTAnaliticFinancialState();

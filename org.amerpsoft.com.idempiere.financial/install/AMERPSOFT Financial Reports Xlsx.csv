@@ -2,6 +2,7 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Financial Reports Xlsx,1000,MSG,,,,,,,,,ALL,,,,,,,,,,,,AccountSummaryNotAllowed,,,,,,,
 *,AMERPSOFT Financial Reports Xlsx,1010,MSG,,,,,,,,,ALL,,,,,,,,,,,,download.file,,,,,,,
 *,AMERPSOFT Financial Reports Xlsx,1020,MSG,,,,,,,,,ALL,,,,,,,,,,,,PositiveBalance,,,,,,,
+*,AMERPSOFT Financial Reports Xlsx,1030,MSG,,,,,,,,,ALL,,,,,,,,,,,,AllPeriods,,,,,,,
 *,AMERPSOFT Financial Reports Xlsx,2010,D,,,,,,,,System Element,ALL,"SELECT 	* FROM 	AD_Element WHERE 	AD_Element_ID IN 
 (203357, 1001096, 1001095, 1001094)",,,,,,,,,,,,,,AD_Element updated,,,,
 *,AMERPSOFT Financial Reports Xlsx,6000,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,FinancialReportType,,,
