@@ -52,6 +52,19 @@ Pasos a seguir:
 ```
 Usando la consola SQL, ejecute estos scripts. Para Oracle, use SQLDeveloper; para PostgreSQL, use DBeaver.
 
+También Instale `AMF Extended Functions`
+
+Funciones para los reportes financieros. Reducen el codigo de Scrpts SQL.
+
+```text
+* amf_org_tree. Query to create function in order to return Organizations.
+* amf_element_value_tree_basic. Query to build function that retrieves Element value tree in basic mode.
+* amf_element_value_tree_extended. Query to build function that retrieves Element value tree in extended mode with parent 
+* amf_balance_account_org. Query for returning  the balance for a given period of an account and an Organization.
+* amf_balance_account_org_flex. Query to build function that retrieves balance for a given Period or Date Range for an account and an organization.
+* amf_balance_account_org_flex_orgparent. Query to build function that retrieves balance for a given Period or Date Range for an account and an organization parent or organization (flex).
+```
+
 <p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 
 ## <a name="step2"></a>⭐️2. Configuración inicial del cliente
