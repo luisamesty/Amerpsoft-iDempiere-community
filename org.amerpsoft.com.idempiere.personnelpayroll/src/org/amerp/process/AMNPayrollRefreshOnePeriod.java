@@ -20,6 +20,8 @@ import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnutilities.AmerpPayrollCalc;
+import org.amerp.amnutilities.AmerpPayrollCalcArray;
+import org.amerp.amnutilities.PayrollScriptEngine;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.*;
@@ -77,7 +79,8 @@ public class AMNPayrollRefreshOnePeriod extends SvrProcess{
 	 */
     @Override
     protected String doIt() throws Exception {
-	    // TODO Auto-generated method stub
+	    // 
+		AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
 	    String sql="";
 	    String AMN_Process_Value="NN";
 	    String Payroll_Name="";
@@ -122,7 +125,7 @@ public class AMNPayrollRefreshOnePeriod extends SvrProcess{
 				//log.warning("MessagetoShow:"+MessagetoShow);
 				if (!amnpayroll.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed))
 				{	
-			    	AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), AMN_Payroll_ID);
+			    	amerpPayrollCalcArray.PayrollEvaluationArrayCalculate(getCtx(), AMN_Payroll_ID);
 				} else {
 					Msg_Value=Msg_Value+" ** ALREADY PROCESSED - CAN'T BE RECALCULATED ** "+
 							Msg.getElement(Env.getCtx(),"AMN_Payroll_ID")+":"+Payroll_Name+" \r\n";

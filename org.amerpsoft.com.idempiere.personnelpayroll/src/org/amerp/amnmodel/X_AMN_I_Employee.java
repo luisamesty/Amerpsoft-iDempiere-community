@@ -35,7 +35,7 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250313L;
+	private static final long serialVersionUID = 20251120L;
 
     /** Standard Constructor */
     public X_AMN_I_Employee (Properties ctx, int AMN_I_Employee_ID, String trxName)
@@ -43,10 +43,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
       super (ctx, AMN_I_Employee_ID, trxName);
       /** if (AMN_I_Employee_ID == 0)
         {
-			setAccountNo_B (null);
-			setAccountNo_N (null);
-			setAddress1 (null);
-			setAddress2 (null);
 			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
@@ -57,20 +53,32 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Position_ID (0);
 			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
+			setAccountNo_B (null);
+			setAccountNo_N (null);
+			setAddress1 (null);
+			setAddress2 (null);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
 			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
-			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
 			setIDNumber (null);
 			setI_IsImported (false);
 // N
-			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setIsDetailedNames (false);
 // N
+			setName (null);
+			setProcessed (false);
+// N
+			setSalary (Env.ZERO);
+			setStatus (null);
+			setUseLenses (false);
+// N
+			setValue (null);
+			setcivilstatus (null);
+			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setisMedicated (false);
 // N
 			setisPensioned (false);
@@ -78,18 +86,10 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setisStudying (false);
 // N
 			setjobcondition (null);
-			setName (null);
 			setpayrollmode (null);
 			setprivateassist (null);
-			setProcessed (false);
-// N
-			setSalary (Env.ZERO);
 			setsex (null);
 			setspouse (null);
-			setStatus (null);
-			setUseLenses (false);
-// N
-			setValue (null);
         } */
     }
 
@@ -99,10 +99,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
       super (ctx, AMN_I_Employee_ID, trxName, virtualColumns);
       /** if (AMN_I_Employee_ID == 0)
         {
-			setAccountNo_B (null);
-			setAccountNo_N (null);
-			setAddress1 (null);
-			setAddress2 (null);
 			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
@@ -113,20 +109,32 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Position_ID (0);
 			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
+			setAccountNo_B (null);
+			setAccountNo_N (null);
+			setAddress1 (null);
+			setAddress2 (null);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
 			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
-			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
 			setIDNumber (null);
 			setI_IsImported (false);
 // N
-			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setIsDetailedNames (false);
 // N
+			setName (null);
+			setProcessed (false);
+// N
+			setSalary (Env.ZERO);
+			setStatus (null);
+			setUseLenses (false);
+// N
+			setValue (null);
+			setcivilstatus (null);
+			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setisMedicated (false);
 // N
 			setisPensioned (false);
@@ -134,18 +142,10 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setisStudying (false);
 // N
 			setjobcondition (null);
-			setName (null);
 			setpayrollmode (null);
 			setprivateassist (null);
-			setProcessed (false);
-// N
-			setSalary (Env.ZERO);
 			setsex (null);
 			setspouse (null);
-			setStatus (null);
-			setUseLenses (false);
-// N
-			setValue (null);
         } */
     }
 
@@ -155,10 +155,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
       super (ctx, AMN_I_Employee_UU, trxName);
       /** if (AMN_I_Employee_UU == null)
         {
-			setAccountNo_B (null);
-			setAccountNo_N (null);
-			setAddress1 (null);
-			setAddress2 (null);
 			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
@@ -169,20 +165,32 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Position_ID (0);
 			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
+			setAccountNo_B (null);
+			setAccountNo_N (null);
+			setAddress1 (null);
+			setAddress2 (null);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
 			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
-			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
 			setIDNumber (null);
 			setI_IsImported (false);
 // N
-			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setIsDetailedNames (false);
 // N
+			setName (null);
+			setProcessed (false);
+// N
+			setSalary (Env.ZERO);
+			setStatus (null);
+			setUseLenses (false);
+// N
+			setValue (null);
+			setcivilstatus (null);
+			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setisMedicated (false);
 // N
 			setisPensioned (false);
@@ -190,18 +198,10 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setisStudying (false);
 // N
 			setjobcondition (null);
-			setName (null);
 			setpayrollmode (null);
 			setprivateassist (null);
-			setProcessed (false);
-// N
-			setSalary (Env.ZERO);
 			setsex (null);
 			setspouse (null);
-			setStatus (null);
-			setUseLenses (false);
-// N
-			setValue (null);
         } */
     }
 
@@ -211,10 +211,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
       super (ctx, AMN_I_Employee_UU, trxName, virtualColumns);
       /** if (AMN_I_Employee_UU == null)
         {
-			setAccountNo_B (null);
-			setAccountNo_N (null);
-			setAddress1 (null);
-			setAddress2 (null);
 			setAD_OrgTo_ID (0);
 			setAMN_Contract_ID (0);
 			setAMN_Department_ID (0);
@@ -225,20 +221,32 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setAMN_Position_ID (0);
 			setAMN_Sector_ID (0);
 			setAMN_Shift_ID (0);
+			setAccountNo_B (null);
+			setAccountNo_N (null);
+			setAddress1 (null);
+			setAddress2 (null);
 			setBioCode (null);
 // 0
 			setBirthday (new Timestamp( System.currentTimeMillis() ));
 			setC_Activity_ID (0);
 			setC_City_ID (0);
 			setC_Country_ID (0);
-			setcivilstatus (null);
 			setCountryofNacionality_ID (0);
 			setIDNumber (null);
 			setI_IsImported (false);
 // N
-			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setIsDetailedNames (false);
 // N
+			setName (null);
+			setProcessed (false);
+// N
+			setSalary (Env.ZERO);
+			setStatus (null);
+			setUseLenses (false);
+// N
+			setValue (null);
+			setcivilstatus (null);
+			setincomedate (new Timestamp( System.currentTimeMillis() ));
 			setisMedicated (false);
 // N
 			setisPensioned (false);
@@ -246,18 +254,10 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			setisStudying (false);
 // N
 			setjobcondition (null);
-			setName (null);
 			setpayrollmode (null);
 			setprivateassist (null);
-			setProcessed (false);
-// N
-			setSalary (Env.ZERO);
 			setsex (null);
 			setspouse (null);
-			setStatus (null);
-			setUseLenses (false);
-// N
-			setValue (null);
         } */
     }
 
@@ -289,68 +289,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
       return sb.toString();
     }
 
-	/** Set Account No Credit Account.
-		@param AccountNo_B Account No Credit Account
-	*/
-	public void setAccountNo_B (String AccountNo_B)
-	{
-		set_Value (COLUMNNAME_AccountNo_B, AccountNo_B);
-	}
-
-	/** Get Account No Credit Account.
-		@return Account No Credit Account	  */
-	public String getAccountNo_B()
-	{
-		return (String)get_Value(COLUMNNAME_AccountNo_B);
-	}
-
-	/** Set Account No Pay Account.
-		@param AccountNo_N Account No Pay Account
-	*/
-	public void setAccountNo_N (String AccountNo_N)
-	{
-		set_Value (COLUMNNAME_AccountNo_N, AccountNo_N);
-	}
-
-	/** Get Account No Pay Account.
-		@return Account No Pay Account	  */
-	public String getAccountNo_N()
-	{
-		return (String)get_Value(COLUMNNAME_AccountNo_N);
-	}
-
-	/** Set Address 1.
-		@param Address1 Address line 1 for this location
-	*/
-	public void setAddress1 (String Address1)
-	{
-		set_Value (COLUMNNAME_Address1, Address1);
-	}
-
-	/** Get Address 1.
-		@return Address line 1 for this location
-	  */
-	public String getAddress1()
-	{
-		return (String)get_Value(COLUMNNAME_Address1);
-	}
-
-	/** Set Address 2.
-		@param Address2 Address line 2 for this location
-	*/
-	public void setAddress2 (String Address2)
-	{
-		set_Value (COLUMNNAME_Address2, Address2);
-	}
-
-	/** Get Address 2.
-		@return Address line 2 for this location
-	  */
-	public String getAddress2()
-	{
-		return (String)get_Value(COLUMNNAME_Address2);
-	}
-
 	/** Set Inter-Organization.
 		@param AD_OrgTo_ID Organization valid for intercompany documents
 	*/
@@ -371,22 +309,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
-	}
-
-	/** Set Alergic.
-		@param Alergic Alergic to chemicals ór Medicament
-	*/
-	public void setAlergic (String Alergic)
-	{
-		set_Value (COLUMNNAME_Alergic, Alergic);
-	}
-
-	/** Get Alergic.
-		@return Alergic to chemicals ór Medicament
-	  */
-	public String getAlergic()
-	{
-		return (String)get_Value(COLUMNNAME_Alergic);
 	}
 
 	public I_AMN_CommissionGroup getAMN_CommissionGroup() throws RuntimeException
@@ -667,6 +589,100 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return ii.intValue();
 	}
 
+	/** Set Account No Credit Account.
+		@param AccountNo_B Account No Credit Account
+	*/
+	public void setAccountNo_B (String AccountNo_B)
+	{
+		set_Value (COLUMNNAME_AccountNo_B, AccountNo_B);
+	}
+
+	/** Get Account No Credit Account.
+		@return Account No Credit Account	  */
+	public String getAccountNo_B()
+	{
+		return (String)get_Value(COLUMNNAME_AccountNo_B);
+	}
+
+	/** Set Account No Pay Account.
+		@param AccountNo_N Account No Pay Account
+	*/
+	public void setAccountNo_N (String AccountNo_N)
+	{
+		set_Value (COLUMNNAME_AccountNo_N, AccountNo_N);
+	}
+
+	/** Get Account No Pay Account.
+		@return Account No Pay Account	  */
+	public String getAccountNo_N()
+	{
+		return (String)get_Value(COLUMNNAME_AccountNo_N);
+	}
+
+	/** Set Address 1.
+		@param Address1 Address line 1 for this location
+	*/
+	public void setAddress1 (String Address1)
+	{
+		set_Value (COLUMNNAME_Address1, Address1);
+	}
+
+	/** Get Address 1.
+		@return Address line 1 for this location
+	  */
+	public String getAddress1()
+	{
+		return (String)get_Value(COLUMNNAME_Address1);
+	}
+
+	/** Set Address 2.
+		@param Address2 Address line 2 for this location
+	*/
+	public void setAddress2 (String Address2)
+	{
+		set_Value (COLUMNNAME_Address2, Address2);
+	}
+
+	/** Get Address 2.
+		@return Address line 2 for this location
+	  */
+	public String getAddress2()
+	{
+		return (String)get_Value(COLUMNNAME_Address2);
+	}
+
+	/** Set Alergic.
+		@param Alergic Alergic to chemicals ór Medicament
+	*/
+	public void setAlergic (String Alergic)
+	{
+		set_Value (COLUMNNAME_Alergic, Alergic);
+	}
+
+	/** Get Alergic.
+		@return Alergic to chemicals ór Medicament
+	  */
+	public String getAlergic()
+	{
+		return (String)get_Value(COLUMNNAME_Alergic);
+	}
+
+	/** Set BP Search Key.
+		@param BPValue Business Partner Key Value
+	*/
+	public void setBPValue (String BPValue)
+	{
+		set_Value (COLUMNNAME_BPValue, BPValue);
+	}
+
+	/** Get BP Search Key.
+		@return Business Partner Key Value
+	  */
+	public String getBPValue()
+	{
+		return (String)get_Value(COLUMNNAME_BPValue);
+	}
+
 	/** Set Bank Name Credit Account.
 		@param BankName_B Bank Name Credit Account
 	*/
@@ -697,6 +713,21 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return (String)get_Value(COLUMNNAME_BankName_N);
 	}
 
+	/** Set Invoice Partner Key.
+		@param Bill_BPValue Invoice Partner Key
+	*/
+	public void setBill_BPValue (String Bill_BPValue)
+	{
+		set_Value (COLUMNNAME_Bill_BPValue, Bill_BPValue);
+	}
+
+	/** Get Invoice Partner Key.
+		@return Invoice Partner Key	  */
+	public String getBill_BPValue()
+	{
+		return (String)get_Value(COLUMNNAME_Bill_BPValue);
+	}
+
 	public org.compiere.model.I_C_BPartner getBill_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -723,21 +754,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
-	}
-
-	/** Set Invoice Partner Key.
-		@param Bill_BPValue Invoice Partner Key
-	*/
-	public void setBill_BPValue (String Bill_BPValue)
-	{
-		set_Value (COLUMNNAME_Bill_BPValue, Bill_BPValue);
-	}
-
-	/** Get Invoice Partner Key.
-		@return Invoice Partner Key	  */
-	public String getBill_BPValue()
-	{
-		return (String)get_Value(COLUMNNAME_Bill_BPValue);
 	}
 
 	/** Set BioCode.
@@ -770,81 +786,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public Timestamp getBirthday()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Birthday);
-	}
-
-	/** Set birthplace.
-		@param birthplace birthplace
-	*/
-	public void setbirthplace (String birthplace)
-	{
-		set_Value (COLUMNNAME_birthplace, birthplace);
-	}
-
-	/** Get birthplace.
-		@return birthplace	  */
-	public String getbirthplace()
-	{
-		return (String)get_Value(COLUMNNAME_birthplace);
-	}
-
-	/** RH (+) Positive = + */
-	public static final String BLOODRH_RHPlusPositive = "+";
-	/** RH (-) Negative = - */
-	public static final String BLOODRH_RH_Negative = "-";
-	/** Set bloodrh.
-		@param bloodrh bloodrh
-	*/
-	public void setbloodrh (String bloodrh)
-	{
-
-		set_Value (COLUMNNAME_bloodrh, bloodrh);
-	}
-
-	/** Get bloodrh.
-		@return bloodrh	  */
-	public String getbloodrh()
-	{
-		return (String)get_Value(COLUMNNAME_bloodrh);
-	}
-
-	/** A Type = A  */
-	public static final String BLOODTYPE_AType = "A ";
-	/** AB Type = AB */
-	public static final String BLOODTYPE_ABType = "AB";
-	/** B Type = B  */
-	public static final String BLOODTYPE_BType = "B ";
-	/** OType = O  */
-	public static final String BLOODTYPE_OType = "O ";
-	/** Set bloodtype.
-		@param bloodtype bloodtype
-	*/
-	public void setbloodtype (String bloodtype)
-	{
-
-		set_Value (COLUMNNAME_bloodtype, bloodtype);
-	}
-
-	/** Get bloodtype.
-		@return bloodtype	  */
-	public String getbloodtype()
-	{
-		return (String)get_Value(COLUMNNAME_bloodtype);
-	}
-
-	/** Set BP Search Key.
-		@param BPValue Business Partner Key Value
-	*/
-	public void setBPValue (String BPValue)
-	{
-		set_Value (COLUMNNAME_BPValue, BPValue);
-	}
-
-	/** Get BP Search Key.
-		@return Business Partner Key Value
-	  */
-	public String getBPValue()
-	{
-		return (String)get_Value(COLUMNNAME_BPValue);
 	}
 
 	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
@@ -1024,53 +965,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return ii.intValue();
 	}
 
-	/** Divorced = D */
-	public static final String CIVILSTATUS_Divorced = "D";
-	/** Married = M */
-	public static final String CIVILSTATUS_Married = "M";
-	/** Other = O */
-	public static final String CIVILSTATUS_Other = "O";
-	/** Singled = S */
-	public static final String CIVILSTATUS_Singled = "S";
-	/** Widowed = W */
-	public static final String CIVILSTATUS_Widowed = "W";
-	/** Set civilstatus.
-		@param civilstatus civilstatus
-	*/
-	public void setcivilstatus (String civilstatus)
-	{
-
-		set_Value (COLUMNNAME_civilstatus, civilstatus);
-	}
-
-	/** Get civilstatus.
-		@return civilstatus	  */
-	public String getcivilstatus()
-	{
-		return (String)get_Value(COLUMNNAME_civilstatus);
-	}
-
-	/** Set Nacionality.
-		@param CountryofNacionality_ID Nacionality
-	*/
-	public void setCountryofNacionality_ID (int CountryofNacionality_ID)
-	{
-		if (CountryofNacionality_ID < 1)
-			set_Value (COLUMNNAME_CountryofNacionality_ID, null);
-		else
-			set_Value (COLUMNNAME_CountryofNacionality_ID, Integer.valueOf(CountryofNacionality_ID));
-	}
-
-	/** Get Nacionality.
-		@return Nacionality	  */
-	public int getCountryofNacionality_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_CountryofNacionality_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	public org.compiere.model.I_C_Project getC_Project() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_Project)MTable.get(getCtx(), org.compiere.model.I_C_Project.Table_ID)
@@ -1155,6 +1049,27 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return ii.intValue();
 	}
 
+	/** Set Nacionality.
+		@param CountryofNacionality_ID Nacionality
+	*/
+	public void setCountryofNacionality_ID (int CountryofNacionality_ID)
+	{
+		if (CountryofNacionality_ID < 1)
+			set_Value (COLUMNNAME_CountryofNacionality_ID, null);
+		else
+			set_Value (COLUMNNAME_CountryofNacionality_ID, Integer.valueOf(CountryofNacionality_ID));
+	}
+
+	/** Get Nacionality.
+		@return Nacionality	  */
+	public int getCountryofNacionality_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_CountryofNacionality_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
@@ -1187,114 +1102,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return (String)get_Value(COLUMNNAME_Deseases);
 	}
 
-	/** Set downwardloads.
-		@param downwardloads downwardloads
-	*/
-	public void setdownwardloads (BigDecimal downwardloads)
-	{
-		set_Value (COLUMNNAME_downwardloads, downwardloads);
-	}
-
-	/** Get downwardloads.
-		@return downwardloads	  */
-	public BigDecimal getdownwardloads()
-	{
-		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_downwardloads);
-		if (bd == null)
-			 return Env.ZERO;
-		return bd;
-	}
-
-	/** Bachellor = B */
-	public static final String EDUCATIONGRADE_Bachellor = "B";
-	/** University Graduate = E */
-	public static final String EDUCATIONGRADE_UniversityGraduate = "E";
-	/** Elementary = P */
-	public static final String EDUCATIONGRADE_Elementary = "P";
-	/** Technical Superior = S */
-	public static final String EDUCATIONGRADE_TechnicalSuperior = "S";
-	/** Technical = T */
-	public static final String EDUCATIONGRADE_Technical = "T";
-	/** University = U */
-	public static final String EDUCATIONGRADE_University = "U";
-	/** Post Graduated = X */
-	public static final String EDUCATIONGRADE_PostGraduated = "X";
-	/** Set educationgrade.
-		@param educationgrade educationgrade
-	*/
-	public void seteducationgrade (String educationgrade)
-	{
-
-		set_Value (COLUMNNAME_educationgrade, educationgrade);
-	}
-
-	/** Get educationgrade.
-		@return educationgrade	  */
-	public String geteducationgrade()
-	{
-		return (String)get_Value(COLUMNNAME_educationgrade);
-	}
-
-	/** Set educationlevel.
-		@param educationlevel educationlevel
-	*/
-	public void seteducationlevel (String educationlevel)
-	{
-		set_Value (COLUMNNAME_educationlevel, educationlevel);
-	}
-
-	/** Get educationlevel.
-		@return educationlevel	  */
-	public String geteducationlevel()
-	{
-		return (String)get_Value(COLUMNNAME_educationlevel);
-	}
-
-	/** Dismissed = D */
-	public static final String EGRESSCONDITION_Dismissed = "D";
-	/** Deceased = F */
-	public static final String EGRESSCONDITION_Deceased = "F";
-	/** Retired = J */
-	public static final String EGRESSCONDITION_Retired = "J";
-	/** None = N */
-	public static final String EGRESSCONDITION_None = "N";
-	/** Pensioned = P */
-	public static final String EGRESSCONDITION_Pensioned = "P";
-	/** Resignation = R */
-	public static final String EGRESSCONDITION_Resignation = "R";
-	/** Transfer = T */
-	public static final String EGRESSCONDITION_Transfer = "T";
-	/** Set egresscondition.
-		@param egresscondition egresscondition
-	*/
-	public void setegresscondition (String egresscondition)
-	{
-
-		set_Value (COLUMNNAME_egresscondition, egresscondition);
-	}
-
-	/** Get egresscondition.
-		@return egresscondition	  */
-	public String getegresscondition()
-	{
-		return (String)get_Value(COLUMNNAME_egresscondition);
-	}
-
-	/** Set egressdate.
-		@param egressdate egressdate
-	*/
-	public void setegressdate (Timestamp egressdate)
-	{
-		set_Value (COLUMNNAME_egressdate, egressdate);
-	}
-
-	/** Get egressdate.
-		@return egressdate	  */
-	public Timestamp getegressdate()
-	{
-		return (Timestamp)get_Value(COLUMNNAME_egressdate);
-	}
-
 	/** Set EMail Address.
 		@param EMail Electronic Mail Address
 	*/
@@ -1325,50 +1132,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getEMail2()
 	{
 		return (String)get_Value(COLUMNNAME_EMail2);
-	}
-
-	/** Set Employee Image 1.
-		@param empimg1_ID Employee Image 1
-	*/
-	public void setempimg1_ID (int empimg1_ID)
-	{
-		if (empimg1_ID < 1)
-			set_Value (COLUMNNAME_empimg1_ID, null);
-		else
-			set_Value (COLUMNNAME_empimg1_ID, Integer.valueOf(empimg1_ID));
-	}
-
-	/** Get Employee Image 1.
-		@return Employee Image 1
-	  */
-	public int getempimg1_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_empimg1_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	/** Set Employee Image 2.
-		@param empimg2_ID Employee Image 2
-	*/
-	public void setempimg2_ID (int empimg2_ID)
-	{
-		if (empimg2_ID < 1)
-			set_Value (COLUMNNAME_empimg2_ID, null);
-		else
-			set_Value (COLUMNNAME_empimg2_ID, Integer.valueOf(empimg2_ID));
-	}
-
-	/** Get Employee Image 2.
-		@return Employee Image 2
-	  */
-	public int getempimg2_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_empimg2_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
 	}
 
 	/** Set Fax.
@@ -1573,39 +1336,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return false;
 	}
 
-	/** Set incomedate.
-		@param incomedate incomedate
-	*/
-	public void setincomedate (Timestamp incomedate)
-	{
-		set_Value (COLUMNNAME_incomedate, incomedate);
-	}
-
-	/** Get incomedate.
-		@return incomedate	  */
-	public Timestamp getincomedate()
-	{
-		return (Timestamp)get_Value(COLUMNNAME_incomedate);
-	}
-
-	/** Set increasingloads.
-		@param increasingloads increasingloads
-	*/
-	public void setincreasingloads (BigDecimal increasingloads)
-	{
-		set_Value (COLUMNNAME_increasingloads, increasingloads);
-	}
-
-	/** Get increasingloads.
-		@return increasingloads	  */
-	public BigDecimal getincreasingloads()
-	{
-		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_increasingloads);
-		if (bd == null)
-			 return Env.ZERO;
-		return bd;
-	}
-
 	/** Set Detailed Names.
 		@param IsDetailedNames Detailed Names
 	*/
@@ -1626,99 +1356,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 			return "Y".equals(oo);
 		}
 		return false;
-	}
-
-	/** Set Is Medicated.
-		@param isMedicated Indicates if person is Medicated
-	*/
-	public void setisMedicated (boolean isMedicated)
-	{
-		set_Value (COLUMNNAME_isMedicated, Boolean.valueOf(isMedicated));
-	}
-
-	/** Get Is Medicated.
-		@return Indicates if person is Medicated
-	  */
-	public boolean isMedicated()
-	{
-		Object oo = get_Value(COLUMNNAME_isMedicated);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
-	/** Set Is Pensioned.
-		@param isPensioned Indicates if employee is Pensioned by Social Security
-	*/
-	public void setisPensioned (boolean isPensioned)
-	{
-		set_Value (COLUMNNAME_isPensioned, Boolean.valueOf(isPensioned));
-	}
-
-	/** Get Is Pensioned.
-		@return Indicates if employee is Pensioned by Social Security
-	  */
-	public boolean isPensioned()
-	{
-		Object oo = get_Value(COLUMNNAME_isPensioned);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
-	/** Set isStudying.
-		@param isStudying Indicates if is studying
-	*/
-	public void setisStudying (boolean isStudying)
-	{
-		set_Value (COLUMNNAME_isStudying, Boolean.valueOf(isStudying));
-	}
-
-	/** Get isStudying.
-		@return Indicates if is studying
-	  */
-	public boolean isStudying()
-	{
-		Object oo = get_Value(COLUMNNAME_isStudying);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
-	/** Temporary Contract = C */
-	public static final String JOBCONDITION_TemporaryContract = "C";
-	/** Fixed Contract = F */
-	public static final String JOBCONDITION_FixedContract = "F";
-	/** FreeLance = I */
-	public static final String JOBCONDITION_FreeLance = "I";
-	/** Part Time = P */
-	public static final String JOBCONDITION_PartTime = "P";
-	/** Set jobcondition.
-		@param jobcondition jobcondition
-	*/
-	public void setjobcondition (String jobcondition)
-	{
-
-		set_Value (COLUMNNAME_jobcondition, jobcondition);
-	}
-
-	/** Get jobcondition.
-		@return jobcondition	  */
-	public String getjobcondition()
-	{
-		return (String)get_Value(COLUMNNAME_jobcondition);
 	}
 
 	/** Set Last Name 1.
@@ -1797,52 +1434,20 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return (String)get_Value(COLUMNNAME_OrgSector);
 	}
 
-	/** Check = C */
-	public static final String PAYMENTTYPE_Check = "C";
-	/** Deposit = D */
-	public static final String PAYMENTTYPE_Deposit = "D";
-	/** Cash = E */
-	public static final String PAYMENTTYPE_Cash = "E";
-	/** Other = O */
-	public static final String PAYMENTTYPE_Other = "O";
-	/** Set paymenttype.
-		@param paymenttype paymenttype
+	/** Set PIN.
+		@param PIN Personal Identification Number
 	*/
-	public void setpaymenttype (String paymenttype)
+	public void setPIN (String PIN)
 	{
-
-		set_Value (COLUMNNAME_paymenttype, paymenttype);
+		set_Value (COLUMNNAME_PIN, PIN);
 	}
 
-	/** Get paymenttype.
-		@return paymenttype	  */
-	public String getpaymenttype()
+	/** Get PIN.
+		@return Personal Identification Number
+	  */
+	public String getPIN()
 	{
-		return (String)get_Value(COLUMNNAME_paymenttype);
-	}
-
-	/** Assistance = A */
-	public static final String PAYROLLMODE_Assistance = "A";
-	/** Both = B */
-	public static final String PAYROLLMODE_Both = "B";
-	/** Hours = H */
-	public static final String PAYROLLMODE_Hours = "H";
-	/** Standard = S */
-	public static final String PAYROLLMODE_Standard = "S";
-	/** Set payrollmode.
-		@param payrollmode payrollmode
-	*/
-	public void setpayrollmode (String payrollmode)
-	{
-
-		set_Value (COLUMNNAME_payrollmode, payrollmode);
-	}
-
-	/** Get payrollmode.
-		@return payrollmode	  */
-	public String getpayrollmode()
-	{
-		return (String)get_Value(COLUMNNAME_payrollmode);
+		return (String)get_Value(COLUMNNAME_PIN);
 	}
 
 	/** Set Phone.
@@ -1875,42 +1480,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getPhone2()
 	{
 		return (String)get_Value(COLUMNNAME_Phone2);
-	}
-
-	/** Set PIN.
-		@param PIN Personal Identification Number
-	*/
-	public void setPIN (String PIN)
-	{
-		set_Value (COLUMNNAME_PIN, PIN);
-	}
-
-	/** Get PIN.
-		@return Personal Identification Number
-	  */
-	public String getPIN()
-	{
-		return (String)get_Value(COLUMNNAME_PIN);
-	}
-
-	/** Private Hospital Insurance = H */
-	public static final String PRIVATEASSIST_PrivateHospitalInsurance = "H";
-	/** None = N */
-	public static final String PRIVATEASSIST_None = "N";
-	/** Set privateassist.
-		@param privateassist privateassist
-	*/
-	public void setprivateassist (String privateassist)
-	{
-
-		set_Value (COLUMNNAME_privateassist, privateassist);
-	}
-
-	/** Get privateassist.
-		@return privateassist	  */
-	public String getprivateassist()
-	{
-		return (String)get_Value(COLUMNNAME_privateassist);
 	}
 
 	/** Set Processed.
@@ -1958,21 +1527,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		return false;
 	}
 
-	/** Set profession.
-		@param profession profession
-	*/
-	public void setprofession (String profession)
-	{
-		set_Value (COLUMNNAME_profession, profession);
-	}
-
-	/** Get profession.
-		@return profession	  */
-	public String getprofession()
-	{
-		return (String)get_Value(COLUMNNAME_profession);
-	}
-
 	/** Set Salary.
 		@param Salary Salary
 	*/
@@ -1989,26 +1543,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
-	}
-
-	/** Female = F */
-	public static final String SEX_Female = "F";
-	/** Male = M */
-	public static final String SEX_Male = "M";
-	/** Set sex.
-		@param sex sex
-	*/
-	public void setsex (String sex)
-	{
-
-		set_Value (COLUMNNAME_sex, sex);
-	}
-
-	/** Get sex.
-		@return sex	  */
-	public String getsex()
-	{
-		return (String)get_Value(COLUMNNAME_sex);
 	}
 
 	/** Set Size Pant.
@@ -2088,26 +1622,6 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 	public String getSports()
 	{
 		return (String)get_Value(COLUMNNAME_Sports);
-	}
-
-	/** No = N */
-	public static final String SPOUSE_No = "N";
-	/** Yes = Y */
-	public static final String SPOUSE_Yes = "Y";
-	/** Set spouse.
-		@param spouse spouse
-	*/
-	public void setspouse (String spouse)
-	{
-
-		set_Value (COLUMNNAME_spouse, spouse);
-	}
-
-	/** Get spouse.
-		@return spouse	  */
-	public String getspouse()
-	{
-		return (String)get_Value(COLUMNNAME_spouse);
 	}
 
 	/** Active = A */
@@ -2207,6 +1721,492 @@ public class X_AMN_I_Employee extends PO implements I_AMN_I_Employee, I_Persiste
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set birthplace.
+		@param birthplace birthplace
+	*/
+	public void setbirthplace (String birthplace)
+	{
+		set_Value (COLUMNNAME_birthplace, birthplace);
+	}
+
+	/** Get birthplace.
+		@return birthplace	  */
+	public String getbirthplace()
+	{
+		return (String)get_Value(COLUMNNAME_birthplace);
+	}
+
+	/** RH (+) Positive = + */
+	public static final String BLOODRH_RHPlusPositive = "+";
+	/** RH (-) Negative = - */
+	public static final String BLOODRH_RH_Negative = "-";
+	/** Set bloodrh.
+		@param bloodrh bloodrh
+	*/
+	public void setbloodrh (String bloodrh)
+	{
+
+		set_Value (COLUMNNAME_bloodrh, bloodrh);
+	}
+
+	/** Get bloodrh.
+		@return bloodrh	  */
+	public String getbloodrh()
+	{
+		return (String)get_Value(COLUMNNAME_bloodrh);
+	}
+
+	/** A Type = A  */
+	public static final String BLOODTYPE_AType = "A ";
+	/** AB Type = AB */
+	public static final String BLOODTYPE_ABType = "AB";
+	/** B Type = B  */
+	public static final String BLOODTYPE_BType = "B ";
+	/** OType = O  */
+	public static final String BLOODTYPE_OType = "O ";
+	/** Set bloodtype.
+		@param bloodtype bloodtype
+	*/
+	public void setbloodtype (String bloodtype)
+	{
+
+		set_Value (COLUMNNAME_bloodtype, bloodtype);
+	}
+
+	/** Get bloodtype.
+		@return bloodtype	  */
+	public String getbloodtype()
+	{
+		return (String)get_Value(COLUMNNAME_bloodtype);
+	}
+
+	/** Divorced = D */
+	public static final String CIVILSTATUS_Divorced = "D";
+	/** Married = M */
+	public static final String CIVILSTATUS_Married = "M";
+	/** Other = O */
+	public static final String CIVILSTATUS_Other = "O";
+	/** Singled = S */
+	public static final String CIVILSTATUS_Singled = "S";
+	/** Widowed = W */
+	public static final String CIVILSTATUS_Widowed = "W";
+	/** Set civilstatus.
+		@param civilstatus civilstatus
+	*/
+	public void setcivilstatus (String civilstatus)
+	{
+
+		set_Value (COLUMNNAME_civilstatus, civilstatus);
+	}
+
+	/** Get civilstatus.
+		@return civilstatus	  */
+	public String getcivilstatus()
+	{
+		return (String)get_Value(COLUMNNAME_civilstatus);
+	}
+
+	/** Set downwardloads.
+		@param downwardloads downwardloads
+	*/
+	public void setdownwardloads (BigDecimal downwardloads)
+	{
+		set_Value (COLUMNNAME_downwardloads, downwardloads);
+	}
+
+	/** Get downwardloads.
+		@return downwardloads	  */
+	public BigDecimal getdownwardloads()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_downwardloads);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Bachellor = B */
+	public static final String EDUCATIONGRADE_Bachellor = "B";
+	/** University Graduate = E */
+	public static final String EDUCATIONGRADE_UniversityGraduate = "E";
+	/** Elementary = P */
+	public static final String EDUCATIONGRADE_Elementary = "P";
+	/** Technical Superior = S */
+	public static final String EDUCATIONGRADE_TechnicalSuperior = "S";
+	/** Technical = T */
+	public static final String EDUCATIONGRADE_Technical = "T";
+	/** University = U */
+	public static final String EDUCATIONGRADE_University = "U";
+	/** Post Graduated = X */
+	public static final String EDUCATIONGRADE_PostGraduated = "X";
+	/** Set educationgrade.
+		@param educationgrade educationgrade
+	*/
+	public void seteducationgrade (String educationgrade)
+	{
+
+		set_Value (COLUMNNAME_educationgrade, educationgrade);
+	}
+
+	/** Get educationgrade.
+		@return educationgrade	  */
+	public String geteducationgrade()
+	{
+		return (String)get_Value(COLUMNNAME_educationgrade);
+	}
+
+	/** Set educationlevel.
+		@param educationlevel educationlevel
+	*/
+	public void seteducationlevel (String educationlevel)
+	{
+		set_Value (COLUMNNAME_educationlevel, educationlevel);
+	}
+
+	/** Get educationlevel.
+		@return educationlevel	  */
+	public String geteducationlevel()
+	{
+		return (String)get_Value(COLUMNNAME_educationlevel);
+	}
+
+	/** Dismissed = D */
+	public static final String EGRESSCONDITION_Dismissed = "D";
+	/** Deceased = F */
+	public static final String EGRESSCONDITION_Deceased = "F";
+	/** Retired = J */
+	public static final String EGRESSCONDITION_Retired = "J";
+	/** None = N */
+	public static final String EGRESSCONDITION_None = "N";
+	/** Pensioned = P */
+	public static final String EGRESSCONDITION_Pensioned = "P";
+	/** Resignation = R */
+	public static final String EGRESSCONDITION_Resignation = "R";
+	/** Transfer = T */
+	public static final String EGRESSCONDITION_Transfer = "T";
+	/** Set egresscondition.
+		@param egresscondition egresscondition
+	*/
+	public void setegresscondition (String egresscondition)
+	{
+
+		set_Value (COLUMNNAME_egresscondition, egresscondition);
+	}
+
+	/** Get egresscondition.
+		@return egresscondition	  */
+	public String getegresscondition()
+	{
+		return (String)get_Value(COLUMNNAME_egresscondition);
+	}
+
+	/** Set egressdate.
+		@param egressdate egressdate
+	*/
+	public void setegressdate (Timestamp egressdate)
+	{
+		set_Value (COLUMNNAME_egressdate, egressdate);
+	}
+
+	/** Get egressdate.
+		@return egressdate	  */
+	public Timestamp getegressdate()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_egressdate);
+	}
+
+	/** Set Employee Image 1.
+		@param empimg1_ID Employee Image 1
+	*/
+	public void setempimg1_ID (int empimg1_ID)
+	{
+		if (empimg1_ID < 1)
+			set_Value (COLUMNNAME_empimg1_ID, null);
+		else
+			set_Value (COLUMNNAME_empimg1_ID, Integer.valueOf(empimg1_ID));
+	}
+
+	/** Get Employee Image 1.
+		@return Employee Image 1
+	  */
+	public int getempimg1_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_empimg1_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Employee Image 2.
+		@param empimg2_ID Employee Image 2
+	*/
+	public void setempimg2_ID (int empimg2_ID)
+	{
+		if (empimg2_ID < 1)
+			set_Value (COLUMNNAME_empimg2_ID, null);
+		else
+			set_Value (COLUMNNAME_empimg2_ID, Integer.valueOf(empimg2_ID));
+	}
+
+	/** Get Employee Image 2.
+		@return Employee Image 2
+	  */
+	public int getempimg2_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_empimg2_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set incomedate.
+		@param incomedate incomedate
+	*/
+	public void setincomedate (Timestamp incomedate)
+	{
+		set_Value (COLUMNNAME_incomedate, incomedate);
+	}
+
+	/** Get incomedate.
+		@return incomedate	  */
+	public Timestamp getincomedate()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_incomedate);
+	}
+
+	/** Set increasingloads.
+		@param increasingloads increasingloads
+	*/
+	public void setincreasingloads (BigDecimal increasingloads)
+	{
+		set_Value (COLUMNNAME_increasingloads, increasingloads);
+	}
+
+	/** Get increasingloads.
+		@return increasingloads	  */
+	public BigDecimal getincreasingloads()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_increasingloads);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Is Medicated.
+		@param isMedicated Indicates if person is Medicated
+	*/
+	public void setisMedicated (boolean isMedicated)
+	{
+		set_Value (COLUMNNAME_isMedicated, Boolean.valueOf(isMedicated));
+	}
+
+	/** Get Is Medicated.
+		@return Indicates if person is Medicated
+	  */
+	public boolean isMedicated()
+	{
+		Object oo = get_Value(COLUMNNAME_isMedicated);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Is Pensioned.
+		@param isPensioned Indicates if employee is Pensioned by Social Security
+	*/
+	public void setisPensioned (boolean isPensioned)
+	{
+		set_Value (COLUMNNAME_isPensioned, Boolean.valueOf(isPensioned));
+	}
+
+	/** Get Is Pensioned.
+		@return Indicates if employee is Pensioned by Social Security
+	  */
+	public boolean isPensioned()
+	{
+		Object oo = get_Value(COLUMNNAME_isPensioned);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set isStudying.
+		@param isStudying Indicates if is studying
+	*/
+	public void setisStudying (boolean isStudying)
+	{
+		set_Value (COLUMNNAME_isStudying, Boolean.valueOf(isStudying));
+	}
+
+	/** Get isStudying.
+		@return Indicates if is studying
+	  */
+	public boolean isStudying()
+	{
+		Object oo = get_Value(COLUMNNAME_isStudying);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Temporary Contract = C */
+	public static final String JOBCONDITION_TemporaryContract = "C";
+	/** Fixed Contract = F */
+	public static final String JOBCONDITION_FixedContract = "F";
+	/** FreeLance = I */
+	public static final String JOBCONDITION_FreeLance = "I";
+	/** Part Time = P */
+	public static final String JOBCONDITION_PartTime = "P";
+	/** Set jobcondition.
+		@param jobcondition jobcondition
+	*/
+	public void setjobcondition (String jobcondition)
+	{
+
+		set_Value (COLUMNNAME_jobcondition, jobcondition);
+	}
+
+	/** Get jobcondition.
+		@return jobcondition	  */
+	public String getjobcondition()
+	{
+		return (String)get_Value(COLUMNNAME_jobcondition);
+	}
+
+	/** Check = C */
+	public static final String PAYMENTTYPE_Check = "C";
+	/** Deposit = D */
+	public static final String PAYMENTTYPE_Deposit = "D";
+	/** Cash = E */
+	public static final String PAYMENTTYPE_Cash = "E";
+	/** Other = O */
+	public static final String PAYMENTTYPE_Other = "O";
+	/** Set paymenttype.
+		@param paymenttype paymenttype
+	*/
+	public void setpaymenttype (String paymenttype)
+	{
+
+		set_Value (COLUMNNAME_paymenttype, paymenttype);
+	}
+
+	/** Get paymenttype.
+		@return paymenttype	  */
+	public String getpaymenttype()
+	{
+		return (String)get_Value(COLUMNNAME_paymenttype);
+	}
+
+	/** Assistance = A */
+	public static final String PAYROLLMODE_Assistance = "A";
+	/** Both = B */
+	public static final String PAYROLLMODE_Both = "B";
+	/** Hours = H */
+	public static final String PAYROLLMODE_Hours = "H";
+	/** Standard = S */
+	public static final String PAYROLLMODE_Standard = "S";
+	/** Set payrollmode.
+		@param payrollmode payrollmode
+	*/
+	public void setpayrollmode (String payrollmode)
+	{
+
+		set_Value (COLUMNNAME_payrollmode, payrollmode);
+	}
+
+	/** Get payrollmode.
+		@return payrollmode	  */
+	public String getpayrollmode()
+	{
+		return (String)get_Value(COLUMNNAME_payrollmode);
+	}
+
+	/** Private Hospital Insurance = H */
+	public static final String PRIVATEASSIST_PrivateHospitalInsurance = "H";
+	/** None = N */
+	public static final String PRIVATEASSIST_None = "N";
+	/** Set privateassist.
+		@param privateassist privateassist
+	*/
+	public void setprivateassist (String privateassist)
+	{
+
+		set_Value (COLUMNNAME_privateassist, privateassist);
+	}
+
+	/** Get privateassist.
+		@return privateassist	  */
+	public String getprivateassist()
+	{
+		return (String)get_Value(COLUMNNAME_privateassist);
+	}
+
+	/** Set profession.
+		@param profession profession
+	*/
+	public void setprofession (String profession)
+	{
+		set_Value (COLUMNNAME_profession, profession);
+	}
+
+	/** Get profession.
+		@return profession	  */
+	public String getprofession()
+	{
+		return (String)get_Value(COLUMNNAME_profession);
+	}
+
+	/** Female = F */
+	public static final String SEX_Female = "F";
+	/** Male = M */
+	public static final String SEX_Male = "M";
+	/** Set Sex at Birth.
+		@param sex Sex at Birth
+	*/
+	public void setsex (String sex)
+	{
+
+		set_Value (COLUMNNAME_sex, sex);
+	}
+
+	/** Get Sex at Birth.
+		@return Sex at Birth	  */
+	public String getsex()
+	{
+		return (String)get_Value(COLUMNNAME_sex);
+	}
+
+	/** No = N */
+	public static final String SPOUSE_No = "N";
+	/** Yes = Y */
+	public static final String SPOUSE_Yes = "Y";
+	/** Set spouse.
+		@param spouse spouse
+	*/
+	public void setspouse (String spouse)
+	{
+
+		set_Value (COLUMNNAME_spouse, spouse);
+	}
+
+	/** Get spouse.
+		@return spouse	  */
+	public String getspouse()
+	{
+		return (String)get_Value(COLUMNNAME_spouse);
 	}
 
 	/** Set zodiacsign.

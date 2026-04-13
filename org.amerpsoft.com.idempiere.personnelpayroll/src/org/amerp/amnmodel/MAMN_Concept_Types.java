@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import org.compiere.model.Query;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
@@ -326,4 +327,53 @@ public class MAMN_Concept_Types extends X_AMN_Concept_Types {
 
         return concepts;
     }
+	
+	/**
+	 * Obtiene el primer AMN_Concept_Types_ID encontrado para el calcorder y client ID especificados
+	 * @param ctx         Contexto de la aplicación
+	 * @param p_AD_Client_ID ID del cliente
+	 * @param p_CalcOrder Orden de cálculo del concepto
+	 * @param trxName     Nombre de la transacción
+	 * @return ID del concepto o 0 si no existe
+	 */
+	public static int getConceptTypeIdByCalcOrder(Properties ctx, int p_AD_Client_ID, int p_CalcOrder, String trxName) {
+	    String whereClause = COLUMNNAME_CalcOrder + "=? AND (" + 
+	                         COLUMNNAME_AD_Client_ID + "=? OR " + 
+	                         COLUMNNAME_AD_Client_ID + "=0)";
+	    
+	    Integer id = new Query(ctx, Table_Name, whereClause, trxName)
+	            .setParameters(p_CalcOrder, p_AD_Client_ID)
+	            .setOrderBy(COLUMNNAME_AD_Client_ID + " DESC") // Prioriza registros específicos del cliente
+	            .firstId();
+	    
+	    return id != null ? id : 0;
+	}
+	
+	/**
+	 * Obtiene el primer value de concepto encontrado para el calcorder y client ID especificados
+	 * @param ctx         Contexto de la aplicación
+	 * @param p_AD_Client_ID ID del cliente
+	 * @param p_CalcOrder Orden de cálculo del concepto
+	 * @param trxName     Nombre de la transacción
+	 * @return Value del concepto o null si no existe
+	 */
+	public static String getConceptValueByCalcOrder(Properties ctx, int p_AD_Client_ID, int p_CalcOrder, String trxName) {
+	    String whereClause = COLUMNNAME_CalcOrder + "=? AND (" + 
+	                         COLUMNNAME_AD_Client_ID + "=? OR " + 
+	                         COLUMNNAME_AD_Client_ID + "=0)";
+	    
+	    // Primero obtenemos el ID
+	    Integer conceptTypeId = new Query(ctx, Table_Name, whereClause, trxName)
+	            .setParameters(p_CalcOrder, p_AD_Client_ID)
+	            .setOrderBy(COLUMNNAME_AD_Client_ID + " DESC") // Prioriza registros específicos del cliente
+	            .firstId();
+
+	    // Si encontramos un ID, retornamos el Value
+	    if (conceptTypeId != null && conceptTypeId > 0) {
+	        MAMN_Concept_Types conceptType = new MAMN_Concept_Types(ctx, conceptTypeId, trxName);
+	        return conceptType.getValue();
+	    }
+	    
+	    return null;
+	}
 }
