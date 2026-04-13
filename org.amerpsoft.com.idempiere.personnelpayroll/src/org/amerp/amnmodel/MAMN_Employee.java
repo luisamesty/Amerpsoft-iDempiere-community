@@ -134,11 +134,9 @@ public class MAMN_Employee extends X_AMN_Employee {
 		setprofession(impEmployee.getprofession());
 		setSalary(impEmployee.getSalary());
 		setsex(impEmployee.getsex());
-		setSocialSecurityNO(impEmployee.getSocialSecurityNO());
 		setSports(impEmployee.getSports());
 		setspouse(impEmployee.getspouse());
 		setStatus(impEmployee.getStatus());
-		setURL(impEmployee.getURL());
 		setUseLenses(impEmployee.isUseLenses());
 		setWeight(impEmployee.getWeight());
 		setzodiacsign(impEmployee.getzodiacsign());
