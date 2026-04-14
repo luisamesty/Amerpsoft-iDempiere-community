@@ -6,7 +6,7 @@
 
 .login-window .z-window-content {
 	background-color: #E5E5E5;
-	background-image: url(../images_mo/background-mo.png) !important;
+	background-image: url(../images_mo/background-mo-12.png) !important;
     background-position: center;
 	background-repeat: no-repeat;
 }
