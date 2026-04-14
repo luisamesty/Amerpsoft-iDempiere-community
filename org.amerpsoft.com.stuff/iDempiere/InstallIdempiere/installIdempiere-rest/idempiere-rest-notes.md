@@ -46,22 +46,21 @@ For more information you can see [Install Idempiere](https://wiki.idempiere.org/
 
 Clone repository from origin in the same forlder you have idempiere environment:
 
-```copy
+```bash
 cd ..\sources\
 git clone https://github.com/bxservice/idempiere-rest.git
 ```
 
 Folder layout:
 
+```text
 * sources\idempiere
 * sources\idempiere-rest
   * com.trekglobal.idempiere.extensions.parent
   * com.trekglobal.idempiere.rest.api
-  * com.trekglobal.idempiere.extensions.p2
-    
-```text
-
+  * com.trekglobal.idempiere.extensions.p2 
 ```
+
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
@@ -69,11 +68,13 @@ Folder layout:
 
 Use maven property maven.repo.local:
 
+```bash
 mvn -Dmaven.repo.local=$HOME/.my/other/repository clean install
+```
 
 No modifications to settings.xml are necessary.
 
-```copy
+```bash
 mvn -Dmaven.repo.local=$HOME/.m2/repository_11_OK clean install
 ```
 User settings example:
@@ -208,6 +209,7 @@ When you know beforehand all the login information needed to get into the system
 .../api/v1/auth/tokens
 
 With a body like this:
+
 ```text
 {
     "username": "{{userName}}",
@@ -221,6 +223,7 @@ With a body like this:
     }
 }
 ```
+
 Change all the Template:Propertyname values to the ones you want to use in your instance.
 
 Screen shot:
@@ -237,6 +240,7 @@ If you want to log in as a user would normally do in iDempiere (choosing a role,
 
 POST .../api/v1/auth/tokens
 Body:
+
 ```text
 {
     "username": "{{username}}",
@@ -267,20 +271,26 @@ With that token you can request for login information from the user that is bein
 Authorization: Bearer {authToken}
 
 The information you can request is the following, and it needs to be done in this order because each request needs information from the previous call:
+
 ```text
 GET .../api/v1/auth/roles?client={clientId}
 ```
 Returns an array with the roles that the user has access to
 
+```text
 GET .../api/v1/auth/organizations?client={clientId}&role={roleId}
+```
 
 Returns an array with the organizations that the user has access to.
 
+```text
 /api/v1/auth/warehouses?client={clientId}&role={roleId}&organization={organizationId}
-
+```
 Returns an array with the warehouses that the user has access to.
 
+```text
 GET .../api/v1/auth/language?client={clientId}
+```
 
 Returns an array with the languages the user can login with.
 
@@ -288,6 +298,7 @@ When you have all the data you need to do a final PUT request like this:
 
 PUT .../api/v1/auth/tokens
 
+```text
 Body:
 
 {
@@ -307,6 +318,7 @@ Response Payload
     "token": "eyJraWQiOiJpZGVtcGllcmUiLCJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHYXJkZW5BZG1pbiIsIkFEX0NsaWVudF9JRCI6MTEsIkFEX1VzZXJfSUQiOjEwMSwiQURfUm9sZV9JRCI6MjAwMDAxLCJBRF9PcmdfSUQiOjExLCJNX1dhcmVob3VzZV9JRCI6MTAzLCJBRF9MYW5ndWFnZSI6ImVuX1VTIiwiQURfU2Vzc2lvbl9JRCI6MTAwMDE2MiwiaXNzIjoiaWRlbXBpZXJlLm9yZyIsImV4cCI6MTcwMTc3NTUzN30.bAUEhPylAQhZjZquJhvLpO9zMZG3g6zlM_IqO9ifeXJpAJBOoJtDqd8CrYPU1PKURzoPRSUglbKqr1LsXdz38A",
     "refresh_token": "eyJraWQiOiJpZGVtcGllcmUiLCJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwODk1OTIyNC1iYzBhLTRkNTQtOTlhZS1jNmRmZjNiOGEwMzUiLCJpc3MiOiJpZGVtcGllcmUub3JnIiwiZXhwIjoxNzAxODU4MzM3fQ.uSE5SOtWgPvReC4JtyV4alHd-ccU0L9QhIpP2TwT7C5TJFeCGVYTdyWc291DaIweyiIGCfWFgQlbe0oH1EEXXg"
 }
+```
 
 ### Refresh Token
 
@@ -318,12 +330,14 @@ When the token expires, you can get a new token calling the following request:
 
 POST .../api/v1/auth/refresh
 Body:
+
 ```text
 {
     "refresh_token": "{{refreshToken}}"
 }
 ```
 Response Payload
+
 ```text
 {
     "token": "eyJraWQiOiJpZGVtcGllcmUiLCJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTdXBlclVzZXIiLCJBRF9DbGllbnRfSUQiOjAsIkFEX1VzZXJfSUQiOjEwMCwiQURfUm9sZV9JRCI6MTAwMDAxNCwiQURfT3JnX0lEIjowLCJBRF9MYW5ndWFnZSI6ImVuX1VTIiwiQURfU2Vzc2lvbl9JRCI6MTAwMDE2MywiaXNzIjoiaWRlbXBpZXJlLm9yZyIsImV4cCI6MTcwMTc3NTc5NX0.pdMdr3ihTz9fSOkoDP-tvrirjQNAw0Z8OHn1xMCq3A6b94JBD74MHd4hvb6y51xp8eezElsg1nVq0sMh7AsEvA",

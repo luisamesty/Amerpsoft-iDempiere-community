@@ -27,25 +27,25 @@ Procedimientos de instalación para CentOS con la base de datos PostgreSQL.
 
 Instálelo en la máquina donde se ejecuta DDBB.
 
-```$
-$ ssh root@maquina-postgresql.com -p 22
+```bash
+ssh root@maquina-postgresql.com -p 22
 ```
 
 #### Instalar el RPM del repositorio
 
-```
+```bash
 sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 ```
 
 #### Instalar PostgreSQL
 
-```
+```bash
 sudo yum install -y postgresql15-server
 ```
 
 #### Opcionalmente, inicializar la base de datos y habilitar el inicio automático.
 
-```
+```bash
 sudo /usr/pgsql-15/bin/postgresql-15-setup initdb
 sudo systemctl enable postgresql-15
 sudo systemctl start postgresql-15
@@ -55,18 +55,20 @@ dnf install postgresql15-contrib
 
 Para empezar a usar PostgreSQL, deberá conectarse a su indicador de comandos. Comience cambiando al usuario de PostgreSQL.
 
-```
+```bash
 sudo su postgres
 ```
 Cambiar contraseña de usuario
 
+```bash
+postgres=# ALTER USER postgres PASSWORD 'NewPassw0rd';
 ```
-postgres=# ALTER USER postgres PASSWORD 'NewPassw0rd'; ```
 
 #### Reiniciar PostgreSQL
 
 Por último, reinicie el servicio PostgreSQL para habilitar estos cambios.
-```
+
+```bash
 sudo systemctl restart postgresql-15
 ```
 
@@ -78,9 +80,10 @@ sudo systemctl restart postgresql-15
 
 Instale en la máquina donde se ejecuta el administrador de bases de datos.
 
-````
+```bash
 ssh root@maquina-postgresql.com -p 22
-````
+```
+
 #### Modificar el archivo ***ph_hba.conf***
 
 Después de instalar Postgres, debe verificar la configuración correcta de:
@@ -89,15 +92,18 @@ Después de instalar Postgres, debe verificar la configuración correcta de:
 
 La siguiente línea requiere cambiar el método de autenticación:
 
-```
+```bash
 local all all peer
+```
 CAMBIAR A:
+
+```bash
 local all all scram-sha-256
 ```
 
 Añadir conexión remota para su IP
 
-```
+```bash
 # Conexiones locales IPv4:
 host all all 127.0.0.1/32 scram-sha-256
 host all all 83.49.112.218/32 scram-sha-256
@@ -111,7 +117,7 @@ Puerto 5432/5433.
 
 Editar: '/var/lib/pgsql/15/data/postgresql.conf'
 
-```
+```bash
 #------------------------------------------------------------------------------
 # CONEXIONES Y AUTENTICACIÓN
 #------------------------------------------------------------------------------
@@ -125,7 +131,8 @@ shared_buffers = 512 MB # mín. 128 kB
 #### Reiniciar Postgres
 
 Reinicie el servicio PostgreSQL para habilitar estos cambios.
-```
+
+```bash
 sudo systemctl restart postgresql-15
 ```
 
@@ -135,12 +142,12 @@ Ejecute Postgres en la máquina que ejecuta el gestor de bases de datos.
 
 <div style="padding-left: 20px;">
 
-````
-Comando del SO (el número de puerto puede ser diferente de 5432, 5433)
-$ sudo su postgres
-$ psql -p 5432 postgres -U postgres
+```bash
+# Comando del SO (el número de puerto puede ser diferente de 5432, 5433)
+sudo su postgres
+psql -p 5432 postgres -U postgres
 password user postgres: PostgreSQLPassword (NewPassw0rd) # Ingresar la contraseña de Postgres
-````
+```
 
 </div>
 
@@ -150,10 +157,11 @@ Crear el rol idempiere y cualquier otro si es necesario.
 
 <div style="padding-left: 20px;">
 
-````
-Comandos de Postgres:
-# CREAR ROL adempiere CONTRASEÑA DE INICIO DE SESIÓN DE SUPERUSUARIO 'adempiere';
-# CREAR ROL luisamesty CONTRASEÑA DE INICIO DE SESIÓN DE SUPERUSUARIO 'NNNNNNN'; ````
+```sql
+-- Comandos de Postgres:
+CREATE ROL adempiere CONTRASEÑA DE INICIO DE SESIÓN DE SUPERUSUARIO 'adempiere';
+CREATE ROL luisamesty CONTRASEÑA DE INICIO DE SESIÓN DE SUPERUSUARIO 'NNNNNNN'; ````
+```
 
 </div>
 ##### CREAR Base de Datos: idempiereSeed12
@@ -163,29 +171,29 @@ Crear la entidad de base de datos (idempiereSeed12). Se crea vacía.
 <div style="padding-left: 20px;">
 DESCARGAR SOLO SI ES NECESARIO
 
-````
-Comandos de Postgres:
-Estos dos primeros comandos desconectan todos los procesos de la base de datos:
-# SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity
+```sql
+-- Comandos de Postgres:
+-- Estos dos primeros comandos desconectan todos los procesos de la base de datos:
+SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity
 WHERE pg_stat_activity.datname = 'idempiereSeed12' AND pid <> pg_backend_pid();
 
-# SELECT pg_terminate_backend(pid) FROM pg_stat_get_activity(NULL::integer)
+SELECT pg_terminate_backend(pid) FROM pg_stat_get_activity(NULL::integer)
 WHERE datid = (SELECT oid FROM pg_database WHERE datname = 'idempiereSeed12');
 
-Eliminar base de datos
-# Eliminar base de datos "idempiereSeed12";
+-- DROP Database
+DROP DATABASE "idempiereSeed11";
 
-Crear base de datos:
-# Crear base de datos "idempiereSeed12"
-Con
-Propietario = adempiere
-Codificación = 'UTF8'
-Espacio de tabla = pg_default
-Límite de conexión = -1;
+-- CREATE Database:
+CREATE DATABASE "idempiereSeed11"
+    WITH 
+    OWNER = adempiere
+    ENCODING = 'UTF8'
+   TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
 
-# Modificar base de datos "idempiereSeed12"
-Establecer ruta_de_búsqueda a adempiere;
-````
+ALTER DATABASE "idempiereSeed11"
+    SET search_path TO adempiere;
+```
 
 </div>
 
@@ -194,10 +202,10 @@ Establecer ruta_de_búsqueda a adempiere;
 <div style="padding-left: 20px;">
 Cambiar nombre solo si es necesario para mantener una copia de seguridad
 
-````
-Comandos Postgres:
-# Modificar base de datos "idempiereSeed12" Cambiar nombre a "idempiereSeed12_Backup"
-````
+```sql
+-- Comandos Postgres:
+Modificar base de datos "idempiereSeed12" Cambiar nombre a "idempiereSeed12_Backup"
+```
 
 </div>
 
@@ -205,10 +213,10 @@ Comandos Postgres:
 
 <div style="padding-left: 20px;">
 
-````
-Comandos de Postgres:
-# \q
-````
+```sql
+-- Comandos de Postgres:
+\q
+```
 
 </div>
 
@@ -219,16 +227,18 @@ Comandos de Postgres:
 
 <div style="padding-left: 20px;">
 
-````
-$ cd /home
-$ ls -l
+```bash
+cd /home
+ls -l
 total 53488
 -rw-r--r--. 1 root root 44945504 21 mar 10:05 Adempiere_pg.dmp
 -rw-r--r--. 1 root root 9818290 21 mar 09:08 Adempiere_pg.jar
--- EJECUTAR COMANDO DE POSTGRES
-$ psql -d idempiereSeed12 -f Adempiere_pg.dmp
+```
+EJECUTAR COMANDO DE POSTGRES
+```bash
+psql -d idempiereSeed12 -f Adempiere_pg.dmp
 contraseña usuario adempiere: adempiere
-````
+```
 
 </div>
 
@@ -245,37 +255,37 @@ Esquema: adempiere debe crearse con 899 tablas, 160 vistas y 70 funciones.
 
 #### MÁQUINA IDEMPIERE
 
-````
+```bash
 Instalar en la máquina que ejecuta Idempiere; requiere Java.
 ssh root@maquina-idempiere.com -p 22
-````
+```
 
 #### Instalar JAVA OpenJDK17
 
-````
+```bash
 ssh root@maquina-idempiere.com -p 22
 yum install java-17-openjdk
-````
+```
 
 #### Verificar Java
 
-````
+```bash
 java -version
 Versión de OpenJDK "17.0.6" 2023-01-17 LTS
 Entorno de ejecución de OpenJDK (Red_Hat-17.0.6.0.10-3.el9) (compilación 17.0.6+10-LTS)
 Máquina virtual de servidor OpenJDK de 64 bits (Red_Hat-17.0.6.0.10-3.el9) (compilación 17.0.6+10-LTS, modo mixto) Compartir)
-````
+```
 
 #### Instalar para evitar java.lang.reflect.InvocationTargetException
 
-````
+```bash
 yum install fontconfig
 Agente Droplet DigitalOcean 35 kB/s | 3.3 kB 00:00
 El paquete fontconfig-2.14.0-2.el9.x86_64 ya está instalado.
 Dependencias resueltas.
 No hay nada que hacer.
 ¡Listo!
-````
+```
 
 <p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 
@@ -283,91 +293,102 @@ No hay nada que hacer.
 
 #### MÁQUINA IDEMPIERE
 
-````
-Instalar en la máquina Idempiere y requiere Java. ssh root@maquina-idempiere.com -p 22
-````
+Instalar en la máquina Idempiere y requiere Java.
+
+```bash
+ ssh root@maquina-idempiere.com -p 22
+```
 
 ##### Instaladores de GET IDEMPIERE 12
 
 ##### Instalar wget
 
-````
-$ sudo yum install wget
-````
+```bash
+sudo yum install wget
+```
 
 ##### Verificar la versión de wget ejecutando:
 
-````
-$ sudo wget --version
-````
+```bash
+sudo wget --version
+```
 
 ##### DESCARGAR INSTALADORES
 
-````
+```bash
 $ cd /home/
 $ wget https://sourceforge.net/projects/idempiere/files/v12/daily-server/idempiereServer12Daily.gtk.linux.x86_64.zip
 ...
 $ wget https://sourceforge.net/projects/idempiere/files/v12/daily-server/idempiereServer12Daily.gtk.linux.x86_64.zip.MD5
-````
+```
 
 ...
 
 ##### VERIFICAR
 
-````
+```bash
 $ md5sum -c idempiereServer12Daily.gtk.linux.x86_64.zip.MD5
 idempiereServer12Daily.gtk.linux.x86_64.zip: OK
-````
+```
 
 <a href="#top">Volver arriba</a>
 
 ### <a name="step5"></a>⭐️5-Instalar desde los instaladores
 
 #### MÁQUINA IDEMPIERE
-````
+
+```bash
 Instalar en la máquina Idempiere y requiere Java. ssh root@maquina-idempiere.com -p 22
-````
+```
 ##### INSTALAR IDEMPIERE 12 DESDE Instaladores
 ##### CREAR USUARIO idempiere
-````
+
+```bash
 adduser idempiere
-````
+```
 ##### AÑADIR CONTRASEÑA DE USUARIO
-````
+
+```bash
 passwd idempiere
-````
-
-##### INSTALAR descomprimir
-````
-yum install descomprimir
-````
-
-##### DESCOMPRIMIR INSTALADORES
-##### Descomprimir idempiereServer12Daily.gtk.linux.x86_64.zip
 ```
 
+##### INSTALAR descomprimir
+
+```bash
+yum install descomprimir
+```
+
+##### DESCOMPRIMIR INSTALADORES
+
+##### Descomprimir idempiereServer12Daily.gtk.linux.x86_64.zip
+
+```bash
 unzip idempiereServer12Daily.gtk.linux.x86_64.zip
 ```
 
 ##### MOVER INSTALADORES a /opt
-````
+
+```bash
 mv idempiere.gtk.linux.x86_64/idempiere-server /opt
 rmdir idempiere.gtk.linux.x86_64
 chown -R idempiere:idempiere /opt/idempiere-server
-````
+```
 
 ##### CONFIGURAR IDEMPIERE
-````
+
+```bash
 su - idempiere ##### No es necesario si ya eres el usuario idempiere.
 cd /opt/idempiere-server
-````
+```
 ##### Ejecutar shell
-````
+
+```bash
 sh console-setup-alt.sh
-````
+```
 
 ##### Responder preguntas:
-````
+
+```bash
 Inicio de Java [/usr/lib/jvm/java-17-openjdk-17.0.6.0.10-3.el9.x86_64]: Intro Aceptar
 Opciones de Java [-Xms64M -Xmx512M]: Intro Aceptar
 Inicio de iDempiere [/opt/idempiere-server]: Intro Aceptar
@@ -414,66 +435,75 @@ Correo electrónico del administrador []:
 Guardar cambios (S/N) [S]: Ingresar
 
 Los cambios se actualizarán en idempiere.properties e idempiereEnv.properties.
-````
+```
 
 ##### ACTUALIZAR BASE DE DATOS idempiereSeed12
 Para mantener la base de datos sincronizada con el código, es necesario ejecutar el siguiente script:
-````
+
+```bash
 su - idempiere # No es necesario si ya eres el usuario idempiere
 cd /opt/idempiere-server/utils
 sh RUN_SyncDB.sh
-````
+```
 
 ##### ACTUALIZAR BASE DE DATOS idempiereSeed12
 ##### Registrar el código de versión en la base de datos
-````
+
+```bash
 Para firmar la base de datos con el código de versión ejecutándose en el servidor, se recomienda (o es obligatorio según la configuración)
 ejecutar el siguiente script:
 su - idempiere # No es necesario si ya eres el usuario idempiere
 cd /opt/idempiere-server
 sh sign-database-build-alt.sh
-````
+```
 
 <a href="#top">Volver arriba</a>
 
 ### <a name="step6"></a>⭐️6- Ejecutando idempiere12
 
 ##### MÁQUINA IDEMPIERE
-````
-Se instala en la máquina Idempiere y requiere Java. ssh root@maquina-idempiere.com -p 22
-````
+
+Se instala en la máquina Idempiere y requiere Java. 
+
+```bash
+ssh root@maquina-idempiere.com -p 22
+```
+
 ##### EJECUTAR IDEMPIERE 12 DESDE Instaladores
 
 ##### Ejecución manual
 Una vez instalado y configurado el servidor iDempiere, puede iniciarlo con:
 
-````
-$ su - idempiere # no es necesario si ya es usuario idempiere
-$ cd /opt/idempiere-server
-$ sh idempiere-server.sh
-o
-$ idempiere
-o
-$ nohup sh idempiere-server.sh >> idempiere-server.log 2>&1 &
-````
+```bash
+su - idempiere # no es necesario si ya es usuario idempiere
+cd /opt/idempiere-server
+sh idempiere-server.sh
+# o
+idempiere
+# o
+nohup sh idempiere-server.sh >> idempiere-server.log 2>&1 &
+```
 
 ##### Instalar como servicio
 iDempiere se puede registrar como servicio en Linux. Para ello, puede copiar los scripts proporcionados a la carpeta /etc/rc.d/init.d de la siguiente manera:
 
-````
-$ sudo su - # esto debe Ejecutar como root
-# cp /opt/idempiere-server/utils/unix/idempiere_RedHat.sh /etc/rc.d/init.d/idempiere
-# systemctl daemon-reload
-````
+```bash
+sudo su - # esto debe Ejecutar como root
+cp /opt/idempiere-server/utils/unix/idempiere_RedHat.sh /etc/rc.d/init.d/idempiere
+systemctl daemon-reload
+```
+
 ##### Ejecutar Idempiere como servicio
+
 Una vez registrado iDempiere como servicio, se iniciará automáticamente al reiniciar el servidor. También se puede iniciar, detener, reiniciar y comprobar como de costumbre con:
 
-````
-# systemctl status idempiere # para comprobar el estado de la aplicación
-# systemctl restart idempiere # para reiniciar la aplicación iDempiere
-# systemctl stop idempiere # para detener la aplicación iDempiere
-# systemctl start idempiere # para iniciar la aplicación iDempiere al detenerse
-````
+```bash
+# Ejecutar como root
+systemctl status idempiere # para comprobar el estado de la aplicación
+systemctl restart idempiere # para reiniciar la aplicación iDempiere
+systemctl stop idempiere # para detener la aplicación iDempiere
+systemctl start idempiere # para iniciar la aplicación iDempiere al detenerse
+```
 
 <a href="#top">Volver arriba</a>
 

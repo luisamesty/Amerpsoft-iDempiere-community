@@ -40,21 +40,19 @@ Para más información, consulte [Instalar Idempiere](https://wiki.idempiere.org
 
 Clonar el repositorio desde el origen en el mismo directorio donde se encuentra el entorno de idempiere:
 
-```copy
+```bash
 cd ..\sources\
 git clone https://github.com/bxservice/idempiere-rest.git
 ```
 
 Diseño de carpetas:
 
+```text
 * sources\idempiere
 * sources\idempiere-rest
 * com.trekglobal.idempiere.extensions.parent
 * com.trekglobal.idempiere.rest.api
 * com.trekglobal.idempiere.extensions.p2
-
-```text
-
 ```
 
 <p align="left">(<a href="#readme-top">volver arriba</a>)</p>
@@ -63,11 +61,13 @@ Diseño de carpetas:
 
 Utilice la propiedad maven.repo.local de Maven:
 
+```bash
 mvn -Dmaven.repo.local=$HOME/.my/other/repository clean install
+```
 
 No es necesario modificar el archivo settings.xml.
 
-```copiar
+```bash
 mvn -Dmaven.repo.local=$HOME/.m2/repository_12_OK instalación limpia
 ```
 Ejemplo de configuración de usuario:
@@ -198,6 +198,7 @@ Una vez que conozcas de antemano toda la información de inicio de sesión neces
 .../api/v1/auth/tokens
 
 Con un cuerpo como este:
+
 ```text
 {
 "username": "{{userName}}",
@@ -211,6 +212,7 @@ Con un cuerpo como este:
 }
 }
 ```
+
 Cambia todos los valores de Template:Propertyname por los que quieras usar en tu instancia.
 
 Captura de pantalla:
@@ -227,8 +229,9 @@ Captura de pantalla:
 Si desea iniciar sesión como lo haría un usuario normal en iDempiere (eligiendo un rol, almacén, cliente, etc.), debe realizar las siguientes solicitudes:
 
 POST .../api/v1/auth/tokens
-Cuerpo:
-```texto
+Body:
+
+```text
 {
 "username": "{{username}}",
 "password": "{{password}}"
@@ -258,12 +261,15 @@ Con ese token, puede solicitar la información de inicio de sesión del usuario 
 Autorización: Portador {authToken}
 
 La información que puede solicitar es la siguiente y debe hacerse en este orden, ya que cada solicitud necesita información de la llamada anterior:
+
 ```text
 GET .../api/v1/auth/roles?client={clientId}
 ```
 Devuelve una matriz con los roles a los que el usuario tiene acceso.
 
+```text
 GET .../api/v1/auth/organizations?client={clientId}&role={roleId}
+```
 
 Devuelve una matriz con las organizaciones a las que el usuario tiene acceso.
 
@@ -271,15 +277,20 @@ Devuelve una matriz con las organizaciones a las que el usuario tiene acceso.
 
 Devuelve una matriz con los almacenes a los que el usuario tiene acceso.
 
+```text
 GET .../api/v1/auth/language?client={clientId}
+```
 
 Devuelve una matriz con los idiomas en los que el usuario puede iniciar sesión.
 
 Cuando tenga todos los datos, debe realizar una solicitud PUT final como esta:
 
+```text
 PUT .../api/v1/auth/tokens
+```
 
-Cuerpo:
+```text
+Body:
 
 {
 "clientId": {clientId},
@@ -289,5 +300,6 @@ Cuerpo:
 "language": "{language}"
 }
 * Las propiedades language, organizationId y warehouseId son opcionales; se pueden omitir.
+```
 
 <p align="left">(<a href="#readme-top">volver arriba</a>)</p>
