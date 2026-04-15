@@ -11,33 +11,57 @@
 
 ## <b>Description</b>
 
-AMERPSOFT ZK_Themes contains two basic themes.
+AMERPSOFT ZK_Themes contains basic themes.
+
+- iceblue_am
 - iceblue_mo
 - ksys
 
 Based on IDEMPIERE-4421, Some Theme Migration Notes:
 
 Theme resources reside at:
+
+```text
 src/web/theme/THEME_NAME 
-instead of /theme/THEME_NAME
+```
+
+instead of 
+
+```text
+/theme/THEME_NAME
+```
 
 Within the theme folder, reference to other theme resources must use full path (with “~./” prefix) instead of relative path. 
 For e.g, at:
+```text
 theme/default/zul/login/login-left.zul
+```
 The macroURI value is change from vendor-logo.zul
 to:
+```text
 ~./theme/default/zul/login/vendor-logo.zul
-
+```
 
 Same goes for resource reference at *.css.dsp. 
-For e.g, at theme/default/css/fragment/grid.css.dsp background-image: url(${c:encodeURL('/theme/default/images/EditRecord16.png')}) 
+For e.g, at theme/default/css/fragment/grid.css.dsp 
+```css
+background-image: url(${c:encodeURL('/theme/default/images/EditRecord16.png')}) 
+```
+
 is replace with:
+
+```css
 background-image: url(${c:encodeURL('~./theme/default/images/EditRecord16.png')}). 
+```
+
 Note the added “~./” prefix.
+
 </pre>
 
 Additional folders containing images for customers
 
+- web.theme.iceblue_am.images_tam
+- web.theme.iceblue_am.images_mcc
 - web.theme.iceblue_mo.images_mo
 - web.theme.iceblue_mo.images_mcc
 
@@ -118,9 +142,11 @@ Value: default
 This will put default Idempiere Standard ZK Theme
     
 SQL Commands: 
+
+```sql
 UPDATE ad_sysconfig SET value ='default' WHERE AD_SysConfig_ID=200021;
 COMMIT;
-
+```
 
 <!-- CONTACT -->
 ## Contact
@@ -135,6 +161,5 @@ For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempie
 - Updated for Idempiere release 8.2 - March 2021
 - Updated for Idempiere release 11 - January 2024
 - Updated for Idempiere release 12 - June 2025
-- Under Test - See release-11 branch.
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>

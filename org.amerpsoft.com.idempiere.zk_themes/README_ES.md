@@ -1,43 +1,70 @@
 &lArr;[COMMUNITY PLUGINS](../README.md) | [Home](../README.md)
 
   <div>
-    🇬🇧 English | 🇪🇸 <a href="README_ES.md">Español</a>
+    🇬🇧 <a href="README.md">English</a> | 🇪🇸 Español</a>
   </div>
   
   
-## <b>ZK_Themes</b>
+## <b>Plugin ZK_Themes</b>
 
 <a name="readme-top"></a>
 
-## <b>Description</b>
+## <b>Descripcion</b>
 
-AMERPSOFT ZK_Themes contains two basic themes.
+AMERPSOFT ZK_Themes contiene dos temas básicos.
+
+- iceblue_am
 - iceblue_mo
 - ksys
 
-Based on IDEMPIERE-4421, Some Theme Migration Notes:
+Basado en IDEMPIERE-4421, Algunas notas de migración:
 
-Theme resources reside at:
+Los fuentes de los temas residen en:
+
+```text
 src/web/theme/THEME_NAME 
-instead of /theme/THEME_NAME
+```
+en lugar de:
 
-Within the theme folder, reference to other theme resources must use full path (with “~./” prefix) instead of relative path. 
-For e.g, at:
+```text
+/theme/THEME_NAME
+```
+
+Dentro de la carpeta del tema, las referencias a otros recursos del tema deben usar la ruta completa (con el prefijo “~./”) en lugar de la ruta relativa.
+
+Por ejemplo, en:
+
+```text
 theme/default/zul/login/login-left.zul
-The macroURI value is change from vendor-logo.zul
-to:
+```
+
+El valor de macroURI se cambia de vendor-logo.zul a:
+
+```text
 ~./theme/default/zul/login/vendor-logo.zul
+```
 
+Lo mismo ocurre con la referencia a recursos en *.css.dsp.
+Por ejemplo, en theme/default/css/fragment/grid.css.dsp
 
-Same goes for resource reference at *.css.dsp. 
-For e.g, at theme/default/css/fragment/grid.css.dsp background-image: url(${c:encodeURL('/theme/default/images/EditRecord16.png')}) 
-is replace with:
+```css 
+background-image: url(${c:encodeURL('/theme/default/images/EditRecord16.png')}) 
+```
+
+se reemplaza con:
+
+```css
 background-image: url(${c:encodeURL('~./theme/default/images/EditRecord16.png')}). 
-Note the added “~./” prefix.
+```
+
+Nótese el prefijo añadido “~./”.
+
 </pre>
 
-Additional folders containing images for customers
+Carpetas adicionales que contienen imágenes para los clientes.
 
+- web.theme.iceblue_am.images_tam
+- web.theme.iceblue_am.images_mcc
 - web.theme.iceblue_mo.images_mo
 - web.theme.iceblue_mo.images_mcc
 
@@ -59,44 +86,46 @@ Maintainer: Heng Sin
 ## <b>Documentation</b>
 
 
-See <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
+Ver <b>amerp_themes.docx</b>   or   <b>amerp_themes.pdf</b>
 
 
 [AMERPSOFT Themes - amerp_themes.pdf ](./documentation/amerp_themes.pdf)
 
-## <b>Installation Procedure</b>
+## <b>Procedimiento de Instalacion</b>
 
-### <b>Install Jar Plugin </b>
-    Available on p2 site target plugins
-    org.amerpsoft.com.idempiere.zk_themes_12.0.0.XXXXXXXXXXXXXX.jar
+### <b>Instalar Jar Plugin </b>
+
+Instalar con OSGI System Console. 
+Disponible en los plugins de destino del sitio p2.
+
+org.amerpsoft.com.idempiere.zk_themes_12.0.0.XXXXXXXXXXXXXX.jar
 
 ### <b>Pack in AMERPSOFT ZK_Themes.zip</b>
 
-Once plugin is running, then Pack-In:
+Una vez que el 'plugin' esté en funcionamiento, entonces 'Pack-In':
 
 <b>AMERPSOFT ZK_Themes.zip</b>
 
-It contains SysConfig Variables:
+Contiene variables de SysConfig:
 
 ```text
-    - ZK_THEME 
-    - ZK_LOGO_LARGE
-    - ZK_LOGO_SMALL
-    - ZK_BROWSER_TITLE
-    - ZK_BROWSER_ICON
-    - ZK_THEME_USE_FONT_ICON_FOR_IMAGE 
-    
-    SET ZK_THEME_USE_FONT_ICON_FOR_IMAGE to 'N'
+- ZK_THEME 
+- ZK_LOGO_LARGE
+- ZK_LOGO_SMALL
+- ZK_BROWSER_TITLE
+- ZK_BROWSER_ICON
+- ZK_THEME_USE_FONT_ICON_FOR_IMAGE 
+
+SET ZK_THEME_USE_FONT_ICON_FOR_IMAGE to 'N'
 ```
 
+### <b>Introducir manualmente los valores configurados</b>
 
-### <b>Manually enter Configured values</b>
+Si se produce un error al instalar el paquete, puede introducirlos manualmente.
 
-If error on Pack-IN you may enter them manually.
+(Administración del sistema --> Reglas generales --> Reglas del sistema --> Configurador del sistema)
 
-(System Admin --> General Rules --> System Rules --> System Configurator)
-
-Configured Values:
+Valores configurados:
 | NAME	                          | VALUE	   | DESCRIPTION	                                                           |AD_SYSCONFIG_UU      |
 |---------------------------------|------------| ------------------------------------------------------------------------- |-------------------- | 
 |ZK_THEME	                      |iceblue_c	       |Available choices ksys iceblue_c  |	054399ad-3705-411d-b79e-7ec7111888c5 |
@@ -107,27 +136,36 @@ Configured Values:
 |ZK_BROWSER_TITLE	              | iDempiere AMERP |	Browser Title	| c587f6f8-2910-4b27-913e-2e41e8581ea0 |
 
 
-## <b>IF SOMETHING GO WRONG</b>
 
-REPLACE AD_Sysconfig Record (AD_SysConfig_ID=200021)
+## <b>SI ALGO VA MAL</b>
+
+REEPLACE AD_Sysconfig Record (AD_SysConfig_ID=200021)
 
 Name:ZK_THEME
 
 Value: default
 
-This will put default Idempiere Standard ZK Theme
-    
-SQL Commands: 
+Esto pondrá el tema predeterminado Imperiere Standard ZK.
+
+Comando SQL:
+```sql 
 UPDATE ad_sysconfig SET value ='default' WHERE AD_SysConfig_ID=200021;
 COMMIT;
+```
 
+## Contacto
 
-<!-- CONTACT -->
-## Contact
+Estos plugins y tutoriales son cortesía de Luis Amesty de [Amerpsoft Consulting](http://amerpsoft.com/).
 
-These plugins and tutorial is brought to you by Luis Amesty from: [Amerpsoft Consulting](http://amerpsoft.com/). 
+Para cualquier pregunta o mejora, contáctame en: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
 
-For any question or improvement see me at: [Idempiere WIKI](https://wiki.idempiere.org/en/User:Luisamesty)
+<p align="left">(<a href="#readme-top">volver arriba</a>)</p>
+
+## Requiere la versión 12 de Idempiere
+
+Consulta la rama de la versión 12 para más detalles.
+
+<p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 
 
 ## Release Notes:

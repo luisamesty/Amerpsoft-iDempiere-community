@@ -185,7 +185,7 @@ To update go to 'System Admin / Tenant Rules / Tenant', on Tab 'Tenant Info', up
 
 <b>Verify reports and processes menus created. </b>
 
- ```text
+```text
 	- Amfin Process Reset Accounting
 	- Amfin Process Repost Accounting
 	- Amfin Process GLJournal Annual Closing

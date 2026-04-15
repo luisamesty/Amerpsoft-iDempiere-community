@@ -22,7 +22,7 @@ El sistema contable es la base para el inicio de un cliente y una organización;
 
 <b>Contenido:</b>
 
-```texto
+```text
 - Funciones de la base de datos
 - Configuración inicial del cliente
 - Instalación del plugin
@@ -153,7 +153,7 @@ Revisa los elementos de la cuenta.
 
 <b>Instalar el plugin mediante la consola web Apache Felix</b>
 
-```texto
+```text
 - Descargar el archivo jar del plugin del repositorio.
 (Nombre: org.amerpsoft.lve.idempiere.financial_12.0.0.202404091015.jar)
 - Instalar mediante la consola web Apache Felix de Osgi
@@ -163,7 +163,7 @@ Revisa los elementos de la cuenta.
 
 <b>Empaquetar AMERPSFOT Financial.zip</b>
 
-```texto
+```text
 1. Descargar ‘AMERPSOFT Financial.zip’
 2. Empaquetar usando el diccionario de la aplicación --> Menú Empaquetar
 3. Ejecutar Sincronizar terminología, Comprobación de secuencia y Actualización de acceso de rol
@@ -182,7 +182,7 @@ Para actualizar, vaya a "Administración del Sistema / Reglas del Inquilino / In
 
 Verifique los menús de informes y procesos creados.
 
-```texto
+```text
 - Proceso de Amfin: Reinicio Contable
 - Proceso de Amfin: Recontabilización Contable
 - Proceso de Amfin: Cierre Anual del GLJournal
@@ -190,7 +190,7 @@ Verifique los menús de informes y procesos creados.
 
 Informes Financieros de AMERPSOFT
 
-```texto
+```text
 - Elementos de Cuenta de Amfin, Jasper
 - Balance de Comprobación de Amfin, Jasper, un Período
 - Balance de Comprobación de Amfin, Jasper, por Dos Fechas
@@ -204,7 +204,7 @@ Informes Financieros de AMERPSOFT
 
 Procesos Financieros de AMERPSOFT
 
-```texto
+```text
 - Proceso de Amfin: Restablecer Contabilidad: Restablecer cuentas de hechos ** Verificar **
 - Proceso de Amfin: Recontabilización de Contabilidad: Este proceso recontabiliza un tipo de documento en un período determinado.
 - Proceso de Amfin: Cierre Anual del Diario General: Este proceso genera un Diario General para el cierre anual.
@@ -215,7 +215,7 @@ Procesos Financieros de AMERPSOFT
 
 Informes Financieros de AMERPSOFT
 
-```texto
+```text
 - Elementos de Cuenta Amfin Jasper
 - Balance de Comprobación Amfin Jasper, Un Período
 - Balance de Comprobación Amfin Jasper, Dos Fechas

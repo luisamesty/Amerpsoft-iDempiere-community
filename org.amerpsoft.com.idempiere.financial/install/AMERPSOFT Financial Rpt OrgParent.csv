@@ -8,6 +8,39 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Financial Rpt OrgParent,1150,V,,,,,,,,,ALL,,,,,,,,,,,Refresco_Forzado_Año,,,,,,,,
 *,AMERPSOFT Financial Rpt OrgParent,1230,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AMF_SummaryType,,,
 *,AMERPSOFT Financial Rpt OrgParent,1240,REF,,,,,,,,,ALL,,,,,,,,,,,,,,,,AccountTreeLevel,,,
+*,AMERPSOFT Financial Rpt OrgParent,1900,SQL,,,,,,,,,ALL,"-- 1. Borrar adjuntos previos (Archivos Jasper .jrxml/.jasper)
+DELETE FROM AD_Attachment 
+WHERE AD_Table_ID = 284 
+  AND Record_ID IN (
+    SELECT AD_Process_ID 
+    FROM AD_Process 
+    WHERE Value IN (
+        'AmfinAccountElementsJasper',
+        'AmfinTrialBalanceJasperTwoDatesOrgTree',
+        'AmfinTrialBalanceJasperOnePeriodOrgTree',
+        'AmfinStateFinancialBalanceJasperOrg',
+        'AmfinStateFinancialIntegralResultsOrgTre',
+        'AmfinTrialBalanceJasperTwoDatesOrgTree',
+        'AmfinAnaliticFinancialStateJasperOrg'
+        
+    )
+);
+
+-- 2. Borrar parámetros previos (Evita conflictos de SeqNo y duplicados)
+DELETE FROM AD_Process_Para 
+WHERE AD_Process_ID IN (
+    SELECT AD_Process_ID 
+    FROM AD_Process 
+    WHERE Value IN (
+        'AmfinAccountElementsJasper',
+        'AmfinTrialBalanceJasperTwoDatesOrgTree',
+        'AmfinTrialBalanceJasperOnePeriodOrgTree',
+        'AmfinStateFinancialBalanceJasperOrg',
+        'AmfinStateFinancialIntegralResultsOrgTre',
+        'AmfinTrialBalanceJasperTwoDatesOrgTree',
+        'AmfinAnaliticFinancialStateJasperOrg'
+    )
+);",,,,,,,,,,,,,,Cleans Reports,,,,
 *,AMERPSOFT Financial Rpt OrgParent,2000,P,,,,,,,,,ALL,,,,,AmfinAccountElementsJasper,,,,,,,,,,,,,,
 *,AMERPSOFT Financial Rpt OrgParent,2010,P,,,,,,,,,ALL,,,,,AmfinTrialBalanceJasperTwoDatesOrgTree,,,,,,,,,,,,,,
 *,AMERPSOFT Financial Rpt OrgParent,2010,P,,,,,,,,,ALL,,,,,AmfinTrialBalanceJasperOnePeriodOrgTree,,,,,,,,,,,,,,

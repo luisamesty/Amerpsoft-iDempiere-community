@@ -214,9 +214,9 @@ These reports have been tested with Postgresql database.
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
 
-## Requires Idempiere Release 11 
+## Requires Idempiere Release 12
 
-  Under Test - See release-11 branch for more details.
+See release-12 branch for more details.
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 

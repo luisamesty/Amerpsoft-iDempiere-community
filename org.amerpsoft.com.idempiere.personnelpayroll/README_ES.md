@@ -200,15 +200,13 @@ Verifique que estos informes estén instalados en el menú:
 </a>
 </div>
 
-```
-
 Estos informes han sido probados con la base de datos Postgresql.
 
-&lt;p align=&quot;left&quot;&gt;(&lt;a href=&quot;#readme-top&quot;&gt;volver arriba&lt;/a&gt;)&lt;/p&gt;
+<p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 
-## Requiere Idempiere Versión 11
+## Requiere Idempiere Versión 12
 
-En prueba - Ver la rama `release-11` para más detalles.
+Ver la rama `release-12` para más detalles.
 
-&lt;p align=&quot;left&quot;&gt;(&lt;a href=&quot;#readme-top&quot;&gt;volver arriba&lt;/a&gt;)&lt;/p&gt;
+<p align="left">(<a href="#readme-top">volver arriba</a>)</p>
 ```

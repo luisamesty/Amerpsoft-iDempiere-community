@@ -90,6 +90,7 @@ AP Invoice - Withholding Number Multiple Invoice.
 		Withholding Rule: Export one by one and import 
 
 When is completed, you should have:
+
 - Tax rates
 - Tax categories.
 - Withholding Categories

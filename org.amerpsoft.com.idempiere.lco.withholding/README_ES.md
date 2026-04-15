@@ -46,11 +46,14 @@ Verifique que los archivos de 2Pack se hayan actualizado y cargado correctamente
 Debe iniciar sesión como usuario del sistema.
 
 Hay dos archivos de paquete:
+
 - AMERPSOFT LCO Withholding (2Pack_7.1.1.zip)
 - AMERPSOFT LCO Withholding Windows (2Pack_7.1.2.zip)
 
 #### <b>3- Agregar datos de retención (Venezuela)</b>
+
 Esto aplica a las normas de retención del SENIAT en Venezuela.
+
 Se deben crear otros países.
 - Inicie sesión en idempiere como GardenAdmin. - Empaquetar en 'AMERPSOFT LCO Withholding Data.zip'
 * El archivo se encuentra en el directorio de instalación.
@@ -110,9 +113,9 @@ Cálculo de retención: Exportar uno por uno e importar
 Reglas de retención: Exportar uno por uno e importar
 
 Al finalizar, debería tener:
+
 - Tasas de impuestos
 - Categorías de impuestos
-
 - Categorías de Retención
 - Tipos de Retención con Reglas y Cálculo
 - Ventana Factura (Proveedor) **ACTUALIZADO**
