@@ -39,6 +39,7 @@ Import-Package: org.osgi.service.event,
  net.sf.jasperreports.engine,
  org.amerp.amndocument,
  org.compiere.model,
+ org.compiere.apps,
  org.mozilla.classfile;version="1.7.6",
  org.mozilla.javascript;version="1.7.6"
 Bundle-Vendor: Amerpsoft
