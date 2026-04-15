@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Parent
+Bundle-SymbolicName: org.amerpsoft.com.idempiere.parent
+Bundle-Version: 12.0.0.qualifier
+Automatic-Module-Name: org.amerpsoft.com.idempiere.parent
