@@ -50,7 +50,9 @@ SELECT
 '01' AS ITITRA,
 --ICDSRV	Num/A	3	0	4	6		S	Código empresa (asignado por el Banco)
 CASE WHEN cnt.value='GIO' THEN   '471' 
-	WHEN cnt.value='MO2' THEN '468' END  AS ICDSRV,
+	WHEN cnt.value='MO2' THEN '468' 
+	WHEN cnt.value='ABB' THEN 'NU9' 
+	END  AS ICDSRV,
 --ICTDEB	Num		10	0	7	16		S N Cobro Cuotas	Nro. de cuenta para débito/Cuenta empresa
 COALESCE(LPAD(TRIM(employ1.accountno), 10, '0'),RPAD('',10, '0')) AS ICTDEB,
 --IBCOCR	Num		3	0	17	19		S	Nro. de Banco para crédito Obs: siempre 017
@@ -90,6 +92,7 @@ REPLACE(TO_CHAR(CAST($P{PayDate} AS Timestamp), 'HH12:MI:SS'),':','')   AS IHORC
 --IUSUCA	Alfa	10		243	252		N	Nombre del usuario que cargó
 CASE WHEN cnt.value='GIO' THEN RPAD(TRIM('LAGIOCONDA'),10, ' ')   
 	WHEN cnt.value='MO2' THEN RPAD(TRIM('MONALISA'),10, ' ') 
+	WHEN cnt.value='ABB' THEN RPAD(TRIM('ABESSOR'),10, ' ') 
 END AS IUSUCA
 FROM adempiere.amn_payroll as pyr
 INNER JOIN adempiere.amn_employee as emp  ON (emp.amn_employee_id= pyr.amn_employee_id) 
