@@ -72,7 +72,7 @@
 	<parameter name="sign3" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[-- PayrollSocialSecurityMTESS2025
--- 
+-- QUERY RECURSIVA V2
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -81,14 +81,13 @@ WITH Conceptos AS (
 	    0 as level, 
 	    TRN1.Parent_ID, 
 		ARRAY [TRN1.Node_ID::text]  AS ancestry, 
-		ARRAY [ACTP.value::text]  AS valueparent,
-		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value (Nodo actual)
+		ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
 		TRN1.Node_ID as Star_An,
 		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
-		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -103,15 +102,14 @@ WITH Conceptos AS (
 		TRN2.level+1 as level,
 		TRN1.Parent_ID, 
 		TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
-		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
-		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		TRN2.valueparent || ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value
+		TRN2.calcorderparent || ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
 		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
 		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
-		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -121,7 +119,6 @@ WITH Conceptos AS (
 		)  AND TRN1.isActive='Y' 		
 	) 
 	-- MAIN SELECT
-	-- AMN_Concept_types for Level reports
 	SELECT DISTINCT ON (trial.calcorder, trial.ancestry)
 		trial.Level,
 		trial.Node_ID, 
@@ -152,10 +149,10 @@ WITH Conceptos AS (
 			PAR.Node_ID, 
 			PAR.Parent_ID ,
 			PAR.ancestry,
-			PAR.valueparent,
-			COALESCE(valueparent[2],'') as Value1,
-			COALESCE(valueparent[3],'') as Value2,
-			COALESCE(valueparent[4],'') as Value3,
+			-- Al usar el nodo actual en el array, las posiciones se alinean de raíz a fin:
+			COALESCE(valueparent[1],'') as Value1, -- Nivel Raíz (Top)
+			COALESCE(valueparent[2],'') as Value2, -- Sub-nivel 1
+			COALESCE(valueparent[3],'') as Value3, -- Sub-nivel 2
 			CNT.AD_client_ID,
 			CNT.AD_Org_ID,
 			CNT.AMN_Concept_Types_ID,
@@ -193,6 +190,7 @@ WITH Conceptos AS (
 	) trial
 	LEFT JOIN amn_concept_types as ACTN1 ON (ACTN1.Value = trial.Value1 AND ACTN1.AD_Client_ID= trial.AD_Client_ID)
 	LEFT JOIN amn_concept_types as ACTN2 ON (ACTN2.Value = trial.Value2 AND ACTN2.AD_Client_ID= trial.AD_Client_ID)
+	-- CORRECCIÓN: Join explícito por Value y Client_ID para evitar nulos o cartesianos
 	LEFT JOIN amn_concept_types as ACTN3 ON (ACTN3.Value = trial.Value3 AND ACTN3.AD_Client_ID= trial.AD_Client_ID)
 	WHERE trial.ad_client_id = $P{AD_Client_ID}
 	 AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR trial.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -207,6 +205,9 @@ SELECT
 	value2,
 	name2,
 	calcorder2,
+	value3,
+	name3,
+	calcorder3,
 	amndateend,
 	isshow,
 	c_value,
@@ -258,6 +259,9 @@ SELECT
 		value2,
 		name2,
 		calcorder2,
+		value3,
+		name3,
+		calcorder3,
 		isshow,
 		c_value,
 		departamento,
@@ -305,6 +309,9 @@ SELECT
 			cty.value2,
 			cty.name2,
 			cty.calcorder2,
+			cty.value3,
+			cty.name3,
+			cty.calcorder3,
 			-- PERIOD
 			prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend,
 			-- TIPO DE CONCEPTO
@@ -389,13 +396,14 @@ SELECT
 		    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
 		    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 	) AS recibo
-	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
+	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, value3, name3, calcorder3,amndateend, isshow, c_value,
 	departamento, amn_employee_id, cedula, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
 	invdateini, invdateend,
 	razon_social, socialsecurityid, socialsecuritymtess, amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
 	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate, optmode, ips_tasa, concept_value
 	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
-) AS recibocur]]>
+) AS recibocur
+]]>
 	</queryString>
 	<field name="org_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
@@ -422,6 +430,20 @@ SELECT
 	<field name="calcorder2" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="calcorder2"/>
 		<property name="com.jaspersoft.studio.field.label" value="calcorder2"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
+	</field>
+	<field name="value3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="value3"/>
+		<property name="com.jaspersoft.studio.field.label" value="value3"/>
+	</field>
+	<field name="name3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name3"/>
+		<property name="com.jaspersoft.studio.field.label" value="name3"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
+	</field>
+	<field name="calcorder3" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="calcorder3"/>
+		<property name="com.jaspersoft.studio.field.label" value="calcorder3"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_concept_types"/>
 	</field>
 	<field name="amndateend" class="java.sql.Timestamp">
@@ -557,7 +579,7 @@ SELECT
 		<property name="com.jaspersoft.studio.field.label" value="amndateini"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
 	</field>
-	<field name="COLUMN_34" class="java.sql.Timestamp">
+	<field name="COLUMN_37" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="amndateend"/>
 		<property name="com.jaspersoft.studio.field.label" value="amndateend"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="amn_period"/>
@@ -931,6 +953,74 @@ SELECT
 		<variableExpression><![CDATA[($V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100))).subtract($V{ips_t})]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="horas_extras_diurnas_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+   "HED".equalsIgnoreCase($F{value3}) 
+  || "HEDI".equalsIgnoreCase($F{value3}) 
+  || "HAD".equalsIgnoreCase($F{value3}) 
+  || "HEA".equalsIgnoreCase($F{value3})
+  || "HEN".equalsIgnoreCase($F{value3})
+  || "HNO".equalsIgnoreCase($F{value3}) )) 
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_diurnas_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+   "HED".equalsIgnoreCase($F{value3}) 
+  || "HEDI".equalsIgnoreCase($F{value3}) 
+  || "HAD".equalsIgnoreCase($F{value3}) 
+  || "HEA".equalsIgnoreCase($F{value3})
+  || "HEN".equalsIgnoreCase($F{value3})
+  || "HNO".equalsIgnoreCase($F{value3}) )) 
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_diurnas_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+   "HED".equalsIgnoreCase($F{value3}) 
+  || "HEDI".equalsIgnoreCase($F{value3}) 
+  || "HAD".equalsIgnoreCase($F{value3}) 
+  || "HEA".equalsIgnoreCase($F{value3})
+  || "HEN".equalsIgnoreCase($F{value3})
+  || "HNO".equalsIgnoreCase($F{value3}) )) 
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_diurnas_t" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+   "HED".equalsIgnoreCase($F{value3}) 
+  || "HEDI".equalsIgnoreCase($F{value3}) 
+  || "HAD".equalsIgnoreCase($F{value3}) 
+  || "HEA".equalsIgnoreCase($F{value3})
+  || "HEN".equalsIgnoreCase($F{value3})
+  || "HNO".equalsIgnoreCase($F{value3}) )) 
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_nocturnas_importe" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+($F{value3} != null && $F{value3}.toUpperCase().matches("HEN|HNO")) ) )
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_nocturnas_tloc" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porLocalidad" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+($F{value3} != null && $F{value3}.toUpperCase().matches("HEN|HNO")) ) )
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_nocturnas_org" class="java.math.BigDecimal" resetType="Group" resetGroup="GroupbyOrg" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+($F{value3} != null && $F{value3}.toUpperCase().matches("HEN|HNO")) ) )
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="horas_extras_nocturnas_t" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{value2}.compareToIgnoreCase( "HORASEXTRAS" ) == 0 && (
+($F{value3} != null && $F{value3}.toUpperCase().matches("HEN|HNO")) ) )
+? $F{amountcalculated} : BigDecimal.ZERO]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
 	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
 		<groupHeader>
@@ -1052,6 +1142,32 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salario_rec_org}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="850" y="0" width="90" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="6476880d-bf81-4814-9810-2ef9c962e791">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{horas_extras_diurnas_org}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1060" y="0" width="130" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="d7f4d800-6bdd-4b3e-97fa-15905070a013">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{horas_extras_diurnas_org}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1179,6 +1295,32 @@ SELECT
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salario_rec_tloc}]]></textFieldExpression>
 				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="850" y="0" width="90" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="4f12d80c-fb6b-45ca-9a57-3d61663f8fde">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{horas_extras_diurnas_tloc}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
+					<reportElement mode="Transparent" x="1060" y="0" width="130" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="9fbdd5d3-a686-4150-9587-a14ce65fff7e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{horas_extras_diurnas_tloc}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -1252,7 +1394,9 @@ $V{salario_basico}
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[String.format(java.util.Locale.US, "%.0f", $V{horas_extras})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[String.valueOf($V{horas_extras} == null ? "" :
+$V{horas_extras}.toString().substring(0,
+Math.min(3, $V{horas_extras}.toString().length())))]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="790" y="0" width="60" height="12" uuid="6ce3747b-4a36-402c-a932-bafa49c89ae4">
@@ -1443,9 +1587,12 @@ $V{otros_ingresos}
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[String.valueOf($V{horas_extras} == null ? "" :
-$V{horas_extras}.toString().substring(0,
-Math.min(3, $V{horas_extras}.toString().length())))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[String.valueOf(
+    $V{dias_trabajados}
+        .multiply(java.math.BigDecimal.valueOf(8))
+        .setScale(0, java.math.RoundingMode.DOWN)
+        .intValue()
+)]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="1660" y="0" width="100" height="12" uuid="d567fff5-b0a3-4bd2-9ef2-4ce560312302">
@@ -1473,6 +1620,58 @@ $V{salario_rec}
     ))]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement x="850" y="0" width="90" height="12" printWhenGroupChanges="GroupbyOrg" uuid="61618f84-fe2e-4dc1-b3ef-30ce7972e0f3">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{horas_extras_diurnas_importe} == null ? "" :
+$V{horas_extras_diurnas_importe}
+    .setScale(0, java.math.RoundingMode.HALF_UP)
+    .toPlainString()
+    .replace(".", "")
+    .substring(0, Math.min(10,
+        $V{horas_extras_diurnas_importe}
+            .setScale(0, java.math.RoundingMode.HALF_UP)
+            .toPlainString()
+            .replace(".", "")
+            .length()
+    ))]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+					<reportElement x="1060" y="0" width="130" height="12" printWhenGroupChanges="GroupbyOrg" uuid="0fd6a785-a647-4b2a-91b0-726bc4615841">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{horas_extras_nocturnas_importe} == null ? "" :
+$V{horas_extras_nocturnas_importe}
+    .setScale(0, java.math.RoundingMode.HALF_UP)
+    .toPlainString()
+    .replace(".", "")
+    .substring(0, Math.min(10,
+       $V{horas_extras_nocturnas_importe}
+            .setScale(0, java.math.RoundingMode.HALF_UP)
+            .toPlainString()
+            .replace(".", "")
+            .length()
+    ))]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
@@ -1480,9 +1679,8 @@ $V{salario_rec}
 		<band height="12">
 			<printWhenExpression><![CDATA[$P{isShowHeader}.compareToIgnoreCase( "N" ) == 0 && $P{isShowColumns}.compareToIgnoreCase( "N" ) == 0 && $V{PAGE_NUMBER} ==1]]></printWhenExpression>
 			<textField>
-				<reportElement x="70" y="0" width="60" height="12" uuid="c3e90ce6-8e36-4e4c-a37c-ccdb36ad5786">
+				<reportElement x="70" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" uuid="c3e90ce6-8e36-4e4c-a37c-ccdb36ad5786">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
@@ -1905,7 +2103,7 @@ $V{salario_rec}
 				<textFieldExpression><![CDATA[$R{report.of}+" "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="69" y="0" width="60" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="GroupbyOrg" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
+				<reportElement x="70" y="0" width="60" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="GroupbyOrg" uuid="6aa1867d-b8db-46a9-a9f5-14197a5b0f5b">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1917,7 +2115,7 @@ $V{salario_rec}
 				<textFieldExpression><![CDATA[$F{org_name}]]></textFieldExpression>
 			</textField>
 			<image isUsingCache="true" onErrorType="Icon" evaluationTime="Report">
-				<reportElement key="" x="0" y="0" width="69" height="42" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
+				<reportElement key="" x="0" y="0" width="70" height="42" isPrintInFirstWholeBand="true" uuid="a4a3aa49-cfb8-4c00-b1fa-13d1ec48b85f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -1971,10 +2169,10 @@ $V{salario_rec}
 				<textFieldExpression><![CDATA[$F{currencyrate}.compareTo( java.math.BigDecimal .ZERO)>=0 ? "Tasa: "+$F{currencyrate}.setScale(8, java.math.RoundingMode.HALF_UP): ""]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="69" y="28" width="401" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="GroupbyOrg" uuid="2d9ba5ae-c77a-415e-b85d-441d9db29f6d">
+				<reportElement x="70" y="28" width="400" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="GroupbyOrg" uuid="2d9ba5ae-c77a-415e-b85d-441d9db29f6d">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -1985,10 +2183,9 @@ $V{salario_rec}
  : "("+$R{report.allperiods}+")" )]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="69" y="14" width="60" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="GroupbyOrg" uuid="ce616051-bfd3-4587-b2c3-f94ebf46035f">
+				<reportElement x="70" y="14" width="60" height="14" isRemoveLineWhenBlank="true" printWhenGroupChanges="GroupbyOrg" uuid="ce616051-bfd3-4587-b2c3-f94ebf46035f">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Top">
@@ -2455,6 +2652,32 @@ $V{salario_rec}
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{salario_rec_t}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+				<reportElement mode="Transparent" x="850" y="0" width="90" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="fceebe81-a061-4299-9d7d-18efcfb971bb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{horas_extras_diurnas_t}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
+				<reportElement mode="Transparent" x="1060" y="0" width="130" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="f2a666d8-09fe-4027-93dd-a2bf686c3b71">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box padding="0" topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{horas_extras_diurnas_t}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
