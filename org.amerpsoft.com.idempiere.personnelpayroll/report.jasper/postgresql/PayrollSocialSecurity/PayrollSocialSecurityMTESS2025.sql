@@ -1,5 +1,5 @@
 -- PayrollSocialSecurityMTESS2025
--- 
+-- QUERY RECURSIVA V2
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -8,14 +8,13 @@ WITH Conceptos AS (
 	    0 as level, 
 	    TRN1.Parent_ID, 
 		ARRAY [TRN1.Node_ID::text]  AS ancestry, 
-		ARRAY [ACTP.value::text]  AS valueparent,
-		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value (Nodo actual)
+		ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
 		TRN1.Node_ID as Star_An,
 		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
-		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -30,15 +29,14 @@ WITH Conceptos AS (
 		TRN2.level+1 as level,
 		TRN1.Parent_ID, 
 		TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
-		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
-		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		TRN2.valueparent || ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value
+		TRN2.calcorderparent || ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
 		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
 		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
-		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -48,7 +46,6 @@ WITH Conceptos AS (
 		)  AND TRN1.isActive='Y' 		
 	) 
 	-- MAIN SELECT
-	-- AMN_Concept_types for Level reports
 	SELECT DISTINCT ON (trial.calcorder, trial.ancestry)
 		trial.Level,
 		trial.Node_ID, 
@@ -79,10 +76,10 @@ WITH Conceptos AS (
 			PAR.Node_ID, 
 			PAR.Parent_ID ,
 			PAR.ancestry,
-			PAR.valueparent,
-			COALESCE(valueparent[2],'') as Value1,
-			COALESCE(valueparent[3],'') as Value2,
-			COALESCE(valueparent[4],'') as Value3,
+			-- Al usar el nodo actual en el array, las posiciones se alinean de raíz a fin:
+			COALESCE(valueparent[1],'') as Value1, -- Nivel Raíz (Top)
+			COALESCE(valueparent[2],'') as Value2, -- Sub-nivel 1
+			COALESCE(valueparent[3],'') as Value3, -- Sub-nivel 2
 			CNT.AD_client_ID,
 			CNT.AD_Org_ID,
 			CNT.AMN_Concept_Types_ID,
@@ -120,6 +117,7 @@ WITH Conceptos AS (
 	) trial
 	LEFT JOIN amn_concept_types as ACTN1 ON (ACTN1.Value = trial.Value1 AND ACTN1.AD_Client_ID= trial.AD_Client_ID)
 	LEFT JOIN amn_concept_types as ACTN2 ON (ACTN2.Value = trial.Value2 AND ACTN2.AD_Client_ID= trial.AD_Client_ID)
+	-- CORRECCIÓN: Join explícito por Value y Client_ID para evitar nulos o cartesianos
 	LEFT JOIN amn_concept_types as ACTN3 ON (ACTN3.Value = trial.Value3 AND ACTN3.AD_Client_ID= trial.AD_Client_ID)
 	WHERE trial.ad_client_id = $P{AD_Client_ID}
 	 AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR trial.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
@@ -134,6 +132,9 @@ SELECT
 	value2,
 	name2,
 	calcorder2,
+	value3,
+	name3,
+	calcorder3,
 	amndateend,
 	isshow,
 	c_value,
@@ -185,6 +186,9 @@ SELECT
 		value2,
 		name2,
 		calcorder2,
+		value3,
+		name3,
+		calcorder3,
 		isshow,
 		c_value,
 		departamento,
@@ -232,6 +236,9 @@ SELECT
 			cty.value2,
 			cty.name2,
 			cty.calcorder2,
+			cty.value3,
+			cty.name3,
+			cty.calcorder3,
 			-- PERIOD
 			prd.amn_period_id, prd.name as periodo, prd.amndateini, prd.amndateend,
 			-- TIPO DE CONCEPTO
@@ -316,7 +323,7 @@ SELECT
 		    AND ( CASE WHEN ( $P{isShowZERO} = 'Y') OR ($P{isShowZERO} = 'N' 
 		    			AND (  pyr_d.qtyvalue <> 0 OR pyr_d.amountallocated <> 0 OR pyr_d.amountdeducted<>0  OR pyr_d.amountcalculated<> 0)) THEN 1=1 ELSE 1=0 END )
 	) AS recibo
-	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
+	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, value3, name3, calcorder3,amndateend, isshow, c_value,
 	departamento, amn_employee_id, cedula, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
 	invdateini, invdateend,
 	razon_social, socialsecurityid, socialsecuritymtess, amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
