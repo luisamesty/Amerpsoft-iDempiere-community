@@ -2,6 +2,8 @@
 -- Used for  reports and individual print
 -- Currency Rate Added and Conversion reviewed
 -- HISTORIC
+-- AJUSTES
+-- QUERY RECURSIVA V2
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -10,13 +12,13 @@ WITH Conceptos AS (
 	    0 as level, 
 	    TRN1.Parent_ID, 
 		ARRAY [TRN1.Node_ID::text]  AS ancestry, 
-		ARRAY [ACTP.value::text]  AS valueparent,
-		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value (Nodo actual)
+		ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
 		TRN1.Node_ID as Star_An,
+		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
-		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -31,14 +33,14 @@ WITH Conceptos AS (
 		TRN2.level+1 as level,
 		TRN1.Parent_ID, 
 		TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
-		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
-		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
+		TRN2.valueparent || ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value
+		TRN2.calcorderparent || ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
 		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
+		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
-		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -48,7 +50,6 @@ WITH Conceptos AS (
 		)  AND TRN1.isActive='Y' 		
 	) 
 	-- MAIN SELECT
-	-- AMN_Concept_types for Level reports
 	SELECT DISTINCT ON (trial.calcorder, trial.ancestry)
 		trial.Level,
 		trial.Node_ID, 
@@ -64,6 +65,7 @@ WITH Conceptos AS (
 		trial.amn_concept_types_id, 
 		trial.calcorder,
 		trial.optmode, 
+		trial.defaultvalue,
 		trial.isshow,
 		trial.concept_value,
 		trial.concept_name,
@@ -78,15 +80,16 @@ WITH Conceptos AS (
 			PAR.Node_ID, 
 			PAR.Parent_ID ,
 			PAR.ancestry,
-			PAR.valueparent,
-			COALESCE(valueparent[2],'') as Value1,
-			COALESCE(valueparent[3],'') as Value2,
-			COALESCE(valueparent[4],'') as Value3,
+			-- Al usar el nodo actual en el array, las posiciones se alinean de raíz a fin:
+			COALESCE(valueparent[1],'') as Value1, -- Nivel Raíz (Top)
+			COALESCE(valueparent[2],'') as Value2, -- Sub-nivel 1
+			COALESCE(valueparent[3],'') as Value3, -- Sub-nivel 2
 			CNT.AD_client_ID,
 			CNT.AD_Org_ID,
 			CNT.AMN_Concept_Types_ID,
 			CNT.calcorder,
 			CNT.optmode, 
+			CNT.defaultvalue,
 			CNT.isshow,
 			CNT.concept_value,
 			CNT.concept_name,
@@ -103,6 +106,7 @@ WITH Conceptos AS (
 			amnct.description as concept_description,
 			amnct.calcorder,
 			amnct.optmode, 
+			amnct.defaultvalue,
 			amnct.isshow,
 			tree.AD_Tree_ID, 
 			tree.name as tree_name
@@ -117,11 +121,12 @@ WITH Conceptos AS (
 	) trial
 	LEFT JOIN amn_concept_types as ACTN1 ON (ACTN1.Value = trial.Value1 AND ACTN1.AD_Client_ID= trial.AD_Client_ID)
 	LEFT JOIN amn_concept_types as ACTN2 ON (ACTN2.Value = trial.Value2 AND ACTN2.AD_Client_ID= trial.AD_Client_ID)
+	-- CORRECCIÓN: Join explícito por Value y Client_ID para evitar nulos o cartesianos
 	LEFT JOIN amn_concept_types as ACTN3 ON (ACTN3.Value = trial.Value3 AND ACTN3.AD_Client_ID= trial.AD_Client_ID)
 	WHERE trial.ad_client_id = $P{AD_Client_ID}
 	 AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR trial.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	ORDER BY trial.calcorder, trial.ancestry
-) 
+)
 -- 
 -- MAIN SELECT
 SELECT 
@@ -156,6 +161,16 @@ SELECT
 	iso_code2,
 	cursymbol1,currname1,
 	cursymbol2,currname2, 
+	concept_value,
+	optmode,
+    CASE
+        -- Si contiene el símbolo '/', realiza la división
+        WHEN ips_tasa LIKE '%/%' THEN
+            (SPLIT_PART(ips_tasa, '/', 1)::NUMERIC / SPLIT_PART(ips_tasa, '/', 2)::NUMERIC)
+        -- Si es un número entero (incluyendo "0"), conviértelo directamente
+        ELSE
+            ips_tasa::NUMERIC
+    END AS ips_tasa_numerica,
 	cantidad,
 	amountallocated,
 	amountdeducted,
@@ -193,6 +208,9 @@ SELECT
 		iso_code2,
 		cursymbol1,currname1,
 		cursymbol2,currname2, 
+		concept_value,
+		optmode,
+		ips_tasa,
 		SUM(cantidad) AS cantidad,
 		SUM(amountallocated) AS amountallocated,
 		SUM(amountdeducted) AS amountdeducted, 
@@ -217,7 +235,8 @@ SELECT
 			cty.optmode, 
 			cty.calcorder, 
 			cty.isshow, 
-			cty.concept_value as cty_value, 
+			cty.concept_value, 
+			CASE WHEN cty.optmode ='W' THEN CAST(cty.defaultvalue AS text) ELSE '0' END AS ips_tasa,
 			COALESCE(cty.concept_name, cty.concept_description) as concept_type,
 			-- TIPO DE CONCEPTO (PROCESO)
 			ctp.value as ctp_value, COALESCE(ctp.name, ctp.description) as concept_type_process, 	 
@@ -303,6 +322,6 @@ SELECT
 	GROUP BY org_value, org_name, rep_logo, value2,name2, calcorder2, amndateend, isshow, c_value,
 	departamento, amn_employee_id, value_emp, empleado, fecha_ingreso, paymenttype, cargo, amn_location_id, location_value, location_name, nro_id, amn_payroll_id,
 	amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
-	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate
+	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate, concept_value, optmode, ips_tasa
 	ORDER BY  org_value, location_value, value_emp, amndateini ASC, documentno, calcorder2
 ) AS recibocur
