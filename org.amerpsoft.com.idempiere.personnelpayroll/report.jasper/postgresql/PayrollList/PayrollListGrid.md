@@ -1,3 +1,138 @@
+# LPY-87 PayrollListGrid.jrxml
+
+**Jasper: PayrollListGrid.jrxml**
+
+**Reporte Nomina formato Planilla Error en trabajador E06359**
+
+Caso Trabajador E06359 SANTIAGO NICOLAS MARTIN ENCISO VALDOVINOS. Nomina de Junio 2026
+No efectúo el cálculo correcto de IPS.
+El campo observaciones no indica ele error.
+Se procede a revisar la Query del reporte y las condiciones del campo Observaciones.
+
+Par ello se crean variables nuevas en el reporte.
+
+# Variables
+
+La variable `ips_audit`:
+
+* Calculation: No
+* Increment Type: None
+* Reset Type Group_por_empleado
+* Expresion:
+
+```Java
+$V{v_asignaciones}.subtract($V{bonificacion})
+```
+
+La variable `ips_tasa_concepto`:
+
+* Calculation: No
+* Increment Type: None
+* Reset Type Group_por_empleado
+* Expresion:
+
+```Java
+$F{value2}.equalsIgnoreCase("IPSNOMINA") && $F{concept_value}.equalsIgnoreCase("IPS_T") && $F{optmode}.equalsIgnoreCase("W") && $F{isshow}.equalsIgnoreCase("Y") ? $F{ips_tasa_numerica} : $V{ips_tasa_concepto}
+```
+
+La variable `ips_tasa_recibo`:
+
+* Calculation: No
+* Increment Type: None
+* Reset Type Group_por_empleado
+* Expresion:
+
+```Java
+$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{concept_value}.compareToIgnoreCase( "IPS_T" )==0  && $F{optmode}.compareToIgnoreCase( "W" )==0  && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{cantidad} : $V{ips_tasa_recibo}
+```
+
+La variable `ips_diferencia`:
+
+* Calculation: No
+* Increment Type: None
+* Reset Type Group_por_empleado
+* Expresion:
+
+```Java
+$V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) > 0
+&& $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) > 0
+&& $V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) == 0
+&& $V{ips_diferencia}.compareTo(BigDecimal.ONE) < 0
+```
+
+La variable `ips_ok`:
+
+* Calculation: No
+* Increment Type: None
+* Reset Type Group_por_empleado
+* INitial Value Expresion: Boolean.FALSE   **IMPORTANTE**
+* Expresion:
+
+```Java
+$V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) > 0
+&& $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) > 0
+&& $V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) == 0
+&& $V{ips_diferencia}.compareTo(BigDecimal.ONE) < 0
+```
+
+# Logica de Observaciones.
+
+La condición es:
+
+* **OK** cuando:
+
+  1. `ips_tasa_concepto > 0`
+  2. `ips_tasa_recibo > 0`
+  3. `ips_tasa_concepto == ips_tasa_recibo`
+  4. `ips_diferencia < 1`
+
+En cualquier otro caso → **ERROR**, mostrando las tasas y la diferencia.
+
+La expresión quedaría así:
+
+```java
+(
+    $V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) > 0
+    && $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) > 0
+    && $V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) == 0
+    && $V{ips_diferencia}.compareTo(BigDecimal.ONE) < 0
+)
+?
+"IPS OK"
+:
+"IPS ERROR"
++ " (Cpto: " + $V{ips_tasa_concepto}
++ "%, Rec: " + $V{ips_tasa_recibo}
++ "%, Diff: " + $V{ips_diferencia} + ")"
+```
+
+Y la variable `ips_OK` debería ser **exactamente la misma condición**:
+
+```java
+$V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) > 0
+&& $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) > 0
+&& $V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) == 0
+&& $V{ips_diferencia}.compareTo(BigDecimal.ONE) < 0
+```
+
+De esa forma:
+
+| Concepto | Recibo | Diferencia | Resultado                                                 |
+| -------: | -----: | ---------: | --------------------------------------------------------- |
+|        9 |      9 |          0 | **IPS OK**                                          |
+|        9 |      9 |       0,25 | **IPS OK**                                          |
+|        9 |      9 |     306000 | **IPS ERROR (Concepto: 9%, Rec: 9%, Diff: 306000)** |
+|        9 |      8 |          0 | **IPS ERROR (Concepto: 9%, Rec: 8%, Diff: 0)**      |
+|        0 |      9 |          0 | **IPS ERROR (Concepto: 0%, Rec: 9%, Diff: 0)**      |
+
+Este enfoque tiene la ventaja de que solo hay **dos resultados posibles**: **OK** o **ERROR**, y el mensaje de error siempre incluye toda la información necesaria para diagnosticar el problema.
+
+
+# Query reporte.
+
+Se revisa la porción que devuelve la estructura de arbolde conceptos.
+
+```SQL
 -- Payroll List CrossTab (Column View)
 -- Used for  reports and individual print
 -- Currency Rate Added and Conversion reviewed
@@ -26,7 +161,7 @@ WITH Conceptos AS (
 				LEFT JOIN AMN_Concept amnc ON adcli.AD_Client_ID = amnc.AD_Client_ID
 				LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= amnc.AD_Tree_ID
 				WHERE adcli.AD_client_ID=$P{AD_Client_ID}	) 
-		AND TRN1.isActive='Y' AND TRN1.Parent_ID = 0		
+		AND TRN1.isActive='Y' AND TRN1.Parent_ID = 0	
 		UNION ALL
 		SELECT 
 		TRN1.AD_Tree_ID, 
@@ -48,7 +183,7 @@ WITH Conceptos AS (
 				LEFT JOIN AMN_Concept amnc ON adcli.AD_Client_ID = amnc.AD_Client_ID
 				LEFT JOIN AD_Tree tree ON tree.AD_Tree_ID= amnc.AD_Tree_ID
 				WHERE adcli.AD_client_ID=$P{AD_Client_ID}
-		)  AND TRN1.isActive='Y' 		
+		)  AND TRN1.isActive='Y' 	
 	) 
 	-- MAIN SELECT
 	SELECT DISTINCT ON (trial.calcorder, trial.ancestry)
@@ -222,7 +357,7 @@ SELECT
 		SELECT 
 			-- ORG
 		    CASE WHEN ( $P{isShowOrganization} = 'N' ) THEN 'Todas' ELSE coalesce(org.value,'') END AS org_value ,
-		    CASE WHEN ( $P{isShowOrganization} = 'N' ) THEN '** Todas las Organizaciones **' ELSE coalesce(org.name,org.value,'') END AS org_name ,		   	
+		    CASE WHEN ( $P{isShowOrganization} = 'N' ) THEN '** Todas las Organizaciones **' ELSE coalesce(org.name,org.value,'') END AS org_name ,		   
 --		    coalesce(org.value,'') as org_value,
 --			coalesce(org.name,org.value,'') as org_name,
 			CASE WHEN ($P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0) THEN img1.binarydata ELSE img2.binarydata END as rep_logo,
@@ -251,7 +386,7 @@ SELECT
 			-- LOCATION
 		    lct.amn_location_id AS amn_location_id,
 		    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN 'Todas' ELSE lct.value END AS location_value ,
-		    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description) END AS location_name ,		   	
+		    CASE WHEN ($P{AMN_Location_ID} IS NULL AND $P{isShowLocation} = 'N' ) THEN '** Todas las localidades **' ELSE COALESCE(lct.name, lct.description) END AS location_name ,		   
 			-- EMPLOYEE
 		   	emp.amn_employee_id,
 		  	emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso, emp.paymenttype,
@@ -273,7 +408,7 @@ SELECT
 			COALESCE(currt2.cursymbol,curr2.cursymbol,curr2.iso_code,'') as cursymbol2,
 			COALESCE(currt2.description,curr2.description,curr2.iso_code,curr2.cursymbol,'') as currname2, 
 			-- PAYROLL DETAIL
-		    -- MONTOS Y CIFRAS cty.concept_value	
+		    -- MONTOS Y CIFRAS cty.concept_value
 		    pyr_d.amn_payroll_detail_id,   
 			pyr_d.qtyvalue as cantidad, 
 			currencyConvert(pyr_d.amountallocated,pyr.c_currency_id, $P{C_Currency_ID}, pyr.dateacct, NULL, pyr.AD_Client_ID, pyr.AD_Org_ID ) as amountallocated, 
@@ -317,3 +452,4 @@ SELECT
 	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate, optmode, ips_tasa, concept_value
 	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
 ) AS recibocur
+```

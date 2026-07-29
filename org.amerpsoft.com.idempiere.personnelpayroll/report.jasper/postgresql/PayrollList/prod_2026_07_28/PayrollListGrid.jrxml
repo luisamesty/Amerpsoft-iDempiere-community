@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListGrid" pageWidth="1500" pageHeight="595" orientation="Landscape" columnWidth="1460" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollList" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PayrollListGrid" pageWidth="1400" pageHeight="595" orientation="Landscape" columnWidth="1360" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="PayrollList" uuid="fd9f1ac1-4033-44f3-82af-663167512350">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere-MO_LPY LOCAL"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="297"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="696"/>
-	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
-	<property name="net.sf.jasperreports.export.xlsx.detect.cell.type" value="true"/>
-	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
-	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
-	<property name="net.sf.jasperreports.export.xls.pattern" value="#,##0.00"/>
-	<property name="net.sf.jasperreports.export.xlsx.pattern" value="#,##0.00"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="pageHeader"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.2" value="columnHeader"/>
-	<property name="net.sf.jasperreports.export.xlsx.exclude.origin.keep.first.band.1" value="pageHeader"/>
-	<property name="net.sf.jasperreports.export.xlsx.exclude.origin.keep.first.band.2" value="columnHeader"/>
-	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageFooter"/>
-	<property name="net.sf.jasperreports.export.xlsx.exclude.origin.band.1" value="pageFooter"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="StyleObservaciones">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100)).subtract($V{ips}).abs().compareTo(BigDecimal.ONE) < 0 ]]></conditionExpression>
+			<style mode="Transparent" forecolor="#F01411" isBold="true"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="AD_Client_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[1000000]]></defaultValueExpression>
 	</parameter>
@@ -32,10 +35,10 @@
 	<parameter name="AMN_Location_ID" class="java.lang.Integer"/>
 	<parameter name="AMN_Employee_ID" class="java.lang.Integer"/>
 	<parameter name="isShowOrganization" class="java.lang.String">
-		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="isShowLocation" class="java.lang.String">
-		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="isShowHeader" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
@@ -61,8 +64,6 @@
 -- Currency Rate Added and Conversion reviewed
 -- ONE PERIOD
 -- VERSION 2 (Agregado Concepto IPS DE Auditoria)
--- AJUSTES
--- QUERY RECURSIVA V2
 WITH Conceptos AS (
 	WITH RECURSIVE Nodos AS (
 	    SELECT 
@@ -71,13 +72,14 @@ WITH Conceptos AS (
 	    0 as level, 
 	    TRN1.Parent_ID, 
 		ARRAY [TRN1.Node_ID::text]  AS ancestry, 
-		ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value (Nodo actual)
-		ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
+		ARRAY [ACTP.value::text]  AS valueparent,
+		ARRAY [ACTP.calcorder::int]  AS calcorderparent,
 		TRN1.Node_ID as Star_An,
 		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
+		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -92,14 +94,15 @@ WITH Conceptos AS (
 		TRN2.level+1 as level,
 		TRN1.Parent_ID, 
 		TRN2.ancestry || ARRAY[TRN1.Node_ID::text] AS ancestry,
-		TRN2.valueparent || ARRAY [ACT.value::text]  AS valueparent, -- CAMBIO: Usar ACT.value
-		TRN2.calcorderparent || ARRAY [ACT.calcorder::int]  AS calcorderparent, -- CAMBIO: Usar ACT.calcorder
+		TRN2.valueparent || ARRAY [ACTP.value::text]  AS valueparent,
+		TRN2.calcorderparent || ARRAY [ACTP.calcorder::int]  AS calcorderparent,
 		COALESCE(TRN2.Star_An,TRN1.Parent_ID) as Star_An,
 		ACT.optmode,
 		ACT.issummary
 		FROM ad_treenode TRN1 
 		INNER JOIN Nodos TRN2 ON (TRN2.node_id =TRN1.Parent_ID)
 		LEFT JOIN AMN_Concept_Types ACT ON ACT.AMN_Concept_Types_ID = TRN1.Node_ID
+		LEFT JOIN AMN_Concept_Types ACTP ON ACTP.AMN_Concept_Types_ID = TRN1.Parent_ID
 		WHERE TRN1.AD_tree_ID=(
 			SELECT DISTINCT tree.AD_Tree_ID
 				FROM AD_Client adcli
@@ -109,6 +112,7 @@ WITH Conceptos AS (
 		)  AND TRN1.isActive='Y' 		
 	) 
 	-- MAIN SELECT
+	-- AMN_Concept_types for Level reports
 	SELECT DISTINCT ON (trial.calcorder, trial.ancestry)
 		trial.Level,
 		trial.Node_ID, 
@@ -139,10 +143,10 @@ WITH Conceptos AS (
 			PAR.Node_ID, 
 			PAR.Parent_ID ,
 			PAR.ancestry,
-			-- Al usar el nodo actual en el array, las posiciones se alinean de raíz a fin:
-			COALESCE(valueparent[1],'') as Value1, -- Nivel Raíz (Top)
-			COALESCE(valueparent[2],'') as Value2, -- Sub-nivel 1
-			COALESCE(valueparent[3],'') as Value3, -- Sub-nivel 2
+			PAR.valueparent,
+			COALESCE(valueparent[2],'') as Value1,
+			COALESCE(valueparent[3],'') as Value2,
+			COALESCE(valueparent[4],'') as Value3,
 			CNT.AD_client_ID,
 			CNT.AD_Org_ID,
 			CNT.AMN_Concept_Types_ID,
@@ -180,12 +184,11 @@ WITH Conceptos AS (
 	) trial
 	LEFT JOIN amn_concept_types as ACTN1 ON (ACTN1.Value = trial.Value1 AND ACTN1.AD_Client_ID= trial.AD_Client_ID)
 	LEFT JOIN amn_concept_types as ACTN2 ON (ACTN2.Value = trial.Value2 AND ACTN2.AD_Client_ID= trial.AD_Client_ID)
-	-- CORRECCIÓN: Join explícito por Value y Client_ID para evitar nulos o cartesianos
 	LEFT JOIN amn_concept_types as ACTN3 ON (ACTN3.Value = trial.Value3 AND ACTN3.AD_Client_ID= trial.AD_Client_ID)
 	WHERE trial.ad_client_id = $P{AD_Client_ID}
 	 AND ( CASE WHEN ( ( $P{AD_Org_ID} = 0 OR $P{AD_Org_ID} IS NULL ) OR trial.ad_org_id= $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END )
 	ORDER BY trial.calcorder, trial.ancestry
-)
+) 
 -- 
 -- MAIN SELECT
 SELECT 
@@ -374,7 +377,8 @@ SELECT
 	amn_process_id, amn_payroll_detail_id, documentno, amn_period_id, periodo, amndateini, amndateend, amountallocated_t, amountdeducted_t,
 	iso_code1, iso_code2, cursymbol1, currname1, cursymbol2, currname2, currencyrate, optmode, ips_tasa, concept_value
 	ORDER BY  org_value, location_value, value_emp, documentno, calcorder2
-) AS recibocur]]>
+) AS recibocur
+]]>
 	</queryString>
 	<field name="org_value" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="org_value"/>
@@ -869,26 +873,16 @@ SELECT
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="ips_tasa_concepto" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
-		<variableExpression><![CDATA[$F{value2}.equalsIgnoreCase("IPSNOMINA") && $F{concept_value}.equalsIgnoreCase("IPS_T") && $F{optmode}.equalsIgnoreCase("W") && $F{isshow}.equalsIgnoreCase("Y") ? $F{ips_tasa_numerica} : $V{ips_tasa_concepto}]]></variableExpression>
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{concept_value}.compareToIgnoreCase( "IPS_T" )==0  && $F{optmode}.compareToIgnoreCase( "W" )==0  && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{ips_tasa_numerica} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<variable name="ips_tasa_recibo" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
-		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{concept_value}.compareToIgnoreCase( "IPS_T" )==0  && $F{optmode}.compareToIgnoreCase( "W" )==0  && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{cantidad} : $V{ips_tasa_recibo}]]></variableExpression>
+		<variableExpression><![CDATA[$F{value2}.compareToIgnoreCase( "IPSNOMINA" )==0 && $F{concept_value}.compareToIgnoreCase( "IPS_T" )==0  && $F{optmode}.compareToIgnoreCase( "W" )==0  && $F{isshow}.compareToIgnoreCase( "Y" )==0 ? $F{cantidad} : BigDecimal.ZERO]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
-	<variable name="ips_diferencia" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
-		<variableExpression><![CDATA[$V{ips_audit}
-    .multiply($V{ips_tasa_concepto})
-    .divide(BigDecimal.valueOf(100))
-    .subtract($V{ips})
-    .abs()]]></variableExpression>
-	</variable>
-	<variable name="ips_ok" class="java.lang.Boolean" resetType="Group" resetGroup="Group_porEmpleado">
-		<variableExpression><![CDATA[$V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) > 0
-&& $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) > 0
-&& $V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) == 0
-&& $V{ips_diferencia}.compareTo(BigDecimal.ONE) < 0]]></variableExpression>
-		<initialValueExpression><![CDATA[Boolean.FALSE]]></initialValueExpression>
+	<variable name="ips_audit_diff" class="java.math.BigDecimal" resetType="Group" resetGroup="Group_porEmpleado">
+		<variableExpression><![CDATA[($V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100))).subtract($V{ips_t})]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
 	<group name="GroupbyOrg" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{org_value}]]></groupExpression>
@@ -932,6 +926,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1110" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="72280727-5506-4f82-bbc1-cf5ece349780">
@@ -944,6 +939,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1180" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="31945cc6-cf9f-43a8-8e53-a41833e6fab8">
@@ -957,6 +953,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_org}.subtract($V{v_deducciones_org})]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="400" y="0" width="30" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="f3d4f683-a4d6-48f4-b8b9-297a9b895720">
@@ -970,6 +967,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{horas_extras_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="430" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="f7ee5262-0dc9-4c39-b9fe-9a4c50f05207">
@@ -984,6 +982,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{horas_extras_importe_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="490" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="ff45a782-2f65-43cb-8a17-efa06483040e">
@@ -997,6 +996,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{feriados_importe_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="560" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="ad5395eb-5224-4843-827a-530882aa3afc">
@@ -1010,6 +1010,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{comision_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="620" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="442f6bb9-5e2d-4234-b92a-e4d8c744fdc7">
@@ -1023,6 +1024,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{bonificacion_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="680" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="5d266688-d3e2-47c8-8e3e-361f6b440c7c">
@@ -1036,6 +1038,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_ingresos_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="340" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="c3d38aa8-bcf4-420f-b18b-6777d5baebaa">
@@ -1050,6 +1053,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salario_rec_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="810" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb66484b-24ff-4d1e-b916-5994f01b9614">
@@ -1063,6 +1067,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{loans_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="870" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c41c06e3-6181-46f1-bdb6-cee44ed44a75">
@@ -1076,6 +1081,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{vales_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="930" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="acbaaf5f-3e7d-4c26-9b6c-d0eb76b70dd3">
@@ -1089,6 +1095,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_descuentos_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="990" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3629c5f5-2992-4fc9-ba5b-9aedce0c089f">
@@ -1102,6 +1109,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{descuentos_judiciales_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="GroupbyOrg" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1050" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a732dddb-12e6-4002-ae29-835f43f3f401">
@@ -1115,6 +1123,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ips_org}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1147,6 +1156,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_tloc}.subtract($V{v_deducciones_tloc})]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1110" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="184a6d1d-4bd5-44bd-9331-93ea1a2dd72a">
@@ -1159,6 +1169,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="740" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="781bf38c-2edc-4518-ad64-4aa37e0a6328">
@@ -1171,6 +1182,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1199,6 +1211,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1110" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="521ebd70-f772-4fa4-aea4-4b420cad7160">
@@ -1211,6 +1224,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1180" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="c8f2703f-bd4f-43c1-ad7a-d3db14225901">
@@ -1225,6 +1239,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones_tloc}.subtract($V{v_deducciones_tloc})]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="400" y="0" width="30" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="c68375d1-85d2-43c4-b147-d962c099f3a0">
@@ -1238,6 +1253,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{horas_extras_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="430" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="74d07a9c-e908-4ba6-b717-978c0f316e1d">
@@ -1252,6 +1268,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{horas_extras_importe_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="490" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="b4e5c72c-a5da-419a-8bb9-c19d7d7c2ca6">
@@ -1265,6 +1282,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{feriados_importe_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="560" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="21a4b9f7-7bcc-411d-8a04-a699b72c8c5d">
@@ -1278,6 +1296,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{comision_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="620" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="3533ae28-7748-436c-a4a7-c65c32efb2bb">
@@ -1291,6 +1310,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{bonificacion_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="680" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="6d9175df-b910-4a93-b119-17219ba84313">
@@ -1304,6 +1324,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_ingresos_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="340" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="3237b465-9c57-471a-bbc1-0e141a1d4d1b">
@@ -1318,6 +1339,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salario_rec_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="810" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a6db79b9-a00b-4208-82f3-2e1cae620862">
@@ -1331,6 +1353,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{loans_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="870" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d6f6de25-d592-4ba9-9b8e-249e9911ee4c">
@@ -1344,6 +1367,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{vales_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="930" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8772f251-86c6-4228-99a3-20d7e47e9594">
@@ -1357,6 +1381,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_descuentos_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="990" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3aa33331-2297-4fa1-88b4-b0f27bfb85ec">
@@ -1370,6 +1395,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{descuentos_judiciales_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porLocalidad" pattern="#,##0.00">
 					<reportElement mode="Transparent" x="1050" y="0" width="60" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="abb8c6dc-2c5c-404d-a6d5-8ca1488cc6be">
@@ -1383,6 +1409,7 @@ SELECT
 						<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ips_tloc}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -1433,6 +1460,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salario_basico}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="340" y="0" width="60" height="12" uuid="35cefcb2-83b2-4521-9f02-19d5dac3b6ee">
@@ -1449,6 +1477,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{salario_rec}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="400" y="0" width="30" height="12" printWhenGroupChanges="GroupbyOrg" uuid="2714073e-9159-4bd3-a5a6-07b66f7e4022">
@@ -1464,6 +1493,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{horas_extras}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="430" y="0" width="60" height="12" printWhenGroupChanges="GroupbyOrg" uuid="47a52d07-c30d-48fe-badd-5895d5d29120">
@@ -1479,6 +1509,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{horas_extras_importe}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="560" y="0" width="60" height="12" uuid="6ce3747b-4a36-402c-a932-bafa49c89ae4">
@@ -1494,6 +1525,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{comision}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="620" y="0" width="60" height="12" uuid="43928a0d-0daf-410a-b01e-2dba597b3a36"/>
@@ -1507,6 +1539,7 @@ SELECT
 						<font fontName="Arial" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{bonificacion}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="1050" y="0" width="60" height="12" uuid="85f6fea1-a6df-45de-bd74-c3088611cf7c">
@@ -1522,6 +1555,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ips}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="990" y="0" width="60" height="12" uuid="c9b79d31-659d-433b-a1f6-72c5acb71831">
@@ -1537,6 +1571,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{descuentos_judiciales}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Auto" pattern="#,##0.00">
 					<reportElement x="1180" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" uuid="184ebed9-e99b-45fa-b822-9f6c58d21e29">
@@ -1552,6 +1587,7 @@ SELECT
 						<font fontName="Arial" size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones}.subtract($V{v_deducciones})]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.###;(#,##0.###-)">
 					<reportElement x="310" y="0" width="30" height="12" uuid="016e7b67-73a7-4e07-9e2e-82715bf76d31">
@@ -1567,6 +1603,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{dias_trabajados}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="740" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" uuid="e5541cc4-93bd-4741-a663-2d480aaeb3ba">
@@ -1582,6 +1619,7 @@ SELECT
 						<font fontName="Arial" size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_asignaciones}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="1110" y="0" width="70" height="12" uuid="07245095-a0b1-4d23-8e16-12a61baf9167">
@@ -1598,6 +1636,7 @@ SELECT
 						<font fontName="Arial" size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{v_deducciones}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="810" y="0" width="60" height="12" uuid="94a81f95-1cde-4845-9160-61b235e956b4">
@@ -1613,6 +1652,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{loans}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="870" y="0" width="60" height="12" uuid="281691cf-14ba-41bf-870f-f22ad68f7c17">
@@ -1628,6 +1668,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{vales}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="930" y="0" width="60" height="12" uuid="a61bf06d-ee0c-49e4-ba9f-bd6b3bb3686f">
@@ -1643,6 +1684,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_descuentos}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="490" y="0" width="70" height="12" printWhenGroupChanges="GroupbyOrg" uuid="125e5332-ff55-4b07-b16f-9f06e1bbfee6">
@@ -1658,6 +1700,7 @@ SELECT
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{feriados_importe}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 					<reportElement x="680" y="0" width="60" height="12" uuid="5f1d631b-22f9-46a2-9555-d72e85619410"/>
@@ -1671,9 +1714,10 @@ SELECT
 						<font fontName="Arial" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{otros_ingresos}]]></textFieldExpression>
+					<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Auto">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="1250" y="0" width="210" height="12" uuid="3c6c92c8-befa-4824-8894-8ee1e8b3a071">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Group_porEmpleado">
+					<reportElement style="StyleObservaciones" stretchType="RelativeToTallestObject" x="1250" y="0" width="110" height="12" uuid="3c6c92c8-befa-4824-8894-8ee1e8b3a071">
 						<property name="local_mesure_unitheight" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -1684,19 +1728,15 @@ SELECT
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[(
-    $V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) > 0
-    && $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) > 0
-    && $V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) == 0
-    && $V{ips_diferencia}.compareTo(BigDecimal.ONE) < 0
-)
-?
-"IPS OK"
-:
-"IPS ERROR"
-+ " (Cpto: " + $V{ips_tasa_concepto}
-+ "%, Rec: " + $V{ips_tasa_recibo}
-+ "%, Diff: " + $V{ips_diferencia} + ")"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($V{ips_tasa_concepto}.compareTo(BigDecimal.ZERO) == 0 || $V{ips_tasa_recibo}.compareTo(BigDecimal.ZERO) == 0
+    ? "IPS Tasa Cero" 
+    : ($V{ips_tasa_concepto}.compareTo($V{ips_tasa_recibo}) != 0
+        ? "IPS % con:" + $V{ips_tasa_concepto} + " " + " rec:" + $V{ips_tasa_recibo}  :
+          ($V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100)).subtract($V{ips}).abs().compareTo(BigDecimal.ONE) < 0 
+              ? "" 
+              : "IPS Diff.: " + $V{ips_audit}.multiply($V{ips_tasa_concepto}).divide(BigDecimal.valueOf(100)).subtract($V{ips}).abs()
+          )  )   ) 
+]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -1899,10 +1939,9 @@ SELECT
 				<textFieldExpression><![CDATA["Otros Ing."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1250" y="0" width="210" height="12" uuid="50816218-6793-42b0-a737-17d4704e8326">
+				<reportElement x="1250" y="0" width="110" height="12" uuid="50816218-6793-42b0-a737-17d4704e8326">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1916,7 +1955,7 @@ SELECT
 		<band height="42" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isShowHeader}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<textField pattern="dd/MM/yy">
-				<reportElement key="" x="1250" y="0" width="210" height="14" printWhenGroupChanges="GroupbyOrg" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
+				<reportElement key="" x="1250" y="0" width="110" height="14" printWhenGroupChanges="GroupbyOrg" uuid="763a4c01-cd7d-48ef-864b-5f6350e01605">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1928,7 +1967,7 @@ SELECT
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement key="" x="1250" y="14" width="210" height="14" printWhenGroupChanges="GroupbyOrg" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
+				<reportElement key="" x="1250" y="14" width="110" height="14" printWhenGroupChanges="GroupbyOrg" uuid="590d3913-4132-46e4-ba02-c06f6d861a4e">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1981,7 +2020,7 @@ SELECT
 				<textFieldExpression><![CDATA[$R{report.page}+" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement key="" x="1110" y="28" width="140" height="14" uuid="d6a39ccf-9ce9-44f3-820b-72162d5266a6">
+				<reportElement key="" x="1050" y="28" width="130" height="14" uuid="d6a39ccf-9ce9-44f3-820b-72162d5266a6">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -1993,7 +2032,7 @@ SELECT
 				<textFieldExpression><![CDATA[$R{report.currency}+ ": "+($F{iso_code2}+"-"+$F{cursymbol2}+"-"+$F{currname2})]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement key="" x="1250" y="28" width="210" height="14" printWhenGroupChanges="GroupbyOrg" uuid="6e10d617-9a42-415f-87ed-6c4de6ed1208">
+				<reportElement key="" x="1180" y="28" width="180" height="14" printWhenGroupChanges="GroupbyOrg" uuid="6e10d617-9a42-415f-87ed-6c4de6ed1208">
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -2037,7 +2076,7 @@ SELECT
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<printWhenExpression><![CDATA[$P{isShowColumns}.compareToIgnoreCase( "Y" ) == 0]]></printWhenExpression>
 			<line>
-				<reportElement x="0" y="0" width="1460" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
+				<reportElement x="0" y="0" width="1360" height="1" uuid="57d462f3-eb66-44f1-8cd3-ef79a0782ca8">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2045,7 +2084,7 @@ SELECT
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="1" width="1460" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
+				<reportElement x="0" y="1" width="1360" height="1" uuid="d3c3c1a4-919d-4e40-b2db-7d9e267b79ac">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2053,14 +2092,14 @@ SELECT
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="14" width="1460" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
+				<reportElement x="0" y="14" width="1360" height="1" uuid="9f350fa8-35cd-42cd-8a0f-2b2291889e53">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="0" y="15" width="1460" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
+				<reportElement x="0" y="15" width="1360" height="1" uuid="23861dc8-43af-44f6-afc5-7d63e56dae3e">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
@@ -2256,10 +2295,9 @@ SELECT
 				<textFieldExpression><![CDATA["Otros Ing."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1250" y="0" width="210" height="16" uuid="03918105-6fc9-4b23-9dc7-dc30fb2b8759">
+				<reportElement x="1250" y="0" width="110" height="16" uuid="03918105-6fc9-4b23-9dc7-dc30fb2b8759">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$P{isSummary}.compareToIgnoreCase("N")== 0]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -2270,7 +2308,7 @@ SELECT
 		</band>
 	</columnHeader>
 	<summary>
-		<band height="555" splitType="Immediate">
+		<band height="87" splitType="Immediate">
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="740" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="1c3c2cf6-dde0-4211-84e2-fc0757598236">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -2282,6 +2320,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{v_asignaciones_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="1110" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="7a65d44b-b077-44d2-b645-3ba4ea7b0019">
@@ -2295,6 +2334,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{v_deducciones_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="1180" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="20a47382-6f54-497e-a0a0-1bf5982d6eb6">
@@ -2309,6 +2349,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{v_asignaciones_t}.subtract($V{v_deducciones_t})]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="73" width="250" height="1" uuid="14d979a6-460f-49a8-9d8f-923ea508ab1b">
@@ -2378,6 +2419,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{horas_extras_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="430" y="0" width="60" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="a62b3293-6e08-42de-9030-21859038045e">
@@ -2392,6 +2434,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{horas_extras_importe_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="490" y="0" width="70" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="2ec73ad0-d11f-4969-ab75-454d2f7cf265">
@@ -2405,6 +2448,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{feriados_importe_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="560" y="0" width="60" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="39b64657-f028-4179-842a-cb69600c09e5">
@@ -2418,6 +2462,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{comision_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="620" y="0" width="60" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="9acc8807-c2f7-4e29-aeaf-08ae587f3b2b">
@@ -2431,6 +2476,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{bonificacion_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="680" y="0" width="60" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="e6b980a8-c13d-48c4-a435-4e78070ebcd7">
@@ -2444,6 +2490,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{otros_ingresos_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="340" y="0" width="60" height="14" printWhenGroupChanges="GroupbyOrg" forecolor="#000000" backcolor="#FFFFFF" uuid="4b3d7382-0417-4768-abb9-71e82ee29a6b">
@@ -2458,6 +2505,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{salario_rec_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="810" y="0" width="60" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c2097b40-fb70-41c2-a191-fa985877a4c0">
@@ -2471,6 +2519,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{loans_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="870" y="0" width="60" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="c4db6acb-cb8e-4889-942d-b512710cec2b">
@@ -2484,6 +2533,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{vales_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="930" y="0" width="60" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f7b1a52e-f589-4027-a208-cdeb8eafa1c3">
@@ -2497,6 +2547,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{otros_descuentos_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="990" y="0" width="60" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="dad387af-e3e7-4ea8-9d6a-635fa68a5a1e">
@@ -2510,6 +2561,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{descuentos_judiciales_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="Group_porEmpleado" pattern="#,##0.00">
 				<reportElement mode="Transparent" x="1050" y="0" width="60" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0e8dc8cf-9f00-4cd6-b03a-39b329cfe186">
@@ -2523,6 +2575,7 @@ SELECT
 					<paragraph lineSpacing="Single" lineSpacingSize="1.0" firstLineIndent="0" leftIndent="0" rightIndent="0" spacingBefore="0" spacingAfter="0" tabStopWidth="40"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ips_t}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{isForExport}.compareToIgnoreCase( "N" ) == 0.0 ?  "#,##0.00;(-#,##0.00)"  :"###0.00"]]></patternExpression>
 			</textField>
 			<line>
 				<reportElement x="340" y="73" width="280" height="1" uuid="24768531-d0b7-4e2b-b47f-68b8c79184d3">
