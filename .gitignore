@@ -9,7 +9,6 @@
 
 # Archivos de configuración de Eclipse (generalmente no deben versionarse)
 .classpath
-.project
 .settings/
 
 # Archivos de sistema
