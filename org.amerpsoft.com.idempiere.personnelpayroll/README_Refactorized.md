@@ -4,7 +4,7 @@ Refactorizar Clases de Cálculo de Nóminas.
 Rama de desarrollo release-11\_LPY-49\_Refactorizar  
 La clase **AmerpPayrollCalc.java,** contiene varios métodos y tiene mucha codigo responsable del cálculo. Se pretende separar en varias clases para distribuir la carga de codigo sobre una sola clase.
 
-## Clases Involucradas Claculo de Nóminas.
+## Clases Involucradas Cálculo de Nóminas.
 
 ### Paquete src/org/amerp/amnutilities:
 

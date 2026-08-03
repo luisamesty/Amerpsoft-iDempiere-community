@@ -1555,7 +1555,7 @@ public class FinancialReports_TreeOrg_Form  implements IFormController, EventLis
         // Leer el valor persistido para el reporte
         String PostingType = m_postingType_value;
         // C_Year_ID
-        Integer C_Year_ID = null;
+        Integer C_Year_ID = m_yearID;
         Object objC_Year_ID = fYear.getValue();
         if (objC_Year_ID instanceof KeyNamePair) {
             // Si el valor es un KeyNamePair (caso más probable), extrae el Key (ID)

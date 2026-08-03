@@ -333,6 +333,7 @@ public class RPTStateFinancialIntegralResults12 extends AbstractXlsxGenerator {
         Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
         Integer C_Year_ID = (Integer) parameters.get("C_Year_ID");
         Integer C_Period_ID = (Integer) parameters.get("C_Period_ID");
+        C_Period_ID = 0;
         String PostingType = (String) parameters.get("PostingType");
         Integer C_ElementValue_ID = (Integer) parameters.get("C_ElementValue_ID");
         Timestamp DateFrom = (Timestamp) parameters.get("DateFrom");

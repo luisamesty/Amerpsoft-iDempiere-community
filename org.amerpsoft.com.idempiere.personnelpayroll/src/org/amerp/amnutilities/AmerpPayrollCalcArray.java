@@ -157,7 +157,7 @@ public class AmerpPayrollCalcArray {
 					forceRulesInit = false;
 					forceDVInit = false;
 				}
-				pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx, Payroll_ID, CalcOrder, forceRulesInit, forceDVInit, true);
+				pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx, Payroll_ID, CalcOrder, pyVars, forceRulesInit, forceDVInit, true);
 				// CALCULATE VALUE from Concept_Script
 				if (Formula.trim().equalsIgnoreCase("script")
 						|| ((!Concept_Script.isEmpty() && Concept_Script != null))) {

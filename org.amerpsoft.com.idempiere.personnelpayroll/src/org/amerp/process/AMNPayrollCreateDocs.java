@@ -217,7 +217,7 @@ public class AMNPayrollCreateDocs {
 		(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID,
 			 int p_AMN_Payroll_ID, String trxName ) {
 		
-		PayrollVariables pyVars;
+		PayrollVariables pyVars = new PayrollVariables(true);
 		// Receipt Lines List
 		AMNReceiptLines ReceiptLines = null;
 		AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
@@ -321,7 +321,7 @@ public class AMNPayrollCreateDocs {
 				}
 				// CALCULATE DEFAULT VALUE
 				try {
-					pyVars = amerpPayrollCalc.PayrollEvaluation(ctx, p_AMN_Payroll_ID, ReceiptLines.getCalcOrder(), forceRulesInit, forceDVInit, false);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(ctx, p_AMN_Payroll_ID, ReceiptLines.getCalcOrder(), pyVars, forceRulesInit, forceDVInit, false);
 					// Evauate Concept_ScriptDefaultValueST if Empty
 					if (ReceiptLines.getScriptDefaultValue()==null || ReceiptLines.getScriptDefaultValue().isEmpty()) {
 						RetVal=pyScriptEngine.FormulaEvaluationScript(

@@ -35,7 +35,7 @@ public class AmerpPayrollCalc  {
 	CLogger log = CLogger.getCLogger(AmerpPayrollCalc.class);
 	
 	// Load Variables Values
-	PayrollVariables pyVars = new PayrollVariables(true);
+//	PayrollVariables pyVars = new PayrollVariables(true);
 	
 	/*******************************************************************************************
    	 * Payroll Evaluation using Script Engine Manager
@@ -53,7 +53,7 @@ public class AmerpPayrollCalc  {
  	 * This Method is Used by PayrollDetail Callout on Concept_Types_Proc Value
 	 *******************************************************************************************/
 	public PayrollVariables PayrollEvaluation(Properties p_ctx, int p_AMN_Payroll_ID , 
-			int p_calcorder, boolean forceRulesInit, boolean forceDVInit, boolean forceRounding) //throws ScriptException
+			int p_calcorder, PayrollVariables pyVars, boolean forceRulesInit, boolean forceDVInit, boolean forceRounding) //throws ScriptException
 	{
 		// Variables
 		//PayrollVariables pyVars = new PayrollVariables(true);
@@ -99,7 +99,6 @@ public class AmerpPayrollCalc  {
 		} else {
 		    p_script = formula;
 		}
-
 		// Load main Vars
 		pyVarsLoad.setPayrollVariablesMain(p_ctx, pyVars, p_AMN_Payroll_ID, conceptValue, p_script, emp.getSalary(), forceRounding);
 		// Load Days related Vars
@@ -334,7 +333,7 @@ public class AmerpPayrollCalc  {
 	    }
 	    
 	    // logVariablesShow
-		// logVariablesShow(pyVars, pyVars);
+		// logVariablesShow(pyVars);
 		return pyVars;
 
 	}
@@ -411,113 +410,6 @@ public class AmerpPayrollCalc  {
 		log.warning(Message);
 		return Message;
 	}
-		
- 
-
-	 
-	
-	
-	/**
-     * Returns the <code>indexth item in the collection. The index 
-     * starts at 0. 
-     * @param index  index into the collection. 
-     * @return  QtyValue , ResultValue , ErrorMessage
-     * @exception XSException
-     *   INDEX_SIZE_ERR: if <code>index is greater than or equal to the 
-     *   number of objects in the list.
-     */
-    /* CalcOrder */
-	public int getCalcOrder(int index) 
-        throws Exception {
-        int ConIndex = pyVars.getConIndex();
-        if(index < 0 || index > ConIndex - 1) {
-            throw new RuntimeException("CONCEPT INDEX SIZE ERR");
-        }
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[index];
-		return CT.getCalcOrder();
-    }
-	
-    public void setCalcOrder(int p_index, int p_CalcOrder) {
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[p_index];
-    	CT.setCalcOrder(p_CalcOrder);
-    	pyVars.ConceptTypes[p_index]=CT;
-    }
-    
-    /* ConceptVariable */
-	public String getConceptVariable(int index) 
-	
-            throws Exception {
-				int ConIndex = pyVars.getConIndex();
-	            if(index < 0 || index > ConIndex - 1) {
-	                throw new RuntimeException("CONCEPT INDEX SIZE ERR");
-	        }
-    		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-    		CT=pyVars.ConceptTypes[index];
-            return CT.ConceptVariable;
-    }
-	
-	public void setConceptVariable(int p_index, String p_ConceptVariable) {
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[p_index];
-		CT.setConceptVariable(p_ConceptVariable);
-		pyVars.ConceptTypes[p_index]=CT;
-    }
-
-    /* QtyValue */
-	public BigDecimal getQtyValue(int index) 
-        throws Exception {
-		int ConIndex = pyVars.getConIndex();
-        if(index < 0 || index > ConIndex - 1) {
-            throw new RuntimeException("CONCEPT INDEX SIZE ERR");
-        }
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[index];
-        return CT.getQtyValue();
-    }
-	public void setQtyValue(int p_index, BigDecimal p_QtyValue) {
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[p_index];
-    	CT.setQtyValue(p_QtyValue);
-    	pyVars.ConceptTypes[p_index]=CT;
-    }
-    /* ResultValue */
-	public BigDecimal getResultValue(int index) 
-            throws Exception {
-			int ConIndex = pyVars.getConIndex();
-            if(index < 0 || index > ConIndex - 1) {
-                throw new RuntimeException("CONCEPT INDEX SIZE ERR");
-            }
-    		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-    		CT=pyVars.ConceptTypes[index];
-            return CT.getResultValue();
-    }
-	public void setResultValue(int p_index, BigDecimal p_ResultValue) {
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[p_index];
-    	CT.setResultValue(p_ResultValue);
-    	pyVars.ConceptTypes[p_index]=CT;
-    }
-   
-    /* ErrorMessage */
-	public String getErrorMessage(int index) 
-            throws Exception {
-			int ConIndex = pyVars.getConIndex();
-            if(index < 0 || index > ConIndex - 1) {
-                throw new RuntimeException("CONCEPT INDEX SIZE ERR");
-            }
-    		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-    		CT=pyVars.ConceptTypes[index];
-            return CT.getErrorMessage();
-    }
-	
-	public void setErrorMessage(int p_index, String p_ErrorMessage) {
-		AmerpConceptTypes CT = new  AmerpConceptTypes(0,"",BigDecimal.valueOf(0.00),BigDecimal.valueOf(0.00),"");
-		CT=pyVars.ConceptTypes[p_index];
-    	CT.setErrorMessage(p_ErrorMessage);
-    	pyVars.ConceptTypes[p_index]=CT;
-    }
 
 }
 

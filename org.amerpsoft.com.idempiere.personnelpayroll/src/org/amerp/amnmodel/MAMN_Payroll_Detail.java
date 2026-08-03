@@ -241,7 +241,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			int p_AD_Client_ID, int p_AD_Org_ID,  int p_AMN_Process_ID, int p_AMN_Contract_ID,
 			int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID, String trxName) {
 		
-		PayrollVariables pyVars;
+		PayrollVariables pyVars = new PayrollVariables(true);
 		AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
 		PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
 		int Concept_CalcOrder=0;
@@ -317,7 +317,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		Concept_DefaultValue = BigDecimal.valueOf(1.00);;
 		// CALCULATE DEFAULT VALUE
 		try {
-			pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx, p_AMN_Payroll_ID, Concept_CalcOrder, forceRulesInit, forceDVInit, false);
+			pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx, p_AMN_Payroll_ID, Concept_CalcOrder, pyVars, forceRulesInit, forceDVInit, false);
 			// Evauate Concept_ScriptDefaultValueST if Empty
 			if (Concept_ScriptDefaultValueST==null || Concept_ScriptDefaultValueST.isEmpty()) {
 				RetVal=pyScriptEngine.FormulaEvaluationScript(

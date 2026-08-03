@@ -50,7 +50,7 @@ public class PayrollScriptEngine {
 			String p_Concept_Reference, String p_script, BigDecimal p_qtyValueRead, 
 			BigDecimal p_va_SB, BigDecimal p_workdays, String p_OptMode, boolean forceRounding) throws ScriptException
 	{
-		
+log.warning(p_Concept_Reference.trim() +" - p_script="+p_script);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		// AMN Payroll
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Env.getCtx(), p_AMN_Payroll_ID, null);
@@ -287,108 +287,108 @@ public class PayrollScriptEngine {
 				//ctx.setAttribute("AM_Status", AM_Status, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_IncomeDate")) {
-				ScriptableObject.putProperty(scope,"AM_IncomeDate", pyVars.get("AM_IncomeDate"));
+				ScriptableObject.putProperty(scope,"AM_IncomeDate", pyVars.getString("AM_IncomeDate"));
 				//ctx.setAttribute("AM_IncomeDate", AM_IncomeDate, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_PaymentType")) {
-				ScriptableObject.putProperty(scope,"AM_PaymentType", pyVars.get("AM_PaymentType"));
+				ScriptableObject.putProperty(scope,"AM_PaymentType", pyVars.getString("AM_PaymentType"));
 				//ctx.setAttribute("AM_PaymentType", AM_PaymentType, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_CivilStatus")) {
-				ScriptableObject.putProperty(scope,"AM_CivilStatus", pyVars.get("AM_CivilStatus"));
+				ScriptableObject.putProperty(scope,"AM_CivilStatus", pyVars.getString("AM_CivilStatus"));
 				//ctx.setAttribute("AM_CivilStatus", AM_CivilStatus, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_Sex")) {
-				ScriptableObject.putProperty(scope,"AM_Sex", pyVars.get("AM_Sex"));
+				ScriptableObject.putProperty(scope,"AM_Sex", pyVars.getString("AM_Sex"));
 				//ctx.setAttribute("AM_Sex", AM_Sex, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_Spouse")) {
-				ScriptableObject.putProperty(scope,"AM_Spouse", pyVars.get("AM_Spouse"));
+				ScriptableObject.putProperty(scope,"AM_Spouse", pyVars.getString("AM_Spouse"));
 				//ctx.setAttribute("AM_Spouse", AM_Spouse, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_IsPensioned")) {
-				ScriptableObject.putProperty(scope,"AM_IsPensioned", pyVars.get("AM_IsPensioned"));
+				ScriptableObject.putProperty(scope,"AM_IsPensioned", pyVars.getString("AM_IsPensioned"));
 				//ctx.setAttribute("AM_IsPensioned", AM_IsPensioned, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_IsStudyng")) {
-				ScriptableObject.putProperty(scope,"AM_IsStudyng", pyVars.get("AM_IsStudyng"));
+				ScriptableObject.putProperty(scope,"AM_IsStudyng", pyVars.getString("AM_IsStudyng"));
 				//ctx.setAttribute("AM_IsStudyng", AM_IsStudyng, ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_IsMedicated")) {
-				ScriptableObject.putProperty(scope,"AM_IsMedicated", pyVars.get("AM_IsMedicated"));
+				ScriptableObject.putProperty(scope,"AM_IsMedicated", pyVars.getString("AM_IsMedicated"));
 				//ctx.setAttribute("AM_IsMedicated", AM_IsMedicated, ScriptContext.ENGINE_SCOPE);
 			}
 			// AM_BirthDate
 			if (p_script.contains("AM_BirthDate")) {
-				ScriptableObject.putProperty(scope,"AM_BirthDate", pyVars.get("AM_BirthDate"));
+				ScriptableObject.putProperty(scope,"AM_BirthDate", pyVars.getString("AM_BirthDate"));
 				//ctx.setAttribute("AM_BirthDate", AM_BirthDate, ScriptContext.ENGINE_SCOPE);
 			}
 			// AM_Workforce
 			if (p_script.contains("AM_Workforce")) {
 				//log.warning("AM_Workforce="+AM_Workforce);
-				ScriptableObject.putProperty(scope,"AM_Workforce", pyVars.get("AM_Workforce"));
+				ScriptableObject.putProperty(scope,"AM_Workforce", pyVars.getString("AM_Workforce"));
 				//ctx.setAttribute("AM_Workforce", AM_Workforce, ScriptContext.ENGINE_SCOPE);
 			}			
 			// AM_Department
 			if (p_script.contains("AM_Department")) {
 				//log.warning("AM_Department="+AM_Department);
-				ScriptableObject.putProperty(scope,"AM_Department", pyVars.get("AM_Department"));
+				ScriptableObject.putProperty(scope,"AM_Department", pyVars.getString("AM_Department"));
 				//ctx.setAttribute("AM_Department", AM_Department, ScriptContext.ENGINE_SCOPE);
 			}	
 			// AM_Location
 			if (p_script.contains("AM_Location")) {
-				ScriptableObject.putProperty(scope,"AM_Location", pyVars.get("AM_Location"));
+				ScriptableObject.putProperty(scope,"AM_Location", pyVars.getString("AM_Location"));
 				//ctx.setAttribute("AM_Location", AM_Location, ScriptContext.ENGINE_SCOPE);
 			}	
 			// AM_Project
 			if (p_script.contains("AM_Project")) {
-				ScriptableObject.putProperty(scope,"AM_Project", pyVars.get("AM_Project"));
+				ScriptableObject.putProperty(scope,"AM_Project", pyVars.getString("AM_Project"));
 				//ctx.setAttribute("AM_Project", AM_Project, ScriptContext.ENGINE_SCOPE);
 			}			
 			// AM_Activity
 			if (p_script.contains("AM_Activity")) {
-				ScriptableObject.putProperty(scope,"AM_Activity", pyVars.get("AM_Activity"));
+				ScriptableObject.putProperty(scope,"AM_Activity", pyVars.getString("AM_Activity"));
 				//ctx.setAttribute("AM_Activity", AM_Activity, ScriptContext.ENGINE_SCOPE);
 			}	
 			// AM_Jobtitle
 			if (p_script.contains("AM_Jobtitle")) {
-				ScriptableObject.putProperty(scope,"AM_Jobtitle", pyVars.get("AM_Jobtitle"));
+				ScriptableObject.putProperty(scope,"AM_Jobtitle", pyVars.getString("AM_Jobtitle"));
 				//ctx.setAttribute("AM_Jobtitle", AM_Jobtitle, ScriptContext.ENGINE_SCOPE);
 			}
 			// AM_Jobstation
 			if (p_script.contains("AM_Jobstation")) {
-				ScriptableObject.putProperty(scope,"AM_Jobstation", pyVars.get("AM_Jobstation"));
+				ScriptableObject.putProperty(scope,"AM_Jobstation", pyVars.getString("AM_Jobstation"));
 				//ctx.setAttribute("AM_Jobtitle", AM_Jobtitle, ScriptContext.ENGINE_SCOPE);
 			}
 			// AM_Jobunit
 			if (p_script.contains("AM_Jobunit")) {
-				ScriptableObject.putProperty(scope,"AM_Jobunit", pyVars.get("AM_Jobunit"));
+				ScriptableObject.putProperty(scope,"AM_Jobunit", pyVars.getString("AM_Jobunit"));
 				//ctx.setAttribute("AM_Jobunit", AM_Jobunit, ScriptContext.ENGINE_SCOPE);
 			}
 			// REC_InitDate
 			if (p_script.contains("REC_InitDate")) {
-				ScriptableObject.putProperty(scope,"REC_InitDate", pyVars.get("REC_InitDate"));
+				ScriptableObject.putProperty(scope,"REC_InitDate", pyVars.getString("REC_InitDate"));
 				//ctx.setAttribute("REC_InitDate", REC_InitDate, ScriptContext.ENGINE_SCOPE);
 			}
 			// REC_EndDate
 			if (p_script.contains("REC_EndDate")) {
-				ScriptableObject.putProperty(scope,"REC_EndDate", pyVars.get("REC_EndDate"));
+				ScriptableObject.putProperty(scope,"REC_EndDate", pyVars.getString("REC_EndDate"));
 				//ctx.setAttribute("REC_EndDate", REC_EndDate, ScriptContext.ENGINE_SCOPE);
 			}
 			// ACCT_Date
 			if (p_script.contains("ACCT_Date")) {
 				//log.warning("ACCT_Date="+ACCT_Date);
-				ScriptableObject.putProperty(scope,"ACCT_Date", pyVars.get("ACCT_Date"));
+				ScriptableObject.putProperty(scope,"ACCT_Date", pyVars.getString("ACCT_Date"));
 				//ctx.setAttribute("ACCT_Date", ACCT_Date, ScriptContext.ENGINE_SCOPE);
 			}
 			// REF_InitDate
 			if (p_script.contains("REF_InitDate")) {
-				ScriptableObject.putProperty(scope,"REF_InitDate", pyVars.get("REF_InitDate"));
+				ScriptableObject.putProperty(scope,"REF_InitDate", pyVars.getString("REF_InitDate"));
 				//ctx.setAttribute("REF_InitDate", REF_InitDate, ScriptContext.ENGINE_SCOPE);
 			}
 			// REF_EndDate
 			if (p_script.contains("REF_EndDate")) {
-				ScriptableObject.putProperty(scope,"REF_EndDate", pyVars.get("REF_EndDate"));
+				ScriptableObject.putProperty(scope,"REF_EndDate", pyVars.getString("REF_EndDate"));
 				//ctx.setAttribute("REF_EndDate", REF_EndDate, ScriptContext.ENGINE_SCOPE);
 			}	
 			// AMN_downwardloads
@@ -404,7 +404,7 @@ public class PayrollScriptEngine {
 				//ctx.setAttribute("NLUNES", BigDecimal.valueOf(NLUNES), ScriptContext.ENGINE_SCOPE);
 			}
 			if (p_script.contains("AM_Currency")) {
-				ScriptableObject.putProperty(scope,"AM_Currency", pyVars.get("AM_Currency"));
+				ScriptableObject.putProperty(scope,"AM_Currency", pyVars.getString("AM_Currency"));
 				//ctx.setAttribute("AM_Currency", AM_Currency, ScriptContext.ENGINE_SCOPE);
 			}
 			//log.warning("p_script:"+p_script +"  AM_Process:"+AM_Process.trim()+"  AM_Contract:"+AM_Contract);			
@@ -733,6 +733,7 @@ public class PayrollScriptEngine {
 			RetVal.setBDCalcAmnt(BigDecimal.valueOf(CalcAmnt));
 			RetVal.setErrorMessage(ErrorMessage.trim());	
 		}
+log.warning("CalcAmt="+RetVal.getBDCalcAmnt());
 		return RetVal ;
 	}  
 	
