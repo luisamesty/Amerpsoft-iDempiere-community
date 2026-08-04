@@ -41,4 +41,3 @@ Bundle-Vendor: Amerpsoft
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.amerp.amxeditor.editor.Activator
-Export-Package: org.amerp.amxeditor.model
