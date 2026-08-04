@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.compiere.model.Query;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.Msg;
 
 /**
  * Utilidades de traducción (nombre/description/help) para AD_Element.
@@ -90,6 +91,53 @@ public class MsgUtils {
         return getTranslatedValueSQL(sql, adElementId, language, "Help");
     }
 
+    /**
+     * Obtiene el PrintName traducido del elemento.
+     * Si PrintName es null o vacío → devuelve Name.
+     */
+    public static String getElementPrintName(int adElementId, String language) {
+
+        if (adElementId <= 0)
+            return "";
+
+        // 1️⃣ Intentar vía PO (si existe en classpath)
+        try {
+            Object trl = tryGetTranslationPO(adElementId, language);
+            if (trl != null) {
+
+                Object printNameVal = getProperty(trl, "getPrintName");
+                if (printNameVal instanceof String) {
+                    String printName = ((String) printNameVal).trim();
+                    if (!printName.isEmpty())
+                        return printName;
+                }
+
+                Object nameVal = getProperty(trl, "getName");
+                if (nameVal instanceof String) {
+                    String name = ((String) nameVal).trim();
+                    if (!name.isEmpty())
+                        return name;
+                }
+            }
+        } catch (Throwable t) {
+            // ignorar y continuar con SQL
+        }
+
+        // 2️⃣ Fallback seguro vía SQL
+        String sql =
+            "SELECT COALESCE(NULLIF(trl.PrintName, ''), " +
+            "               NULLIF(e.PrintName, ''), " +
+            "               trl.Name, " +
+            "               e.Name) AS Value " +
+            "FROM AD_Element e " +
+            "LEFT JOIN AD_Element_Trl trl " +
+            "  ON (e.AD_Element_ID = trl.AD_Element_ID " +
+            "      AND trl.AD_Language = ?) " +
+            "WHERE e.AD_Element_ID = ?";
+
+        return getTranslatedValueSQL(sql, adElementId, language, "Value");
+    }
+    
     // -------------------- Helpers --------------------
 
     /** Usa SQL directo y devuelve la columna pedida (fallback). */
@@ -272,5 +320,127 @@ public class MsgUtils {
         }
         
         return fullDescription.toString();
+    }
+    
+    public static String getTranslatedName(String name, String language) {
+
+        if (name == null || name.isBlank())
+            return name;
+
+        // 1️⃣ Buscar en AD_Message
+        String sqlMessage = """
+            SELECT COALESCE(trl.MsgText, m.MsgText)
+            FROM AD_Message m
+            LEFT JOIN AD_Message_Trl trl
+                   ON (m.AD_Message_ID = trl.AD_Message_ID
+                   AND trl.AD_Language = ?)
+            WHERE m.Value = ?
+            """;
+
+        String msg = DB.getSQLValueString(
+                null,
+                sqlMessage,
+                language,
+                name
+        );
+
+        if (msg != null && !msg.isBlank())
+            return msg;
+
+        // 2️⃣ Buscar en AD_Element
+        String sqlElement = """
+            SELECT COALESCE(trl.Name, e.Name)
+            FROM AD_Element e
+            LEFT JOIN AD_Element_Trl trl
+                   ON (e.AD_Element_ID = trl.AD_Element_ID
+                   AND trl.AD_Language = ?)
+            WHERE e.ColumnName = ?
+            """;
+
+        String element = DB.getSQLValueString(
+                null,
+                sqlElement,
+                language,
+                name
+        );
+
+        if (element != null && !element.isBlank())
+            return element;
+
+        // 3️⃣ Fallback final
+        return name;
+    }
+    
+    public static String getTranslatedPrintName(String name, String language) {
+
+        if (name == null || name.isBlank())
+            return name;
+
+        // 1️⃣ Buscar primero en AD_Element
+        String sqlElement = """
+            SELECT COALESCE(
+                   NULLIF(trl.PrintName, ''),
+                   NULLIF(e.PrintName, ''),
+                   trl.Name,
+                   e.Name)
+            FROM AD_Element e
+            LEFT JOIN AD_Element_Trl trl
+                   ON (e.AD_Element_ID = trl.AD_Element_ID
+                   AND trl.AD_Language = ?)
+            WHERE e.ColumnName = ?
+            """;
+
+        String element = DB.getSQLValueString(
+                null,
+                sqlElement,
+                language,
+                name
+        );
+
+        if (element != null && !element.isBlank())
+            return element;
+
+        // 2️⃣ Fallback a AD_Message
+        String sqlMessage = """
+            SELECT COALESCE(trl.MsgText, m.MsgText)
+            FROM AD_Message m
+            LEFT JOIN AD_Message_Trl trl
+                   ON (m.AD_Message_ID = trl.AD_Message_ID
+                   AND trl.AD_Language = ?)
+            WHERE m.Value = ?
+            """;
+
+        String msg = DB.getSQLValueString(
+                null,
+                sqlMessage,
+                language,
+                name
+        );
+
+        if (msg != null && !msg.isBlank())
+            return msg;
+
+        return name;
+    }
+    
+    /**
+     * getTranslatedYesNo
+     * Devuelve el valor traducido de Y o N
+     * @param value
+     * @return
+     */
+    public static String getTranslatedYesNo(String value) {
+
+        if (value == null || value.isBlank())
+            return "";
+
+        if ("Y".equalsIgnoreCase(value))
+            return Msg.getMsg(Env.getCtx(), "Yes");
+
+        if ("N".equalsIgnoreCase(value))
+            return Msg.getMsg(Env.getCtx(), "No");
+
+        // Si viene cualquier otro valor inesperado
+        return value;
     }
 }
