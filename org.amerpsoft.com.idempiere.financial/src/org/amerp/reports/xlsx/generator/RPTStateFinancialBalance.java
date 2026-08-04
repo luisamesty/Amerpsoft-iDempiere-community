@@ -1,20 +1,22 @@
 package org.amerp.reports.xlsx.generator;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.amerp.reports.DataPopulator;
 import org.amerp.reports.OrgTree;
 import org.amerp.reports.TrialBalanceLine;
 import org.amerp.reports.xlsx.constants.FinancialReportConstants;
+import org.amerp.reports.xlsx.util.AccountUtils;
 import org.amerp.reports.xlsx.util.ExcelUtils;
+import org.amerp.reports.xlsx.util.MsgUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -46,10 +48,10 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
 	// Cabeceras, incluyendo saldos y organización
     private final String[] headers = { 
         "value", "name", "AD_Org_ID", 
-        "C_Period_ID", "Balance" 
+        "BeginningBalance", "AmtAcctDr", "AmtAcctCr", "C_Period_ID", "Balance" 
     };
     //Anchos proporcionales para las  columnas
-    private int[] maxLen = { 15, 25, 10, 16, 16 };
+    private int[] maxLen = { 15, 25, 10, 16, 16, 16, 16, 16 };
     private int orgColNameLen = 16;
     // Organizaciones seleccionadas
     List<OrgTree> orgs  = null;
@@ -60,7 +62,7 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
 
     @Override
     public String getReportName() {
-        return "StateFinancialIntegralResults"; // Nombre del archivo y de la hoja
+        return "StateFinancialBalance"; // Nombre del archivo y de la hoja
     }
 
 	// ===================================================================
@@ -76,8 +78,14 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
 
     @Override
     protected String getReportSubTitle(Map<String, Object> parameters) {
-        // En este caso, no hay subtítulo dinámico, devolvemos una cadena vacía o informativa
-        return "";
+    	String subTitle = "";
+        String isShowSummaryElements = (String) parameters.get("isShowSummaryElements");
+        String isPositiveBalance = (String) parameters.get("isPositiveBalance");
+        subTitle = MsgUtils.getTranslatedPrintName("PositiveBalance",Env.getAD_Language(Env.getCtx()))+
+        		"("+MsgUtils.getTranslatedYesNo(isPositiveBalance)+")"+
+        		" - "+MsgUtils.getTranslatedPrintName("isShowSummaryElements",Env.getAD_Language(Env.getCtx()))+
+        		"("+MsgUtils.getTranslatedYesNo(isShowSummaryElements)+")";
+        return subTitle;
     }
     
     @Override
@@ -177,16 +185,17 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
             }
         }
         // --- TÍTULO DEL INFORME
-        row = sheet.createRow(1);
+        row = sheet.createRow(0);
         Cell cellTitle = row.createCell(1);
         cellTitle.setCellValue(getReportTitle(parameters));
-        CellStyle titleStyle = styleMap.get("L3B"); 
+        CellStyle titleStyle = styleMap.get("L1B"); 
         cellTitle.setCellStyle(titleStyle);
-
+        // 🏆 COMBINAR CELDAS DEL TITULO (Fila 0, Columnas 1 a 3)
+   		sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, 3));
         // --- 📅 ETIQUETA DE FECHA (Fila 1 - Columna 4)
         Cell cellDateLabel = row.createCell(4); 
         cellDateLabel.setCellValue(Msg.translate(Env.getCtx(), "Date"));
-        cellDateLabel.setCellStyle(styleMap.get("TEXT_B")); 
+        cellDateLabel.setCellStyle(styleMap.get("L1B")); 
         // --- 🗓️ VALOR DE LA FECHA DEL REPORTE (Fila 1 - Columna 5)
         Cell cellDateValue = row.createCell(5);
         // Obtener la fecha del contexto de ejecución del reporte
@@ -198,7 +207,13 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         } else {
             cellDateValue.setCellValue("N/A");
         }
-        cellDateValue.setCellStyle(styleMap.get("TEXT_N"));
+        cellDateValue.setCellStyle(styleMap.get("L1B"));
+        // SUB-TITULO DEL INFORME (Parametros seleccionados)
+        row = sheet.createRow(1);
+        Cell cellSubTitle = row.createCell(1);
+        cellSubTitle.setCellValue(getReportSubTitle(parameters));
+        CellStyle subTitleStyle = styleMap.get("L3B"); 
+        cellSubTitle.setCellStyle(subTitleStyle);
         // --- NOMBRE CLIENTE
         row = sheet.createRow(2);
         Cell cellName = row.createCell(0);
@@ -235,6 +250,10 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
     @Override
     protected void writeColumnHeader(Map<String, Object> parameters) {
         
+    	// Indica si muestra Movimientos o Balance
+        String isShowMovementsAmounts = (String)  parameters.get("isShowMovementsAmounts");
+        String isShowCrosstab = (String) parameters.get("isShowCrosstab");  
+        
         // Reajustar el ancho de las columnas
     	for (int col = 0; col < maxLen.length; col++) {
     	    sheet.setColumnWidth(col, maxLen[col] * 256);
@@ -265,9 +284,6 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
             cell.setCellStyle(headerStyle);
         }
         
-        
-        String isShowCrosstab = (String) parameters.get("isShowCrosstab");   
-        
         // Escribir cabeceras traducidas
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -279,10 +295,14 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         // Escribir cabeceras Organizaciones
         if (isShowCrosstab != null && isShowCrosstab.compareToIgnoreCase("Y")==0) {
         	int colIndex = headers.length; // Columna inicial
+        	// Prefijo Organizacion
+        	String prefixOrgValue = isShowMovementsAmounts.compareToIgnoreCase("Y") == 0 ? 
+        			Msg.translate(Env.getCtx(),"C_Period_ID")+"-" : 
+        			Msg.translate(Env.getCtx(), "Balance")+"-";
             // 2. MODO CROSSTAB: Saldos Finales Dinámicos por Organización
             for (Integer orgID : selectedOrgIDs) {
                 String orgValue = orgValues.get(orgID);
-                String headerText =  orgValue ;
+                String headerText =  prefixOrgValue+orgValue ;
                 
                 Cell cell = headerRow.createCell(colIndex++);
                 cell.setCellValue(headerText);
@@ -300,7 +320,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         Integer C_AcctSchema_ID = (Integer) parameters.get("C_AcctSchema_ID");
         Integer AD_Org_ID = (Integer) parameters.get("AD_Org_ID");
         Integer AD_OrgParent_ID = (Integer) parameters.get("AD_OrgParent_ID");
-        Integer C_Period_ID = (Integer) parameters.get("C_Period_ID");
+        Integer periodObj = (Integer) parameters.get("C_Period_ID");
+        Integer C_Period_ID = (periodObj == null) ? 0 : periodObj;
         String PostingType = (String) parameters.get("PostingType");
         Integer C_ElementValue_ID = (Integer) parameters.get("C_ElementValue_ID");
         Timestamp DateFrom = (Timestamp) parameters.get("DateFrom");
@@ -309,10 +330,21 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         String isShowOrganization = (String) parameters.get("isShowOrganization");
         String isShowCrosstab = (String) parameters.get("isShowCrosstab");
         String trxName = (String) parameters.get("AD_PInstance_ID"); // Usar PInstance como trxName
+        String isShowMovementsAmounts = (String)  parameters.get("isShowMovementsAmounts");
+        String isShowSummaryElements = (String) parameters.get("isShowSummaryElements");
+        String isShowSubTotal = (String) parameters.get("isShowSubTotal");
+        String isPositiveBalance = (String) parameters.get("isPositiveBalance");
         String ReportTitle = (String) parameters.get("ReportTitle");
         
+        // Boolean Vars 
+        Boolean isCrosstab = isShowCrosstab.compareToIgnoreCase("Y")==0;
+        Boolean isOrganization = isShowOrganization.compareToIgnoreCase("Y")==0;
+        Boolean isShowMovements = isShowMovementsAmounts.compareToIgnoreCase("Y")==0;
+        Boolean isShowSummary = isShowSummaryElements.compareToIgnoreCase("Y")==0;
+        Boolean isPositive = isPositiveBalance.compareToIgnoreCase("Y")==0;
+        String accountType = "";
         // Obtener Datos  (C_ElementValue_ID = null para TrialBalance) 
-        List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceData(
+        List<TrialBalanceLine> reportData = DataPopulator.getTrialBalanceDataByDates(
                 AD_Client_ID, C_AcctSchema_ID, AD_Org_ID, AD_OrgParent_ID, 
                 C_Period_ID, PostingType, null, 
                 DateFrom, DateTo, isShowZERO, trxName);
@@ -342,15 +374,23 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         
         // Bucle de clasificación (antes del bucle de escritura principal)
         BigDecimal totalAssets = BigDecimal.ZERO; 
+        BigDecimal totalDrAssets = BigDecimal.ZERO; 
+        BigDecimal totalCrAssets = BigDecimal.ZERO; 
         BigDecimal totalLiabilities = BigDecimal.ZERO; 
+        BigDecimal totalDrLiabilities = BigDecimal.ZERO; 
+        BigDecimal totalCrLiabilities = BigDecimal.ZERO; 
         BigDecimal totalOwnersequity = BigDecimal.ZERO; 
+        BigDecimal totalDrOwnersequity = BigDecimal.ZERO; 
+        BigDecimal totalCrOwnersequity = BigDecimal.ZERO; 
         BigDecimal totalReport = BigDecimal.ZERO; 
+        BigDecimal totalDrReport = BigDecimal.ZERO; 
+        BigDecimal totalCrReport = BigDecimal.ZERO; 
         BigDecimal totalPerAssets = BigDecimal.ZERO; 
         BigDecimal totalPerLiabilities = BigDecimal.ZERO; 
         BigDecimal totalPerOwnersequity = BigDecimal.ZERO; 
         BigDecimal totalPerReport = BigDecimal.ZERO;
         for (TrialBalanceLine e : reportData) {
-            String accountType = e.getAccountType();
+            accountType = e.getAccountType();
             String tipoRegistro = e.getTipoRegistro();
             Integer orgID = e.getAD_Org_ID();
             
@@ -360,6 +400,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 if ("50".equals(tipoRegistro)) {
                     totalPerAssets = totalPerAssets.add(e.getBalancePeriodo());
                     totalAssets = totalAssets.add(e.getCloseBalance());
+                    totalDrAssets = totalDrAssets.add(e.getAmtAcctDr());
+                    totalCrAssets = totalCrAssets.add(e.getAmtAcctCr());
                 }
                 // Acumulación Crosstab (Usando el registro por Organización: "60")
                 if ("60".equals(tipoRegistro)) {
@@ -373,6 +415,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 if ("50".equals(tipoRegistro)) {
                     totalPerLiabilities = totalPerLiabilities.add(e.getBalancePeriodo());
                     totalLiabilities = totalLiabilities.add(e.getCloseBalance());
+                    totalDrLiabilities = totalDrLiabilities.add(e.getAmtAcctDr());
+                    totalCrLiabilities = totalCrLiabilities.add(e.getAmtAcctCr());
                 }
                 // Acumulación Crosstab (Usando el registro por Organización: "60")
                 if ("60".equals(tipoRegistro)) {
@@ -386,6 +430,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 if ("50".equals(tipoRegistro)) {
                     totalPerOwnersequity = totalPerOwnersequity.add(e.getBalancePeriodo());
                     totalOwnersequity = totalOwnersequity.add(e.getCloseBalance());
+                    totalDrOwnersequity = totalDrOwnersequity.add(e.getAmtAcctDr());
+                    totalCrOwnersequity = totalCrOwnersequity.add(e.getAmtAcctCr());
                 }
                 // Acumulación Crosstab (Usando el registro por Organización: "60")
                 if ("60".equals(tipoRegistro)) {
@@ -395,9 +441,7 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 }
             }
         }
-        // 
-        Boolean isCrosstab = isShowCrosstab.compareToIgnoreCase("Y")==0;
-        Boolean isOrganization = isShowOrganization.compareToIgnoreCase("Y")==0;
+
         
         // Crear el mapa OrgID -> Índice de Columna
         Map<Integer, Integer> orgColumnMap = new HashMap<>();
@@ -413,50 +457,64 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
         int rowNumGen = headerRows + 1;
         // == Assets
         // Assets Lines
+        accountType = X_C_ElementValue.ACCOUNTTYPE_Asset;
         if (assetsTbl.size() > 0) {
-        	rowNumGen = generateReportContentbyAccountType(rowNumGen, isOrganization, isCrosstab, orgColumnMap, assetsTbl);
+        	rowNumGen = generateReportContentbyAccountType(rowNumGen, isOrganization, isCrosstab, isShowMovements, isShowSummary, X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, orgColumnMap, assetsTbl);
 	        
         }
         // Assets Total
         Row row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Asset) +") ==", textBold);
-        ExcelUtils.createStyledCell(row, 3, totalPerAssets, numBold);
-        ExcelUtils.createStyledCell(row, 4, totalAssets, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalDrAssets, numBold);
+        ExcelUtils.createStyledCell(row, 5, totalCrAssets, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, totalPerAssets), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Asset, isPositive, totalAssets), numBold);
         rowNumGen++;
         
         // === Liabilities
         // Liabilities Lines
+        accountType = X_C_ElementValue.ACCOUNTTYPE_Liability;
         if (liabilitiesTbl.size() > 0) {
-        	rowNumGen = generateReportContentbyAccountType(rowNumGen, isOrganization, isCrosstab, orgColumnMap, liabilitiesTbl);
+        	rowNumGen = generateReportContentbyAccountType(rowNumGen, isOrganization, isCrosstab, isShowMovements, isShowSummary, X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, orgColumnMap, liabilitiesTbl);
             rowNumGen++;
         }
         // Liabilities Total
         row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_Liability) +") ==", textBold);
-        ExcelUtils.createStyledCell(row, 3, totalPerLiabilities, numBold);
-        ExcelUtils.createStyledCell(row, 4, totalLiabilities, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalDrLiabilities, numBold);
+        ExcelUtils.createStyledCell(row, 5, totalCrLiabilities, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, totalPerLiabilities), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_Liability, isPositive, totalLiabilities), numBold);
+
         rowNumGen++;
         
         // === Ownersequity
         // Ownersequity Lines
-    	rowNumGen = generateReportContentbyAccountType(rowNumGen, isOrganization, isCrosstab, orgColumnMap, ownersequityTbl);
+        accountType = X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity;
+    	rowNumGen = generateReportContentbyAccountType(rowNumGen, isOrganization, isCrosstab, isShowMovements, isShowSummary, X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, orgColumnMap, ownersequityTbl);
         rowNumGen++;
         // Ownersequity Total
         row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 1, "== Total ("+FinancialReportConstants.getAccountTypeName(ctx, X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity) +") ==", textBold);
-        ExcelUtils.createStyledCell(row, 3, totalPerOwnersequity, numBold);
-        ExcelUtils.createStyledCell(row, 4, totalOwnersequity, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalDrOwnersequity, numBold);
+        ExcelUtils.createStyledCell(row, 5, totalCrOwnersequity, numBold);
+        ExcelUtils.createStyledCell(row, 6, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, totalPerOwnersequity), numBold);
+        ExcelUtils.createStyledCell(row, 7, AccountUtils.applyPositiveBalance(X_C_ElementValue.ACCOUNTTYPE_OwnerSEquity, isPositive, totalOwnersequity), numBold);
 
         // === Total
         rowNumGen++;
         totalReport = totalAssets.add(totalLiabilities).add(totalOwnersequity);
         totalPerReport = totalPerAssets.add(totalPerLiabilities).add(totalPerOwnersequity);
+        totalDrReport = totalDrAssets.add(totalDrLiabilities).add(totalDrOwnersequity);
+        totalCrReport = totalAssets.add(totalCrLiabilities).add(totalCrOwnersequity);
         // Report Total
         row = sheet.createRow(rowNumGen++);
         ExcelUtils.createStyledCell(row, 0, totalAccountRes, textBold);
         ExcelUtils.createStyledCell(row, 1, totalAccountResName, textBold);
-        ExcelUtils.createStyledCell(row, 3, totalPerReport, numBold);
-        ExcelUtils.createStyledCell(row, 4, totalReport, numBold);
+        ExcelUtils.createStyledCell(row, 4, totalDrReport, numBold);
+        ExcelUtils.createStyledCell(row, 5, totalCrReport, numBold);
+        ExcelUtils.createStyledCell(row, 6, totalPerReport, numBold);
+        ExcelUtils.createStyledCell(row, 7, totalReport, numBold);
         
         // === ESCRITURA DEL TOTAL REPORTE CROSSTAB ===
         if (isCrosstab) {
@@ -533,7 +591,8 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
      * @param accountTypeGroup
      * @return rowNum
      */
-    protected int  generateReportContentbyAccountType(int rowNum, boolean isOrganization, boolean isCrosstab, Map<Integer, Integer> orgColumnMap, 
+    protected int  generateReportContentbyAccountType(int rowNum, boolean isOrganization, boolean isCrosstab, boolean isShowMovements, 
+    		boolean isShowSummary, String accountType, boolean isPositive, Map<Integer, Integer> orgColumnMap, 
     		List<TrialBalanceLine> accountTypeGroup) {
 
         // Reusar estilos desde styleMap
@@ -556,40 +615,50 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
             CellStyle tStyle = bold ? textBold : textNormal;
             CellStyle nStyle = bold ? numBold : numNormal;
             // Si la línea NO es un detalle de Org (ej., es R o 60), escríbela como la línea principal
-            if ("10".equals(tipoRegistro) || "50".equals(tipoRegistro)) {       
-                // Nueva Fila
-                Row row = sheet.createRow(rowNum++);
-                // Formatear la cuenta con sangría (Indentación)
-                String paddedName = ExcelUtils.padLeft(tbl.getNombre(), level);
-                String orgValue = tbl.getOrgValue() != null ? tbl.getOrgValue() : "";
-
-                // --- Columna 0: Cód. Cuenta (con sangría)
-                ExcelUtils.createStyledCell(row, 0, tbl.getCodigo(), tStyle);
-                ExcelUtils.updateMaxLen(maxLen, 0, tbl.getCodigo());
-
-                // --- Columna 1: Nombre Cuenta
-                ExcelUtils.createStyledCell(row, 1, paddedName, tStyle);
-                ExcelUtils.updateMaxLen(maxLen, 1, paddedName);
-
-                // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
-                ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
-                ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
-                // --- Columnas 3-4: Periodo y Balanace (BigDecimals)
-                int col = 3;
-                ExcelUtils.createStyledCell(row, col++, tbl.getBalancePeriodo(), nStyle);
-                ExcelUtils.createStyledCell(row, col++, tbl.getCloseBalance(), nStyle);
-                
+            if ("10".equals(tipoRegistro) || "50".equals(tipoRegistro)) {
+            	// Muestra si isSummary = 'Y' o si tbl.getIsSummary() ='N'
+            	if (isShowSummary || (!isShowSummary && tbl.getIsSummary().compareToIgnoreCase("N")==0)) {
+	                // Nueva Fila
+	                Row row = sheet.createRow(rowNum++);
+	                // Formatear la cuenta con sangría (Indentación)
+	                String paddedName = ExcelUtils.padLeft(tbl.getNombre(), level);
+	                String orgValue = tbl.getOrgValue() != null ? tbl.getOrgValue() : "";
+	
+	                // --- Columna 0: Cód. Cuenta (con sangría)
+	                ExcelUtils.createStyledCell(row, 0, tbl.getCodigo(), tStyle);
+	                ExcelUtils.updateMaxLen(maxLen, 0, tbl.getCodigo());
+	
+	                // --- Columna 1: Nombre Cuenta
+	                ExcelUtils.createStyledCell(row, 1, paddedName, tStyle);
+	                ExcelUtils.updateMaxLen(maxLen, 1, paddedName);
+	
+	                // --- Columna 2: Organización (solo para tipo 50, nulo para R/60)
+	                ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
+	                ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
+	                // --- Columnas 3-4-5-6-7: openbal-dr-cr- Periodo y Balanace (BigDecimals)
+	                int col = 3;
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getOpenBalance()), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
+	                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getCloseBalance()), nStyle);
+	                
+            	}                
             } else if ("60".equals(tipoRegistro) && isCrosstab) { 
                 // --- LÓGICA CROSSTAB: Escribir el Saldo de Organización ---
                 int currentOrgID = tbl.getAD_Org_ID(); // Asumimos que tienes este campo en TrialBalanceLine
                 BigDecimal orgBalance = tbl.getCloseBalance(); // El saldo final de esta Org/línea
+                BigDecimal orgPeriodBalance = tbl.getBalancePeriodo();
                 // 1. Encontrar la Fila (Row) correcta para esta cuenta
                 Row targetRow = sheet.getRow(rowNum - 1); 
                 if (targetRow != null && orgColumnMap.containsKey(currentOrgID)) {
                     // 2. Obtener la columna de destino
                     int targetCol = orgColumnMap.get(currentOrgID);
                     // 3. Escribir el saldo en la columna de Crosstab
-                    ExcelUtils.createStyledCell(targetRow, targetCol, orgBalance, nStyle);
+                    if (isShowMovements)
+                    	ExcelUtils.createStyledOrgCell(targetRow, targetCol, AccountUtils.applyPositiveBalance(accountType, isPositive, orgPeriodBalance), nStyle);
+                    else
+                    	ExcelUtils.createStyledOrgCell(targetRow, targetCol, AccountUtils.applyPositiveBalance(accountType, isPositive, orgBalance), nStyle);
                 }
             } else if ("60".equals(tipoRegistro) && isOrganization) {
                 // --- ESCENARIO 2: LÓGICA DE DETALLE POR ORGANIZACIÓN (NO CROSSTAB) ---
@@ -617,10 +686,13 @@ public class RPTStateFinancialBalance extends AbstractXlsxGenerator {
                 ExcelUtils.createStyledCell(row, 2, orgValue, tStyle);
                 ExcelUtils.updateMaxLen(maxLen, 2, orgValue);
                 
-                // --- Columnas 3-4: Periodo y Balanace de la Organización
+                // --- Columnas 3-4-5-6-7: openbal-dr-cr- Periodo y Balanace de la Organización
                 int col = 3;
-                ExcelUtils.createStyledCell(row, col++, tbl.getBalancePeriodo(), nStyle);
-                ExcelUtils.createStyledCell(row, col++, tbl.getCloseBalance(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getOpenBalance()), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctDr(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, tbl.getAmtAcctCr(), nStyle);
+                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getBalancePeriodo()), nStyle);
+                ExcelUtils.createStyledCell(row, col++, AccountUtils.applyPositiveBalance(accountType, isPositive, tbl.getCloseBalance()), nStyle);
             } else {
             	 continue; 
             }

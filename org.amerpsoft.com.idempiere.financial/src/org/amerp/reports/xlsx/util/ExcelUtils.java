@@ -45,6 +45,16 @@ public class ExcelUtils {
         cell.setCellStyle(style);
     }
     
+    public static void createStyledOrgCell(Row row, int colIndex, BigDecimal value, CellStyle style) {
+        Cell cell = row.createCell(colIndex);
+
+        if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
+            cell.setCellValue(value.doubleValue());
+        }
+        // Si es null o 0 → no se pinta nada
+
+        cell.setCellStyle(style);
+    }
     // --- Valor seguro (evita NullPointerException)
     public static String safeString(String s) {
         return s != null ? s : "";

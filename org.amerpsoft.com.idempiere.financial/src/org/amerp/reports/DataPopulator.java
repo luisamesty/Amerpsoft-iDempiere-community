@@ -575,10 +575,13 @@ public class DataPopulator {
 			String PostingType, Integer C_ElementValue_ID, Timestamp DateFrom, Timestamp DateTo, 
 			String isShowZERO, String trxName) {
 	        
+		Integer  parmC_Period_ID = C_Period_ID;
         List<TrialBalanceLine> list = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-
+        // Verifica si el Periodo es cero (Significa llamar a las Querys por fechas)
+        if (C_Period_ID == 0)	
+        	parmC_Period_ID = null;
         try {
             pstmt = DB.prepareStatement(ReportGeneratorQuerys.SQL_TRIAL_BALANCE_DATA, trxName);
             int index = 1;
@@ -606,9 +609,13 @@ public class DataPopulator {
             pstmt.setInt(index++, AD_OrgParent_ID);     // 9
             pstmt.setInt(index++, AD_Org_ID);           // 10
             pstmt.setInt(index++, C_AcctSchema_ID);     // 11
-            pstmt.setInt(index++, C_Period_ID);         // 12
+            // C_Period_ID Puede ser Nulo     			// 12
+            if (parmC_Period_ID == null || parmC_Period_ID == 0) {
+                pstmt.setObject(index++, null, java.sql.Types.INTEGER);
+            } else {
+                pstmt.setInt(index++, parmC_Period_ID);
+            }
             pstmt.setString(index++, PostingType);      // 13
-            
             // C_ElementValue_ID (Puede ser NULL)
             if (C_ElementValue_ID == null || C_ElementValue_ID == 0) {
                  pstmt.setObject(index++, null, java.sql.Types.INTEGER); // 14
@@ -670,6 +677,213 @@ public class DataPopulator {
         return list;
     }
 	
+	/**
+	 * getTrialBalanceDataByDates
+	 * Set C_Period_ID = 0 Means NULL and call getTrialBalanceData By Dates
+	 * @param AD_Client_ID
+	 * @param C_AcctSchema_ID
+	 * @param AD_Org_ID
+	 * @param AD_OrgParent_ID
+	 * @param PostingType
+	 * @param C_ElementValue_ID
+	 * @param DateFrom
+	 * @param DateTo
+	 * @param isShowZERO
+	 * @param trxName
+	 * @return
+	 */
+	public static List<TrialBalanceLine> getTrialBalanceDataByDates(
+		    int AD_Client_ID,
+		    int C_AcctSchema_ID,
+		    int AD_Org_ID,
+		    int AD_OrgParent_ID,
+		    int C_Period_ID,
+		    String PostingType,
+		    Integer C_ElementValue_ID,
+		    Timestamp DateFrom,
+		    Timestamp DateTo,
+		    String isShowZERO,
+		    String trxName
+		) {
+
+			Integer nullC_Period_ID = 0;
+		    return getTrialBalanceData(
+		        AD_Client_ID,
+		        C_AcctSchema_ID,
+		        AD_Org_ID,
+		        AD_OrgParent_ID,
+		        nullC_Period_ID,              // 👈 Periodo SIEMPRE nulo == 0
+		        PostingType,
+		        C_ElementValue_ID,
+		        DateFrom,
+		        DateTo,
+		        isShowZERO,
+		        trxName
+		    );
+		}
+
+	/**
+	 * 
+	 * @param AD_Client_ID
+	 * @param C_AcctSchema_ID
+	 * @param AD_Org_ID
+	 * @param AD_OrgParent_ID
+	 * @param C_Period_ID
+	 * @param PostingType
+	 * @param C_ElementValue_ID
+	 * @param DateFrom
+	 * @param DateTo
+	 * @param isShowZERO
+	 * @param trxName
+	 * @return
+	 */
+	public static List<TrialBalanceLine12> getTrialBalanceData12Periods(
+		    int AD_Client_ID,
+		    int C_AcctSchema_ID,
+		    int AD_Org_ID,
+		    int AD_OrgParent_ID,
+		    int C_Year_ID,
+		    int C_Period_ID,
+		    String PostingType,
+		    Integer C_ElementValue_ID,
+		    Timestamp DateFrom,
+		    Timestamp DateTo,
+		    String isShowZERO,
+		    String trxName
+		) {
+
+			Integer nullC_Period_ID = 0;
+		    return getTrialBalanceData12PeriodsQuery(
+		        AD_Client_ID,
+		        C_AcctSchema_ID,
+		        AD_Org_ID,
+		        AD_OrgParent_ID,
+		        C_Year_ID,
+		        nullC_Period_ID,
+		        PostingType,
+		        C_ElementValue_ID,
+		        DateFrom,
+		        DateTo,
+		        isShowZERO,
+		        trxName
+		    );
+		}
+	
+	/**
+	 *  getTrialBalanceData
+	 * Obtiene los datos del balance de comprobación con estructura jerárquica.
+	 * @param AD_Client_ID
+	 * @param C_AcctSchema_ID
+	 * @param AD_Org_ID
+	 * @param AD_OrgParent_ID
+	 * @param C_Period_ID
+	 * @param PostingType
+	 * @param C_ElementValue_ID
+	 * @param DateFrom
+	 * @param DateTo
+	 * @param isShowZERO
+	 * @param trxName
+	 * @return
+	 */
+	public static List<TrialBalanceLine12> getTrialBalanceData12PeriodsQuery(
+			int AD_Client_ID, int C_AcctSchema_ID, int AD_Org_ID, int AD_OrgParent_ID, int C_Year_ID,  int C_Period_ID, 
+			String PostingType, Integer C_ElementValue_ID, Timestamp DateFrom, Timestamp DateTo, 
+			String isShowZERO, String trxName) {
+	        
+		Integer  parmC_Period_ID = C_Period_ID;
+	    List<TrialBalanceLine12> list = new ArrayList<>();
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    // Verifica si el Periodo es cero (Significa llamar a las Querys por fechas)
+	    if (C_Period_ID == 0)	
+	    	parmC_Period_ID = null;
+	    try {
+	        pstmt = DB.prepareStatement(ReportGeneratorQuerys.SQL_TRIAL_BALANCE_12_PERIODS, trxName);
+	        int index = 1;
+	        
+	     // ==========================================================
+	        // ASIGNACIÓN DE PARÁMETROS (24 Parámetros)
+	        // ==========================================================
+	
+	        // 1. Accounts CTE (2 Parámetros)
+	        pstmt.setInt(index++, AD_Client_ID);     // 1
+	        pstmt.setInt(index++, C_AcctSchema_ID);  // 2
+	        
+	        // 3. C_year_ID
+	        pstmt.setInt(index++, C_Year_ID);     	// 3
+	        
+	        // 4. AD_Client_ID, 5. AD_Org_ID, 6. AD_OrgParent_ID
+	        pstmt.setInt(index++, AD_Client_ID);     // 4
+	        pstmt.setInt(index++, AD_Org_ID);        // 5
+	        pstmt.setInt(index++, AD_OrgParent_ID);  // 6
+	        
+	        // 7. AD_Client_ID, 8. AD_OrgParent_ID, 9. AD_Org_ID, 10. C_AcctSchema_ID
+	        pstmt.setInt(index++, AD_Client_ID);    // 7
+	        pstmt.setInt(index++, AD_OrgParent_ID); // 8
+	        pstmt.setInt(index++, AD_Org_ID);  		// 9
+	        pstmt.setInt(index++, C_AcctSchema_ID); // 10
+	        // 11 isShowZERO
+	        pstmt.setString(index++, isShowZERO); 	// 11: isShowZERO = 'Y' or 'N'
+	        
+	        // ==========================================================
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            TrialBalanceLine12 line = new TrialBalanceLine12();
+	            
+	            // Mapeo de campos de identidad y jerarquía
+	            line.setCodigo(rs.getString("codigo"));
+	            line.setNombre(rs.getString("nombre"));
+	            line.setAccountType(rs.getString("accounttype"));
+	            line.setAccountSign(rs.getString("accountsign"));
+	            line.setIsSummary(rs.getString("issummary"));
+	            line.setOrgValue(rs.getString("org_value"));
+	            line.setAD_Org_ID(rs.getInt("ad_org_id"));
+	            line.setTipoRegistro(rs.getString("tipo_registro"));
+	            line.setLevel(rs.getInt("level"));
+
+	            // Mapeo de SALDOS DE MOVIMIENTOS (sa_p01 al sa_p12 y anual)
+	            line.setSa_p01(rs.getBigDecimal("sa_p01"));
+	            line.setSa_p02(rs.getBigDecimal("sa_p02"));
+	            line.setSa_p03(rs.getBigDecimal("sa_p03"));
+	            line.setSa_p04(rs.getBigDecimal("sa_p04"));
+	            line.setSa_p05(rs.getBigDecimal("sa_p05"));
+	            line.setSa_p06(rs.getBigDecimal("sa_p06"));
+	            line.setSa_p07(rs.getBigDecimal("sa_p07"));
+	            line.setSa_p08(rs.getBigDecimal("sa_p08"));
+	            line.setSa_p09(rs.getBigDecimal("sa_p09"));
+	            line.setSa_p10(rs.getBigDecimal("sa_p10"));
+	            line.setSa_p11(rs.getBigDecimal("sa_p11"));
+	            line.setSa_p12(rs.getBigDecimal("sa_p12"));
+	            line.setSa_anual(rs.getBigDecimal("sa_anual"));
+
+	            // Mapeo de SALDOS FINALES (bal_p01 al bal_p12 y anual)
+	            line.setBal_p01(rs.getBigDecimal("bal_p01"));
+	            line.setBal_p02(rs.getBigDecimal("bal_p02"));
+	            line.setBal_p03(rs.getBigDecimal("bal_p03"));
+	            line.setBal_p04(rs.getBigDecimal("bal_p04"));
+	            line.setBal_p05(rs.getBigDecimal("bal_p05"));
+	            line.setBal_p06(rs.getBigDecimal("bal_p06"));
+	            line.setBal_p07(rs.getBigDecimal("bal_p07"));
+	            line.setBal_p08(rs.getBigDecimal("bal_p08"));
+	            line.setBal_p09(rs.getBigDecimal("bal_p09"));
+	            line.setBal_p10(rs.getBigDecimal("bal_p10"));
+	            line.setBal_p11(rs.getBigDecimal("bal_p11"));
+	            line.setBal_p12(rs.getBigDecimal("bal_p12"));
+	            line.setBal_anual(rs.getBigDecimal("bal_anual"));
+	            
+	            list.add(line);
+	        }
+	    } catch (Exception e) {
+	        log.log(Level.SEVERE, "Fallo al obtener los datos del Balance de Comprobación.", e);
+	    } finally {
+	        DB.close(rs, pstmt);
+	    }
+	
+	    return list;
+	}
+
 	/**
 	 * getSelectedOrgIDs Devuelve una lista de AD_Org_IDs
 	 * @param orgs
