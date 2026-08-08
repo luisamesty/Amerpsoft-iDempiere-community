@@ -37,7 +37,7 @@ import org.compiere.util.*;
 public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 
 	CLogger log = CLogger.getCLogger(AMN_Payroll_Detail_Qty_callout.class);
-	PayrollVariables pyVars;
+	PayrollVariables pyVars = new PayrollVariables(true);
 	AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
 	AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
 	PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
@@ -210,7 +210,7 @@ public class AMN_Payroll_Detail_Qty_callout implements IColumnCallout {
 					// *******************************************************
 					// Calculate Concepts VARIABLES
 					// *******************************************************
-					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder,forceRulesInit, forceDVInit, false);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder,pyVars,forceRulesInit, forceDVInit, false);
 
 					// IF script is not Empty or formula equals ("script")
 					if (formula.trim().equalsIgnoreCase("script") || ((!script.isEmpty() && script!=null))) {

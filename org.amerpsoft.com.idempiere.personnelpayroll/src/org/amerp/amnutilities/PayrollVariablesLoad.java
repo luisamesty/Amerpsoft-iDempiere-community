@@ -25,7 +25,6 @@ import org.compiere.model.MActivity;
 import org.compiere.model.MCurrency;
 import org.compiere.model.MProject;
 import org.compiere.util.CLogger;
-import org.compiere.util.Env;
 
 public class PayrollVariablesLoad {
 

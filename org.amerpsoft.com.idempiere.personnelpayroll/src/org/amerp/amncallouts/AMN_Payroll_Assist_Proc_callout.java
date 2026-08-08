@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
 import org.amerp.amnmodel.MAMN_Employee;
+import org.amerp.amnmodel.MAMN_Leaves;
 import org.amerp.amnmodel.MAMN_Payroll_Assist_Proc;
 import org.amerp.amnmodel.MAMN_Shift_Detail;
 import org.amerp.process.AMNPayrollProcessPayrollAssistUtil;

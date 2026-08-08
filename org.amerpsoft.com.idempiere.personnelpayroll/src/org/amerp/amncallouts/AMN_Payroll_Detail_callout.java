@@ -37,7 +37,7 @@ import org.compiere.util.*;
 public class AMN_Payroll_Detail_callout implements IColumnCallout {
 
 	CLogger log = CLogger.getCLogger(AMN_Payroll_Detail_callout.class);
-	PayrollVariables pyVars;
+	PayrollVariables pyVars = new PayrollVariables(true);
 	AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
 	AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
 	PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
@@ -216,7 +216,7 @@ public class AMN_Payroll_Detail_callout implements IColumnCallout {
 		            //log.warning(".....................AMN_Payroll_Detail_callout.java...QUANTITY..CALCULATE..........................................");
 		            //log.warning("Concept_DefaultValueST:"+Concept_DefaultValueST+"  va_SB="+va_SB+"   workdaysDT"+workdaysDT);	
 					// Calculate Concepts VARIABLES
-					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, false);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, pyVars, forceRulesInit, forceDVInit, false);
 					// Select Concept_ScriptDefaultValue or Concept_DefaultValueST
 					if (Concept_ScriptDefaultValue==null || Concept_ScriptDefaultValue.isEmpty()) {
 						Concept_ValueResult=pyScriptEngine.FormulaEvaluationScript(
@@ -242,7 +242,7 @@ public class AMN_Payroll_Detail_callout implements IColumnCallout {
 				ScriptResult Concept_ValueResult = null;
 				try {
 					// Calculate Concepts VARIABLES
-					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, false);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, pyVars, forceRulesInit, forceDVInit, false);
 					// Select Concept_ScriptDefaultValue or Concept_DefaultValueST
 					if (Concept_ScriptDefaultValue==null || Concept_ScriptDefaultValue.isEmpty()) {
 	                    Concept_ValueResult=pyScriptEngine.FormulaEvaluationScript(
@@ -272,7 +272,7 @@ public class AMN_Payroll_Detail_callout implements IColumnCallout {
 					// *******************************************************
 					// Calculate Concepts VARIABLES
 					// *******************************************************
-					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, forceRulesInit, forceDVInit, true);
+					pyVars = amerpPayrollCalc.PayrollEvaluation(p_ctx,Payroll_ID,Concept_CalcOrder, pyVars, forceRulesInit, forceDVInit, true);
 
 					// IF script is not Empty or formula equals ("script")
 					if (formula.trim().equalsIgnoreCase("script") || ((!script.isEmpty() && script!=null))) {
