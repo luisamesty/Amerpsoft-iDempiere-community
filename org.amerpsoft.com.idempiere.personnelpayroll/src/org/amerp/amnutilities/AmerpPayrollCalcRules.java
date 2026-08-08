@@ -77,6 +77,7 @@ public class AmerpPayrollCalcRules {
 		InvDateAcct=amnpayroll.getDateAcct();
 		RefDateIni=amnpayroll.getRefDateIni();
 		RefDateEnd=amnpayroll.getRefDateEnd();
+
 		EmployeeIncomeDate=amnemployee.getincomedate();
 		MAMN_Shift amnshift = new MAMN_Shift(p_ctx, amnemployee.getAMN_Shift_ID(), ruleValue);
 		// Calculates Years
@@ -88,7 +89,8 @@ public class AmerpPayrollCalcRules {
         ScriptEngineManager manager = new ScriptEngineManager ();
         ScriptEngine engine = manager.getEngineByName ("java");
 		engine = rule.getScriptEngine();
-
+		// safeTrxName
+		String safeTrxName = (trxName != null) ? trxName : amnpayroll.get_TrxName();
 		// SET PARAMETERS
 		// Window context are    W_
 		// Login context  are    G_
@@ -97,7 +99,7 @@ public class AmerpPayrollCalcRules {
 		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "Ctx", p_ctx);
 		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "AMN_Payroll_ID", p_AMN_Payroll_ID);
 		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "AMN_Employee_ID", amnpayroll.getAMN_Employee_ID());
-		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "trxName", amnpayroll.get_TrxName());
+		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "trxName", safeTrxName != null ? safeTrxName : "");
 		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "InvDateIni", InvDateIni);
 		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "InvDateEnd", InvDateEnd);
 		engine.put(MAMN_Rules.ARGUMENTS_PREFIX + "InvDateAcc", InvDateAcct);

@@ -84,44 +84,59 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 	 * @param p_AMN_Concept_Types_Proc_ID
 	 * @return MAMN_PayrollDetail
 	 */
-	public static MAMN_Payroll_Detail findAMNPayrollDetailbyAMNPayroll(Properties ctx, Locale locale, 
-				int p_AMN_Payroll_ID,  int p_AMN_Concept_Types_Proc_ID) {
-				
-		MAMN_Payroll_Detail retValue = null;
-		String sql = "SELECT * " + 
-				"FROM amn_payroll as pay " + 
-				"LEFT JOIN amn_payroll_detail as pad on (pay.amn_payroll_id = pad.amn_payroll_id) " + 
-				"WHERE pad.amn_payroll_id=? " + 
-				"AND pad.amn_concept_types_proc_id=?"
-			;        
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
-            pstmt.setInt (1, p_AMN_Payroll_ID);
-            pstmt.setInt (2, p_AMN_Concept_Types_Proc_ID);
+	/**
+	 * Busca un detalle de nómina por encabezado y proceso de concepto (sin Locale).
+	 */
+	public static MAMN_Payroll_Detail findAMNPayrollDetailbyAMNPayroll(
+	        Properties ctx, 
+	        int p_AMN_Payroll_ID, 
+	        int p_AMN_Concept_Types_Proc_ID) {
+	    
+	    return findAMNPayrollDetailbyAMNPayroll(ctx, (Locale) null, p_AMN_Payroll_ID, p_AMN_Concept_Types_Proc_ID);
+	}
 
-			rs = pstmt.executeQuery();
-			while (rs.next())
-			{
-				MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, rs, null);
-				Integer key = new Integer(amnpayrolldetail.getAMN_Payroll_Detail_ID());
-				s_cache.put (key, amnpayrolldetail);
-				if (amnpayrolldetail.isActive())
-					retValue = amnpayrolldetail;
-			}
-		}
-	    catch (SQLException e)
-	    {
-	    	retValue = null;
+	/**
+	 * Busca un detalle de nómina por encabezado y proceso de concepto (con Locale).
+	 */
+	public static MAMN_Payroll_Detail findAMNPayrollDetailbyAMNPayroll(
+	        Properties ctx, 
+	        Locale locale, 
+	        int p_AMN_Payroll_ID, 
+	        int p_AMN_Concept_Types_Proc_ID) {
+
+	    MAMN_Payroll_Detail retValue = null;
+	    
+	    // Simplificación de la consulta directa a la tabla de detalles
+	    String sql = "SELECT * FROM AMN_Payroll_Detail " +
+	                 "WHERE AMN_Payroll_ID = ? AND AMN_Concept_Types_Proc_ID = ?";
+	        
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    try {
+	        pstmt = DB.prepareStatement(sql, null);
+	        pstmt.setInt(1, p_AMN_Payroll_ID);
+	        pstmt.setInt(2, p_AMN_Concept_Types_Proc_ID);
+
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, rs, null);
+	            
+	            // Actualizar caché evitando 'new Integer()' (deprecado en Java moderno)
+	            s_cache.put(amnpayrolldetail.getAMN_Payroll_Detail_ID(), amnpayrolldetail);
+	            
+	            if (amnpayrolldetail.isActive()) {
+	                retValue = amnpayrolldetail;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        retValue = null;
+	    } finally {
+	        DB.close(rs, pstmt);
+	        rs = null; 
+	        pstmt = null;
 	    }
-		finally
-		{
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-		return retValue;
+	    
+	    return retValue;
 	}
 
 	/**	
@@ -225,6 +240,129 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
         return resultMap;
     }
 	
+    /**
+     * createOrUpdatePayrollDetail UNIFICADO para createPayrollDetail
+     * @param ctx
+     * @param p_AMN_Payroll_ID
+     * @param p_AMN_Concept_Types_Proc_ID
+     * @param QtyValue
+     * @param p_AMN_Payroll_Detail_ID
+     * @param keepExistingConcept
+     * @return
+     * @throws Exception
+     */
+    public MAMN_Payroll_Detail createOrUpdatePayrollDetail(
+            Properties ctx, 
+            int p_AMN_Payroll_ID, 
+            int p_AMN_Concept_Types_Proc_ID, 
+            BigDecimal QtyValue, 
+            int p_AMN_Payroll_Detail_ID, 
+            boolean keepExistingConcept)  {
+
+        // 1. Obtener la cabecera y detalle si se envía del recibo de nómina
+        MAMN_Payroll amnpayroll = new MAMN_Payroll(getCtx(), p_AMN_Payroll_ID, get_TrxName());
+        MAMN_Payroll_Detail amnpayrolldetail = null;
+        if (p_AMN_Payroll_Detail_ID > 0) {
+            amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), p_AMN_Payroll_Detail_ID, get_TrxName());
+        }
+
+        // Contexto de Contrato y Empleado
+        MAMN_Contract amncontract = new MAMN_Contract(ctx, amnpayroll.getAMN_Contract_ID(), get_TrxName());
+        BigDecimal PayrolldaysC = amncontract.getPayRollDays();
+        
+        int AMN_Employee_ID = amnpayroll.getAMN_Employee_ID();
+        MAMN_Employee amnemployee = new MAMN_Employee(ctx, AMN_Employee_ID, get_TrxName());
+        BigDecimal Salary = amnemployee.getSalary();
+        
+        BigDecimal Payrolldays = amnpayroll.getAMNPayrollDays(p_AMN_Payroll_ID); 
+        if (PayrolldaysC.equals(Payrolldays)) {
+            Payrolldays = PayrolldaysC;
+        }		
+
+        // 2. Metadata del Concepto
+        MAMN_Concept_Types_Proc amnctp = new MAMN_Concept_Types_Proc(ctx, p_AMN_Concept_Types_Proc_ID, get_TrxName());
+        MAMN_Concept_Types amncty = new MAMN_Concept_Types(ctx, amnctp.getAMN_Concept_Types_ID(), get_TrxName());
+        
+        String Concept_Value = amncty.getValue();
+        String Concept_Name = amncty.getName();
+        String Concept_Description = (amncty.getDescription() != null) ? amncty.getDescription() : "*** Description Empty ***";
+        int Concept_CalcOrder = amncty.getCalcOrder();
+        int AMN_Concept_Uom_ID = amncty.getAMN_Concept_Uom_ID();
+        
+        String Concept_DefaultValueST = (amncty.getDefaultValue() != null) ? amncty.getDefaultValue().trim() : "";
+        String Concept_ScriptDefaultValueST = (!Util.isEmpty(amncty.getScriptDefaultValue(), true)) ? amncty.getScriptDefaultValue() : "";
+
+        // 3. Evaluar la cantidad por defecto solo si no se debe conservar la existente o si es un nuevo registro
+        BigDecimal finalQtyValue = QtyValue;
+
+        if (amnpayrolldetail == null || !keepExistingConcept) {
+            if (QtyValue == null || QtyValue.compareTo(BigDecimal.ZERO) == 0) {
+                boolean forceRulesInit = "Y".equalsIgnoreCase(MSysConfig.getValue("AMERP_Payroll_Rules_Apply", "N", amnpayroll.getAD_Client_ID()));
+                boolean forceDVInit = true;
+
+                PayrollVariables pyVars = new PayrollVariables(true);
+                AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
+                PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
+                BigDecimal calculatedDefault = BigDecimal.valueOf(1.00);
+
+                try {
+                    pyVars = amerpPayrollCalc.PayrollEvaluation(ctx, p_AMN_Payroll_ID, Concept_CalcOrder, pyVars, forceRulesInit, forceDVInit, false);
+                    ScriptResult RetVal;
+                    
+                    if (Concept_ScriptDefaultValueST.isEmpty()) {
+                        RetVal = pyScriptEngine.FormulaEvaluationScript(
+                                p_AMN_Payroll_ID, pyVars, Concept_Value, Concept_DefaultValueST, calculatedDefault, Salary, Payrolldays, "", false);
+                    } else {
+                        RetVal = pyScriptEngine.FormulaEvaluationScript(
+                                p_AMN_Payroll_ID, pyVars, Concept_Value, Concept_ScriptDefaultValueST, calculatedDefault, Salary, Payrolldays, "", false);
+                    }
+                    calculatedDefault = RetVal.getBDCalcAmnt();
+                } catch (Exception ex) {
+                    // Captura cualquier tipo de fallo (ScriptException, NullPointerException, etc.)
+                    // para garantizar que el proceso continúe
+                    calculatedDefault = BigDecimal.valueOf(1.00);
+                    log.log(Level.WARNING, "** ERROR EN EVALUACIÓN DE FÓRMULA (" + Concept_Value + "). Se asigna valor por defecto 1.00 **", ex);
+                }
+                finalQtyValue = calculatedDefault;
+            }
+        }
+
+        // 4. Instanciación y Persistencia
+        if (amnpayrolldetail == null) {
+            amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), 0, get_TrxName());
+            amnpayrolldetail.setAD_Client_ID(amnpayroll.getAD_Client_ID());
+            amnpayrolldetail.setAD_Org_ID(amnpayroll.getAD_Org_ID());
+            amnpayrolldetail.setAMN_Payroll_ID(p_AMN_Payroll_ID);
+            amnpayrolldetail.setAMN_Concept_Types_Proc_ID(p_AMN_Concept_Types_Proc_ID);
+        }
+
+        // Actualización de campos
+        amnpayrolldetail.setValue(Concept_Value);
+        amnpayrolldetail.setCalcOrder(Concept_CalcOrder);
+        amnpayrolldetail.setName(Concept_Name);
+        amnpayrolldetail.setDescription(Concept_Description);
+        amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
+        
+        // Si keepExistingConcept == true y el registro ya existía, no modificamos el QtyValue guardado previa de la BD
+        if (p_AMN_Payroll_Detail_ID == 0 || !keepExistingConcept) {
+            amnpayrolldetail.setQtyValue(finalQtyValue);
+        }
+
+        amnpayrolldetail.saveEx(get_TrxName());
+
+        // Monitor UI Update
+        IProcessUI processMonitor = Env.getProcessUI(ctx);
+        if (processMonitor != null) {
+            processMonitor.statusUpdate(String.format("%-15s", "Receipt Lines").replace(' ', '_') +
+                    Msg.getElement(Env.getCtx(), "AMN_Employee_ID") + ": " +
+                    String.format("%-50s", amnemployee.getValue() + "_" + amnemployee.getName().trim()).replace(' ', '_') +
+                    Msg.getElement(Env.getCtx(), "AMN_Concept_Types_ID") + ": " +
+                    String.format("%-50s", amnpayrolldetail.getValue() + "-" + amnpayrolldetail.getName()).replace(' ', '_'));
+        }
+
+        return amnpayrolldetail;
+    }
+    
 	/**
 	 * createAmnPayrollDetail
 	 * @param ctx

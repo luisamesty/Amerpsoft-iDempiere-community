@@ -596,7 +596,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 
 		return true;
 		
-	}	//	createAmnPayrollDetail
+	}	//	createAmnPayrollHistoric
 	
 	/**
 	 * createAmnPayrollHistoric
