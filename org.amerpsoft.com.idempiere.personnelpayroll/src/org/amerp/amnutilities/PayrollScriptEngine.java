@@ -50,7 +50,6 @@ public class PayrollScriptEngine {
 			String p_Concept_Reference, String p_script, BigDecimal p_qtyValueRead, 
 			BigDecimal p_va_SB, BigDecimal p_workdays, String p_OptMode, boolean forceRounding) throws ScriptException
 	{
-log.warning(p_Concept_Reference.trim() +" - p_script="+p_script);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		// AMN Payroll
 		MAMN_Payroll amnpayroll = new MAMN_Payroll(Env.getCtx(), p_AMN_Payroll_ID, null);
@@ -733,7 +732,6 @@ log.warning(p_Concept_Reference.trim() +" - p_script="+p_script);
 			RetVal.setBDCalcAmnt(BigDecimal.valueOf(CalcAmnt));
 			RetVal.setErrorMessage(ErrorMessage.trim());	
 		}
-log.warning("CalcAmt="+RetVal.getBDCalcAmnt());
 		return RetVal ;
 	}  
 	
