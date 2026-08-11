@@ -37,7 +37,9 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 	private int p_AD_Org_ID = 0;
 	private int p_C_ElementValue_ID = 0;
 	private int p_TargetAcctSchema_ID = 0;
+	private boolean	p_isShowActivity = true;
 	private int C_Currency_ID=0;
+	private int C_Activity_ID = 0;
 	private int C_AcctSchema_ID=0;
 	private int C_ElementValue_ID = 0;
 	private int PR_DocType_ID = 0;
@@ -46,7 +48,6 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 	private String p_DocumentNo="";
 	private String Account_Value="";
 	private String Account_Name="";
-	private int GL_Journal_ID=0;
 	private BigDecimal resultAmount = BigDecimal.ZERO;
 	private String irpp ="";
 	int lineNo = 10;
@@ -59,9 +60,7 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 	MAccount maccount = null;
 	@Override
 	protected void prepare() {
-		// TODO Auto-generated method stub
-	   	//log.warning("........Here I'm in the prerare() - method");		
-			ProcessInfoParameter[] paras = getParameter();
+		ProcessInfoParameter[] paras = getParameter();
 		for (ProcessInfoParameter para : paras)
 		{
 			String paraName = para.getParameterName();
@@ -75,6 +74,8 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 				p_C_Period_ID =  para.getParameterAsInt();
 			else if (paraName.equals("C_ElementValue_ID")) 
 				p_C_ElementValue_ID =  para.getParameterAsInt();
+			else if (paraName.equals("isShowActivity")) 
+				p_isShowActivity =  para.getParameterAsBoolean();
 			else if (paraName.equals("DocumentNo")) 
 				p_DocumentNo =  para.getParameterAsString();
 			else
@@ -84,11 +85,13 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		// TODO Auto-generated method stub
 		// Process Monitor
 		IProcessUI processMonitor = Env.getProcessUI(getCtx());
 		String Message="";
-		// TODO Auto-generated method stub
+		String Activity_value="";
+		String Activity_name="";
+		String sqls = "";
+		// Period
 		MPeriod mperiod = new MPeriod(Env.getCtx(),p_C_Period_ID, null);
 		Timestamp DateIni = mperiod.getStartDate();
 		Timestamp DateEnd = mperiod.getEndDate();
@@ -102,7 +105,6 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 			C_AcctSchema_ID = p_TargetAcctSchema_ID;
 		else
 			C_AcctSchema_ID = as.getC_AcctSchema_ID();
-//log.warning("p_TargetAcctSchema_ID="+p_TargetAcctSchema_ID+" C_AcctSchema_ID="+C_AcctSchema_ID);
 		// Default GL Category
 		MGLCategory glcat =  MGLCategory.getDefault(Env.getCtx(), null);
 		// GL_Journal - GL_JournalLine		
@@ -123,7 +125,7 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 					":"+" **** DEBE REACTIVAR Y ELIMINAR ****");
 			return null;
 		} else {
-			// * Create a GL Journal
+			// Create a GL Journal
 			// conversion type = default
 			mjournal = new MJournal(getCtx(), 0, get_TrxName());
 			mjournal.setAD_Org_ID(p_AD_Org_ID);
@@ -140,8 +142,6 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 			mjournal.setC_AcctSchema_ID(C_AcctSchema_ID);
 			mjournal.setC_ConversionType_ID(MConversionType.getDefault(as.getAD_Client_ID()));
 			mjournal.saveEx();
-			//
-			GL_Journal_ID= mjournal.getGL_Journal_ID();
 		}	
 		// Generate GL_JournalLine	
 		// 
@@ -166,20 +166,46 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 //				" ORDER BY ele.value ) as saldos " +
 //				" WHERE saldos.value >='4' AND saldos.closebalance <> 0 "
 //				;
-		String sqls = "SELECT * FROM (  "+
+		if (p_isShowActivity) {
+			// YES Activity
+		sqls = "SELECT * FROM (  "+
 				" SELECT   "+
 				"   c_elementvalue_id, ele.value, ele.name,  "+
-				"   SUM(CASE WHEN ( fas.postingtype = 'A' AND fas.DateAcct <= ? ) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as closebalance  "+
+				"   SUM(CASE WHEN ( fas.postingtype = 'A' AND fas.DateAcct <= ? ) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as closebalance,  "+
+				"   ele.AccountType, "+
+				"   COALESCE(act.c_activity_id,0) as c_activity_id, "+
+				"   COALESCE(act.value,'0000') as activity_value, "+
+				"   COALESCE(act.name,'NO Activity') as activity_name "+
 				"   FROM c_elementvalue ele  "+
 				"   LEFT JOIN ( "+
 				"   	SELECT * FROM fact_acct WHERE c_acctschema_id = ?  "+
 				"   ) fas ON ele.c_elementvalue_id=fas.account_id "+
+				"   LEFT JOIN C_Activity act  ON act.C_Activity_ID= fas.C_activity_ID " +
 				"   WHERE ele.issummary='N' AND fas.ad_client_id=? AND fas.ad_org_id=? AND fas.c_acctschema_id=? "+
-				"   GROUP BY c_elementvalue_id  "+
+				"   GROUP BY ele.c_elementvalue_id, act.c_activity_id  "+
 				"   ORDER BY ele.value ) as saldos  "+
-				"   WHERE saldos.value >='4' AND saldos.closebalance <> 0  "
+				"   WHERE saldos.accounttype IN ('E','R','M') AND saldos.closebalance <> 0  "
 				;
-				   //log.warning("sql="+sqls);
+
+		} else {
+			// NO Activity
+			sqls = "SELECT * FROM (  "+
+					" SELECT   "+
+					"   c_elementvalue_id, ele.value, ele.name,  "+
+					"   SUM(CASE WHEN ( fas.postingtype = 'A' AND fas.DateAcct <= ? ) THEN (fas.amtacctdr - fas.amtacctcr) ELSE 0 END) as closebalance,  "+
+					"   ele.AccountType, 0 as c_activity_id, '' as activity_value, '' as activity_name "+
+					"   FROM c_elementvalue ele  "+
+					"   LEFT JOIN ( "+
+					"   	SELECT * FROM fact_acct WHERE c_acctschema_id = ?  "+
+					"   ) fas ON ele.c_elementvalue_id=fas.account_id "+
+					"   WHERE ele.issummary='N' AND fas.ad_client_id=? AND fas.ad_org_id=? AND fas.c_acctschema_id=? "+
+					"   GROUP BY c_elementvalue_id  "+
+					"   ORDER BY ele.value ) as saldos  "+
+					"   WHERE saldos.accounttype IN ('E','R','M') AND saldos.closebalance <> 0  "
+					;
+		}
+		
+		//log.warning("sql="+sqls);
 		//log.warning("IO_DocType_ID="+IO_DocType_ID+"  p_AD_Client_ID="+p_AD_Client_ID+"  p_AD_Org_ID="+p_AD_Org_ID);
 		PreparedStatement pstmts = null;
 		ResultSet rss = null;
@@ -195,9 +221,17 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 			while (rss.next())
 			{
 				C_ElementValue_ID= rss.getInt(1);
-				Account_Value = rss.getString(2);
-				Account_Name = rss.getString(3);
+				Account_Value = rss.getString(2).trim();
+				Account_Name = rss.getString(3).trim();
 				BigDecimal CloseBalance = rss.getBigDecimal(4);
+				C_Activity_ID = rss.getInt(6);
+				if (C_Activity_ID > 0) {
+					Activity_value = rss.getString(7).trim();
+					Activity_name = rss.getString(8).trim();
+				} else { 
+					Activity_value = "0000";
+					Activity_name = "NO Activity";
+				}
 				// CloseBalance
 				if (CloseBalance.compareTo(BigDecimal.ZERO) != 0) {
 					// ------------------------
@@ -212,16 +246,16 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 							0, 0, 0,
 							0, 0, 0,
 							0, 0, 0,
-							0, 0, 0, 0,
+							C_Activity_ID, 0, 0, 0,
 							0,
 							get_TrxName());
 					//
-					maccount.setAD_Org_ID(p_AD_Client_ID);
+					maccount.setAD_Org_ID(p_AD_Org_ID);
 					maccount.setC_BPartner_ID(0);
 					maccount.setC_SalesRegion_ID(0);
 					maccount.setC_Project_ID(0);
 					maccount.setC_Campaign_ID(0);
-					maccount.setC_Activity_ID(0);
+					maccount.setC_Activity_ID(C_Activity_ID);
 					// ROUND 2 DECIMALS
 					if (CloseBalance.compareTo(BigDecimal.ZERO) > 0) {
 						debitAmt = BigDecimal.ZERO.setScale(2, RoundingMode.CEILING);
@@ -234,22 +268,41 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 					}
 					resultAmount= resultAmount.add(CloseBalance);
 					// CREATE JOURNAL LINE DEBIT OR CREDIT DEPENDING ON SIGN
-					irpp = createJournalLine(mjournal, lineNo, as, Account_Value.trim()+"-"+Account_Name.trim(),  
-								"Cierre de Ejercicio Fiscal al "+dt1.format(DateEnd), DateEnd, C_Currency_ID, maccount, 
+					if (p_isShowActivity) {
+						irpp = createJournalLine(mjournal, lineNo, as, Account_Value.trim()+"-"+Account_Name.trim(),  
+							    Activity_name+" - Cierre de Ejercicio Fiscal al "+dt1.format(DateEnd), DateEnd, C_Currency_ID, maccount, 
 								debitAmt, creditAmt, debitAmt, creditAmt, C_ValidCombination_ID);
+					} else {
+						irpp = createJournalLine(mjournal, lineNo, as, Account_Value.trim()+"-"+Account_Name.trim(),  
+							   "Cierre de Ejercicio Fiscal al "+dt1.format(DateEnd), DateEnd, C_Currency_ID, maccount, 
+								debitAmt, creditAmt, debitAmt, creditAmt, C_ValidCombination_ID);
+					}
 					lineNo += 10;
 					// 
 					// Process Monitor
 					if (processMonitor != null)
 					{
-						Message = Msg.translate(Env.getCtx(), "C_ElementValue_ID")+":"+Account_Value.trim()+"-"+Account_Name.trim()+
-								Msg.translate(Env.getCtx(), "Date")+":"+dt1.format(DateEnd);
+						if (p_isShowActivity) {
+							Message = Msg.getElement(Env.getCtx(), "C_ElementValue_ID")+": "+Account_Value.trim()+"-"+Account_Name.trim()+
+								"  "+Msg.getElement(Env.getCtx(), "C_Activity_ID")+": ("+C_Activity_ID+")"+Activity_value+"_"+Activity_name+
+								"  "+Msg.getElement(Env.getCtx(), "Date")+":"+dt1.format(DateEnd);
+						} else {
+							Message = Msg.getElement(Env.getCtx(), "C_ElementValue_ID")+":"+Account_Value.trim()+"-"+Account_Name.trim()+
+									"  "+Msg.getElement(Env.getCtx(), "Date")+":"+dt1.format(DateEnd);
+						}
 						processMonitor.statusUpdate(Message);
 					}
 					// Document 
-					addLog( PR_DocTypeName+":"+" Saldo del Mes ("+ Account_Value+"/"+Account_Name+") " +
-							Msg.translate(Env.getCtx(), "Date")+":"+
-							dt1.format(DateEnd));
+					if (p_isShowActivity) {
+						addLog( PR_DocTypeName+": "+" Saldo del Mes ("+ Account_Value+"/"+Account_Name+") " +
+								"  "+Msg.getElement(Env.getCtx(), "C_Activity_ID")+": "+Activity_value+"_"+Activity_name+
+								"  "+Msg.translate(Env.getCtx(), "Date")+":"+
+								dt1.format(DateEnd));
+					} else {
+						addLog( PR_DocTypeName+": "+" Saldo del Mes ("+ Account_Value+"/"+Account_Name+") " +
+								"  "+Msg.translate(Env.getCtx(), "Date")+":"+
+								dt1.format(DateEnd));						
+					}
 					addLog("   "+irpp);
 				}
 			}	
@@ -284,7 +337,7 @@ public class AMFGLJournalAnnualClosing extends SvrProcess {
 			}
 			// CREATE JOURNAL LINE DEBIT OR CREDIT DEPENDING ON SIGN ON RESULT
 			irpp = createJournalLine(mjournal, lineNo, as, Account_Value.trim()+"-"+Account_Name.trim(),  
-						"Cirre de Ejercicio Fiscal al "+dt1.format(DateEnd), DateEnd, C_Currency_ID, maccount, 
+						"Cierre de Ejercicio Fiscal al "+dt1.format(DateEnd), DateEnd, C_Currency_ID, maccount, 
 						debitAmt, creditAmt, debitAmt, creditAmt, C_ValidCombination_ID);
 
 			// MJournal Header Add Total 

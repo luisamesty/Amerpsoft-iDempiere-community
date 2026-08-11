@@ -50,6 +50,9 @@ public class AMFProcessfactory implements IProcessFactory{
     	// AMFRebuildANewClientSchema
     	if(p_className.equals("org.amerp.process.AMFRebuildANewClientSchema"))
     		return new org.amerp.process.AMFRebuildANewClientSchema();
+    	// AMTGLJournalDelete
+    	if(p_className.equals("org.amerp.process.AMTGLJournalDelete"))
+    		return new org.amerp.process.AMTGLJournalDelete();
     	// REPORTS JASPER
     	// AccountElements_Tree 
         if (p_className.equals("org.amerp.reports.jasper.AccountElements_Tree.AccountElements_Tree_Std"))

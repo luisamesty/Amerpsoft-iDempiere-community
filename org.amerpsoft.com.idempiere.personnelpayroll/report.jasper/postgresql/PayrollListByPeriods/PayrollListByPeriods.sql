@@ -54,10 +54,11 @@ FULL JOIN
 	COALESCE(currt2.description,curr2.iso_code,curr2.cursymbol,'') as currname2,  
  	 -- EMPLOYEE
 	 emp.amn_employee_id, emp.value as value_emp, emp.name as empleado, emp.incomedate as fecha_ingreso,
-	 COALESCE(jtt.name, jtt.description) as cargo, cbp.taxid as nro_id,
+	 COALESCE(jtt.name, jtt.description) as cargo, cbp.taxid as nro_id, emp.idnumber AS cedula,
 	-- PAYROLL
 	 pyr.documentno,
-	 pyr.amn_payroll_id, pyr.description as recibo,
+	 pyr.amn_payroll_id, pyr.description as recibo, pyr.invdateini, pyr.invdateend, pyr.refdateini, pyr.refdateend,
+	 pyr.invdateini, pyr.invdateend,
 	 --pyr.amountallocated as amountallocated_t, 
 	 --pyr.amountdeducted as amountdeducted_t, 
 	 --pyr.amountcalculated as amountcalculated_t,
