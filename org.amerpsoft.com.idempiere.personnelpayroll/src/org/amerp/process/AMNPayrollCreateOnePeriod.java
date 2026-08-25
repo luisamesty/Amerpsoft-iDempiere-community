@@ -68,6 +68,7 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 	static Timestamp p_InvDateIni = null;
 	static Timestamp p_RefDateEnd = null;
 	static Timestamp p_RefDateIni = null;
+	private boolean	keepExistingConcepts = false;
 	// Receipt List
 	AMNReceipts Receipt = null;
 	List<AMNReceipts> ReceiptsGenList = new ArrayList<AMNReceipts>();
@@ -105,6 +106,8 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 				p_RefDateIni = para.getParameterAsTimestamp();
 			else if (paraName.equals("RefDateEnd"))
 				p_RefDateEnd = para.getParameterAsTimestamp();
+			else if (paraName.equals("keepExistingConcepts"))
+				keepExistingConcepts = para.getParameterAsBoolean();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
@@ -459,7 +462,43 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 			}
 			if (!ReceiptsGenList.get(i).getRecIsPosted()) {
 				// CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
-				Msg_Lines=AMNPayrollCreateDocs.CreatePayrollOneDocDetailLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
+				Msg_Lines=AMNPayrollCreateDocs.CreatePayrollOneDocDetailLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), keepExistingConcepts, trxNameLine);
+				// LOANS
+				if (AMN_Process_Value.equalsIgnoreCase("NN") ||
+						AMN_Process_Value.equalsIgnoreCase("TI") ) {
+					// ************************
+					// Process NN an TI	
+					// ************************
+					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
+					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
+					
+				} else if (AMN_Process_Value.equalsIgnoreCase("NV")) {
+					// ************************
+					// Process NV	
+					// ************************
+					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
+					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
+					
+				} else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
+					// ************************
+					// Process NP
+					// ************************
+					
+				} else if (AMN_Process_Value.equalsIgnoreCase("NU")) {
+					// ************************
+					// Process NU
+					// ************************
+					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
+					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
+
+				} else if (AMN_Process_Value.equalsIgnoreCase("PL")) {
+					// ************************
+					// Process 
+					// ************************
+					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
+					// ALL LOANS DEFERRED
+					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLinesAllforPL(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
+				}
 				trx.commit(); // Guarda los cambios
 				// Calculate Document
 				Msg_Lines= Msg_Lines + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);

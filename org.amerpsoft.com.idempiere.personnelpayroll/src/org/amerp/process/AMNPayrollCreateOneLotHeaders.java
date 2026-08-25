@@ -57,6 +57,8 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 	private int p_LoanQuotaNo = 0;
 	private int p_AMN_FirstPeriod_ID = 0;
 	private String p_LoanDescription="Descripción Pago Diferido";
+	private boolean	keepExistingConcepts = false;
+	
 	@Override
 	protected void prepare() {
     	//log.warning("...........Toma de Parametros...................");
@@ -97,6 +99,8 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 				p_RefDateIni = para.getParameterAsTimestamp();
 			else if (paraName.equals("RefDateEnd"))
 				p_RefDateEnd = para.getParameterAsTimestamp();
+			else if (paraName.equals("keepExistingConcepts"))
+				keepExistingConcepts = para.getParameterAsBoolean();
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
@@ -237,7 +241,7 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 					    	// Document Header
 							addLog(Msg.getElement(getCtx(), "AMN_Employee_ID")+":"+Employee_Value+"-"+Employee_Name);
 							AMN_Payroll_ID=  AMNPayrollCreateDocs.CreatePayrollOneDocument(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, get_TrxName());
-							Msg_Header= AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,  get_TrxName());
+							Msg_Header= AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(getCtx(), p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd,  keepExistingConcepts, get_TrxName());
 							addLog(Msg_Header);
 						}
 					} else {
