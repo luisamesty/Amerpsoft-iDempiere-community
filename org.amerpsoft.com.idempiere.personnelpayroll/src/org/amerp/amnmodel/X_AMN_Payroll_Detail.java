@@ -34,7 +34,7 @@ public class X_AMN_Payroll_Detail extends PO implements I_AMN_Payroll_Detail, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250221L;
+	private static final long serialVersionUID = 20261006L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Detail (Properties ctx, int AMN_Payroll_Detail_ID, String trxName)
@@ -231,6 +231,28 @@ public class X_AMN_Payroll_Detail extends PO implements I_AMN_Payroll_Detail, I_
 		return ii.intValue();
 	}
 
+	/** Set AMN_Payroll_Detail_Parent_ID.
+		@param AMN_Payroll_Detail_Parent_ID Link to Payroll Detail Transaction for Balances on LOAN type Concepts
+	*/
+	public void setAMN_Payroll_Detail_Parent_ID (int AMN_Payroll_Detail_Parent_ID)
+	{
+		if (AMN_Payroll_Detail_Parent_ID < 1)
+			set_Value (COLUMNNAME_AMN_Payroll_Detail_Parent_ID, null);
+		else
+			set_Value (COLUMNNAME_AMN_Payroll_Detail_Parent_ID, Integer.valueOf(AMN_Payroll_Detail_Parent_ID));
+	}
+
+	/** Get AMN_Payroll_Detail_Parent_ID.
+		@return Link to Payroll Detail Transaction for Balances on LOAN type Concepts
+	  */
+	public int getAMN_Payroll_Detail_Parent_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AMN_Payroll_Detail_Parent_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set AMN_Payroll_Detail_UU.
 		@param AMN_Payroll_Detail_UU AMN_Payroll_Detail_UU
 	*/
@@ -367,24 +389,6 @@ public class X_AMN_Payroll_Detail extends PO implements I_AMN_Payroll_Detail, I_
 		return bd;
 	}
 
-	/** Set CalcOrder.
-		@param CalcOrder CalcOrder
-	*/
-	public void setCalcOrder (int CalcOrder)
-	{
-		set_Value (COLUMNNAME_CalcOrder, Integer.valueOf(CalcOrder));
-	}
-
-	/** Get CalcOrder.
-		@return CalcOrder	  */
-	public int getCalcOrder()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_CalcOrder);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_Invoice)MTable.get(getCtx(), org.compiere.model.I_C_Invoice.Table_ID)
@@ -436,6 +440,24 @@ public class X_AMN_Payroll_Detail extends PO implements I_AMN_Payroll_Detail, I_
 	public int getC_Payment_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Payment_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set CalcOrder.
+		@param CalcOrder CalcOrder
+	*/
+	public void setCalcOrder (int CalcOrder)
+	{
+		set_Value (COLUMNNAME_CalcOrder, Integer.valueOf(CalcOrder));
+	}
+
+	/** Get CalcOrder.
+		@return CalcOrder	  */
+	public int getCalcOrder()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_CalcOrder);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

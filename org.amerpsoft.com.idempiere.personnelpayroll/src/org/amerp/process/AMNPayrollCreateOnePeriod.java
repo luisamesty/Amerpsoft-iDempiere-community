@@ -12,6 +12,7 @@
   *****************************************************************************/
 package org.amerp.process;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,8 +22,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import javax.script.ScriptException;
-
+import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.util.IProcessUI;
 import org.amerp.amnmodel.MAMN_Contract;
 import org.amerp.amnmodel.MAMN_Payroll;
@@ -30,12 +30,7 @@ import org.amerp.amnmodel.MAMN_Payroll_Historic;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
 import org.amerp.amnutilities.AmerpMsg;
-import org.amerp.amnutilities.AmerpPayrollCalc;
-import org.amerp.amnutilities.AmerpPayrollCalcArray;
 import org.amerp.amnutilities.AmerpUtilities;
-import org.amerp.amnutilities.PayrollScriptEngine;
-import org.compiere.model.MAcctSchema;
-import org.compiere.model.MClientInfo;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.*;
@@ -59,16 +54,17 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 	private int p_AMN_Contract_ID = 0;
 	private int p_AMN_Period_ID = 0;
 	private int p_AMN_Payroll_Lot_ID = 0;
-	String Employee_Name,AMN_Process_Value="";
-	String Employee_Value="";
-	String sql="";
-	String sql1="";
+	String Employee_Name, AMN_Process_Value = "";
+	String Employee_Value = "";
+	String sql = "";
+	String sql1 = "";
 	static Timestamp p_DateAcct = null;
 	static Timestamp p_InvDateEnd = null; 
 	static Timestamp p_InvDateIni = null;
 	static Timestamp p_RefDateEnd = null;
 	static Timestamp p_RefDateIni = null;
 	private boolean	keepExistingConcepts = false;
+	
 	// Receipt List
 	AMNReceipts Receipt = null;
 	List<AMNReceipts> ReceiptsGenList = new ArrayList<AMNReceipts>();
@@ -76,24 +72,15 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 	AMNReceiptLines ReceiptLines = null;
 	List<AMNReceiptLines> ReceiptConcepts = new ArrayList<AMNReceiptLines>();
 
-	/* (non-Javadoc)
-	 * @see org.compiere.process.SvrProcess#prepare()
-	 */
     @Override
     protected void prepare() {
-	    // TODO Auto-generated method stub
-    	//log.warning("...........Toma de Parametros...................");
     	ProcessInfoParameter[] paras = getParameter();
-		for (ProcessInfoParameter para : paras)
-		{
+		for (ProcessInfoParameter para : paras) {
 			String paraName = para.getParameterName();
-			// SPECIAL CASE BECAUSE FIRST TWO PARAMETERS DOESN'T COME FROM TABLE
-			// THEY COME FROM AMN_PROCESS_CONTRACT_V  (VIEW)
-			// THIRD PARAMETER COMES FROM AMN_PERIOD TABLE
 			if (paraName.equals("AMN_Process_ID"))
-				p_AMN_Process_ID =  para.getParameterAsInt();
+				p_AMN_Process_ID = para.getParameterAsInt();
 			else if (paraName.equals("AMN_Contract_ID"))
-				p_AMN_Contract_ID =  para.getParameterAsInt();
+				p_AMN_Contract_ID = para.getParameterAsInt();
 			else if (paraName.equals("AMN_Period_ID"))
 				p_AMN_Period_ID = para.getParameterAsInt();
 			else if (paraName.equals("DateAcct"))
@@ -111,187 +98,122 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 			else
 				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
 		}	 
-		//log.warning("...........Parametros...................");
-		//log.warning("Process_ID:"+p_AMN_Process_ID+"  AMN_Contract_ID:"+p_AMN_Contract_ID+"  AMN_Period_ID:"+p_AMN_Period_ID);
     }
 
-	/* (non-Javadoc)
-	 * @see org.compiere.process.SvrProcess#doIt()
-	 */
     @Override
     protected String doIt() throws Exception {
-
-	    String Msg_Header="";
-	    String Msg_Value="";
-	    boolean okProcess = false;
-	    MAMN_Process amnprocess = new MAMN_Process(getCtx(), p_AMN_Process_ID, null); 
+    	String trxName = get_TrxName();
+    	Properties ctx = getCtx();
+    	
+	    MAMN_Process amnprocess = new MAMN_Process(ctx, p_AMN_Process_ID, trxName); 
 	    AMN_Process_Value = amnprocess.getAMN_Process_Value();
-		MAMN_Contract amncontract = new MAMN_Contract(getCtx(), p_AMN_Contract_ID, null);
-		// Default Account Schema
-		MClientInfo info = MClientInfo.get(getCtx(), amnprocess.getAD_Client_ID(), null); 
-		MAcctSchema as = MAcctSchema.get (getCtx(), info.getC_AcctSchema1_ID(), null);
-		as.getC_AcctSchema_ID();
-   		// Default Currency  for Contract
-   		Integer Currency_ID = AmerpUtilities.defaultAMNContractCurrency(p_AMN_Contract_ID);
-   		// Default ConversionType for Contract
-   		Integer ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amncontract.getAMN_Contract_ID());
-   		// ************************
-    	// Process VALIDATION	
-    	// ************************
-	    if (AMN_Process_Value.equalsIgnoreCase("NN") ||
-	    		AMN_Process_Value.equalsIgnoreCase("TI") ||
-	    		AMN_Process_Value.equalsIgnoreCase("NO") ) {
-	    	// ************************
-	    	// Process NN PO and TI	
-	    	// ************************
-	    	// log.warning("p_AMN_Process_ID:"+p_AMN_Process_ID+"  p_AMN_Contract_ID"+ p_AMN_Contract_ID+"  p_AMN_Period_ID"+ p_AMN_Period_ID);
-	    	okProcess = AMNPayrollCreateInvoicesNN(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, Currency_ID, ConversionType_ID, get_TrxName());
-	    } else if (AMN_Process_Value.equalsIgnoreCase("NV")) {
-	    	// ************************
-	    	// Process NV	
-	    	// ************************
-	    	Msg_Value=Msg_Value+(Msg.getMsg(getCtx(), "Process")+":"+
-	    	AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n")+
-	    	Msg.getMsg(getCtx(),"Description")+":"+amnprocess.getDescription();
-	    	okProcess = AMNPayrollCreateInvoicesNV(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, Currency_ID, ConversionType_ID, get_TrxName());
-	    } else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
-	    	// ************************
-	    	// Process NP
-	    	// ************************
-	    	Msg_Value=Msg_Value+(Msg.getMsg(getCtx(), "Process")+":"+
-	    	AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n")+
-	    	Msg.getMsg(getCtx(),"Description")+":"+amnprocess.getDescription();
-	    	okProcess = AMNPayrollCreateInvoicesNP(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, Currency_ID, ConversionType_ID, get_TrxName());
-	    } else if (AMN_Process_Value.equalsIgnoreCase("PI")) {
-	    	// ************************
-	    	// Process PI
-	    	// ************************
-	    	Msg_Value=Msg_Value+(Msg.getMsg(getCtx(), "Process")+":"+
-	    	AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n")+
-	    	Msg.getMsg(getCtx(),"Description")+":"+amnprocess.getDescription();
-	    	okProcess = AMNPayrollCreateInvoicesPI(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, Currency_ID, ConversionType_ID, get_TrxName());
-	    } else if (AMN_Process_Value.equalsIgnoreCase("NU")) {
-	    	// ************************
-	    	// Process NU
-	    	// ************************
-	    	Msg_Value=Msg_Value+(Msg.getMsg(getCtx(), "Process")+":"+
-	    	AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n")+
-	    	Msg.getMsg(getCtx(),"Description")+":"+amnprocess.getDescription();
-	    	okProcess = AMNPayrollCreateInvoicesNU(getCtx(), p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, Currency_ID, ConversionType_ID, get_TrxName());
-	    } else {
-	    	Msg_Value=Msg_Value+(Msg.getMsg(getCtx(), "Process")+":"+AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n");
-	    }
-	    if ( okProcess ) {
-	    	// END MESSAGE
-	    	Msg_Header = Msg.getElement(getCtx(), "AMN_Process_ID")+":"+amnprocess.getName().trim();
-		    addLog(Msg_Header);
-		    Msg_Header = Msg.getElement(getCtx(), "AMN_Payroll_ID")+
-		    		Msg.getElement(getCtx(), "Qty")+
-		    		" ("+ReceiptsGenList.size()+") :";
-		    addLog(Msg_Header);		
-			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-			    Msg_Header = Msg.getElement(getCtx(), "AMN_Payroll_ID")+":"+
-			    		Msg.getElement(getCtx(), "AMN_Employee_ID")+":"+ReceiptsGenList.get(i).getEmployee_Value()+"-"+ReceiptsGenList.get(i).getEmployee_Name();
-			    addLog(Msg_Header);
-			    Msg_Header = Msg.getElement(getCtx(), " ")+":"+
-			    		ReceiptsGenList.get(i).getDocumentNo()+"-"+ReceiptsGenList.get(i).getError();
-			    addLog(Msg_Header);
-			    log.warning("Updating Final Message"+Msg_Header);
-			}
-	    	return "OK";
-	    } else {	    	
-	    	return null;
-	    }
-    }  
+		MAMN_Contract amncontract = new MAMN_Contract(ctx, p_AMN_Contract_ID, trxName);
+		
+		
+   		Integer currencyID = AmerpUtilities.defaultAMNContractCurrency(p_AMN_Contract_ID);
+   		Integer conversionTypeID = AmerpUtilities.defaultAMNContractConversionType(amncontract.getAMN_Contract_ID());
 
-     /**
-     * AMNPayrollCreateInvoicesNN
-     * Standard Payroll Invoices
-     * 
-     * @param p_AMN_Process_ID
-     * @param p_AMN_Contract_ID
-     * @param p_AMN_Period_ID
-     * @param C_Currency_ID
-     * @param C_ConversionType_ID
-     * @return
-     */
-    public boolean AMNPayrollCreateInvoicesNN(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
-    	// AllProcess
-    	AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
-    	return true;
-    }
-    
+	    boolean okProcess = false;
+
+	    // Cargar el objeto del periodo
+	    MAMN_Period amnPeriod = new MAMN_Period(getCtx(), p_AMN_Period_ID, get_TrxName());
+
+	    // Validación Período
+	    if (amnPeriod != null && amnPeriod.get_ID() > 0) {
+	            p_DateAcct = amnPeriod.getAMNDateEnd(); 
+	            p_InvDateIni = amnPeriod.getAMNDateIni();
+	            p_InvDateEnd = amnPeriod.getAMNDateEnd();
+	            p_RefDateIni = amnPeriod.getRefDateIni();
+	            p_RefDateEnd = amnPeriod.getRefDateEnd();
+	    } else {
+	        throw new AdempiereException("Periodo de nómina no encontrado (AMN_Period_ID=" + p_AMN_Period_ID + ")");
+	    }
+	    
+	    switch (AMN_Process_Value.toUpperCase()) {
+	    	case "NN":
+	    	case "TI":
+	    	case "NO":
+	    		okProcess = AMNPayrollCreateInvoicesNN(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, currencyID, conversionTypeID, trxName);
+	    		break;
+	    	case "NV":
+	    		okProcess = AMNPayrollCreateInvoicesNV(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, currencyID, conversionTypeID, trxName);
+	    		break;
+	    	case "NP":
+	    		okProcess = AMNPayrollCreateInvoicesNP(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, currencyID, conversionTypeID, trxName);
+	    		break;
+	    	case "PI":
+	    		okProcess = AMNPayrollCreateInvoicesPI(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, currencyID, conversionTypeID, trxName);
+	    		break;
+	    	case "NU":
+	    		okProcess = AMNPayrollCreateInvoicesNU(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, currencyID, conversionTypeID, trxName);
+	    		break;
+	    	default:
+	    		addLog(Msg.getMsg(ctx, "Process") + ":" + AMN_Process_Value.trim() + Msg.getMsg(ctx, "NotAvailable"));
+	    		return null;
+	    }
+
+	    if (okProcess) {
+	        
+	        // 1. (Opcional) Si quieres enviar el archivo Excel a descargas de la UI:
+	        File excelFile = AMNPayrollUtils.generateReceiptsSummaryExcel(ReceiptsGenList);
+	        if (excelFile != null && excelFile.exists()) {
+	            processUI.download(excelFile);
+	        }
+
+	        // 2. Llenar la pantalla del Log fila por fila mediante addLog(...)
+	        
+	        // Encabezado principal del log (Fila 1)
+	        addLog("PROCESAMIENTO DE NÓMINA FINALIZADO");
+	        
+	        // Métricas generales (Fila 2)
+	        long countSuccess = ReceiptsGenList.stream().filter(r -> r.Error == null || r.Error.trim().isEmpty()).count();
+	        long countFail = ReceiptsGenList.size() - countSuccess;
+	        long countInvoices = ReceiptsGenList.stream().filter(r -> r.InvoiceIsCreated).count();
+	        
+	        addLog(String.format("Recibos Generados: %d | Éxito: %d | Fallos: %d | Facturas Creadas: %d", 
+	                ReceiptsGenList.size(), countSuccess, countFail, countInvoices));
+
+	        // Separador visual
+	        addLog("----------------------------------------------------------------------------------");
+
+	        // Recorrer la lista y hacer addLog por cada recibo (cada uno será una fila en la tabla)
+	        int itemSeq = 1;
+	        for (AMNReceipts rec : ReceiptsGenList) {
+	            
+	            BigDecimal allocated = rec.AmountAllocated != null ? rec.AmountAllocated : BigDecimal.ZERO;
+	            BigDecimal deducted = rec.AmountDeducted != null ? rec.AmountDeducted : BigDecimal.ZERO;
+	            BigDecimal net = allocated.subtract(deducted);
+
+	            String status = (rec.Error == null || rec.Error.trim().isEmpty()) ? "OK" : "ERROR: " + rec.Error;
+	            
+	            // Construir la línea informativa de la fila
+	            String lineMsg = String.format("No:%d | Recibo:%s | Ficha:%s | Trabajador:%s | Líneas:%d | Asig:%.2f | Ded:%.2f | Neto:%.2f | Contabilizado:%s | Factura:%s | %s",
+	                    itemSeq++,
+	                    rec.DocumentNo != null ? rec.DocumentNo : "",
+	                    rec.Employee_Value != null ? rec.Employee_Value : "",
+	                    rec.Employee_Name != null ? rec.Employee_Name : "",
+	                    rec.NoLines,
+	                    allocated,
+	                    deducted,
+	                    net,
+	                    rec.RecIsPosted ? "SÍ" : "NO",
+	                    rec.InvoiceIsCreated ? "SÍ" : "NO",
+	                    status
+	            );
+
+	            // CADA addLog CREA UNA FILA EN LA TABLA DEL RESULTADO
+	            addLog(lineMsg);
+	        }
+
+	        addLog("----------------------------------------------------------------------------------");
+	        addLog("Proceso completado exitosamente.");
+	    }
+
+	    // OBLIGATORIO: Devolver null para que iDempiere renderice la pestaña de Log
+	    return null; 
+	}
+
     /**
-     * AMNPayrollCreateInvoicesNP
-     * Social Benefits Payroll Invoices
-     * @param p_AMN_Process_ID
-     * @param p_AMN_Contract_ID
-     * @param p_AMN_Period_ID
-     * @param C_Currency_ID
-     * @param C_ConversionType_ID
-     * @return
-     */
-    public boolean AMNPayrollCreateInvoicesNP(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
-    	// AllProcess 
-    	AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
-    	return true;
-    }
-    
-    /**
-     * AMNPayrollCreateInvoicesPI
-     * Social Benefits Interest Paymenet Payroll Invoices
-     * @param p_AMN_Process_ID
-     * @param p_AMN_Contract_ID
-     * @param p_AMN_Period_ID
-     * @param C_Currency_ID
-     * @param C_ConversionType_ID
-     * @return
-     */
-    public boolean AMNPayrollCreateInvoicesPI(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
-    	// AllProcess 
-    	AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
-    	return true;
-    }
-    
-     /**
-     * AMNPayrollCreateInvoicesNV
-     * VACATIONS Payroll Invoices
-     * @param p_AMN_Process_ID
-     * @param p_AMN_Contract_ID
-     * @param p_AMN_Period_ID
-     * @param C_Currency_ID
-     * @param C_ConversionType_ID
-     * @return
-     */
-    public boolean AMNPayrollCreateInvoicesNV(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
-    	// AllProcess
-    	AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
-    	return true;
-    }
- 
-    /**
-     * AMNPayrollCreateInvoicesNU
-     * Social Benefits Payroll Invoices
-     * 
-     * @param p_AMN_Process_ID
-     * @param p_AMN_Contract_ID
-     * @param p_AMN_Period_ID
-     * @param C_Currency_ID
-     * @param C_ConversionType_ID
-     * @return
-     */
-    public boolean AMNPayrollCreateInvoicesNU(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
-    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
-    	// AllProcess
-    	AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
-    	return true;
-    }
-    
-     /**
      * AMNPayrollCreateInvoicesAllProcess
      * All Standard Payroll Invoices
      * 
@@ -300,30 +222,24 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
      * @param p_AMN_Period_ID
      * @param C_Currency_ID
      * @param C_ConversionType_ID
+     * @param trxName
      * @return
      */
     public boolean AMNPayrollCreateInvoicesAllProcess(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
     		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, 
     		String trxName) {
 	    
-    	AmerpPayrollCalc amerpPayrollCalc = new AmerpPayrollCalc();
-    	AmerpPayrollCalcArray amerpPayrollCalcArray = new AmerpPayrollCalcArray();
     	String Msg_Header="";
-    	String Msg_Lines="";
-	    String Msg_Updates="";
 	    String MessagetoShow ="";
+	    
 	    int AMN_Employee_ID=0;
 		int AMN_Payroll_ID = 0;
-		Timestamp NextPPDateIni = null;
-		Timestamp NextPPDateEnd = null;
 	    MAMN_Payroll amnpayrollCK = null;
 	    MAMN_Payroll amnpayroll = null;
-	    MAMN_Period  			amnperiod  = new MAMN_Period(ctx, p_AMN_Period_ID, null);
-	    MAMN_Payroll_Historic 	amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
-	    IProcessUI processMonitor = Env.getProcessUI(getCtx());
+	    IProcessUI processMonitor = Env.getProcessUI(ctx);
+	    int recNo = 0;
 	    int Percent = 0;
-	    int NoRecs = 0;
-	    Trx trx = Trx.get(Trx.createTrxName("AMNPayrollCreateDocs"), true);
+	    Integer NoRecs = 0;
 	    // ARRAY EMPLOYEE - CONTRACT
 		sql = "SELECT " + 
 				"amnemp.amn_employee_id as amn_employee_id,   " + 
@@ -356,26 +272,33 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 			// Only Non-Retired Employees and Non-Suspended (Active and Vacation Employees )
 			sql1 = "WHERE amnemp.isactive='Y' and (amnemp.status = 'A' or amnemp.status = 'V') and amncon.amn_contract_id=? "  +        		
 				"ORDER BY amnemp.value ";
-
 	    }
 	    // Complete SQL Sentence
 		sql = sql + sql1;
 		PreparedStatement pstmt = null;
 		ResultSet rspc = null;		
-		// Create Docs Headers and Lines
-		// log.warning("sql="+sql);
 		// **********************
 		// Document Headers
 		// **********************
+		Trx trxHdr = null;
 		try
 		{
-			String trxNameHdr = trxName+"_"+AMN_Employee_ID;
-			trx = Trx.get(Trx.createTrxName(trxNameHdr), true);
-			pstmt = DB.prepareStatement(sql, null);
+			// Definir un nombre base único concatenando el ID del empleado
+			String trxNameHdrBase = trxName + "_Hdr_";
+			// Generar el nombre de transacción único para iDempiere con UUID interno
+			String trxNameHdr = Trx.createTrxName(trxNameHdrBase);
+			// Instanciar y registrar el objeto Trx (el segundo parámetro 'true' la crea si no existe)
+			trxHdr = Trx.get(trxNameHdr, true);
+			// Obtener el número total de registros ejecutando un COUNT con el parámetro
+			String sqlCount = "SELECT COUNT(*) FROM (" + sql + ") t";
+			NoRecs = DB.getSQLValue(trxName, sqlCount, p_AMN_Contract_ID);
+			// Preparar y ejecutar la consulta principal
+			pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt (1, p_AMN_Contract_ID);
 			rspc = pstmt.executeQuery();
 			while (rspc.next())
 			{
+				recNo++;
 				AMN_Employee_ID = rspc.getInt(1);
 				Employee_Name = rspc.getString(2).trim();
 				Employee_Value= rspc.getString(3).trim();
@@ -387,442 +310,392 @@ public class AMNPayrollCreateOnePeriod extends SvrProcess{
 				Receipt.setEmployee_Value(Employee_Value);
 				Receipt.setEmployee_Name(Employee_Name);
 				Receipt.setNoLines(0);
-				amnpayrollCK = MAMN_Payroll.findByAMNPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
-						p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, AMN_Employee_ID);
+				Receipt.setError("");
+				Receipt.setDateAcct(p_DateAcct);
+				Receipt.setInvDateIni(p_InvDateIni);
+				Receipt.setInvDateEnd(p_InvDateEnd);
+				Receipt.setRefDateIni(p_RefDateIni);
+				Receipt.setRefDateEnd(p_RefDateEnd);
+
+				amnpayrollCK = MAMN_Payroll.findByAMNPayroll(ctx, Env.getLanguage(ctx).getLocale(), 
+						p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, AMN_Employee_ID, trxName);
 				if (amnpayrollCK != null ) {
 					Receipt.setAMN_Payroll_ID(amnpayrollCK.getAMN_Payroll_ID());
 					Receipt.setDocumentNo(amnpayrollCK.getDocumentNo().trim());
 					Receipt.setDescription(amnpayrollCK.getValue().trim()+" "+amnpayrollCK.getName().trim());
-					if (amnpayrollCK.isPosted()) {
+					Receipt.setDateAcct(amnpayrollCK.getDateAcct());
+					Receipt.setInvDateIni(amnpayrollCK.getInvDateIni());
+					Receipt.setInvDateEnd(amnpayrollCK.getInvDateEnd());
+					Receipt.setRefDateIni(amnpayrollCK.getRefDateIni());
+					Receipt.setRefDateEnd(amnpayrollCK.getRefDateEnd());
+					if (amnpayrollCK.isPosted() || amnpayrollCK.isProcessed()) {
 						Msg_Header = Msg.translate(ctx, "Error")+Msg.translate(ctx, "document.status.completed")+" ("+amnpayrollCK.getDocStatus()+") ";
 					    Receipt.setRecIsPosted(true);
-					    Receipt.setError(Msg_Header);
 					} else {
-						AMN_Payroll_ID =  AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameHdr);
+						trxHdr.start();
+						AMN_Payroll_ID =  AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, 
+								AMN_Employee_ID, amnpayrollCK.getAMN_Payroll_ID(), 
+								amnpayrollCK.getDateAcct(), amnpayrollCK.getInvDateIni(), amnpayrollCK.getInvDateEnd(), amnpayrollCK.getRefDateIni(), amnpayrollCK.getRefDateEnd(), 
+								trxNameHdr);
 						Msg_Header = "("+AmerpMsg.getElementPrintText(ctx, "AMN_Payroll_ID")+" **** "+Msg.translate(ctx, "Updated")+ " **** )";
 						Receipt.setRecIsPosted(false);
 						Receipt.setError(Msg_Header);
+						trxHdr.commit();
 					}
-				}	else {
-					AMN_Payroll_ID=  AMNPayrollCreateDocs.CreatePayrollOneDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, AMN_Employee_ID, 0, p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, trxNameHdr);
-					amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, get_TrxName());
-					amnpayroll = MAMN_Payroll.findByAMNPayroll(Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-							p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, AMN_Employee_ID);
-					AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
-					Receipt.setAMN_Payroll_ID(AMN_Payroll_ID);
-					Receipt.setRecIsPosted(false);
-					Receipt.setAMN_Payroll_ID(amnpayroll.getAMN_Payroll_ID());
-					Receipt.setDocumentNo(amnpayroll.getDocumentNo().trim());
-					Receipt.setDescription(amnpayroll.getValue().trim()+" "+amnpayroll.getName().trim());
-					Msg_Header = "("+AmerpMsg.getElementPrintText(ctx, "AMN_Payroll_ID")+" **** "+Msg.translate(ctx, "New")+ " **** )";
-				    Receipt.setError(Msg_Header);
+					Receipt.setError(Receipt.getError()+" "+Msg_Header.trim());
+				} else {
+					// Iniciar la transacción de la cabecera/empleado
+					try {
+					    // Crear la cabecera dentro de trxNameHdr
+					    AMN_Payroll_ID = AMNPayrollCreateDocs.CreatePayrollOneDocument(
+					            ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, 
+					            p_AMN_Payroll_Lot_ID, AMN_Employee_ID, 0, 
+					            p_DateAcct, p_InvDateIni, p_InvDateEnd, p_RefDateIni, p_RefDateEnd, 
+					            trxNameHdr
+					    );
+					    // 
+					    if (AMN_Payroll_ID > 0) {
+					        amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, trxNameHdr);
+					    } else {
+						    // 3. Obtener el objeto PO dentro de la MISMA transacción trxNameHdr
+						    // (Asegúrate de pasar trxNameHdr al findByAMNPayroll)
+						    amnpayroll = MAMN_Payroll.findByAMNPayroll(
+						            ctx, 
+						            Env.getLanguage(ctx).getLocale(), 
+						            p_AMN_Process_ID, 
+						            p_AMN_Contract_ID, 
+						            p_AMN_Period_ID, 
+						            AMN_Employee_ID,
+						            trxNameHdr
+						    );
+						    AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
+					    }
+
+					    if (!Receipt.RecIsPosted) {
+						    Receipt.setAMN_Payroll_ID(AMN_Payroll_ID);
+						    Receipt.setRecIsPosted(false);
+						    Receipt.setDocumentNo(amnpayroll.getDocumentNo().trim());
+						    Receipt.setDescription(amnpayroll.getValue().trim() + " " + amnpayroll.getName().trim());
+						    
+						    Msg_Header = "(" + AmerpMsg.getElementPrintText(ctx, "AMN_Payroll_ID") + " **** " + Msg.translate(ctx, "New") + " **** )";
+						    Receipt.setError(Msg_Header);
+					    }
+
+					    // 6. Hacer COMMIT SOLO cuando la cabecera Y los detalles estén guardados
+					    trxHdr.commit();
+					} catch (Exception eh) {
+					    log.log(Level.SEVERE, "Error al crear nómina para empleado: " + AMN_Employee_ID, eh);
+					    Receipt.setError(Msg_Header);
+					}
 				}
-				ReceiptsGenList.add(Receipt);
+				// Percentage Monitor
+				MessagetoShow = String.format("%-4s",recNo)+"/"+String.format("%-4s",NoRecs)+
+						" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
+						Receipt.getDocumentNo().trim()+" "+
+						AmerpMsg.getElementPrintText(ctx, "AMN_Employee_ID")+":"+
+						String.format("%-50s",Receipt.getEmployee_Value().trim()+"_"+Receipt.getEmployee_Name().trim()).replace(' ', '_') +"_"+
+						" ";
+				if (processMonitor != null) {
+					processMonitor.statusUpdate(MessagetoShow);
+				}
+			    // =========================================================================
+			    // CREACIÓN DE LÍNEAS HIJAS (DETALLES Y VALES)
+			    // Paarámetros ctx, Receipt y trxNameHdr
+			    // =========================================================================
+			    Msg_Header = AMNPayrollCreateAMNPAyrollDetail(ctx, Receipt, keepExistingConcepts,  trxNameHdr);
+			    trxHdr.commit();
+			    Msg_Header = Msg_Header + AMNPayrollCalculateAMNPAyrollDetail(ctx, Receipt,  trxNameHdr);
+			    trxHdr.commit();
+			    // AMNPayrollCalculateHistoric
+			    Msg_Header = Msg_Header + AMNPayrollCalculateHistoric(ctx, Receipt,  trxNameHdr);
+			    trxHdr.commit();
+			    Msg_Header = Msg_Header + AMNPayrolNominalSalary(ctx, Receipt, C_Currency_ID, trxNameHdr);
+			    trxHdr.commit();
+			    // Social Benefits NP
+			    if (AMN_Process_Value.equalsIgnoreCase("NP") ) {
+			    	Msg_Header = Msg_Header + AMNPayrolNominalResetSocialBenefitsNP(ctx, Receipt, C_Currency_ID, trxNameHdr);
+				    trxHdr.commit();
+			    }
+			    // Social Benefits NU
+			    if (AMN_Process_Value.equalsIgnoreCase("NU") ) {
+			    	Msg_Header = Msg_Header + AMNPayrolNominalResetSocialBenefitsNU(ctx, Receipt, C_Currency_ID, trxNameHdr);
+				    trxHdr.commit();
+			    }
+			    // Actualiza Valores del recibo No. Línea(s)	Asignación	Deducción	Neto Pagado
+			    if (Receipt.getAMN_Payroll_ID() > 0) {
+			        amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, trxNameHdr);
+			        if (amnpayroll !=null ) {
+			        	Receipt.setAmountAllocated(amnpayroll.getAmountAllocated());
+			        	Receipt.setAmountDeducted(amnpayroll.getAmountDeducted());
+			        	Receipt.setAmountNetPaid(amnpayroll.getAmountNetpaid());
+			        	Receipt.setNoLines(MAMN_Payroll.sqlGetAMNPayrollDetailNoLines (AMN_Payroll_ID, trxName));
+			        }
+			    }
+			    Receipt.setError(Receipt.getError()+" "+Msg_Header.trim());
+			    // Agrega registro de recibos procesados
+			    ReceiptsGenList.add(Receipt);
 			}				
-			// Guarda los cambios
-			trx.commit(); 
 		}
 	    catch (SQLException e)
 	    {
+	    	if (trxHdr != null) {
+	            trxHdr.rollback();
+	        }
+	        log.log(Level.SEVERE, "Error procesando Encabezado de Recibo de Trabajador: " + AMN_Employee_ID, e);
 	    }
 		finally
 		{
 			DB.close(rspc, pstmt);
 			rspc = null; pstmt = null;
-	     	trx.close();  
+			if (trxHdr != null) {
+		        trxHdr.close();
+		    }
 		}
-		DB.close(rspc, pstmt);
-		rspc = null; pstmt = null;
-		// NoRecs Number of receipts created or updated
-		NoRecs = ReceiptsGenList.size();
-		//log.warning("...Headers Completed....("+NoRecs+")");
-		// **********************
-		// Document Lines	
-		// **********************
-		// Create Array for Receipt Concepts
-		// ReceiptConcepts  array of ReceiptLines
-		String trxNameLine = "";
-		AMNPayrollCreateReceiptLinesArray(ctx, p_AMN_Process_ID, p_AMN_Contract_ID,  trxNameLine);
-		//for (int j=0 ; j < ReceiptConcepts.size() ; j++) {
-		for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-			Percent = 100 * (i / NoRecs);
-			AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-			//log.warning("Document Lines i=("+i+") Percent="+Percent+" "+ReceiptsGenList.get(i).getAMN_Payroll_ID()+" "+ReceiptsGenList.get(i).getDescription()+" "+ReceiptsGenList.get(i).getError());
-			trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
-			trx = Trx.get(Trx.createTrxName(trxNameLine), true);
-			// Percentage Monitor
-			MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
-					" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
-					ReceiptsGenList.get(i).getDocumentNo().trim()+" "+
-					AmerpMsg.getElementPrintText(ctx, "AMN_Employee_ID")+":"+
-					String.format("%-50s",ReceiptsGenList.get(i).getEmployee_Value().trim()+"_"+ReceiptsGenList.get(i).getEmployee_Name().trim()).replace(' ', '_') +"_"+
-					" ";
-			if (processMonitor != null) {
-				processMonitor.statusUpdate(MessagetoShow);
-			}
-			if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-				// CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
-				Msg_Lines=AMNPayrollCreateDocs.CreatePayrollOneDocDetailLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), keepExistingConcepts, trxNameLine);
-				// LOANS
-				if (AMN_Process_Value.equalsIgnoreCase("NN") ||
-						AMN_Process_Value.equalsIgnoreCase("TI") ) {
-					// ************************
-					// Process NN an TI	
-					// ************************
-					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
-					
-				} else if (AMN_Process_Value.equalsIgnoreCase("NV")) {
-					// ************************
-					// Process NV	
-					// ************************
-					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
-					
-				} else if (AMN_Process_Value.equalsIgnoreCase("NP")) {
-					// ************************
-					// Process NP
-					// ************************
-					
-				} else if (AMN_Process_Value.equalsIgnoreCase("NU")) {
-					// ************************
-					// Process NU
-					// ************************
-					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLines(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
-
-				} else if (AMN_Process_Value.equalsIgnoreCase("PL")) {
-					// ************************
-					// Process 
-					// ************************
-					// LOANS VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-					// ALL LOANS DEFERRED
-					AMNPayrollCreateDocs.CreatePayrollOneDocDetailDeferredLinesAllforPL(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxName);
-				}
-				trx.commit(); // Guarda los cambios
-				// Calculate Document
-				Msg_Lines= Msg_Lines + AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
-				trx.commit(); // Guarda los cambios
-			}
-		}
-		// log.warning("...Lines Completed....");
-		// **********************
-		// Calculate Document
-		// Payroll Historic
-		// **********************
-		for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-			Percent = 100 * (i / NoRecs);
-			AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-			trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
-			trx = Trx.get(Trx.createTrxName(trxNameLine), true);
-			Percent = 100 * (i / ReceiptsGenList.size());
-			// Percentage Monitor
-			MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
-					" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
-					ReceiptsGenList.get(i).getDocumentNo().trim()+" "+
-					AmerpMsg.getElementPrintText(ctx, "AMN_Employee_ID")+":"+	
-					String.format("%-50s",ReceiptsGenList.get(i).getEmployee_Value().trim()+"_"+ReceiptsGenList.get(i).getEmployee_Name().trim()).replace(' ', '_') +"_"+
-					" ";
-			if (processMonitor != null) {
-				processMonitor.statusUpdate(MessagetoShow);
-			}
-			if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-				amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, ReceiptsGenList.get(i).getAMN_Employee_ID(), amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), trxNameLine);
-				trx.commit(); // Guarda los cambios
-			}
-		}
-		trx.close(); 
-		// ********************************************
-		// Nominal Salary UPDATE ONLY ON NN Process
-		// ********************************************
-		if (AMN_Process_Value.equalsIgnoreCase("NN")) {
-			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-				Percent = 100 * (i / NoRecs);
-				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
-				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
-				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
-				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
-				Percent = 100 * (i / ReceiptsGenList.size());
-				// Percentage Monitor
-				MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
-						" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
-						ReceiptsGenList.get(i).getDocumentNo().trim()+" "+
-						AmerpMsg.getElementPrintText(ctx, "AMN_Employee_ID")+":"+
-						String.format("%-50s",ReceiptsGenList.get(i).getEmployee_Value().trim()+"_"+ReceiptsGenList.get(i).getEmployee_Name().trim()).replace(' ', '_') +"_"+
-						" ";
-				if (processMonitor != null) {
-					processMonitor.statusUpdate(MessagetoShow);
-				}
-				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-					Msg_Updates=  AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
-					trx.commit(); // Guarda los cambios
-				}
-				// SALARY NOMINAL HISTORIC
-		    	if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.updateSalaryAmnPayrollHistoric(ctx, null, AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
-						trx.commit(); // Guarda los cambios
-				}
-				// END OF SALARY HISTORIC
-			}
-			trx.close(); 
-		}
-
-		// *******************************************************
-		// RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NP Process
-		// *******************************************************
-		if (AMN_Process_Value.equalsIgnoreCase("NP") ) {
-			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-				Percent = 100 * (i / NoRecs);
-				NextPPDateIni = null;
-				NextPPDateEnd = null;
-				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
-				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
-				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
-				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
-				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-				Percent = 100 * (i / ReceiptsGenList.size());
-				// Percentage Monitor
-				MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
-						" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
-						ReceiptsGenList.get(i).getDocumentNo().trim()+" "+
-						AmerpMsg.getElementPrintText(ctx, "AMN_Employee_ID")+":"+
-						String.format("%-50s",ReceiptsGenList.get(i).getEmployee_Value().trim()+"_"+ReceiptsGenList.get(i).getEmployee_Name().trim()).replace(' ', '_') +"_"+
-						" ";
-				if (processMonitor != null) {
-					processMonitor.statusUpdate(MessagetoShow);
-				}
-				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-					if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
-					    // SOCIAL BENEFIT HISTORIC UPDATED Current Period and Two Previouss Periods
-					    // Current Period
-				    	Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, ReceiptsGenList.get(i).getAMN_Employee_ID(), amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxNameLine);
-					    // Next Previuss Period
-						// Calculates Average last 12 months
-						GregorianCalendar cal = new GregorianCalendar();
-						cal.setTime(amnperiod.getAMNDateIni());
-						// SET HOUR 00:00:00 
-						cal.set(Calendar.HOUR_OF_DAY, 0);
-						cal.set(Calendar.MINUTE, 0);
-						cal.set(Calendar.SECOND, 0);
-						cal.set(Calendar.MILLISECOND, 0);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
-					} else {
-					    // SOCIAL BENEFIT HISTORIC UPDATED Current Period ONLY
-					    // Current Period ONLY
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxName);
-					}
-				}
-				trx.commit(); // Guarda los cambios
-			}
-			trx.close(); 
-		}
-
-		// *******************************************************
-		// RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NU Process
-		// *******************************************************
-		if (AMN_Process_Value.equalsIgnoreCase("NU") ) {
-			for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-				Percent = 100 * (i / NoRecs);
-				AMN_Employee_ID=ReceiptsGenList.get(i).getAMN_Employee_ID();
-				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
-				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
-				NextPPDateIni = null;
-				NextPPDateEnd = null;
-				trxNameLine =  trxName+"_Lin_"+AMN_Employee_ID;
-				trx = Trx.get(Trx.createTrxName(trxNameLine), true);
-				AMN_Payroll_ID=ReceiptsGenList.get(i).getAMN_Payroll_ID();
-				amnpayroll = new MAMN_Payroll(ctx, AMN_Payroll_ID, null);
-				Percent = 100 * (i / ReceiptsGenList.size());
-				// Percentage Monitor
-				MessagetoShow = String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
-						" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
-						ReceiptsGenList.get(i).getDocumentNo().trim()+" "+
-						AmerpMsg.getElementPrintText(ctx, "AMN_Employee_ID")+":"+
-						String.format("%-50s",ReceiptsGenList.get(i).getEmployee_Value().trim()+"_"+ReceiptsGenList.get(i).getEmployee_Name().trim()).replace(' ', '_') +"_"+
-						" ";
-				if (processMonitor != null) {
-					processMonitor.statusUpdate(MessagetoShow);
-				}
-				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-					Msg_Updates=  AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID,ReceiptsGenList.get(i).getAMN_Employee_ID(), ReceiptsGenList.get(i).getAMN_Payroll_ID(), trxNameLine);
-					trx.commit(); // Guarda los cambios
-				}
-				if (!ReceiptsGenList.get(i).getRecIsPosted()) {
-					if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
-					    // UTILITIES HISTORIC UPDATED
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, ReceiptsGenList.get(i).getAMN_Employee_ID(), amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxNameLine);
-					    // Next Previuss Period
-						// Calculates Average last 12 months
-						GregorianCalendar cal = new GregorianCalendar();
-						cal.setTime(amnperiod.getAMNDateIni());
-						// SET HOUR 00:00:00 
-						cal.set(Calendar.HOUR_OF_DAY, 0);
-						cal.set(Calendar.MINUTE, 0);
-						cal.set(Calendar.SECOND, 0);
-						cal.set(Calendar.MILLISECOND, 0);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-					    Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-						// Next Previuss Period
-						cal.add(Calendar.DAY_OF_YEAR, -1);
-						NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
-						cal.set(Calendar.DAY_OF_MONTH, 1);
-						NextPPDateIni = new Timestamp(cal.getTimeInMillis());
-						Msg_Updates= Msg_Updates+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, AMN_Employee_ID, NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxNameLine);
-					}
-				}
-			}
-			trx.commit(); // Guarda los cambios
-		}
-		trx.close(); 
 		//AMNPayrollCreateInvoicesAllProcess
 		return true;
 	} 
 
-    /**
-     * AMNPayrollCreateReceiptLinesArray
-     * @param ctx
-     * @param p_AMN_Process_ID
-     * @param p_AMN_Contract_ID
-     * @param p_AMN_Payroll_ID
-     * @param trxName
-     * @return
-     */
-    public boolean AMNPayrollCreateReceiptLinesArray(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, String trxName )  {
-    	// ReceiptConcepts
-	    
-    	
-    	String sql="";
-		//
-		sql ="SELECT  " + 
-			"cty.calcorder,  " + 
-			"cty.amn_concept_types_id, " + 
-			"ctp.amn_process_id, " + 
-			"ctp.amn_concept_types_proc_id,  " + 
-			"cty.defaultvalue, " + 
-			"cty.scriptdefaultvalue, " + 
-			"cty.value, " + 
-			"cty.name, " + 
-			"cty.description, " + 
-			"cty.AMN_Concept_Uom_ID "+ 
-			"FROM amn_concept_types as cty " + 
-			"LEFT JOIN amn_concept_types_proc as ctp ON (ctp.amn_concept_types_id = cty.amn_concept_types_id) " + 
-			"LEFT JOIN amn_concept_uom as cum on (cty.amn_concept_uom_id = cum.amn_concept_uom_id) " + 
-			"LEFT JOIN amn_concept_types_contract as ctc ON (ctc.amn_concept_types_id = cty.amn_concept_types_id) " +
-			"WHERE cty.rule = 'F' AND ctp.amn_process_id = ?" + 
-			" AND ctc.amn_contract_id =? "+
-			" AND cty.isactive ='Y' "+
-			" AND ctp.isactive ='Y' "+
-			" AND ctc.isactive ='Y' "+	
-			"ORDER BY cty.calcorder" 
-			;
-		PreparedStatement pstmt1 = null;
-		ResultSet rsod1 = null;
-		try
-		{
-			pstmt1 = DB.prepareStatement(sql, null);
-            pstmt1.setInt (1, p_AMN_Process_ID);
-            pstmt1.setInt (2, p_AMN_Contract_ID);
-            rsod1 = pstmt1.executeQuery();
-			while (rsod1.next())
-			{
-				ReceiptLines = new AMNReceiptLines();
-				ReceiptLines.setCalcOrder(rsod1.getInt(1));
-				ReceiptLines.setAMN_Concept_Type_ID(rsod1.getInt(2));
-				ReceiptLines.setAMN_Process_ID(rsod1.getInt(3));
-				ReceiptLines.setAMN_Concept_Type_Proc_ID(rsod1.getInt(4));
-				ReceiptLines.setDefaultValue(rsod1.getString(5));
-				ReceiptLines.setScriptDefaultValue(rsod1.getString(6));
-				ReceiptLines.setConceptValue(rsod1.getString(7));
-				ReceiptLines.setConceptName(rsod1.getString(8));
-				ReceiptLines.setConceptDescription(rsod1.getString(9));
-				ReceiptLines.setAMN_Concept_Uom_ID(rsod1.getInt(10));
-
-				ReceiptLines.setAMN_Contract_ID(p_AMN_Contract_ID);
-				// ADD to ReceiptConcepts Array
-				ReceiptConcepts.add(ReceiptLines);
-			}
+	// ************************
+	// Document Lines CREATES
+	// ************************
+    private String AMNPayrollCreateAMNPAyrollDetail(Properties ctx, AMNReceipts prReceipt, boolean keepExistingConcepts, 
+    		String trxName) {
+	
+    	String retValue="";
+		if (!prReceipt.getRecIsPosted()) {
+			// CREATE MAMN_Payroll_Detail (DOCUMENT LINES)
+	     	// Document Lines
+			retValue= AMNPayrollCreateDocs.CreatePayrollOneDocumentLines(ctx, 
+					p_AMN_Process_ID, 
+					p_AMN_Contract_ID, 
+		    		p_AMN_Period_ID, 
+		    		p_AMN_Payroll_Lot_ID, 
+		    		prReceipt.getAMN_Employee_ID(), 
+		    		prReceipt.getAMN_Payroll_ID(),
+		    		prReceipt.getDateAcct(), prReceipt.getInvDateIni(), prReceipt.getInvDateEnd(), prReceipt.getRefDateIni(), prReceipt.getRefDateEnd(),  
+		    		keepExistingConcepts,
+		    		trxName);
 		}
-	    catch (SQLException e)
-	    {
-	    }
-		finally
-		{
-			DB.close(rsod1, pstmt1);
-			rsod1 = null; 
-			pstmt1 = null;
-		}
-    	return false;
+		return retValue;   	
     }
+    
+	// ************************************
+	// Document Lines REFRESH / CALCULATES
+	// ************************************
+    private String AMNPayrollCalculateAMNPAyrollDetail(Properties ctx, AMNReceipts prReceipt,  String trxName) {
+    	
+    	String retValue="";
+		if (!prReceipt.getRecIsPosted()) {
+			// Calculate Document
+			retValue= AMNPayrollCreateDocs.CalculateOnePayrollDocument(ctx, 
+					p_AMN_Process_ID, 
+					p_AMN_Contract_ID, 
+					p_AMN_Period_ID,
+		    		prReceipt.getAMN_Employee_ID(), 
+		    		prReceipt.getAMN_Payroll_ID(),
+					trxName);
+		} else {
+			retValue = Msg.getElement(ctx,"AMN_Payroll_ID")+": "+prReceipt.getAMN_Payroll_ID()+" "+prReceipt.getEmployee_Value() + " "+ Msg.translate(ctx, "AlreadyPosted");
+		}
+		return retValue;   	
+    }
+    
+	// **************************************
+	// Calculate Document Payroll Historic
+	// *************************************
+    private String AMNPayrollCalculateHistoric(Properties ctx, AMNReceipts prReceipt,  String trxName) {
+
+    	String retValue="";
+    	MAMN_Payroll_Historic 	amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
+    	if (!prReceipt.getRecIsPosted()) {
+    		amnpayrollhistoric.createAmnPayrollHistoric(ctx, null, prReceipt.getAMN_Employee_ID(), prReceipt.getInvDateIni(), prReceipt.getInvDateEnd(), trxName);
+		}
+    	return retValue;
+    }
+    
+	// ********************************************
+	// Nominal Salary UPDATE ONLY ON NN Process
+	// ********************************************
+    private String AMNPayrolNominalSalary(Properties ctx, AMNReceipts prReceipt,  int C_Currency_ID, String trxName) {
+
+    	String retValue="";
+    	MAMN_Payroll_Historic 	amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
+    	if (!prReceipt.getRecIsPosted() && amnpayrollhistoric != null) {
+    		if (amnpayrollhistoric.updateSalaryAmnPayrollHistoric(ctx, Env.getLanguage(ctx).getLocale(), prReceipt.getAMN_Employee_ID(), prReceipt.getInvDateIni(), prReceipt.getInvDateEnd(), C_Currency_ID, trxName))
+    			retValue=Msg.getElement(ctx,"Salary")+" "+"OK";
+		} 
+    	return retValue;
+    }
+    
+	// *******************************************************
+	// RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NP Process
+	// *******************************************************
+    private String AMNPayrolNominalResetSocialBenefitsNP(Properties ctx, AMNReceipts prReceipt, int C_Currency_ID, String trxName) {
+
+    	String retValue="";
+    	MAMN_Payroll_Historic 	amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
+    	MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, prReceipt.getAMN_Payroll_ID(), trxName);
+    	if (!prReceipt.getRecIsPosted() && amnpayrollhistoric != null) {
+			if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
+			    // SOCIAL BENEFIT HISTORIC UPDATED Current Period and Two Previouss Periods
+			    // Current Period
+				if (amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, 
+						Env.getLanguage(ctx).getLocale(), prReceipt.getAMN_Employee_ID(), 
+						prReceipt.getInvDateIni(), prReceipt.getInvDateEnd(), C_Currency_ID, trxName))
+						retValue ="OK";
+			    // Next Previuss Period
+				// Calculates Average last 12 months
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(prReceipt.getInvDateIni());
+				// SET HOUR 00:00:00 
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				Timestamp NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				Timestamp NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+			} else {
+			    // SOCIAL BENEFIT HISTORIC UPDATED Current Period ONLY
+			    // Current Period ONLY
+				retValue= retValue+ amnpayrollhistoric.resetSocialbenefitsUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), prReceipt.getInvDateIni(), prReceipt.getInvDateEnd(), C_Currency_ID, trxName);
+			}
+
+    	}
+    	return retValue;
+    }
+    
+	// *******************************************************
+	// RESET SOCIAL BENEFIT HISTORIC UPDATED  ON NU Process
+	// *******************************************************
+    
+    private String AMNPayrolNominalResetSocialBenefitsNU(Properties ctx, AMNReceipts prReceipt, int C_Currency_ID, String trxName) {
+
+    	String retValue="";
+    	MAMN_Payroll_Historic 	amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
+    	MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, prReceipt.getAMN_Payroll_ID(), trxName);
+    	
+    	
+    	if (!prReceipt.getRecIsPosted() && amnpayrollhistoric != null && amnpayroll != null) {
+    		MAMN_Period amnperiod = new MAMN_Period(ctx, amnpayroll.getAMN_Period_ID(), trxName);
+			if (amnperiod != null && amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
+			    // UTILITIES HISTORIC UPDATED
+				if(amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), 
+						prReceipt.getInvDateIni(), prReceipt.getInvDateEnd(), C_Currency_ID, trxName))
+					retValue="OK";
+			    // Next Previuss Period
+				// Calculates Average last 12 months
+				GregorianCalendar cal = new GregorianCalendar();
+				cal.setTime(amnperiod.getAMNDateIni());
+				// SET HOUR 00:00:00 
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				Timestamp NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				Timestamp NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+			    retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+				// Next Previuss Period
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+				NextPPDateEnd = new Timestamp(cal.getTimeInMillis());
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				NextPPDateIni = new Timestamp(cal.getTimeInMillis());
+				retValue= retValue+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx, null, prReceipt.getAMN_Employee_ID(), NextPPDateIni, NextPPDateEnd, C_Currency_ID, trxName);
+			}
+
+    	}
+    	return retValue;
+    }
+    
+    private boolean AMNPayrollCreateInvoicesNN(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
+    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
+    	return AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    }
+    
+    private boolean AMNPayrollCreateInvoicesNP(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
+    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
+    	return AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    }
+    
+    private boolean AMNPayrollCreateInvoicesPI(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
+    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
+    	return AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    }
+    
+    private boolean AMNPayrollCreateInvoicesNV(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
+    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
+    	return AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    }
+ 
+    private boolean AMNPayrollCreateInvoicesNU(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID, 
+    		int p_AMN_Period_ID, int p_AMN_Payroll_Lot_ID, int C_Currency_ID, int C_ConversionType_ID, String trxName) {
+    	return AMNPayrollCreateInvoicesAllProcess(ctx, p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Payroll_Lot_ID, C_Currency_ID, C_ConversionType_ID, trxName);
+    }
+
 }
-
-
