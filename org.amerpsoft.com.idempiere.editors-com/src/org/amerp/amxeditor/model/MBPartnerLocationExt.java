@@ -38,7 +38,7 @@ import org.compiere.model.*;
  * @author Luis Amesty
  *
  */
-public class MBPartnerLocationExt extends X_C_BPartner_Location {
+public class MBPartnerLocationExt extends MBPartnerLocation implements I_C_BPartner_Location_Amerp {
 	/**
 	 * 
 	 */
@@ -70,14 +70,22 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 * @param trxName
 	 * @return array of locations
 	 */
-	public static MBPartnerLocationExt[] getForBPartner(Properties ctx,
-			int C_BPartner_ID, String trxName) {
-		List<MBPartnerLocationExt> list = new Query(ctx, Table_Name,
-				"C_BPartner_ID=?", trxName).setParameters(C_BPartner_ID).list();
-		MBPartnerLocationExt[] retValue = new MBPartnerLocationExt[list.size()];
-		list.toArray(retValue);
-		return retValue;
-	} // getForBPartner
+
+	
+    public static MBPartnerLocationExt[] getForBPartner(Properties ctx, int C_BPartner_ID, String trxName) {
+        List<MBPartnerLocationExt> list = new Query(ctx, Table_Name, "C_BPartner_ID=?", trxName)
+                .setParameters(C_BPartner_ID)
+                .list();
+
+        MBPartnerLocationExt[] retValue = new MBPartnerLocationExt[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            retValue[i] = list.get(i);
+        }
+        return retValue;
+    }
+
+
+    
 
 	/**************************************************************************
 	 * Default Constructor
@@ -144,9 +152,8 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 * @return location
 	 */
 	public MLocationExt getLocation(boolean requery) {
+		int C_Location_ID = 0;
 		if (requery || m_location == null) {
-//			m_location = (MLocationExt) MLocationExt.get(getCtx(), getC_Location_ID(), get_TrxName());
-			int C_Location_ID = 0;
 			C_Location_ID = (int) getC_Location_ID();
 			m_location = (MLocationExt) MLocationExt.get(getCtx(), C_Location_ID, get_TrxName());
 		}
@@ -174,15 +181,15 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 * @return save
 	 */
 	protected boolean beforeSave(boolean newRecord) {
-		
-//		if (this.get_ID()== 0)
-//			return false;
-//		if (getC_Location_ID() == 0)
-//			return false;
 
 		// Set New Name
 		if (".".equals(getName())) {
+			// 1. Intentar forzar requery = true
 			MLocationExt address = getLocation(true);
+			// 2. Si getLocation sigue devolviendo el objeto cacheado viejo, reinstanciar usando la transacción actual
+			if (address == null || address.get_ID() == 0 || get_TrxName() != null) {
+				address = new MLocationExt(getCtx(), getC_Location_ID(), get_TrxName());
+			}
 			setName(getBPLocName(address));
 		}
 		return true;
@@ -271,6 +278,16 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 			}
 		}
 		return m_uniqueName.toString();
+	}
+
+	@Override
+	public void setOpenLocation(String OpenLocation) {
+		set_Value (COLUMNNAME_OpenLocation, OpenLocation);
+	}
+
+	@Override
+	public String getOpenLocation() {
+		return (String)get_Value(COLUMNNAME_OpenLocation); 
 	}
 
 } // MBpartnerLocationExt

@@ -4,8 +4,6 @@
 
 package org.amerp.amxeditor.model;
 
-import java.io.File;
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,28 +14,18 @@ import org.compiere.model.MCountry;
 import org.compiere.model.MLocation;
 import org.compiere.model.MRegion;
 import org.compiere.model.MSysConfig;
-import org.compiere.process.DocAction;
+import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
-import org.amerp.amxeditor.model.MCountryExt;
-import org.amerp.amxeditor.model.MRegionExt;
+import org.compiere.util.Env;
+import org.compiere.util.Language;
 
 /**
- *	Location (Address)
+ *	Location Extended (Address)
  *	
- *  @author Jorg Janke
- *  @version $Id: MLocation.java,v 1.3 2006/07/30 00:54:54 jjanke Exp $
- *  
- *  @author Michael Judd (Akuna Ltd)
- * 				<li>BF [ 2695078 ] Country is not translated on invoice
- * 				<li>FR [2794312 ] Location AutoComplete - check if allow cities out of list
- * 
- * @author Teo Sarca, teo.sarca@gmail.com
- * 		<li>BF [ 3002736 ] MLocation.get cache all MLocations
- * 			https://sourceforge.net/tracker/?func=detail&aid=3002736&group_id=176962&atid=879332
  */
-public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAction
+public class MLocationExt extends MLocation implements I_C_Location_Amerp
 {
 	/**
 	 * 
@@ -49,11 +37,19 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 	public static String LOCATION_MAPS_ROUTE_PREFIX   = MSysConfig.getValue("LOCATION_MAPS_ROUTE_PREFIX");
 	public static String LOCATION_MAPS_SOURCE_ADDRESS      = MSysConfig.getValue("LOCATION_MAPS_SOURCE_ADDRESS");
 	public static String LOCATION_MAPS_DESTINATION_ADDRESS = MSysConfig.getValue("LOCATION_MAPS_DESTINATION_ADDRESS");
+	// OpenStreet MAps
+	public static String LOCATION_MAPS_URL_PREFIX_NOMINATIM     = MSysConfig.getValue("LOCATION_MAPS_URL_PREFIX_NOMINATIM");
+	// Additional Field Names C_Location
 	public static final String COLUMNNAME_C_Municipality_ID = "C_Municipality_ID";
 	//public static final String COLUMNNAME_MunicipalityName = "municipalityname";
 	public static final String COLUMNNAME_C_Parish_ID = "C_Parish_ID";
 	//public static final String COLUMNNAME_ParishName = "parishname";
-	
+    // --- CONSTANTES DE ESTADO DE GEOCODIFICACIÓN ---
+    public static final String GEOCODING_STATUS_OK = "OK";
+    public static final String GEOCODING_STATUS_NOT_FOUND = "NOT_FOUND";
+    public static final String GEOCODING_STATUS_ERROR = "ERROR";
+    public static final String GEOCODING_STATUS_PENDING = "PENDING";
+    
 	static private 	MCountryExt		m_c = null;
 	private 	MRegionExt		m_r = null;
 	private 	MMunicipality	m_m = null;
@@ -65,7 +61,7 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 	 *	@param ctx context
 	 *	@param C_Location_ID id
 	 *	@param trxName transaction
-	 *	@return MLocation
+	 *	@return MLocationExt
 	 */
 	public static MLocationExt get (Properties ctx, int C_Location_ID, String trxName)
 	{
@@ -139,14 +135,21 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 		super (ctx, C_Location_ID, trxName);
 		if (C_Location_ID == 0)
 		{
-			MCountry defaultCountry = MCountry.getDefault(getCtx()); 
+			// 1. Obtener el idioma activo del contexto del usuario
+	        Language lang = Env.getLanguage(getCtx());
+	        // 2. Buscar el país que tenga asignado ese AD_Language
+	        MCountry defaultCountry = new Query(getCtx(), MCountry.Table_Name, "AD_Language=?", get_TrxName())
+	            .setParameters(lang.getAD_Language())
+	            .setOnlyActiveRecords(true)
+	            .first();
 			setCountry(defaultCountry);
+			// Region por defecto
 			MRegion defaultRegion = MRegion.getDefault(getCtx());
 			if (defaultRegion != null 
 				&& defaultRegion.getC_Country_ID() == defaultCountry.getC_Country_ID())
 				setRegion(defaultRegion);
 		}
-	}	//	MLocation
+	}	//	MLocationExt
 
 	/**
 	 * 	Parent Constructor
@@ -158,7 +161,7 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 		super (country.getCtx(), 0, country.get_TrxName());
 		setCountry (country);
 		setRegion (region);
-	}	//	MLocation
+	}	//	MLocationExt
 
 	/**
 	 * 	Full Constructor
@@ -174,7 +177,7 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 		setC_Country_ID(C_Country_ID);
 		setC_Region_ID(C_Region_ID);
 		setCity(city);
-	}	//	MLocation
+	}	//	MLocationExt
 
 	/**
 	 * 	Load Constructor
@@ -185,7 +188,7 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 	public MLocationExt (Properties ctx, ResultSet rs, String trxName)
 	{
 		super(ctx, rs, trxName);
-	}	//	MLocation
+	}	//	MLocationExt
 
 	/**
 	 * 	Set Country
@@ -467,146 +470,53 @@ public class MLocationExt extends MLocation implements I_C_Location_Amerp, DocAc
 		return ii.intValue();
 	}
 
-	/**
-	 * 	Get (local) Region Name
-	 *	@return	region Name or ""
-	 */
-
 	@Override
-	public void setDocStatus(String newStatus) {
-		
-		
+	public void setGeocodingStatus(String GeocodingStatus) {
+		set_Value (COLUMNNAME_GeocodingStatus, GeocodingStatus);
 	}
 
 	@Override
-	public String getDocStatus() {
-		
-		return null;
+	public String getGeocodingStatus() {
+		return (String)get_Value(COLUMNNAME_GeocodingStatus);
 	}
 
 	@Override
-	public boolean processIt(String action) throws Exception {
-		
-		return false;
+	public void setLatitude(String Latitude) {
+		set_Value (COLUMNNAME_Latitude, Latitude);
 	}
 
 	@Override
-	public boolean unlockIt() {
-		
-		return false;
+	public String getLatitude() {
+		return (String)get_Value(COLUMNNAME_Latitude);
 	}
 
 	@Override
-	public boolean invalidateIt() {
-		
-		return false;
+	public void setLongitude(String Longitude) {
+		set_Value (COLUMNNAME_Longitude, Longitude);
 	}
 
 	@Override
-	public String prepareIt() {
-		
-		return null;
+	public String getLongitude() {
+		return (String)get_Value(COLUMNNAME_Longitude);
 	}
 
 	@Override
-	public boolean approveIt() {
-		
-		return false;
+	public void setGeoSearchAddress(String GeoSearchAddress) {
+		set_Value (COLUMNNAME_GeoSearchAddress, GeoSearchAddress);
 	}
 
 	@Override
-	public boolean rejectIt() {
-		
-		return false;
+	public String getGeoSearchAddress() {
+		return (String)get_Value(COLUMNNAME_GeoSearchAddress);
 	}
 
 	@Override
-	public String completeIt() {
-		
-		return null;
+	public void setOpenGeoMap(String OpenGeoMap) {
+		set_Value (COLUMNNAME_OpenGeoMap, OpenGeoMap);
 	}
 
 	@Override
-	public boolean voidIt() {
-		
-		return false;
+	public String getOpenGeoMap() {
+		return (String)get_Value(COLUMNNAME_OpenGeoMap); 
 	}
-
-	@Override
-	public boolean closeIt() {
-		
-		return false;
-	}
-
-	@Override
-	public boolean reverseCorrectIt() {
-		
-		return false;
-	}
-
-	@Override
-	public boolean reverseAccrualIt() {
-		
-		return false;
-	}
-
-	@Override
-	public boolean reActivateIt() {
-		
-		return false;
-	}
-
-	@Override
-	public String getSummary() {
-		
-		return null;
-	}
-
-	@Override
-	public String getDocumentNo() {
-		
-		return null;
-	}
-
-	@Override
-	public String getDocumentInfo() {
-		
-		return null;
-	}
-
-	@Override
-	public File createPDF() {
-		
-		return null;
-	}
-
-	@Override
-	public String getProcessMsg() {
-		
-		return null;
-	}
-
-	@Override
-	public int getDoc_User_ID() {
-		
-		return 0;
-	}
-
-	@Override
-	public int getC_Currency_ID() {
-		
-		return 0;
-	}
-
-	@Override
-	public BigDecimal getApprovalAmt() {
-		
-		return null;
-	}
-
-	@Override
-	public String getDocAction() {
-		
-		return null;
-	}
-}	//	MLocation
+}	//	MLocationExt

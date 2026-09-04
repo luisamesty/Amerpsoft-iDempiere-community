@@ -30,11 +30,20 @@ import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Textbox;
 import org.adempiere.webui.component.Window;
+import org.adempiere.webui.event.ActionEvent;
+import org.adempiere.webui.event.ActionListener;
+import org.adempiere.webui.event.ValueChangeEvent;
+import org.adempiere.webui.event.ValueChangeListener;
+import org.adempiere.webui.panel.ADForm;
+import org.adempiere.webui.panel.CustomForm;
+import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.*;
 //
 import org.amerp.amxeditor.model.*;
+import org.amerp.amxeditor.service.LocationAddressUtil;
+import org.amerp.amxeditor.service.LocationAddressUtil.LocationData;
 import org.compiere.model.*;
 //
 import org.compiere.util.*;
@@ -49,6 +58,10 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Iframe;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Vbox;
 
@@ -56,7 +69,7 @@ import org.zkoss.zul.Vbox;
  * @author luisamesty
  *
  */
-public class WLocationExtDialog extends Window implements EventListener<Event>
+public class WLocationExtDialog extends Window implements IFormController, EventListener<Event>, ValueChangeListener, ActionListener
 {
 	/**
 	 * 
@@ -66,6 +79,8 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 	private static final String LABEL_STYLE = "white-space: nowrap;";
 	/** Logger          */
 	private static CLogger log = CLogger.getCLogger(WLocationExtDialog.class);
+	/** UI form instance */
+	private CustomForm form = new CustomForm();
 	private Label lblAddress1;
 	private Label lblAddress2;
 	private Label lblAddress3;
@@ -94,6 +109,15 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 	private Listbox lstMunicipality;
 	private Listbox lstParish;
 	
+	// Componentes de Geolocalización (Solo Lectura)
+	private Label lblLatitude;
+	private Label lblLongitude;
+	private Label lblGeocodingStatus;
+
+	private Textbox txtLatitude;
+	private Textbox txtLongitude;
+    private Combobox cmbGeocodingStatus;
+    private String m_GeoCodingStatus;
 	private ConfirmPanel confirmPanel;
 	private Grid mainPanel;
 
@@ -107,7 +131,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 	private int         s_oldCountry_ID = 0;
 	private int         s_oldRegion_ID = 0;
 	private int         s_oldMunicipality_ID = 0;
-	private int         s_oldParish_ID = 0;
 	
 	private int m_WindowNo = 0;
 
@@ -128,6 +151,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 
 	private Button toLink;
 	private Button toRoute;
+	private Button toLinkOpenStreet;
 	
 	private Listbox lstAddressValidation;
 	private Button btnOnline;
@@ -137,7 +161,9 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 	
 	private GridField m_GridField = null;
 	private boolean onSaveError = false;
-	//END
+	// Map Frame
+    private Iframe mapIframe;
+    //END
 
 	public WLocationExtDialog(String title, MLocationExt location)
 	{
@@ -174,7 +200,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		m_origCountry_ID = m_location.getC_Country_ID();
 		//  Current Region
 		lstRegion.appendItem("", null);
-		for (MRegion region : MRegion.getRegions(Env.getCtx(), m_origCountry_ID))
+		for (MRegion region : MRegion.getRegions(m_origCountry_ID))
 		{
 			lstRegion.appendItem(region.getName(),region);
 		}
@@ -211,8 +237,8 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		//  
 		if (!ThemeManager.isUseCSSForWindowSize()) 
 		{
-			ZKUpdateUtil.setWindowWidthX(this, 380);
-			ZKUpdateUtil.setWindowHeightX(this, 420); // required fixed height for ZK to auto adjust the position based on available space
+			ZKUpdateUtil.setWindowWidthX(this, 550);
+			ZKUpdateUtil.setWindowHeightX(this, 520); 
 		}
 		else
 		{
@@ -222,8 +248,9 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			});
 		}
 		//
-		ZKUpdateUtil.setWidth(this,"350px");
-		ZKUpdateUtil.setHeight(this, "420px");
+		ZKUpdateUtil.setWidth(this, "550px");
+		ZKUpdateUtil.setHeight(this, "580px");
+		
 		this.setSclass("popup-dialog");
 		this.setClosable(true);
 		this.setBorder("normal");
@@ -319,12 +346,23 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		confirmPanel = new ConfirmPanel(true);
 		confirmPanel.addActionListener(this);
 
+		// Configured Map (Google)
 		toLink = new Button(Msg.getMsg(Env.getCtx(), "Map"));
 		LayoutUtils.addSclass("txt-btn", toLink);
 		toLink.addEventListener(Events.ON_CLICK,this);
+		// OpenStreet Map
+		toLinkOpenStreet = new Button(Msg.getMsg(Env.getCtx(), "Map")+" (OpenStreet)");
+		LayoutUtils.addSclass("txt-btn", toLinkOpenStreet);
+		toLinkOpenStreet.addEventListener(Events.ON_CLICK,this);
+		// Configured Route
 		toRoute = new Button(Msg.getMsg(Env.getCtx(), "Route"));
 		LayoutUtils.addSclass("txt-btn", toRoute);
 		toRoute.addEventListener(Events.ON_CLICK,this);
+		// Mapa Frame
+		mapIframe = new Iframe();
+        mapIframe.setWidth("100%");
+        mapIframe.setHeight("350px");
+        mapIframe.setStyle("border: 1px solid #ccc; border-radius: 4px;");
 		
 		btnOnline = new Button(Msg.getElement(Env.getCtx(), "ValidateAddress"));
 		LayoutUtils.addSclass("txt-btn", btnOnline);
@@ -333,8 +371,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		txtResult = new Textbox();
 		txtResult.setCols(2);
 		txtResult.setRows(3);
-		//txtResult.setHeight("100%");
-		//ZKUpdateUtil.setHeight(txtResult, "100%");
 		txtResult.setReadonly(true);
 		
 		cbxValid = new Checkbox();
@@ -343,10 +379,52 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		
 		lstAddressValidation = new Listbox();
 		lstAddressValidation.setMold("select");
-		//lstAddressValidation.setWidth("154px");
 		ZKUpdateUtil.setWidth(lstAddressValidation, "154px");	
 		lstAddressValidation.setRows(0);		
+		
+		lblLatitude = new Label(Msg.getElement(Env.getCtx(), "Latitude"));
+		lblLatitude.setStyle(LABEL_STYLE);
+		lblLongitude = new Label(Msg.getElement(Env.getCtx(), "Longitude"));
+		lblLongitude.setStyle(LABEL_STYLE);
+		lblGeocodingStatus = new Label(Msg.getElement(Env.getCtx(), "GeocodingStatus"));
+		lblGeocodingStatus.setStyle(LABEL_STYLE);
 
+		txtLatitude = new Textbox();
+		txtLatitude.setCols(20);
+		txtLatitude.setReadonly(false);
+
+		txtLongitude = new Textbox();
+		txtLongitude.setCols(20);
+		txtLongitude.setReadonly(false);
+
+		cmbGeocodingStatus = new Combobox();
+		List<ValueNamePair> geoCodingStatusTypes = this.getGeocodeStatusArray();
+		cmbGeocodingStatus.setModel(new ListModelList<>(geoCodingStatusTypes));
+		cmbGeocodingStatus.setItemRenderer((item, data, index) -> {
+            ValueNamePair vnp = (ValueNamePair) data;
+            item.setLabel(vnp.getName());
+            item.setValue(vnp); 
+        });
+        // Seleccionar valor inicial
+        String valueToSet = (m_GeoCodingStatus == null || m_GeoCodingStatus.isEmpty())
+                            ? MLocationExt.GEOCODING_STATUS_OK
+                            : m_GeoCodingStatus;
+        for (ValueNamePair vnp : geoCodingStatusTypes) {
+            if (vnp.getValue().equals(valueToSet)) {
+            	cmbGeocodingStatus.setValue(vnp.getName());
+            	m_GeoCodingStatus = vnp.getValue();
+                break;
+            }
+        }
+        Events.postEvent(new Event("onChange", cmbGeocodingStatus));
+        // Listener
+        cmbGeocodingStatus.addEventListener("onChange", event -> {
+            if (cmbGeocodingStatus.getSelectedItem() != null) {
+                ValueNamePair selected = (ValueNamePair) cmbGeocodingStatus.getSelectedItem().getValue();
+                m_GeoCodingStatus = selected.getValue();
+            }
+        });
+		
 		mainPanel = GridFactory.newGridLayout();
 	}
 	
@@ -436,10 +514,28 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		//lstCountry.setHflex("1");
 		ZKUpdateUtil.setHflex(lstCountry, "1");
 		
+		Row pnlGeoStatus = new Row();
+		pnlGeoStatus.appendChild(lblGeocodingStatus.rightAlign());
+		pnlGeoStatus.appendChild(cmbGeocodingStatus);
+		ZKUpdateUtil.setHflex(cmbGeocodingStatus, "1");
+
+		Row pnlLat = new Row();
+		pnlLat.appendChild(lblLatitude.rightAlign());
+		pnlLat.appendChild(txtLatitude);
+		ZKUpdateUtil.setHflex(txtLatitude, "1");
+
+		Row pnlLon = new Row();
+		pnlLon.appendChild(lblLongitude.rightAlign());
+		pnlLon.appendChild(txtLongitude);
+		ZKUpdateUtil.setHflex(txtLongitude, "1");
+
 		Panel pnlLinks    = new Panel();
 		pnlLinks.appendChild(toLink);
 		if (MLocationExt.LOCATION_MAPS_URL_PREFIX == null)
 			toLink.setVisible(false);
+		pnlLinks.appendChild(toLinkOpenStreet);
+		if (MLocationExt.LOCATION_MAPS_URL_PREFIX_NOMINATIM == null)
+			toLinkOpenStreet.setVisible(false);
 		pnlLinks.appendChild(toRoute);
 		if (MLocationExt.LOCATION_MAPS_ROUTE_PREFIX == null || Env.getAD_Org_ID(Env.getCtx()) <= 0)
 			toRoute.setVisible(false);
@@ -448,45 +544,48 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		pnlLinks.setStyle("text-align:right");
 		
 		Borderlayout borderlayout = new Borderlayout();
-		this.appendChild(borderlayout);
-		//borderlayout.setHflex("1");
-		//borderlayout.setVflex("1");
-		ZKUpdateUtil.setHflex(borderlayout, "1");
-		ZKUpdateUtil.setVflex(borderlayout, "1");
-		
-		Center centerPane = new Center();
-		centerPane.setSclass("dialog-content");
-		centerPane.setAutoscroll(true);
-		borderlayout.appendChild(centerPane);
-		
-		Vbox vbox = new Vbox();
-		centerPane.appendChild(vbox);
-		vbox.appendChild(mainPanel);
-		if (MLocationExt.LOCATION_MAPS_URL_PREFIX != null || MLocationExt.LOCATION_MAPS_ROUTE_PREFIX != null)
-			vbox.appendChild(pnlLinks);
-		
-		String addressValidation = MSysConfig.getValue(MSysConfig.ADDRESS_VALIDATION, null, Env.getAD_Client_ID(Env.getCtx()));
-		enabledCountryList.clear();
-		if (addressValidation != null && addressValidation.trim().length() > 0)
-		{
-			StringTokenizer st = new StringTokenizer(addressValidation, ";");
-			while (st.hasMoreTokens())
-			{
-				String token = st.nextToken().trim();
-				enabledCountryList.add(token);
-			}
-		}
-			
-		if (enabledCountryList.size() > 0)
-		{
-			Grid grid = GridFactory.newGridLayout();
-			vbox.appendChild(grid);
+        ZKUpdateUtil.setHflex(borderlayout, "1");
+        ZKUpdateUtil.setVflex(borderlayout, "1");
+        this.appendChild(borderlayout);
+        
+        Center centerPane = new Center();
+        centerPane.setSclass("dialog-content");
+        centerPane.setAutoscroll(true); // Scroll interno en pantallas pequeñas
+        ZKUpdateUtil.setVflex(centerPane, "1");
+        borderlayout.appendChild(centerPane);
+
+        // Vbox como ÚNICO hijo directo de centerPane
+        Vbox vbox = new Vbox();
+        ZKUpdateUtil.setHflex(vbox, "1");
+        centerPane.appendChild(vbox);
+        
+        vbox.appendChild(mainPanel);
+        if (MLocationExt.LOCATION_MAPS_URL_PREFIX != null || MLocationExt.LOCATION_MAPS_ROUTE_PREFIX != null)
+            vbox.appendChild(pnlLinks);
+        
+        String addressValidation = MSysConfig.getValue(MSysConfig.ADDRESS_VALIDATION, null, Env.getAD_Client_ID(Env.getCtx()));
+        enabledCountryList.clear();
+        if (addressValidation != null && addressValidation.trim().length() > 0)
+        {
+            StringTokenizer st = new StringTokenizer(addressValidation, ";");
+            while (st.hasMoreTokens())
+            {
+                String token = st.nextToken().trim();
+                enabledCountryList.add(token);
+            }
+        }
+            
+        if (enabledCountryList.size() > 0)
+        {
+            // Usar una variable diferente o la instancia creada aquí
+            Grid gridLayout = GridFactory.newGridLayout();
+            vbox.appendChild(gridLayout);
 			
 			columns = new Columns();
-			grid.appendChild(columns);
+			gridLayout.appendChild(columns);
 			
 			Rows rows = new Rows();
-			grid.appendChild(rows);
+			gridLayout.appendChild(rows);
 			
 			Row row = new Row();
 			rows.appendChild(row);
@@ -541,8 +640,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			}
 		}
 		
-		//vbox.setVflex("1");
-		//vbox.setHflex("1");
 		ZKUpdateUtil.setVflex(vbox, "1");
 		ZKUpdateUtil.setHflex(vbox, "1");
 		
@@ -580,9 +677,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		MCountryExt country =  m_location.getCountryExt();
 		if (log.isLoggable(Level.FINE)) log.fine(country.getName() + ", Region=" + country.isHasRegion() + " " + country.getCaptureSequence()
 				+ ", C_Location_ID=" + m_location.getC_Location_ID());
-//		log.warning("m_location.initLocation Init Values..City:"+m_location.getC_City_ID()+"-"+m_location.getCity()+
-//						"..Country:"+m_location.getC_Country_ID()+"..Region:"+m_location.getC_Region_ID()+
-//						"..Municipality:"+m_location.getC_Municipality_ID()+"..Parish:"+m_location.getC_Parish_ID());
 		//  new Country
 		if (m_location.getC_Country_ID() != s_oldCountry_ID)
 		{
@@ -633,9 +727,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			{
 				lstMunicipality.appendItem(municipality.getName(),municipality);			
 			}
-			//setMunicipality();
-			//m_origMunicipality_ID =  m_location.getC_Municipality_ID();
-//			log.warning("getC_Municipality_ID()"+m_location.getC_Municipality_ID());		
+			//setMunicipality();	
 			if(m_location.getC_Municipality_ID()>0){
 				setMunicipality();
 			} else {
@@ -644,14 +736,11 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			}
 			s_oldRegion_ID = m_location.getC_Region_ID();
 		}
-
 		//  new Municipality
 		// actualiza cuando cambia el municipio
 		if (m_location.getC_Municipality_ID() != s_oldMunicipality_ID)
 		{
 			// Clear Parish
-//			setParish();
-			// log.warning("  Municipality_ID="+m_location.getC_Municipality_ID()+" C_Region_ID="+m_location.getC_Region_ID());
 			lstParish.getChildren().clear();
 			lstParish.appendItem("", null); 
 			for (MParish parish : MParish.getSQLParishs(Env.getCtx(),  m_location.getC_Municipality_ID(),m_location.getC_Region_ID()))
@@ -662,26 +751,16 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			s_oldMunicipality_ID = m_location.getC_Municipality_ID();
 		}
 		//  new Parish
-		//log.warning("m_location.initLocation OJO..City:"+m_location.getC_City_ID()+"-"+m_location.getCity()+
-		//				"..Country:"+m_location.getC_Country_ID()+"..Region:"+m_location.getC_Region_ID()+
-		//				"..Municipality:"+m_location.getC_Municipality_ID()+"..Parish:"+m_location.getC_Parish_ID());
-		//      sequence of City Postal Region - @P@ @C@ - @C@, @R@ @P@
 		String ds = country.getCaptureSequence();
 		if (ds == null || ds.length() == 0)
 		{
 			log.log(Level.SEVERE, "CaptureSequence empty - " + country);
 			ds = "";    //  @C@,  @P@
 		}
-		isCityMandatory = false;
-		isRegionMandatory = false;
-		isAddress1Mandatory = false;
-		isAddress2Mandatory = false;
-		isAddress3Mandatory = false;
-		isAddress4Mandatory = false;
-		isPostalMandatory = false;
-		isPostalAddMandatory = false;
-		isMunicipalityMandatory = false;
-		isParishMandatory = false;
+		// Init Mandatory fields variables FIRST STAGE
+		this.initMandatoryFromAD();
+
+		// Review Mandatory fields variables SECOND STAGE IF CONFIGURED
 		StringTokenizer st = new StringTokenizer(ds, "@", false);
 		while (st.hasMoreTokens())
 		{
@@ -722,16 +801,15 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			} else if (s.startsWith("R") && m_location.getCountryExt().isHasRegion()) {
 				addComponents((Row)lstRegion.getParent());
 				isRegionMandatory = s.endsWith("!");
-
-			}
-			// NEW FIELDS ELEMENTS
-			if (m_location.getCountryExt().isHasRegion()) {
-				
-
 			}
 		}
 
-		//      Fill it
+		// --- SECCIÓN GEOLOCALIZACIÓN (Al final del formulario) ---
+        addComponents((Row) cmbGeocodingStatus.getParent());
+        addComponents((Row) txtLatitude.getParent());
+        addComponents((Row) txtLongitude.getParent());
+
+        //      Fill it
 		if (m_location.getC_Location_ID() != 0)
 		{
 			txtAddress1.setText(m_location.getAddress1());
@@ -752,10 +830,27 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 				setRegion();                
 			}
 			setCountry();
+
+			// 1. Cargar coordenadas
+		    if (txtLatitude != null)
+		        txtLatitude.setText(m_location.getLatitude());
+		    if (txtLongitude != null)
+		        txtLongitude.setText(m_location.getLongitude());
+
+		    // 2. Cargar estado de geolocalización desde BD (evitando el valor por defecto)
+		    m_GeoCodingStatus = m_location.getGeocodingStatus();
+		    
+		    // Si la BD no tiene valor grabado aún, asignamos PENDING explícitamente
+		    if (Util.isEmpty(m_GeoCodingStatus)) {
+		    	m_GeoCodingStatus = MLocationExt.GEOCODING_STATUS_PENDING;
+		    }
+		    
+		    setGeocodingStatus(m_GeoCodingStatus);
+		    // Inicia el Variable  con el valor leido de la tabla
+		    m_location.setGeocodingStatus(m_GeoCodingStatus);
+		    // Inicia el Combo con el valor leido de la tabla
+		    setSelectedGeocodingStatus(cmbGeocodingStatus, m_GeoCodingStatus);
 		}
-//log.warning("m_location.initLocation  END..City:"+m_location.getC_City_ID()+"-"+m_location.getCity()+
-//				"..Country:"+m_location.getC_Country_ID()+"..Region:"+m_location.getC_Region_ID()+
-//				"..Municipality:"+m_location.getC_Municipality_ID()+"..Parish:"+m_location.getC_Parish_ID());
 	}
 	
 	/**
@@ -880,17 +975,17 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 				}
 			}
 			
-			String msg = validate_OK();
+			String msg = validate_Mandatory_OK();
 			if (msg != null) {
-				onSaveError = true;
-				FDialog.error(0, this, "FillMandatory", Msg.parseTranslation(Env.getCtx(), msg), new Callback<Integer>() {					
-					@Override
-					public void onCallback(Integer result) {
-						Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
-					}
-				});
-				inOKAction = false;
-				return;
+			    onSaveError = true;
+			    
+			    // Firma correcta de Dialog.error para iDempiere 10+
+			    Dialog.error(m_WindowNo, "FillMandatory", Msg.parseTranslation(Env.getCtx(), msg), evt -> {
+			        Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
+			    });
+			    
+			    inOKAction = false;
+			    return;
 			}
 			
 			if (action_OK())
@@ -902,11 +997,8 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			else
 			{
 				onSaveError = true;
-				FDialog.error(0, this, "CityNotFound", (String)null, new Callback<Integer>() {					
-					@Override
-					public void onCallback(Integer result) {
-						Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
-					}
+				Dialog.error(m_WindowNo, "AddressNotProcessed", (String) null, evt -> {
+					Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
 				});
 			}
 			inOKAction = false;
@@ -918,14 +1010,32 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		}
 		else if (toLink.equals(event.getTarget()))
 		{
-			String urlString = MLocationExt.LOCATION_MAPS_URL_PREFIX + getFullAdress();
+			String urlString = MLocationExt.LOCATION_MAPS_URL_PREFIX + getFullAddress();
 			String message = null;
+
 			try {
 				Executions.getCurrent().sendRedirect(urlString, "_blank");
 			}
 			catch (Exception e) {
 				message = e.getMessage();
-				FDialog.warn(0, this, "URLnotValid", message);
+				Dialog.warn(m_WindowNo, "URLnotValid", message);
+			}
+		}
+		else if (toLinkOpenStreet.equals(event.getTarget()))
+		{
+			
+			if (!Util.isEmpty(getFullAddress()) && !getGeocodingStatus().equals(MLocationExt.GEOCODING_STATUS_OK)) {
+				String urlString = MLocationExt.LOCATION_MAPS_URL_PREFIX_NOMINATIM + getFullAddress();
+				String message = null;
+
+				try {
+					Executions.getCurrent().sendRedirect(urlString, "_blank");
+				}
+				catch (Exception e) {
+					message = e.getMessage();
+					Dialog.warn(m_WindowNo, "URLnotValid", message);
+				}
+
 			}
 		}
 		else if (toRoute.equals(event.getTarget()))
@@ -937,14 +1047,14 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 
 				String urlString = MLocationExt.LOCATION_MAPS_ROUTE_PREFIX +
 						         MLocationExt.LOCATION_MAPS_SOURCE_ADDRESS + orgLocation.getMapsLocation() + //org
-						         MLocationExt.LOCATION_MAPS_DESTINATION_ADDRESS + getFullAdress(); //partner
+						         MLocationExt.LOCATION_MAPS_DESTINATION_ADDRESS + getFullAddress(); //partner
 				String message = null;
 				try {
 					Executions.getCurrent().sendRedirect(urlString, "_blank");
 				}
 				catch (Exception e) {
 					message = e.getMessage();
-					FDialog.warn(0, this, "URLnotValid", message);
+					Dialog.warn(m_WindowNo, "URLnotValid", message);
 				}
 			}
 		}
@@ -963,14 +1073,12 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 				}
 			}
 			// VALIDATION MESSAGE USING FDialog Class
-			String msg = validate_OK();
+			String msg = validate_Mandatory_OK();
 			if (msg != null) {
 				onSaveError = true;
-				FDialog.error(0, this, "FillMandatory", Msg.parseTranslation(Env.getCtx(), msg), new Callback<Integer>() {					
-					@Override
-					public void onCallback(Integer result) {
-						Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
-					}
+				onSaveError = true;
+				Dialog.error(m_WindowNo, "FillMandatory", Msg.parseTranslation(Env.getCtx(), msg), evt -> {
+					Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
 				});
 				inOKAction = false;
 				return;
@@ -1022,11 +1130,9 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 				if (!ok)
 				{
 					onSaveError = true;
-					FDialog.error(0, this, "Error", m_location.getErrorMessage(), new Callback<Integer>() {					
-						@Override
-						public void onCallback(Integer result) {
-							Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
-						}
+					onSaveError = true;
+					Dialog.error(m_WindowNo, "Error", m_location.getErrorMessage(), evt -> {
+						Events.echoEvent("onSaveError", WLocationExtDialog.this, null);
 					});
 				}
 			}
@@ -1099,8 +1205,23 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		}
 	}
 
+	@Override
+	public void valueChange(ValueChangeEvent event) {
+	    String propertyName = event.getPropertyName();
+	    
+	    // Si el evento viene de nuestro combo de estado de geolocalización
+	    if ("GeocodingStatus".equalsIgnoreCase(propertyName) || event.getSource() == cmbGeocodingStatus) {
+	        String newValue = getGeocodingStatus();
+	        
+	        // Actualizar el valor en el modelo de MLocationExt (M_Location / C_Location)
+	        if (m_location != null) {
+	            m_location.set_ValueOfColumn("GeocodingStatus", newValue);
+	        }
+	    }
+	}
+	
 	// LCO - address 1, region and city required
-	private String validate_OK() {
+	private String validate_Mandatory_OK() {
 		String fields = "";
 		if (isAddress1Mandatory && txtAddress1.getText().trim().length() == 0) {
 			fields = fields + " " + "@Address1@, ";
@@ -1154,17 +1275,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		m_location.setCity(txtCity.getValue());
 		m_location.setPostal(txtPostal.getValue());
 		m_location.setPostal_Add(txtPostalAdd.getValue());
-		//
-//log.warning("m_location.action_OK  Values..City:"+m_location.getC_City_ID()+"-"+m_location.getCity()+
-//		"..Country:"+m_location.getC_Country_ID()+"..Region:"+m_location.getC_Region_ID()+
-//		"..Municipality:"+m_location.getC_Municipality_ID()+"..Parish:"+m_location.getC_Parish_ID());
-//log.warning(
-//		"Combos.."+"  lstRegion:"+lstRegion.getItemCount()+"  lstMunicipality:"+
-//		lstMunicipality.getItemCount()+"  lstParish:"+lstParish.getItemCount()+
-//		"  lstRegion.getSelectedItem():"+lstRegion.getSelectedItem()+
-//		"  lstParish.getSelectedItem():"+lstParish.getSelectedItem()+
-//		"  lstMunicipality.getSelectedItem():"+lstMunicipality.getSelectedItem());
-
 		//  Country/Region
 		MCountryExt country = (MCountryExt)lstCountry.getSelectedItem().getValue();
 		m_location.setCountry(country);
@@ -1172,10 +1282,6 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 			//if (!lstRegion.getSelectedItem().equals(null)) {
 			if (lstRegion.getSelectedItem() != null) {
 				MRegionExt r = (MRegionExt)lstRegion.getSelectedItem().getValue();
-//				MRegionExt rr = (MRegion)lstRegion.getSelectedItem().getValue();
-//				// POWrapper Class
-//				I_C_Region_Amerp r =  POWrapper.create(rr, I_C_Region_Amerp.class);
-
 				m_location.setRegion(r); 
 			} else {
 				m_location.setC_Region_ID(0);
@@ -1197,23 +1303,27 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 		} else {
 			m_location.setParish(null);
 		}
-		//Save changes 		
+		// 1. Asignar variables de geolocalización
+		m_location.setLatitude(txtLatitude.getValue());
+		m_location.setLongitude(txtLongitude.getValue());
+		m_location.setGeocodingStatus(getGeocodingStatus());
+		log.warning("Antes de salvar GeoCodingStatus = " + m_location.getGeocodingStatus());
 		boolean success = false;
+		// 2. Guardar m_location utilizando la transacción activa
 		if (m_location.save())
 		{
-            // IDEMPIERE-417 Force Update BPLocation.Name
-        	if (m_GridField != null && m_GridField.getGridTab() != null
-        			&& "C_BPartner_Location".equals(m_GridField.getGridTab().getTableName()))
-    		{
-        		m_GridField.getGridTab().setValue("Name", ".");
+			// Obtener C_BPartner_Location_ID dentro de la misma transacción
+			String sql = "SELECT C_BPartner_Location_ID FROM C_BPartner_Location WHERE C_Location_ID = ?";
+			int bplID = DB.getSQLValueEx(trx.getTrxName(), sql, m_location.getC_Location_ID());
+			MBPartnerLocationExt bpl = new MBPartnerLocationExt(Env.getCtx(), bplID, trx.getTrxName());
+			if (m_GridField != null && m_GridField.getGridTab() != null
+        			&& "C_BPartner_Location".equals(m_GridField.getGridTab().getTableName())) {
+        		if (!bpl.isPreserveCustomName())
+        			m_GridField.getGridTab().setValue("Name", ".");
 				success = true;
     		} else {
     			//Update BP_Location name IDEMPIERE 417
-    			int bplID = DB.getSQLValueEx(trx.getTrxName(), "SELECT C_BPartner_Location_ID FROM C_BPartner_Location WHERE C_Location_ID = " + m_location.getC_Location_ID());
-    			if (bplID>0)
-    			{
-    				MBPartnerLocationExt bpl = new MBPartnerLocationExt(Env.getCtx(), bplID, trx.getTrxName());
-//    				bpl.setName(bpl.getBPLocName(m_location));
+    			if (bplID>0) {
     				if (bpl.save())
     					success = true;
     			} else {
@@ -1221,6 +1331,7 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
     			}
     		}
 		}
+		// 3. Confirmar o revertir la transacción
 		if (success) {
 			trx.commit();
 		} else {
@@ -1246,33 +1357,244 @@ public class WLocationExtDialog extends Window implements EventListener<Event>
 	}
 	
 	/** returns a string that contains all fields of current form */
-	String getFullAdress()
-	{
-		MRegionExt region = null;
-		MMunicipality municipality = null;
-		MParish parish = null;
+	String getFullAddress() {
+	    String txtCountry = "";
+	    String txtRegion = "";
+	    String txtMunicipality = "";
+	    String txtParish = "";
 
-		if (lstRegion.getSelectedItem()!=null)
-			region = new MRegionExt(Env.getCtx(), ((MRegionExt)lstRegion.getSelectedItem().getValue()).getC_Region_ID(), null);
-		if (lstMunicipality.getSelectedItem() != null)
-			municipality = new MMunicipality(Env.getCtx(), ((MMunicipality)lstMunicipality.getSelectedItem().getValue()).getC_Municipality_ID(), null);
-		if (lstParish.getSelectedItem() != null)
-			parish = new MParish(Env.getCtx(), ((MParish)lstParish.getSelectedItem().getValue()).getC_Parish_ID(), null);
-		MCountryExt c = (MCountryExt)lstCountry.getSelectedItem().getValue();
+	    // 1. Validar y extraer País
+	    if (lstCountry != null && lstCountry.getSelectedItem() != null) {
+	        Object val = lstCountry.getSelectedItem().getValue();
+	        if (val instanceof MCountryExt country) {
+	            txtCountry = country.getName() != null ? country.getName() : "";
+	        }
+	    }
 
-		String address = "";
-		address = address + (txtAddress1.getText() != null ? txtAddress1.getText() + ", " : "");
-		address = address + (txtAddress2.getText() != null ? txtAddress2.getText() + ", " : "");
-		address = address + (txtCity.getText() != null ? txtCity.getText() + ", " : "");
-		if (parish != null)
-			address = address + (parish.getName() != null ? parish.getName() + ", " : "");
-		if (municipality != null)
-			address = address + (municipality.getName() != null ? municipality.getName() + ", " : "");
-		if (region != null)
-			address = address + (region.getName() != null ? region.getName() + ", " : "");
-		address = address + (c.getName() != null ? c.getName() : "");
-		//return address.replace(" ", "+");
-		return address;
-	}	
+	    // 2. Validar y extraer Región
+	    if (lstRegion != null && lstRegion.getSelectedItem() != null) {
+	        Object val = lstRegion.getSelectedItem().getValue();
+	        if (val instanceof MRegionExt region) {
+	            txtRegion = region.getName() != null ? region.getName() : "";
+	        }
+	    }
+
+	    // 3. Validar y extraer Municipio
+	    if (lstMunicipality != null && lstMunicipality.getSelectedItem() != null) {
+	        Object val = lstMunicipality.getSelectedItem().getValue();
+	        if (val instanceof MMunicipality municipality) {
+	            txtMunicipality = municipality.getName() != null ? municipality.getName() : "";
+	        }
+	    }
+
+	    // 4. Validar y extraer Parroquia
+	    if (lstParish != null && lstParish.getSelectedItem() != null) {
+	        Object val = lstParish.getSelectedItem().getValue();
+	        if (val instanceof MParish parish) {
+	            txtParish = parish.getName() != null ? parish.getName() : "";
+	        }
+	    }
+
+	    // 5. Construir DTO con textos seguros usando helper para los Textbox
+	    LocationAddressUtil.LocationData locData = new LocationData(
+	            getTextSafe(txtAddress1), 
+	            getTextSafe(txtAddress2), 
+	            getTextSafe(txtAddress3),
+	            getTextSafe(txtAddress4),
+	            txtMunicipality, 
+	            txtParish, 
+	            getTextSafe(txtCity), 
+	            txtRegion,
+	            txtCountry
+	    );
+
+	    return LocationAddressUtil.buildFullAddress(locData, ",");
+	}
+
+	/**
+	 * Método auxiliar para obtener el texto de un Textbox evitando NullPointerException.
+	 */
+	private String getTextSafe(Textbox txt) {
+	    if (txt != null && txt.getText() != null) {
+	        return txt.getText().trim();
+	    }
+	    return "";
+	}
+	
+	/**
+	 * Sobrecarga de getTextSafe para componentes WAutoCompleterCity.
+	 */
+	private String getTextSafe(WAutoCompleterCity autoCompleter) {
+	    if (autoCompleter != null && autoCompleter.getText() != null) {
+	        return autoCompleter.getText().trim();
+	    }
+	    return "";
+	}
+	
+	private List<ValueNamePair> getGeocodeStatusArray() {
+	    // 1. Obtener el AD_Reference_ID dinámicamente por Nombre
+	    String sql = "SELECT AD_Reference_ID FROM AD_Reference WHERE Name = ? AND IsActive = 'Y'";
+	    int adReferenceId = DB.getSQLValue(null, sql, "GeocodingStatus");
+
+	    if (adReferenceId <= 0) {
+	        // Manejo de error si no existe la referencia en el diccionario de datos
+	        return Collections.emptyList();
+	    }
+
+	    // 2. Obtener los ítems traducidos según el idioma actual
+	    ValueNamePair[] list = MRefList.getList(Env.getCtx(), adReferenceId, false);
+	    List<ValueNamePair> geoCodeStatusList = new ArrayList<>(Arrays.asList(list));
+
+	    // 3. Ordenar por prioridad personalizada
+	    Map<String, Integer> priority = Map.of(
+	        MLocationExt.GEOCODING_STATUS_OK, 1,
+	        MLocationExt.GEOCODING_STATUS_ERROR, 2,
+	        MLocationExt.GEOCODING_STATUS_NOT_FOUND, 3,
+	        MLocationExt.GEOCODING_STATUS_PENDING, 4
+	    );
+
+	    geoCodeStatusList.sort(Comparator.comparingInt(
+	        v -> priority.getOrDefault(v.getValue(), 99)
+	    ));
+
+	    return geoCodeStatusList;
+	}
+	
+	/**
+	 * Establece la opción seleccionada según el código de estado (ej: "OK", "NOT_FOUND").
+	 */
+	private void setGeocodingStatus(String status) {
+	    if (cmbGeocodingStatus == null) return;
+
+	    if (Util.isEmpty(status)) {
+	        cmbGeocodingStatus.setSelectedIndex(-1);
+	        return;
+	    }
+
+	    for (int i = 0; i < cmbGeocodingStatus.getItemCount(); i++) {
+	        Comboitem item = cmbGeocodingStatus.getItemAtIndex(i);
+	        Object rawVal = item.getValue();
+	        String code = null;
+
+	        if (rawVal instanceof ValueNamePair vnp) {
+	            code = vnp.getValue();
+	        } else if (rawVal instanceof String str) {
+	            code = str;
+	        }
+
+	        if (code != null && status.equalsIgnoreCase(code)) {
+	            cmbGeocodingStatus.setSelectedIndex(i);
+	            return;
+	        }
+	    }
+	}
+
+	/**
+	 * Obtiene el código del estado seleccionado (retorna String para guardar en BD).
+	 */
+	private String getGeocodingStatus() {
+	    if (cmbGeocodingStatus != null) {
+	        // 1. Obtener el ítem seleccionado actualmente en la UI
+	        Comboitem selectedItem = cmbGeocodingStatus.getSelectedItem();
+	        
+	        if (selectedItem != null) {
+	            Object rawVal = selectedItem.getValue();
+	            
+	            // Si le asignaste el String directo mediante item.setValue("OK")
+	            if (rawVal instanceof String str && !str.isBlank()) {
+	                return str.trim();
+	            }
+	            
+	            // En caso de que se haya guardado el objeto ValueNamePair completo
+	            if (rawVal instanceof ValueNamePair vnp) {
+	                return vnp.getValue();
+	            }
+	        }
+
+	        // 2. Fallback: Si no hay selectedItem pero hay un valor interno asignado al combo
+	        Object rawComboVal = cmbGeocodingStatus.getValue();
+	        if (rawComboVal instanceof String strVal && !strVal.isBlank()) {
+	            return strVal.trim();
+	        }
+	    }
+	    
+	    return "";
+	}
+
+	
+	/**
+	 * Selecciona el elemento correspondiente en el combo de estado de geocodificación
+	 * basándose en el valor leído de la base de datos.
+	 * 
+	 * @param cmbGeocodingStatus Componente Combobox ZK
+	 * @param initialStatus Valor leído de BD (m_GeoCodingStatus)
+	 * @return El valor seleccionado de BD o el valor por defecto (OK)
+	 */
+	private String setSelectedGeocodingStatus(Combobox cmbGeocodingStatus, String initialStatus) {
+	    // 1. Determinar el valor a buscar
+	    String valueToSet = (initialStatus == null || initialStatus.trim().isEmpty())
+	                        ? MLocationExt.GEOCODING_STATUS_OK
+	                        : initialStatus;
+	                        
+	    List<ValueNamePair> geoCodingStatusTypes = this.getGeocodeStatusArray();
+
+	    // 2. Buscar y seleccionar la coincidencia en el combo
+	    if (cmbGeocodingStatus != null && geoCodingStatusTypes != null) {
+	        for (ValueNamePair vnp : geoCodingStatusTypes) {
+	            if (vnp.getValue().equals(valueToSet)) {
+	                
+	                // Buscar el Comboitem equivalente en el Combobox para seleccionarlo formalmente
+	                Comboitem itemToSelect = cmbGeocodingStatus.getItems().stream()
+	                        .filter(item -> vnp.getValue().equals(item.getValue()))
+	                        .findFirst()
+	                        .orElse(null);
+
+	                if (itemToSelect != null) {
+	                    cmbGeocodingStatus.setSelectedItem(itemToSelect);
+	                } else {
+	                    cmbGeocodingStatus.setValue(vnp.getName());
+	                }
+	                
+	                return vnp.getValue();
+	            }
+	        }
+	    }
+
+	    return valueToSet;
+	}
+
+	/**
+	 * initMandatoryFromAD
+	 * Review Mandatory fields from table C_Location (MLocationExt)
+	 */
+	private void initMandatoryFromAD() {
+	    int tableId = MTable.getTable_ID(MLocationExt.Table_Name);
+
+	    isAddress1Mandatory     = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_Address1);
+	    isAddress2Mandatory     = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_Address2);
+	    isAddress3Mandatory     = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_Address3);
+	    isAddress4Mandatory     = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_Address4);
+	    isCityMandatory         = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_City);
+	    isRegionMandatory       = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_C_Region_ID);
+	    isPostalMandatory       = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_Postal);
+	    isPostalAddMandatory    = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_Postal_Add);
+	    isMunicipalityMandatory = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_C_Municipality_ID);
+	    isParishMandatory       = isColumnMandatory(tableId, MLocationExt.COLUMNNAME_C_Parish_ID);
+	}
+
+	private boolean isColumnMandatory(int tableId, String columnName) {
+	    MColumn col = MColumn.get(Env.getCtx(), tableId, columnName);
+	    return col != null && col.isMandatory();
+	}
+	
+	@Override
+	public ADForm getForm() {
+		return form;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		log.warning("actionPerformed="+event.getEventName());
+	}
 
 }

@@ -14,13 +14,11 @@ package org.amerp.amxeditor.factory;
 
 import org.adempiere.webui.editor.IEditorConfiguration;
 import org.adempiere.webui.editor.WEditor;
-import org.adempiere.webui.editor.WLocationEditor;
 import org.adempiere.webui.factory.IEditorFactory;
 import org.amerp.amxeditor.editor.WLocationExtEditor;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.CLogger;
-import java.util.logging.Level;
 /**
  * @author luisamesty
  *

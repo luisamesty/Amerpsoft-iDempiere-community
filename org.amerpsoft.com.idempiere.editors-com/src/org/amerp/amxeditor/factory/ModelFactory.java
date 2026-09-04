@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 
 import org.adempiere.base.IModelFactory;
 import org.amerp.amxeditor.model.*;
-import org.compiere.model.MCountry;
 import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;

@@ -23,4 +23,69 @@ public interface I_C_Location_Amerp extends I_C_Location{
 	public int getC_Parish_ID();
 
 
+    /** Column name GeocodingStatus */
+    public static final String COLUMNNAME_GeocodingStatus = "GeocodingStatus";
+
+	/** Set Geocoding Status.
+	  * Status or result obtained from the automatic geocoding process.
+	  */
+	public void setGeocodingStatus (String GeocodingStatus);
+
+	/** Get Geocoding Status.
+	  * Status or result obtained from the automatic geocoding process.
+	  */
+	public String getGeocodingStatus();
+
+    /** Column name Latitude */
+    public static final String COLUMNNAME_Latitude = "Latitude";
+
+	/** Set Latitude.
+	  * Geographic latitude coordinate of the location.
+	  */
+	public void setLatitude (String Latitude);
+
+	/** Get Latitude.
+	  * Geographic latitude coordinate of the location.
+	  */
+	public String getLatitude();
+
+    /** Column name Longitude */
+    public static final String COLUMNNAME_Longitude = "Longitude";
+
+	/** Set Longitude.
+	  * Geographic longitude coordinate of the location.
+	  */
+	public void setLongitude (String Longitude);
+
+	/** Get Longitude.
+	  * Geographic longitude coordinate of the location.
+	  */
+	public String getLongitude();
+
+	/** Column name GeocodingStatus */
+    public static final String COLUMNNAME_GeoSearchAddress = "GeoSearchAddress";
+
+	/** Set Search Address .
+	  * Search Address  or result obtained from the automatic geocoding process.
+	*/
+	public void setGeoSearchAddress (String GeoSearchAddress);
+
+	/** Get GeoSearchAddress.
+	  * Search Address or result obtained from the automatic geocoding process.
+	*/
+	public String getGeoSearchAddress();
+
+    /** Column name OpenGeoMap */
+    public static final String COLUMNNAME_OpenGeoMap = "OpenGeoMap";
+
+	/** Set Open GeoMap.
+	  * Open GeoMap for Update
+	  */
+	public void setOpenGeoMap (String OpenGeoMap);
+
+	/** Get OpenGeoMap
+	  * Open GeoMap for Update
+	  */
+	public String getOpenGeoMap();
+	
 }
