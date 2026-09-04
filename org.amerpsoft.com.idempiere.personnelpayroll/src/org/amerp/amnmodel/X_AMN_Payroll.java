@@ -35,7 +35,7 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250205L;
+	private static final long serialVersionUID = 20261006L;
 
     /** Standard Constructor */
     public X_AMN_Payroll (Properties ctx, int AMN_Payroll_ID, String trxName)
@@ -697,34 +697,6 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return ii.intValue();
 	}
 
-	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException
-	{
-		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
-			.getPO(getC_DocType_ID(), get_TrxName());
-	}
-
-	/** Set Document Type.
-		@param C_DocType_ID Document type or rules
-	*/
-	public void setC_DocType_ID (int C_DocType_ID)
-	{
-		if (C_DocType_ID < 0)
-			set_ValueNoCheck (COLUMNNAME_C_DocType_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_C_DocType_ID, Integer.valueOf(C_DocType_ID));
-	}
-
-	/** Get Document Type.
-		@return Document type or rules
-	  */
-	public int getC_DocType_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_C_DocType_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
@@ -748,6 +720,34 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public int getC_DocTypeTarget_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_DocTypeTarget_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException
+	{
+		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_ID)
+			.getPO(getC_DocType_ID(), get_TrxName());
+	}
+
+	/** Set Document Type.
+		@param C_DocType_ID Document type or rules
+	*/
+	public void setC_DocType_ID (int C_DocType_ID)
+	{
+		if (C_DocType_ID < 0)
+			set_ValueNoCheck (COLUMNNAME_C_DocType_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_C_DocType_ID, Integer.valueOf(C_DocType_ID));
+	}
+
+	/** Get Document Type.
+		@return Document type or rules
+	  */
+	public int getC_DocType_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_DocType_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -1269,24 +1269,6 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 		return false;
 	}
 
-	/** Set month.
-		@param month month
-	*/
-	public void setmonth (int month)
-	{
-		set_Value (COLUMNNAME_month, Integer.valueOf(month));
-	}
-
-	/** Get month.
-		@return month	  */
-	public int getmonth()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_month);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -1444,6 +1426,24 @@ public class X_AMN_Payroll extends PO implements I_AMN_Payroll, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set month.
+		@param month month
+	*/
+	public void setmonth (int month)
+	{
+		set_Value (COLUMNNAME_month, Integer.valueOf(month));
+	}
+
+	/** Get month.
+		@return month	  */
+	public int getmonth()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_month);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set year.

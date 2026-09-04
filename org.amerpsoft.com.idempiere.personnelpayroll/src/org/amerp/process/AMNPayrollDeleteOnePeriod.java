@@ -1,247 +1,150 @@
 package org.amerp.process;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 import org.adempiere.util.IProcessUI;
-import org.amerp.amnmodel.MAMN_Employee;
 import org.amerp.amnmodel.MAMN_Payroll;
 import org.amerp.amnmodel.MAMN_Payroll_Docs;
 import org.amerp.amnmodel.MAMN_Period;
 import org.amerp.amnmodel.MAMN_Process;
-import org.amerp.amnutilities.AmerpMsg;
-import org.compiere.model.MAcctSchema;
-import org.compiere.model.MClientInfo;
 import org.compiere.model.MInvoice;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.compiere.util.Trx;
 
-public class AMNPayrollDeleteOnePeriod  extends SvrProcess {
+public class AMNPayrollDeleteOnePeriod extends SvrProcess {
 
-	static CLogger log = CLogger.getCLogger(AMNPayrollDeleteOnePeriod.class);
-	private int p_AMN_Process_ID = 0;
-	private int p_AMN_Contract_ID = 0;
-	private int p_AMN_Period_ID = 0;
-	private int p_AMN_Payroll_ID = 0;
+    private static CLogger log = CLogger.getCLogger(AMNPayrollDeleteOnePeriod.class);
+    private int p_AMN_Process_ID = 0;
+    private int p_AMN_Period_ID = 0;
+    private int p_AMN_Payroll_ID = 0;
 
-	String AMN_Process_Value="";
+    private String AMN_Process_Value = "";
 
+    private List<AMNReceipts> ReceiptsGenList = new ArrayList<>();
+    private List<AMNReceiptLines> ReceiptConcepts = new ArrayList<>();
 
-    int NoRecs = 0;
-    int NoRecsLines = 0;
-    String Msg_Error="";
-	static Timestamp p_DateAcct = null;
-	static Timestamp p_InvDateEnd = null; 
-	static Timestamp p_InvDateIni = null;
-	static Timestamp p_RefDateEnd = null;
-	static Timestamp p_RefDateIni = null;
-	// Receipt List
-	List<AMNReceipts> ReceiptsGenList = new ArrayList<AMNReceipts>();
-	// Receipt Lines List
-	List<AMNReceiptLines> ReceiptConcepts = new ArrayList<AMNReceiptLines>();
-	
-	@Override
-	protected void prepare() {
-	    //log.warning("...........Toma de Parametros...................");
-    	ProcessInfoParameter[] paras = getParameter();
-		for (ProcessInfoParameter para : paras)
-		{
-			String paraName = para.getParameterName();
-			// SPECIAL CASE BECAUSE FIRST TWO PARAMETERS DOESN'T COME FROM TABLE
-			// THEY COME FROM AMN_PROCESS_CONTRACT_V  (VIEW)
-			// THIRD PARAMETER COMES FROM AMN_PERIOD TABLE
-			if (paraName.equals("AMN_Process_ID"))
-				p_AMN_Process_ID =  para.getParameterAsInt();
-			else if (paraName.equals("AMN_Contract_ID"))
-				p_AMN_Contract_ID =  para.getParameterAsInt();
+    @Override
+    protected void prepare() {
+        ProcessInfoParameter[] paras = getParameter();
+        for (ProcessInfoParameter para : paras) {
+            String paraName = para.getParameterName();
+            if (paraName.equals("AMN_Process_ID"))
+                p_AMN_Process_ID = para.getParameterAsInt();
+            else if (paraName.equals("AMN_Contract_ID"))
+				para.getParameterAsInt();
 			else if (paraName.equals("AMN_Period_ID"))
-				p_AMN_Period_ID = para.getParameterAsInt();
-			else
-				log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
-		}	 
-	}
+                p_AMN_Period_ID = para.getParameterAsInt();
+            else
+                log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
+        }   
+    }
 
-	@Override
-	protected String doIt() throws Exception {
+    @Override
+    protected String doIt() throws Exception {
+        MAMN_Process amnprocess = new MAMN_Process(getCtx(), p_AMN_Process_ID, get_TrxName()); 
+        AMN_Process_Value = amnprocess.getAMN_Process_Value();
+        MAMN_Period amnperiod = new MAMN_Period(getCtx(), p_AMN_Period_ID, get_TrxName());
 
+        if (!AMN_Process_Value.equalsIgnoreCase("NN") &&
+            !AMN_Process_Value.equalsIgnoreCase("TI") &&
+            !AMN_Process_Value.equalsIgnoreCase("NO") && 
+            !AMN_Process_Value.equalsIgnoreCase("NU") &&
+            !AMN_Process_Value.equalsIgnoreCase("NP")) {
+            return Msg.getMsg(getCtx(), "Process") + ":" + AMN_Process_Value.trim() + Msg.getMsg(getCtx(), "NotAvailable");
+        }
 
-	    String Msg_Value="";
-	    String msg_Value0="";
-	    String MessagetoShow="";
-	    boolean okReceipts = false;
-	    int AMN_Payroll_ID = 0;
-	    MAMN_Payroll amnp = null;
-	    MAMN_Employee emp = null;
-	    String DocumentNo = "";
-	    MAMN_Process amnprocess = new MAMN_Process(getCtx(), p_AMN_Process_ID, null); 
-	    AMN_Process_Value = amnprocess.getAMN_Process_Value();
-		MAMN_Period amnperiod = new MAMN_Period(getCtx(), p_AMN_Period_ID, null);
-		// Default Account Schema
-		MClientInfo info = MClientInfo.get(getCtx(), amnprocess.getAD_Client_ID(), null); 
-		MAcctSchema as = MAcctSchema.get (getCtx(), info.getC_AcctSchema1_ID(), null);
-		as.getC_AcctSchema_ID();
-   		
-   		// ************************
-    	// Process VALIDATION	
-    	// ************************
-	    if (AMN_Process_Value.equalsIgnoreCase("NN") ||
-	    		AMN_Process_Value.equalsIgnoreCase("TI") ||
-	    		AMN_Process_Value.equalsIgnoreCase("NO") || 
-	    		AMN_Process_Value.equalsIgnoreCase("NU") ||
-	    		AMN_Process_Value.equalsIgnoreCase("NP") ){
-	    	// *************************
-	    	// Process NN PO TI NO NU NP	
-	    	// *************************
-	    	// log.warning("p_AMN_Process_ID:"+p_AMN_Process_ID+"  p_AMN_Contract_ID"+ p_AMN_Contract_ID+"  p_AMN_Period_ID"+ p_AMN_Period_ID);
-	    	Msg_Error="";
-	    	okReceipts = AMNPayrollDeleteDocs.amnPayrollDeleteReceiptsGeneratePayrollArrays(getCtx(), amnperiod, p_AMN_Payroll_ID, 
-	    			ReceiptsGenList, ReceiptConcepts, Msg_Error, get_TrxName());
+        String msgError = "";
+        boolean okReceipts = AMNPayrollDeleteDocs.amnPayrollDeleteReceiptsGeneratePayrollArrays(
+                getCtx(), amnperiod, p_AMN_Payroll_ID, ReceiptsGenList, ReceiptConcepts, msgError, get_TrxName());
 
-	    } else {
-	    	Msg_Value = (Msg.getMsg(getCtx(), "Process")+":"+AMN_Process_Value.trim()+Msg.getMsg(getCtx(),"NotAvailable")+" \n");
-	    }
-	    //
-	    if ( okReceipts ) {
-	    	
-			if( Msg_Error.isEmpty() ) {
-				
-			    IProcessUI processMonitor = Env.getProcessUI(getCtx());
-			    int Percent = 0;
-		    	// END MESSAGE
-				Msg_Value = Msg.getElement(getCtx(), "AMN_Process_ID")+":"+amnprocess.getName().trim();
-			    addLog(Msg_Value);
-			    Msg_Value = Msg.getElement(getCtx(), "AMN_Payroll_ID")+" "+
-			    		Msg.getElement(getCtx(), "Qty")+
-			    		" ("+ReceiptsGenList.size()+") :";
-			    addLog(Msg_Value);		
-			    Msg_Value = Msg.getElement(getCtx(), "AMN_Payroll_Detail_ID")+" "+
-			    		Msg.getElement(getCtx(), "Qty")+
-			    		" ("+ReceiptConcepts.size()+") :";
-			    addLog(Msg_Value);	
-			    // DELETE LINES
-			    NoRecsLines = ReceiptConcepts.size();
-			    if(NoRecsLines > 0) {
-				    AMN_Payroll_ID = ReceiptConcepts.get(0).getAMN_Payroll_ID();
-				    // FOR all Rreceipt Lines
-				    for (int i=0 ; i < ReceiptConcepts.size() ; i++) {
-				    	// Check if same AMN_Payroll_ID
-						if (ReceiptConcepts.get(i).getAMN_Payroll_ID() != AMN_Payroll_ID) {
-							// Change
-							AMN_Payroll_ID = ReceiptConcepts.get(i).getAMN_Payroll_ID();
-						}
-						amnp = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, get_TrxName());
-						emp = new MAMN_Employee(getCtx(), amnp.getAMN_Employee_ID(), get_TrxName());
-					    DocumentNo= amnp.getDocumentNo();
-					    // log.warning("Deleting Lines i="+i+"  AMN_Payroll_ID="+AMN_Payroll_ID+ "  DocumentNo="+DocumentNo);
-					    // Percent to show
-						if(NoRecsLines > 0)
-							Percent = 100 * (i / NoRecsLines);
-						// Percentage Monitor
-						MessagetoShow = AmerpMsg.getElementPrintText(getCtx(), "AMN_Payroll_Detail_ID")+": "+
-								String.format("%-4s",i)+"/"+String.format("%-4s",NoRecsLines)+
-								" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+DocumentNo+" "+
-								AmerpMsg.getElementPrintText(getCtx(), "AMN_Employee_ID")+":"+
-								String.format("%-50s",emp.getValue().trim()+"_"+emp.getName().trim().replace(' ', '_') +"_"+" ");
-						if (processMonitor != null) {
-							processMonitor.statusUpdate(MessagetoShow);
-						}
-						// Verifica NO Contabilizado
-						if (!amnp.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
-							// DELETE Receipt Lines
-							Msg_Value = Msg_Value + AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneLine(getCtx(), amnp, ReceiptConcepts.get(i).getAMN_Payroll_Detail_ID(),  get_TrxName());
-						} else {
-							msg_Value0="*** ADVERTENCIA "+Msg.getMsg(Env.getCtx(),"completed")+" *** \r\n";
-							addLog(msg_Value0);
-							Msg_Value=Msg_Value+msg_Value0;	
-							break;
-						}
-					}
-			    }
-			    Percent = 0;
-			    NoRecs = ReceiptsGenList.size();	
-			    // DELETE PAYROLL DOCS
-			    if (NoRecs > 0) {
-				    for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-				    	// Check if same AMN_Payroll_ID
-						AMN_Payroll_ID = ReceiptsGenList.get(i).getAMN_Payroll_ID();
-						amnp = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, get_TrxName());
-						emp = new MAMN_Employee(getCtx(), amnp.getAMN_Employee_ID(), get_TrxName());
-						if (!amnp.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
-					        // Busca Documentos en AMN_Payroll_Docs
-					        List<MAMN_Payroll_Docs> amnpdocs = MAMN_Payroll_Docs.getByPayrollID(getCtx(), AMN_Payroll_ID, get_TrxName());
-					        if (!amnpdocs.isEmpty()) {
-						        for (MAMN_Payroll_Docs doc : amnpdocs) {
-						            MInvoice invoice = new MInvoice(getCtx(),doc.getC_Invoice_ID(),get_TrxName());
-						            if (invoice != null && !invoice.isPaid()) {
-						            	amnp.deleteInvoiceLines(getCtx(), invoice, DocumentNo);
-						            	doc.delete(true);
-						            	invoice.delete(true);
-						            } else {
-						            	log.warning("Factura procesada o con asignaciones.");
-						            }
-						        }
-					       }
-						}
-			        }
-			    }
-			    // FOR all Rreceipt Headeres
-			    if (NoRecs > 0) {
-				    for (int i=0 ; i < ReceiptsGenList.size() ; i++) {
-				    	// Check if same AMN_Payroll_ID
-						AMN_Payroll_ID = ReceiptsGenList.get(i).getAMN_Payroll_ID();
-						amnp = new MAMN_Payroll(getCtx(), AMN_Payroll_ID, get_TrxName());
-						emp = new MAMN_Employee(getCtx(), amnp.getAMN_Employee_ID(), get_TrxName());
-						// Percent to show
-						if(NoRecs > 0)
-							Percent = 100 * (i / NoRecs);
-						// log.warning("Deleting Headers i="+i+"  AMN_Payroll_ID="+AMN_Payroll_ID+ "  DocumentNo="+ReceiptsGenList.get(i).getDocumentNo());
-						// Percentage Monitor
-						MessagetoShow = AmerpMsg.getElementPrintText(getCtx(), "AMN_Payroll_Detail_ID")+": "+
-								String.format("%-4s",i)+"/"+String.format("%-4s",NoRecs)+
-								" ( "+String.format("%-5s",Percent)+"% )  RecNo:"+
-								ReceiptsGenList.get(i).getDocumentNo()+" "+
-								AmerpMsg.getElementPrintText(getCtx(), "AMN_Employee_ID")+":"+
-								String.format("%-50s",ReceiptsGenList.get(i).getEmployee_Value().trim()+"_"+ReceiptsGenList.get(i).getEmployee_Name().trim().replace(' ', '_') +"_"+" ");
-						if (processMonitor != null) {
-							processMonitor.statusUpdate(MessagetoShow);
-						}
-						// Verifica NO Contabilizado
-						if (!amnp.getDocStatus().equalsIgnoreCase(MAMN_Payroll.STATUS_Completed)) {
-							// DELETE Receipt Header
-							AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneHeader(getCtx(), amnp,  get_TrxName());
-						}
-						log.warning("Updating Final Message"+Msg_Value);
-					}
-			    }
-				Msg_Value = "OK";
-				
-			} else {
-				Msg_Value = Msg_Value + Msg.getMsg(getCtx(), "Errors")+":  \r\n";
-				addLog(Msg_Value);	
-				Msg_Value = "***** "+ AmerpMsg.getElementPrintText(getCtx(), "AMN_Payroll_ID")+" - "+Msg.getMsg(getCtx(), "completed")+"(s) ***** \r\n";
-				addLog(Msg_Value);	
-				Msg_Value = "*** "+Msg.translate(getCtx(), "Warning")+" *** \r\n";  
-				addLog(Msg_Value);	
-				Msg_Value = AmerpMsg.getElementPrintText(getCtx(), "AMN_Payroll_ID")+"(s)"+ NoRecs+ " ";
-				Msg_Value = Msg_Value + AmerpMsg.getElementPrintText(getCtx(), "AMN_Payroll_ID")+"(s) "+ Msg.getMsg(Env.getCtx(),"completed")+":  \r\n";
-				addLog(Msg_Value);	
-				Msg_Value = Msg_Value +Msg_Error;
-				addLog(Msg_Value);	
-				
-			}
+        if (!okReceipts || !msgError.isEmpty()) {
+            addLog("Error cargando estructuras para eliminar: " + msgError);
+            return "Error";
+        }
 
-	    } else {	    	
-	    	Msg_Value = Msg_Value + AmerpMsg.getElementPrintText(getCtx(), "AMN_Payroll_ID")+"(s)"+ NoRecs+ " ";
-	    	addLog(Msg_Value);
-	    }
-	    
-		return Msg_Value;
-    
-	}
+        IProcessUI processMonitor = Env.getProcessUI(getCtx());
 
+        // 1. ELIMINACIÓN DE LÍNEAS (CON SUB-TRANSACTION POR BLOQUE DE SEGURIDAD)
+        int noRecsLines = ReceiptConcepts.size();
+        if (noRecsLines > 0) {
+            for (int i = 0; i < noRecsLines; i++) {
+                AMNReceiptLines line = ReceiptConcepts.get(i);
+                
+                int percent = (100 * (i + 1)) / noRecsLines; // Corrige división entera
+                if (processMonitor != null) {
+                    processMonitor.statusUpdate("Eliminando Líneas: " + (i + 1) + "/" + noRecsLines + " (" + percent + "%)");
+                }
+
+                MAMN_Payroll amnp = new MAMN_Payroll(getCtx(), line.getAMN_Payroll_ID(), get_TrxName());
+                if (MAMN_Payroll.STATUS_Completed.equalsIgnoreCase(amnp.getDocStatus())) {
+                    addLog("*** ADVERTENCIA: Documento completado ID=" + amnp.getAMN_Payroll_ID() + " ***");
+                    break;
+                }
+
+                // Borrar línea en sub-transacción segura
+                String trxLineName = Trx.createTrxName("DelLine_" + line.getAMN_Payroll_Detail_ID());
+                Trx trxLine = Trx.get(trxLineName, true);
+                try {
+                    AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneLine(getCtx(), amnp, line.getAMN_Payroll_Detail_ID(), trxLineName);
+                    trxLine.commit(true);
+                } catch (Exception e) {
+                    trxLine.rollback();
+                    log.log(Level.SEVERE, "Error eliminando línea detail_id=" + line.getAMN_Payroll_Detail_ID(), e);
+                } finally {
+                    trxLine.close();
+                }
+            }
+        }
+
+        // 2. ELIMINACIÓN DE FACTURAS Y CABECERAS
+        int noRecs = ReceiptsGenList.size();
+        if (noRecs > 0) {
+            for (int i = 0; i < noRecs; i++) {
+                AMNReceipts rec = ReceiptsGenList.get(i);
+                int payrollID = rec.getAMN_Payroll_ID();
+
+                int percent = (100 * (i + 1)) / noRecs;
+                if (processMonitor != null) {
+                    processMonitor.statusUpdate("Eliminando Cabeceras: " + (i + 1) + "/" + noRecs + " (" + percent + "%)");
+                }
+
+                String trxHdrName = Trx.createTrxName("DelHdr_" + payrollID);
+                Trx trxHdr = Trx.get(trxHdrName, true);
+
+                try {
+                    MAMN_Payroll amnp = new MAMN_Payroll(getCtx(), payrollID, trxHdrName);
+                    if (!MAMN_Payroll.STATUS_Completed.equalsIgnoreCase(amnp.getDocStatus())) {
+                        
+                        // Eliminar facturas asociadas
+                        List<MAMN_Payroll_Docs> amnpdocs = MAMN_Payroll_Docs.getByPayrollID(getCtx(), payrollID, trxHdrName);
+                        for (MAMN_Payroll_Docs doc : amnpdocs) {
+                            MInvoice invoice = new MInvoice(getCtx(), doc.getC_Invoice_ID(), trxHdrName);
+                            if (invoice.get_ID() > 0 && !invoice.isPaid()) {
+                                amnp.deleteInvoiceLines(getCtx(), invoice, amnp.getDocumentNo());
+                                doc.deleteEx(true, trxHdrName);
+                                invoice.deleteEx(true, trxHdrName);
+                            }
+                        }
+
+                        // Eliminar cabecera de nómina
+                        AMNPayrollDeleteDocs.amnPayrollDeleteInvoicesAllProcessOneHeader(getCtx(), amnp, trxHdrName);
+                    }
+                    trxHdr.commit(true);
+                } catch (Exception e) {
+                    trxHdr.rollback();
+                    log.log(Level.SEVERE, "Error eliminando cabecera de nómina ID: " + payrollID, e);
+                } finally {
+                    trxHdr.close();
+                }
+            }
+        }
+
+        return "OK";
+    }
 }
