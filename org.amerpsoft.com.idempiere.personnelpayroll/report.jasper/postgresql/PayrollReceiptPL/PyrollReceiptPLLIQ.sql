@@ -270,7 +270,6 @@ FROM
 	LEFT JOIN adempiere.c_city as cit ON (cit.c_city_id= loc.c_city_id)
 	WHERE prc.value= 'PL' AND pyr.ad_client_id=  $P{AD_Client_ID}  
 		AND ( CASE WHEN ( $P{AD_Org_ID} IS NULL OR $P{AD_Org_ID} = 0 OR pyr.ad_org_id = $P{AD_Org_ID} ) THEN 1=1 ELSE 1=0 END ) 
-	    AND ( CASE WHEN ( $P{AMN_Payroll_ID} IS NULL OR pyr.amn_payroll_id= $P{AMN_Payroll_ID} ) THEN 1=1 ELSE 1=0 END )
 	    AND ( CASE WHEN ( $P{Record_ID} IS NULL OR pyr.amn_payroll_id= $P{Record_ID} ) THEN 1=1 ELSE 1=0 END )
 	    AND ( CASE WHEN ( $P{AMN_Location_ID} IS NULL OR lct.amn_location_id= $P{AMN_Location_ID} ) THEN 1=1 ELSE 1=0 END )
 	    AND ( CASE WHEN ( $P{AMN_Department_ID} IS NULL OR dep.amn_department_id= $P{AMN_Department_ID} ) THEN 1=1 ELSE 1=0 END )
