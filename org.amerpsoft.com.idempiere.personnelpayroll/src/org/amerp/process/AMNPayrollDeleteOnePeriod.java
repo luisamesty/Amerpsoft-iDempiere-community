@@ -21,6 +21,7 @@ public class AMNPayrollDeleteOnePeriod extends SvrProcess {
 
     private static CLogger log = CLogger.getCLogger(AMNPayrollDeleteOnePeriod.class);
     private int p_AMN_Process_ID = 0;
+    private int p_AMN_Contract_ID = 0;
     private int p_AMN_Period_ID = 0;
     private int p_AMN_Payroll_ID = 0;
 
@@ -37,8 +38,8 @@ public class AMNPayrollDeleteOnePeriod extends SvrProcess {
             if (paraName.equals("AMN_Process_ID"))
                 p_AMN_Process_ID = para.getParameterAsInt();
             else if (paraName.equals("AMN_Contract_ID"))
-				para.getParameterAsInt();
-			else if (paraName.equals("AMN_Period_ID"))
+                p_AMN_Contract_ID = para.getParameterAsInt();
+            else if (paraName.equals("AMN_Period_ID"))
                 p_AMN_Period_ID = para.getParameterAsInt();
             else
                 log.log(Level.SEVERE, "Unknown Parameter: " + paraName);
