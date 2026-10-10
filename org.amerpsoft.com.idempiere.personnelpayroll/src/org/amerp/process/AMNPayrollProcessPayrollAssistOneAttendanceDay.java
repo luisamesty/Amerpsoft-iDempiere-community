@@ -110,6 +110,8 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 		//
         String messagetoNotify= "";
 	    Properties ctx = getCtx();
+    	String trxName = get_TrxName();
+    	
         //
 		IProcessUI processMonitor = Env.getProcessUI(Env.getCtx());
 		sql = "SELECT DISTINCT "+
@@ -153,7 +155,7 @@ public class AMNPayrollProcessPayrollAssistOneAttendanceDay extends SvrProcess {
 //		    			ctx, p_AD_Client_ID, p_AD_Org_ID, p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);	    	
 		    	AMNPayrollProcessPayrollAssistProcess pppa = new AMNPayrollProcessPayrollAssistProcess();		    	
 		    	Msg_Value = Msg_Value + pppa.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-		    			ctx, p_AD_Client_ID, p_AD_Org_ID, p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
+		    			ctx, p_AD_Client_ID, p_AD_Org_ID, p_AMN_Contract_ID, p_AMNDateAssist, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled, trxName);
 		    	if (!p_IsScheduled)
 		    		addLog(Msg_Value);
 		    	messagetoNotify = messagetoNotify+ Msg_Value +" \r\n";

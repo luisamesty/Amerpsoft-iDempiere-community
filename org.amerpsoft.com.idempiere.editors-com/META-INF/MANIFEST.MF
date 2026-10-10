@@ -30,9 +30,15 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/ModelFactory.xml,
  OSGI-INF/EditorFactory.xml,
  OSGI-INF/DisplayTypeFactory.xml,
- OSGI-INF/EventFactory.xml
+ OSGI-INF/EventFactory.xml,
+ OSGI-INF/RestSerializerFactory.xml,
+ OSGI-INF/RestSaveHandler.xml
 Export-Package: org.amerp.amxeditor.model
-Import-Package: net.sf.jasperreports.engine,
+Import-Package: com.google.gson;resolution:=optional,
+ com.google.gson.reflect;version="[2.9.0,3.0.0)",
+ com.google.gson.stream;version="[2.9.0,3.0.0)",
+ com.trekglobal.idempiere.rest.api.json;resolution:=optional,
+ net.sf.jasperreports.engine,
  org.compiere.model,
  org.osgi.framework;version="[1.10.0,2.0.0)",
  org.osgi.service.event,
