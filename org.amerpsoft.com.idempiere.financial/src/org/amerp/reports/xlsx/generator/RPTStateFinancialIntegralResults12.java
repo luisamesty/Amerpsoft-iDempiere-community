@@ -389,17 +389,17 @@ public class RPTStateFinancialIntegralResults12 extends AbstractXlsxGenerator {
         String accountType = "";
         String tipoRegistro = "";
         
-        for (TrialBalanceLine12 e : reportData) {
+    	for (TrialBalanceLine12 e : reportData) {
             accountType = e.getAccountType();
             tipoRegistro = e.getTipoRegistro();
             
-            // Clasificar en listas para la impresión
+            // 1. Clasificar en listas para la impresión (Muestra todas las cuentas en el Excel)
             if (X_C_ElementValue.ACCOUNTTYPE_Revenue.equals(accountType)) revenuesTbl.add(e);
             else if (X_C_ElementValue.ACCOUNTTYPE_Expense.equals(accountType)) expensesTbl.add(e);
             else if (X_C_ElementValue.ACCOUNTTYPE_Memo.equals(accountType)) memosTbl.add(e);
 
-            // Solo acumulamos para totales si el registro es consolidado (tipo "10" o "50" según tu SQL)
-            if ("10".equals(tipoRegistro) || "50".equals(tipoRegistro)) {
+            // 2. Acumular SOLO para cuentas de movimiento (tipo_registro '60' o issummary 'N')
+            if ("60".equals(tipoRegistro)) { // También puedes usar: if (!"Y".equals(e.getIsSummary()))
                 BigDecimal[] targetSa = null;
                 BigDecimal[] targetBal = null;
 
@@ -412,7 +412,7 @@ public class RPTStateFinancialIntegralResults12 extends AbstractXlsxGenerator {
                 }
 
                 if (targetSa != null) {
-                    // Acumular los 12 periodos
+                    // Acumular los 12 periodos + anual
                     targetSa[0] = targetSa[0].add(e.getSa_p01()); targetBal[0] = targetBal[0].add(e.getBal_p01());
                     targetSa[1] = targetSa[1].add(e.getSa_p02()); targetBal[1] = targetBal[1].add(e.getBal_p02());
                     targetSa[2] = targetSa[2].add(e.getSa_p03()); targetBal[2] = targetBal[2].add(e.getBal_p03());

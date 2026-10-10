@@ -227,10 +227,10 @@ public class AMNPayrollCreateDocs {
 		PayrollScriptEngine pyScriptEngine = new PayrollScriptEngine();
 		IProcessUI processMonitor = Env.getProcessUI(Env.getCtx());
 		// Employee
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, trxName);
 		EmpName = amnemployee.getValue()+"-"+amnemployee.getName();
 		// Determines Process Value to see if NN
-		MAMN_Process amnprocess = new MAMN_Process(ctx, p_AMN_Process_ID, null);
+		MAMN_Process amnprocess = new MAMN_Process(ctx, p_AMN_Process_ID, trxName);
 		AMN_Process_Value = amnprocess.getAMN_Process_Value();
 		MAMN_Payroll amnpayroll = null;
 		// Verify if p_AMN_Payroll_ID is not in parameter
@@ -239,7 +239,7 @@ public class AMNPayrollCreateDocs {
 			p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID, trxName);
 			p_AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
 		} else {
-			amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, null);
+			amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
 		}
 		Msg_Value=Msg_Value+(Msg.getElement(ctx, "AMN_Payroll_ID")+":"+p_AMN_Employee_ID+" \r\n").trim();
 		//log.warning(" BEGIN CalculateOnePayrollDocument...p_AMN_Payroll_ID="+p_AMN_Payroll_ID+"\r\n"+Msg_Value);
@@ -305,10 +305,9 @@ public class AMNPayrollCreateDocs {
 	 * @param int p_AMN_Payroll_ID
 	 * return String Msg_Value
 	 */
-	public static String CreatePayrollOneDocDetailDeferredLines 
-		(Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID,
-			 int p_AMN_Payroll_ID, String trxName) {
-		
+	public static String CreatePayrollOneDocDetailDeferredLines (Properties ctx, int p_AMN_Process_ID, int p_AMN_Contract_ID,
+		 int p_AMN_Payroll_ID, String trxName) {
+	
 	    int AMN_Concept_Types_Proc_ID = 0;
 	    int AMN_Period_ID = 0;
 	    int AMN_Employee_ID = 0;
@@ -316,17 +315,13 @@ public class AMNPayrollCreateDocs {
 	    BigDecimal AmountCalculated = Env.ZERO;
 	    String Msg_Value = "Proceso completado con éxito";
 	
-	    MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, trxName);
-	    
 	    // Obtener información de la nómina y del período actual
 	    MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx, p_AMN_Payroll_ID, trxName);
 	    AMN_Period_ID = amnpayroll.getAMN_Period_ID();
 	    MAMN_Period amnperiod = new MAMN_Period(ctx, AMN_Period_ID, trxName);
 	    AMN_Employee_ID = amnpayroll.getAMN_Employee_ID();
-	    MAMN_Employee amnemployee = new MAMN_Employee(ctx, AMN_Employee_ID, trxName);
 	    
 	    // Consulta limpia sobre AMN_Payroll_Deferred
-	    // Se valida NOT EXISTS para que no se inserte dos veces en el mismo recibo actual
 	    String sql = "SELECT " +
 	            "def.amn_concept_types_proc_id, " + // 1
 	            "def.amountcalculated, " +           // 2
@@ -369,6 +364,9 @@ public class AMNPayrollCreateDocs {
 	                     dueDate.compareTo(amnperiod.getAMNDateEnd()) <= 0);
 	
 	            if (matchesPeriod) {
+	                // Instanciar fresco dentro del bucle para cada línea diferida
+	                MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, trxName);
+	                
 	                amnpayrolldetail.createAmnPayrollDetailDeferred(
 	                        ctx, Env.getLanguage(ctx).getLocale(),
 	                        amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),
@@ -376,14 +374,14 @@ public class AMNPayrollCreateDocs {
 	                        AMN_Concept_Types_Proc_ID, AmountCalculated, AMN_Payroll_Deferred_ID, trxName);
 	            }
 	        }
-	    } catch (SQLException e) {
-	        log.log(Level.SEVERE, "Error procesando cuotas diferidas en AMN_Payroll_ID=" + p_AMN_Payroll_ID, e);
-	        Msg_Value = "Error en el proceso: " + e.getMessage();
-	    } finally {
-	        DB.close(rsod1, pstmt1);
-	    }
-	    
-	    return Msg_Value;
+	} catch (SQLException e) {
+	    log.log(Level.SEVERE, "Error procesando cuotas diferidas en AMN_Payroll_ID=" + p_AMN_Payroll_ID, e);
+	    Msg_Value = "Error en el proceso: " + e.getMessage();
+	} finally {
+	    DB.close(rsod1, pstmt1);
+	}
+	
+	return Msg_Value;
 	}
 
 
@@ -572,7 +570,7 @@ public class AMNPayrollCreateDocs {
 		// ----------------
 		try
 		{
-			pstmt1 = DB.prepareStatement(sql, null);
+			pstmt1 = DB.prepareStatement(sql, trxName);
 	        pstmt1.setInt (1, p_AMN_Process_ID);
 	        pstmt1.setInt (2, p_AMN_Contract_ID);
 	        rsod1 = pstmt1.executeQuery();
@@ -626,17 +624,14 @@ public class AMNPayrollCreateDocs {
 				// ADD to ReceiptConcepts Array
 				ReceiptConcepts.add(ReceiptLines);
 			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, "Error en CreatePayrollOneDocDetailLines consulta SQL", e);
+		} finally {
+	        // Cierre seguro de recursos (Statement y ResultSet)
+	        DB.close(rsod1, pstmt1);
+	        rsod1 = null; 
+	        pstmt1 = null;
 		}
-	    catch (SQLException e)
-	    {
-	    }
-		finally
-		{
-			DB.close(rsod1, pstmt1);
-			rsod1 = null; 
-			pstmt1 = null;
-		}
-		DB.close(rsod1, pstmt1);
 	
 		// ----------------
 		// COPY ARRAY TO DB
@@ -658,7 +653,7 @@ public class AMNPayrollCreateDocs {
 					        amnpayrolldetail.getAMN_Payroll_Detail_ID(), 
 					        keepExistingConcepts);
 			} else {
-				amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, null);
+				amnpayrolldetail = new MAMN_Payroll_Detail(ctx, 0, trxName);
 			    amnpayrolldetail.createAmnPayrollDetail(ctx, Env.getLanguage(Env.getCtx()).getLocale(),
 						amnpayroll.getAD_Client_ID(), amnpayroll.getAD_Org_ID(),  ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(),
 						p_AMN_Payroll_ID, ReceiptConcepts.get(j).getAMN_Concept_Types_Proc_ID(), 
@@ -666,11 +661,7 @@ public class AMNPayrollCreateDocs {
 						ReceiptConcepts.get(j).getConceptName(), ReceiptConcepts.get(j).getConceptName(), 
 						ReceiptConcepts.get(j).getAMN_Concept_Uom_ID(),ReceiptConcepts.get(j).getQtyValue(), 
 						trxName);
-			}
-			// RECEIPT LINES FOR LOANS PAYMENTS
-			// VERIFY AMN_Payroll_Deferred and Create MAMN_Payroll_Detail (DEFERRED DOCUMENT LINES)
-			// CreatePayrollOneDocDetailDeferredLines(ctx, ReceiptConcepts.get(j).getAMN_Process_ID(), ReceiptConcepts.get(j).getAMN_Contract_ID(), amnpayroll.getAMN_Payroll_ID(), trxName);
-			// LOANS 		
+			}	
 		}	
 		
 		return Msg_Value;
