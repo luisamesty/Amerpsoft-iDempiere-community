@@ -37,7 +37,8 @@ Import-Package: net.sf.jasperreports.engine,
  org.osgi.framework;version="[1.10.0,2.0.0)",
  org.osgi.service.event,
  org.zkoss.bind,
- org.zkoss.zul.impl
+ org.zkoss.zul.impl,
+ com.trekglobal.idempiere.rest.api.json
 Bundle-Vendor: Amerpsoft
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

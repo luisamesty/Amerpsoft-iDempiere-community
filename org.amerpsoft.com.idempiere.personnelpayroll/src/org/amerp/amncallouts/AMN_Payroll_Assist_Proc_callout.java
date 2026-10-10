@@ -54,6 +54,8 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
     	// Column Name
     	boolean updateTabs = false;
     	String columnName = p_mField.getColumnName();
+    	String trxName = Env.getContext(p_ctx, WindowNo, "WindowTrxName");
+    	
 		// AMN_Payroll_Assist_Proc_ID
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Payroll_Assist_Proc_ID) != null ) {
     		AMN_Payroll_Assist_Proc_ID = (Integer) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Payroll_Assist_Proc_ID);
@@ -88,14 +90,14 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
     	    // Get Employee AMN_Shift_ID by default
     	    empAMN_Shift_ID = amnemployee.getAMN_Shift_ID();
     	    // MAMN_Shift_Detail
-		    amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), empAMN_Shift_ID, Event_Date);
+		    amnshiftdetail = MAMN_Shift_Detail.findShiftDetailByEventDate(Env.getCtx(), empAMN_Shift_ID, Event_Date);
 		    isDescanso= amnshiftdetail.isDescanso();	
     	}
     	// Attendance AMN_Shift_ID set 
     	if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID) != null)	{
     		attAMN_Shift_ID = (Integer) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID);
     	    // MAMN_Shift_Detail
-		    amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), attAMN_Shift_ID, Event_Date);
+		    amnshiftdetail = MAMN_Shift_Detail.findShiftDetailByEventDate(Env.getCtx(), attAMN_Shift_ID, Event_Date);
 		    isDescanso= amnshiftdetail.isDescanso();	
     	}
     	
@@ -132,7 +134,7 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
     		if (p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID) != null) {
     			attAMN_Shift_ID = (Integer) p_mTab.getValue(MAMN_Payroll_Assist_Proc.COLUMNNAME_AMN_Shift_ID);
     			// MAMN_Shift_Detail
-    		    amnshiftdetail = MAMN_Shift_Detail.findByEventDate(Env.getCtx(), attAMN_Shift_ID, Event_Date);
+    		    amnshiftdetail = MAMN_Shift_Detail.findShiftDetailByEventDate(Env.getCtx(), attAMN_Shift_ID, Event_Date);
         	}
     	}
     	
@@ -149,7 +151,8 @@ public class AMN_Payroll_Assist_Proc_callout implements IColumnCallout{
 	    		&& AMN_Payroll_Assist_Proc_ID >0 )	{
 				atthours= AMNPayrollProcessPayrollAssistUtil.calcAttendanceValuesofPayrollVars(
 						Env.getCtx(), amnemployee.getAD_Client_ID(), amnemployee.getAD_Org_ID(), C_Country_ID, Event_Date, attAMN_Shift_ID, 
-						Shift_In1, Shift_Out1, Shift_In2, Shift_Out2);
+						Shift_In1, Shift_Out1, Shift_In2, Shift_Out2,
+						trxName);
 	    		updateTabs = true;
 	    	}		
     	}

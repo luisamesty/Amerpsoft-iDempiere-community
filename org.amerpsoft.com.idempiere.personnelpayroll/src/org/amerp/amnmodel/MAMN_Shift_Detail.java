@@ -48,7 +48,7 @@ public class MAMN_Shift_Detail extends X_AMN_Shift_Detail {
 	 * @param p_AMN_Employee_ID		Employee
 	 * @return MAMN_Shift_Detail
 	 */
-	public static MAMN_Shift_Detail findByEventDate(Properties ctx,
+	public static MAMN_Shift_Detail findShiftDetailByEventDate(Properties ctx,
 				 int p_AMN_Shift_ID, Timestamp p_Event_Date) {
 				
 		MAMN_Shift_Detail retValue = null;
@@ -88,4 +88,50 @@ public class MAMN_Shift_Detail extends X_AMN_Shift_Detail {
 		return retValue;
 	}
 
+	/**
+	 * findDefaultShiftDetailByEventDate 
+	 * Default MAMN_Shift_Detail findByEventDate
+	 * @param ctx
+	 * @param p_Event_Date
+	 * @return
+	 */
+	public static MAMN_Shift_Detail findDefaultShiftDetailByEventDate(Properties ctx, Timestamp p_Event_Date) {
+			
+		MAMN_Shift_Detail retValue = null;
+		String Event_Dow = MAMN_Payroll_Assist.getPayrollAssist_DayofWeek(p_Event_Date);
+		String sql = "SELECT * "
+				+ "FROM amn_shift s "
+				+ "INNER JOIN amn_shift_detail sd ON sd.amn_shift_id = s.amn_shift_id "
+				+ "WHERE  s.IsDefault='Y' " 
+				+ " AND sd.dayofweek=? "
+				+ "ORDER BY s.value ASC "; 
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try
+		{
+			pstmt = DB.prepareStatement(sql, null);
+	       pstmt.setString (1, Event_Dow);
+			rs = pstmt.executeQuery();
+			while (rs.next())
+			{
+				MAMN_Shift_Detail amnshiftdetail = new MAMN_Shift_Detail(ctx, rs, null);
+				Integer key = new Integer(amnshiftdetail.getAMN_Shift_Detail_ID());
+				s_cache.put (key, amnshiftdetail);
+				if (amnshiftdetail.isActive())
+					retValue = amnshiftdetail;
+				break;
+			}
+		}
+	   catch (SQLException e)
+	   {
+	   	retValue = null;
+	   }
+		finally
+		{
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+		return retValue;
+	}
 }
