@@ -110,6 +110,19 @@ public interface I_AMN_Payroll_Detail
 	/** Get Payroll Invoices Detail	  */
 	public int getAMN_Payroll_Detail_ID();
 
+    /** Column name AMN_Payroll_Detail_Parent_ID */
+    public static final String COLUMNNAME_AMN_Payroll_Detail_Parent_ID = "AMN_Payroll_Detail_Parent_ID";
+
+	/** Set AMN_Payroll_Detail_Parent_ID.
+	  * Link to Payroll Detail Transaction for Balances on LOAN type Concepts
+	  */
+	public void setAMN_Payroll_Detail_Parent_ID (int AMN_Payroll_Detail_Parent_ID);
+
+	/** Get AMN_Payroll_Detail_Parent_ID.
+	  * Link to Payroll Detail Transaction for Balances on LOAN type Concepts
+	  */
+	public int getAMN_Payroll_Detail_Parent_ID();
+
     /** Column name AMN_Payroll_Detail_UU */
     public static final String COLUMNNAME_AMN_Payroll_Detail_UU = "AMN_Payroll_Detail_UU";
 
@@ -191,15 +204,6 @@ public interface I_AMN_Payroll_Detail
 	  */
 	public BigDecimal getAmountQuota();
 
-    /** Column name CalcOrder */
-    public static final String COLUMNNAME_CalcOrder = "CalcOrder";
-
-	/** Set CalcOrder	  */
-	public void setCalcOrder (int CalcOrder);
-
-	/** Get CalcOrder	  */
-	public int getCalcOrder();
-
     /** Column name C_Invoice_ID */
     public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
 
@@ -229,6 +233,15 @@ public interface I_AMN_Payroll_Detail
 	public int getC_Payment_ID();
 
 	public org.compiere.model.I_C_Payment getC_Payment() throws RuntimeException;
+
+    /** Column name CalcOrder */
+    public static final String COLUMNNAME_CalcOrder = "CalcOrder";
+
+	/** Set CalcOrder	  */
+	public void setCalcOrder (int CalcOrder);
+
+	/** Get CalcOrder	  */
+	public int getCalcOrder();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";

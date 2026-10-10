@@ -354,9 +354,9 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
         IProcessUI processMonitor = Env.getProcessUI(ctx);
         if (processMonitor != null) {
             processMonitor.statusUpdate(String.format("%-15s", "Receipt Lines").replace(' ', '_') +
-                    Msg.getElement(Env.getCtx(), "AMN_Employee_ID") + ": " +
+                    Msg.getElement(ctx, "AMN_Employee_ID") + ": " +
                     String.format("%-50s", amnemployee.getValue() + "_" + amnemployee.getName().trim()).replace(' ', '_') +
-                    Msg.getElement(Env.getCtx(), "AMN_Concept_Types_ID") + ": " +
+                    Msg.getElement(ctx, "AMN_Concept_Types_ID") + ": " +
                     String.format("%-50s", amnpayrolldetail.getValue() + "-" + amnpayrolldetail.getName()).replace(' ', '_'));
         }
 
@@ -509,11 +509,11 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		}
 		if (processMonitor != null)
 		{
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
+			//processMonitor.statusUpdate(Msg.getMsg(ctx, "Payroll")+": "+amnemployee.getName());
 			processMonitor.statusUpdate(String.format("%-15s","Receipt Lines").replace(' ', '_')+
-					Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
+					Msg.getElement(ctx, "AMN_Employee_ID")+": "+
 					String.format("%-50s",amnemployee.getValue()+"_"+amnemployee.getName().trim()).replace(' ', '_')+
-					Msg.getElement(Env.getCtx(), "AMN_Concept_Types_ID")+": "+
+					Msg.getElement(ctx, "AMN_Concept_Types_ID")+": "+
 					String.format("%-50s",amnpayrolldetail.getValue()+"-"+amnpayrolldetail.getName()).replace(' ', '_'));
 		}
 		//amnpayroll.saveEx(get_TrxName());	//	Creates AMNPayroll Control
@@ -591,11 +591,11 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		}
 		if (processMonitor != null)
 		{
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
+			//processMonitor.statusUpdate(Msg.getMsg(ctx, "Payroll")+": "+amnemployee.getName());
 			processMonitor.statusUpdate(String.format("%-15s","Receipt Lines").replace(' ', '_')+
-					Msg.getElement(Env.getCtx(), "AMN_Employee_ID")+": "+
+					Msg.getElement(ctx, "AMN_Employee_ID")+": "+
 					String.format("%-50s",amnemployee.getValue()+"_"+amnemployee.getName().trim()).replace(' ', '_')+
-					Msg.getElement(Env.getCtx(), "AMN_Concept_Types_ID")+": "+
+					Msg.getElement(ctx, "AMN_Concept_Types_ID")+": "+
 					String.format("%-50s",amnpayrolldetail.getValue()+"-"+amnpayrolldetail.getName()).replace(' ', '_'));
 		}
 		//amnpayroll.saveEx(get_TrxName());	//	Creates AMNPayroll Control
@@ -677,10 +677,10 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			//log.warning("ANTES DE EVALUAR Concept_DefaultValueST:"+Concept_DefaultValueST+"  Concept_DefaultValue:"+Concept_DefaultValue);
 			// ***
 			//log.warning("DESPUES DE EVALUAR Concept_DefaultValueST:"+Concept_DefaultValueST+"  Concept_DefaultValue:"+Concept_DefaultValue);
-			amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), 0, get_TrxName());
+			amnpayrolldetail = new MAMN_Payroll_Detail(getCtx(), 0, trxName);
+			amnpayrolldetail.setAMN_Payroll_ID(p_AMN_Payroll_ID);
 			amnpayrolldetail.setAD_Client_ID(p_AD_Client_ID);
 			amnpayrolldetail.setAD_Org_ID(p_AD_Org_ID);
-			amnpayrolldetail.setAMN_Payroll_ID(p_AMN_Payroll_ID);
 			amnpayrolldetail.setAMN_Concept_Types_Proc_ID(p_AMN_Concept_Types_Proc_ID);
 			amnpayrolldetail.setValue(Concept_Value);
 			amnpayrolldetail.setCalcOrder(Concept_CalcOrder);
@@ -691,10 +691,11 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
 			// p_mTab.setValue("Script",Concept_Script );			
 			// SAVES NEW
-			amnpayrolldetail.save(get_TrxName());
+			amnpayrolldetail.save(trxName);
 
 		} else {
 			//log.warning("................Values in MAMN_Payroll (UPDATE)...................");
+			amnpayrolldetail.setAMN_Payroll_ID(p_AMN_Payroll_ID);
 			amnpayrolldetail.setValue(Concept_Value);
 			amnpayrolldetail.setCalcOrder(Concept_CalcOrder);
 			amnpayrolldetail.setName(Concept_Name);
@@ -702,12 +703,12 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 			amnpayrolldetail.setQtyValue(p_AmountCalculated);
 			amnpayrolldetail.setAMN_Payroll_Deferred_ID(AMN_Payroll_Deferred_ID);
 			amnpayrolldetail.setAMN_Concept_Uom_ID(AMN_Concept_Uom_ID);
-			amnpayrolldetail.save(get_TrxName());
+			amnpayrolldetail.save(trxName);
 		}
 		if (processMonitor != null)
 		{
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
-			processMonitor.statusUpdate(Msg.getElement(Env.getCtx(), "AMN_Payroll_Detail_ID")+": "+
+			//processMonitor.statusUpdate(Msg.getMsg(ctx, "Payroll")+": "+amnemployee.getName());
+			processMonitor.statusUpdate(Msg.getElement(ctx, "AMN_Payroll_Detail_ID")+": "+
 					amnpayrolldetail.getValue()+"-"+amnpayrolldetail.getName());
 		}
 
@@ -740,7 +741,7 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		int AMN_Concept_Uom_ID = 0;
 		// GET Employee_ID
 		// Deprecated - int Employee_ID = MAMN_Payroll.sqlGetAMNEmployeeID(p_AMN_Payroll_ID);
-		MAMN_Payroll amnpayroll = new MAMN_Payroll(Env.getCtx(),p_AMN_Payroll_ID, null);
+		MAMN_Payroll amnpayroll = new MAMN_Payroll(ctx,p_AMN_Payroll_ID, null);
 		int Employee_ID = amnpayroll.getAMN_Employee_ID();
 		// GET Payrolldays from AMN_Payroll
 		// deprecated BigDecimal Payrolldays = MAMN_Payroll.sqlGetAMNPayrollDays(p_AMN_Payroll_ID);    
@@ -808,8 +809,8 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		}
 		if (processMonitor != null)
 		{
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
-			processMonitor.statusUpdate(Msg.getElement(Env.getCtx(), "AMN_Payroll_Detail_ID")+": "+
+			//processMonitor.statusUpdate(Msg.getMsg(ctx, "Payroll")+": "+amnemployee.getName());
+			processMonitor.statusUpdate(Msg.getElement(ctx, "AMN_Payroll_Detail_ID")+": "+
 					amnpayrolldetail.getValue()+"-"+amnpayrolldetail.getName());
 		}
 		//amnpayroll.saveEx(get_TrxName());	//	Creates AMNPayroll Control
@@ -851,8 +852,8 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 		}
 		if (processMonitor != null)
 		{
-			//processMonitor.statusUpdate(Msg.getMsg(Env.getCtx(), "Payroll")+": "+amnemployee.getName());
-			processMonitor.statusUpdate(Msg.getElement(Env.getCtx(), "p_AMN_Concept_Types_Proc_ID")+": "+
+			//processMonitor.statusUpdate(Msg.getMsg(ctx, "Payroll")+": "+amnemployee.getName());
+			processMonitor.statusUpdate(Msg.getElement(ctx, "p_AMN_Concept_Types_Proc_ID")+": "+
 					amnpayrolldetail.getValue()+"-"+amnpayrolldetail.getDescription());
 		}
 		//amnpayroll.saveEx(get_TrxName());	//	Creates AMNPayroll Control
@@ -1112,66 +1113,12 @@ public class MAMN_Payroll_Detail extends X_AMN_Payroll_Detail {
 
 	@Override
 	protected boolean beforeDelete() {
-		// TODO Auto-generated method stub
-//log.warning("Before Delete (AMN_Payroll_Detail) AMN_Payroll_ID:"+this.getAMN_Payroll_ID()+"AMN_Payroll_Detail_ID:"+this.getAMN_Payroll_Detail_ID());
-//log.warning("Value:"+this.getValue()+"  Name:"+this.getName());
-//log.warning("QtyValue:"+this.getQtyValue()+"  AmountCalculated:"+this.getAmountCalculated());
-
 		return super.beforeDelete();
 	}
 
 	@Override
 	protected boolean afterDelete(boolean success) {
-		// TODO Auto-generated method stub
-		
-//log.warning("After Delete (AMN_Payroll_Detail) AMN_Payroll_ID:"+this.getAMN_Payroll_ID()+"AMN_Payroll_Detail_ID:"+this.getAMN_Payroll_Detail_ID());
-//log.warning("Value:"+this.getValue()+"  Name:"+this.getName());
-//log.warning("QtyValue:"+this.getQtyValue()+"  AmountCalculated:"+this.getAmountCalculated());
-
-//		try {
-//			AmerpPayrollCalc.PayrollEvaluationArrayCalculate(getCtx(), this.getAMN_Payroll_ID());
-//		}
-//		catch (ScriptException ex) {
-//			// TODO Auto-generated catch block
-//			ex.printStackTrace();
-//		}
 		return super.afterDelete(success);
 	}
 	
-	
-//	/*
-//	 * Additinal Filed Variables
-//	 */
-//	static MAccount AMNPayrollDetailCombination;
-//	
-//	static int AMNPayrollDetailElementValue;
-//
-//	/**
-//	 * @return the aMNPayrollDetailCombination
-//	 */
-//	public static MAccount getAMNPayrollDetailCombination() {
-//		return AMNPayrollDetailCombination;
-//	}
-//
-//	/**
-//	 * @param p_aMNPayrollDetailCombination the aMNPayrollDetailCombination to set
-//	 */
-//	public static void setAMNPayrollDetailCombination(MAccount p_aMNPayrollDetailCombination) {
-//		AMNPayrollDetailCombination = p_aMNPayrollDetailCombination;
-//	}
-//
-//	/**
-//	 * @return the aMNPayrollDetailElementValue
-//	 */
-//	public static int getAMNPayrollDetailElementValue() {
-//		return AMNPayrollDetailElementValue;
-//	}
-//
-//	/**
-//	 * @param p_aMNPayrollDetailElementValue the aMNPayrollDetailElementValue to set
-//	 */
-//	public static void setAMNPayrollDetailElementValue(int p_aMNPayrollDetailElementValue) {
-//		AMNPayrollDetailElementValue = p_aMNPayrollDetailElementValue;
-//	}
-//	
 }

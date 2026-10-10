@@ -115,6 +115,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
     @Override
     protected String doIt() throws Exception {
 
+    	String trxName = get_TrxName();
 	    boolean okProcess = false;
 	    String Msg_Header = "";
 	    MAMN_Process amnprocess = new MAMN_Process(getCtx(), p_AMN_Process_ID, null); 
@@ -133,7 +134,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	    if (p_AMN_Payroll_ID == 0) {
 		    // Verify if any AMN_Payroll_ID is created
 			amnpayroll = MAMN_Payroll.findByAMNPayroll(getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-					p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
+					p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID, trxName);
 			if (amnpayroll != null ) 
 				p_AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
 	    } else {
@@ -333,7 +334,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	    // Verify if Amount Allocated Total is > 0
 		MAMN_Payroll amnpayroll = null;
 		amnpayroll = MAMN_Payroll.findByAMNPayroll(ctx, Env.getLanguage(Env.getCtx()).getLocale(), 
-				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
+				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID, trxName);
 		if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
 		    // SOCIAL BENEFIT HISTORIC UPDATED Current Period and Two Previouss Periods
 		    // Current Period
@@ -439,7 +440,7 @@ public class AMNPayrollCreateOneDoc extends SvrProcess{
 	    // Verify if Amount Allocated Total is > 0
 		MAMN_Payroll amnpayroll = null;
 		amnpayroll = MAMN_Payroll.findByAMNPayroll(ctx, Env.getLanguage(getCtx()).getLocale(), 
-				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
+				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID, trxName);
 		if (amnpayroll.getAmountAllocated().compareTo(BigDecimal.valueOf(0)) > 0 ) {
 		    // UTILITIES HISTORIC UPDATED
 		    Msg_Value3= Msg_Value3+ amnpayrollhistoric.resetUtilitiesUpdatedValue(ctx,  null, p_AMN_Employee_ID, amnperiod.getAMNDateIni(), amnperiod.getAMNDateEnd(), C_Currency_ID, trxNameLocal);

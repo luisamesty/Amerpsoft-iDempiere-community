@@ -84,7 +84,9 @@ public class AmerpPayrollCalcUtilDVFormulas {
 		String Process_Value = "NN";
 		MAMN_Process amnprocess = new MAMN_Process(p_ctx,p_AMN_Process_ID, null);
 		Process_Value= amnprocess.getAMN_Process_Value();
-		
+		if (Process_Value == null) {
+		    Process_Value = "";
+		}
 		// BEGIN OF LIST
 		// YTD Year to Date (Date Before Recipt Date)
 		listDV_Variables.add("DV_SALARYYTD"); 		// 'salary_base' 

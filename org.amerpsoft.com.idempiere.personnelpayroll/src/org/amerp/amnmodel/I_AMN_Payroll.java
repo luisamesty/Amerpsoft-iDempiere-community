@@ -290,21 +290,6 @@ public interface I_AMN_Payroll
 
 	public org.compiere.model.I_C_Currency getC_Currency_To() throws RuntimeException;
 
-    /** Column name C_DocType_ID */
-    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
-
-	/** Set Document Type.
-	  * Document type or rules
-	  */
-	public void setC_DocType_ID (int C_DocType_ID);
-
-	/** Get Document Type.
-	  * Document type or rules
-	  */
-	public int getC_DocType_ID();
-
-	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
-
     /** Column name C_DocTypeTarget_ID */
     public static final String COLUMNNAME_C_DocTypeTarget_ID = "C_DocTypeTarget_ID";
 
@@ -319,6 +304,21 @@ public interface I_AMN_Payroll
 	public int getC_DocTypeTarget_ID();
 
 	public org.compiere.model.I_C_DocType getC_DocTypeTarget() throws RuntimeException;
+
+    /** Column name C_DocType_ID */
+    public static final String COLUMNNAME_C_DocType_ID = "C_DocType_ID";
+
+	/** Set Document Type.
+	  * Document type or rules
+	  */
+	public void setC_DocType_ID (int C_DocType_ID);
+
+	/** Get Document Type.
+	  * Document type or rules
+	  */
+	public int getC_DocType_ID();
+
+	public org.compiere.model.I_C_DocType getC_DocType() throws RuntimeException;
 
     /** Column name C_Invoice_ID */
     public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
@@ -365,6 +365,21 @@ public interface I_AMN_Payroll
 
 	public org.compiere.model.I_C_Project getC_Project() throws RuntimeException;
 
+    /** Column name C_SalesRegion_ID */
+    public static final String COLUMNNAME_C_SalesRegion_ID = "C_SalesRegion_ID";
+
+	/** Set Sales Region.
+	  * Sales coverage region
+	  */
+	public void setC_SalesRegion_ID (int C_SalesRegion_ID);
+
+	/** Get Sales Region.
+	  * Sales coverage region
+	  */
+	public int getC_SalesRegion_ID();
+
+	public org.compiere.model.I_C_SalesRegion getC_SalesRegion() throws RuntimeException;
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -380,21 +395,6 @@ public interface I_AMN_Payroll
 	  * User who created this records
 	  */
 	public int getCreatedBy();
-
-    /** Column name C_SalesRegion_ID */
-    public static final String COLUMNNAME_C_SalesRegion_ID = "C_SalesRegion_ID";
-
-	/** Set Sales Region.
-	  * Sales coverage region
-	  */
-	public void setC_SalesRegion_ID (int C_SalesRegion_ID);
-
-	/** Get Sales Region.
-	  * Sales coverage region
-	  */
-	public int getC_SalesRegion_ID();
-
-	public org.compiere.model.I_C_SalesRegion getC_SalesRegion() throws RuntimeException;
 
     /** Column name CurrencyRate */
     public static final String COLUMNNAME_CurrencyRate = "CurrencyRate";
@@ -648,15 +648,6 @@ public interface I_AMN_Payroll
 	  */
 	public boolean isPrinted();
 
-    /** Column name month */
-    public static final String COLUMNNAME_month = "month";
-
-	/** Set month	  */
-	public void setmonth (int month);
-
-	/** Get month	  */
-	public int getmonth();
-
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -772,6 +763,15 @@ public interface I_AMN_Payroll
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name month */
+    public static final String COLUMNNAME_month = "month";
+
+	/** Set month	  */
+	public void setmonth (int month);
+
+	/** Get month	  */
+	public int getmonth();
 
     /** Column name year */
     public static final String COLUMNNAME_year = "year";

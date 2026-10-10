@@ -64,7 +64,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 		BigDecimal Salary_Socialbenefits ;
 		BigDecimal Salary= BigDecimal.valueOf(0);		
 		// GET Employee 
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, trxName);
 		// Get Actual Salary
 		Salary = amnemployee.getSalary();
 		// log.warning("Parameters...p_AMN_Employee_ID:"+p_AMN_Employee_ID+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo);
@@ -79,7 +79,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 			locale = Env.getLanguage(ctx).getLocale();
   		//
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
-		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
+		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
 		amnpayrollhistoric= MAMN_Payroll_Historic.findAMNPayrollHistoricbyDates(
 				ctx, locale, p_AMN_Employee_ID, p_ValueFrom,  p_ValueTo, CU_Currency_ID);
 		//log.warning("........p_AMN_Employee_ID:"+p_AMN_Employee_ID+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo);
@@ -89,7 +89,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 			// SAVES UPDATES
 			// Updated Values for Salary_Socialbenefits
 			amnpayrollhistoric.setSalary_Socialbenefits_Updated(Salary_Socialbenefits);
-			amnpayrollhistoric.save(get_TrxName());
+			amnpayrollhistoric.save(trxName);
 	    }
 		//amnpayroll.saveEx(trxName);	//	Creates AMNPayroll Control
 		if (processMonitor != null)
@@ -120,7 +120,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 		BigDecimal Salary_Utilities ;
 		BigDecimal Salary= BigDecimal.valueOf(0);		
 		// GET Employee 
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, trxName);
 		// Get Actual Salary
 		Salary = amnemployee.getSalary();
 		// log.warning("Parameters...p_AMN_Employee_ID:"+p_AMN_Employee_ID+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo);
@@ -135,7 +135,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 			locale = Env.getLanguage(ctx).getLocale();
   		//
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
-		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
+		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
 		amnpayrollhistoric= MAMN_Payroll_Historic.findAMNPayrollHistoricbyDates(
 				ctx, locale, p_AMN_Employee_ID, p_ValueFrom,  p_ValueTo, CU_Currency_ID);
 		if (amnpayrollhistoric != null) {
@@ -144,7 +144,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 			// SAVES UPDATES
 			// Updated Values for Salary_Socialbenefits
 			amnpayrollhistoric.setSalary_Utilities_Updated(Salary_Utilities);
-			amnpayrollhistoric.save(get_TrxName());
+			amnpayrollhistoric.save(trxName);
 	    }
 		//amnpayroll.saveEx(trxName);	//	Creates AMNPayroll Control
 		if (processMonitor != null)
@@ -181,11 +181,11 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 		BigDecimal SalaryHistoric= BigDecimal.valueOf(0);	
 		
 		// GET Employee 
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, trxName);
 		// Get Actual Salary from Employee Table
 		Salary = amnemployee.getSalary();
 		// Get Salary FROM PAyroll Detail  IF NULL Get Salary from Employee Table
-		MAMN_Payroll_Detail amnparyolldetail = new MAMN_Payroll_Detail(ctx, 0, null);
+		MAMN_Payroll_Detail amnparyolldetail = new MAMN_Payroll_Detail(ctx, 0, trxName);
 		amnparyolldetail = getAMNPAyrollDetailSalaryBaseSB(
 				ctx, locale, p_AMN_Employee_ID, p_ValueFrom,  p_ValueTo, CU_Currency_ID);
 		if (amnparyolldetail != null)
@@ -204,12 +204,10 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 			locale = Env.getLanguage(ctx).getLocale();
   		//
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
-		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, null);
+		MAMN_Payroll_Historic amnpayrollhistoric = new MAMN_Payroll_Historic(ctx, 0, trxName);
 		amnpayrollhistoric= MAMN_Payroll_Historic.findAMNPayrollHistoricbyDates(
 				ctx, locale, p_AMN_Employee_ID, p_ValueFrom,  p_ValueTo, CU_Currency_ID);
-//log.warning(".....(UPDATE).amnpayrollhistoric:"+amnpayrollhistoric);
 		if (amnpayrollhistoric != null) {
-//log.warning(".....(UPDATE).AMN_Employee_ID:"+p_AMN_Employee_ID+"   Salary:"+Salary+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo+"  CU_Currency_ID="+CU_Currency_ID);
 			// Compare Historic Salary with New Payroll Salary SalaryPR
 			if (amnpayrollhistoric.getSalary() != null)
 				SalaryHistoric = amnpayrollhistoric.getSalary();
@@ -221,7 +219,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 				else
 					amnpayrollhistoric.setSalary(SalaryHistoric);
 			// SAVES UPDATES
-			amnpayrollhistoric.save(get_TrxName());
+			amnpayrollhistoric.save(trxName);
 	    }
 		//amnpayroll.saveEx(trxName);	//	Creates AMNPayroll Control
 		if (processMonitor != null)
@@ -417,11 +415,11 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 		BigDecimal Salary_Socialbenefits_Updated ;
 		BigDecimal Salary_Utilities_Updated ;
 		// GET Employee 
-		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, null);
+		MAMN_Employee amnemployee = new MAMN_Employee(ctx, p_AMN_Employee_ID, trxName);
 		// log.warning("Parameters...p_AMN_Employee_ID:"+p_AMN_Employee_ID+"  p_ValueFrom:"+p_ValueFrom+"  p_ValueTo:"+p_ValueTo);
 		// Default Account Schema
-		MClientInfo info = MClientInfo.get(Env.getCtx(), amnemployee.getAD_Client_ID(), null); 
-		MAcctSchema as = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), null);
+		MClientInfo info = MClientInfo.get(Env.getCtx(), amnemployee.getAD_Client_ID(), trxName); 
+		MAcctSchema as = MAcctSchema.get (Env.getCtx(), info.getC_AcctSchema1_ID(), trxName);
 		AcctSchema_ID= as.getC_AcctSchema_ID();
 		if (locale == null)
 		{
@@ -434,12 +432,8 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 			locale = Env.getLanguage(ctx).getLocale();
    		// Default Currency  for Contract
    		Currency_ID = AmerpUtilities.defaultAMNContractCurrency(amnemployee.getAMN_Contract_ID());
-   		if (Currency_ID == null )
-   			Currency_ID = AmerpUtilities.defaultAcctSchemaCurrency(amnemployee.getAD_Client_ID());	
    		// Default ConversionType for Contract
    		ConversionType_ID = AmerpUtilities.defaultAMNContractConversionType(amnemployee.getAMN_Contract_ID());
-   		if (ConversionType_ID == null)	
-   			ConversionType_ID = MConversionType.TYPE_SPOT;
 		//
 		IProcessUI processMonitor = Env.getProcessUI(ctx);
 		// ************************************************************
@@ -468,7 +462,7 @@ public class MAMN_Payroll_Historic extends X_AMN_Payroll_Historic {
 	    ResultSet rs = null;
 	    try
 	    {
-	            pstmt = DB.prepareStatement(sql, null);
+	            pstmt = DB.prepareStatement(sql, trxName);
 	            pstmt.setInt(1, p_AMN_Employee_ID);
 	            pstmt.setInt(2, AcctSchema_ID);
 	            rs = pstmt.executeQuery();

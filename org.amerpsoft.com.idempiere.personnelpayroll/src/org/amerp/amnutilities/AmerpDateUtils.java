@@ -372,59 +372,46 @@ public class AmerpDateUtils {
 	 * 	@param end end date
 	 * 	@return BigDecimal number of days (1 = same)
 	 */
-	static public BigDecimal getDaysElapsed (Timestamp start, Timestamp end)
-	{
-		boolean negative = false;
-		int counter = 0;
-		if (end.before(start))
-		{
-			negative = true;
-			Timestamp temp = start;
-			start = end;
-			end = temp;
-		}
-		//
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTime(start);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		GregorianCalendar calEnd = new GregorianCalendar();
-		calEnd.setTime(end);
-		calEnd.set(Calendar.HOUR_OF_DAY, 0);
-		calEnd.set(Calendar.MINUTE, 0);
-		calEnd.set(Calendar.SECOND, 0);
-		calEnd.set(Calendar.MILLISECOND, 0);
+	static public BigDecimal getDaysElapsed(Timestamp start, Timestamp end) {
+	    // Protección contra valores nulos
+	    if (start == null || end == null) {
+	        return BigDecimal.ZERO;
+	    }
 
-	//	System.out.println("Start=" + start + ", End=" + end + ", dayStart=" + cal.get(Calendar.DAY_OF_YEAR) + ", dayEnd=" + calEnd.get(Calendar.DAY_OF_YEAR));
+	    boolean negative = false;
+	    int counter = 0;
 
-		//	in same year
-		if (cal.get(Calendar.YEAR) == calEnd.get(Calendar.YEAR))
-		{
-			if (negative) {
-				counter = (calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR)) * -1;
-				counter++;
-			} else {
-				counter = calEnd.get(Calendar.DAY_OF_YEAR) - cal.get(Calendar.DAY_OF_YEAR);
-				counter++;
-			}
-			return BigDecimal.valueOf(counter);
-		}
+	    if (end.before(start)) {
+	        negative = true;
+	        Timestamp temp = start;
+	        start = end;
+	        end = temp;
+	    }
 
-		//	not very efficient, but correct
-		
-		while (calEnd.after(cal))
-		{
-			cal.add (Calendar.DAY_OF_YEAR, 1);
-			counter++;
-		}
-		counter++;
-		//
-		if (negative)
-			counter = counter * -1;
+	    GregorianCalendar cal = new GregorianCalendar();
+	    cal.setTime(start);
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
 
-		return BigDecimal.valueOf(counter);
+	    GregorianCalendar endCal = new GregorianCalendar();
+	    endCal.setTime(end);
+	    endCal.set(Calendar.HOUR_OF_DAY, 0);
+	    endCal.set(Calendar.MINUTE, 0);
+	    endCal.set(Calendar.SECOND, 0);
+	    endCal.set(Calendar.MILLISECOND, 0);
+
+	    while (cal.before(endCal)) {
+	        cal.add(Calendar.DAY_OF_MONTH, 1);
+	        counter++;
+	    }
+
+	    if (negative) {
+	        counter = -counter;
+	    }
+
+	    return new BigDecimal(counter);
 	}
 	
 	/**

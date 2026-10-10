@@ -110,6 +110,7 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 
 	@Override
 	protected String doIt() throws Exception {
+    	String trxName = get_TrxName();
 	   	String Msg_Header="";
 	    String Msg_Verified="";
 	    Boolean isError = false;
@@ -183,7 +184,7 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 				}
 				// Verify if AMN_Payroll_ID is created and POSTED
 				amnpayrollCK = MAMN_Payroll.findByAMNPayroll(getCtx(), Env.getLanguage(getCtx()).getLocale(), 
-						p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, AMN_Employee_ID);
+						p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, AMN_Employee_ID, trxName);
 				if (amnpayrollCK != null && amnpayrollCK.isPosted()) {
 					addLog(Msg.getElement(getCtx(), "AMN_Employee_ID")+":"+Employee_Value+"-"+Employee_Name.trim()+" Estado:"+Employee_Status);
 					Msg_Verified = Msg.getElement(getCtx(), "AMN_Payroll_ID")+":"+amnpayrollCK.getDocumentNo().trim()+" "+
@@ -229,7 +230,7 @@ public class AMNPayrollCreateOneLotHeaders extends SvrProcess{
 					//log.warning("Creating Employee="+Employee_Name+Employee_Value);
 				    // Verify if AMN_Payroll_ID is created and POSTED
 					amnpayrollCK = MAMN_Payroll.findByAMNPayroll(getCtx(), Env.getLanguage(getCtx()).getLocale(), 
-							p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, AMN_Employee_ID);
+							p_AMN_Process_ID, AMN_Contract_ID, AMN_Period_ID, AMN_Employee_ID, trxName);
 					if (amnpayrollCK != null ) {
 						if (amnpayrollCK.isPosted()) {
 							Msg_Header = Msg.getElement(getCtx(), "AMN_Payroll_ID")+":"+amnpayrollCK.getDocumentNo().trim()+" "+

@@ -86,7 +86,7 @@ public class AMNPayrollTransferPayrollAssist {
 	    // log.warning("AMN_Process_Value=NN AMN_Process_ID="+p_AMN_Process_ID)	;    
 		// AMN_Payroll
 		MAMN_Payroll amnpayroll =  MAMN_Payroll.findByAMNPayroll(Env.getCtx(), null,
-				0, p_AMN_Contract_ID,  p_AMN_Period_ID, p_AMN_Employee_ID);
+				0, p_AMN_Contract_ID,  p_AMN_Period_ID, p_AMN_Employee_ID, trxName);
 		// Attendance Hours Array
 		AttendanceHours atthours =  new AttendanceHours();
 		// GET HOURS PROCESSED (HND,HNN,HED,HEN)
@@ -101,7 +101,7 @@ public class AMNPayrollTransferPayrollAssist {
 		//log.warning("1... Tr_HND:"+Tr_HND+"  Tr_BONOASIST"+Tr_BONOASIST+"   Tr_BONOTRANSP"+Tr_BONOTRANSP);
 		// GET AMN_Payroll_ID FROM DOCUMENT CREATED
 		amnpayroll = MAMN_Payroll.findByAMNPayroll(Env.getCtx(), Env.getLanguage(Env.getCtx()).getLocale(), 
-				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID);
+				p_AMN_Process_ID, p_AMN_Contract_ID, p_AMN_Period_ID, p_AMN_Employee_ID, trxName);
 		AMN_Payroll_ID = amnpayroll.getAMN_Payroll_ID();
 		// MAMN_Payroll_Detail
 		MAMN_Payroll_Detail amnpayrolldetail = new MAMN_Payroll_Detail(Env.getCtx(), 0, null);
