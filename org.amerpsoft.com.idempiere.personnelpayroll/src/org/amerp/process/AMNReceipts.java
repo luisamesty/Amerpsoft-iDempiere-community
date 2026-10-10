@@ -1,5 +1,7 @@
 package org.amerp.process;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 /**
  * AMNReceipts class
@@ -24,7 +26,17 @@ class AMNReceipts {
 	public int AD_Org_ID;
 	public int C_BPartner_ID;
 	public int C_Location_ID;
-	
+	// Amount Added
+	BigDecimal AmountNetPaid = BigDecimal.ZERO;
+    BigDecimal AmountAllocated = BigDecimal.ZERO;
+    BigDecimal AmountDeducted = BigDecimal.ZERO;
+    BigDecimal AmountCalculated = BigDecimal.ZERO;	
+    // Dates
+	Timestamp DateAcct;
+	Timestamp InvDateEnd; 
+	Timestamp InvDateIni;
+	Timestamp RefDateEnd;
+	Timestamp RefDateIni;
 	
 	public AMNReceipts() {
 		super();
@@ -131,7 +143,7 @@ class AMNReceipts {
 		RecIsPosted = isPosted;
 	}
 	public String getError() {
-		return Error;
+		return Error.trim();
 	}
 	public void setError(String error) {
 		Error = error;
@@ -176,6 +188,86 @@ class AMNReceipts {
 
 	public void setC_Location_ID(int c_Location_ID) {
 		C_Location_ID = c_Location_ID;
+	}
+
+	public boolean isInvoiceIsCreated() {
+		return InvoiceIsCreated;
+	}
+
+	public void setInvoiceIsCreated(boolean invoiceIsCreated) {
+		InvoiceIsCreated = invoiceIsCreated;
+	}
+
+	public BigDecimal getAmountNetPaid() {
+		return AmountNetPaid;
+	}
+
+	public void setAmountNetPaid(BigDecimal amountNetPaid) {
+		AmountNetPaid = amountNetPaid;
+	}
+
+	public BigDecimal getAmountAllocated() {
+		return AmountAllocated;
+	}
+
+	public void setAmountAllocated(BigDecimal amountAllocated) {
+		AmountAllocated = amountAllocated;
+	}
+
+	public BigDecimal getAmountDeducted() {
+		return AmountDeducted;
+	}
+
+	public void setAmountDeducted(BigDecimal amountDeducted) {
+		AmountDeducted = amountDeducted;
+	}
+
+	public BigDecimal getAmountCalculated() {
+		return AmountCalculated;
+	}
+
+	public void setAmountCalculated(BigDecimal amountCalculated) {
+		AmountCalculated = amountCalculated;
+	}
+
+	public Timestamp getDateAcct() {
+		return DateAcct;
+	}
+
+	public void setDateAcct(Timestamp dateAcct) {
+		DateAcct = dateAcct;
+	}
+
+	public Timestamp getInvDateEnd() {
+		return InvDateEnd;
+	}
+
+	public void setInvDateEnd(Timestamp invDateEnd) {
+		InvDateEnd = invDateEnd;
+	}
+
+	public Timestamp getInvDateIni() {
+		return InvDateIni;
+	}
+
+	public void setInvDateIni(Timestamp invDateIni) {
+		InvDateIni = invDateIni;
+	}
+
+	public Timestamp getRefDateEnd() {
+		return RefDateEnd;
+	}
+
+	public void setRefDateEnd(Timestamp refDateEnd) {
+		RefDateEnd = refDateEnd;
+	}
+
+	public Timestamp getRefDateIni() {
+		return RefDateIni;
+	}
+
+	public void setRefDateIni(Timestamp refDateIni) {
+		RefDateIni = refDateIni;
 	}
 	
 }
