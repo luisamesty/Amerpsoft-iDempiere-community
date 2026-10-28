@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Applies, before the save, the LocationExtended values received by the REST (PO attribute AMX_REST_<column>). -->
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.amerp.amxeditor.RestSaveHandler">
+   <implementation class="org.amerp.amxeditor.rest.LocationExtendedSaveHandler"/>
+   <reference bind="bindEventManager" cardinality="1..1"
+              interface="org.adempiere.base.event.IEventManager" name="IEventManager"
+              policy="static" unbind="unbindEventManager"/>
+</scr:component>
