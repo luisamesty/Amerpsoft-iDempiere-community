@@ -10,6 +10,7 @@ Require-Bundle: org.adempiere.base;bundle-version="11.0.0",
  org.adempiere.ui;bundle-version="11.0.0",
  org.adempiere.ui.zk;bundle-version="11.0.0",
  org.idempiere.zk.extra;bundle-version="11.0.0",
+ com.trekglobal.idempiere.rest.api,
  zcommon;bundle-version="9.6.4",
  zel;bundle-version="0.0.0",
  zhtml;bundle-version="0.0.0",
@@ -37,14 +38,12 @@ Export-Package: org.amerp.amxeditor.model
 Import-Package: com.google.gson;resolution:=optional,
  com.google.gson.reflect;version="[2.9.0,3.0.0)",
  com.google.gson.stream;version="[2.9.0,3.0.0)",
- com.trekglobal.idempiere.rest.api.json;resolution:=optional,
  net.sf.jasperreports.engine,
  org.compiere.model,
  org.osgi.framework;version="[1.10.0,2.0.0)",
  org.osgi.service.event,
  org.zkoss.bind,
- org.zkoss.zul.impl,
- com.trekglobal.idempiere.rest.api.json
+ org.zkoss.zul.impl
 Bundle-Vendor: Amerpsoft
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
