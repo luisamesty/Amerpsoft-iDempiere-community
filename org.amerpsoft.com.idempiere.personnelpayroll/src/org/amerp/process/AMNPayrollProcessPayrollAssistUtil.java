@@ -37,7 +37,6 @@ public class AMNPayrollProcessPayrollAssistUtil {
 	// PUBLIC VARS
 
 	static CLogger log = CLogger.getCLogger(AMNPayrollProcessPayrollAssistUtil.class);
-	
 	/**
 	 * Procedure: calcAttendanceValuesofPayrollVars
 	 * Description: Calculates Values of HND,HNN,HED,HEN,Attendance,AttendanceBonus
@@ -56,7 +55,7 @@ public class AMNPayrollProcessPayrollAssistUtil {
 	        Properties ctx, int p_AD_Client_ID, int p_AD_Org_ID, int p_C_Country_ID,
 	        Timestamp p_Event_Date, Integer p_AMN_Shift_ID, 
 	        Timestamp p_Shift_In1, Timestamp p_Shift_Out1, 
-	        Timestamp p_Shift_In2, Timestamp p_Shift_Out2, String trxName) 
+	        Timestamp p_Shift_In2, Timestamp p_Shift_Out2) 
 	{
 	    // *********************************************************
 	    // ******* 1️⃣ Variables iniciales
@@ -70,7 +69,7 @@ public class AMNPayrollProcessPayrollAssistUtil {
 	    // *********************************************************
 	    // ******* 2️⃣ Estructura de asistencia
 	    // *********************************************************
-	    MAMN_Payroll_Assist_Proc attendancehours = new MAMN_Payroll_Assist_Proc(Env.getCtx(), trxName);
+	    MAMN_Payroll_Assist_Proc attendancehours = new MAMN_Payroll_Assist_Proc(Env.getCtx(), null);
 	    attendancehours.setShift_In1(p_Shift_In1);
 	    attendancehours.setShift_In2(p_Shift_In2);
 	    attendancehours.setShift_Out1(p_Shift_Out1);
@@ -81,7 +80,7 @@ public class AMNPayrollProcessPayrollAssistUtil {
 	    // *********************************************************
 	    // ******* 3️⃣ Turnos por defecto
 	    // *********************************************************
-	    MAMN_Shift_Detail amnshiftdetail = MAMN_Shift_Detail.findShiftDetailByEventDate(ctx, p_AMN_Shift_ID, p_Event_Date);
+	    MAMN_Shift_Detail amnshiftdetail = MAMN_Shift_Detail.findByEventDate(ctx, p_AMN_Shift_ID, p_Event_Date);
 	    if (amnshiftdetail == null) {
 	        attendancehours.setDescription(
 	        		Msg.getMsg(ctx, "Error")+" "+
@@ -1032,36 +1031,4 @@ public class AMNPayrollProcessPayrollAssistUtil {
 	    return shiftIndicators;
 	}
 
-	/**
-     * Encuentra el Timestamp de la lista que está más cerca de un Timestamp objetivo,
-     * excluyendo estrictamente el primer y el último elemento de la lista.
-     * 
-     * @Timestamp targetTime   Fecha y hora de referencia para comparar
-     * @param rawEvents        Lista de timestamps (marcaciones)
-     * @return Timestamp       El elemento intermedio más cercano, o null si no hay suficientes elementos
-     */
-    public static Timestamp findClosestExcludingFirstAndLast(Timestamp targetTime, List<Timestamp> rawEvents) {
-        if (rawEvents == null || rawEvents.size() < 3 || targetTime == null) {
-            return null; // Se necesitan al menos 3 elementos para tener intermedios
-        }
-
-        Timestamp closestEvent = null;
-        long minDifference = Long.MAX_VALUE;
-
-        // Iterar desde el índice 1 hasta el penúltimo (size() - 2)
-        for (int i = 1; i < rawEvents.size() - 1; i++) {
-            Timestamp event = rawEvents.get(i);
-            
-            if (event != null) {
-                long diff = Math.abs(targetTime.getTime() - event.getTime());
-                
-                if (diff < minDifference) {
-                    minDifference = diff;
-                    closestEvent = event;
-                }
-            }
-        }
-
-        return closestEvent;
-    }
 }

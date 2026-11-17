@@ -95,7 +95,6 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
     	String eol = System.getProperty("line.separator");
 		String Employee_Name="";
         Properties ctx = getCtx();
-    	String trxName = get_TrxName();
 		GregorianCalendar cal = new GregorianCalendar();
 		GregorianCalendar cal2 = new GregorianCalendar();		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -173,9 +172,12 @@ public class AMNPayrollProcessPayrollAssistOneEmployee extends SvrProcess {
 			// ARRAY EMPLOYEE - CONTRACT
 			Timestamp currDate=new Timestamp(cal.getTimeInMillis());
 			Msg_Value = "";
+			//Msg_Value = Msg.getMsg(Env.getCtx(), "Date")+": "+p_currDate.toString().substring(0,10)+ "  ";
+//	    	Msg_Value = Msg_Value + AMNPayrollProcessPayrollAssistProc.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
+//	    			ctx, amnemployee.getAD_Client_ID(), amnemployee.getAD_OrgTo_ID(), p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
 	    	AMNPayrollProcessPayrollAssistProcess pppa = new AMNPayrollProcessPayrollAssistProcess();		    	
 	    	Msg_Value = Msg_Value + pppa.CreatePayrollDocumentsAssistProcforEmployeeOneDay(
-    			ctx,  amnemployee.getAD_Client_ID(), amnemployee.getAD_OrgTo_ID(), p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled, trxName);
+	    			ctx,  amnemployee.getAD_Client_ID(), amnemployee.getAD_OrgTo_ID(), p_AMN_Contract_ID, currDate, p_AMN_Employee_ID, p_AMN_Assist_Process_Mode, p_IsScheduled);
 	    	addLog(Msg_Value);
 	    	cal.add(Calendar.DAY_OF_MONTH, 1);
 		}   	
