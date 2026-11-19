@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- REST (com.trekglobal.idempiere.rest.api): serializer for tables with LocationExtended columns, above the default (0). -->
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.amerp.amxeditor.RestSerializerFactory">
+   <property name="service.ranking" type="Integer" value="100"/>
+   <service>
+      <provide interface="com.trekglobal.idempiere.rest.api.json.IPOSerializerFactory"/>
+   </service>
+   <implementation class="org.amerp.amxeditor.rest.LocationExtendedSerializerFactory"/>
+</scr:component>

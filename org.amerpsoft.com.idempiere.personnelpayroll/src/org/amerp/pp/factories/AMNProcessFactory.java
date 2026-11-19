@@ -69,6 +69,8 @@ public class AMNProcessFactory implements IProcessFactory {
         processClasses.put("org.amerp.process.imp.AMNImportSalarySocialBenefits", AMNImportSalarySocialBenefits.class);
         processClasses.put("org.amerp.process.imp.AMNImportEmployee", AMNImportEmployee.class);
         processClasses.put("org.amerp.process.imp.AMNImportPayrollAssistRow", AMNImportPayrollAssistRow.class);
+        processClasses.put("org.amerp.process.imp.AMNHouseKeepingPayrollAssist", AMNHouseKeepingPayrollAssist.class);
+        
     }
 
     @Override

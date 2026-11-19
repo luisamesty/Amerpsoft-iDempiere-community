@@ -31,7 +31,7 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250829L;
+	private static final long serialVersionUID = 20261124L;
 
     /** Standard Constructor */
     public X_AMN_Payroll_Assist_Unit (Properties ctx, int AMN_Payroll_Assist_Unit_ID, String trxName)
@@ -221,7 +221,7 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	}
 
 	/** Set Address.
-		@param C_Location_ID Location or Address. Organization OrgInfo address.
+		@param C_Location_ID Location or Address
 	*/
 	public void setC_Location_ID (int C_Location_ID)
 	{
@@ -232,7 +232,7 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	}
 
 	/** Get Address.
-		@return Location or Address. Organization OrgInfo address.
+		@return Location or Address
 	  */
 	public int getC_Location_ID()
 	{
@@ -240,6 +240,22 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Description.
+		@param Description Optional short description of the record
+	*/
+	public void setDescription (String Description)
+	{
+		set_Value (COLUMNNAME_Description, Description);
+	}
+
+	/** Get Description.
+		@return Optional short description of the record
+	  */
+	public String getDescription()
+	{
+		return (String)get_Value(COLUMNNAME_Description);
 	}
 
 	/** Set Name.
@@ -256,6 +272,22 @@ public class X_AMN_Payroll_Assist_Unit extends PO implements I_AMN_Payroll_Assis
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
+	}
+
+	/** Set Note.
+		@param Note Optional additional user defined information
+	*/
+	public void setNote (String Note)
+	{
+		set_Value (COLUMNNAME_Note, Note);
+	}
+
+	/** Get Note.
+		@return Optional additional user defined information
+	  */
+	public String getNote()
+	{
+		return (String)get_Value(COLUMNNAME_Note);
 	}
 
 	/** Set Search Key.

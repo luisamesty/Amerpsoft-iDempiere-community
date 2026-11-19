@@ -135,12 +135,12 @@ public interface I_AMN_Payroll_Assist_Unit
     public static final String COLUMNNAME_C_Location_ID = "C_Location_ID";
 
 	/** Set Address.
-	  * Location or Address. Organization OrgInfo address.
+	  * Location or Address
 	  */
 	public void setC_Location_ID (int C_Location_ID);
 
 	/** Get Address.
-	  * Location or Address. Organization OrgInfo address.
+	  * Location or Address
 	  */
 	public int getC_Location_ID();
 
@@ -159,6 +159,19 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -185,6 +198,19 @@ public interface I_AMN_Payroll_Assist_Unit
 	  * Alphanumeric identifier of the entity
 	  */
 	public String getName();
+
+    /** Column name Note */
+    public static final String COLUMNNAME_Note = "Note";
+
+	/** Set Note.
+	  * Optional additional user defined information
+	  */
+	public void setNote (String Note);
+
+	/** Get Note.
+	  * Optional additional user defined information
+	  */
+	public String getNote();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

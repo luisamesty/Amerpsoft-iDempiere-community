@@ -1,18 +1,10 @@
 package org.amerp.amnmodel;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
-import org.amerp.amnutilities.AmerpPayrollCalcUtilDVFormulas;
-import org.amerp.amnutilities.AmerpUtilities;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
-import org.compiere.util.Msg;
 
 public class MAMN_Payroll_Assist_Row extends X_AMN_Payroll_Assist_Row{
 
