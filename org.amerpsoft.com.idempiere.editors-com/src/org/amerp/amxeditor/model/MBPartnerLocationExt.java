@@ -174,7 +174,22 @@ public class MBPartnerLocationExt extends X_C_BPartner_Location {
 	 * @return save
 	 */
 	protected boolean beforeSave(boolean newRecord) {
-		
+
+		// REST: the C_Location_ID received by the API (see org.amerp.amxeditor.rest) is applied here, before the
+		// name is built from the address; the event handler would apply it later anyway (PO_BEFORE_*), but doing it
+		// here also covers iDempiere versions whose beforeSave needs the location before the model events.
+		Object restLocation = get_Attribute(org.amerp.amxeditor.rest.LocationExtendedSerializerFactory.ATTRIBUTE_PREFIX + COLUMNNAME_C_Location_ID);
+		if (restLocation instanceof Integer) {
+			set_Attribute(org.amerp.amxeditor.rest.LocationExtendedSerializerFactory.ATTRIBUTE_PREFIX + COLUMNNAME_C_Location_ID, null);
+			int id = (Integer) restLocation;
+			if (id > 0) {
+				MLocation loc = new MLocation(getCtx(), id, get_TrxName());
+				if (loc.get_ID() != id || loc.getAD_Client_ID() != getAD_Client_ID())
+					throw new org.adempiere.exceptions.AdempiereException("C_Location_ID " + id + " not found in this tenant");
+			}
+			set_ValueNoCheck(COLUMNNAME_C_Location_ID, id > 0 ? Integer.valueOf(id) : null);
+		}
+
 //		if (this.get_ID()== 0)
 //			return false;
 //		if (getC_Location_ID() == 0)

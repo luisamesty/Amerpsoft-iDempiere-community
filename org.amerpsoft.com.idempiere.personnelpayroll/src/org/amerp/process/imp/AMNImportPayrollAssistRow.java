@@ -42,6 +42,7 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
     int recMAMN_Payroll_Assist_Row_ID = 0;
     Map<String, Integer> pinToEmployeeMap = new HashMap<>();
     private String paramMsg = "";
+    private String fechasMsg = "";
     
 	@Override
     protected void prepare() {
@@ -115,7 +116,13 @@ public class AMNImportPayrollAssistRow extends SvrProcess {
         cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 999);
         p_RefDateEnd = new Timestamp(cal.getTimeInMillis());
-               
+
+        fechasMsg += "Fecha / Hora actualizadas:  DateIni=" + p_RefDateIni
+                + " | DateEnd=" + p_RefDateEnd
+                + "\r\n";
+        log.warning(fechasMsg);
+        fechasMsg += fechasMsg;
+        
         // Determina el Numero de Registros
         int rowCount = 0;
         String countSql = "SELECT COUNT(*) FROM ( "
