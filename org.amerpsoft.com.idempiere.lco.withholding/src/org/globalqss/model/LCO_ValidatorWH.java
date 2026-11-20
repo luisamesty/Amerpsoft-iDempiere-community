@@ -106,8 +106,6 @@ public class LCO_ValidatorWH extends AbstractEventHandler
 	@Override
 	protected void doHandleEvent(Event event) {
 		String type = event.getTopic();
-//log.warning("LCO_USE_WITHHOLDING Set env="+MSysConfig.getBooleanValue("LCO_USE_WITHHOLDINGS", true, Env.getAD_Client_ID(Env.getCtx())) );
-//log.warning("Type: " + type);
 		if (type.equals(IEventTopics.AFTER_LOGIN)) {
 
 			log.info("Type: " + type);
@@ -120,8 +118,12 @@ public class LCO_ValidatorWH extends AbstractEventHandler
 
 		if (! MSysConfig.getBooleanValue("LCO_USE_WITHHOLDINGS", true, Env.getAD_Client_ID(Env.getCtx())))
 			return;
-
 		PO po = getPO(event);
+		String trxName = (po != null) ? po.get_TrxName() : null;
+		if (!isWithholdingTablesReady(trxName)) {
+			return;
+		}
+		
 		log.info(po.get_TableName() + " Type: "+type);
 		String msg;
 
@@ -280,6 +282,31 @@ public class LCO_ValidatorWH extends AbstractEventHandler
 
 	}	//	doHandleEvent
 
+	private volatile boolean withholdingTablesVerified = false;
+
+	private boolean isWithholdingTablesReady(String trxName) {
+		if (withholdingTablesVerified) {
+			return true;
+		}
+		if (!DB.isConnected()) {
+			return false;
+		}
+		try {
+			int cnt = DB.getSQLValue(
+					trxName,
+					"SELECT COUNT(*) FROM AD_Table WHERE TableName IN ('LCO_InvoiceWithholding', 'LCO_WithholdingCalc') AND IsActive='Y'");
+			if (cnt >= 2) {
+				withholdingTablesVerified = true;
+				return true;
+			}
+			log.warning("LCO withholding tables not yet created in AD_Table; skipping LCO_ValidatorWH logic");
+			return false;
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Could not verify LCO withholding tables existence", e);
+			return false;
+		}
+	}
+	
 	private String clearInvoiceWithholdingAmtFromInvoice(MInvoice inv) {
 		// Clear invoice withholding amount
 
