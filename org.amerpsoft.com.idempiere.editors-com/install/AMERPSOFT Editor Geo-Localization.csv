@@ -5,13 +5,60 @@ AD_Org_ID[Name],AD_Package_Exp_ID[Name],Line,Type,AD_EntityType_ID[EntityType],A
 *,AMERPSOFT Editor Geo-Localization,4030,T,,,,,,,,Region,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,4060,T,,,,,,,,C_Municipality,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,4070,T,,,,,,,,C_Parish,ALL,,,,,,,,,,,,,,,,,,,
+*,AMERPSOFT Editor Geo-Localization,4100,T,,,,,,,,Business Partner,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,4110,T,,,,,,,,Partner Location,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,4200,T,,,,,,,,Address,ALL,,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,6010,P,,,,,,,,,ALL,,,,,OpenLocation,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,6020,P,,,,,,,,,ALL,,,,,ProcessSingleLocationGeocoding,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,6030,P,,,,,,,,,ALL,,,,,ProcessBatchGeocoding,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,8000,W,,,,,,,,,ALL,,,,,,,Location,,,,,,,,,,,,
-*,AMERPSOFT Editor Geo-Localization,8020,W,,,,,,,,,ALL,,,,,,,Business Partner,,,,,,,,,,,,
+*,AMERPSOFT Editor Geo-Localization,8100,SQL,,,,,,,,Field,ALL,"WITH updated AS (
+    UPDATE ad_field
+    SET isactive = 'Y',
+        isdisplayed = 'Y',
+        seqno = 100,
+        updated = NOW(),
+        updatedby = 100
+    WHERE ad_tab_id = 222
+      AND name = 'Open Location'
+    RETURNING ad_field_id
+)
+INSERT INTO ad_field (
+    ad_field_id,
+    ad_field_uu,
+    ad_client_id,
+    ad_org_id,
+    isactive,
+    created,
+    createdby,
+    updated,
+    updatedby,
+    name,
+    ad_tab_id,
+    ad_column_id,
+    entitytype,
+    isdisplayed,
+    seqno
+)
+SELECT
+    COALESCE((SELECT MAX(ad_field_id) + 1 FROM ad_field), 1000000),
+    generate_uuid(),
+    0,
+    0,
+    'Y',
+    NOW(),
+    100,
+    NOW(),
+    100,
+    'Open Location',
+    222,
+    c.ad_column_id,
+    'D',
+    'Y',
+    100
+FROM ad_column c
+WHERE c.ad_column_uu = 'UUID-DE-LA-COLUMNA-DEL-CAMPO'
+  AND NOT EXISTS (SELECT 1 FROM updated);",,,,,,,,,,,,,,Botón Open Location,,,,
 *,AMERPSOFT Editor Geo-Localization,9010,D,,,,,,,,ToolBar Button,ALL,"SELECT 	* FROM 	AD_ToolBarButton WHERE 	AD_ToolBarButton_ID IN  (1000225,1000226)",,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,9020,D,,,,,,,,System Configurator,ALL,SELECT 	* FROM 	AD_SysConfig WHERE AD_SysConfig_ID=1000014,,,,,,,,,,,,,,,,,,
 *,AMERPSOFT Editor Geo-Localization,10000,D,,,,,,,,Package Exp.,ALL,SELECT * FROM AD_Package_Exp WHERE AD_Package_Exp_UU='00f4bf5c-61f1-463e-9527-b853f23c913d';AD_Package_Exp_Detail,,,,,,,,,,,,,,,,,,
